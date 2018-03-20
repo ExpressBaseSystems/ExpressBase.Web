@@ -357,6 +357,16 @@
             slideRight('.form-save-wraper', '#form-buider-propGrid');
         }
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
+            if (CurProp === 'DataSourceId') {
+                $.ajax({
+                    type: "POST",
+                    url: "../DS/GetColumns",
+                    data: { DataSourceRefId : PropsObj.DataSourceId},
+                    success: function (Columns) {
+                        PropsObj.Columns = JSON.parse(Columns);
+                    }.bind(this)
+                });
+            }
             if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm")
                 RefreshControl(PropsObj);
         }.bind(this);

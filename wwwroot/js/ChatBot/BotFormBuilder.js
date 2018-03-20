@@ -357,19 +357,19 @@
             slideRight('.form-save-wraper', '#form-buider-propGrid');
         }
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-            //if (CurProp === 'DataSourceId') {
-            //    $.ajax({
-            //        type: "POST",
-            //        url: "../DS/GetColumns",
-            //        data: { DataSourceRefId : PropsObj.DataSourceId},
-            //        success: function (Columns) {
-            //            PropsObj.Columns.$values = Columns;
-            //            this.PGobj.setObject(PropsObj, AllMetas["EbBotForm"]);
-            //        }.bind(this)
-            //    });
-            //}
-            if (PropsObj)
-                RefreshControl(PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm");
+            if (CurProp === 'DataSourceId') {
+                $.ajax({
+                    type: "POST",
+                    url: "../DS/GetColumns",
+                    data: { DataSourceRefId : PropsObj.DataSourceId},
+                    success: function (Columns) {
+                        PropsObj.Columns.$values = Columns;
+                        this.PGobj.setObject(PropsObj, AllMetas["EbBotForm"]);
+                    }.bind(this)
+                });
+            }
+            if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm")
+                RefreshControl(PropsObj);
         }.bind(this);
 
 

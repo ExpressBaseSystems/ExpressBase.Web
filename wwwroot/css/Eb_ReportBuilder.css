@@ -787,7 +787,7 @@
     height: 100%;
     width: 1px;
     border-left: 2px dotted #55f;
-    z-index: 150;
+    z-index: 10;
     margin-left: 78px;
 }
 .track_line_vert2 {

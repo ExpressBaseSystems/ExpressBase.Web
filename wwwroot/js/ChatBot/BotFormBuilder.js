@@ -176,15 +176,21 @@
                 $ctrl.on("focus", this.controlOnFocus.bind(this));
                 $ctrl.attr("id", id);
                 $ctrl.attr("eb-type", type);
+                var ctrlObj = new EbObjects["Eb" + type](id);
                 if (sibling) {
                     $ctrl.insertBefore($(sibling));
-                    this.rootContainerObj.Controls.InsertAt($(sibling).index() - 1, new EbObjects["Eb" + type](id));
+                    this.rootContainerObj.Controls.InsertAt($(sibling).index() - 1, ctrlObj);
                 }
                 else {
                     $(target).append($ctrl);
-                    this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
+                    this.rootContainerObj.Controls.Append(ctrlObj);
                 }
                 $ctrl.focus();
+
+                ctrlObj.label = "";
+                ctrlObj.HelpText = "";
+
+                RefreshControl(ctrlObj);
             }
             else
                 console.log("ondrop else : removed");

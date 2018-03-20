@@ -463,6 +463,11 @@
     border: solid 1px #ddf;
 }
 
+.Otile-active {
+    background-color: #b1bfc1;
+    color :#222;
+}
+
 .pg-wraper {
     color: #114;
 }

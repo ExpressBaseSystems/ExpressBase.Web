@@ -1,0 +1,41 @@
+﻿/*imageuphome----------------*/
+.menubar_horri {
+    padding: 10px;
+    background: var(--eb-blue);
+}
+.menu_bar_vert {
+    height: calc(100vh - 54px);
+    background: white;
+    width: 100%;
+}
+.btn_upload {
+    border-radius: 20px;
+    background: white;
+    color: var(--eb-blue);
+}
+.image_up_container{
+    float:left;
+    width:75%;
+}
+.image_up_container_tag {
+    float: left;
+    width: 25%;
+    padding: 0 10px 10px 10px;
+}
+.image_up_container .file-preview {
+    padding: 0;
+}
+.image_up_container .file-drop-zone {
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: white;
+}
+.image_up_container_tag .tag_cont {
+    box-shadow: var(--eb-shadow);
+    border-radius: 4px;
+}
+    .image_up_container_tag .tag_cont_head {
+        width:100%;
+        padding:5px;       
+    }

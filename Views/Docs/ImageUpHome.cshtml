@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<link href="~/css/Docs.css" rel="stylesheet" />
+<script src="~/js/Docs/ImageUp.js" type="text/javascript"></script>
+<div class="row menubar_horri">
+    <a class="btn btn_upload pull-right">Upload</a>
+</div>
+<div class="row">
+    <div class="col-md-2 nopadding">
+        <div class="menu_bar_vert">
+
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div class="image_up_container_outer">
+            <h4>Upload Image</h4>
+            <div class="image_up_container">               
+                <input id="image_up_input" type='file' data-preview-file-type='text' multiple />
+            </div>
+            <div class="image_up_container_tag">
+                <div class="tag_cont">
+                    <div class="tag_cont_head">
+                        <h5>Tag Image</h5>
+                    </div>
+                    <div class="tag_cont_body">
+                        <input class="form-control" id="tagsinput_input"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var im = new ImageUploader_Doc({});
+</script>

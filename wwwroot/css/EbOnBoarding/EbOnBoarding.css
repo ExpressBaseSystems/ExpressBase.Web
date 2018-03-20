@@ -142,9 +142,9 @@
             height: 100px;
         }
 
-.prof-setup-cropie .loginmodal-container {
-    max-width: 500px;
-    height: 400px;
+
+.eb-cropie {
+    height: 300px;
     padding-bottom: 50px;
 }
 

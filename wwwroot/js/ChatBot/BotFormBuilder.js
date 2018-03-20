@@ -363,8 +363,7 @@
                     url: "../DS/GetColumns",
                     data: { DataSourceRefId : PropsObj.DataSourceId},
                     success: function (Columns) {
-                        PropsObj.Columns.$values = Columns;
-                        this.PGobj.setObject(PropsObj, AllMetas["EbBotForm"]);
+                        PropsObj.Columns = JSON.parse(Columns);
                     }.bind(this)
                 });
             }

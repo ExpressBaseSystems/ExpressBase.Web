@@ -1,6 +1,6 @@
 ﻿/*imageuphome----------------*/
 .menubar_horri {
-    padding: 10px;
+    padding: 0 10px 0 10px;
     background: var(--eb-blue);
 }
 .menu_bar_vert {
@@ -9,13 +9,17 @@
     width: 100%;
 }
 .btn_upload {
-    border-radius: 20px;
-    background: white;
-    color: var(--eb-blue);
+    color: white;
+    background-color: transparent;
+    font-size: 15px;
+}
+.image_up_container_outer {
+    display: none;
+    float: left;
 }
 .image_up_container{
     float:left;
-    width:75%;
+    width:100%;
 }
 .image_up_container_tag {
     float: left;
@@ -31,11 +35,53 @@
     padding: 0;
     background: white;
 }
-.image_up_container_tag .tag_cont {
+.tag_modal_wrapper .bootstrap-tagsinput {
+    width: 100%;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    height: 80px;
+}
+.tag_modal_wrapper .bootstrap-tagsinput .tag {
+    padding: 8px;
+    font-size: 14px;
+}
+.image_down_cont_outer, .image_up_container_outer {
+    float: left;
+    width: 100%;
+    padding-left:30px;
+    padding-right:30px;
+}
+.image_down_cont_body{
+    width:100%;
+    float:left;
+}
+.img_wrapper {
+    width: 17%;
+    padding: 5px;
+    background: white;
     box-shadow: var(--eb-shadow);
     border-radius: 4px;
+    height: 205px;
+    float: left;
+    margin: 1%;
 }
-    .image_up_container_tag .tag_cont_head {
-        width:100%;
-        padding:5px;       
+.img_wrapper_img {
+    width: 100%;
+    height: 70%;
+}
+    .img_wrapper_img img{
+        height:100%;
     }
+.img_wrapper_text {
+    width: 100%;
+    height: 25%;
+}
+.f {
+    text-align: center;
+    FONT-FAMILY: open sans;
+    font-weight: 600;
+}
+.f_s{
+    font-size:10px;
+}

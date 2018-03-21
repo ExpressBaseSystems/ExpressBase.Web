@@ -831,7 +831,7 @@
             //url: this.ssurl + "/bots",
             url:"../Boti/InserBotDetails",
             data: {
-                TableName: this.curForm.tableName, Fields: this.formValuesWithType
+                TableName: this.curForm.tableName, Fields: this.getFormValuesWithTypeColl()
             },
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
@@ -839,6 +839,13 @@
             success: this.ajaxsuccess.bind(this),
         });
         this.formValues = {};
+    };
+    this.getFormValuesWithTypeColl = function () {
+        var FVWTcoll = [];
+        $.each(this.formValuesWithType, function (key, val) {
+            FVWTcoll.push({ Name: key, Value: val[0], Type: val[1] });
+        });
+        return FVWTcoll;
     };
 
     this.ajaxsuccess = function () {

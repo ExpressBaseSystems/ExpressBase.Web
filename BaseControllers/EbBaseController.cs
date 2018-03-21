@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common.ServiceClients;
+using ExpressBase.Common.ServiceStack.Auth;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -14,6 +15,8 @@ namespace ExpressBase.Web.BaseControllers
         protected RedisClient Redis { get; set; }
 
         protected EbStaticFileClient FileClient { get; set; }
+
+        public CustomUserSession Session { get; set; }
 
         public EbBaseController(IServiceClient _ssclient)
         {

@@ -432,6 +432,7 @@ namespace ExpressBase.Web.Controllers
                             UserName = req["uname"],
                             Password = (req["pass"] + req["uname"]).ToMD5Hash(),
                             Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", tenantid } },
+                            RememberMe = true
                             //UseTokenCookie = true
                         });
 
@@ -460,6 +461,7 @@ namespace ExpressBase.Web.Controllers
                         Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
                         Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
                         Response.Cookies.Append("UserAuthId", authResponse.User.AuthId, options);
+                        Response.Cookies.Append("X-ss-pid", authResponse.SessionId, options);
 
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);

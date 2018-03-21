@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.ServiceClients;
+using ExpressBase.Common.ServiceStack.Auth;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,9 @@ namespace ExpressBase.Web.Controllers
 
                 string bToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
                 string rToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+                Session = new CustomUserSession();
+                Session.Id = context.HttpContext.Request.Cookies["X-ss-pid"];
+                Session = Redis.Get<CustomUserSession>("urn:iauthsession:"+ Session.Id);
 
                 this.ServiceClient.BearerToken = bToken;
                 this.ServiceClient.RefreshToken = rToken;

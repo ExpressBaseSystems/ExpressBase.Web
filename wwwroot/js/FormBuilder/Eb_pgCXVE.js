@@ -339,12 +339,13 @@
 
     this.searchObj = function (event) {
         var $e = $(event.target);
-        $(this.pgCXE_Cont_Slctr + " .OSE-body .colTile").each(function (i, o) {
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").each(function (i, o) {
             if (0 > $(o).text().toLocaleLowerCase().search($e.val().toLocaleLowerCase()))
                 $(this).hide();
             else
                 $(this).show();
         });
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .Otile-active").focus();
     }.bind(this);
 
     this.getOBjNameByval = function (data, refId) {
@@ -361,8 +362,8 @@
 
     this.OTileClick = function (data) {
         var $e = $(event.target);
-        $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeAttr("style");
-        $e.css("background-color", "#b1bfc1").css("color", "#222");
+        $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeClass("Otile-active");
+        $e.addClass("Otile-active");
         var ObjName = $e.attr("name");
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".ColT-right-arrow").removeAttr("style");
         $e.attr("is-selected", true).find(".ColT-right-arrow").css("visibility", "visible");

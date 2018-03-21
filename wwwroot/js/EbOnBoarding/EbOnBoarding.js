@@ -34,14 +34,15 @@
     this.ProfileImgUpload = function () {
         var uploadProf = new EbImageCropper({
             preview: 'profimage',
-            cropperContainer: 'cropsection'
+            cropperContainer: 'cropsection',
+            toggleId:'profimage'
         });
     };
     this.LogoImageUpload = function () {
-        var uploadLogo = new EbImageCropper({
-            preview: 's-logo-prev',
-            cropperContainer: 'eb-cropie-inner'
-        });
+        //var uploadLogo = new EbImageCropper({
+        //    preview: 's-logo-prev',
+        //    cropperContainer: 'eb-cropie-inner'
+        //});
     };
 
     this.ValidateForm = function () {

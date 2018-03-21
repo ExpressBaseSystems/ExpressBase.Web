@@ -19,7 +19,7 @@ namespace ExpressBase.Web.Controllers
     {
         public DSController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public DVColumnCollection GetColumns(string DataSourceRefId)
+        public string GetColumns(string DataSourceRefId)
         {
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", DataSourceRefId));
             if (columnresp == null || columnresp.Columns.Count == 0)
@@ -47,7 +47,7 @@ namespace ExpressBase.Web.Controllers
 
                 Columns.Add(_col);
             }
-            return Columns;
+            return EbSerializers.Json_Serialize(Columns);
         }
     }
 }

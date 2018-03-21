@@ -193,7 +193,7 @@ namespace ExpressBase.Web.Controllers
                 string base64Norm = base64.Replace("data:image/png;base64,", "");
                 myFileContent = System.Convert.FromBase64String(base64Norm);
                 uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = "jpg";
+                uploadImageRequest.ImageInfo.FileType = "png";
                 uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 

@@ -56,7 +56,7 @@ namespace ExpressBase.Web.Controllers
                 string rToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
                 Session = new CustomUserSession();
                 Session.Id = context.HttpContext.Request.Cookies["X-ss-pid"];
-                Session = Redis.Get<CustomUserSession>("urn:iauthsession:"+ Session.Id);
+                //Session = Redis.Get<CustomUserSession>("urn:iauthsession:"+ Session.Id); // Exception when inside a controller where Redis is not initialised
 
                 this.ServiceClient.BearerToken = bToken;
                 this.ServiceClient.RefreshToken = rToken;

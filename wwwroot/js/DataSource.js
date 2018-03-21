@@ -228,13 +228,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         else {
             this.Parameter_Count = 0;
         }
-        this.CreateObjString();
+        //this.CreateObjString();
         this.DrawTable();
     }
 
     this.CreateObjString = function () {
+        var ParamsArray = [];
         if (this.Parameter_Count !== 0) {
-            var ObjString = "[";
             var filter_control_list = $("#all_control_names").val();
             var myarray = filter_control_list.split(',');
             for (var i = 0; i < myarray.length; i++) {
@@ -244,18 +244,15 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 var value = $('#' + myarray[i]).val();
                 if (type === '6')
                     value = value.substring(0, 10);
-
-                ObjString += '{\"name\":\"' + name + '\",';
-                ObjString += '\"type\":\"' + type + '\",';
-                ObjString += '\"value\":\"' + value + '\"},';
+                ParamsArray.push(new fltr_obj(type, name, value));
+                //ObjString += '{\"name\":\"' + name + '\",';
+                //ObjString += '\"type\":\"' + type + '\",';
+                //ObjString += '\"value\":\"' + value + '\"},';
             }
-            ObjString = ObjString.slice(0, -1) + ']';
-            this.Object_String_WithVal = ObjString;
+            //ObjString = ObjString.slice(0, -1) + ']';
+            //this.Object_String_WithVal = ObjString;
         }
-        else {
-            this.Object_String_WithVal = null;
-        }
-        console.log("Object_String_WithVal" + this.Object_String_WithVal);
+        return ParamsArray;
     }
 
     this.DrawTable = function () {
@@ -293,7 +290,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 scrollY: "300px",
                 processing: true,
                 ajax: {
-                    url: this.Ssurl + "/ds/data/" + this.Refid,
+                    //url: this.Ssurl + "/ds/data/" + this.Refid,
+                    url: "../DV/getData",
                     type: "POST",
                     data: this.Load_tble_Data.bind(this),
                     crossDomain: true,
@@ -312,9 +310,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.Load_tble_Data = function (dq) {
         delete dq.columns; delete dq.order; delete dq.search;
-        dq.RefId = this.ver_Refid;
+        dq.RefId = this.Refid;
         dq.TFilters = [];
-        dq.Params = this.Object_String_WithVal;
+        dq.Params = this.CreateObjString();
         return dq;
     };
 

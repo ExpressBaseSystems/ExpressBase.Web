@@ -407,6 +407,7 @@
 .page-outer-container {
     width:100%;
     height:100%;
+    position:relative;
 }
 
 .page-outer-cont {
@@ -782,20 +783,21 @@
     outline: none;
 }
 .track_line_vert1 {
-    position: fixed;
+    position: absolute;
     height: 100%;
     width: 1px;
     border-left: 2px dotted #55f;
-    z-index: 150;
+    z-index: 10;
     margin-left: 78px;
 }
 .track_line_vert2 {
-    position: fixed;
+    position: absolute;
     height: 100%;
     width: 1px;
     border-left: 2px dotted #55f;
     z-index: 150;
-    right:calc(16.6666% + 10px);
+    right: 0;
+    margin-left: 78px;
 }
 ._head_vert1 {
     width: 0;

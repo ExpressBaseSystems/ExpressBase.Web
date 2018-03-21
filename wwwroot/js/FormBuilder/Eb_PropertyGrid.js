@@ -102,7 +102,7 @@
         }
         else if (type === 21) {    // If MultiLanguageKeySelector Editor
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" style=" width: calc(100% - 26px); direction: rtl;" />'
-                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+                + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '"  for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 17) {  //  If imageUploader
             valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
@@ -184,7 +184,7 @@
             return '<tr class="pgGroupRow" group-h="' + displayName + '"><td colspan="2" class="pgGroupCell"> &nbsp ' + displayName + '</td></tr > ';
     };
 
-    //checks an object is contained in array by name
+    //checks an object is contained in array by name case insensitive
     this.isContains = function (obj, val) {
         for (var i = 0; i < obj.length; i++)
             if (obj[i].name.toLowerCase() === val.toLowerCase())
@@ -268,8 +268,9 @@
         var prop = null;
         for (var i in propArray) {
             prop = propArray[i];
+            var _meta = getObjByval(this.Metas, "name", prop);
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
-            if (!this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || !this.isContains(this.Metas, prop) || (this.wc === "uc" && getObjByval(this.Metas, "name", prop).HideForUser) || getObjByval(this.Metas, "name", prop).MetaOnly)
+            if (_meta === undefined || !this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || (this.wc === "uc" && _meta.HideForUser) || !this.isContains(this.Metas, prop) || ((_meta.MetaOnly === undefined) ? false : _meta.MetaOnly))
                 continue;
             if (this.IsSortByGroup) {
                 // Check what is the group of the current property or use the default 'Other' group
@@ -443,7 +444,8 @@
         var $e = $(e.target);
         //$e.removeClass("Eb-invalid");
         $.each(this.AllObjects, function (i, obj) {
-            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
+            console.log(this.CurProp);
+            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] !== undefined && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
 
                 this.Ebalert.alert({
                     head: "This property is set as Unique.",
@@ -469,7 +471,6 @@
             });
             $e.focus().addClass("Eb-invalid");
         }
-
     }.bind(this);
 
     //??

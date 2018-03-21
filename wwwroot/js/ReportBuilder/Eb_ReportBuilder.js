@@ -22,6 +22,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.rulertype = "cm";
     this.copyStack = null;
     this.copyORcut = null;
+    this.margin = {
+        Left: 0,
+        Right: 0
+    }; 
 
     this.repExtern = new ReportExtended(this);
     this.RbCommon = new RbCommon(this);
@@ -50,7 +54,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
-                cursor: "crosshair", containment: containment,
+                cursor: "crosshair", containment: containment, appendTo: "body",
                 start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.ondragControl.bind(this)
             });
             $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));
@@ -352,28 +356,41 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
             var obj = new EbObjects["Eb" + this.Objtype](Objid);
             this.dropLoc.append(obj.$Control.outerHTML());
+            this.objCollection[Objid] = obj;
             if (this.col.hasClass('coloums')) {
                 obj.Top = (this.posTop - this.dropLoc.offset().top) - PosOBjOFdrag['top'];
-                obj.Left = (this.posLeft - this.dropLoc.offset().left) - PosOBjOFdrag['left'];
                 obj.DbType = this.col.attr("DbType");
                 obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
                 obj.ColumnName = this.col.text().trim();
             }
-            else {
+            else 
                 obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
-                obj.Left = (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];
-            }
-            obj.Title = Title;            
-            this.objCollection[Objid] = obj;
+            obj.Title = Title; 
+            obj.Left = this.leftwithMargin();
             this.RefreshControl(obj);
         }
         else if (this.col.hasClass('dropped')) {
-            this.dropLoc.append(this.col.css({ left: (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop }));
+            var l1 = this.leftwithMargin();
+            this.dropLoc.append(this.col.css({ left: l1, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop }));
             var obj1 = this.objCollection[this.col.attr('id')];
             obj1.Top = this.col.position().top;
             obj1.Left = this.col.position().left;          
         }
     };//on drop func of dropable
+
+    this.leftwithMargin = function () {
+        var l = null;
+        var r = $.isEmptyObject(this.objCollection[this.col.attr('id')]) ? new EbObjects["Eb" + this.col.attr('eb-type')]("sam").Width : parseFloat(this.objCollection[this.col.attr('id')].Width);
+        if (!this.col.hasClass('dropped'))
+            l = this.col.hasClass('coloums') ? (this.posLeft - this.dropLoc.offset().left) - PosOBjOFdrag['left'] : (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];   
+        else
+            l = (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft;
+        if (l < $(".track_line_vert1").position().left)
+            l = this.margin.Left;
+        else if (l + r > $(".track_line_vert2").position().left)
+            l = this.margin.Right - r;
+        return l;
+    };
 
     this.onReSizeFn = function (event, ui) {
         var resizeId = $(event.target).attr("id");
@@ -638,7 +655,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.addImageFn = function (obj) {
-        obj.Source = 'url(' + 'http://eb_roby_dev.localhost:5000/static/' + obj.Image + '.JPG) center no-repeat';
+        obj.Source = 'url(' + 'http://eb_dbpjl5pgxleq20180130063835-dev.localhost:41500/static/' + obj.Image + '.JPG) center no-repeat';
         this.RefreshControl(obj);
     };
     this.onDrag_stop = function (event, ui) {
@@ -649,6 +666,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };//drag start fn of control
 
     this.ondragControl = function (event, ui) {
+        $(ui.helper).css("z-index", 10);
         $('#guid-v , #guid-h, #guid-vr, #guid-hb').show();
         $('#guid-v').css({ 'left': (event.pageX - $(containment).offset().left) - (this.reDragLeft + 3) });
         $('#guid-h').css({ 'top': (event.pageY - $(containment).offset().top) - (this.reDragTop + 3) });

@@ -80,9 +80,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult SolutionDashBoard()
         {
-            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest ());
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = 0 });          
-            ViewBag.Connections = JsonConvert.SerializeObject(solutionConnections.EBSolutionConnections);
+            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest ());       
+            ViewBag.Connections = JsonConvert.SerializeObject(resp.EBSolutionConnections);
             ViewBag.SolutionInfo = resp.Data;
             return View();
         }     

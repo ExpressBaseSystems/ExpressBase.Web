@@ -48,6 +48,7 @@
 
     this.toggleModal = function () {
         $("#bg_" + this.ContainerId + " .imgup-bg").toggle(350);
+        this.startSE();
     };
 
     this.loadFileInput = function () {
@@ -59,7 +60,7 @@
             initialPreviewAsData: true,
             uploadAsync: true,
             uploadExtraData: this.uploadtag.bind(this)
-        }).on('fileuploaded', this.fileUploadSuccess.bind(this))
+        })/*.on('fileuploaded', this.fileUploadSuccess.bind(this))*/
             .on('fileloaded', this.addtagButton.bind(this))
             .on('fileclear', function (event) {
                 $("#" + this.ContainerId + "tag-section").empty();
@@ -71,12 +72,12 @@
     };
 
     this.fileUploadSuccess = function (event, data, previewId, index) {
-        $("#" + this.ContainerId + "sub-upload").show();
-        this.FileId = data.response.objId;
-        $('#' + this.ContainerId + 'obj-id').text(this.FileId);
-        $(".file-preview-initial").attr("tabindex", "1");
-        $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
-        $("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, this.FileId));
+        //$("#" + this.ContainerId + "sub-upload").show();
+        //this.FileId = data.response.objId;
+        //$('#' + this.ContainerId + 'obj-id').text(this.FileId);
+        //$(".file-preview-initial").attr("tabindex", "1");
+        //$(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
+        //$("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, this.FileId));
     };
 
     this.addtagButton = function (event, file, previewId, index, reader) {
@@ -86,6 +87,7 @@
                 + "class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title= 'Tag' > Tag</button > ");
             $("#" + this.ContainerId + "tagbtn" + previewId).on("click", this.tagimageOnClick.bind(this));
         }
+        $("#" + this.ContainerId + "_close").prop('disabled', true);
     };//tadd tag btn
 
     this.imageOnSelect = function (e) {
@@ -124,7 +126,20 @@
     };
 
     this.getId = function () {
+        this.ss.stopListening();
         return this.FileId;
+    };
+
+    this.startSE = function () {
+        this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.info", Channels: ["file-upload"] });
+        this.ss.onUploadSuccess = function (m, e) {
+            $("#" + this.ContainerId + "sub-upload").show();
+            this.FileId = m;
+            $('#' + this.ContainerId + 'obj-id').text(this.FileId);
+            $(".file-preview-initial").attr("tabindex", "1");
+            $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
+            $("#" + this.ContainerId + "_close").prop('disabled', false).on('click', this.getId.bind(this));            
+        }.bind(this);
     };
 
     this.init = function () {

@@ -463,12 +463,18 @@
     border: solid 1px #ddf;
 }
 
+.Otile-active {
+    background-color: #b1bfc1;
+    color :#222;
+}
+
 .pg-wraper {
     color: #114;
 }
 
 .form-buider-cont {
     color: #114;
+    background-color: white;
 }
 
 .pgRow:hover {

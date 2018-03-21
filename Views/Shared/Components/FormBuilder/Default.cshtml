@@ -13,14 +13,14 @@
     var _toolBox = new EbToolbox(_builderType);
 }
 <div class='eb-loaderFixed'><i class='fa fa-spinner fa-pulse fa-4x fa-fw center-block'></i></div>
-<div id="con" class="form-buider-cont">
+<div id="con" class="web-form-buider-cont">
     <div id="toolbox_cont" class='formB-box toolbox-cont'>
         <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-times pin" onclick="slideLeft ('.form-save-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
             @Html.Raw(_toolBox.html)
         </div>
     </div>
-    <div class="form-save-wraper">
+    <div class="web-form-wraper">
         <div id="form-buider-form" eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form">
             @Html.Raw(ViewBag.Html)
             @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@

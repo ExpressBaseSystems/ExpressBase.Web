@@ -592,11 +592,13 @@
         var hold = $.ss.eventSource.onerror;
         $.ss.eventSource.onerror = function () {
             var args = arguments;
-            window.setTimeout(function () {
-                $.ss.reconnectServerEventsAuth({ errorArgs: args });
-                if (hold)
-                    hold.apply(args);
-            }, 10000);
+            if (!$.ss.eventSourceStop) {
+                window.setTimeout(function () {
+                    $.ss.reconnectServerEventsAuth({ errorArgs: args });
+                    if (hold)
+                        hold.apply(args);
+                }, 10000);
+            }
         };
     };
 });

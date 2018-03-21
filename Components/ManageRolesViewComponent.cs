@@ -30,9 +30,9 @@ namespace ExpressBase.Web.Components
 		public async Task<IViewComponentResult> InvokeAsync(int itemid)
 		{
 			var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
-			ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);
-			ViewBag.SelectedRoleInfo = JsonConvert.SerializeObject(fr.SelectedRoleInfo);
-			ViewBag.PermissionList = JsonConvert.SerializeObject(fr.PermissionList);
+			ViewBag.AppCollection = EbSerializers.Json_Serialize(fr.ApplicationCollection);
+			ViewBag.SelectedRoleInfo = EbSerializers.Json_Serialize(fr.SelectedRoleInfo);
+			ViewBag.PermissionList = EbSerializers.Json_Serialize(fr.PermissionList);
 			ViewBag.RoleId = itemid;
 			TempData["_dict"] = GetPermissionOperationsAsJs();
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
@@ -46,9 +46,9 @@ namespace ExpressBase.Web.Components
 					Is_System = true
 				});
 			}
-			ViewBag.RoleList = JsonConvert.SerializeObject(fr.RoleList);
-			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
-			ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
+			ViewBag.RoleList = EbSerializers.Json_Serialize(fr.RoleList);
+			ViewBag.Role2RoleList = EbSerializers.Json_Serialize(fr.Role2RoleList);
+			ViewBag.UsersList = EbSerializers.Json_Serialize(fr.UsersList);
 			return View();
 		}
 		private string GetPermissionOperationsAsJs()

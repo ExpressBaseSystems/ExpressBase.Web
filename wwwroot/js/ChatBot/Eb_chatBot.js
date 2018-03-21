@@ -830,7 +830,7 @@
             type: "POST",
             url: this.ssurl + "/bots",
             data: {
-                TableName: this.curForm.name, Fields: JSON.stringify(this.formValuesWithType)
+                TableName: this.curForm.tableName, Fields: JSON.stringify(this.formValuesWithType)
             },
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);

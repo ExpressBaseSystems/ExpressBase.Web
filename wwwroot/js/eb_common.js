@@ -119,7 +119,7 @@ function RefreshControl(obj) {
     $.each(metas, function (i, meta) {
         var name = meta.name;
         if (meta.IsUIproperty) {
-            NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
+            NewHtml = NewHtml.replace('@' + name + '@', obj[name]);
         }
     });
     $("#" + obj.EbSid).html($(NewHtml).html());

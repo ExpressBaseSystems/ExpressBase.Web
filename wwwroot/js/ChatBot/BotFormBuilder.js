@@ -222,7 +222,7 @@
         this.rootContainerObj.Controls.InsertAt(idx, this.clipboard.ctrl);
     }.bind(this);
 
-    this.DelCtrl= function (id) {
+    this.DelCtrl = function (id) {
         var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
         var ctrl = this.rootContainerObj.Controls.PopByName(id);
@@ -393,17 +393,23 @@
         }
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             if (CurProp === 'DataSourceId') {
+                $.LoadingOverlay('show');
                 $.ajax({
                     type: "POST",
                     url: "../DS/GetColumns",
                     data: { DataSourceRefId: PropsObj.DataSourceId },
                     success: function (Columns) {
                         PropsObj.Columns = JSON.parse(Columns);
+                        $.LoadingOverlay('hide');
                     }.bind(this)
                 });
             }
-            if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm")
+            if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm") {
                 RefreshControl(PropsObj);
+            }
+            if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'ComboBox') {
+                this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
+            }
         }.bind(this);
 
 
@@ -413,6 +419,26 @@
             right: 24,
         });
     };
+
+
+    this.refreshCombo = function (cmbid, PropsObj, CurProp) {
+        //if (CurProp === 'DisplayMembers')
+        {
+            var count = (PropsObj.DisplayMembers.$values.length === 0) ? 1 : PropsObj.DisplayMembers.$values.length;
+            var $combowrap = $("#" + cmbid).find(".combo-wrap");
+            var perwidth = (100 / count);
+            $($combowrap.children()[0]).css("width", (perwidth + "%"));
+            var divhtml = $($combowrap.children()[0]).outerHTML();
+            $combowrap.empty();
+            for (var i = 0; i < count; i++) {
+                $combowrap.append(divhtml);
+            }
+        }
+    }
+    jQuery.fn.outerHTML = function () {
+        return jQuery('<div />').append(this.eq(0).clone()).html();
+    };
+
 
     this.CtxMenu = [{
         name: 'copy',

@@ -42,6 +42,10 @@ function slide(dir, leftDiv, rightDiv, $stickBtn) {
 
 
 function getObjByval(ObjArray, key, val) {
+    if (ObjArray === undefined) {
+        console.error("ObjArray undefined");
+        return false;
+    }
     return ObjArray.filter(function (obj) { return obj[key] == val; })[0];
 };
 

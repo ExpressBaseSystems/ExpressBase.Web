@@ -139,7 +139,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public void InserBotDetails(string TableName, Dictionary<string, BotInsert>  Fields)
+        public void InserBotDetails(string TableName, List<BotInsert>  Fields)
         {
            var x =  ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
         }

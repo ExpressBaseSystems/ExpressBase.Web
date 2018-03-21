@@ -1,16 +1,23 @@
-﻿using System;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.EbServiceStack.ReqNRes;
+using ExpressBase.Common.ServiceClients;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using ExpressBase.Objects.ServiceStack_Artifacts;
+using Newtonsoft.Json;
+using ServiceStack;
+using ServiceStack.Redis;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace ExpressBase.Web.Views
+namespace ExpressBase.Web.Controllers
 {
-    public class DocsController : Controller
+    public class DocsController : EbBaseIntController
     {
-        // GET: /<controller>/
+        public DocsController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+
         public IActionResult ImageUpHome()
         {
             return View();

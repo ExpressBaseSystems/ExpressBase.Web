@@ -11,7 +11,7 @@
         this.head = alert.head;
         this.body = alert.body;
         this.type = alert.type || "danger";
-        this.delay = alert.delay || 4000;
+        this.delay = alert.delay || 1e7;
         this.$CurAlert = $('<div class="alert alert-' + this.type + ' alert-dismissable fade in">'
             + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
             + '<strong>' + alert.head + '</strong> &nbsp;' + alert.body

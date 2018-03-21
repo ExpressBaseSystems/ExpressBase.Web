@@ -138,5 +138,10 @@ namespace ExpressBase.Web.Controllers
             ViewBag.tileshtml = _html;
             return View();
         }
+
+        public void InserBotDetails(string TableName, Dictionary<string, BotInsert>  Fields)
+        {
+           var x =  ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
+        }
     }
 }

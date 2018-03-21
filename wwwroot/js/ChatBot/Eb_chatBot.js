@@ -828,13 +828,14 @@
     this.DataCollection = function () {
         $.ajax({
             type: "POST",
-            url: this.ssurl + "/bots",
+            //url: this.ssurl + "/bots",
+            url:"../Boti/InserBotDetails",
             data: {
-                TableName: this.curForm.tableName, Fields: JSON.stringify(this.formValuesWithType)
+                TableName: this.curForm.tableName, Fields: this.formValuesWithType
             },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
             success: this.ajaxsuccess.bind(this),
         });
         this.formValues = {};

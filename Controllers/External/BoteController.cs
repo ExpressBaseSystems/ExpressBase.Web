@@ -117,6 +117,9 @@ namespace ExpressBase.Web.Controllers
                 List<object> returnlist = new List<object>();
                 returnlist.Add(authResponse);
                 returnlist.Add(formlist.BotForms);
+                CookieOptions options = new CookieOptions();
+                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
+                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
                 return returnlist;
             }
             else

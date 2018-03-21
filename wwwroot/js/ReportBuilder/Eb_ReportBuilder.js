@@ -38,7 +38,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.pages = this.RbCommon.pages;
     this.TextAlign = this.RbCommon.TextAlign;
     this.rulerTypesObj = this.RbCommon.EbRuler;
-    
+    this.GenerateButtons = function () { };
     this.RefreshControl = function (obj) {        
         var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];

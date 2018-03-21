@@ -128,7 +128,8 @@
         Vue.config.devtools = true;
 
         $(`#${ctrl.name}_loading-image`).hide();
-        var EbCombo = new EbSelect(ctrl.name, ctrl.DataSourceId, ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000]);
+        //var EbCombo = new EbSelect(ctrl.name, ctrl.DataSourceId, ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000], ctrl);
+        var EbCombo = new EbSelect(ctrl);
     };
 
     this.Cards = function (ctrl) {

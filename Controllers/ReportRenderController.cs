@@ -29,8 +29,22 @@ namespace ExpressBase.Web.Controllers
     public class ReportRenderController : EbBaseIntController
     {
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+        public IActionResult Index(string refid)
+        {
+            ViewBag.Refid = refid;
+            EbObjectParticularVersionResponse resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+            EbReport Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
+            Report.AfterRedisGet(this.Redis, this.ServiceClient);
+            if (Report.EbDataSource.FilterDialog != null)
+            {
+                ViewBag.Fd = Report;
+              //  return ViewComponent("ParameterDiv", new { paramDiv = Report.EbDataSource.FilterDialog });
+            }
 
-        public IActionResult SS_Report(string refid)
+            return View();
+        }
+
+        public IActionResult Render(string refid, List<Object> Params)
         {
             Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);
             var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
@@ -41,7 +55,7 @@ namespace ExpressBase.Web.Controllers
             {
                 var x = string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc);
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
-                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname= user.FullName});
+                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname = user.FullName });
                 resultlist1.StreamWrapper.Memorystream.Position = 0;
             }
             catch (Exception e)

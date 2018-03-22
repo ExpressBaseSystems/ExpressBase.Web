@@ -495,13 +495,13 @@
 
     .slick-next:before, .slick-prev:before {
         font-size: 28px;
-        opacity: 1;
-        color: rgba(0, 0, 0, 0.12);
+        opacity: 0.5;
+        color: rgba(0, 0, 0, 0.24);
     }
-
-.card-btn-cont {
-    padding: 0 12px 8px 12px;
-}
+        
+        .card-btn-cont {
+            padding: 0 12px 8px 12px;
+        }
 
     .card-btn-cont .btn {
         margin-top: 5px;

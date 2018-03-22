@@ -531,8 +531,8 @@
         $("#" + this.PropsObj.EbSid + ' span').text(name);
 
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
-        this.nameChanged();
-    }.bind(this)
+        this.nameChanged(this.PropsObj);
+    }.bind(this);
 
     //removed PG tables from DOM
     this.clear = function () {

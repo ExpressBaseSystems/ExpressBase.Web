@@ -218,11 +218,12 @@
         var idx = $e.index() + 1;
 
         this.clipboard.$ctrl.insertAfter($e);
+        $e.on("focus", this.controlOnFocus.bind(this));
         this.clipboard.$ctrl.contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
         this.rootContainerObj.Controls.InsertAt(idx, this.clipboard.ctrl);
     }.bind(this);
 
-    this.DelCtrl= function (id) {
+    this.DelCtrl = function (id) {
         var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
         var ctrl = this.rootContainerObj.Controls.PopByName(id);
@@ -297,9 +298,7 @@
 
     };
 
-    this.AfterSave = function () {
-
-        var TblName = "r_rr"////
+    this.AfterSave = function (TblName) {
         if (this.validateTableName(TblName)) {
             $.ajax({
                 type: "POST",
@@ -314,8 +313,8 @@
             });
         }
         else {
-            this.Ebalert.alert({
-                head: "Enter a name containing only lowercase letters or digits and starting with a lowercase letter.",
+            this.PGobj.Ebalert.alert({
+                head: "Name Not in a valid format,",
                 body: "Enter a name containing only lowercase letters or digits and starting with a lowercase letter..",
                 type: "danger",
                 delay: 5000
@@ -343,16 +342,29 @@
                     return true
                 }
                 else
-                    alert("Enter a name containing only lowercase letters or numerics as 'TableName'");
+                    this.nameAlert("Enter a name containing only lowercase letters or numerics as 'TableName'");
             }
             else
-                alert("Should include no Space or Hyphen in the 'TableName'");
+                this.nameAlert("Should include no Space or Hyphen in the 'TableName'");
         }
-        else
-            alert("Make first letter lowercase letter");
+        else 
+            this.nameAlert("Make first letter lowercase letter");
 
         return false;
     };
+
+    this.nameAlert = function (body) {
+        this.PGobj.Ebalert.alert({
+            head: "Name Not in a valid format.",
+            body: body,
+            type: "danger",
+        });
+    }.bind(this);
+
+    this.PGobj.nameChanged = function (propsObj) {
+        if (propsObj.EbSid === "form-buider-form")
+            this.validateTableName(this.rootContainerObj.Name);
+    }.bind(this);
 
     this.ajaxsuccess = function () {
 
@@ -388,31 +400,60 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
+
         this.PGobj.Close = function () {
             slideRight('.form-save-wraper', '#form-buider-propGrid');
-        }
+        };
+
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             if (CurProp === 'DataSourceId') {
+                $.LoadingOverlay('show');
                 $.ajax({
                     type: "POST",
                     url: "../DS/GetColumns",
                     data: { DataSourceRefId: PropsObj.DataSourceId },
                     success: function (Columns) {
                         PropsObj.Columns = JSON.parse(Columns);
+                        $.LoadingOverlay('hide');
                     }.bind(this)
                 });
             }
-            if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm")
+            if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm") {
                 RefreshControl(PropsObj);
+            }
+            if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'ComboBox') {
+                this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
+            }
         }.bind(this);
 
 
-        this.Ebalert = new EbAlert({
+        this.PGobj.Ebalert = new EbAlert({
             id: this.wraperId + "BFBalertCont",
             top: 24,
             right: 24,
-        });
+
+        }.bind(this));
+    }.bind(this);
+
+
+    this.refreshCombo = function (cmbid, PropsObj, CurProp) {
+        //if (CurProp === 'DisplayMembers')
+        {
+            var count = (PropsObj.DisplayMembers.$values.length === 0) ? 1 : PropsObj.DisplayMembers.$values.length;
+            var $combowrap = $("#" + cmbid).find(".combo-wrap");
+            var perwidth = (100 / count);
+            $($combowrap.children()[0]).css("width", (perwidth + "%"));
+            var divhtml = $($combowrap.children()[0]).outerHTML();
+            $combowrap.empty();
+            for (var i = 0; i < count; i++) {
+                $combowrap.append(divhtml);
+            }
+        }
+    }
+    jQuery.fn.outerHTML = function () {
+        return jQuery('<div />').append(this.eq(0).clone()).html();
     };
+
 
     this.CtxMenu = [{
         name: 'copy',

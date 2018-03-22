@@ -1,30 +1,67 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common;
+@{
+    bool fd = false;
+}
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
 <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<script type="text/javascript" src="~/js/eb_common.js"></script>
 <body>
-    <select class="selectpicker" data-style="btn-new" id="repdd">
-        @{
-            List<EbObjectWrapper> list = ViewBag.reports;
-            foreach (var report in list)
-            {
-                <option value="@report.RefId">@report.Id ** @report.RefId</option>
-            }
-        }
-    </select>
-    <button class="btn" id="render">render</button>
-    <iframe id="resultreport"></iframe>
+    <div id="fd"></div>
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    @{
+                        if (ViewBag.Fd.EbDataSource.FilterDialog != null)
+                        {
+                            @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.Fd.EbDataSource.FilterDialog });
+                            fd = true;
+                        }
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="run">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<iframe src='../ReportRender/Render?refid=@ViewBag.Refid'></iframe>*@
 </body>
 <script>
-    $('#render').on('click', function () {
-        $.post('../ReportRender/RenderReport',
-            { refid: $('#repdd').val() }, function (data) {
-                console.log(data);
-            }
-        );
+    $(document).ready(function () {
 
-    })
+        if ('@fd' ==='True') {
+            $("#myModal").modal();
+        }
+        $("#run").on("click", function () {
+            var ParamsArray = [];
+            var filter_control_list = $("#all_control_names").val();
+            var myarray = filter_control_list.split(',');
+            for (var i = 0; i < myarray.length; i++) {
+                console.log($("#" + myarray[i]).val());
+                var type = $('#' + myarray[i]).attr('data-ebtype');
+                var name = $('#' + myarray[i]).attr('name');
+                var value = $('#' + myarray[i]).val();
+                if (type === '6')
+                    value = value.substring(0, 10);
+                ParamsArray.push(new fltr_obj(type, name, value));
+            }
+            $.post('../ReportRender/Render', {
+                refid:'@ViewBag.Refid',
+                Params: ParamsArray
+            });
+        });
+    });
+
+
 </script>
 <style>
     select.selectpicker {
@@ -36,5 +73,4 @@
     .btn-new {
         background-color: #2A3F54;
     }
-
 </style>

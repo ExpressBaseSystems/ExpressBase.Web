@@ -822,7 +822,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.renderOnedit = function () {
         for (var objPropIndex in this.EditObj) {
-            if (typeof this.EditObj[objPropIndex] === "object") {
+            if (typeof this.EditObj[objPropIndex] === "object" && objPropIndex !=="Margin") {
                 if (objPropIndex === "ReportObjects")
                     this.appendHTMLonEdit(this.EditObj[objPropIndex].$values,"ReportObjects");
                 else

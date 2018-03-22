@@ -1,13 +1,12 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Connections;
+using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
-using Newtonsoft.Json;
-using ExpressBase.Common.ServiceClients;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -31,7 +30,7 @@ namespace ExpressBase.Web.Controllers
 
             this.MqClient.Post<bool>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
             {
-                SolutionId = req["solutionId"]
+                SolutionId = String.IsNullOrEmpty(req["solutionId"]) ? ViewBag.cid : req["solutionId"]
             });
 
             return View();

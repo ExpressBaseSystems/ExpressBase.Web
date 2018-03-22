@@ -5,19 +5,21 @@
 
 var z = 100;
 
-var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues) {
+//var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
+var EbSelect = function (ctrl) {
     //parameters   
-    this.name = name;
-    this.dsid = ds_id;
-    this.vmName = 'id'; //vmName;
-    this.dmNames = ['acmaster1_xid', 'acmaster1_name', 'tdebit']; //dmNames;
-    this.maxLimit = 1;//maxLimit;
-    this.minLimit = 3;//minLimit;
-    this.multiSelect = (this.maxLimit > 1);
-    this.required = true;//required;
-    this.servicestack_url = servicestack_url;
-    this.vmValues = (vmValues !== null) ? vmValues : [];
-    this.dropdownHeight = (ctrl.DropdownHeight === 0) ? "400" : dropdownHeight;
+    this.name = ctrl.name;
+    this.dsid = ctrl.dataSourceId;
+    this.vmName = ctrl.valueMembers["0"].name; //ctrl.vmName;
+    this.dmNames = ctrl.displayMembers.map(function (obj) { return obj.name; });;//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
+    this.maxLimit = ctrl.maxLimit;//ctrl.maxLimit;
+    this.minLimit = ctrl.minLimit;//ctrl.minLimit;
+    this.multiSelect = (ctrl.maxLimit > 1);
+    this.required = ctrl.required;//ctrl.required;
+    this.servicestack_url = "";//ctrl.servicestack_url;
+    //this.vmValues = (ctrl.vmValues !== null) ? ctrl.vmValues : [];
+    this.dropdownHeight = (ctrl.dropdownHeight === 0) ? "400" : ctrl.dropdownHeight;
+
 
     //local variables
     this.container = this.name + "Container";

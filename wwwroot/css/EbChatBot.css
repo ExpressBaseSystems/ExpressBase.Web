@@ -496,7 +496,7 @@
     .slick-next:before, .slick-prev:before {
         font-size: 28px;
         opacity: 1;
-        color: rgba(0, 0, 0, 0.7098039215686275);
+        color: rgba(0, 0, 0, 0.12);
     }
 
 .card-btn-cont {

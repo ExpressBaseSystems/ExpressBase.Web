@@ -18,21 +18,37 @@
             //    $("#" + this.ContainerId + "tag-section").empty();
             //    $('#' + this.ContainerId + 'obj-id').text(" ");
             //});
-        $(".file-drop-zone").css({ "height": '280px', "overflow-y": "auto" });
+        $(".file-drop-zone").css({ "height": '95%', "overflow-y": "auto" });
         $(".file-preview-initial").attr("tabindex", "1");
         //$(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
     };
 
     this.addCustbtn = function (event, file, previewId, index, reader) {
         $("#" + previewId).children().find(".file-footer-buttons").append(`<button type='button' id='Docs_crop_btn${previewId }'
-              class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title= 'Crop' > Crop</button> <button type='button' id='Docs_Tag_btn${previewId }'
-              class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title= 'Tag' > Tag</button>`);
-        $("#Docs_crop_btn" + previewId).on("click", this.cropImg.bind(this));
+              class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title= 'Crop'> Crop</button><button type='button' id='Docs_Tag_btn${previewId }'
+              class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title= 'Tag'> Tag</button>`);
+        //$("#Docs_crop_btn" + previewId).on("click", this.cropImg.bind(this));
         $("#Docs_Tag_btn" + previewId).on("click", this.tagImg.bind(this));
+
+        this.cropfy = new cropfy({
+            Container: 'container' + previewId,
+            Toggle: '#Docs_crop_btn' + previewId,
+            isUpload: true,
+            enableSE: true,
+            Browse: false,
+            Url: reader.result
+        });
+        this.cropfy.getFile = function (file) {
+            $('#' + previewId).children().find("img").attr("src", file);
+        };
     };
 
     this.cropImg = function (e) {
-        console.log("crop");
+        var id = $(e.target).attr("id");
+        
+        this.cropfy.getFile = function (file) {
+            $("#" + $(e.target).attr("prid")).children().find("img").attr("src", file);
+        };
     };
 
     this.tagImg = function (e) {
@@ -75,8 +91,9 @@
     this._start = function () {
         this.loadImages();
         this.makeFup();        
-        $("#tagsinput_input").tagsinput();
+        $("#tagsinput_input").tagsinput();       
         $(".toggle_btn_docs").on("click", this.toggleDiv.bind(this));
+        $(".upload_btn_docs").on("click", function () { $(".upload_sec").toggle(300, "swing"); });
         $("#save_tag").on('click', function () { this.currtag = $("#tagsinput_input").tagsinput('items'); this.tagImg(); }.bind(this));
     };
     this._start();

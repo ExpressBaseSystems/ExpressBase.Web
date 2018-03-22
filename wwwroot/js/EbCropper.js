@@ -1,11 +1,13 @@
 ﻿var cropfy = function (option) {
-    this.Toggle = $("#" + option.ToggleId);
+    this.Toggle = option.Toggle.charAt(0) === "#" ? $(option.Toggle) : $(option.Toggle);
     this.Container = option.Container;
     this.Upload = option.isUpload;
     this.enableSE = option.enableSE;
+    this.Browse = option.Browse;
+    this.url = option.Url||'';
     this.fileurl = null;
     this.cropie = null;
-    this.getFile = function () { return this.fileurl; }
+    this.getFile = function (b65) { return b65; }
 
     this.appendModal = function () {
         $('body').append(`<div class="modal fade" id="${this.Container}_modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -33,8 +35,7 @@
             </div>
           <button type="button" class="btn btn-primary" id="${this.Container}_crop"><i class="fa fa-crop"></i></button>
           <button type="button" class="btn btn-primary" id="${this.Container}_save"><i class="fa fa-save"></i></button>
-          <button type="button" class="btn btn-primary" id="${this.Container}_browse" onclick="$('#${this.Container}_browse_file').click();"><i class="fa fa-folder-open-o"></i></button>
-          <input type="file" style="display:none;" id="${this.Container}_browse_file"/>
+          
         </div>
       </div>
     </div>
@@ -43,7 +44,6 @@
         $("." + this.Container + "_zoom").closest(".btn").on("click", this.zoom.bind(this));
         $("." + this.Container + "_rotate").closest(".btn").on("click", this.rotate.bind(this));
         $("#" + this.Container + "_crop").closest(".btn").on("click", this.crop.bind(this));
-        $("#" + this.Container + "_browse_file").on("change", this.browse.bind(this));
         $("#" + this.Container + "_save").on("click", this.saveCropfy.bind(this));
         this.appendBtn();
     };
@@ -54,6 +54,14 @@
             $f.append(`<button type="button" class="btn btn-primary" id="${this.Container}_upload"><i class="fa fa-upload"></i></button>`);
             $("#" + this.Container + "_upload").on("click", this.upload.bind(this));
         }
+        if (this.Browse) {
+            $f.append(`<button type="button" class="btn btn-primary" id="${this.Container}_browse" onclick="$('#${this.Container}_browse_file').click();">
+                        <i class="fa fa-folder-open-o"></i></button>
+                        <input type="file" style="display:none;" id="${this.Container}_browse_file"/>`);
+
+            $("#" + this.Container + "_browse_file").on("change", this.browse.bind(this));
+        }
+        
     };
 
     this.toggleModal = function (e) {
@@ -61,7 +69,9 @@
     };
 
     this.modalShown = function () {
-
+        this.cropie.croppie('bind', {
+            url: this.url,
+        });
     };
 
     this.__cropfy = function () {
@@ -71,7 +81,8 @@
                 height: 150
             },
             showZoomer: false,
-            enableOrientation: true
+            enableOrientation: true,
+            enableExif: true,
         });
     };
 
@@ -80,7 +91,7 @@
 
     this.saveCropfy = function () {
         this.toggleModal();
-        this.getFile();
+        this.getFile(this.fileurl);
     };
 
     this.zoom = function () {

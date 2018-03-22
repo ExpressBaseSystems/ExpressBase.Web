@@ -225,7 +225,7 @@
             $.each(result.columns, function (i, columnCollection) {
                 $("#data-table-list ul[id='dataSource']").append(" <li><a>Table" + i + "</a><ul id='t" + i + "'></ul></li>");
                 $.each(columnCollection, function (j, obj) {
-                    if (obj.type.intCode === /*16*/19)
+                    if (obj.type.intCode === 16)
                         type = "DataFieldText";
                     else if (obj.type.intCode === 7 || obj.type.intCode === 8 || obj.type.intCode === 10 || obj.type.intCode === 11 || obj.type.intCode === 12 || obj.type.intCode === 21)
                         type = "DataFieldNumeric";

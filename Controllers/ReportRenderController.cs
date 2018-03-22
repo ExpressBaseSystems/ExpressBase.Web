@@ -23,11 +23,13 @@ using System.Text;
 using Newtonsoft.Json;
 using ExpressBase.Web2;
 using ExpressBase.Security;
+using ExpressBase.Common.Data;
 
 namespace ExpressBase.Web.Controllers
 {
     public class ReportRenderController : EbBaseIntController
     {
+        private static IActionResult Pdf { get; set; }
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
         public IActionResult Index(string refid)
         {
@@ -35,16 +37,16 @@ namespace ExpressBase.Web.Controllers
             EbObjectParticularVersionResponse resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             EbReport Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
             Report.AfterRedisGet(this.Redis, this.ServiceClient);
-            if (Report.EbDataSource.FilterDialog != null)
+            ViewBag.Fd = Report; /*if (Report.EbDataSource.FilterDialog != null)*/
             {
                 ViewBag.Fd = Report;
-              //  return ViewComponent("ParameterDiv", new { paramDiv = Report.EbDataSource.FilterDialog });
+                //  return ViewComponent("ParameterDiv", new { paramDiv = Report.EbDataSource.FilterDialog });
             }
 
             return View();
         }
 
-        public IActionResult Render(string refid, List<Object> Params)
+        public bool Render(string refid, List<Param> Params)
         {
             Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);
             var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
@@ -55,7 +57,7 @@ namespace ExpressBase.Web.Controllers
             {
                 var x = string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc);
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
-                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname = user.FullName });
+                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname = user.FullName, Params = Params });
                 resultlist1.StreamWrapper.Memorystream.Position = 0;
             }
             catch (Exception e)
@@ -63,8 +65,13 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("--------------REPORT exception TS ---  " + DateTime.Now + "\n " + e.Message + "\n" + e.StackTrace);
 
             }
-            return new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");
+            Pdf = new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");
+            return true;
         }
 
+        public IActionResult RenderReport()
+        {
+            return Pdf;
+        }
     }
 }

@@ -43,23 +43,27 @@ namespace ExpressBase.Web.Controllers
         public FileStream GetFile(string filename)
         {
             string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
-            if (!System.IO.File.Exists(sFilePath))
+            try
             {
-                byte[] fileByte = this.FileClient.Post<byte[]>
-                    (new DownloadFileRequest
-                    {
-                        FileDetails = new FileMeta
+                if (!System.IO.File.Exists(sFilePath))
+                {
+                    byte[] fileByte = this.FileClient.Post<byte[]>
+                        (new DownloadFileRequest
                         {
-                            FileName = filename,
-                            FileType = filename.Split('.')[1].ToLower()
-                        }
-                    });
-                EbFile.Bytea_ToFile(fileByte, sFilePath);
+                            FileDetails = new FileMeta
+                            {
+                                FileName = filename,
+                                FileType = filename.Split('.')[1].ToLower()
+                            }
+                        });
+                    EbFile.Bytea_ToFile(fileByte, sFilePath);
+                }
+                HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+                if (filename.ToLower().EndsWith(".pdf"))
+                    HttpContext.Response.Headers[HeaderNames.ContentType] = "application/pdf";
             }
+            catch(Exception e) { }
 
-            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
-            if (filename.ToLower().EndsWith(".pdf"))
-                HttpContext.Response.Headers[HeaderNames.ContentType] = "application/pdf";
             return System.IO.File.OpenRead(sFilePath);
         }
 
@@ -189,7 +193,7 @@ namespace ExpressBase.Web.Controllers
                 string base64Norm = base64.Replace("data:image/png;base64,", "");
                 myFileContent = System.Convert.FromBase64String(base64Norm);
                 uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = "jpg";
+                uploadImageRequest.ImageInfo.FileType = "png";
                 uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 

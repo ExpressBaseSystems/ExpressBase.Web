@@ -5,7 +5,7 @@
     this.controller = this.params.Controller;
     this.TenantId = this.params.TenantId;
     this.toggleId = this.params.toggleId;
-    if (this.params.IsMultiple === true) { this.multiple = "multiple"; }
+    this.multiple = this.params.IsMultiple ? this.multiple = "multiple" : "";
     this.initialPrev = [];
     this.initialPrevConfig = [];
     this.currtag = " ";
@@ -20,9 +20,8 @@
     this.CreateMOdalW = function () {
         var modalHTML = '<div class="fup" id="bg_' + this.ContainerId + '"><div class="imgup-bg">'
             + '<div class="imgup-Cont">'
-
             + '<div class="modal-header">'
-            + '<button type="button" class="close" onclick="$(\'#' + this.ContainerId + ' .imgup-bg\').hide(500);" >&times;</button>'
+            + '<button type="button" class="close" id="' + this.ContainerId+'_close_btn" onclick="$(\'#' + this.ContainerId + ' .imgup-bg\').hide(500);" >&times;</button>'
             + '<h4 class="modal-title" style="display:inline;">Image Selector </h4>'
             + '<p style="display:inline;float:right;margin-right: 20px;" id="' + this.ContainerId + 'obj-id"></p>'
             + '</div>'
@@ -47,8 +46,15 @@
     }; //modal creation and fileinput initialized
 
     this.toggleModal = function () {
-        $("#bg_" + this.ContainerId + " .imgup-bg").toggle(350);
-        this.startSE();
+        var $c = $("#bg_" + this.ContainerId + " .imgup-bg");
+        $c.toggle(350, function () {
+            if ($c.is(":visible"))
+               this.startSE();           
+        }.bind(this));
+    };
+
+    this.stopListening = function () {
+        this.ss.stopListening();
     };
 
     this.loadFileInput = function () {
@@ -80,13 +86,17 @@
         //$("#" + this.ContainerId + "_close").on('click', this.getId.bind(this, this.FileId));
     };
 
+    this.cropImg = function (e) {
+
+    };
+
     this.addtagButton = function (event, file, previewId, index, reader) {
-        if (this.params.IsTag === true) {
+        if (this.params.IsTag) {
             this.filename = file.name;
             $("#" + previewId).children().find(".file-footer-buttons").append("<button type='button' id='" + this.ContainerId + "tagbtn" + previewId + "'"
                 + "class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title= 'Tag' > Tag</button > ");
             $("#" + this.ContainerId + "tagbtn" + previewId).on("click", this.tagimageOnClick.bind(this));
-        }
+        }       
         $("#" + this.ContainerId + "_close").prop('disabled', true);
     };//tadd tag btn
 
@@ -116,7 +126,7 @@
             "tags": this.currtag
         }, function (result) {
             for (var objid = 0; objid < result.length; objid++) {
-                var url = "http://" + _this.TenantId + ".localhost:5000/static/" + result[objid].objectId + "." + result[objid].fileType;
+                var url = "http://" + _this.TenantId + ".localhost:41500/static/" + result[objid].objectId + "." + result[objid].fileType;
                 var config = { caption: result[objid].fileName, size: result[objid].length };
                 _this.initialPrev.push(url);
                 _this.initialPrevConfig.push(config);
@@ -148,6 +158,7 @@
         this.CreateMOdalW();
         this.loadFileInput();
         $('body').off("click", "#" + this.toggleId).on("click", "#" + this.toggleId, this.toggleModal.bind(this));
+        $('#' + this.ContainerId + '_close_btn').on("click", this.stopListening.bind(this));
     };
     this.init();
 }

@@ -137,7 +137,6 @@
     };
 
     this.initCards = function ($Ctrl) {
-        console.log("initCards");
         $Ctrl.find(".card-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl))
         $Ctrl.not('.slick-initialized').slick({
             slidesToShow: 1,

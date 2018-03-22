@@ -485,17 +485,18 @@
 }
 
 .slick-next {
-    right: -20px;
+    right: -25px;
 }
 
 .slick-prev {
-    left: -30px;
+    left: -28px;
     z-index: 1;
 }
 
     .slick-next:before, .slick-prev:before {
-        font-size: 30px;
+        font-size: 28px;
         opacity: 1;
+        color: rgba(0, 0, 0, 0.7098039215686275);
     }
 
 .card-btn-cont {

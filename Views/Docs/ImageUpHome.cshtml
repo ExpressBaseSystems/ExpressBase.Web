@@ -7,23 +7,67 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script src="~/js/EbCropper.js" type="text/javascript"></script>
 <script src="~/js/Docs/ImageUp.js" type="text/javascript"></script>
-<div class="row menubar_horri">
-    <a class="btn btn_upload pull-right toggle_btn_docs" whichCont="image_down_cont_outer"><i class="fa fa-home"></i></a>
-    <a class="btn btn_upload pull-right upload_btn_docs" whichCont="image_up_container_outer">Upload</a>
-</div>
-<div class="row">
-    <div class="col-md-2 nopadding">
-        <div class="menu_bar_vert">
-
-        </div>
+<div class="row home_head">
+    <div class="home_head_header">
     </div>
-    <div class="col-md-10">
-        <div class="image_down_cont_outer" id="image_down_cont_outer">
-            <h4>Uploads</h4>
-            <div class="image_down_cont_body" id="image_down_cont_body">
-               
+    <div class="home_head_container form-inline" style="padding-left:20%;">
+        <button class="btn home_btns upload_btn_docs mr-l20">Upload <i class="fa fa-upload"></i></button>
+        <input type="text" class="form-control mr-l20 btn-search" placeholder="Search" aria-describedby="basic-addon1">
+        <span class="fa fa-search" style="margin-left:-25px;color: #3e8ef7;"></span>
+    </div>
+</div>
+<div class="row page-container">
+    <div class="site-gridmenu site-menubar-unfold">
+        <ul class="site-menu" data-plugin="menu" style="transform: translate3d(0px, 0px, 0px);">
+            <li class="site-menu-category">General</li>
+            <li class="site-menu-item" data-toggle="collapse" data-target="#demo">
+                <a class="site-menu-list-item">
+                    <i class="fa fa-home menu-icon"></i>
+                    <span class="site-menu-title">Album</span>
+                    <span class="site-menu-arrow"><i class="fa fa-chevron-right"></i></span>
+                </a>
+                <ul class="site-menu-sub collapse" id="demo">
+                    <li class="site-menu-sub-items">
+                        <a class="site-menu-list-item-a">
+                            <span class="site-menu-sub-title">test</span>
+                        </a>
+                    </li>
+                    <li class="site-menu-sub-items">
+                        <a class="site-menu-list-item-a">
+                            <span class="site-menu-sub-title">test1</span>
+                        </a>
+                    </li>
+                    <li class="site-menu-sub-items">
+                        <a class="site-menu-list-item-a">
+                            <span class="site-menu-sub-title">test2</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="site-page">
+        <div class="page-header">
+            <h1 class="page-title">File Uploads</h1>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Forms</a></li>
+                <li class="breadcrumb-item active">File Uploads</li>
+            </ol>
+        </div>
+        <div class="page-content">
+            <div class="panel">
+                <div class="panel-heading" style="padding:0;">
+                    <h3 class="panel-title">
+                        Recent Uploads
+                        <a class="last_update">last uploaded on 12/05/18</a>
+                    </h3>
+                </div>
+                <div class="image_down_cont_body" id="image_down_cont_body">
+
+                </div>
             </div>
-        </div>        
+        </div>
     </div>
 </div>
 <div class="upload_sec" style="display:none;">
@@ -41,29 +85,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade tag_modal_wrapper" id="TagModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document" style="margin-top:12%">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Tags</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px;">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input class="form-control" id="tagsinput_input" value="remove this tag"/>
-            </div>
-            <div class="modal-footer">                
-                <button type="button" class="btn btn-primary" id="save_tag">Save</button>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
     var im = new ImageUploader_Doc({Tenantid:'@ViewBag.cid'});
 </script>
-@*var d = new cropfy({Container:'container',
-                    ToggleId:'btn-t',
-										isUpload:true,
-										enableSE:true,
-                  });*@

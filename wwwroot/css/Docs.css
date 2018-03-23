@@ -1,22 +1,28 @@
 ﻿/*imageuphome----------------*/
+.upload_sec {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    margin-left: -15px;
+    padding: 20px 100px 20px 100px;
+}
+
 .menubar_horri {
-    padding: 0 10px 0 10px;
-    background: var(--eb-blue);
+    padding: 5px 10px 5px 10px;
+    background: white;
 }
 .menu_bar_vert {
     height: calc(100vh - 54px);
-    background: white;
+    /*background: white;*/
     width: 100%;
 }
 .btn_upload {
-    color: white;
+    color: #989696;
     background-color: transparent;
-    font-size: 15px;
+    font-size: 20px;
 }
-.image_up_container_outer {
-    display: none;
-    float: left;
-}
+
 .image_up_container{
     float:left;
     width:100%;
@@ -46,11 +52,20 @@
     padding: 8px;
     font-size: 14px;
 }
-.image_down_cont_outer, .image_up_container_outer {
+.image_down_cont_outer{
     float: left;
     width: 100%;
     padding-left:30px;
     padding-right:30px;
+}
+.image_up_container_outer {
+    width: 100%;
+    float: left;
+    background: #fdfdfd;
+    height: 100%;
+    border: 1px solid #ccc;
+    box-shadow: var(--eb-shadow);
+    border-radius: 4px;
 }
 .image_down_cont_body{
     width:100%;
@@ -85,3 +100,21 @@
 .f_s{
     font-size:10px;
 }
+/*xzcvxxcvx*/
+.tag_wrapper{
+    background:#f2f0f0;
+    height:100%;
+}
+.image_up_container_outer_header {
+    height: 6%;
+    background: var(--ebbg);
+}
+.image_up_container_outer_body{
+    height:94%;
+}
+    .image_up_container_outer_body .file-input {
+        height: 93%;
+    }
+        .image_up_container_outer_body .file-input .file-preview {
+            height:100%;
+        }

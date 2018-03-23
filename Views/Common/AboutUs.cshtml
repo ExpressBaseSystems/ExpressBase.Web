@@ -150,14 +150,6 @@
     Html.RenderPartial("PageFooter");
 }
 <script>
-    $(document).scroll(function () {
-        var y = $(this).scrollTop();
-        if (y > $('.aboutus-header').height()) {
-            $('#trial-btn').fadeIn();
-            $('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
-        } else {
-            $('#trial-btn').fadeOut();
-            $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
-        }
-    });
+    $("#products").hide();
+    $('#trial-btn').show();  
 </script>

@@ -116,12 +116,12 @@
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://redis.io/"><img class="img-responsive" src="~/images/redis-logo.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="http://jquery.com/"><img class="img-responsive" src="~/images/jquery.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" style="padding-left: 25px;"/></a></div>
-            <div class="col-md-2 col-md-offset-1 col-sm-4 col-xs-6"><a href="https://azure.microsoft.com/"><img class="img-responsive" src="~/images/azure.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.digitalocean.com/"><img class="img-responsive" src="~/images/digitalOcean.png" /></a></div>
+            @*<div class="col-md-2 col-md-offset-1 col-sm-4 col-xs-6"><a href="https://azure.microsoft.com/"><img class="img-responsive" src="~/images/azure.png" /></a></div>*@
+            <div class="col-md-2 col-md-offset-1 col-sm-4 col-xs-6"><a href="https://www.digitalocean.com/"><img class="img-responsive" src="~/images/digitalOcean.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.rabbitmq.com/"><img class="img-responsive" src="~/images/rabitMq.png" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.docker.com/"><img class="img-responsive" src="~/images/docker.png" style="height:95px;" /></a></div>
             <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://www.kubernetes.io/"><img class="img-responsive" src="~/images/kubernetes-logo.png" style="height: 115px;"/></a></div>
-            @*<div class="col-md-2 col-sm-4 col-xs-6"><a href="https://cloud.google.com/"><img class="img-responsive" src="~/images/gcp-logo.png" style="" /></a></div>*@
+            <div class="col-md-2 col-sm-4 col-xs-6"><a href="https://cloud.google.com/"><img class="img-responsive" src="~/images/gcp-logo.png" style="" /></a></div>
         </div>
     </div>
 </section>
@@ -139,13 +139,6 @@
     Html.RenderPartial("PageFooter");
 }
 <script>
-    $(document).scroll(function () {
-
-        var y = $(this).scrollTop();
-        if (y > $('.apaas').height()) {           
-            $('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
-        } else {            
-            $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
-        }
-    });
+    $("#products").hide();
+    $('#trial-btn').show();
 </script>

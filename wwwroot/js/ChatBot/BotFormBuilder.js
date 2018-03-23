@@ -432,7 +432,7 @@
             top: 24,
             right: 24,
 
-        }.bind(this));
+        });
     }.bind(this);
 
 

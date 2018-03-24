@@ -424,6 +424,8 @@
             if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'ComboBox') {
                 this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
             }
+            //if (CurProp === 'CardCollection')
+            //    this.RefreshCardColl(PropsObj);
         }.bind(this);
 
 
@@ -431,10 +433,16 @@
             id: this.wraperId + "BFBalertCont",
             top: 24,
             right: 24,
-
         }.bind(this));
     }.bind(this);
 
+
+    //this.RefreshCardColl = function (PropsObj) {
+    //    var crd = PropsObj.CardCollection.$values;
+    //    for (i = 0; i < crd.length; i++) {
+    //        RefreshControl(crd[i]);
+    //    }
+    //};
 
     this.refreshCombo = function (cmbid, PropsObj, CurProp) {
         //if (CurProp === 'DisplayMembers')

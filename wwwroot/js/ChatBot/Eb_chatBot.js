@@ -581,9 +581,11 @@
         if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation")))
             $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
         var lablel = this.curCtrl.label;
-        if (this.curCtrl.helpText)
-            lablel += ` (${this.curCtrl.helpText})`;
-        this.msgFromBot(lablel);
+        if (lablel) {
+            if (this.curCtrl.helpText)
+                lablel += ` (${this.curCtrl.helpText})`;
+            this.msgFromBot(lablel);
+        }
         this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
     }.bind(this);
 
@@ -652,7 +654,7 @@
             btnOkLabel: " Edit ",
             btnOkClass: "btn btn-sm btn-warning",
             btnOkIcon: "glyphicon glyphicon-pencil",
-            btnCancelIcon:"glyphicon glyphicon-remove-circle",
+            btnCancelIcon: "glyphicon glyphicon-remove-circle",
             onConfirm: this.editDpndCtrl,
             //onCancel: function () {
             //    alert("cancel");
@@ -828,7 +830,7 @@
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url:"../Boti/InserBotDetails",
+            url: "../Boti/InserBotDetails",
             data: {
                 TableName: this.curForm.tableName, Fields: this.getFormValuesWithTypeColl()
             },
@@ -903,10 +905,10 @@
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 /////////////////////////////////////////////////Form click
-                //setTimeout(function () {
-                //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=9]").click();
-                //}.bind(this), this.typeDelay * 2 + 100);
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    //$(".btn-box").find("[idx=22]").click();
+                }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

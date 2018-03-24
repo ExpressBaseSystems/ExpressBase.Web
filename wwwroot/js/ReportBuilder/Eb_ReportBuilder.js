@@ -906,7 +906,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.EbObject = new EbObjects["EbReport"]("Report1");
         this.height = this.repExtern.convertPointToPixel(this.pages[this.type].height) + "px";
         this.width = this.repExtern.convertPointToPixel(this.pages[this.type].width) + "px";
-        this.designHeight = this.height;
+        this.designHeight = "450px";
         this.EbObject.PaperSize = this.type;
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
         $('#PageContainer,.ruler,.rulerleft').empty();

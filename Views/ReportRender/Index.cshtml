@@ -1,28 +1,48 @@
-﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
-@using ExpressBase.Common;
+﻿@using ExpressBase.Common;
+@using ExpressBase.Objects;
 @{
+    EbFilterDialog dsobj = null;
     bool fd = false;
+    if (ViewBag.Fd.EbDataSource != null)
+    {
+        if (ViewBag.Fd.EbDataSource.FilterDialog != null)
+        {
+            dsobj = ViewBag.Fd.EbDataSource.FilterDialog;
+        }
+    }
 }
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
 <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+
 <script type="text/javascript" src="~/js/eb_common.js"></script>
 <body>
-    <div id="fd"></div>
-    <div class="modal fade" id="myModal" role="dialog">
+    <div class="col-md-12 col-sm-12 c0l-lg-12">
+        <button class="btn run pull-right" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div">
+            <i class="fa fa-filter" aria-hidden="true"></i>
+        </button>
+    </div>
+    <div class="modal fade" id="RptModal" role="dialog">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Modal Header</h4>
+                    <h4 class="modal-title"> <i class="fa fa-filter" aria-hidden="true"></i>Parameter div</h4>
                 </div>
                 <div class="modal-body">
                     @{
-                        if (ViewBag.Fd.EbDataSource.FilterDialog != null)
+                        if (ViewBag.Fd.EbDataSource != null)
                         {
-                            @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.Fd.EbDataSource.FilterDialog });
-                            fd = true;
+                            if (ViewBag.Fd.EbDataSource.FilterDialog != null)
+                            {
+                                @await Component.InvokeAsync("ParameterDiv", new { paramDiv = dsobj });
+                                fd = true;
+                            }
                         }
                     }
 
@@ -33,35 +53,56 @@
             </div>
         </div>
     </div>
-    @*<iframe src='../ReportRender/Render?refid=@ViewBag.Refid'></iframe>*@
+    <iframe id="reportIframe" class="reportIframe"></iframe>
 </body>
+
+
 <script>
     $(document).ready(function () {
-
-        if ('@fd' ==='True') {
-            $("#myModal").modal();
+        if ('@fd' === 'True') {
+            $("#RptModal").modal();
         }
+        else {
+            render();
+        }
+        $("#filter").on("click", function () {
+            $("#RptModal").modal();
+        })
+
         $("#run").on("click", function () {
-            var ParamsArray = [];
-            var filter_control_list = $("#all_control_names").val();
-            var myarray = filter_control_list.split(',');
-            for (var i = 0; i < myarray.length; i++) {
-                console.log($("#" + myarray[i]).val());
-                var type = $('#' + myarray[i]).attr('data-ebtype');
-                var name = $('#' + myarray[i]).attr('name');
-                var value = $('#' + myarray[i]).val();
-                if (type === '6')
-                    value = value.substring(0, 10);
-                ParamsArray.push(new fltr_obj(type, name, value));
-            }
-            $.post('../ReportRender/Render', {
-                refid:'@ViewBag.Refid',
-                Params: ParamsArray
-            });
+            render();
         });
+
     });
 
+    function render() {
+                $.LoadingOverlay("show");
+            var ParamsArray = [];
+            var filter_control_list = $("#all_control_names").val();
+            if (filter_control_list !== undefined) {
+                var myarray = filter_control_list.split(',');
+                for (var i = 0; i < myarray.length; i++) {
+                    console.log($("#" + myarray[i]).val());
+                    var type = $('#' + myarray[i]).attr('data-ebtype');
+                    var name = $('#' + myarray[i]).attr('name');
+                    var value = $('#' + myarray[i]).val();
+                    if (type === '6')
+                        value = value.substring(0, 10);
+                    ParamsArray.push(new fltr_obj(type, name, value));
+                }
+            }
+            $.post('../ReportRender/Render',
+            {
+                refid:'@ViewBag.Refid',
+                Params: ParamsArray
+            },
+            function(data){
+                $("#reportIframe").attr("src","../ReportRender/RenderReport");
+                 $("#RptModal").modal('hide');
+     $.LoadingOverlay("hide");
+            });
 
+    }
 </script>
 <style>
     select.selectpicker {
@@ -72,5 +113,10 @@
 
     .btn-new {
         background-color: #2A3F54;
+    }
+
+    .reportIframe {
+        width: 100%;
+        height: 90vh;
     }
 </style>

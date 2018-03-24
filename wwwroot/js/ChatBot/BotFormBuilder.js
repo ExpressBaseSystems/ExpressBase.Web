@@ -383,7 +383,7 @@
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-
+    this.GenerateButtons = function () { };
 
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
@@ -429,11 +429,12 @@
         }.bind(this);
 
 
-        this.PGobj.Ebalert = new EbAlert({
-            id: this.wraperId + "BFBalertCont",
-            top: 24,
-            right: 24,
-        }.bind(this));
+        //this.PGobj.Ebalert = new EbAlert({
+        //    id: this.wraperId + "BFBalertCont",
+        //    top: 24,
+        //    right: 24,
+        //}.bind(this));
+
     }.bind(this);
 
 

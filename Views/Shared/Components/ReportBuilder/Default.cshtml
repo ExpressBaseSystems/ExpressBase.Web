@@ -225,16 +225,16 @@
             $.each(result.columns, function (i, columnCollection) {
                 $("#data-table-list ul[id='dataSource']").append(" <li><a>Table" + i + "</a><ul id='t" + i + "'></ul></li>");
                 $.each(columnCollection, function (j, obj) {
-                    if (obj.type.intCode === 16)
+                    if (obj.type === 16)
                         type = "DataFieldText";
-                    else if (obj.type.intCode === 7 || obj.type.intCode === 8 || obj.type.intCode === 10 || obj.type.intCode === 11 || obj.type.intCode === 12 || obj.type.intCode === 21)
+                    else if (obj.type === 7 || obj.type === 8 || obj.type === 10 || obj.type === 11 || obj.type === 12 || obj.type === 21)
                         type = "DataFieldNumeric";
-                    else if (obj.type.intCode === 3)
+                    else if (obj.type === 3)
                         type = "DataFieldBoolean";
-                    else if (obj.type.intCode === 5 || obj.type.intCode === 6 || obj.type.intCode === 17 || obj.type.intCode === 26)
+                    else if (obj.type === 5 || obj.type === 6 || obj.type === 17 || obj.type === 26)
                         type = "DataFieldDateTime";
 
-                    $("#data-table-list ul[id='t" + i + "']").append("<li class='styl'><div eb-type='" + type + "' DbType='" + obj.type.intCode +"' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
+                    $("#data-table-list ul[id='t" + i + "']").append("<li class='styl'><div eb-type='" + type + "' DbType='" + obj.type +"' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
                 });
             });
             $('#data-table-list').treed();

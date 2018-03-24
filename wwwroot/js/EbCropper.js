@@ -1,5 +1,5 @@
 ﻿var cropfy = function (option) {
-    this.Toggle = option.Toggle.charAt(0) === "#" ? $(option.Toggle) : $(option.Toggle);
+    this.Toggle = option.Toggle;
     this.Container = option.Container;
     this.Upload = option.isUpload;
     this.enableSE = option.enableSE;
@@ -11,12 +11,12 @@
 
     this.appendModal = function () {
         $('body').append(`<div class="modal fade" id="${this.Container}_modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content cropfy_modal" style="border-radius:0;">
-        <div class="modal-header cropfy_header" style="background: #337ab7;color: white;">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="margin-top: 10%;">
+      <div class="modal-content cropfy_modal" style="border-radius:0;border:none;">
+        <div class="modal-header cropfy_header" style="background: #3e8ef7;color: white;">
           <h5 class="modal-title" id="exampleModalLongTitle">Crop Image</h5>
           <button type="button" class="close cropfy_close" data-dismiss="modal" style="margin-top:-4%;" id="${this.Container}_close">
-            <span aria-hidden="true">&times;</span>
+            <span><i class="fa fa-close"></i></span>
           </button>
         </div>
         <div class="modal-body">
@@ -24,10 +24,10 @@
                 <div id="${this.Container}_cropy_container">
                 </div>
             </div>
-        <div class="modal-footer cropfy_footer" id="${this.Container}_cropy_footer" style="padding-bottom: 0;">
+        <div class="modal-footer cropfy_footer" id="${this.Container}_cropy_footer" style="padding-bottom: 0;padding-right:0;">
             <div class="btn-group" role="group">
-                <button type="button" title="zoom_in" class="btn btn-secondary ${this.Container}_zoom"><i class="fa fa-search-plus"></i></button>
-                <button type="button" title="zoom_ot" class="btn btn-secondary ${this.Container}_zoom"><i class="fa fa-search-minus"></i></button>
+               <button type="button" title="zoom_in" class="btn btn-secondary ${this.Container}_zoom"><i class="fa fa-search-plus"></i></button>
+               <button type="button" title="zoom_ot" class="btn btn-secondary ${this.Container}_zoom"><i class="fa fa-search-minus"></i></button>
             </div>
             <div class="btn-group" role="group">
             <button type="button" title="rotate_l" class="btn btn-secondary ${this.Container}_rotate"><i class="fa fa-undo"></i></button>
@@ -138,7 +138,7 @@
         this.appendModal();
         $("#" + this.Container + "_modal").on('shown.bs.modal', this.modalShown.bind(this));
         $("#" + this.Container + "_modal").on('hide.bs.modal', this.modalHide.bind(this));
-        this.Toggle.on("click", this.toggleModal.bind(this));
+        $("body").off("click").on("click", this.Toggle, this.toggleModal.bind(this));
     };
     this.start();
 };

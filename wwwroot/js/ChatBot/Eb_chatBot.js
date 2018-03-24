@@ -907,7 +907,7 @@
                 /////////////////////////////////////////////////Form click
                 setTimeout(function () {
                     //$(".btn-box .btn:last").click();
-                    $(".btn-box").find("[idx=22]").click();
+                    //$(".btn-box").find("[idx=22]").click();
                 }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);

@@ -119,6 +119,11 @@ namespace ExpressBase.Web.Controllers
             {
                 var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
+                    ViewBag.dsObj = dsobj;
+                }
             }
             else if (type.Equals(EbObjectTypes.EmailBuilder))
             {

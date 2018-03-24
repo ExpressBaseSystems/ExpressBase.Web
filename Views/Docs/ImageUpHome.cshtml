@@ -64,7 +64,26 @@
                     </h3>
                 </div>
                 <div class="image_down_cont_body" id="image_down_cont_body">
-
+                    @*<div class="img_wrapper">
+                        <div class="img_wrapper_img">
+                            <img src="~/images/amal.jpg" class="img-responsive" />
+                        </div>
+                        <div class="img_wrapper_text">
+                            <h5 class="f">amal.jpg</h5>
+                            <p class="f_s" data-toggle="tooltip" title="12/01/18"><i class="fa fa-upload"></i> 12/01/18</p>
+                        </div>
+                        <div class="btn_container form-inline">
+                            <div class="dropdown" style="float:left;margin-right:5px">
+                                <button type='button' data-toggle="dropdown" class='kv-file-upload btn btn-kv btn-default btn-outline-secondary dropdown-toggle' title='Download'><i class="fa fa-download"></i></button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Orgninal</a></li>
+                                    <li><a href="#">Medium</a></li>
+                                    <li><a href="#">small</a></li>
+                                </ul>
+                            </div>                            
+                            <button type='button' class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title='Tag'>Tag</button>
+                        </div>
+                    </div>*@
                 </div>
             </div>
         </div>
@@ -72,15 +91,35 @@
 </div>
 <div class="upload_sec" style="display:none;">
     <div class="image_up_container_outer" id="image_up_container_outer">
-        <div class="image_up_container_outer_header">
-            <button class="btn pull-right" onclick="$('.upload_sec').toggle();" style="color:white;background-color:transparent"><i class="fa fa-close"></i></button>
+        <div class="image_up_container_outer_header form-inline">
+            <label><i class="fa fa-uplopad"></i> Upload Image</label>
+            <button class="btn pull-right" onclick="$('.upload_sec').toggle('slide', { direction: 'down' }, 300);" style="color:white;background-color:transparent;margin-top:-7px"><i class="fa fa-close"></i></button>
         </div>
         <div class="image_up_container_outer_body">
             <div class="col-md-9" style="padding:30px;height:100%;">
                 <input id="image_up_input" type='file' data-preview-file-type='text' />
             </div>
             <div class="col-md-3 tag_wrapper">
-
+                <h4 class="tag-title">Add Tags</h4>
+                <input class="form-control" id="tagsinput_input" value="remove this tag" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade tag_modal_wrapper" id="TagModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="margin-top:12%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Tags</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input class="form-control" id="tagsinput_input_modal" value="remove this tag" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="save_tag">Save</button>
             </div>
         </div>
     </div>

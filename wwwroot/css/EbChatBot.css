@@ -105,17 +105,17 @@
     text-align: -webkit-left;
 }
 
-.eb-chatBox::-webkit-scrollbar-track {
+.eb-chatBox::-webkit-scrollbar-track, .eb-chatBox-dev::-webkit-scrollbar-track {
     background-color: #F5F5F5;
     border-radius: 10px;
 }
 
-.eb-chatBox::-webkit-scrollbar {
+.eb-chatBox::-webkit-scrollbar, .eb-chatBox-dev::-webkit-scrollbar {
     width: 6px;
     background-color: #F5F5F5;
 }
 
-.eb-chatBox::-webkit-scrollbar-thumb {
+.eb-chatBox::-webkit-scrollbar-thumb, .eb-chatBox-dev::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: #777;
 }
@@ -645,7 +645,9 @@
 
 .locinp {
     height: 1.2em !important;
+    min-height:0!important;
     margin-left: 5px;
+    border:none !important;
     border-bottom: solid 1px #e4e4e4 !important;
     font-size: calc(1em - 1px);
     float: right;

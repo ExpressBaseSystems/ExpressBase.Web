@@ -47,6 +47,8 @@
         else if (type === 1) {    // If options create drop-down list
             if (typeof value === "string")
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
+            else
+                value = (!meta.enumoptions[value]) ? Object.keys(meta.enumoptions)[0] : value;
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, );
             this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };

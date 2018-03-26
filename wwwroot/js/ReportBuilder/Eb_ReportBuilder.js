@@ -20,8 +20,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.designHeight = null;
     this.type = 2;
     this.rulertype = "cm";
-    this.copyStack = null;
-    this.copyORcut = null;
     this.margin = {
         Left: 0,
         Right: 0
@@ -30,6 +28,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.repExtern = new ReportExtended(this);
     this.RbCommon = new RbCommon(this);
     this.pg = new Eb_PropertyGrid("propGrid");
+    this.RM = new ReportMenu(this);
 
     this.idCounter = this.RbCommon.EbidCounter;
     this.subSecIdCounter = this.RbCommon.subSecCounter;
@@ -39,6 +38,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.TextAlign = this.RbCommon.TextAlign;
     this.rulerTypesObj = this.RbCommon.EbRuler;
     this.GenerateButtons = function () { };
+
     this.RefreshControl = function (obj) {        
         var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
@@ -136,6 +136,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                                     <div class='page-reportLayer' id='page-reportLayer' style='display:none;position:relative;width:${this.width};height:${this.height}'></div>`);
         $(".page").resizable({
             handles: "s",
+            stop: this.onPageResizeStop.bind(this),
             resize: this.onPageResize.bind(this)
         });       
         $(".page-reportLayer").droppable({ accept: ".draggable-to-page,.dropped", drop: this.onDropFn.bind(this) }); 
@@ -146,7 +147,14 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.onPageResize = function () {
         $('.headersections,.multiSplit').css("height", $('.page').height());
         $(".rulerleft").css("height", $('.page').height());
+        $(".tracker_drag").css({"height": $(".page").height() + 20});
         this.repExtern.OndragOfSections();
+    };
+
+    this.onPageResizeStop = function (event, ui) {
+        this.designHeight = $(".page").height() + "px"; 
+        $('.ruler,.rulerleft').empty();
+        this.ruler();
     };
 
     this.createHeaderBox = function () {
@@ -412,7 +420,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             this.editElement(curControl);
             this.Resizable(curControl);
         }
-        this.contextMenu(curControl, curObject);
+        this.RM.Menu(curControl);
     };//obj send to pg on focus
 
     this.Resizable = function (object) {
@@ -449,192 +457,6 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         $(event.target).css({ "text-overflow": "ellipsis", "overflow": "hidden" });
         $(event.target).resizable("destroy");
     }
-
-    this.contextMenu = function (curControl, curObject) {
-        this.curObject = curObject;
-        var selector = curControl.attr('id');
-        this.itemsDisabled = {};
-        $.contextMenu({
-            selector: '#' + selector,
-            autoHide: true,
-            items: {
-                "copy": { name: "Copy", icon: "copy", callback: this.contextMenucopy.bind(this) },
-                "cut": { name: "Cut", icon: "cut", callback: this.contextMenucut.bind(this) },
-                "paste": { name: "Paste", icon: "paste", callback: this.contextMenupaste.bind(this) },
-                "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) },
-                "lock": { name: "Lock", icon: "fa-lock", callback: this.lockControl.bind(this) },
-                "unlock": { name: "unlock", icon: "fa-unlock", callback: this.unLockControl.bind(this) },
-                "summary": { name: "Summary", icon: "fa-cog", callback: this.addSummeryField.bind(this) },
-                "fold1": {
-                    "name": "Text Align", icon: "fa-text",
-                    "items": {
-                        "Align Left": { name: "Align Left", icon: "fa-align-left", callback: this.contextMenuLeft.bind(this) },
-                        "Align Right": { name: "Align Right", icon: "fa-align-right", callback: this.contextMenuRight.bind(this) },
-                        "Align Center": { name: "Align Center", icon: "fa-align-center", callback: this.contextMenuCenter.bind(this) },
-                        "Align Justify": { name: "Align Justify", icon: "fa-align-justify", callback: this.contextMenuJustify.bind(this) },
-                    }
-                },
-                "fold2": {
-                    "name": "Align", icon: "",
-                    "items": {
-                        "Top": { name: "Top", icon: "", callback: this.repExtern.alignGroup.bind(this) },
-                        "Bottom": { name: "Bottom", icon: "", callback: this.repExtern.alignGroup.bind(this) },
-                        "Left": { name: "Left", icon: "", callback: this.repExtern.alignGroup.bind(this) },
-                        "Right": { name: "Right", icon: "", callback: this.repExtern.alignGroup.bind(this) },
-                    }
-                }
-            }
-        });
-    };
-
-    this.contextMenucopy = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            this.copyStack = Object.assign({}, this.objCollection[$(selector.selector).attr('id')]);
-            this.copyORcut = 'copy';
-        }
-        else
-            alert("section cannot copy!");
-    };
-    this.contextMenucut = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            this.copyStack = this.objCollection[$(selector.selector).attr('id')];
-            this.copyORcut = 'cut';
-            $(selector.selector).remove();
-        }
-        else
-            alert("section cannot cut!");
-    };
-    this.contextMenupaste = function (eType, selector, action, originalEvent) {
-        if (this.copyStack === null) { alert('no item copied'); }
-        else {
-            var $obj = {};
-            var Objid = null;
-            var Objtype = $("#" + this.copyStack.EbSid).attr('eb-type');
-            if (this.copyORcut === 'copy') {
-                Objid = Objtype + (this.idCounter["Eb" + Objtype + "Counter"])++;
-                $obj = new EbObjects["Eb" + Objtype](Objid);                
-                this.repExtern.replaceWOPtConvProp($obj, this.copyStack);
-                $obj.EbSid = Objid;
-                $obj.Name = Objid;
-            }
-            else if (this.copyORcut === 'cut') {
-                $obj = this.copyStack;
-                Objid = this.copyStack.EbSid;
-            }
-            $obj.Top = action.originalEvent.pageY - $(selector.selector).offset().top;
-            $obj.Left = action.originalEvent.pageX - $(selector.selector).offset().left;
-            $(selector.selector).append($obj.$Control.outerHTML());
-            this.objCollection[Objid] = $obj;
-            this.RefreshControl($obj);
-            this.copyStack = null;
-            this.copyORcut = null;
-        }
-    };
-    this.contextMenudelete = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).remove();
-        }
-        else
-            alert('no permission');
-    };
-    this.contextMenuJustify = function (eType, selector, action, originalEvent) {
-        this.objCollection[$(selector.selector).attr("id")].TextAlign = this.TextAlign[3];
-        this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
-    };
-    this.contextMenuRight = function (eType, selector, action, originalEvent) {
-        this.objCollection[$(selector.selector).attr("id")].TextAlign = this.TextAlign[2];
-        this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
-    };
-    this.contextMenuCenter = function (eType, selector, action, originalEvent) {
-        this.objCollection[$(selector.selector).attr("id")].TextAlign = this.TextAlign[1];
-        this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
-    };
-    this.contextMenuLeft = function (eType, selector, action, originalEvent) {
-        this.objCollection[$(selector.selector).attr("id")].TextAlign = this.TextAlign[0];
-        this.RefreshControl(this.objCollection[$(selector.selector).attr("id")]);
-    };
-    this.lockControl = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).addClass('locked').draggable('disable');
-        }
-        else if ($(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).addClass('locked').droppable({
-                disabled: true
-            });
-            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).addClass('locked').draggable('disable'); });
-            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
-            $('#' + locksymbDiv).append('<i class="fa fa-lock lock-icon" aria-hidden="true"></i>');
-            if ($(selector.selector).siblings().length === 0) {
-                $('#btn' + $(selector.selector).attr("data_val")).attr('disabled', 'disabled');
-            }
-            $(selector.selector).parent().next('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
-            $(selector.selector).parent().prev('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
-        }
-    };
-    this.unLockControl = function (eType, selector, action, originalEvent) {
-        if (!$(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).removeClass('locked').draggable('enable');
-        }
-        else if ($(selector.selector).hasClass("pageHeaders")) {
-            $(selector.selector).removeClass('locked').droppable({
-                disabled: false
-            });
-            $(selector.selector).children().each(function (i, obj) { $("#" + obj.id).removeClass('locked').draggable('enable'); });
-            var locksymbDiv = $(selector.selector).attr("id").slice(0, -1) + 'subBox' + $(selector.selector).attr('id').slice(-1);
-            $('#' + locksymbDiv).children("i").remove();
-            if ($(selector.selector).siblings().length === 0) {
-                $('#btn' + $(selector.selector).attr("data_val")).removeAttr('disabled');
-            }
-            $(selector.selector).parent().next().css({ "cursor": "ns-resize", "pointer-events": "auto" });
-            $(selector.selector).parent().prev('.gutter').css({ "cursor": "ns-resize", "pointer-events": "auto" });
-        }
-    };
-
-    this.addSummeryField = function (eType, selector, action, originalEvent) {
-        $("#summarry-editor-modal-container").modal("toggle");
-        this.selector = selector;
-        this.$funcselect = $("#summarry-editor-modal-container #summary-func").empty();
-        this.$sectionselect = $("#summarry-editor-modal-container #summary-sections").empty();
-        var sections = this.getSectionToAddSum($(selector.selector));
-        if ($(selector.selector).hasClass("EbCol")) {
-            $("#summarry-editor-modal-container #summary-fieldname").val($(selector.selector).text().trim());
-            for (var func in summaryFunc) {
-                this.$funcselect.append(`<option 
-                value="${summaryFunc[func]}">${summaryFunc[func]}</option>`);
-            }
-            for (var i = 0; i < sections.length; i++) {
-                this.$sectionselect.append(`<option 
-                value="#${sections[i].attr("id")}">${sections[i].attr("eb-type") + sections[i].attr("id").slice(-1)}</option>`);
-            }
-            $("#submit-summary").off("click").on("click", this.appendSummaryField.bind(this));
-        }
-    };
-
-    this.appendSummaryField = function (e) {
-        $("#summarry-editor-modal-container").modal("toggle");
-        var type = $(this.selector.selector).attr("eb-type");
-        var Objid = type + "Summary" + this.idCounter["Eb" + type + "SummaryCounter"]++;
-        var obj = new EbObjects["Eb" + type + "Summary"](Objid);
-        $(this.$sectionselect.val()).append(obj.$Control.outerHTML());
-        obj.DataField = $(this.selector.selector).text().trim();
-        obj.Title = this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")";
-        obj.Function = this.$funcselect.val();
-        obj.Left = this.objCollection[$(this.selector.selector).attr("id")].Left;
-        this.objCollection[Objid] = obj;
-        this.RefreshControl(obj);
-        $("#running-summary ul[id='running-summary-childul']").append("<li class='styl'><div tabindex='1' $(this).focus(); class='textval'> "
-            + this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")" + "</div></li>");
-    };
-
-    this.getSectionToAddSum = function (selector) {
-        var objlist = [];
-        selector.parent().parent().nextAll().not(".gutter,#detail").each(function (i, obj) {
-            $(obj).children().not(".gutter").each(function (j, sections) {
-                objlist.push($(sections));
-            })
-        })
-        return objlist;
-    };
 
     this.editElement = function (control) {
         this.control = control;

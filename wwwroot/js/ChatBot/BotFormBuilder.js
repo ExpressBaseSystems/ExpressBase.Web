@@ -347,7 +347,7 @@
             else
                 this.nameAlert("Should include no Space or Hyphen in the 'TableName'");
         }
-        else 
+        else
             this.nameAlert("Make first letter lowercase letter");
 
         return false;
@@ -383,7 +383,7 @@
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-
+    this.GenerateButtons = function () { };
 
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
@@ -401,9 +401,7 @@
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
 
-        this.PGobj.Close = function () {
-            slideRight('.form-save-wraper', '#form-buider-propGrid');
-        };
+        this.PGobj.Close = function () { slideRight('.form-save-wraper', '#form-buider-propGrid'); };
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             if (CurProp === 'DataSourceId') {
@@ -424,6 +422,8 @@
             if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'ComboBox') {
                 this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
             }
+            //if (CurProp === 'CardCollection')
+            //    this.RefreshCardColl(PropsObj);
         }.bind(this);
 
 
@@ -431,10 +431,17 @@
             id: this.wraperId + "BFBalertCont",
             top: 24,
             right: 24,
+        });
 
-        }.bind(this));
     }.bind(this);
 
+
+    //this.RefreshCardColl = function (PropsObj) {
+    //    var crd = PropsObj.CardCollection.$values;
+    //    for (i = 0; i < crd.length; i++) {
+    //        RefreshControl(crd[i]);
+    //    }
+    //};
 
     this.refreshCombo = function (cmbid, PropsObj, CurProp) {
         //if (CurProp === 'DisplayMembers')

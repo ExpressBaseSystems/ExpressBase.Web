@@ -123,7 +123,28 @@ function RefreshControl(obj) {
         }
     });
     $("#" + obj.EbSid).html($(NewHtml).html());
+
+    if (obj.$type.split(',')[0].split('.')[2] === 'EbCards') {
+        RedrawCardInEbCards(obj);
+    }
 };
+
+function RedrawCardInEbCards(obj) {
+    var crd = PropsObj.CardCollection.$values;
+    $("#" + obj.EbSid).children().remove();
+    var WholeHtml = "";
+    for (i = 0; i < crd.length; i++) {
+        var NewHtml = crd[i].$Control.outerHTML();
+        var metas = AllMetas[$("#" + crd[i].EbSid).attr("eb-type")];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                WholeHtml += NewHtml.replace('@' + name + '@', crd[i][name]);
+            }
+        });
+    }
+}
+
 function getEbObjectTypes() {
     Eb_ObjectTypes = {
         WebForm: { Id: 0, ImgSrc: "form1.svg" },

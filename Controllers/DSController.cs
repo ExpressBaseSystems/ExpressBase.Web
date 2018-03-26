@@ -32,17 +32,17 @@ namespace ExpressBase.Web.Controllers
             {
                 DVBaseColumn _col = null;
 
-                if ((int)column.Type == EbDbTypes.String && column.ColumnName == "socialid")
+                if (column.Type == EbDbTypes.String && column.ColumnName == "socialid")
                     _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px",ClassName = "tdheight", RenderAs = StringRenderType.Image };
-                else if ((int)column.Type == EbDbTypes.String && column.ColumnName == "latlong")
+                else if (column.Type == EbDbTypes.String && column.ColumnName == "latlong")
                     _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px",ClassName = "tdheight", RenderAs = StringRenderType.Marker };
-                else if ((int)column.Type == EbDbTypes.String)
+                else if (column.Type == EbDbTypes.String)
                     _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
-                else if ((int)column.Type == EbDbTypes.Int16 || (int)column.Type == EbDbTypes.Int32 || (int)column.Type == EbDbTypes.Int64 || (int)column.Type == EbDbTypes.Double || (int)column.Type == EbDbTypes.Decimal || (int)column.Type == EbDbTypes.VarNumeric)
+                else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
                     _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right" };
-                else if ((int)column.Type == EbDbTypes.Boolean)
+                else if (column.Type == EbDbTypes.Boolean)
                     _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px",ClassName = "tdheight" };
-                else if ((int)column.Type == EbDbTypes.DateTime || (int)column.Type == EbDbTypes.Date || (int)column.Type == EbDbTypes.Time)
+                else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
 
                 Columns.Add(_col);

@@ -87,9 +87,42 @@ var EbSelect = function (ctrl) {
     // init datatable
     this.InitDT = function () {
         this.IsDatatableInit = true;
-        this.EbObject = new EbObjects["EbTableVisualization"]("Container");
-        this.EbObject.DataSourceRefId = this.dsid;
-        this.datatable = new EbDataTable(null, null, null, this.EbObject, null, 0, "https://expressbaseservicestack.azurewebsites.net");
+        //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
+        //this.EbObject.DataSourceRefId = this.dsid;
+        //this.datatable = new EbDataTable(null, null, null, this.EbObject, null, 0, "https://expressbaseservicestack.azurewebsites.net");
+        $.ajax({
+            type: "POST",
+            url: "../DS/GetColumns",
+            data: { DataSourceRefId: this.dsid },
+            success: function (Columns) {
+                this.DTColumns = JSON.parse(Columns).$values;
+                //$.LoadingOverlay('hide');
+            }.bind(this)
+        });
+        this.datatable = $(this.DTSelector).DataTable({//change ebsid to name
+            processing: true,
+            serverSide: true,
+            dom: 'rt',
+            columns: this.DTColumns,
+            ajax: {
+                url: "../dv/getData",
+                type: 'POST',
+                data: function (dq) {
+                    delete dq.columns; delete dq.order; delete dq.search;
+                    dq.RefId = this.dsid;
+                    dq.Params = { Name: "id", Value: "ac", Type:"11"};
+                }.bind(this),
+                dataSrc: function (dd) {
+                    return dd.data;
+                },
+            },
+            initComplete: function () {
+                this.hideTypingAnim();
+                this.AskWhatU();
+                $tableCont.show(100);
+            }.bind(this)
+            
+        });
         //settings: {
         //    hideCheckbox: (this.multiSelect === false) ? true : false,
         //    scrollY: "200px",//this.dropdownHeight,

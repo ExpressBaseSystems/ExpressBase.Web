@@ -137,8 +137,12 @@
     };
 
     this.initCards = function ($Ctrl) {
-        console.log("initCards");
         $Ctrl.find(".card-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl))
+        $Ctrl.find(".cardselectbtn").off('click').on('click', function (evt) {
+            alert(evt.target);
+            var footerid = '#Footer' + $(evt.target).parents().find('.cards-cont').attr('id');
+            $(footerid).append($(evt.target).closest('.footercard').children().find('.itemPrice').val() + '-----' + $(evt.target).closest('.footercard').children().find('.itemCount').val() + '<br>');
+        });
         $Ctrl.not('.slick-initialized').slick({
             slidesToShow: 1,
             infinite: false,

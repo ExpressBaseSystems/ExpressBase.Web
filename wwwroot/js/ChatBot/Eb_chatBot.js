@@ -423,9 +423,9 @@
         if (this.isAlreadylogined) {
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
             /////////////////////////////////////////////////
-            //setTimeout(function () {
-            //    $(".btn-box").find("[idx=0]").click();
-            //}.bind(this), this.typeDelay * 2 + 100);
+            setTimeout(function () {
+                $(".btn-box").find("[idx=0]").click();
+            }.bind(this), this.typeDelay * 2 + 100);
         }
         else {
             this.msgFromBot(`Hello ${this.FBResponse.name}, ${greeting}`);
@@ -450,7 +450,7 @@
     };
 
     this.initFormCtrls_fm = function () {
-        $.each(this.curForm.controls, function (i, control) {
+        $.each(this.curForm.controls, function (i, control) {//////////////////////////////////////
             if (this.initControls[control.objType] !== undefined)
                 this.initControls[control.objType](control);
         }.bind(this));
@@ -573,23 +573,24 @@
     this.getControl = function (idx) {
         if (idx === this.formControls.length)
             return;
-        var $ctrlCont = $(this.formControls[idx][0].outerHTML);
-        var control = this.formControls[idx][0].outerHTML;
+        var controlHTML = this.formControls[idx][0].outerHTML;
+        var $ctrlCont = $(controlHTML);
         this.curCtrl = this.curForm.controls[idx];
         var name = this.curCtrl.name;
-        if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation"))
-            $CtrlCont = $(control);
-        else
-            $CtrlCont = $(this.wrapIn_chat_ctrl_cont(idx, control));
-        var lablel = this.curCtrl.label + ' ?';
-        if (this.curCtrl.helpText)
-            lablel += ` (${this.curCtrl.helpText})`;
-        this.msgFromBot(lablel);
-        this.msgFromBot($CtrlCont, function () { $(`#${name}`).select(); }, name);
+
+        if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation")))
+            $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
+        var lablel = this.curCtrl.label;
+        if (lablel) {
+            if (this.curCtrl.helpText)
+                lablel += ` (${this.curCtrl.helpText})`;
+            this.msgFromBot(lablel);
+        }
+        this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
     }.bind(this);
 
-    this.wrapIn_chat_ctrl_cont = function (idx, control) {
-        return '<div class="chat-ctrl-cont">' + control + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
+    this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
+        return '<div class="chat-ctrl-cont">' + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
     };
 
     this.replyAsImage = function ($prevMsg, input, idx) {
@@ -653,7 +654,7 @@
             btnOkLabel: " Edit ",
             btnOkClass: "btn btn-sm btn-warning",
             btnOkIcon: "glyphicon glyphicon-pencil",
-            btnCancelIcon:"glyphicon glyphicon-remove-circle",
+            btnCancelIcon: "glyphicon glyphicon-remove-circle",
             onConfirm: this.editDpndCtrl,
             //onCancel: function () {
             //    alert("cancel");
@@ -829,7 +830,7 @@
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url:"../Boti/InserBotDetails",
+            url: "../Boti/InserBotDetails",
             data: {
                 TableName: this.curForm.tableName, Fields: this.getFormValuesWithTypeColl()
             },
@@ -904,10 +905,10 @@
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 /////////////////////////////////////////////////Form click
-                //setTimeout(function () {
-                //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=4]").click();
-                //}.bind(this), this.typeDelay * 2 + 100);
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    //$(".btn-box").find("[idx=22]").click();
+                }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);
 

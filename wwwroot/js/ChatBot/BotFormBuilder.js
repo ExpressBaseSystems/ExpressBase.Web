@@ -429,11 +429,11 @@
         }.bind(this);
 
 
-        //this.PGobj.Ebalert = new EbAlert({
-        //    id: this.wraperId + "BFBalertCont",
-        //    top: 24,
-        //    right: 24,
-        //}.bind(this));
+        this.PGobj.Ebalert = new EbAlert({
+            id: this.wraperId + "BFBalertCont",
+            top: 24,
+            right: 24,
+        });
 
     }.bind(this);
 

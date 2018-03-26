@@ -230,7 +230,7 @@
     this.initCM = function (selector) {
         $.contextMenu({
             selector: '#' + selector,
-            autoHide: false,
+            autoHide: true,
             items: this.options
         });
     };

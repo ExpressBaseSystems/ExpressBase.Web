@@ -347,7 +347,7 @@
             else
                 this.nameAlert("Should include no Space or Hyphen in the 'TableName'");
         }
-        else 
+        else
             this.nameAlert("Make first letter lowercase letter");
 
         return false;
@@ -401,9 +401,7 @@
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
 
-        this.PGobj.Close = function () {
-            slideRight('.form-save-wraper', '#form-buider-propGrid');
-        };
+        this.PGobj.Close = function () { slideRight('.form-save-wraper', '#form-buider-propGrid'); };
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             //if (CurProp === 'DataSourceId') {
@@ -429,11 +427,11 @@
         }.bind(this);
 
 
-        //this.PGobj.Ebalert = new EbAlert({
-        //    id: this.wraperId + "BFBalertCont",
-        //    top: 24,
-        //    right: 24,
-        //}.bind(this));
+        this.PGobj.Ebalert = new EbAlert({
+            id: this.wraperId + "BFBalertCont",
+            top: 24,
+            right: 24,
+        });
 
     }.bind(this);
 

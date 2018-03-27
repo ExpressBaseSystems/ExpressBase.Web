@@ -137,13 +137,21 @@
     };
 
     this.initCards = function ($Ctrl) {
-        $Ctrl.find(".card-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl))
-        $Ctrl.find(".cardselectbtn").off('click').on('click', function (evt) {
-            alert(evt.target);
-            var footerid = '#Footer' + $(evt.target).parents().find('.cards-cont').attr('id');
-            $(footerid).append($(evt.target).closest('.footercard').children().find('.itemPrice').val() + '-----' + $(evt.target).closest('.footercard').children().find('.itemCount').val() + '<br>');
+        $Ctrl.find(".cards-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl));
+        
+        $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {
+            //alert(evt.target);
+            var q = $(evt.target).closest('.card-cont').find('.item-quantity').val();
+            var p = $(evt.target).closest('.card-cont').find('.item-price').val();
+            var $tbody = $(evt.target).closest('.cards-cont').next().find('.table tbody');
+            var iname = $($(evt.target).closest('.card-bottom').children()[0]).text();
+            $tbody.append(`<tr><td>${iname}</td><td style='text-align: center;'>${q}</td><td style='text-align: center;'>${q * p}</td><td style='text-align: center;'><i class="fa fa-trash-o remove-cart-item" aria-hidden="true"></i></td></tr>`);
+
+            $('.remove-cart-item').off('click').on('click', function (evt) {
+                $(evt.target).closest('tr').remove();
+            });
         });
-        $Ctrl.not('.slick-initialized').slick({
+        $Ctrl.find('.cards-cont').not('.slick-initialized').slick({
             slidesToShow: 1,
             infinite: false,
             draggable: false,

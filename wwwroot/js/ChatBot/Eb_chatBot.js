@@ -70,7 +70,7 @@
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
-        $("body").on("click", ".card-btn-cont .btn", this.ctrlSend);
+        $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.showDate();
         //$('body').confirmation({

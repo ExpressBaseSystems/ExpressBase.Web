@@ -412,6 +412,7 @@
                     data: { DataSourceRefId: PropsObj.DataSourceId },
                     success: function (Columns) {
                         PropsObj.Columns = JSON.parse(Columns);
+                        this.setAllChildObjColumns(PropsObj);
                         $.LoadingOverlay('hide');
                     }.bind(this)
                 });
@@ -426,12 +427,22 @@
             //    this.RefreshCardColl(PropsObj);
         }.bind(this);
 
+        this.setAllChildObjColumns = function (PropsObj) {
+            $.each(PropsObj.Fields.$values, function (i, item) {
+                item.Columns = PropsObj.Columns;
+            });
+        }.bind(this);
+
 
         this.PGobj.Ebalert = new EbAlert({
             id: this.wraperId + "BFBalertCont",
             top: 24,
             right: 24,
         });
+
+        setTimeout(function () {
+            $("#minmize").click();
+        }), 3000;
 
     }.bind(this);
 

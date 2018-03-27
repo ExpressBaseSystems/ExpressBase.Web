@@ -73,9 +73,18 @@
             valueHTML = '<input type="date" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
-        else if (type > 6 && type < 11) {    //  If collection editor
-            valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
-                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        else if (type > 6 && type < 11) {
+            if (meta.Limit === 0) {//  If collection editor
+                valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
+                    + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+            }
+            else {
+                var _meta = jQuery.extend({}, meta);
+                _meta.editor = 1;
+                var names = this.PropsObj.Columns.$values.map(a => a.name);
+                _meta.enumoptions = names//{ 5: "Date", 6: "DateTime", 17: "Time" };
+                return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf);
+            }
         }
         else if (type === 11) {    // If JS editor
             valueHTML = '<span style="vertical-align: sub;">(JavaScript)</span>'

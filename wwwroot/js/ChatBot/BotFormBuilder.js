@@ -404,18 +404,18 @@
         this.PGobj.Close = function () { slideRight('.form-save-wraper', '#form-buider-propGrid'); };
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-            if (CurProp === 'DataSourceId') {
-                $.LoadingOverlay('show');
-                $.ajax({
-                    type: "POST",
-                    url: "../DS/GetColumns",
-                    data: { DataSourceRefId: PropsObj.DataSourceId },
-                    success: function (Columns) {
-                        PropsObj.Columns = JSON.parse(Columns);
-                        $.LoadingOverlay('hide');
-                    }.bind(this)
-                });
-            }
+            //if (CurProp === 'DataSourceId') {
+            //    $.LoadingOverlay('show');
+            //    $.ajax({
+            //        type: "POST",
+            //        url: "../DS/GetColumns",
+            //        data: { DataSourceRefId: PropsObj.DataSourceId },
+            //        success: function (Columns) {
+            //            PropsObj.Columns = JSON.parse(Columns);
+            //            $.LoadingOverlay('hide');
+            //        }.bind(this)
+            //    });
+            //}
             if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm") {
                 RefreshControl(PropsObj);
             }

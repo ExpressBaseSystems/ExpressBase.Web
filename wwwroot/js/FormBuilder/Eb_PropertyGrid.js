@@ -81,7 +81,7 @@
             else {
                 var _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
-                var names = this.PropsObj.Columns.$values.map(a => a.name);
+                var names = this.PropsObj.Columns.$values.map(a => (a.name || a.ColumnName));
                 _meta.enumoptions = names//{ 5: "Date", 6: "DateTime", 17: "Time" };
                 return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf);
             }

@@ -24,7 +24,8 @@
             var mlkey = this.MLEObj.get();
             this.PGobj.PropsObj[this.PGobj.CurProp] = mlkey;
         }
-
+        //else if (this.editor === 13)
+        //    this.PGobj.callOnchangeExecFns()
 
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);

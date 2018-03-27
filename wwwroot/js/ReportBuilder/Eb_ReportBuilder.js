@@ -664,12 +664,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         for (var i = 0; i < $controlColl.length; i++) {
             var editControl = $controlColl[i];
             var eb_type = editControl.$type.split(",")[0].split(".").pop().substring(2);
-            var Objid = eb_type + (this.idCounter["Eb" + eb_type + "Counter"])++;
+            var Objid = editControl.EbSid;
+            eb_type + (this.idCounter["Eb" + eb_type + "Counter"])++;
             var $control = new EbObjects["Eb" + eb_type](Objid);
             if (container)
-                $("#page-reportLayer").append($control.$Control.outerHTML());
-            else
-                this.containerId.append($control.$Control.outerHTML());
+                this.containerId = $("#page-reportLayer");
+            this.containerId.append($control.$Control.outerHTML());
             this.repExtern.replaceProp($control, editControl);
             this.objCollection[Objid] = $control;
             this.RefreshControl($control);

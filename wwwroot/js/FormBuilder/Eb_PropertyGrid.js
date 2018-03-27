@@ -210,16 +210,23 @@
         // call OnChangeExec functions
         for (var prop in this.OnChangeExec) {
             var func = this.OnChangeExec[prop].bind(this.PropsObj, this);
-            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input, select", func);
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").off("change", "input, select").on("change", "input, select", func);
             func();
         }
+        console.log("callOnchangeExecFns() called");
     };
 
     //makes a property editor readOnly
-    this.MakeReadOnly = function (prop) { $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true); };
+    this.MakeReadOnly = function (prop) {
+        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
+        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "not-allowed").css("background-color", "#e8e8e8").find("button").css("cursor", "not-allowed").prop('disabled', true);
+    };
 
     //makes a property editor readWritable
-    this.MakeReadWrite = function (prop) { $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false); };
+    this.MakeReadWrite = function (prop) {
+        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false);
+        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "inherit").css("background-color", "inherit").find("button").css("cursor", "inherit").prop('disabled', false);
+    };
 
     //makes a property row hidden
     this.HideProperty = function (prop) {

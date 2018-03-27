@@ -117,8 +117,8 @@
     };
 
     this.windowscroll = function () {
-        $(".tracker_drag").css({ "top": $(window).scrollTop()});
-        
+        //$(".tracker_drag").css({ "top": $(window).scrollTop()});
+        $(".tracker_drag").css({ "height": ($(".page").height() - $(window).scrollTop()) + 20, "top": $(window).scrollTop() });
     };
 
     this.start = function () {

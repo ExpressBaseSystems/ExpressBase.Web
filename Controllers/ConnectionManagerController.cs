@@ -151,7 +151,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (req["databaseVendor"].ToString() == "ORACLE")
                     {
-                        var response = this.ServiceClient.Post(new EbDbCreateRequest { dbName = dbcon.DatabaseName });
+                        var response = this.ServiceClient.Post(new EbDbCreateRequest { dbName = dbcon.DatabaseName, ischange = "true" });
                     }       
                 }
 

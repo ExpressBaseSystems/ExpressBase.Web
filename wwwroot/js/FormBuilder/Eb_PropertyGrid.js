@@ -29,7 +29,7 @@
     };
 
     //Builds property Grid rows
-    this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf) {
+    this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf, IsCElimitEditor) {
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.wraperId + name;
@@ -50,8 +50,17 @@
             else
                 value = (!meta.enumoptions[value]) ? Object.keys(meta.enumoptions)[0] : value;
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, );
-            this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
+            if (!IsCElimitEditor)
+                this.getValueFuncs[name] = function () {
+                    return parseInt($('#' + elemId).val());
+                };
+            else
+                this.getValueFuncs[name] = function () {
+                    console.log("getValueFuncs 2");
+                    return this.PropsObj.Columns.$values[parseInt($('#' + elemId).val())];
+                }.bind(this);
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
+
         }
         else if (type === 2) {    // If number 
             valueHTML = '<input type="number" id="' + elemId + '" value="' + (value || 0) + '" style="width:100%" />';
@@ -81,9 +90,8 @@
             else {
                 var _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
-                var names = this.PropsObj.Columns.$values.map(a => (a.name || a.ColumnName));
-                _meta.enumoptions = names//{ 5: "Date", 6: "DateTime", 17: "Time" };
-                return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf);
+                _meta.enumoptions = this.PropsObj.Columns.$values.map(a => (a.name || a.ColumnName));
+                return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf, true);
             }
         }
         else if (type === 11) {    // If JS editor

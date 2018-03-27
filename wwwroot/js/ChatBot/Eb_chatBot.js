@@ -64,6 +64,7 @@
         $("body").on("click", ".msg-cont [name=ctrlsend]", this.ctrlSend);
         $("body").on("click", ".msg-cont [name=ctrledit]", this.ctrlEdit);
         $("body").on("click", ".eb-chatBox [name=formsubmit]", this.formSubmit);
+        $("body").on("click", ".eb-chatBox [name=formcancel]", this.formSubmit);
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
@@ -566,7 +567,7 @@
     this.showSubmit = function () {
         if ($("[name=formsubmit]").length === 0) {
             this.msgFromBot('Are you sure? Can I submit?');
-            this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button class="btn">Cancel</button></div>'));
+            this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button name="formcancel" class="btn">Cancel</button></div>'));
         }
     };
 

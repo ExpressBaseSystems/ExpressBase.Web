@@ -124,9 +124,9 @@ function RefreshControl(obj) {
     });
     $("#" + obj.EbSid).html($(NewHtml).html());
 
-    if (obj.$type.split(',')[0].split('.')[2] === 'EbCards') {
-        RedrawCardInEbCards(obj);
-    }
+    //if (obj.$type.split(',')[0].split('.')[2] === 'EbCards') {
+    //    RedrawCardInEbCards(obj);
+    //}
 };
 
 function RedrawCardInEbCards(obj) {

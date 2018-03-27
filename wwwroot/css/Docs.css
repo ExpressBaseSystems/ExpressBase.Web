@@ -59,7 +59,8 @@
     width: 80%;
     float: left;
     margin-left: 20%;
-    height:100%;
+    height: 100%;
+    position: relative;
 }
 .site-page-head {
     position: relative;
@@ -175,6 +176,7 @@ margin-right:14px;
 .image_up_container_outer_body {
     height: 93%;
     padding: 10px 100px 50px 100px;
+    background: #f1f4f5;
 }
 
     .image_up_container_outer_body .file-input {
@@ -248,33 +250,39 @@ margin-right:14px;
 }
 
 .img_wrapper {
-    width: 20%;
+    width: 18%;
     padding: 5px;
-    background: white;
-    border: 2px solid #e4eaec;
+    /* background: #fafafa; */
+    /* border: 1px solid #ffffff; */
     border-radius: 4px;
     float: left;
     margin: 1%;
+    /* box-shadow: var(--eb-shadow); */
+    box-shadow: 1px 1px 5px 0 #a2958a;
 }
 
 .img_wrapper_img {
     width: 100%;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
     .img_wrapper_img img {
-        height: 150px;
+        height: 125px;
         width: auto;
     }
 
 .img_wrapper_text {
     width: 100%;
     height: 25%;
+    FONT-FAMILY: open sans;
+    font-weight: 100;
 }
 
 .f {
     FONT-FAMILY: open sans;
-    font-weight: 600;
+    font-weight: 100;
     margin: 5px 0px;
 }
 
@@ -324,7 +332,8 @@ margin-right:14px;
 .tag_wrapper .bootstrap-tagsinput {
     min-height: 150px;
     box-shadow: var(--eb-shadow);
-    border:none;
+    border: none;
+    width: 100%;
 }
 .tag_modal_wrapper .modal-header {
     background: #0280db;
@@ -340,3 +349,48 @@ margin-right:14px;
         border-radius: 20px;
         background-color: #0280db;
     }
+
+.Recent_up_prev {
+    width: 300px;
+    box-shadow: var(--eb-shadow);
+    float: left;
+    border: 2px solid #15c541;
+    border-radius: 4px;
+    background-color: white;
+    height: 60px;
+    right: 0;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+.Recent_up_prev_bdy {
+    width: 30%;
+    height: 100%;
+    float: left;
+}
+    .Recent_up_prev_bdy img {
+        height: 100%;
+        width: auto;
+    }
+.img_info {
+    float: left;
+    width: 70%;
+    background: white;
+    position: relative;
+    padding:5px;
+    font-family:open sans;
+    font-weight:100;
+}
+.img_info h5{
+    margin:0;
+}
+._close_prev {
+    position: absolute;
+    right: 1px;
+    width: 15px;
+    height: 15px;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 50%;
+    top: 1px;
+}

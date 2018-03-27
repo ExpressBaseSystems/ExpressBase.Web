@@ -210,9 +210,10 @@
         // call OnChangeExec functions
         for (var prop in this.OnChangeExec) {
             var func = this.OnChangeExec[prop].bind(this.PropsObj, this);
-            $("#" + this.wraperId + " [name=" + prop + "Tr]").on("change", "input, select", func);
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").off("change", "input, select").on("change", "input, select", func);
             func();
         }
+        console.log("callOnchangeExecFns() called");
     };
 
     //makes a property editor readOnly

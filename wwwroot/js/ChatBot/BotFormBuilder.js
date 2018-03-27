@@ -433,6 +433,10 @@
             right: 24,
         });
 
+        setTimeout(function () {
+            $("#minmize").click();
+        }), 3000;
+
     }.bind(this);
 
 

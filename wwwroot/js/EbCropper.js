@@ -4,6 +4,7 @@
     this.Upload = option.isUpload;
     this.enableSE = option.enableSE;
     this.Browse = option.Browse;
+    this.result = option.Result||'base64';
     this.url = option.Url||'';
     this.fileurl = null;
     this.cropie = null;
@@ -111,7 +112,7 @@
     };
 
     this.crop = function () {
-        this.cropie.croppie('result', 'base64').then(this.cropafter.bind(this));
+        this.cropie.croppie('result', this.result).then(this.cropafter.bind(this));
     };
 
     this.cropafter = function (b65) {

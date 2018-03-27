@@ -87,7 +87,16 @@
                 </div>
             </div>
         </div>
-    </div>
+        @*<div class="Recent_up_prev">
+            <div class="Recent_up_prev_bdy">
+                <img src="~/images/amal.jpg" class="img-responsive" />
+            </div>
+            <div class="img_info">
+                <span class="fa fa-close _close_prev"></span>
+                <h5>Upload success</h5>
+            </div>
+        </div>*@
+    </div>  
 </div>
 <div class="upload_sec" style="display:none;">
     <div class="image_up_container_outer" id="image_up_container_outer">
@@ -101,7 +110,7 @@
             </div>
             <div class="col-md-3 tag_wrapper">
                 <h4 class="tag-title">Add Tags</h4>
-                <input class="form-control" id="tagsinput_input" value="remove this tag" />
+                <input class="form-control" id="tagsinput_input_comm" value="" />
             </div>
         </div>
     </div>
@@ -116,14 +125,15 @@
                 </button>
             </div>
             <div class="modal-body">
-                <input class="form-control" id="tagsinput_input_modal" value="remove this tag" />
+                <input class="form-control" id="tagsinput_input_modal" value="" />
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="save_tag">Save</button>
+                <button type="button" class="btn btn-primary save_tag" id="save_tag">Save</button>
             </div>
         </div>
     </div>
 </div>
+   
 <script>
     var im = new ImageUploader_Doc({Tenantid:'@ViewBag.cid'});
 </script>

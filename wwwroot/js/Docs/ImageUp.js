@@ -1,8 +1,12 @@
 ﻿var ImageUploader_Doc = function (opt) {
+
     this.TenantId = opt.Tenantid;
-    this.currtag = ["devresource"];
-    this.prevId = "";
-    this.index = null;
+    var _i = null;
+    var _prev = null;
+    var _input = $("#image_up_input");
+    var _tComm = $("#tagsinput_input_comm");
+    var _tImg = $("#tagsinput_input_modal");
+    var _tag = {};
 
     this.b64toBlob = function (b64Data, contentType, sliceSize) {
         contentType = contentType || '';
@@ -23,17 +27,16 @@
     }
 
     this.makeFup = function () {
-        $("#image_up_input").fileinput({
+        _input.fileinput({
             uploadUrl: "../StaticFile/UploadImageAsync",
             maxFileCount: 5,
             uploadAsync: true,
             uploadExtraData: this.uploadtag.bind(this)
         }).on('fileuploaded', this.fileUploadSuccess.bind(this))
-            .on('fileloaded', this.addCustbtn.bind(this))
-            .on('filepreajax', this.filepreajax.bind(this));
+          .on('fileloaded', this.addCustbtn.bind(this))
+          .on('filepreajax', this.filepreajax.bind(this));
 
         $(".file-drop-zone").css({ "height": '95%', "overflow-y": "auto" });
-        $(".file-preview-initial").attr("tabindex", "1");
 
         this.cropfy = new cropfy({
             Container: 'container',
@@ -43,37 +46,44 @@
             Browse: false,
             Result: 'base64'
         });
+
         this.cropfy.getFile = function (file) {
-            $('#' + this.prevId).children().find("img").attr("src", file);
+            $('#' + _prev).children().find("img").attr("src", file);
             var f = this.updateStack(file);
         }.bind(this);
     };
 
-    this.updateStack = function (f) {
-        if (f) {
-            var i = this.index;
-            var block = f.split(";");
-            var contentType = block[0].split(":")[1];
-            var realData = block[1].split(",")[1];
-            var blob = this.b64toBlob(realData, contentType);
-            var sf = $("#image_up_input").fileinput('getFileStack')[i];
-            var file = new File([blob], sf.name, { type: contentType, lastModified: Date.now() });
-            $("#image_up_input").fileinput('updateStack', i, file);
-        }
+    this.updateStack = function (b64) {
+        let block = b64.split(";");
+        let contentType = block[0].split(":")[1];
+        let realData = block[1].split(",")[1];
+        let blob = this.b64toBlob(realData, contentType);
+        let sf = _input.fileinput('getFileStack')[_i];
+        let file = new File([blob], sf.name, { type: contentType, lastModified: Date.now() });
+        _input.fileinput('updateStack', _i, file);
     };
 
     this.uploadtag = function () {
-        return { "tags": this.currtag };
+        return { "tags": JSON.stringify(_tag) };
     };
 
     this.filepreajax = function (event, previewId, index) {
-        this.currtag.push($("#tagsinput_input_comm").val());
+        var r = _tComm.tagsinput('items');
+        if (!$.isEmptyObject(_tag)) {
+            for (var key in _tag) {
+                for (let i = 0; i < r.length; i++) {
+                    _tag[key].push(r[i]);
+                }
+            }
+        }
     };
 
     this.addCustbtn = function (event, file, previewId, index, reader) {
         $("#" + previewId).children().find(".file-footer-buttons").append(`<button type='button' id='Docs_crop_btn${previewId}'
-              class='kv-file-upload btn btn-kv btn-default btn-outline-secondary crop_btn' index="${index}" previd=${previewId} b65='${reader.result}' title= 'Crop'> Crop</button><button type='button' id='Docs_Tag_btn${previewId}'
-              class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' title= 'Tag'> Tag</button>`);
+              class='kv-file-upload btn btn-kv btn-default btn-outline-secondary crop_btn' index="${index}" previd=${previewId} b65='${reader.result}' title= 'Crop'>Crop</button>
+              <button type='button' id='Docs_Tag_btn${previewId}'
+              class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' index="${index}" title= 'Tag'> Tag</button>`);
+
         $("#Docs_crop_btn" + previewId).on("click", this.cropImg.bind(this));
         $("#Docs_Tag_btn" + previewId).on("click", this.tagImg.bind(this));
         this.startSE();
@@ -81,24 +91,24 @@
 
     this.startSE = function () {
         this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.info", Channels: ["file-upload"] });
-        this.ss.onUploadSuccess = function (m, e) {
+        this.ss.onUploadSuccess = function (obj, e) {
             $(".fileinput-remove-button").click();
             $(".upload_sec").toggle("slide", { direction: "down" }, 300);
-            this.showRecentUpl(m);
+            this.showRecentUpl(obj);
         }.bind(this);
     };
 
-    this.showRecentUpl = function (id) {
-        $(".site-page").append(`<div class="Recent_up_prev" id="${id}">
+    this.showRecentUpl = function (obj) {
+        $(".site-page").append(`<div class="Recent_up_prev" id="${obj.objectId}">
         <div class="Recent_up_prev_bdy">
-            <img src="http://${ this.TenantId}-dev.localhost:41500/static/${id}.jpg" class="img-responsive" />
+            <img src="http://${ this.TenantId}-dev.localhost:41500/static/${obj.objectId}.jpg" class="img-responsive" />
         </div>
         <div class="img_info">
-            <span class="fa fa-close _close_prev" onclick="$('#${id}').remove();"></span>
+            <span class="fa fa-close _close_prev" onclick="$('#${obj.objectId}').remove();"></span>
             <h5>Upload success</h5>
         </div>
     </div>`);
-        this.drawThumbNails([{ objectId: id, length: 12345, uploadDateTime: "12/3/18", }]);
+        this.drawThumbNails([obj]);
     };
 
     this.fileUploadSuccess = function (event, data, previewId, index) {
@@ -106,20 +116,21 @@
     };
 
     this.cropImg = function (e) {
-        this.index = parseInt($(e.target).attr("index"));
+        _i = parseInt($(e.target).attr("index"));
         this.cropfy.url = $(e.target).attr("b65");
-        this.prevId = $(e.target).attr("previd");
+        _prev = $(e.target).attr("previd");
         this.cropfy.toggleModal();
     };
 
     this.tagImg = function (e) {
+        if (e)
+            _i = parseInt($(e.target).attr("index"));
         $("#TagModal").modal("toggle");
     };
 
-    this._saveTag = function (e) {
-        if (this.currtag.length > 1)
-            this.currtag.length = 1;
-        this.currtag.push($("#tagsinput_input_modal").val());
+    this._saveTag = function (e) {       
+        var f = _input.fileinput('getFileStack')[_i];
+        _tag[f.name.toLowerCase()] = _tImg.tagsinput('items');
         this.tagImg();
     };
 
@@ -151,8 +162,8 @@
     };
 
     this.loadImages = function () {
-        $.post("../StaticFile/FindFilesByTags", {
-            "tags": "devresource"
+        $.post("../StaticFile/FindFilesByTenant", {
+            "type": 1
         }, function (result) {
             this.drawThumbNails(result);
         }.bind(this));
@@ -161,10 +172,11 @@
     this._start = function () {
         this.loadImages();
         this.makeFup();
-        $("#tagsinput_input_comm").tagsinput();
-        $("#tagsinput_input_modal").tagsinput();
+        _tComm.tagsinput();
+        _tImg.tagsinput();
         $(".upload_btn_docs").on("click", function () { $(".upload_sec").toggle("slide", { direction: "down" }, 300); });
         $("body").off("click").on("click", ".save_tag", this._saveTag.bind(this));
     };
+
     this._start();
 };

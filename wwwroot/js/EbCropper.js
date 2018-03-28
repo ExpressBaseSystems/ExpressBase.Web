@@ -1,4 +1,5 @@
 ﻿var cropfy = function (option) {
+
     this.Toggle = option.Toggle;
     this.Container = option.Container;
     this.Upload = option.isUpload;

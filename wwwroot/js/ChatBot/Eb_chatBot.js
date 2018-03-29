@@ -579,7 +579,7 @@
         this.curCtrl = this.curForm.controls[idx];
         var name = this.curCtrl.name;
 
-        if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation")))
+        if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation" || this.curCtrl.objType === "Image")))
             $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
         var lablel = this.curCtrl.label;
         if (lablel) {

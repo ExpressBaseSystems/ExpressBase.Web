@@ -326,7 +326,7 @@ Navigation bar
 }
 .header-section {
     margin-bottom: 50px !important;
-    color: #a09e9e;
+    color: #6f6e6e;
 }
 .service-box {
     width:100%;
@@ -1017,4 +1017,24 @@ footer {
 }
 .f12{
     font-size:12px;
+}
+.cust_img {
+    height: 70px;
+    display: flex;
+    justify-content: center;
+}
+.cust_img img{
+    height:100%;
+}
+.customers{
+    margin-bottom:30px;
+}
+.pr_img_cont {
+    height: 40px;
+    display: flex;
+    justify-content: center;
+}
+.pr_img_cont img{
+    height:100%;
+    width:auto;
 }

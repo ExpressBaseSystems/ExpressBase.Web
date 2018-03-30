@@ -312,26 +312,7 @@ Navigation bar
         text-shadow: 0px 1px 0px #14426f;
         font-weight: 300;
     }
-    /*PARTNERS*/
-    .img-box .img-responsive {
-        margin: 20px auto;
-        border-radius: 4px;
-    }
-
-.partners {
-    background-color: #fafafa;
-    padding-top: 20px;
-    padding-bottom: 50px;
-}
-
-.partner h4 {
-    font-weight: normal;
-    color: #717f86;
-}
-
-.partner img {
-    width: auto;
-}
+  
 /*Work Shop*/
 .nopadding {
     padding: 0 !important;
@@ -339,14 +320,18 @@ Navigation bar
 
 .work-shop {
     padding-bottom: 40px;
-    background-color: #fafafa;
     padding-top: 30px;
     font-family: open sans;
     font-weight: 300;
 }
-    .header-section {
-        margin-bottom: 50px !important;      
-    }
+.header-section {
+    margin-bottom: 50px !important;
+    color: #6f6e6e;
+}
+.service-box {
+    width:100%;
+    float:left;
+}
 
 .content {
     font-family: 'Open Sans';
@@ -370,7 +355,6 @@ Navigation bar
 }
 
 .icon-text {
-    padding: 20px 0px 0px;
     font-size: 30px;
 }
 /*workshop ends*/
@@ -418,51 +402,8 @@ Navigation bar
         }
 /*end team*/
 /*overlay2*/
-.eb-banner2 {
-    height: inherit;
-    font-family:open sans;
-
-}
-    .eb-banner2 p {
-        line-height: 1.6;
-        font-size: 15px;
-        font-weight: 300;
-        margin-top: 20px;
-    }
-.prod-link {
-    text-decoration: underline;
-    font-size: 16px;
-    margin-left: 10px;
-} 
-.eb-banner2-img {
-    background-repeat: no-repeat;
-    border: 1px solid #ccc;
-    padding: 0;
-    margin-top: 50px;
-}
-.chatbot-container {
-    border: none;
-    text-align: center;
-}
-    .chatbot-container img {
-        border: 1px solid #ccc;
-    }
-
-.padd-left-30 {
-    padding-left:30px;
-}
-.overlay2 {
-    padding-bottom: 50px;
-}
-.bg-fafa{
-    background:#fafafa;
-} 
 .bg-white {
     background-color: #fff !important;
-}
-
-.eb-banner2-text {
-    margin-top:50px;
 }
 
 .eb-integrations {
@@ -472,19 +413,21 @@ Navigation bar
 /*Footer*/
 footer {
     padding-top: 30px;
-    background-color: #e6edf1;
+    background-color: #1c3c4c;
     color: white;
     padding-bottom: 30px;
     font-family: open sans;
     font-weight: 300;
 }
     footer h5 {
-        color: #1270a5;
+        color: #a7a7a7;
+        margin-top:0;
     }
 
     footer a {
         text-decoration: none;
-        color: #717171;
+        color: #a7a7a7;
+        font-size: 13px;
     }
 
         footer a:hover, footer a:focus {
@@ -493,27 +436,42 @@ footer {
             border-bottom: 1px dotted #999;
         }
     footer p {
-        color: #717171;
+        color: #a7a7a7;
+        font-size: 12px;
     }
     footer .cmpny-details {
         padding-left: 32px;
     }
     footer ul {
         list-style-type: none;
-        padding:0;
+        padding: 0;
+        padding-left: 20px;
+    }
+    footer ul li {
+        margin-bottom:2px;
     }
 
+.f_social {
+    background: #2e7dfd;
+    padding: 5px;
+    text-align: center;
+    border-radius: 50%;
+    margin: 6px;
+    float:left;
+    color:white;
+}
+.f_social i{
+    width:20px;
+}
 .copyright {
-    min-height: 40px;
     background-color: #1c3c4c;
 }
 
     .copyright p {
-        text-align: left;
-        color: #FFF;
-        padding: 15px 0;
-        margin-bottom: 0px;
-        font-size: 12px;
+        color: #d8cdcd;
+        padding: 10px 0px 0px 0px;
+        font-size: 11px;
+        margin-bottom: 4px;
     }
 
 .heading7 {
@@ -522,29 +480,6 @@ footer {
     color: #3b5998;
     margin-bottom: 10px;
 }
-
-.bottom_ul {
-    list-style-type: none;
-    float: right;
-    margin-bottom: 0px;
-}
-
-    .bottom_ul li {
-        float: left;
-        line-height: 40px;
-    }
-
-        .bottom_ul li:after {
-            content: "|";
-            color: #FFF;
-            margin-right: 8px;
-            margin-left: 8px;
-        }
-
-        .bottom_ul li a {
-            color: #FFF;
-            font-size: 12px;
-        }
 /*Footer*/
 .btn-submit:hover, .btn-submit:focus {
     background-color: #5fcf80;
@@ -760,11 +695,6 @@ footer {
 #technnology {
     padding-bottom: 40px;
 }
-
-    #technnology img {
-        margin-bottom: 20px;
-        height: 100px;
-    }
 
 /*sidebar*/
 #EbsideBar {
@@ -1059,4 +989,52 @@ footer {
 
 #charttype img{
     height: 40px;
+}
+.techstack {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+}
+.techstack a{
+    height:100%
+}
+.techstack img{
+    height:100%;
+}
+.supportedBy{
+    float:left;
+    width:100%;
+}
+.support_logos {
+    width: 25%;
+    float: left;
+    margin: 5% 7% 1% 0%;
+}
+.support_logos img{
+    width: 100%;
+}
+.f12{
+    font-size:12px;
+}
+.cust_img {
+    height: 70px;
+    display: flex;
+    justify-content: center;
+}
+.cust_img img{
+    height:100%;
+}
+.customers{
+    margin-bottom:30px;
+}
+.pr_img_cont {
+    height: 40px;
+    display: flex;
+    justify-content: center;
+}
+.pr_img_cont img{
+    height:100%;
+    width:auto;
 }

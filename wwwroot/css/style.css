@@ -190,6 +190,7 @@ Navigation bar
     border-radius: 2px;
     padding: 7px !important;
     color: white !important;
+    box-shadow: 0 6px 20px 2px rgb(180, 228, 180);
 }
 .ext-pageheader .btn-trial a:hover {
     background: #31d031 !important;
@@ -217,22 +218,6 @@ Navigation bar
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;
     border-radius: 50%;
-}
-
-.badge {
-    font-size: 10px;
-    font-weight: 400;
-    line-height: 13px;
-    padding: 2px 6px;
-    position: absolute;
-    bottom: 14px !important;
-    right: -13px !important;
-    background-color: #3b5998 !important;
-}
-
-.notifications {
-    top: 20px !important;
-    right: 30px !important;
 }
 
 .eb-banner {
@@ -336,9 +321,9 @@ Navigation bar
 .content {
     font-family: 'Open Sans';
     font-weight: 300;
-    font-size: 15px;
+    font-size: 1.5rem;
     color: #494a4a;
-    line-height: 1.5;
+    line-height: 2.5rem;
 }
 
 .icon-box {
@@ -352,11 +337,9 @@ Navigation bar
 
 .ser-text {
     font-size: 22px;
+    margin: 10px 0px 15px;
 }
 
-.icon-text {
-    font-size: 30px;
-}
 /*workshop ends*/
 /*aboutus*/
 .eb-banner-abtus-head {
@@ -1030,11 +1013,39 @@ footer {
     margin-bottom:30px;
 }
 .pr_img_cont {
-    height: 40px;
+    height: 70px;
     display: flex;
     justify-content: center;
 }
 .pr_img_cont img{
     height:100%;
     width:auto;
+}
+.product_info{
+    padding-bottom:50px;
+}
+.pr_text {
+    font-weight: 400;
+    font-family: Montserrat;
+}
+    .pr_text h4 {
+        margin: 15px 0px 15px;
+        font-size: 22px;
+        color: #4e4c4c;
+    }
+    .pr_text p {
+        font-size: 1.5rem;
+        line-height: 2.5rem;
+        color: #36424c;
+    }
+.pd-t6em{
+    padding-top:5em;
+}
+.pd-t-1em{
+    padding-top:1em;
+}
+.pr_link {
+    color: #238fb1;
+    font-size: 12px;
+    width: 100%;
 }

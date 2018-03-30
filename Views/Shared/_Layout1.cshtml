@@ -49,6 +49,7 @@
     <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" />
     <link rel="stylesheet" type="text/css" href="~/css/Survey/EbSurvey.css" />
     <link rel="stylesheet" type="text/css" href="~/css/Survey/EbSurvey.css" />
+    <link rel="stylesheet" href="~/css/EbOnBoarding/AppDashBoard.css" />
 
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -237,6 +238,30 @@
                 }
             }
 
+            <div class="modal fade" id="qick_menu_wrapper_Mod" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document" style="width: 65%;">
+                    <div class="modal-content">
+                        <div class="qick_menu_wrapper">
+                            <div class="quick_menu_head">
+                                <img src="~/images/EB_Logo.png" class="p_i" />
+                            </div>
+                            <div class="quick_menu_body">
+                                <div class="quick_menu_tool">
+                                    <div class="tool_br">
+
+                                    </div>
+                                </div>
+                                <div class="quick_menu_pane">
+                                    <div class="pane_br">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="layout_div" class="container-fluid main-cont">
                 @RenderBody()
                 @RenderSection("EbHead", false)
@@ -249,6 +274,7 @@
     var menu = new menujs('@ViewBag.wc');
     $("#layout_div").data("menu", menu);
 
+    $("body").off("click").on("click", ".quik_menu", function (e) { $("#qick_menu_wrapper_Mod").modal("toggle"); });
 
     $('.list-group a').on('click', function () {
         var $this = $(this),

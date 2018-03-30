@@ -4,28 +4,29 @@
     Html.RenderPartial("ExtPageHeader");
 }
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400" rel="stylesheet">
 <!--Navigation bar/-->
 <!--Slider-->
 @*<script type="text/javascript">
-    window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
-    window.EXPRESSbase_APP_ID = 13;
-    (function () {
-        d = document;
-        s = d.createElement("script");
-        s.src = "/js/ChatBot/ebbot-ext.js";
-        //s.src = "https://expressbase.com/js/ChatBot/ebbot-ext.js";
-        s.async = 1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-        d.ebbotName = "Travel Assistant";
-        d.ebbotThemeColor = "#393";
-        d.botdpURL = 'https://expressbase.com/images/assistant.png';
-    })();
-</script>*@
+        window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
+        window.EXPRESSbase_APP_ID = 13;
+        (function () {
+            d = document;
+            s = d.createElement("script");
+            s.src = "/js/ChatBot/ebbot-ext.js";
+            //s.src = "https://expressbase.com/js/ChatBot/ebbot-ext.js";
+            s.async = 1;
+            d.getElementsByTagName("head")[0].appendChild(s);
+            d.ebbotName = "Travel Assistant";
+            d.ebbotThemeColor = "#393";
+            d.botdpURL = 'https://expressbase.com/images/assistant.png';
+        })();
+    </script>*@
 @*<svg id="boticon" class="boticon" height="0"></svg>*@
 
 <section class="message-box-indexpage">
-   @ViewBag.message
-    <i class="fa fa-close pull-right" id="close-msg"></i>    
+    @ViewBag.message
+    <i class="fa fa-close pull-right" id="close-msg"></i>
 </section>
 <section class="slider eb-banner">
     <div class="container">
@@ -35,8 +36,8 @@
                     <h2>Fast growing Small & Midsize Businesses <br />deserve rapidly evolving software.</h2>
                     <p>
                         RAD platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
-                        Build complex business apps 10x faster, with drag n drop & low-code. Efficiently manage change 
-                        in business processes with versioning & branching of building blocks like SQL data-sources, 
+                        Build complex business apps 10x faster, with drag n drop & low-code. Efficiently manage change
+                        in business processes with versioning & branching of building blocks like SQL data-sources,
                         portable reports, visualizations, web-forms or even bots.
                     </p>
                 </div>
@@ -49,13 +50,13 @@
                     @*<div class="no-creditcared">No credit card required.</div>*@
 
                     @*<form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
-                        <div class="input-group">
-                            <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
-                            <span class="input-group-btn">
-                                <button type="submit" class="btn getstarted">Get Started</button>
-                            </span>
-                        </div>                        
-                    </form>*@
+                            <div class="input-group">
+                                <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn getstarted">Get Started</button>
+                                </span>
+                            </div>
+                        </form>*@
                     <form action="" onsubmit="return validate(this)" method="post">
                         <div class="input-group">
                             <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
@@ -65,25 +66,25 @@
                         </div>
                     </form>
                     @*<div class="form-group social-btn-sec">
-                        <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
-                        <div class="form-inline">
-                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
-                                <i class="fa fa-facebook fa-lg"></i>
-                            </a>
-                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
-                                <i class="fa fa-twitter fa-lg"></i>
-                            </a>
-                            <a class="btn socialbtns" href="#">
-                                <i class="fa fa-linkedin fa-lg"></i>
-                            </a>
-                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
-                                <i class="fa fa-google-plus fa-lg"></i>
-                            </a>
-                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
-                                <i class="fa fa-github fa-lg"></i>
-                            </a>
-                        </div>
-                    </div>*@
+                            <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                            <div class="form-inline">
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                                    <i class="fa fa-facebook fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                                    <i class="fa fa-twitter fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="#">
+                                    <i class="fa fa-linkedin fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                                    <i class="fa fa-google-plus fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                                    <i class="fa fa-github fa-lg"></i>
+                                </a>
+                            </div>
+                        </div>*@
                 </div>
             </div>
         </div>
@@ -93,7 +94,7 @@
 <!--work-shop-->
 <section id="work-shop" class="work-shop">
     <div class="container">
-        <div class="row">           
+        <div class="row">
             <div class="col-md-4 col-lg-4 col-sm-6 col-xs-12">
                 <div class="service-box text-center">
                     <div class="icon-box">
@@ -126,8 +127,10 @@
                     </div>
                     <div class="icon-text">
                         <h4 class="ser-text">App Security</h4>
-                        <h6 class="content">Role Based Access Control (RBAC) standard helps you authorize users by roles.
-                        Create unlimited roles by grouping permissions or even roles.</h6>
+                        <h6 class="content">
+                            Role Based Access Control (RBAC) standard helps you authorize users by roles.
+                            Create unlimited roles by grouping permissions or even roles.
+                        </h6>
                     </div>
                 </div>
             </div>
@@ -150,8 +153,10 @@
                     </div>
                     <div class="icon-text">
                         <h4 class="ser-text">Low Code</h4>
-                        <h6 class="content">No code platforms don’t work for complex requirements. Precisely why we are low-code. 
-                        Put your existing skills to use, code in JavaScript, C# & SQL.</h6>
+                        <h6 class="content">
+                            No code platforms don’t work for complex requirements. Precisely why we are low-code.
+                            Put your existing skills to use, code in JavaScript, C# & SQL.
+                        </h6>
                     </div>
                 </div>
             </div>
@@ -163,8 +168,10 @@
                     </div>
                     <div class="icon-text">
                         <h4 class="ser-text">Faster Time to Market</h4>
-                        <h6 class="content">Conventional modes of development & delivery are high effort-time–money exercises. 
-                        Use our platform to express build complex business apps 10x faster.</h6>
+                        <h6 class="content">
+                            Conventional modes of development & delivery are high effort-time–money exercises.
+                            Use our platform to express build complex business apps 10x faster.
+                        </h6>
                     </div>
                 </div>
             </div>
@@ -179,7 +186,7 @@
         </div>
         <div class="row">
             <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
-                <img src="~/images/alarz.png" class="img-responsive" style="height: 120px;margin-top: -20px;"/>
+                <img src="~/images/alarz.png" class="img-responsive" style="height: 120px;margin-top: -20px;" />
             </div>
             <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
                 <img src="~/images/BMC.png" class="img-responsive" />
@@ -188,10 +195,10 @@
                 <img src="~/images/hairocraft.png" class="img-responsive" />
             </div>
             <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
-                <img src="~/images/ekminute.png" class="img-responsive" style="height: 55px;margin-top: 9px;"/>
+                <img src="~/images/ekminute.png" class="img-responsive" style="height: 55px;margin-top: 9px;" />
             </div>
             <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
-                <img src="~/images/cams.png" class="img-responsive" style="height: 46px;margin-top: 10px;"/>
+                <img src="~/images/cams.png" class="img-responsive" style="height: 46px;margin-top: 10px;" />
             </div>
             <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
                 <img src="~/images/RANCHES.png" class="img-responsive" />
@@ -199,18 +206,82 @@
         </div>
     </div>
 </section>
-<section>
+<section class="product_info">
     <div class="container">
-        <div class="row">
-            <div class="header-section text-center">
-                <h3 style="margin-top: 30px;">OUR SaaS OFFERINGS</h3>
-            </div>
-            <div class="col-md-2 col-lg-2 col-sm-2 col-xs-12 pr_cont">
+        <div class="header-section text-center">
+            <h3 style="margin-top: 30px;">OUR SaaS OFFERINGS</h3>
+        </div>
+        <div class="row pd-t-1em">
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont pd-l-0">
                 <div class="pr_img_cont">
-                    <img src="~/images/svg/form1.svg" />
+                    <img src="~/images/svg/form_.svg" />
                 </div>
                 <div class="pr_text">
-
+                    <h4 class="text-center">Dynamic.Forms</h4>
+                    <p class="text-center">
+                        Drag n Drop builder with auto persist/retrieval of data without writing even a single line of SQL statement
+                        Heightened security including field level permissions
+                        Infinite custom validations for data integrity
+                        Embeddable scripts to deploy anywhere
+                    </p>
+                    <div class="pr_link text-center">forms.expressbase.com</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont pd-l-0">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/bi.svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Intuitive.Visualizations</h4>
+                    <p class="text-center">
+                        Visualise your data from an SQL into both table and chart visualisations
+                        Interactive dashboard enabling customisation
+                        Drill down dashboards
+                        Embed and Share visualisations
+                    </p>
+                    <div class="pr_link text-center">bi.expressbase.com</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont pd-0">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/report_wall.svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Portable.Reports</h4>
+                    <p class="text-center">
+                        Design and generate visually appealing portable documents (.pdf) using our state-of-the-art Report Designer. Schedule report generation and get it sent to any email any time.
+                        Support for QR Code, Bar Code, images, shapes etc. Embed into your websites or applications.
+                    </p>
+                    <div class="pr_link text-center">reports.expressbase.com</div>
+                </div>
+            </div>
+        </div>
+        <div class="row pd-t6em">
+            <div class="col-md-4 col-lg-4 col-sm-4 col-md-offset-2 col-lg-offset-2 col-xs-12 pr_cont pd-r-0">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/chat_.svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Adaptive.Bots</h4>
+                    <p class="text-center">
+                        Create your own bots using Simple Drag n Drop Builder and deploy everywhere
+                        Initiate and Automate business workflows from the bot itself
+                        An elegant solution for Data collection, Surveys and even Enterprise forms
+                    </p>
+                    <div class="pr_link text-center">bots.expressbase.com</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont pd-r-0">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/document_ .svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Managed.Documents</h4>
+                    <p class="text-center">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. In viverra consequat velit,
+                        nec tempus elit. In finibus ex eget semper vestibulum.
+                    </p>
+                    <div class="pr_link text-center">docs.expressbase.com</div>
                 </div>
             </div>
         </div>
@@ -227,13 +298,13 @@
                 <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="http://jquery.com/"><img class="img-responsive" src="~/images/jquery.png" /></a></div>
                 <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://vue.js.org/"><img class="img-responsive" src="~/images/vue.png" /></a></div>
                 <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://www.microsoft.com/net/"><img class="img-responsive" src="~/images/aspnetcore.png" /></a></div>
-                <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://servicestack.net/"><img class="img-responsive" src="~/images/servicestack.png" /></a></div>         
+                <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://servicestack.net/"><img class="img-responsive" src="~/images/servicestack.png" /></a></div>
             </div>
             <div class="row" style="margin-bottom:40px;">
                 <div class="col-md-2 col-md-offset-2 col-xs-6 techstack"><a href="https://www.postgresql.org/"><img class="img-responsive" src="~/images/postgresql.png" /></a></div>
                 <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://redis.io/"><img class="img-responsive" src="~/images/redis-logo.png" /></a></div>
                 <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://www.rabbitmq.com/"><img class="img-responsive" src="~/images/rabitMq.png" /></a></div>
-                <div class="col-md-2  col-sm-4 col-xs-6 techstack"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" style="padding: 3px;" /></a></div>            
+                <div class="col-md-2  col-sm-4 col-xs-6 techstack"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" style="padding: 3px;" /></a></div>
             </div>
             <div class="row">
                 <div class="col-md-2 col-md-offset-1 col-sm-4 col-xs-6 techstack"><a href="https://www.docker.com/"><img class="img-responsive" src="~/images/docker.png" style="padding: 9px;" /></a></div>
@@ -253,13 +324,13 @@
         <div class="col-md-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-xs-12 col-sm-offset-4">
             @*<div class="no-creditcared">No credit card required.</div>*@
             @*<form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
-                <div class="input-group">
-                    <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
-                    <span class="input-group-btn">
-                        <button type="submit" class="btn getstarted">Get Started</button>
-                    </span>
-                </div>
-            </form>*@
+                    <div class="input-group">
+                        <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn getstarted">Get Started</button>
+                        </span>
+                    </div>
+                </form>*@
             <form action="" onsubmit="return validate(this)" method="post">
                 <div class="input-group">
                     <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
@@ -269,26 +340,26 @@
                 </div>
             </form>
             @*<div class="form-group social-btn-sec">
-                <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
-                <div class="form-inline">
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
-                        <i class="fa fa-facebook fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
-                        <i class="fa fa-twitter fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="#">
-                        <i class="fa fa-linkedin fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
-                        <i class="fa fa-google-plus fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
-                        <i class="fa fa-github fa-lg"></i>
-                    </a>
-                </div>
-            </div>*@
-        </div>        
+                    <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
+                    <div class="form-inline">
+                        <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                            <i class="fa fa-facebook fa-lg"></i>
+                        </a>
+                        <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                            <i class="fa fa-twitter fa-lg"></i>
+                        </a>
+                        <a class="btn socialbtns" href="#">
+                            <i class="fa fa-linkedin fa-lg"></i>
+                        </a>
+                        <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                            <i class="fa fa-google-plus fa-lg"></i>
+                        </a>
+                        <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                            <i class="fa fa-github fa-lg"></i>
+                        </a>
+                    </div>
+                </div>*@
+        </div>
     </div>
 </section>
 <div class="bot-login-sec">
@@ -309,21 +380,21 @@
                 $('#trial-btn').fadeOut();
                /* $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" })*/;
             }
-        });                   
+        });
     });
 
     function validate(form) {
         var email = form.email.value.trim();
-        if (ValidateEmail(email)) 
+        if (ValidateEmail(email))
             return true;
-        else 
+        else
             return false;
     }
     function ValidateEmail(mail) {
         if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
             return (true);
         return (false);
-    }     
+    }
 </script>
 @if (ViewBag.useremail != null)
 {
@@ -340,6 +411,6 @@
             $("#close-msg").click(function (e) {
                 $(".message-box-indexpage").hide();
                 $(".ext-pageheader .navbar").css("top", "0");
-            });    
+            });
     </script>
 }

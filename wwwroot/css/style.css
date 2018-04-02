@@ -216,10 +216,9 @@ Navigation bar
 }
 .eb-banner-text-img-sec {
     width: 100%;
-    
 }
 .get-start-sec {
-    /*margin-top: 10px;*/
+    font-family: var(--fontf);
 }
 .no-creditcared {
     text-align: center;
@@ -248,6 +247,7 @@ Navigation bar
         height: 45px;
         border: none;
         color: white;
+        font-family: var(--fontf);
     }
         .get-start-sec span button:hover {
             color: white;
@@ -279,7 +279,7 @@ Navigation bar
     }
     .bg-color-banner p {
         width: 90%;
-        font-size: 20px;
+        font-size: 18px;
         line-height: 1.6;
         color: white;
         font-family: Montserrat;
@@ -382,7 +382,7 @@ footer {
     background-color: #1c3c4c;
     color: white;
     padding-bottom: 30px;
-    font-family: open sans;
+    font-family: var(--fontf);
     font-weight: 300;
 }
     footer h5 {
@@ -555,8 +555,8 @@ footer {
     .bg-color-banner p {font-size: 14px;}
     .get-start-sec .col-md-4{margin:20px 0;}
     .multi_db_supp_img img {
-        width: 100%;
-        height: auto;
+        width: 100% !important;
+        height: auto !important;
     }
 }
 

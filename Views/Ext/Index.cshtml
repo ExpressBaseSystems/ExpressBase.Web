@@ -23,13 +23,13 @@
 @*<svg id="boticon" class="boticon" height="0"></svg>*@
 
 <section class="message-box-indexpage">
-    @ViewBag.message
+    <span>@ViewBag.message</span>
     <i class="fa fa-close pull-right" id="close-msg"></i>
 </section>
 <section class="slider eb-banner">
     <div class="container">
         <div class="row">
-            <div class="col-md-12 no-padd eb-banner-text-img-sec">
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd eb-banner-text-img-sec">
                 <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner">
                     <h2>Fast growing Small & Midsize Businesses <br />deserve rapidly evolving software.</h2>
                     <p class="">
@@ -44,7 +44,7 @@
                 </div>
             </div>
             <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd get-start-sec" style="padding-bottom: 3em;padding-top: 4em;">
-                <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3">
+                <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 callfaction_cont">
                     @*<div class="no-creditcared">No credit card required.</div>*@
 
                     @*<form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
@@ -55,11 +55,11 @@
                                 </span>
                             </div>
                         </form>*@
-                    <form action="" onsubmit="return validate(this)" method="post">
+                    <form action="" method="post" class="joinbeta">
                         <div class="input-group">
-                            <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                            <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
                             <span class="input-group-btn">
-                                <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin"></i></button>
+                                <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
                             </span>
                         </div>
                     </form>
@@ -154,7 +154,7 @@
                 </div>
             </div>
         </div>
-        <div class="row" style="margin-top: 4rem;">
+        <div class="row feature_row_second">
             <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
                 <div class="service-box text-center">
                     <div class="icon-box">
@@ -248,7 +248,7 @@
             </div>
         </div>
         <div class="row pd-t6em">
-            <div class="col-md-4 col-lg-4 col-sm-4 col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-xs-12 pr_cont pd-r-0">
+            <div class="col-md-4 col-lg-4 col-sm-4 col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-xs-12 pr_cont pd-r-0 pdl0xssm">
                 <div class="pr_img_cont">
                     <img src="~/images/svg/bi.svg" />
                 </div>
@@ -261,7 +261,7 @@
                     @*<div class="pr_link text-center">bi.expressbase.com</div>*@
                 </div>
             </div>
-            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont">
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont pdr0xssm">
                 <div class="pr_img_cont">
                     <img src="~/images/svg/document_ .svg" />
                 </div>
@@ -290,7 +290,7 @@
                 </p>
             </div>
             <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 multi_db_supp_img">
-                <img src="~/images/dbsupport.png" class="img-responsive" />
+                <img src="~/images/dbsupport.png" class="img-responsive hidden-xs hidden-sm" />
             </div>
         </div>
     </div>
@@ -299,7 +299,7 @@
     <div class="container">
         <div class="row">
             <h3 class="mt0 eb_font_H text-center h_b cw">High productivity aPaaS</h3>
-            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12" style="border-right: 1px solid #80adc3;">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 _quats" style="border-right: 1px solid #80adc3;">
                 <div class="cust_callout_block">
                     <div class="cust_callout_content">
                         <p>
@@ -341,20 +341,22 @@
     <div class="container">
         <div class="row">
             <h3 class="mt0 eb_font_H text-center h_b">Built with Passion</h3>
-            <div class="col-md-2 col-md-offset-1 col-lg-offset-1 col-sm-4 col-xs-6 techstack"><a href="https://getbootsrap.com/net/"><img class="img-responsive" src="~/images/bootsrap.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack b40"><a href="http://jquery.com/"><img class="img-responsive" src="~/images/jquery.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack b40"><a href="https://vue.js.org/"><img class="img-responsive" src="~/images/vue.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack b40"><a href="https://www.microsoft.com/net/"><img class="img-responsive" src="~/images/aspnetcore.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack b40"><a href="https://servicestack.net/"><img class="img-responsive" src="~/images/servicestack.png" /></a></div>
-            <div class="col-md-2 col-md-offset-2 col-xs-6 techstack"><a href="https://www.postgresql.org/"><img class="img-responsive" src="~/images/postgresql.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack b40"><a href="https://redis.io/"><img class="img-responsive" src="~/images/redis-logo.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack b40"><a href="https://www.rabbitmq.com/"><img class="img-responsive" src="~/images/rabitMq.png" /></a></div>
-            <div class="col-md-2  col-sm-4 col-xs-6 techstack b40"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" style="padding: 3px;" /></a></div>
-            <div class="col-md-2 col-md-offset-1 col-sm-4 col-xs-6 techstack"><a href="https://www.docker.com/"><img class="img-responsive" src="~/images/docker.png" style="padding: 9px;" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://www.nginx.com/"><img class="img-responsive" src="~/images/nginx.png" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://www.kubernetes.io/"><img class="img-responsive" src="~/images/kubernetes-logo.png" style="" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://cloud.google.com/"><img class="img-responsive" src="~/images/gcp-logo.png" style="" /></a></div>
-            <div class="col-md-2 col-sm-4 col-xs-6 techstack"><a href="https://azure.microsoft.com/"><img class="img-responsive" src="~/images/azure.png" /></a></div>
+            <div class="col-md-2 col-md-offset-1 col-lg-offset-1 col-sm-2 col-sm-offset-1 col-xs-6 techstack"><a href="https://getbootsrap.com/net/"><img class="img-responsive" src="~/images/bootsrap.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="http://jquery.com/"><img class="img-responsive" src="~/images/jquery.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://vue.js.org/"><img class="img-responsive" src="~/images/vue.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.microsoft.com/net/"><img class="img-responsive" src="~/images/aspnetcore.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://servicestack.net/"><img class="img-responsive" src="~/images/servicestack.png" /></a></div>
+            
+            <div class="col-md-2 col-md-offset-2 col-sm-2 col-sm-offset-2 col-xs-6 techstack"><a href="https://www.postgresql.org/"><img class="img-responsive" src="~/images/postgresql.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://redis.io/"><img class="img-responsive" src="~/images/redis-logo.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.rabbitmq.com/"><img class="img-responsive" src="~/images/rabitMq.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" style="padding: 3px;" /></a></div>
+            
+            <div class="col-md-2 col-md-offset-1 col-sm-offset-1 col-xs-6 col-sm-2 techstack"><a href="https://www.docker.com/"><img class="img-responsive" src="~/images/docker.png" style="padding: 9px;" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://www.nginx.com/"><img class="img-responsive" src="~/images/nginx.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://www.kubernetes.io/"><img class="img-responsive" src="~/images/kubernetes-logo.png" style="" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://cloud.google.com/"><img class="img-responsive" src="~/images/gcp-logo.png" style="" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://azure.microsoft.com/"><img class="img-responsive" src="~/images/azure.png" /></a></div>
         </div>
     </div>
 </section>
@@ -365,7 +367,7 @@
             <h3 class="mt0 eb_font_H text-center h_b">Join Us</h3>
         </div>
         <div class="col-md-12 no-padd get-start-sec">
-            <div class="col-md-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-xs-12 col-sm-offset-4">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 callfaction_cont">
                 @*<div class="no-creditcared">No credit card required.</div>*@
                 @*<div class="no-creditcared">No credit card required.</div>*@
                 @*<form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
@@ -376,11 +378,11 @@
                             </span>
                         </div>
                     </form>*@
-                <form action="" onsubmit="return validate(this)" method="post">
+                <form action="" method="post" class="joinbeta">
                     <div class="input-group">
-                        <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                        <input type="email" id="emailtxt" name="Email" class="form-control emailtxt" placeholder="Enter your email">
                         <span class="input-group-btn">
-                            <button type="submit" class="btn getstarted">Join our Private Beta</button>
+                            <button type="submit" class="btn getstarted">Join our Private Beta <i class="fa fa-spinner fa-spin jb"></i></button>
                         </span>
                     </div>
                 </form>
@@ -424,11 +426,12 @@
             } else {
                 $('#trial-btn').fadeOut();
             }
+            $(".message-box-indexpage").fadeOut();
+            $(".ext-pageheader .navbar").css("top", "0");
         });
     });
-
     function validate(form) {
-        var email = form.email.value.trim();
+        var email = form.Email.value.trim();
         if (ValidateEmail(email))
             return true;
         else
@@ -439,14 +442,37 @@
             return (true);
         return (false);
     }
+    $(".joinbeta").submit(function (e) {
+        e.preventDefault();
+        if (validate(this)) {
+            $.ajax({
+                type: 'POST',
+                url: "../Ext/JoinBeta",
+                beforeSend: function () {
+                    $(e.target).children().find('i').show();
+                },
+                data: $(e.target).serializeArray()
+            }).done(function (data) {
+                var msg = data ? "Thank you for your interest in our private beta. We will get back to you shortly." : "You have already specified your interest to join our private beta. We will get back to you shortly.";
+                $(e.target).children().find('i').hide();
+                $(e.target).children().find(".emailtxt").val("");
+                $(".message-box-indexpage").fadeIn().children("span").text(msg);
+                $(".ext-pageheader .navbar").css("top", "40px");
+                $("#close-msg").click(function (e) {
+                    $(".message-box-indexpage").fadeOut();
+                    $(".ext-pageheader .navbar").css("top", "0");
+                });
+            });
+        }
+    });
 </script>
-@if (ViewBag.useremail != null)
+@*@if (ViewBag.useremail != null)
 {
     <script>
             $("#login-modal").modal('toggle');
             $("#email-login").val("@ViewBag.useremail");
     </script>
-}
+}*@
 @if (ViewBag.message != null)
 {
     <script>

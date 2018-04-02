@@ -83,9 +83,9 @@ body {
     color: white;
     padding: 15px;
     font-size: 16px;
-    font-family: open sans;
+    font-family: var(--fontf);
     font-weight: 400;
-    display:none;
+    display: none;
 }
 /***********************************
 Navigation bar
@@ -252,7 +252,9 @@ Navigation bar
         .get-start-sec span button:hover {
             color: white;
         }
-
+        .get-start-sec span button:focus {
+            color: white;
+        }
     .get-start-sec .social-btn-sec {
         margin-top: 10px;
         text-align: center;
@@ -279,8 +281,8 @@ Navigation bar
     }
     .bg-color-banner p {
         width: 90%;
-        font-size: 18px;
-        line-height: 1.6;
+        font-size: 17px;
+        line-height: 3.2rem;
         color: white;
         font-family: Montserrat;
         font-weight: 300;
@@ -322,7 +324,9 @@ Navigation bar
     font-size: 22px;
     margin: 10px 0px 15px;
 }
-
+.feature_row_second {
+    margin-top: 4rem;
+}
 /*workshop ends*/
 /*aboutus*/
 .eb-banner-abtus-head {
@@ -480,66 +484,52 @@ footer {
     .service-box {
         padding: 0 !important;
     }
+    .cust_callout_content {height: auto !important;}
+    .multi_db_supp_text {width: 100%;}
+        .multi_db_supp_text p {text-align: center;}
+        .multi_db_supp_text h3 {text-align: center;}
+    ._quats{width:100% !important}
+    .mt {padding-top: 2em;}
+    .mb {padding-bottom: 2em;}
+    .h_b {margin-bottom: 1em;}
+    .pdl0xssm{padding-left:0;}
+    .pdr0xssm{padding-right:0;}
+    .img_main_callout img {height: 19px !important;}
+    .bg-color-banner h2 {padding-bottom: 30px;}
 }
 
 @media (min-width: 20px) and (max-width: 450px) {
     .header-section p {
         font-size: 20px;
     }
-
     .heading {
         margin-bottom: 20px;
     }
-
-    .service-box {
-        margin-bottom: 30px;
-    }
-
     .contact-form-button {
         width: 40%;
     }
-
     .footer .social-links li {
         margin: 0 5px 25px;
     }
-
     .modal-sm {
         width: 300px;
     }
-
     .login-box-body {
         padding: 15px 20px;
     }
-
     .navbar-default .navbar-brand {
         margin-left: 10px;
     }
-
     .navbar-default .navbar-nav > li > a {
         text-align: center;
         font-size: 12px;
         font-weight: normal;        
     }
-    .navbar-collapse,collapse in {
-       
-    }
-    .eb-banner2-img {
-        padding-left:15px;
-        padding-right:15px;
-        border:none;
-    }
-    .chatbot-container img{
-        width:98%;
-    }
-    .parteners-last {
-        padding-top:20px;
-    }
-    .gl {
-        text-align: center;
-    }
-    .pr_cont{
-        margin-bottom:30px;
-    }
+    .eb-banner2-img {padding-left:15px;padding-right:15px;border:none;}
+    .chatbot-container img{width:98%;}
+    .parteners-last { padding-top:20px;}
+    .gl {text-align: center;}
+    .pr_cont{margin-bottom:30px;}
     .pd-t6em {padding-top: 0 !important;}
     .for-mob {display: flex;align-items: center;justify-content: center;}
     .supportedBy {display: flex;align-items: center;justify-content: center;margin-bottom: 15px;}
@@ -554,10 +544,19 @@ footer {
     .bg-color-banner h2 {font-size: 35px;}
     .bg-color-banner p {font-size: 14px;}
     .get-start-sec .col-md-4{margin:20px 0;}
-    .multi_db_supp_img img {
-        width: 100% !important;
-        height: auto !important;
-    }
+    .multi_db_supp_img img {width: 100% !important;height: auto !important;}
+    .cust_callout_content {height: auto !important;padding:0 !important;text-align:left !important;}
+    .callfaction_cont{padding:0;}
+    .callfaction_cont .getstarted{font-size:9px;}
+    .emailtxt {font-size: 11px;}
+    .h_b {margin-bottom: 1em;}
+    .feature_row_second {margin-top: 0;}
+    .multi_db_supp_text p {font-size: 1.6rem !important;text-align: center;}
+    .mt { padding-top: 2em;}
+    .mb {padding-bottom: 2em;}
+    .multi_db_supp_text h3 {text-align: center;}
+    .img_main_callout {text-align: right;}
+    .bg-color-banner{padding:0 !important}
 }
 
 .login-box-body {
@@ -566,21 +565,22 @@ footer {
 
 .aboutus-header {
     min-height: 500px;
-    background: var(--ebbg);
-    background-image: var(--ebbgimage);
     width: 100%;
-    font-family:open sans;
-    font-weight:300;
+    font-family: var(--fontf);
+    font-weight: 300;
+    padding-top: 100px;
 }
 .aboutus-header h1{
     color:white;
 }
 .founder {
     padding-top: 50px;
-    background: #fafafa;
     padding-bottom: 50px;
-    font-family: open sans;
+    font-family: var(--fontf);
 }
+    .founder .detail-info {
+        line-height: 3rem;
+    }
 
 .sign-in-ext {
     margin-top: 50px;
@@ -937,4 +937,9 @@ footer {
 }
 .cw {
     color: gainsboro;
+}
+.jb {
+    margin-left: 5px;
+    font-size: 18px;
+    display:none;
 }

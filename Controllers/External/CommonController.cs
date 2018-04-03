@@ -20,8 +20,7 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-     
-
+        
         //[HttpPost]
         //public string UniqueCheck(string text)
         //{

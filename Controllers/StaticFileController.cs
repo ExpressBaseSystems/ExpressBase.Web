@@ -3,6 +3,7 @@ using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.ServiceClients;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using ServiceStack;
 using System;
 using System.Collections.Generic;
@@ -129,45 +130,38 @@ namespace ExpressBase.Web.Controllers
         public async Task<JsonResult> UploadImageAsync(int i, string tags)
         {
             JsonResult resp = null;
-            string Id = string.Empty;
-            string url = string.Empty;
-
-            //tags = String.IsNullOrEmpty(tags) ? "UnniTest,PGSQL,FilterSearch,UploadImageAsync" : tags;
+            var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);
             try
             {
                 var req = this.HttpContext.Request.Form;
                 UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new FileMeta();
-                if (!String.IsNullOrEmpty(tags))
-                {
-                    List<string> Tags = new List<string>(tags.Split(','));
-                    uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
-                    uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", Tags);
-                }
+
                 foreach (var formFile in req.Files)
                 {
                     if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split('.')[1].ToLower()))
                     {
                         byte[] myFileContent;
-
                         using (var memoryStream = new MemoryStream())
                         {
                             await formFile.CopyToAsync(memoryStream);
                             memoryStream.Seek(0, SeekOrigin.Begin);
                             myFileContent = new byte[memoryStream.Length];
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
-
                             uploadImageRequest.ImageByte = myFileContent;
                         }
 
+                        if (!dict.IsEmpty())
+                        {
+                            uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", dict[formFile.FileName]);
+                        }
                         uploadImageRequest.ImageInfo.FileName = formFile.FileName;
                         uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split('.')[1];
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         this.FileClient.Post<bool>(uploadImageRequest);
-                        url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
-
-                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK", initialPreview = url, objId = Id });
+                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK" });
                     }
                 }
             }
@@ -222,6 +216,13 @@ namespace ExpressBase.Web.Controllers
             FileInfoList = this.FileClient.Post(findFilesByTagRequest);
 
             return FileInfoList;
+        }
+
+        [HttpPost]
+        public List<FileMeta> FindFilesByTenant(int type)
+        {            
+            List<FileMeta> resp= this.FileClient.Post(new InitialFileReq{ Type = (FileClass)type });
+            return resp;
         }
     }
 }

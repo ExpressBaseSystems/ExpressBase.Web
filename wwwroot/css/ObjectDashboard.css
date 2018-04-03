@@ -87,12 +87,11 @@
 
 .objectDashB-toolbar {
     width: 100%;
-    background-color: #2c2d27;
-    //margin-top: 50px;
-    padding-left: 10px;
-    padding-right: 10px;
+    background-color: #ffffff;
     position: fixed;
     z-index: 10;
+    padding: 2px 2px 2px 2px;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.35);
 }
 
 .app_div {
@@ -118,20 +117,116 @@
 .toolbar2 {
     margin-top: 5px;
 }
+.bread_cr_title {
+    float:left;
+}
+.obj_list_shortCut {
+    float: left;
+    background-color: transparent;
+    color: #336699;
+    padding: 3px 12px;
+    font-size: 18px;
+    margin-right: 5px;
+}
 
 .toolicons .btn {
     background-color: transparent;
+    color: #336699;
+    padding: 3px 12px;
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+    .toolicons .btn:hover {
+        background-color: #e4e4e4;
+        border-radius: 0;
+        outline: none;
+        border-radius: 4px;
+    }
+
+    .toolicons .btn:focus {
+        background-color: #e4e4e4;
+        border-radius: 0;
+        outline: none;
+        border-radius: 4px;
+    }
+    /*profile image and dropdown style*/
+.obj_dash_proimage_drp {
+    float: right;
+}
+    .obj_dash_proimage_drp .dropdown-menu {
+        right: 5px;
+        left: unset;
+        padding: 0;
+    }
+.drp_ul {
+    list-style: none;
+    padding: 5px;
+    background-color: #fafafa;
+    min-width: 270px;
+    width: 270px;
+    margin: 0;
+    z-index:100;
+}
+.drp_item a {
+    cursor: pointer;
+    height: 50px;
+    margin: 0;
+    overflow: hidden;
+    padding: 8px 20px 8px 20px;
+    width: 100%;
+    display: flex;
+    font-size: 14px;
+    color: #333;
+    font-family: open sans;
+    align-items: center;
+}
+.border_b{
+  border-bottom:1px solid #ccc;
+}
+.drp_item a i{
+    margin-right:3rem;
+}
+.drp_item .user_info {
+    min-width: 80%;
+    height: 100%;
+    float: left;
+    padding: 5px 5px 5px 12px;
+}
+    .drp_item .user_info h4 {
+        font-family: open sans;
+        margin: 0;
+        font-size:16px;
+    }
+    .drp_item .user_info p {
+        margin: 3px 0;
+    }
+.proimage_inner {
+    float: left;
+    height: 83%;
+    margin-right: 1rem;
+}
+.obj_dash_proimage {
+    height: 28px;
+    margin-right: 5px;
+    cursor:pointer;
+}
+/*profile image and dropdown style end.....................*/
+.notification_menu {
+    position:relative;
+}
+.notification_menu:after {
+    content: "10";
+    position: absolute;
+    font-size: 9px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: #f90a0a;
+    height: 15px;
     color: white;
-}
-
-.toolicons .btn:hover {
-    background-color: #30C2FF;
-    border-radius: 0;
-}
-
-.toolicons .btn:focus {
-    background-color: #30C2FF;
-    border-radius: 0;
+    border: 2px solid #f90a0a;
+    right: 5px;
+    top: -1px;
 }
 
 .dashbord .userimg {
@@ -221,10 +316,6 @@ li:hover {
 .box5 {
     margin-left: 17px !important;
 }
-
-.vernav {
-}
-
 .wrkcpylink {
     text-decoration: none;
     font-family: sans-serif;
@@ -241,8 +332,6 @@ li:hover {
 .codedit .tab-section-common .nav > .active a {
     background: white;
 }
-
-
 /*changelog*/
 .changLog-container {
     display: none;
@@ -330,3 +419,46 @@ li:hover {
         padding: 2px;
     }
 
+    /*quick menu*/
+.qick_menu_wrapper {
+    background: #fafafa;
+    height: 500px;
+    width: 100%;
+}
+.quick_menu_head {
+    padding: 2px;
+    background: white;
+    float: left;
+    width: 100%;
+}
+.quick_menu_head .p_i {
+    float:left;
+    height:34px;
+}
+.quick_menu_body {
+    height: calc(100% - 40px);
+    float: left;
+    width:100%;
+}
+.quick_menu_tool {
+    float: left;
+    width: 25%;
+    height: 100%;
+    padding: 5px;
+}
+.quick_menu_pane {
+    float: left;
+    width: 75%;
+    height: 100%;
+    padding: 10px 10px 10px 0px;
+}
+.tool_br {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+.pane_br {
+    width: 100%;
+    height: 100%;
+    background-color: WHITE;
+}

@@ -49,16 +49,11 @@
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
             else
                 value = (!meta.enumoptions[value]) ? Object.keys(meta.enumoptions)[0] : value;
-            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, );
+            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, IsCElimitEditor);
             if (!IsCElimitEditor)
-                this.getValueFuncs[name] = function () {
-                    return parseInt($('#' + elemId).val());
-                };
+                this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
             else
-                this.getValueFuncs[name] = function () {
-                    console.log("getValueFuncs 2");
-                    return this.PropsObj.Columns.$values[parseInt($('#' + elemId).val())];
-                }.bind(this);
+                this.getValueFuncs[name] = function () { var idx = parseInt($('#' + elemId).val()) , value = (idx !== 0) ? this.PropsObj[meta.source].$values[idx -1] : null; return value; }.bind(this);
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
 
         }
@@ -90,7 +85,7 @@
             else {
                 var _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
-                _meta.enumoptions = this.PropsObj.Columns.$values.map(a => (a.name || a.ColumnName));
+                _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.name || a.ColumnName))];
                 return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf, true);
             }
         }
@@ -183,12 +178,10 @@
     };
 
     // BootstrapSelect Html builder
-    this.getBootstrapSelectHtml = function (id, selectedValue, options) {
-        selectedValue = selectedValue || 0;
+    this.getBootstrapSelectHtml = function (id, selectedValue, options, IsCElimitEditor) {
+        selectedValue = selectedValue || 0; // default value....optimize
         var html = "<select class='selectpicker' >";
-        $.each(options, function (i, val) {
-            html += "<option data-token='" + i + "'>" + val + "</option>";
-        });
+        $.each(options, function (i, val) { html += `<option style='@color;' data-token='${i}'>${val}</option>`.replace("@color", (IsCElimitEditor && i === 0) ? "color:#777" : ""); });
         html += "</select><input type='hidden' value='" + selectedValue + "' id='" + id + "'>";
         return html;
     };

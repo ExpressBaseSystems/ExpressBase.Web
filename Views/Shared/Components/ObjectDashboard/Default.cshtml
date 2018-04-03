@@ -4,11 +4,14 @@
 <div class="row" id="">
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-4 pd-0">
-            <div class="brdCrumb col-md-12 pd-0">
-                <a href="#"> Home/</a>
-            </div>
-            <div class="col-md-12 pd-0">
-                <h5 class="mr-0" style="color:white"> <label id="objname">@ViewBag.ObjName</label></h5>
+            <button class="btn obj_list_shortCut quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
+            <div class="bread_cr_title">
+                <div class="brdCrumb col-md-12 pd-0">
+                    <a href="#"> Home/</a>
+                </div>
+                <div class="col-md-12 pd-0">
+                    <h5 class="mr-0"> <label id="objname">@ViewBag.ObjName</label></h5>
+                </div>
             </div>
         </div>
         <div class="col-md-8 pd-0">
@@ -35,14 +38,32 @@
                             <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
                         }
                     }
-                    <button class='btn' id="minmize"><i class="fa fa-caret-up" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
+                    <button class="btn notification_menu">
+                        <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
+                    </button> 
+                    <div class="dropdown obj_dash_proimage_drp">                        
+                        <img src="~/images/proimg.jpg" data-toggle="dropdown" class="obj_dash_proimage img-responsive dropdown-toggle" />
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <ul class="drp_ul">
+                                <li class="drp_item border_b" style="height:50px;">
+                                    <img src="~/images/proimg.jpg" class="proimage_inner" /><div class="user_info">
+                                    <h4>Sample name</h4>
+                                    <p>sample@gmail.com</p>
+                                    </div>
+                                </li>
+                                <li class="drp_item border_b"><a><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                <li class="drp_item"><a><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class='btn' id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="dashbord">
+    <div class="dashbord" style="display:none;">
         <div class="col-md-7 box2">
             @{
                 if (ViewBag.Refid.Length > 0)

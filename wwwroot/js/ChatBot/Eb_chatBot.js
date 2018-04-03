@@ -72,6 +72,7 @@
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
         $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
+        this.initConnectionCheck();
         this.showDate();
         //$('body').confirmation({
         //    selector: '.eb-chatBox'
@@ -579,7 +580,7 @@
         this.curCtrl = this.curForm.controls[idx];
         var name = this.curCtrl.name;
 
-        if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation")))
+        if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation" || this.curCtrl.objType === "Image")))
             $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
         var lablel = this.curCtrl.label;
         if (lablel) {
@@ -936,6 +937,18 @@
             }
         }.bind(this), { scope: 'email' });
     }
+
+    this.initConnectionCheck = function () {
+        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://www.expressbase.com/images/EB_Logo.png?' + Date.now() }, active: 'image' } };
+        setInterval(this.connectionPing, 2000);
+    };
+
+    this.connectionPing = function () {
+        Offline.options.checks.image.url = 'https://www.expressbase.com/images/EB_Logo.png?' + Date.now();
+        if (Offline.state === 'up')
+            Offline.check();
+        console.log(Offline.state);
+    };
     this.init();
 };
 

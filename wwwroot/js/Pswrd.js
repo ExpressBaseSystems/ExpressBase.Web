@@ -1,7 +1,4 @@
-﻿
-                  
-
-$(document).ready(function () {
+﻿$(document).ready(function () {
     $('#password').keyup(function () {
         $('#result').html(checkStrength($('#password').val()))
     })

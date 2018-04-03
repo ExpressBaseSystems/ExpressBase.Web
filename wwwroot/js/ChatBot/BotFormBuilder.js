@@ -429,10 +429,10 @@
         }.bind(this);
 
         this.setAllChildObjColumns = function (PropsObj) {
-            $.each(PropsObj.Fields.$values, function (i, item) { item.Columns = PropsObj.Columns; });
+            $.each(PropsObj.CardFields.$values, function (i, item) { item.Columns = PropsObj.Columns; });
 
             var _this = this;
-            Object.defineProperty(PropsObj.Fields.$values, "push", {
+            Object.defineProperty(PropsObj.CardFields.$values, "push", {
                 configurable: false,
                 enumerable: false, // hide from for...in
                 writable: false,

@@ -41,7 +41,7 @@ namespace ExpressBase.Web.Controllers
     public class ExtController : EbBaseExtController
     {
         public const string RequestEmail = "reqEmail";
-        public const string Email = "email";
+        //public const string Email = "email";
 
         public ExtController(IServiceClient _client, IRedisClient _redis)
             : base(_client, _redis) { }
@@ -84,7 +84,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult ResetPassword()
         {
-            
+
             return View();
         }
 
@@ -98,7 +98,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult ForgotPassword(int i)
         {
-            string Email = this.HttpContext.Request.Form["Email"];            
+            string Email = this.HttpContext.Request.Form["Email"];
             UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = Email });
             if (!result.isUniq)
             {
@@ -111,7 +111,7 @@ namespace ExpressBase.Web.Controllers
                 TempData["Message"] = string.Format("{0} invalid!", Email);
                 return RedirectToAction("ForgotPassword");
             }
-                
+
         }
 
         public IActionResult UsrSignIn()
@@ -136,16 +136,16 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-		public IActionResult TestFeb()
-		{
-			EbXmlSerializer s = new EbXmlSerializer();
-			SamClass obj = new SamClass {id = 1, name = "asdfg" };
-			ViewBag.str = s.Serialize<SamClass>(obj);
-			return View();
-		}
+        public IActionResult TestFeb()
+        {
+            EbXmlSerializer s = new EbXmlSerializer();
+            SamClass obj = new SamClass { id = 1, name = "asdfg" };
+            ViewBag.str = s.Serialize<SamClass>(obj);
+            return View();
+        }
 
 
-		[HttpPost]
+        [HttpPost]
         public IActionResult StripeResponse()
         {
             var json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
@@ -238,7 +238,7 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                string reqEmail = this.HttpContext.Request.Form[Email];
+                string reqEmail = this.HttpContext.Request.Form[TokenConstants.EMAIL];
                 TempData[RequestEmail] = reqEmail;
                 UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
                 if (result.isUniq)
@@ -276,8 +276,8 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string btoken = req["Btoken"].ToString();
-			string rtoken = req["Rtoken"].ToString();
-			int apptype = Convert.ToInt32(req["AppType"]);
+            string rtoken = req["Rtoken"].ToString();
+            int apptype = Convert.ToInt32(req["AppType"]);
             string Email = req["Email"].ToString();
 
             if (TenantSingleSignOn(btoken, rtoken))
@@ -293,73 +293,73 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-		public bool TenantSingleSignOn(string btoken, string rtoken)
-		{            
-            var host = this.HttpContext.Request.Host;           
-            string[] hostParts = host.Host.Split('.');
-			string whichconsole = "dc";
+        public bool TenantSingleSignOn(string btoken, string rtoken)
+        {
+            var host = this.HttpContext.Request.Host;
+            string[] hostParts = host.Host.Split(RoutingConstants.DOT);
+            string whichconsole = RoutingConstants.DC;
 
-			////CHECK WHETHER SOLUTION ID IS VALID
+            ////CHECK WHETHER SOLUTION ID IS VALID
 
-			string email = ValidateTokensAndGetUserName(btoken, rtoken);
-			if (string.IsNullOrEmpty(email))
-				return false;
+            string email = ValidateTokensAndGetUserName(btoken, rtoken);
+            if (string.IsNullOrEmpty(email))
+                return false;
 
-			//CHECK WHETHER SOLUTION ID IS VALID
+            //CHECK WHETHER SOLUTION ID IS VALID
 
-			bool bOK2AttemptLogin = true;
+            bool bOK2AttemptLogin = true;
 
-			if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
-				this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+            if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+                this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-			else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
-				this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+            else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
+                this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-			else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
-				this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
+            else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
+                this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
 
-			else
-				bOK2AttemptLogin = false;
+            else
+                bOK2AttemptLogin = false;
 
-			if (bOK2AttemptLogin)
-			{
-				MyAuthenticateResponse authResponse = null;
-				try
-				{
-					var authClient = this.ServiceClient;
-					authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
-					{
-						provider = CredentialsAuthProvider.Name,
-						UserName = email,
-						Password = "NIL",
-						Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", ViewBag.cid }, { "sso", "true" } },
-					});
+            if (bOK2AttemptLogin)
+            {
+                MyAuthenticateResponse authResponse = null;
+                try
+                {
+                    var authClient = this.ServiceClient;
+                    authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                    {
+                        provider = CredentialsAuthProvider.Name,
+                        UserName = email,
+                        Password = "NIL",
+                        Meta = new Dictionary<string, string> { { RoutingConstants.WC, whichconsole }, { TokenConstants.CID, ViewBag.cid }, { "sso", "true" } },
+                    });
 
-				}
-				catch (WebServiceException wse) { Console.WriteLine("Exception:" + wse.ToString()); }
-				catch (Exception wse) { Console.WriteLine("Exception:" + wse.ToString()); }
-				if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized") { }
-				else //AUTH SUCCESS
-				{
-					CookieOptions options = new CookieOptions();
+                }
+                catch (WebServiceException wse) { Console.WriteLine("Exception:" + wse.ToString()); }
+                catch (Exception wse) { Console.WriteLine("Exception:" + wse.ToString()); }
+                if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized") { }
+                else //AUTH SUCCESS
+                {
+                    CookieOptions options = new CookieOptions();
 
-					Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-					Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
 
-					return true;
-				}
-			}
+                    return true;
+                }
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		
 
-		[HttpPost]
+
+        [HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
             var host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split('.');
+            string[] hostParts = host.Host.Split(RoutingConstants.DOT);
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
 
@@ -370,23 +370,23 @@ namespace ExpressBase.Web.Controllers
 
             bool bOK2AttemptLogin = true;
 
-			if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
-				this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+            if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+                this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-			else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
-				this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+            else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
+                this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-			else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
-				this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
+            else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
+                this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
 
-			else
-			{
-				bOK2AttemptLogin = false;
-				_controller = RoutingConstants.EXTCONTROLLER;
-				_action = "Error";
-			}
+            else
+            {
+                bOK2AttemptLogin = false;
+                _controller = RoutingConstants.EXTCONTROLLER;
+                _action = "Error";
+            }
 
-			if (bOK2AttemptLogin)
+            if (bOK2AttemptLogin)
             {
                 string token = req["g-recaptcha-response"];
                 Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
@@ -431,7 +431,7 @@ namespace ExpressBase.Web.Controllers
                             provider = CredentialsAuthProvider.Name,
                             UserName = req["uname"],
                             Password = (req["pass"] + req["uname"]).ToMD5Hash(),
-                            Meta = new Dictionary<string, string> { { "wc", whichconsole }, { "cid", tenantid } },
+                            Meta = new Dictionary<string, string> { { RoutingConstants.WC, whichconsole }, { TokenConstants.CID, tenantid } },
                             RememberMe = true
                             //UseTokenCookie = true
                         });
@@ -460,8 +460,8 @@ namespace ExpressBase.Web.Controllers
 
                         Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
                         Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                        Response.Cookies.Append("UserAuthId", authResponse.User.AuthId, options);
-                        Response.Cookies.Append("X-ss-pid", authResponse.SessionId, options);
+                        Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+                        Response.Cookies.Append(CacheConstants.X_SS_PID, authResponse.SessionId, options);
 
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
@@ -474,36 +474,36 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction(_action, _controller);
         }
 
-		private void DecideConsole(string subDomain, bool isNotTenantUser, out string whichconsole)
-		{
-			string cid = null;
-			if (isNotTenantUser && !subDomain.Equals(CoreConstants.EXPRESSBASE))
-			{
-				if (subDomain.EndsWith("-bot") || subDomain.EndsWith("-mob") || subDomain.EndsWith("-dev"))
-				{
-					cid = subDomain.Substring(0, subDomain.LastIndexOf("-"));
+        private void DecideConsole(string subDomain, bool isNotTenantUser, out string whichconsole)
+        {
+            string cid = null;
+            if (isNotTenantUser && !subDomain.Equals(CoreConstants.EXPRESSBASE))
+            {
+                if (subDomain.EndsWith(RoutingConstants.DASHBOT) || subDomain.EndsWith(RoutingConstants.DASHMOB) || subDomain.EndsWith(RoutingConstants.DASHDEV))
+                {
+                    cid = subDomain.Substring(0, subDomain.LastIndexOf(RoutingConstants.DASH));
 
-					if (subDomain.EndsWith("-bot"))
-						whichconsole = EbAuthContext.BotUserContext;
-					else if (subDomain.EndsWith("-mob"))
-						whichconsole = EbAuthContext.MobileUserContext;
-					else //if (subDomain.EndsWith("-dev"))
-						whichconsole = EbAuthContext.DeveloperContext;
-				}
-				else
-				{
-					cid = subDomain;
-					whichconsole = EbAuthContext.WebUserContext;
-				}
-			}
-			else // TENANT CONSOLE
-			{
-				cid = CoreConstants.EXPRESSBASE;
-				whichconsole = EbAuthContext.TenantContext;
-			}
+                    if (subDomain.EndsWith(RoutingConstants.DASHBOT))
+                        whichconsole = EbAuthContext.BotUserContext;
+                    else if (subDomain.EndsWith(RoutingConstants.DASHMOB))
+                        whichconsole = EbAuthContext.MobileUserContext;
+                    else //if (subDomain.EndsWith("-dev"))
+                        whichconsole = EbAuthContext.DeveloperContext;
+                }
+                else
+                {
+                    cid = subDomain;
+                    whichconsole = EbAuthContext.WebUserContext;
+                }
+            }
+            else // TENANT CONSOLE
+            {
+                cid = CoreConstants.EXPRESSBASE;
+                whichconsole = EbAuthContext.TenantContext;
+            }
 
-			ViewBag.cid = cid;
-		}
+            ViewBag.cid = cid;
+        }
 
         private void RouteToDashboard(bool hasSystemRole, string whichconsole, out string _controller, out string _action)
         {
@@ -514,12 +514,12 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                if (hasSystemRole && whichconsole == "dc")
+                if (hasSystemRole && whichconsole == RoutingConstants.DC)
                 {
                     _controller = "Tenant";
                     _action = "SolutionDashBoard";
                 }
-                else if (whichconsole == "uc")
+                else if (whichconsole == RoutingConstants.UC)
                 {
                     _controller = "TenantUser";
                     _action = "UserDashboard";
@@ -534,9 +534,9 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult errorredirect(string console)
         {
-            if (console == "tc")
+            if (console == RoutingConstants.TC)
                 return RedirectToAction("SignIn", RoutingConstants.EXTCONTROLLER);
-            else if (console == "dc")
+            else if (console == RoutingConstants.DC)
                 return RedirectToAction("DevSignIn", RoutingConstants.EXTCONTROLLER);
             else
                 return RedirectToAction("UsrSignIn", RoutingConstants.EXTCONTROLLER);
@@ -556,7 +556,7 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = "NIL",
                     Password = "NIL",
-                    Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", CoreConstants.EXPRESSBASE }, { "socialId", socialId } },
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE }, { TokenConstants.SOCIALID, socialId } },
                     // UseTokenCookie = true
                 });
 
@@ -589,15 +589,15 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult VerificationStatus()
         {
-            var email = HttpContext.Request.Query["email"];
-            var token = HttpContext.Request.Query["signup_tok"];
+            var email = HttpContext.Request.Query[TokenConstants.EMAIL];
+            var token = HttpContext.Request.Query[TokenConstants.SIGNUP_TOK];
             var authClient = this.ServiceClient;
             MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,
                 UserName = email,
                 Password = "NIL",
-                Meta = new Dictionary<string, string> { { "signup_tok", token }, { "wc", "tc" } },
+                Meta = new Dictionary<string, string> { { TokenConstants.SIGNUP_TOK, token }, { RoutingConstants.WC, RoutingConstants.TC } },
                 // UseTokenCookie = true
             });
 
@@ -627,105 +627,105 @@ namespace ExpressBase.Web.Controllers
             sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
             this.ServiceClient.Post(sMSSentRequest);
         }
-		
 
-		public byte[] FromBase64Url(string base64Url)
-		{
-			string padded = base64Url.Length % 4 == 0
-				? base64Url : base64Url + "====".Substring(base64Url.Length % 4);
-			string base64 = padded.Replace("_", "/")
-								  .Replace("-", "+");
-			return Convert.FromBase64String(base64);
-		}
 
-		public bool VerifySignature(string token)
-		{
-			string PublicKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_JWT_PUBLIC_KEY_XML);
-			int pos1 = PublicKey.IndexOf("<Modulus>");
-			int pos2 = PublicKey.IndexOf("</Modulus>");
-			int pos3 = PublicKey.IndexOf("<Exponent>");
-			int pos4 = PublicKey.IndexOf("</Exponent>");
-			string modkeypub = PublicKey.Substring(pos1 + 9, pos2 - pos1 - 9);
-			string expkeypub = PublicKey.Substring(pos3 + 10, pos4 - pos3 - 10);
+        public byte[] FromBase64Url(string base64Url)
+        {
+            string padded = base64Url.Length % 4 == 0
+                ? base64Url : base64Url + "====".Substring(base64Url.Length % 4);
+            string base64 = padded.Replace("_", "/")
+                                  .Replace("-", "+");
+            return Convert.FromBase64String(base64);
+        }
 
-			try
-			{
-				string[] tokenParts = token.Split('.');
-				RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-				rsa.ImportParameters(
-				  new RSAParameters()
-				  {
-					  Modulus = FromBase64Url(modkeypub),
-					  Exponent = FromBase64Url(expkeypub)
-				  });
+        public bool VerifySignature(string token)
+        {
+            string PublicKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_JWT_PUBLIC_KEY_XML);
+            int pos1 = PublicKey.IndexOf("<Modulus>");
+            int pos2 = PublicKey.IndexOf("</Modulus>");
+            int pos3 = PublicKey.IndexOf("<Exponent>");
+            int pos4 = PublicKey.IndexOf("</Exponent>");
+            string modkeypub = PublicKey.Substring(pos1 + 9, pos2 - pos1 - 9);
+            string expkeypub = PublicKey.Substring(pos3 + 10, pos4 - pos3 - 10);
 
-				SHA256 sha256 = SHA256.Create();
-				byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(tokenParts[0] + '.' + tokenParts[1]));
+            try
+            {
+                string[] tokenParts = token.Split('.');
+                RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+                rsa.ImportParameters(
+                  new RSAParameters()
+                  {
+                      Modulus = FromBase64Url(modkeypub),
+                      Exponent = FromBase64Url(expkeypub)
+                  });
 
-				RSAPKCS1SignatureDeformatter rsaDeformatter = new RSAPKCS1SignatureDeformatter(rsa);
-				rsaDeformatter.SetHashAlgorithm("SHA256");
-				if (rsaDeformatter.VerifySignature(hash, FromBase64Url(tokenParts[2])))
-				{
-					Console.WriteLine("Signature is verified");
-					return true;
-				}
-			}
-			catch (Exception e) { Console.WriteLine("Exception from VerifySignature:" + e.ToString()); }
-			return false;
-		}
+                SHA256 sha256 = SHA256.Create();
+                byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(tokenParts[0] + '.' + tokenParts[1]));
 
-		public string ValidateTokensAndGetUserName(string btoken, string rtoken, string _wc="tc", string _cid="expressbase")
-		{
-			if (VerifySignature(btoken) && VerifySignature(rtoken))
-			{
-				try
-				{
-					var jwtToken = new JwtSecurityToken(btoken);
-					var cid = jwtToken.Payload["cid"];
-					var uid = jwtToken.Payload["uid"];
-					var email = jwtToken.Payload["email"];
-					var wc = jwtToken.Payload["wc"];
-					var sub = jwtToken.Payload["sub"];
-					long iat = Convert.ToInt64(jwtToken.Payload["iat"]);
-					long exp = Convert.ToInt64(jwtToken.Payload["exp"]);
-					DateTime startDate = new DateTime(1970, 1, 1);
-					DateTime iat_time = startDate.AddSeconds(iat);
-					DateTime exp_time = startDate.AddSeconds(exp);
+                RSAPKCS1SignatureDeformatter rsaDeformatter = new RSAPKCS1SignatureDeformatter(rsa);
+                rsaDeformatter.SetHashAlgorithm("SHA256");
+                if (rsaDeformatter.VerifySignature(hash, FromBase64Url(tokenParts[2])))
+                {
+                    Console.WriteLine("Signature is verified");
+                    return true;
+                }
+            }
+            catch (Exception e) { Console.WriteLine("Exception from VerifySignature:" + e.ToString()); }
+            return false;
+        }
 
-					if(!(wc.ToString().Equals(_wc) && cid.ToString().Equals(_cid)))
-					{
-						Console.WriteLine("wc/cid mismatch");
-						return string.Empty;
-					}
-					if (iat_time < DateTime.Now && exp_time > DateTime.Now)
-					{
-						Console.WriteLine("Valid btoken");
-						return email.ToString();
-					}
-					else
-					{
-						Console.WriteLine("btoken expired");
-						var jwtrToken = new JwtSecurityToken(rtoken);
-						var rsub = jwtrToken.Payload["sub"];
-						long riat = Convert.ToInt64(jwtrToken.Payload["iat"]);
-						long rexp = Convert.ToInt64(jwtrToken.Payload["exp"]);
-						DateTime riat_time = startDate.AddSeconds(riat);
-						DateTime rexp_time = startDate.AddSeconds(rexp);
-						if (riat_time < DateTime.Now && rexp_time > DateTime.Now && rsub.Equals(sub))
-						{
-							Console.WriteLine("Valid rtoken");
-							return email.ToString();
-						}
-						else
-							Console.WriteLine("rtoken expired or invalid");
-					}
-				}
-				catch (Exception e) { Console.WriteLine("Exception:" + e.ToString()); }
-			}
-			return string.Empty;
-		}
-		
+        public string ValidateTokensAndGetUserName(string btoken, string rtoken, string _wc = RoutingConstants.TC, string _cid = CoreConstants.EXPRESSBASE)
+        {
+            if (VerifySignature(btoken) && VerifySignature(rtoken))
+            {
+                try
+                {
+                    var jwtToken = new JwtSecurityToken(btoken);
+                    var cid = jwtToken.Payload[TokenConstants.CID];
+                    var uid = jwtToken.Payload[TokenConstants.UID];
+                    var email = jwtToken.Payload[TokenConstants.EMAIL];
+                    var wc = jwtToken.Payload[TokenConstants.WC];
+                    var sub = jwtToken.Payload[TokenConstants.SUB];
+                    long iat = Convert.ToInt64(jwtToken.Payload[TokenConstants.IAT]);
+                    long exp = Convert.ToInt64(jwtToken.Payload[TokenConstants.EXP]);
+                    DateTime startDate = new DateTime(1970, 1, 1);
+                    DateTime iat_time = startDate.AddSeconds(iat);
+                    DateTime exp_time = startDate.AddSeconds(exp);
 
-	}
+                    if (!(wc.ToString().Equals(_wc) && cid.ToString().Equals(_cid)))
+                    {
+                        Console.WriteLine("wc/cid mismatch");
+                        return string.Empty;
+                    }
+                    if (iat_time < DateTime.Now && exp_time > DateTime.Now)
+                    {
+                        Console.WriteLine("Valid btoken");
+                        return email.ToString();
+                    }
+                    else
+                    {
+                        Console.WriteLine("btoken expired");
+                        var jwtrToken = new JwtSecurityToken(rtoken);
+                        var rsub = jwtrToken.Payload[TokenConstants.SUB];
+                        long riat = Convert.ToInt64(jwtrToken.Payload[TokenConstants.IAT]);
+                        long rexp = Convert.ToInt64(jwtrToken.Payload[TokenConstants.EXP]);
+                        DateTime riat_time = startDate.AddSeconds(riat);
+                        DateTime rexp_time = startDate.AddSeconds(rexp);
+                        if (riat_time < DateTime.Now && rexp_time > DateTime.Now && rsub.Equals(sub))
+                        {
+                            Console.WriteLine("Valid rtoken");
+                            return email.ToString();
+                        }
+                        else
+                            Console.WriteLine("rtoken expired or invalid");
+                    }
+                }
+                catch (Exception e) { Console.WriteLine("Exception:" + e.ToString()); }
+            }
+            return string.Empty;
+        }
+
+
+    }
 
 }

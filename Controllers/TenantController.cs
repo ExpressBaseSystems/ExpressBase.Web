@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = req["Email"],
                     Password = (req["Password"] + req["Email"]).ToMD5Hash(),
-                    Meta = new Dictionary<string, string> { { "wc", "tc" }, { "cid", CoreConstants.EXPRESSBASE } },
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
                     //UseTokenCookie = true
                 });
                 if (authResponse != null)

@@ -58,6 +58,15 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public bool JoinBeta()
+        {           
+            string email = this.HttpContext.Request.Form["Email"];
+            if (this.ServiceClient.Post<bool>(new JoinbetaReq { Email = email }))
+                return true;
+            else
+                return false;
+        }
 
         public IActionResult DevSignIn()
         {

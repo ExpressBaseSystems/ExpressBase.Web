@@ -23,49 +23,84 @@ body {
 .nopadding {padding: 0;}
 .pd-b-0{padding-bottom:0 !important;}
 .pd-l-0{padding-left:0;}
+.pd-r-0{padding-right:0;}
+.jumb {box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);}
+    .jumb:hover {transform: translateY(-1px);box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);}
 /****** LOGIN MODAL ******/
-.loginmodal-container {
+.login_spiner {display:none;}
+.log_error {
+    display: none;
+    max-width: 400px;
+    width: 100% !important;
+    color: #86181d;
+    background-color: #ffdce0;
+    border-color: rgba(27,31,35,0.15);
+    margin: 0 auto;
+    border-radius: 4px;
+    font-family: var(--fontf);
     padding: 15px;
-    max-width: 360px;
+    margin-top: 1em;
+    position: relative;
+    font-size: 15px;
+}
+.eb_login {
+    height: 100vh;
+    max-height: 100vh;
+    background: #f9f9f9;
+}
+.log_error_close {
+    position: absolute;
+    right: 22px;
+}
+.inputEmail {
+    border-top-right-radius:4px !important;
+    border-bottom-right-radius:4px !important;
+}
+.remembrpw {
+    font-size: 13px;
+    color: #898a8a;
+    margin-bottom:2rem;
+}
+.mb-25 {
+    margin-bottom:25px;
+}
+.eb_login .container{
+    height:inherit;
+}
+.login_container {
+    padding: 30px;
+    max-width: 400px;
     width: 100% !important;
     background-color: white;
     margin: 0 auto;
-    border-radius: 2px;
+    border-radius: 4px;
     overflow: hidden;
-    font-family: open sans;
+    font-family: var(--fontf);
     font-weight: 300;
+    margin-top: 10%;
+    box-shadow: var(--eb-shadow);
 }
-    .loginmodal-container h1 {
-        text-align: center;
-        font-size: 1.8em;       
-        margin-bottom: 0;
-        font-weight:300;
+    .login_container h1 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+        font-weight: 300;
+        margin-top: 10px;
     }
-
-.loginmodal {
-    text-align: center;
-    font-size: 14px;    
-    font-weight: 700;
-    height: 36px;
-    padding: 0 8px;
-}
-
-.loginmodal-container a {
+.login_container a {
     text-decoration: none;
     color: #666;
     text-align: center;
     display: inline-block;
 }
 
-.loginmodal-container .signin-btn {
+.login_container .signin-btn {
     width: 100%;
     background: #31d031;
     color: white;
 }
 .login-sec-image {
     width: 100%;
-    text-align: center;
-    padding-top: 25px;
+    padding-top: 10px;
     padding-bottom: 15px;
 }
 .login-sec-image img{
@@ -235,7 +270,7 @@ Navigation bar
 }
 .get-start-sec span {
     background: #23c523;
-    font-family: open sans;
+    font-family: var(--fontf);
     font-weight: 300;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
@@ -337,39 +372,36 @@ Navigation bar
     }
 /*team*/
 .team {
-    font-family: open sans;
+    font-family: var(--fontf);
     font-weight: 300;
-    padding-bottom: 30px;
 }
 
 .profile {
-    padding: 20px 43px 10px 43px;
+   
 }
 
-    .profile h1 {
-        font-weight: normal;
-        font-size: 20px;
-        margin: 0 0 0 0;
-        text-align:center;
+    .team_name {
+        font-size: 18px;
+        margin: 15px 0px 10px 0px;
     }
-
-    .profile h2 {
-        font-size: 14px;
-        font-weight: lighter;
-        margin-top: 5px;
-        text-align: center;
-    }
+        .team_role {
+            font-size: 13px;
+            font-weight: lighter;
+            margin-top: 5px;
+        }
 
     .profile .img-box {
-        opacity: 1;
-        display: block;
-        position: relative;
+        display: flex;
+        justify-content: center;
     }
 
-        .profile .img-box:after {
-            content: "";
-            opacity: 0;
+        .profile .img-box img {
+            width: 50%;
+            height: 50%;
         }
+.img-box_lead {
+    padding: 0 12%;
+}
 /*end team*/
 /*overlay2*/
 .bg-white {
@@ -557,31 +589,76 @@ footer {
     .multi_db_supp_text h3 {text-align: center;}
     .img_main_callout {text-align: right;}
     .bg-color-banner{padding:0 !important}
+    .ml12_5{margin-left:0 !important;}
+    .team_name {font-size: 14px;text-align:center;}
+    .team_role {font-size: 11px;text-align:center;}
+    .founder .detail-info h3 {text-align: center; font-size: 20px;}
+    .founder .detail-info p {padding: 0 5px;}
+    .founder .detail-info h4{text-align:center;}
+    .mv_com {font-size: 15px;}
+    .team_lead_txt{width:100% !important;}
+    .team_lead_img{width:100% !important;}
+    .flx {flex-direction: column-reverse;}
+    .team_lead p {margin-bottom: 3em;}
 }
-
+.ml12_5 {
+    margin-left:12.5%;
+}
 .login-box-body {
     margin-top: 100px;
 }
 
 .aboutus-header {
-    min-height: 500px;
+    min-height: 480px;
     width: 100%;
     font-family: var(--fontf);
     font-weight: 300;
-    padding-top: 100px;
+    background-image: url(../images/wall_people.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
-.aboutus-header h1{
-    color:white;
+.layer {
+    background-color: black;
+    float: left;
+    height: 480px;
+    width: 100%;
+    opacity: .6;
+    padding-top: 150px;
+    color: white;
 }
-.founder {
-    padding-top: 50px;
-    padding-bottom: 50px;
+.icon_mis {
+    width:100%;
+}
+.aboutus-header h1 {
+    color: white;
+    font-size: 3.5em;
+}
+.abt_us_sunH {
+    font-size: 1.9em;
+}
+.mv_com {
+    padding: 5px;
+    font-family: var(--fontf);
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 3.4rem;
+}
+.eb_mis {
+    margin-bottom: 2.6em;
+}
+.pd_for_img {
+    padding: 0px 10px 0px 40px;
+}
+.founder {  
     font-family: var(--fontf);
 }
     .founder .detail-info {
         line-height: 3rem;
     }
-
+.al_bottom {
+    margin-top:13%;
+}
 .sign-in-ext {
     margin-top: 50px;
     background: url(../images/signinExt.jpg) no-repeat center center fixed;
@@ -893,7 +970,7 @@ footer {
 }
 .multi_db_supp_text p {
     font-weight: 400;
-    font-size: 2rem;
+    font-size: 1.7rem;
     color: #828181;
 }
 .multi_db_supp_text {
@@ -942,4 +1019,26 @@ footer {
     margin-left: 5px;
     font-size: 18px;
     display:none;
+}
+.team_lead p{
+    line-height:2.5rem;
+}
+.flx {
+    display:flex;
+}
+.team_lead_txt {
+    width: 66.6%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float:left;
+}
+.team_lead_img {
+    width: 33.3%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
 }

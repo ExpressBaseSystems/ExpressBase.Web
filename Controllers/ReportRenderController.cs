@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using ExpressBase.Web2;
 using ExpressBase.Security;
 using ExpressBase.Common.Data;
+using System.Runtime.Serialization;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -46,6 +47,11 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public void BeforeRender(dvreport dvreport)
+        {
+            //List<Param> pp = EbSerializers.Json_Deserialize<List<Param>>(filterValues);
+            var x = Render(dvreport.refid, dvreport.Params);
+        }
         public bool Render(string refid, List<Param> Params)
         {
             Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);
@@ -73,5 +79,15 @@ namespace ExpressBase.Web.Controllers
         {
             return Pdf;
         }
+    }
+
+    [DataContract]
+    public class dvreport
+    {
+        [DataMember(Order =1)]
+        public string refid { get; set; }
+
+        [DataMember(Order = 2)]
+        public List<Param> Params { get; set; }
     }
 }

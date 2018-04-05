@@ -33,6 +33,8 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
+        [HttpGet("AboutUs")]
         public IActionResult AboutUs()
         {
             return View();
@@ -43,6 +45,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
         public IActionResult EbFAQS()
+        {
+            return View();
+        }
+
+        [HttpGet("SignIn")]
+        public IActionResult SignIn()
         {
             return View();
         }

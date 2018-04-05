@@ -130,6 +130,10 @@
     display: inline-block;
     width: 63.5%;
 }
+.form-save-wraper {
+    display: inline-block;
+    width: 51%;
+}
 
 .property-grid-cont {
     float: right;

@@ -829,7 +829,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             idx = key;
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues("link");
-        var url = "http://"+this.url+"/DV/dv?refid=" + this.linkDV;
+        var splitarray = this.linkDV.split("-");
+        if (splitarray[2] === "3")
+            var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
+        else
+            var url = "http://"+this.url+"/DV/dv?refid=" + this.linkDV;
 
         var _form = document.createElement("form");
         _form.setAttribute("method", "post");

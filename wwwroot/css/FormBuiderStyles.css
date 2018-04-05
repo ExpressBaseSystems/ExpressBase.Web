@@ -148,9 +148,9 @@
     background-color: white;
 }
 
-.eb-chatBox-dev div {
+/*.eb-chatBox-dev div {
     margin-top: 1px;
-}
+}*/
 
 .stickBtn {
     position: fixed;
@@ -299,6 +299,14 @@
     .dev-chat-cont .Eb-ctrlContainer {
         /*background-color:white;*/
     }
+
+.eb-chatBox-dev .msg-cont-bot, .eb-chatBox-dev .msg-cont-user {
+    width: calc(100% - 30px) !important;
+}
+
+.eb-chatBox-dev .ctrl-wraper {
+    width: 100% !important;
+}
 
 .card-cont, .loc-cont {
     border: solid 1px #e5e5e5;

@@ -13,6 +13,7 @@
     this.PGobj = null;
     this.ssurl = url;
     this.clipboard = {};
+    this.botDpURL = 'url(https\:\/\/expressbase\.com\/images\/assistant\.png)center center no-repeat';
 
     this.controlCounters = CtrlCounters;//Global
 
@@ -171,13 +172,13 @@
                 var $el = $(el);
                 var type = $el.attr("eb-type").trim();
                 var id = type + (this.controlCounters[type + "Counter"])++;
-                var $ctrl = new EbObjects["Eb" + type](id).$Control;
+                var ctrlObj = new EbObjects["Eb" + type](id);
+                var $ctrl = ctrlObj.$WrapedCtrl4Bot.clone();
                 $el.remove();
                 $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
                 $ctrl.on("focus", this.controlOnFocus.bind(this));
                 $ctrl.attr("id", id);
                 $ctrl.attr("eb-type", type);
-                var ctrlObj = new EbObjects["Eb" + type](id);
                 if (sibling) {
                     $ctrl.insertBefore($(sibling));
                     this.rootContainerObj.Controls.InsertAt($(sibling).index() - 1, ctrlObj);
@@ -188,7 +189,7 @@
                 }
                 $ctrl.focus();
                 $ctrl.contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
-                ctrlObj.label = "";
+                ctrlObj.Label = id;
                 ctrlObj.HelpText = "";
 
                 RefreshControl(ctrlObj);
@@ -452,6 +453,8 @@
         setTimeout(function () {
             $("#minmize").click();
         }), 3000;
+
+        var html = document.getElementsByTagName('html')[0]; html.style.setProperty("--botdpURL", this.botDpURL)
 
     }.bind(this);
 

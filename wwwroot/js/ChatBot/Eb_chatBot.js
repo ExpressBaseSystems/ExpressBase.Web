@@ -775,7 +775,7 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
-                    if (this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation")) {
+                    if (this.curCtrl && ["Cards", "Locations", "InputGeoLocation", "Image"].includes(this.curCtrl.objType)) {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }

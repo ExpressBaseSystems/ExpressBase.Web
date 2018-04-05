@@ -217,9 +217,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.login === 'dc' && this.tabNum === 0)
                 this.EbObject = commonO.Current_obj;
             else {
-                if (this.login === 'dc')
-                    this.EbObject = commonO.Current_obj;
-                else
+                //if (this.login === 'dc')
+                //    this.EbObject = commonO.Current_obj;
+                //else
                     this.EbObject = dvcontainerObj.currentObj;
             }
         }

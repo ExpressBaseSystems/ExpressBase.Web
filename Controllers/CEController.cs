@@ -351,32 +351,32 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
         [HttpPost]
-        public string GetColumns4Trial(string ds_refid, string parameter)
+        public string GetColumns4Trial(string ds_refid, List<Param> parameter)
         {
             var redis = this.Redis;
             var sscli = this.ServiceClient;
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
-            var paramsList = new List<Param>();
-            if (parameter == null)
-            {
-                paramsList = null;
-            }
-            else
-            {
-                Newtonsoft.Json.Linq.JArray ja = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(parameter);
-                foreach (Newtonsoft.Json.Linq.JToken jt in ja)
-                {
-                    var _dict = new Param();
-                    foreach (Newtonsoft.Json.Linq.JProperty jp in jt.Children())
-                    {
-                        _dict.Name = jp.Name;
-                        _dict.Value = jp.Value.ToString();
-                    }
-                    paramsList.Add(_dict);
-                }
+            //var paramsList = new List<Param>();
+            //if (parameter == null)
+            //{
+            //    paramsList = null;
+            //}
+            //else
+            //{
+            //    Newtonsoft.Json.Linq.JArray ja = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(parameter);
+            //    foreach (Newtonsoft.Json.Linq.JToken jt in ja)
+            //    {
+            //        var _dict = new Param();
+            //        foreach (Newtonsoft.Json.Linq.JProperty jp in jt.Children())
+            //        {
+            //            _dict.Name = jp.Name;
+            //            _dict.Value = jp.Value.ToString();
+            //        }
+            //        paramsList.Add(_dict);
+            //    }
 
-            }
-            DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Params = paramsList });
+            //}
+            DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
             if (columnresp.Columns == null || columnresp.Columns.Count == 0)
             {
                 return "";

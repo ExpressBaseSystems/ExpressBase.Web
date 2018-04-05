@@ -46,6 +46,11 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public void BeforeRender(string refid, string rowData, string filterValues, int tabNum)
+        {
+            List<Param> pp = EbSerializers.Json_Deserialize(filterValues);
+            var x = Render(refid, pp);
+        }
         public bool Render(string refid, List<Param> Params)
         {
             Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);

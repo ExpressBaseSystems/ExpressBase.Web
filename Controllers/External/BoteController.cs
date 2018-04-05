@@ -106,9 +106,9 @@ namespace ExpressBase.Web.Controllers
 
 			Dictionary<string, string> _Meta;
                 _Meta = new Dictionary<string, string> {
-					{ "wc", wc },
-					{ "cid", cid },
-					{ "socialId", socialId },
+					{ TokenConstants.WC, wc },
+					{ TokenConstants.CID, cid },
+					{ TokenConstants.SOCIALID, socialId },
 					{ "phone", anon_phno },
 					{ "emailId", anon_email },
 					{ "anonymous", "true" },

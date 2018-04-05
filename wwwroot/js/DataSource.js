@@ -265,7 +265,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             "</div>");
         $.post('../../CE/GetColumns4Trial', {
             ds_refid: this.Refid,
-            parameter: this.Object_String_WithVal
+            parameter: this.CreateObjString()
         }, this.Load_Table_Columns.bind(this));
         $("#obj_icons").empty();
         $('#save').hide();
@@ -283,7 +283,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         else {
             var cols = JSON.parse(result);
             $("#sample" + commonO.tabNum).dataTable({
-                columns: cols,
+                aoColumns: cols,
                 serverSide: true,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 scrollX: "100%",
@@ -378,7 +378,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 this.ver_Refid = result.refId;
                 alert(this.ver_Refid);
             }
-            this.CreateObjString();
+           /// this.CreateObjString();
             this.DrawTable();
         }
         alert("Success");

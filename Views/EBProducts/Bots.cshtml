@@ -1,7 +1,8 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPageHeader");
 }
-
+<script type="text/javascript">$("#products").hide();</script>
 <script type="text/javascript">
     window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
     window.EXPRESSbase_APP_IDS = [13, 93, 94, 95, 96, 97, 98];
@@ -41,37 +42,8 @@
         })();
     </script>*@
 @*<svg id="boticon" height="0"></svg>*@
-
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
-<div class="container-fluid pd-0">
-    <div class="Eb-bot-header">
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#"><img alt="Brand" src="~/images/EB_Logo.png"></a>
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a class="hvr-underline-from-center" href="~/Common/AboutUs">About</a></li>
-                        <li><a class="hvr-underline-from-center" href="#idF_botDemOCl">Demos</a></li>
-                        <li><a class="hvr-underline-from-center" href="#features">Features</a></li>
-                        <li><a class="hvr-underline-from-center" href="#pricing">Pricing</a></li>
-                        <li><a class="hvr-underline-from-center" href="~/Common/EbFAQS">FAQ</a></li>
-                        <li><a href="#" class="hvr-underline-from-center" data-toggle="modal" data-target="#login-modal">Sign In</a></li>
-                        <li><a class="btn-trial eb-btn-tw" id="trial-btn" style="display:none;" href="#signupcall">Try for FREE</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </div>
-</div>
-<section class="slider" id="signupcall"style="background: var(--ebbg);background-image: var(--ebbgimage);">
+<section class="slider" id="signupcall" style="background: var(--ebbg);background-image: var(--ebbgimage);">
     <div class="container-fluid">
         <div class="row eb-banner eb-bot-pdF-motion-frame">
             <div class="col-md-12 no-padd eb-banner-text-img-sec bg-color-banner text-center">
@@ -158,7 +130,7 @@
                 Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit. Proin sit amet libero velit. Sed nec congue tortor. Aenean vel nisi laoreet,.
             </div>
-            
+
         </div>
         <div class="col-md-4 descript_cont">
             <div class="descript_cont_second b">
@@ -266,7 +238,7 @@
             <div class="demo-col2">
                 <div class="usecase-content-cont">
                     <div class="content">
-                        <h3>Doctor appointments for Hospitals.</h3>                        
+                        <h3>Doctor appointments for Hospitals.</h3>
                         <div class="col-md-12 pd-0">
                             <div class="bot-prob">
                                 <div class="bot-prob-img-sec pd-r-15">
@@ -309,7 +281,7 @@
                                         <div class="prob-container-text">
                                             Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
                                             Wish I had an alternate to take orders over the phone
-                                        </div>                                        
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -341,7 +313,7 @@
                                         <div class="prob-container-text">
                                             Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
                                             Wish I had an alternate to take orders over the phone
-                                        </div>                                        
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -373,7 +345,7 @@
                                         <div class="prob-container-text">
                                             Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
                                             Wish I had an alternate to take orders over the phone
-                                        </div>                                        
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -405,7 +377,7 @@
                                         <div class="prob-container-text">
                                             Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
                                             Wish I had an alternate to take orders over the phone
-                                        </div>                                       
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -437,7 +409,7 @@
                                         <div class="prob-container-text">
                                             Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
                                             Wish I had an alternate to take orders over the phone
-                                        </div>                                        
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -469,7 +441,7 @@
                                         <div class="prob-container-text">
                                             Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
                                             Wish I had an alternate to take orders over the phone
-                                        </div>                                        
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -496,11 +468,9 @@
         </div>
     </div>
 </section>
-<section class="embed_scriptBot bg-fafa">
+<section class="embed_scriptBot mt mb alt">
     <div class="container">
-        <div class="header-section text-center">
-            <h3>Botify your Websites &amp; private Web Apps</h3>
-        </div>
+        <h3 class="mt0 eb_font_H text-center h_b">Botify your Websites &amp; private Web Apps</h3>
         <div class="row">
             <div class="col-md-7 col-lg-7 col-sm-7 col-xs-12 eb-codeedit">
                 <div class="eb-codeedit-Container float-l w-100">
@@ -535,11 +505,9 @@
         </div>
     </div>
 </section>
-<section class="bot-section2" id="features">
+<section class="bot-section2 mt mb" id="features">
     <div class="container">
-        <div class="header-section text-center">
-            <h3>Features</h3>
-        </div>
+        <h3 class="mt0 eb_font_H text-center h_b">Features</h3>
         <div class="row">
             <div class="col-md-6 tiles">
                 <div class="tile-body">
@@ -604,11 +572,9 @@
     </div>
 </section>
 
-<section class="bot-pricing bg-fafa" id="pricing">
+<section class="bot-pricing mt mb alt" id="pricing">
     <div class="container">
-        <div class="header-section text-center">
-            <h3>Pricing</h3>
-        </div>
+        <h3 class="mt0 eb_font_H text-center h_b">Pricing</h3>
         <div class="col-md-12 nopadding bot-pricing-body">
             <div class="col-md-3">
                 <div class="price-tile">
@@ -764,8 +730,9 @@
         d.appIdCount = roundIdx;
         $round.css({
             "border-bottom": "4px solid green",
-            "background": "#e5f3f5",   
-            "outline": "none"});
+            "background": "#e5f3f5",
+            "outline": "none"
+        });
         $(".icon-round").siblings(".icon-label").css("border-bottom", "solid 1px #ccc").css("color", "#8A939E");
 
         $round.parent(".liveDemos_iconContainers").siblings().each(function (i, obj) {

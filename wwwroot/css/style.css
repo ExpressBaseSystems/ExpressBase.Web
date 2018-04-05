@@ -343,22 +343,18 @@ Navigation bar
 }
 
 .profile {
-    padding: 20px 43px 10px 43px;
+   
 }
 
-    .profile h1 {
-        font-weight: normal;
-        font-size: 20px;
-        margin: 0 0 0 0;
-        text-align:center;
+    .team_name {
+        font-size: 18px;
+        margin: 15px 0px 10px 0px;
     }
-
-    .profile h2 {
-        font-size: 14px;
-        font-weight: lighter;
-        margin-top: 5px;
-        text-align: center;
-    }
+        .team_role {
+            font-size: 13px;
+            font-weight: lighter;
+            margin-top: 5px;
+        }
 
     .profile .img-box {
         display: flex;
@@ -366,11 +362,11 @@ Navigation bar
     }
 
         .profile .img-box img {
-            width: 120px;
-            height: 120px;
+            width: 50%;
+            height: 50%;
         }
 .img-box_lead {
-    padding: 0 40px;
+    padding: 0 12%;
 }
 /*end team*/
 /*overlay2*/
@@ -559,8 +555,21 @@ footer {
     .multi_db_supp_text h3 {text-align: center;}
     .img_main_callout {text-align: right;}
     .bg-color-banner{padding:0 !important}
+    .ml12_5{margin-left:0 !important;}
+    .team_name {font-size: 14px;text-align:center;}
+    .team_role {font-size: 11px;text-align:center;}
+    .founder .detail-info h3 {text-align: center; font-size: 20px;}
+    .founder .detail-info p {padding: 0 5px;}
+    .founder .detail-info h4{text-align:center;}
+    .mv_com {font-size: 15px;}
+    .team_lead_txt{width:100% !important;}
+    .team_lead_img{width:100% !important;}
+    .flx {flex-direction: column-reverse;}
+    .team_lead p {margin-bottom: 3em;}
 }
-
+.ml12_5 {
+    margin-left:12.5%;
+}
 .login-box-body {
     margin-top: 100px;
 }
@@ -587,8 +596,12 @@ footer {
 .icon_mis {
     width:100%;
 }
-.aboutus-header h1{
-    color:white;
+.aboutus-header h1 {
+    color: white;
+    font-size: 3.5em;
+}
+.abt_us_sunH {
+    font-size: 1.9em;
 }
 .mv_com {
     padding: 5px;
@@ -923,7 +936,7 @@ footer {
 }
 .multi_db_supp_text p {
     font-weight: 400;
-    font-size: 2rem;
+    font-size: 1.7rem;
     color: #828181;
 }
 .multi_db_supp_text {
@@ -972,4 +985,26 @@ footer {
     margin-left: 5px;
     font-size: 18px;
     display:none;
+}
+.team_lead p{
+    line-height:2.5rem;
+}
+.flx {
+    display:flex;
+}
+.team_lead_txt {
+    width: 66.6%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float:left;
+}
+.team_lead_img {
+    width: 33.3%;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
 }

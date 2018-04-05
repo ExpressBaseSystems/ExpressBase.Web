@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Constants;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using ExpressBase.Web.BaseControllers;
@@ -55,35 +56,35 @@ namespace ExpressBase.Web.Controllers
                 string bToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
                 string rToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
                 Session = new CustomUserSession();
-                Session.Id = context.HttpContext.Request.Cookies["X-ss-pid"];
+                Session.Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID];
                 //Session = Redis.Get<CustomUserSession>("urn:iauthsession:"+ Session.Id); // Exception when inside a controller where Redis is not initialised
 
                 this.ServiceClient.BearerToken = bToken;
                 this.ServiceClient.RefreshToken = rToken;
-                this.ServiceClient.Headers.Add("rToken", rToken);
+                this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, rToken);
 
                 if (this.MqClient != null)
                 {
                     this.MqClient.BearerToken = bToken;
                     this.MqClient.RefreshToken = rToken;
-                    this.MqClient.Headers.Add("rToken", rToken);
+                    this.MqClient.Headers.Add(CacheConstants.RTOKEN, rToken);
                 }
 
                 if (this.FileClient != null)
                 {
                     this.FileClient.BearerToken = bToken;
                     this.FileClient.RefreshToken = rToken;
-                    this.FileClient.Headers.Add("rToken", rToken);
+                    this.FileClient.Headers.Add(CacheConstants.RTOKEN, rToken);
                 }
 
                 var controller = context.Controller as Controller;
                 controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                 controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
-                controller.ViewBag.UId = Convert.ToInt32(jwtToken.Payload["uid"]);
-                controller.ViewBag.UAuthId = context.HttpContext.Request.Cookies["UserAuthId"];
-                controller.ViewBag.cid = jwtToken.Payload["cid"];
-                controller.ViewBag.wc = jwtToken.Payload["wc"];
-                controller.ViewBag.email = jwtToken.Payload["email"];
+                controller.ViewBag.UId = Convert.ToInt32(jwtToken.Payload[TokenConstants.UID]);
+                controller.ViewBag.UAuthId = context.HttpContext.Request.Cookies[TokenConstants.USERAUTHID];
+                controller.ViewBag.cid = jwtToken.Payload[TokenConstants.CID];
+                controller.ViewBag.wc = jwtToken.Payload[TokenConstants.WC];
+                controller.ViewBag.email = jwtToken.Payload[TokenConstants.EMAIL];
                 controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
                 controller.ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
                 controller.ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);

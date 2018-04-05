@@ -30,6 +30,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL)
         {
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
             ViewBag.tid = tid;
             ViewBag.appid = appid;
             ViewBag.botdpURL = botdpURL;
@@ -69,6 +70,34 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
+        public async Task<bool> UploadFileAsync(string base64, string filename,string type, string refreshToken, string bearerToken)
+        {
+            this.ServiceClient.BearerToken = bearerToken;
+            this.ServiceClient.RefreshToken = refreshToken;
+            string Id = string.Empty;
+            string url = string.Empty;
+            try
+            {
+                UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
+                uploadFileRequest.FileDetails = new FileMeta();
+                        byte[] myFileContent;
+                        myFileContent = System.Convert.FromBase64String(base64);
+                        uploadFileRequest.FileByte = myFileContent;
+                        uploadFileRequest.FileDetails.FileName = filename;
+                        uploadFileRequest.FileDetails.FileType = type;
+                        uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
+
+                        this.FileClient.Post<bool>(uploadFileRequest);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }          
+        }
+
+
+        [HttpPost]
         public async Task<List<object>> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = "tc")
         {
 			HttpClient client = new HttpClient();
@@ -77,9 +106,9 @@ namespace ExpressBase.Web.Controllers
 
 			Dictionary<string, string> _Meta;
                 _Meta = new Dictionary<string, string> {
-					{ "wc", wc },
-					{ "cid", cid },
-					{ "socialId", socialId },
+					{ TokenConstants.WC, wc },
+					{ TokenConstants.CID, cid },
+					{ TokenConstants.SOCIALID, socialId },
 					{ "phone", anon_phno },
 					{ "emailId", anon_email },
 					{ "anonymous", "true" },
@@ -168,6 +197,10 @@ namespace ExpressBase.Web.Controllers
                         (control as EbCards).InitFromDataBase(this.ServiceClient);
                         (control as EbCards).BareControlHtml = (control as EbCards).GetBareHtml();
                     }
+                    //else if (control is EbImage)
+                    //{
+                    //    (control as EbCards).InitFromDataBase(this.ServiceClient);
+                    //}
                 }
             }
             if (Obj is EbTableVisualization)

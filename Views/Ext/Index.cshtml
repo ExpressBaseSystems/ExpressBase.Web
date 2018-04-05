@@ -3,60 +3,391 @@
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
     Html.RenderPartial("ExtPageHeader");
 }
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 <!--Navigation bar/-->
 <!--Slider-->
 @*<script type="text/javascript">
-    window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
-    window.EXPRESSbase_APP_ID = 13;
-    (function () {
-        d = document;
-        s = d.createElement("script");
-        s.src = "/js/ChatBot/ebbot-ext.js";
-        //s.src = "https://expressbase.com/js/ChatBot/ebbot-ext.js";
-        s.async = 1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-        d.ebbotName = "Travel Assistant";
-        d.ebbotThemeColor = "#393";
-        d.botdpURL = 'https://expressbase.com/images/assistant.png';
-    })();
-</script>*@
+        window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
+        window.EXPRESSbase_APP_ID = 13;
+        (function () {
+            d = document;
+            s = d.createElement("script");
+            s.src = "/js/ChatBot/ebbot-ext.js";
+            //s.src = "https://expressbase.com/js/ChatBot/ebbot-ext.js";
+            s.async = 1;
+            d.getElementsByTagName("head")[0].appendChild(s);
+            d.ebbotName = "Travel Assistant";
+            d.ebbotThemeColor = "#393";
+            d.botdpURL = 'https://expressbase.com/images/assistant.png';
+        })();
+    </script>*@
 @*<svg id="boticon" class="boticon" height="0"></svg>*@
 
 <section class="message-box-indexpage">
-   @ViewBag.message
-    <i class="fa fa-close pull-right" id="close-msg"></i>    
+    <span>@ViewBag.message</span>
+    <i class="fa fa-close pull-right" id="close-msg"></i>
 </section>
-<section class="slider">
-    <div class="container-fluid">
-        <div class="row eb-banner">
-            <div class="col-md-12 no-padd eb-banner-text-img-sec">
+<section class="slider eb-banner">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd eb-banner-text-img-sec">
                 <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner">
                     <h2>Fast growing Small & Midsize Businesses <br />deserve rapidly evolving software.</h2>
-                    <p>
-                        RAD Platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
-                        Build Complex business Apps 10x faster, with drag n drop &amp; low-code.
-                        Efficiently manage change in business processes with versioning & branching of objects - from a simple SQL statement to a complex Form.
+                    <p class="">
+                        RAD platform on the cloud (or hpaPaaS) specially designed for SMBs.<br />
+                        Build complex business apps 10x faster, with drag n drop & low-code. Efficiently manage change
+                        in business processes with versioning & branching of building blocks like SQL data-sources,
+                        portable reports, visualizations, web-forms or even bots.
                     </p>
                 </div>
                 <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs banner-img pull-right">
                     <img src="~/images/svg/cloud2.svg" />
                 </div>
             </div>
-            <div class="col-md-12 no-padd get-start-sec">
-                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-4">
-                    <div class="no-creditcared">No credit card required.</div>
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd get-start-sec" style="padding-bottom: 3em;padding-top: 4em;">
+                <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 callfaction_cont">
+                    @*<div class="no-creditcared">No credit card required.</div>*@
 
-                    <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
+                    @*<form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
+                            <div class="input-group">
+                                <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn getstarted">Get Started</button>
+                                </span>
+                            </div>
+                        </form>*@
+                    <form action="" method="post" class="joinbeta">
+                        <div class="input-group jumb">
+                            <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                    @*<div class="form-group social-btn-sec">
+                            <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                            <div class="form-inline">
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                                    <i class="fa fa-facebook fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                                    <i class="fa fa-twitter fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="#">
+                                    <i class="fa fa-linkedin fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                                    <i class="fa fa-google-plus fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                                    <i class="fa fa-github fa-lg"></i>
+                                </a>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--Slider/-->
+<section class="customers">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
+                <img src="~/images/alarz.png" class="img-responsive" style="height: 120px;margin-top: -20px;" />
+            </div>
+            <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
+                <img src="~/images/BMC.png" class="img-responsive" />
+            </div>
+            <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
+                <img src="~/images/hairocraft.png" class="img-responsive" />
+            </div>
+            <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
+                <img src="~/images/ekminute.png" class="img-responsive" style="height: 55px;margin-top: 9px;" />
+            </div>
+            <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
+                <img src="~/images/cams.png" class="img-responsive" style="height: 46px;margin-top: 10px;" />
+            </div>
+            <div class="col-md-2 col-lg-2 col-sm-2 col-xs-6 cust_img">
+                <img src="~/images/RANCHES.png" class="img-responsive" />
+            </div>
+        </div>
+    </div>
+</section>
+<!--work-shop-->
+<section id="work-shop" class="work-shop mt mb alt">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
+                <div class="service-box text-center">
+                    <div class="icon-box">
+                        <i class="fa fa-cloud faa-cloud animated"></i>
+                        <i class="fa fa-cloud faa-cloud animated" style="font-size: 25px;margin-left: -10px;"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">Apps on cloud</h4>
+                        <h6 class="content">Forget about the infrastructure, leave it to us. Focus on your applications and business.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
+                <div class="service-box text-center">
+                    <div class="icon-box">
+                        <i class="fa fa-tv"></i>
+                        <i class="fa fa-mobile" style="margin-left: -10px;font-size:30px;"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">Develop Once, Deploy Anywhere</h4>
+                        <h6 class="content">Use our state-of-the-art developer Studio to develop business apps that can run on web or mobile.</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">                
+                <div class="service-box text-center">
+                    <div class="icon-box">
+                        <i class="fa fa-database"></i>
+                        <i class="fa fa-database" style="margin-left: -10px;font-size: 26px;"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">Own your data</h4>
+                        <h6 class="content">Connect your cloud or in-premise database via https enabling coexistence of your legacy apps and apps built on expressbase.</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row feature_row_second">
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
+                <div class="service-box text-center">
+                    <div class="icon-box">
+                        <i class="fa fa-lock"></i>
+                        <i class="fa fa-key fa-rotate-270" style="font-size: 18px;margin-left: -8px;"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">App Security</h4>
+                        <h6 class="content">
+                            Role Based Access Control (RBAC) standard helps you authorize users by roles.
+                            Create unlimited roles by grouping permissions or even roles.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
+                <div class="service-box text-center">
+                    <div class="icon-box">
+                        <i class="fa fa-code"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">Low Code</h4>
+                        <h6 class="content">
+                            No code platforms don’t work for complex requirements. Precisely why we are low-code.
+                            Put your existing skills to use, code in JavaScript, C# & SQL.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
+                <div class="service-box text-center">
+                    <div class="icon-box">
+                        <i class="fa fa-fighter-jet fa-rotate-270" aria-hidden="true"></i>
+                        <i class="fa fa-clock-o" style="margin-left: -14px;font-size: 30px;"></i>
+                    </div>
+                    <div class="icon-text">
+                        <h4 class="ser-text">Faster Time to Market</h4>
+                        <h6 class="content">
+                            Conventional modes of development & delivery are high effort-time–money exercises.
+                            Use our platform to express build complex business apps 10x faster.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--/ work-shop-->
+<section class="product_info mt mb" id="prd">
+    <div class="container">
+        <h3 class="mt0 eb_font_H text-center h_b">Our SaaS Offerings</h3>
+        <div class="row pd-t-1em">
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/form_.svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Dynamic.Forms</h4>
+                    <p class="text-center">
+                        Create Embeddable Forms using our Drag n Drop 
+                        builder with custom validations & field level permissions.
+                    </p>
+                    @*<div class="pr_link text-center">forms.expressbase.com</div>*@
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/chat_.svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Adaptive.Bots</h4>
+                    <p class="text-center">
+                        Design and embed bots using our builder.
+                        Initiate and Automate business workflows, collect data elegently.
+                    </p>
+                    @*<div class="pr_link text-center">bots.expressbase.com</div>*@
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/report_wall.svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Portable.Reports</h4>
+                    <p class="text-center">
+                        Design, generate, schedule or embed visually appealing
+                        portable documents using our Report Designer.
+                    </p>
+                    @*<div class="pr_link text-center">reports.expressbase.com</div>*@
+                </div>
+            </div>
+        </div>
+        <div class="row pd-t6em">
+            <div class="col-md-4 col-lg-4 col-sm-4 col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-xs-12 pr_cont pd-r-0 pdl0xssm">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/bi.svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Intuitive.Visualizations</h4>
+                    <p class="text-center">
+                        Visualise your data as tables or charts. Group visualizations into customisable, interactive &
+                        embeddable dashboards.
+                    </p>
+                    @*<div class="pr_link text-center">bi.expressbase.com</div>*@
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 pr_cont pdr0xssm">
+                <div class="pr_img_cont">
+                    <img src="~/images/svg/document_ .svg" />
+                </div>
+                <div class="pr_text">
+                    <h4 class="text-center">Managed.Documents</h4>
+                    <p class="text-center">
+                        Upload, tag and search your Documents.
+                        Embed our document manager into your business contexts.
+                    </p>
+                    @*<div class="pr_link text-center">docs.expressbase.com</div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="multi_db_supp mt mb alt">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 multi_db_supp_text">
+                <h3 class="eb_font_H">Use your existing Database</h3>
+                <p class="small">on-premise or cloud</p>
+                <p>
+                    Connects natively with popular database systems. Currently supports PostgreSQL and Oracle. MySQL and SQL server support under developement.
+                    If you don’t have a database, we setup an exclusive one for you in our infrastructure.
+
+                </p>
+            </div>
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 multi_db_supp_img">
+                <img src="~/images/dbsupport.png" class="img-responsive hidden-xs hidden-sm" />
+            </div>
+        </div>
+    </div>
+</section>
+<section class="speakers mt mb">
+    <div class="container">
+        <div class="row">
+            <h3 class="mt0 eb_font_H text-center h_b cw">High productivity aPaaS</h3>
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 _quats" style="border-right: 1px solid #80adc3;">
+                <div class="cust_callout_block">
+                    <div class="cust_callout_content">
+                        <p>
+                            <em>
+                                “Application platform as a service (aPaaS) is a PaaS offering that supports application
+                                development, deployment and execution in the cloud. It encapsulates resources such as
+                                infrastructure and includes services such as those for data management and user interfaces.<br /><br />
+                                By 2020, at least 50% of all new business applications will be created with high-productivity toolsets.”
+                            </em>
+                        </p>
+                    </div>
+                    <div class="img_main_callout">
+                            <img src="~/images/gartner .png" alt="Gartner logo">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 _quats">
+                <div class="cust_callout_block">
+                    <div class="cust_callout_content">
+                        <p>
+                            <em>
+                                “Products and/or cloud services for application development that employ visual,
+                                declarative techniques instead of programming and are available to customers
+                                at low- or no-cost in money and training time to begin,
+                                with costs rising in proportion of the business value of the platforms.  <br /><br />
+                                Our July 2017 survey of 41 AD&D leaders using low-code platforms highlights their goal of dramatically raising their teams' ability to respond in time to demands for business software. ”
+                            </em>
+                        </p>
+                    </div>
+                    <div class="img_main_callout">
+                        <img src="~/images/forester.png" alt="Gartner logo">
+                    </div>                   
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="technnology" class="section-padding mt mb">
+    <div class="container">
+        <div class="row">
+            <h3 class="mt0 eb_font_H text-center h_b">Built with Passion</h3>
+            <div class="col-md-2 col-md-offset-1 col-lg-offset-1 col-sm-2 col-sm-offset-1 col-xs-6 techstack"><a href="https://getbootsrap.com/net/"><img class="img-responsive" src="~/images/bootsrap.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="http://jquery.com/"><img class="img-responsive" src="~/images/jquery.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://vue.js.org/"><img class="img-responsive" src="~/images/vue.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.microsoft.com/net/"><img class="img-responsive" src="~/images/aspnetcore.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://servicestack.net/"><img class="img-responsive" src="~/images/servicestack.png" /></a></div>
+            
+            <div class="col-md-2 col-md-offset-2 col-sm-2 col-sm-offset-2 col-xs-6 techstack"><a href="https://www.postgresql.org/"><img class="img-responsive" src="~/images/postgresql.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://redis.io/"><img class="img-responsive" src="~/images/redis-logo.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.rabbitmq.com/"><img class="img-responsive" src="~/images/rabitMq.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" style="padding: 3px;" /></a></div>
+            
+            <div class="col-md-2 col-md-offset-1 col-sm-offset-1 col-xs-6 col-sm-2 techstack"><a href="https://www.docker.com/"><img class="img-responsive" src="~/images/docker.png" style="padding: 9px;" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://www.nginx.com/"><img class="img-responsive" src="~/images/nginx.png" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://www.kubernetes.io/"><img class="img-responsive" src="~/images/kubernetes-logo.png" style="" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://cloud.google.com/"><img class="img-responsive" src="~/images/gcp-logo.png" style="" /></a></div>
+            <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://azure.microsoft.com/"><img class="img-responsive" src="~/images/azure.png" /></a></div>
+        </div>
+    </div>
+</section>
+<section class="getStarted mt mb alt">
+    <div class="container">
+        <div class="text-center">
+            @*<h3>Sign Up now. Start building your Business Apps...</h3>*@
+            <h3 class="mt0 eb_font_H text-center h_b">Join Us</h3>
+        </div>
+        <div class="col-md-12 no-padd get-start-sec">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 callfaction_cont">
+                @*<div class="no-creditcared">No credit card required.</div>*@
+                @*<div class="no-creditcared">No credit card required.</div>*@
+                @*<form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
                         <div class="input-group">
-                            <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                            <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
                             <span class="input-group-btn">
                                 <button type="submit" class="btn getstarted">Get Started</button>
                             </span>
-                        </div>                        
-                    </form>
-                    <div class="form-group social-btn-sec">
-                        <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                        </div>
+                    </form>*@
+                <form action="" method="post" class="joinbeta">
+                    <div class="input-group jumb">
+                        <input type="email" id="emailtxt" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn getstarted">Join our Private Beta <i class="fa fa-spinner fa-spin jb"></i></button>
+                        </span>
+                    </div>
+                </form>
+                @*<div class="form-group social-btn-sec">
+                        <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
                         <div class="form-inline">
                             <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
                                 <i class="fa fa-facebook fa-lg"></i>
@@ -74,224 +405,7 @@
                                 <i class="fa fa-github fa-lg"></i>
                             </a>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!--Slider/-->
-<!--work-shop-->
-<section id="work-shop" class="work-shop">
-    <div class="container">
-        <div class="row">
-            <div class="header-section text-center">
-                <h3>EXPRESSbuild Business Applications</h3>
-            </div>
-            <div class="col-md-4 col-lg-4 col-sm-6 col-xs-12">
-                <div class="service-box text-center">
-                    <div class="col-md-3 col-sm-12 icon-box">
-                        <i class="fa fa-cloud faa-cloud animated"></i>
-                    </div>
-                    <div class="col-md-9 col-sm-12 icon-text">
-                        <h4 class="ser-text">Apps on cloud</h4>
-                        <h6 class="content">Forget about the infrastructure, leave it to us. Focus on your applications and business.</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-lg-4 col-sm-6 col-xs-12">
-                <div class="service-box text-center">
-                    <div class="col-md-3 col-sm-12 icon-box">
-                        <i class="fa fa-mobile"></i>
-                    </div>
-                    <div class="col-md-9 col-sm-12 icon-text">
-                        <h4 class="ser-text">Develop Once, Deploy Anywhere</h4>
-                        <h6 class="content">Use our state-of-the-art developer Studio to develop business apps that can run anywhere.</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-lg-4 col-sm-6 col-xs-12">
-                <div class="service-box text-center">
-                    <div class="col-md-3 col-sm-12 icon-box">
-                        <i class="fa fa-lock"></i>
-                    </div>
-                    <div class="col-md-9 col-sm-12 icon-text">
-                        <h4 class="ser-text">Secure</h4>
-                        <h6 class="content">Role Based Access Control (RBAC) standard implemented which will help you authorize your team members on varying Roles & permissions. All connections via https.</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-lg-4 col-sm-6 col-xs-12">
-                <div class="service-box text-center">
-                    <div class="col-md-3 col-sm-12 icon-box">
-                        <i class="fa fa-database"></i>
-                    </div>
-                    <div class="col-md-9 col-sm-12 icon-text">
-                        <h4 class="ser-text">Own your data</h4>
-                        <h6 class="content">Bring in your database (cloud hosted or in-premise) and hook it into our cloud infrastructure via a secure link.</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-lg-4 col-sm-6 col-xs-12">
-                <div class="service-box text-center">
-                    <div class="col-md-3 col-sm-12 icon-box">
-                        <i class="fa fa-code"></i>
-                    </div>
-                    <div class="col-md-9 col-sm-12 icon-text">
-                        <h4 class="ser-text">Low Code</h4>
-                        <h6 class="content">Put your existing skills to use. Code in JavaScript & SQL.</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-lg-4 col-sm-6 col-xs-12">
-                <div class="service-box text-center">
-                    <div class="col-md-3 col-sm-12 icon-box">
-                        <i class="fa fa-clock-o"></i>
-                    </div>
-                    <div class="col-md-9 col-sm-12 icon-text">
-                        <h4 class="ser-text">Faster Time to Market</h4>
-                        <h6 class="content">Express build enterprise applications. Manage change efficiently.</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!--/ work-shop-->
-<section class="overlay2 section-padding" id="products">
-    <div class="container">
-        <div class="row eb-banner2">
-            <div class="text-center">
-                <h3>Meet Our Products</h3>
-            </div>
-            <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12">
-                <div class="eb-banner2-text">
-                    <h2>Forms</h2>
-                    <h4>Fundamental to every Business software</h4>
-                    <p>
-                        Drag n Drop builder with auto persist/retrieval of data without writing even a single line of SQL statement<br />
-                        Heightened security including field level permissions<br />
-                        Infinite custom validations for data integrity<br />
-                        Embeddable scripts to deploy anywhere
-                    </p>
-                    Go to<a href="#" class="prod-link">forms.expressbase.com</a>
-                </div>
-            </div>
-            <img class="col-md-5 col-lg-5 col-sm-6 col-xs-12 eb-banner2-img" src="~/images/EbFormBuilder.png">
-        </div>
-    </div>
-</section>
-<section class="overlay2 section-padding bg-fafa">
-    <div class="container">
-        <div class="row eb-banner2">
-            <img class="col-md-5 col-lg-5 col-sm-6 col-xs-12 eb-banner2-img" src="~/images/EbVisualization.png">
-            <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12 padd-left-30">
-                <div class="eb-banner2-text">
-                    <h2>Visualizations</h2>
-                    <h4>Analyse data to support decision making</h4>
-                    <p>
-                        Visualise your data from an SQL into both  table and chart visualisations<br />
-                        Interactive dashboard enabling customisation<br />
-                        Drill down dashboards<br />
-                        Embed and Share visualisations
-                    </p>
-                    Go to<a href="#" class="prod-link">bi.expressbase.com</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="overlay2 section-padding">
-    <div class="container">
-        <div class="row eb-banner2">
-            <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12">
-                <div class="eb-banner2-text">
-                    <h2>Reports</h2>
-                    <h4>For portability and offline usage</h4>
-                    <p>
-                        Dynamically generate visually appealing PDF documents on the fly<br />
-                        Scheduled Reports for automation<br />
-                        State-of-the art Designer on the web
-                    </p>
-                    Go to<a href="#" class="prod-link">reports.expressbase.com</a>
-                </div>
-            </div>
-            <img class="col-md-5 col-lg-5 col-sm-6 col-xs-12 eb-banner2-img" src="~/images/EbReportBuilder.png">
-        </div>
-    </div>
-</section>
-
-<section class="overlay2 section-padding bg-fafa">
-    <div class="container">
-        <div class="row eb-banner2">
-            <div class="col-md-5 col-lg-5 col-sm-6 col-xs-12 eb-banner2-img chatbot-container">
-                <img src="~/images/botscreen.png" style="height:400px;">
-            </div>
-            <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12 padd-left-30">
-                <div class="eb-banner2-text">
-                    <h2>Chat bot</h2>
-                    <h4>Automate repeatable work flows</h4>
-                    <p class="">
-                        Create your own bots using Simple Drag n Drop Builder and deploy everywhere<br />
-                        Initiate and Automate business workflows from the bot itself<br />
-                        An elegant solution for Data collection, Surveys and even Enterprise forms
-                    </p>
-                    Go to<a href="https://bots.expressbase.com/" class="prod-link">bots.expressbase.com</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="container getStarted">
-    <div class="text-center">
-        <h3>Sign Up now. Start building your Business Apps...</h3>
-    </div>
-    <div class="col-md-12 no-padd get-start-sec">
-        <div class="col-md-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-xs-12 col-sm-offset-4">
-            <div class="no-creditcared">No credit card required.</div>
-            <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
-                <div class="input-group">
-                    <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
-                    <span class="input-group-btn">
-                        <button type="submit" class="btn getstarted">Get Started</button>
-                    </span>
-                </div>         
-            </form>
-            <div class="form-group social-btn-sec">
-                <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
-                <div class="form-inline">
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
-                        <i class="fa fa-facebook fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
-                        <i class="fa fa-twitter fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="#">
-                        <i class="fa fa-linkedin fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
-                        <i class="fa fa-google-plus fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
-                        <i class="fa fa-github fa-lg"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!--partners-->
-<section id="partners" class="partners section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="text-center">
-                <h3 style="margin-bottom: 30px;">We Are Supported By</h3>
-            </div>
-            <div class="col-sm-6 col-md-2 col-lg-2 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-">
-                <a href="https://bizspark.microsoft.com/"><img src="~/images/perk-bizspark.jpg" class="img-responsive"></a>
-            </div>
-            <div class="col-sm-6 col-md-2 col-lg-2 col-xs-12 parteners-last">
-                <a href="http://10000startups.com/"><img src="~/images/10000-startups.png" class="img-responsive"></a>
+                    </div>*@
             </div>
         </div>
     </div>
@@ -309,42 +423,68 @@
             var y = $(this).scrollTop();
             if (y > $('.slider').height()) {
                 $('#trial-btn').fadeIn();
-                //$('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
             } else {
                 $('#trial-btn').fadeOut();
-               /* $('.navbar-default').css({ "background-color": "transparent", "background-image": "none" })*/;
             }
-        });                   
+            $(".message-box-indexpage").fadeOut();
+            $(".ext-pageheader .navbar").css("top", "0");
+        });
     });
-
     function validate(form) {
-        var email = form.email.value.trim();
-        if (ValidateEmail(email)) 
+        var email = form.Email.value.trim();
+        if (ValidateEmail(email))
             return true;
-        else 
+        else
             return false;
     }
     function ValidateEmail(mail) {
         if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
             return (true);
         return (false);
-    }     
+    }
+    $(".joinbeta").submit(function (e) {
+        e.preventDefault();
+        if (validate(this)) {
+            $.ajax({
+                type: 'POST',
+                url: "../Ext/JoinBeta",
+                beforeSend: function () {
+                    $(e.target).children().find('i').show();
+                },
+                data: $(e.target).serializeArray()
+            }).done(function (data) {
+                var msg = data ? "Thank you for your interest in our private beta. We will get back to you shortly." : "You have already specified your interest to join our private beta. We will get back to you shortly.";
+                $(e.target).children().find('i').hide();
+                $(e.target).children().find(".emailtxt").val("");
+                $(".message-box-indexpage").fadeIn().children("span").text(msg);
+                $(".ext-pageheader .navbar").css("top", "52px");
+                $(".slider").css("margin-top","100px");
+                $("#close-msg").click(function (e) {
+                    $(".message-box-indexpage").fadeOut();
+                    $(".ext-pageheader .navbar").css("top", "0");
+                    $(".slider").css("margin-top", "0");
+                });
+            });
+        }
+    });
 </script>
-@if (ViewBag.useremail != null)
+@*@if (ViewBag.useremail != null)
 {
     <script>
             $("#login-modal").modal('toggle');
             $("#email-login").val("@ViewBag.useremail");
     </script>
-}
+}*@
 @if (ViewBag.message != null)
 {
     <script>
             $(".message-box-indexpage").show();
-            $(".ext-pageheader .navbar").css("top", "40px");
+            $(".ext-pageheader .navbar").css("top", "52px");
+            $(".slider").css("margin-top", "100px");
             $("#close-msg").click(function (e) {
-                $(".message-box-indexpage").hide();
+                $(".message-box-indexpage").fadeOut();
                 $(".ext-pageheader .navbar").css("top", "0");
-            });    
+                $(".slider").css("margin-top", "0");
+            });
     </script>
 }

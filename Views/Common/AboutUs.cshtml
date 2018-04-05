@@ -2,40 +2,71 @@
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
     Html.RenderPartial("ExtPageHeader");
 }
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 <section class="aboutus-header">
-    <div class="container-fluid">
-        <div class="row eb-banner">
-            <div class="col-md-12 no-padd eb-banner-text-img-sec">
-                <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner">
-                    <h2>Empowering Small & Midsize Businesses</h2>
-                    <p>
-                        Our project proposal was selected to be one of the NASSCOM 10k Startup initiative.
-                        we are incubated at the NASSCOM 10k Startup Warehouse in Infopark, Kochi, Kerala.
+    <div class="layer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 no-padd al_bottom">
+                    <h1 class="text-center">We are a people first company.</h1>
+                    <p class="abt_us_sunH text-center">
+                        Whether employees or customers.
                     </p>
-                </div>    
-                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 banner-img pull-right">
-                    <img src="~/images/svg/cloudaboutus.svg" />
-                </div>                       
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="m_v mt mb">
+    <div class="container">
+        <div class="row mv_com eb_mis">
+            <div class="col-md-2 col-lg-2 col-sm-2 hidden-xs pd_for_img">
+                <img src="~/images/svg/start.svg" class="icon_mis" />
+            </div>
+            <div class="col-md-10 col-lg-10 col-sm-10 col-xs-12">
+                EXPRESSbase Systems Private Limited is a software product (SaaS) startup incorporated in Oct 2016 and
+                is currently incubated at Nasscom 10k StartUp Warehouse, Infopark, Kochi, Kerala, India.
+                We firmly believe people build and shape great companies and products.
+                We have the right mix of young and experienced professionals in our energetic team who are excited to take on huge challeges.
+            </div>
+        </div>
+        <div class="row mv_com eb_vis">
+            <div class="col-md-10 col-lg-10 col-sm-10 col-xs-12">
+                We value our customer's effort, time and money. Our mission is to reduce the time
+                and effort Small and Mid Sized Businesses spend on business automation.
+                Change is inevitable but this is an era of "supersonic" disruptions. To survive, SMBs need rapidly evolving
+                software and conventional modes of application development simply doesn't make sense.
+                We are passionately building next-gen rapid application development tools on the cloud
+                for SMBs who have frequent changes in processes and workflows, thanks to their rapid growth or market disruptions.
+            </div>
+            <div class="col-md-2 col-lg-2 col-sm-2 hidden-xs pd_for_img" style="padding: 0px 30px 0px 40px;">
+                <img src="~/images/svg/aim.svg" class="icon_mis" />
             </div>
         </div>
     </div>
 </section>
 <!--Organisations-->
-<section id="founder" class="founder">
+<section id="founder" class="founder mt mb alt">
     <div class="container">
+        <h2 class="mt0 eb_font_H text-center h_b">Team</h2>
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                <img style="border-radius:0;margin-top: 30px;" src="~/images/founder.jpg" class="img-responsive">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 mb">
+                <img src="~/images/founder.jpg" class="img-responsive" style="border-radius: 10px;">
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
                 <div class="detail-info">
                     <hgroup>
-                        <h3> Suresh Balasubramanian</h3>
-                        <h4>Founder & CEO/CTO</h4>
+                        <h3 class="mt0"> Suresh Balasubramanian</h3>
+                        <h4>Founder & CEO</h4>
                     </hgroup>
-                    <p>Suresh is an IT professional having 20+ years of experience working with both corporate and startups. A graduate in Chemistry, he started his career in Pharmaceutical Sales and Marketing with Sun Pharma. After 1¼ years he eventually ended up in the IT industry after a friend introduced him to the world of computers.</p>
-                    <p>A self taught IT professional, Suresh has worked with corporate like PayPal, BMC Software and Microsoft. Suresh dreams to build a world class next generation aPaaS product targeting Small/Medium enterprises. Suresh lives in Kerala, India with his wife Smruthi Sasidharan and 8 year old son Zorbian Smruthi.</p>
+                    <p>
+                        Suresh is a BSc Chemistry graduate (1994) from the prestigious Maharajas College Ernakulam.
+                        He started his career with Sun Pharma in 1994 and switched to IT in 1995. He has worked with several IT giants
+                        like BMC Software, Microsoft, Covansys, CSC, CSS Corp. and PayPal in India and the US.
+                        Co-Founded an IT Start-up in 2012, NetSonic Solutions LLC in the UAE with a similar but a watered down RAD
+                        client-server software which had 30+ clients in UAE, Qatar and Bahrain. Exited NetSonic and returned back to India to
+                        setup EXPRESSbase Systems P Ltd in Oct 2016.
+                        He has worked in all the phases of SDLC, wide range of platforms, tools & languages and has extensive leadership/management experience.
+                    </p>
                 </div>
             </div>
         </div>
@@ -43,113 +74,85 @@
 </section>
 <!--/ Organisations-->
 <!--team-->
-<section class="team bg-fafa">
+<section class="team mt mb">
     <div class="container">
-        <div class="row">
-            <h2 class="text-center">Team</h2>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
-                <div class="img-box">
-                    <img src="~/images/bini.jpg" class="img-responsive">
-                </div>
-                <h1>Bini Varghese</h1>
-                <h2>Software Engineer</h2>
+        <div class="row team_lead flx">
+            <div class="team_lead_txt">
+                <h3 class="mt0 team_name">Ahammed Unni</h3>
+                <h4 class="team_role">Tech Lead</h4>
+                <p>
+                    Ahammed Completed his engineering degree in Electronics from University of Calicut in 2013.
+                    After graduation he Co-founded an IoT Start-Up <i>passioLab</i> and lead the technical team.
+                    passioLab focused mainly on IoT in consumer space and health industry. The product couldn't hit the market and he moved to devoloping a product
+                    for the fitness industry and founded a company named FittHouse which was incubated at NASSCOM 10k start up warehouse in 2016.
+                    In 2017 he decided to move on and joined EXPRESSbase and is currently leading the engineering team.
+                </p>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
-                <div class="img-box">
-                    <img src="~/images/roby.jpg" class="img-responsive">
-                </div>
-                <h1>Roby Abraham</h1>
-                <h2>Software Engineer</h2>
+            <div class="team_lead_img profile">
+                <div class="img-box_lead">
+                    <img src="~/images/unni.jpg" class="img-responsive" style="border-radius:10px;">
+                </div>               
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
+        </div>
+        <div class="row feature_row_second">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 profile">
                 <div class="img-box">
-                    <img src="~/images/jith pic.jpg" class="img-responsive">
+                    <img src="~/images/bini.png" class="img-responsive">
                 </div>
-                <h1>Jithjob K I</h1>
-                <h2>Software Engineer</h2>
+                <h1 class="team_name text-center">Bini Varghese</h1>
+                <h2 class="team_role text-center">Software Engineer</h2>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 profile">
                 <div class="img-box">
-                    <img src="~/images/dona.jpg" class="img-responsive">
+                    <img src="~/images/rob.png" class="img-responsive">
                 </div>
-                <h1>Dona Jose</h1>
-                <h2>Software Engineer</h2>
+                <h1 class="team_name text-center">Roby Abraham</h1>
+                <h2 class="team_role text-center">Software Engineer</h2>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 profile">
                 <div class="img-box">
-                    <img src="~/images/amal.jpg" class="img-responsive">
+                    <img src="~/images/jith.png" class="img-responsive">
                 </div>
-                <h1>Amal K Dev</h1>
-                <h2>Software Engineer</h2>
+                <h1 class="team_name text-center">Jithjob K I</h1>
+                <h2 class="team_role text-center">Software Engineer</h2>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 profile">
                 <div class="img-box">
-                    <img src="~/images/unni.jpg" class="img-responsive">
+                    <img src="~/images/dona.png" class="img-responsive">
                 </div>
-                <h1>Ahammed Unni</h1>
-                <h2>Software Engineer</h2>
+                <h1 class="team_name text-center">Dona Jose</h1>
+                <h2 class="team_role text-center">Software Engineer</h2>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
+        </div>
+        <div class="row feature_row_second">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 profile ml12_5">
                 <div class="img-box">
-                    <img src="~/images/chinchu.jpg" class="img-responsive">
+                    <img src="~/images/amal.png" class="img-responsive">
                 </div>
-                <h1>Chinchu C Vijayan</h1>
-                <h2>Software Engineer</h2>
+                <h1 class="team_name text-center">Amal K Dev</h1>
+                <h2 class="team_role text-center">Software Engineer</h2>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 profile">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 profile">
                 <div class="img-box">
-                    <img src="~/images/febin.jpg" class="img-responsive">
+                    <img src="~/images/chinchu.png" class="img-responsive">
                 </div>
-                <h1>Febin Carlos</h1>
-                <h2>Software Engineer</h2>
+                <h1 class="team_name text-center">Chinchu C Vijayan</h1>
+                <h2 class="team_role text-center">Software Engineer</h2>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 col-xs-offset-3 col-sm-offset-0 profile">
+                <div class="img-box">
+                    <img src="~/images/febin.png" class="img-responsive">
+                </div>
+                <h1 class="team_name text-center">Febin Carlos</h1>
+                <h2 class="team_role text-center">Software Engineer</h2>
             </div>
         </div>
     </div>
 </section>
-<!-- contact Modal -->
-<div id="contactModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">Contact</h4>
-            </div>
-            <div class="modal-body">
-                <div class="containter">
-                    <div class="row">
-                        <form class="form-horizontal" name="commentform" method="post" action="#">
-                            <div class="col-xs-8">
-                                <div class="form-group">
-                                    <label for="InputName" class="col-lg-4 control-label">Name</label>
-                                    <div class="col-lg-8">
-                                        <input type="text" class="form-control" name="first_name" id="first_name" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="InputEmail" class="col-lg-4 control-label">Email</label>
-                                    <div class="col-lg-8">
-                                        <input type="email" class="form-control" id="email" name="email" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="InputMessage" class="col-lg-4 control-label">Message</label>
-                                    <div class="col-lg-8">
-                                        <textarea name="comments" id="comments" class="form-control" rows="5" required></textarea>
-                                    </div>
-                                </div>
-                                <input type="submit" name="submit" id="submit" value="Submit" class="btn btn-info pull-right">
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div><!-- End of Modal -->
 @{
     Html.RenderPartial("PageFooter");
 }
 <script>
     $("#products").hide();
-    $('#trial-btn').show();  
+    $('#trial-btn').show();
 </script>

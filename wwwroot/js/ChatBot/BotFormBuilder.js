@@ -412,7 +412,8 @@
                     data: { DataSourceRefId: PropsObj.DataSourceId },
                     success: function (Columns) {
                         PropsObj.Columns = JSON.parse(Columns);
-                        this.setAllChildObjColumns(PropsObj);
+                        if (PropsObj.constructor.name === "EbCards")
+                            this.setAllChildObjColumns(PropsObj);
                         $.LoadingOverlay('hide');
                     }.bind(this)
                 });
@@ -428,17 +429,25 @@
         }.bind(this);
 
         this.setAllChildObjColumns = function (PropsObj) {
-            $.each(PropsObj.Fields.$values, function (i, item) {
-                item.Columns = PropsObj.Columns;
+            $.each(PropsObj.CardFields.$values, function (i, item) { item.Columns = PropsObj.Columns; });
+
+            var _this = this;
+            Object.defineProperty(PropsObj.CardFields.$values, "push", {
+                configurable: false,
+                enumerable: false, // hide from for...in
+                writable: false,
+                value: function () {
+                    for (var i = 0, n = this.length, l = arguments.length; i < l; i++ , n++) {
+                        _this.updateColumn(this, n, this[n] = arguments[i], PropsObj); // assign/raise your event
+                    }
+                    return n;
+                }
             });
         }.bind(this);
 
+        this.updateColumn = function (arr, a, p, PropsObj) { $.each(arr, function (i, item) { item.Columns = PropsObj.Columns; }); }.bind(this);
 
-        this.PGobj.Ebalert = new EbAlert({
-            id: this.wraperId + "BFBalertCont",
-            top: 24,
-            right: 24,
-        });
+        this.PGobj.Ebalert = new EbAlert({ id: this.wraperId + "BFBalertCont", top: 24, right: 24, });
 
         setTimeout(function () {
             $("#minmize").click();

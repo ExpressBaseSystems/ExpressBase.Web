@@ -1,7 +1,8 @@
-﻿var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl) {
+﻿var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serverEventUrl) {
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
     this.ebbotThemeColor = _themeColor;
+    this.ServerEventUrl = _serverEventUrl;
     this.botdpURL = 'url(' + _botdpURL + ')center center no-repeat';
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
@@ -72,6 +73,7 @@
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
         $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
+        this.initConnectionCheck();
         this.showDate();
         //$('body').confirmation({
         //    selector: '.eb-chatBox'
@@ -578,8 +580,8 @@
         var $ctrlCont = $(controlHTML);
         this.curCtrl = this.curForm.controls[idx];
         var name = this.curCtrl.name;
-
-        if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation")))
+        //if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation" || this.curCtrl.objType === "Image")))
+        if (!(this.curCtrl && ["Cards", "Locations", "InputGeoLocation", "Image"].includes(this.curCtrl.objType)))
             $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
         var lablel = this.curCtrl.label;
         if (lablel) {
@@ -587,7 +589,14 @@
                 lablel += ` (${this.curCtrl.helpText})`;
             this.msgFromBot(lablel);
         }
-        this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
+        if (["Label", "Image"].includes(this.curCtrl.objType)) {
+            if (this.curCtrl.objType === "Image")
+                this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
+            this.nxtCtrlIdx++;
+            this.callGetControl();
+        }
+        else
+            this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
     }.bind(this);
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
@@ -622,11 +631,22 @@
     this.uploadImage = function (url, ctrlname, idx) {
         console.log("uploadImage");
         var URL = url.substring(url.indexOf(",/") + 1);
-        $.post("../Bote/UploadImageOrginal", {
+        var EbSE = EbServerEvents({ 
+            ServerEventUrl: this.ServerEventUrl,
+            Channels: ["baabu"],
+        });
+        EbSE.onUploadSuccess = function (obj, e) {
+            $(`[for=${ctrlname}] .img-loader:last`).hide(100);
+            this.callGetControl(idx);
+            this.curVal = obj.objId;
+        }.bind(this);
+
+        $.post("../Bote/UploadFileAsync", {
             'base64': URL,
             "filename": ctrlname,
             "refreshToken": this.refreshToken,
-            "bearerToken": this.bearerToken
+            "bearerToken": this.bearerToken,
+            "type": URL.trim(".")[URL.trim(".").length-1]
         }).done(function (result) {
             $(`[for=${ctrlname}] .img-loader:last`).hide(100);
             this.callGetControl(idx);
@@ -936,6 +956,18 @@
             }
         }.bind(this), { scope: 'email' });
     }
+
+    this.initConnectionCheck = function () {
+        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://www.expressbase.com/images/EB_Logo.png?' + Date.now() }, active: 'image' } };
+        setInterval(this.connectionPing, 2000);
+    };
+
+    this.connectionPing = function () {
+        Offline.options.checks.image.url = 'https://www.expressbase.com/images/EB_Logo.png?' + Date.now();
+        if (Offline.state === 'up')
+            Offline.check();
+        console.log(Offline.state);
+    };
     this.init();
 };
 

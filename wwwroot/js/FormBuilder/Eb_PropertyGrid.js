@@ -29,7 +29,7 @@
     };
 
     //Builds property Grid rows
-    this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf) {
+    this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf, IsCElimitEditor) {
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.wraperId + name;
@@ -49,9 +49,13 @@
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
             else
                 value = (!meta.enumoptions[value]) ? Object.keys(meta.enumoptions)[0] : value;
-            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, );
-            this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
+            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, IsCElimitEditor);
+            if (!IsCElimitEditor)
+                this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
+            else
+                this.getValueFuncs[name] = function () { var idx = parseInt($('#' + elemId).val()) , value = (idx !== 0) ? this.PropsObj[meta.source].$values[idx -1] : null; return value; }.bind(this);
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
+
         }
         else if (type === 2) {    // If number 
             valueHTML = '<input type="number" id="' + elemId + '" value="' + (value || 0) + '" style="width:100%" />';
@@ -73,9 +77,18 @@
             valueHTML = '<input type="date" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
-        else if (type > 6 && type < 11) {    //  If collection editor
-            valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
-                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        else if (type > 6 && type < 11) {
+            if (meta.Limit === 0) {//  If collection editor
+                valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
+                    + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+            }
+            else {
+                var _meta = jQuery.extend({}, meta);
+                _meta.editor = 1;
+                _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.name || a.ColumnName))];
+                value = value ? _meta.enumoptions.indexOf(value.name || value.ColumnName) : 0;
+                return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf, true);
+            }
         }
         else if (type === 11) {    // If JS editor
             valueHTML = '<span style="vertical-align: sub;">(JavaScript)</span>'
@@ -166,12 +179,10 @@
     };
 
     // BootstrapSelect Html builder
-    this.getBootstrapSelectHtml = function (id, selectedValue, options) {
-        selectedValue = selectedValue || 0;
+    this.getBootstrapSelectHtml = function (id, selectedValue, options, IsCElimitEditor) {
+        selectedValue = selectedValue || 0; // default value....optimize
         var html = "<select class='selectpicker' >";
-        $.each(options, function (i, val) {
-            html += "<option data-token='" + i + "'>" + val + "</option>";
-        });
+        $.each(options, function (i, val) { html += `<option style='@color;' data-token='${i}'>${val}</option>`.replace("@color", (IsCElimitEditor && i === 0) ? "color:#777" : ""); });
         html += "</select><input type='hidden' value='" + selectedValue + "' id='" + id + "'>";
         return html;
     };

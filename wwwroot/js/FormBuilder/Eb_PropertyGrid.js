@@ -86,6 +86,7 @@
                 var _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
                 _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.name || a.ColumnName))];
+                value = value ? _meta.enumoptions.indexOf(value.name || value.ColumnName) : 0;
                 return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf, true);
             }
         }

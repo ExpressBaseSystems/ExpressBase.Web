@@ -23,6 +23,8 @@
 <script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js"></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js"></script>@*jith*@
 <script type="text/javascript" src="~/js/Common/offline.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/EbServerEvents/eventsource.min.js"></script>@*amal*@
+<script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js"></script>@*amal*@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-confirmation/1.0.7/bootstrap-confirmation.min.js"></script>@*jith*@
 
 
@@ -46,7 +48,8 @@
     var appid = "@ViewBag.appid";
     var themeColor = "@ViewBag.themeColor";
     var botdpURL = "@ViewBag.botdpURL";
-    var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl');
+    var ServerEventUrl = "@ViewBag.ServerEventUrl";
+    var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl', ServerEventUrl);
 
     $.get("http://ipinfo.io", function (response) {
         chatBotObj.userDtls.ip = response.ip;

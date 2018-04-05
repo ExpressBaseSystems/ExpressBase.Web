@@ -56,7 +56,7 @@
                             </div>
                         </form>*@
                     <form action="" method="post" class="joinbeta">
-                        <div class="input-group">
+                        <div class="input-group jumb">
                             <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
                             <span class="input-group-btn">
                                 <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
@@ -379,7 +379,7 @@
                         </div>
                     </form>*@
                 <form action="" method="post" class="joinbeta">
-                    <div class="input-group">
+                    <div class="input-group jumb">
                         <input type="email" id="emailtxt" name="Email" class="form-control emailtxt" placeholder="Enter your email">
                         <span class="input-group-btn">
                             <button type="submit" class="btn getstarted">Join our Private Beta <i class="fa fa-spinner fa-spin jb"></i></button>
@@ -457,10 +457,12 @@
                 $(e.target).children().find('i').hide();
                 $(e.target).children().find(".emailtxt").val("");
                 $(".message-box-indexpage").fadeIn().children("span").text(msg);
-                $(".ext-pageheader .navbar").css("top", "40px");
+                $(".ext-pageheader .navbar").css("top", "52px");
+                $(".slider").css("margin-top","100px");
                 $("#close-msg").click(function (e) {
                     $(".message-box-indexpage").fadeOut();
                     $(".ext-pageheader .navbar").css("top", "0");
+                    $(".slider").css("margin-top", "0");
                 });
             });
         }
@@ -477,10 +479,12 @@
 {
     <script>
             $(".message-box-indexpage").show();
-            $(".ext-pageheader .navbar").css("top", "40px");
+            $(".ext-pageheader .navbar").css("top", "52px");
+            $(".slider").css("margin-top", "100px");
             $("#close-msg").click(function (e) {
-                $(".message-box-indexpage").hide();
+                $(".message-box-indexpage").fadeOut();
                 $(".ext-pageheader .navbar").css("top", "0");
+                $(".slider").css("margin-top", "0");
             });
     </script>
 }

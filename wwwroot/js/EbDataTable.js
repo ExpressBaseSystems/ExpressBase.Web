@@ -830,40 +830,74 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues("link");
         var splitarray = this.linkDV.split("-");
-        if (splitarray[2] === "3")
-            var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
-        else
-            var url = "http://"+this.url+"/DV/dv?refid=" + this.linkDV;
+        if (splitarray[2] === "3") {
+            var url = "http://" + this.url + "/ReportRender/BeforeRender?refid="+this.linkDV;
+            $("#parent-div0").append(`<div class="modal fade" id="RptModal" role="dialog">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>                              
+                            </div>
+                            <div class="modal-body"> <iframe id="reportIframe" class="reportIframe"></iframe>
+                </div>
+                        </div>
+                    </div>
+                </div>
+                `);
 
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "rowData";
-        input.value = this.rowData.toString();
-        _form.appendChild(input);
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "filterValues";
-        input.value = JSON.stringify(this.filterValues);
-        _form.appendChild(input);
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "tabNum";
-        input.value = this.tabNum;
-        _form.appendChild(input);
+            $.ajax({
+                type: "POST",
+                url: "../ReportRender/BeforeRender",
+                data: this.xx(),
+                success: function (result) {
+                    $("#reportIframe").attr("src", "../ReportRender/RenderReport");
+                    $("#RptModal").modal();
+                    $.LoadingOverlay("hide");
+                }.bind(this),
+            });
+        }
+        else {
+            var url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;
 
-        document.body.appendChild(_form);
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        //note I am using a post.htm page since I did not want to make double request to the page 
-        //it might have some Page_Load call which might screw things up.
-        //window.open("post.htm", name, windowoption);       
-        _form.submit();
-        document.body.removeChild(_form);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "rowData";
+            input.value = this.rowData.toString();
+            _form.appendChild(input);
 
-    }
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "filterValues";
+            input.value = JSON.stringify(this.filterValues);
+            _form.appendChild(input);
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "tabNum";
+            input.value = this.tabNum;
+            _form.appendChild(input);
+
+            document.body.appendChild(_form);
+
+            //note I am using a post.htm page since I did not want to make double request to the page 
+            //it might have some Page_Load call which might screw things up.
+            //window.open("post.htm", name, windowoption);       
+            _form.submit();
+            document.body.removeChild(_form);
+        }
+
+    }    
+    this.xx = function () {
+        var Obj = {};
+        Obj.refid = this.linkDV;
+        Obj.Params = this.filterValues;
+        return Obj;
+    };
 
     this.ModifyingDVs = function (parentName, source) {
         $.each(dvcontainerObj.dvcol, function (key, obj) {

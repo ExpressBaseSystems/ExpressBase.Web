@@ -155,7 +155,7 @@
 }
 
 .bot-icon {
-    background: var(--botdpURL);
+    background: var(--botdpURL)!important;
     width: 26px;
     background-size: 100% !important;
     height: 26px;

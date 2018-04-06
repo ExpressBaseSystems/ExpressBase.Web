@@ -1,61 +1,89 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPageHeader2");
 }
-
 <script>
-    $(document).ready(function () {
-        $('#prof').hide();
-        $('.noti').hide();
-        $('#submen').hide();
-        if ($('#err').val() != '') {
-            $('#errdiv').show();
-
-        }
-    });
-   
     function onSubmit(token) {
-            document.getElementById("log_form").submit();
-        }
+        document.getElementById("log_form").submit();
+    }
+    @{ 
+        string url = string.IsNullOrEmpty(ViewBag.logo)? "images/EB_Logo-png.png" : ViewBag.logo;
+    }
 </script>
-
-<section id="login">
+<section class="eb_login">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-                <div class="login-box-body">
-                    <div id="errdiv" class="alert alert-danger" style="display:none">
-                        @ViewBag.errMsg
+            <form class="login_container" id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
+                <div class="login-sec-image text-center">
+                    <img src=@url />
+                </div>
+                <h1 class="text-center">Sign In</h1><br>
+                <div class="form-group mb-25">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                        <input type="email" name="uname" class="form-control inputEmail" placeholder="Email" id="inputEmail" data-error="Email address is invalid." required><br />
                     </div>
-                    <input type="hidden" id="err" value="@ViewBag.errMsg" />
-                    <div class="login-box-msg">
-                        <img id="profile-img" class="img-responsive img-cir" src="~/images/proimg.jpg" />
-                        <p id="profile-name" class="profile-name-card"></p>
-                    </div>
-                    <div class="form-group ">
-                        <form id="log_form" class="form-signin" action="~/Ext/TenantSignin" method="post">
-                            <span id="reauth-email" class="reauth-email"></span>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                                <input type="text" id="uname" name="uname" class="form-control" placeholder="Username/Email" required autofocus><br />
-                            </div><br />
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                                <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
-                            </div>
-                            <div class="checkbox icheck">
-                                <label>
-                                    <input type="checkbox" id="loginrem"> Remember Me
-                                </label>
-                                <div class="text-right nopadding">
-                                    <a href="#">Forgot password?</a>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-block btn-flat g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit' style="background-color:#3b5998;color:white;">Sign In</button>
-                        </form>
+                    <div class="help-block with-errors f12 text-right"></div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                        <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
                     </div>
                 </div>
-            </div>
+                <div class="form-group">
+                    <div class="checkbox icheck remembrpw text-right">
+                        <label>
+                            <input type="checkbox" id="loginrem"> Remember Me
+                        </label>
+                        @*<div class="text-right nopadding">
+                                <a href="~/Ext/ForgotPassword">Forgot password?</a>
+                            </div>*@
+                    </div>
+                    <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit'>
+                        Sign In <i class="fa fa-spinner fa-spin login_spiner"></i>
+                    </button>
+                </div>
+                @*<div class="text-center">Or Sign In by</div>
+                    <div style="padding-left: 34px;">
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
+                                <i class="fa fa-facebook"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="#" class="btn btn-lg btn-block">
+                                <i class="fa fa-twitter text-info"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="#" class="btn btn-lg btn-block">
+                                <i class="fa fa-google-plus text-danger"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="#" class="btn btn-lg btn-block">
+                                <i class="fa fa-linkedin"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-2 col-sm-2">
+                            <a href="#" class="btn btn-lg btn-block">
+                                <i class="fa fa-github text-muted"></i>
+                                <span class="hidden-xs"></span>
+                            </a>
+                        </div>
+                    </div>*@
+            </form>
         </div>
+        <div class="log_error">Incorrect username or password.<i class="fa fa-close log_error_close" onclick="$('.log_error').hide();"></i></div>
     </div>
 </section>
+<script>
+@*$("#logNow").click(function (e) {
+        $(".login_spiner").show();
+        setTimeout(function () { $(".login_spiner").hide(); $(".log_error").show(); }, 3000);
+
+    });</script>*@

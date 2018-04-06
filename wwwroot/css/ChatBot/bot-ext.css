@@ -118,17 +118,6 @@
     display: inline-block;
 }
 
-.bot-icon {
-    background: url(../images/svg/chatBot.svg)center center no-repeat;
-    width: 26px;
-    background-size: 100% !important;
-    height: 26px;
-    display: inline-block;
-    margin-bottom: -6px;
-    border-radius: 24px;
-    background-color: var( --ebbotThemeColor );
-}
-
 .chatclose {
     display: inline-block;
     float: right;

@@ -474,14 +474,28 @@
 }
 
 .eb-chatBox .card-cont {
-    border: none;
-    margin: 0;
-    width: 100%;
-    height: inherit;
+	border-radius: 1.3em 1.3em 0 0;
+	border: none;
+	margin: 0;
+	width: 100%;
+	height: inherit;
 }
 
+.eb-chatBox .cards-cont {
+	padding: 0px;
+	box-shadow: 0px 0px 20px #ccc;
+	border-radius: 1.3em 1.3em 0 0;
+}
+
+.eb-chatBox .card-summary-cont {
+	box-shadow: 0px 0px 20px #ccc;
+	border-radius: 0 0 1.3em 1.3em;
+	margin-top: 5px;
+}
+
+
 .slick-track {
-    display: flex !important;
+	display: flex !important;
 }
 
 .slick-next {

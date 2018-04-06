@@ -70,10 +70,19 @@
         $("#" + this.Container + "_modal").modal("toggle");
     };
 
+    this.startSE = function () {
+        this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.info", Channels: ["file-upload"] });
+        this.ss.onUploadSuccess = function (m, e) {
+            
+        }.bind(this);
+    };
+
     this.modalShown = function () {
         this.cropie.croppie('bind', {
             url: this.url,
         });
+        if (this.enableSE)
+            this.startSE();
     };
 
     this.__cropfy = function () {
@@ -89,6 +98,7 @@
     };
 
     this.modalHide = function () {
+        this.ss.stopListening();
     };
 
     this.saveCropfy = function () {

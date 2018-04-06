@@ -304,23 +304,35 @@ var DvContainerObj = function (settings) {
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
         if (this.dvRefid !== null) {
             $.LoadingOverlay("show");
-            $.ajax({
-                type: "POST",
-                url: "../DV/getdv",
-                data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2], dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
-                success: function (dvObj) {
-                    counter++;
-                    dvObj = JSON.parse(dvObj);
-                    dvcontainerObj.currentObj = dvObj.DsObj;
-                    this.TaggedDvlist = dvObj.DvTaggedList.$values;
-                    if (dvObj.DvList.$values.length > 0) {
-                        this.RelatedDvlist = dvObj.DvList.$values;
-                    }
-                    //this.removeDupliateDV();
-                    $.LoadingOverlay("hide");
-                    dvcontainerObj.btnGoClick();
-                }.bind(this),
-            });
+            if (this.dvRefid.split("-")[2] === "3") {
+                $.ajax({
+                    type: "POST",
+                    url: "../ReportRender/BeforeRender",
+                    data: this.xx(),
+                    success: function (result) {
+                        
+                    }.bind(this),
+                });
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "../DV/getdv",
+                    data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2], dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
+                    success: function (dvObj) {
+                        counter++;
+                        dvObj = JSON.parse(dvObj);
+                        dvcontainerObj.currentObj = dvObj.DsObj;
+                        this.TaggedDvlist = dvObj.DvTaggedList.$values;
+                        if (dvObj.DvList.$values.length > 0) {
+                            this.RelatedDvlist = dvObj.DvList.$values;
+                        }
+                        //this.removeDupliateDV();
+                        $.LoadingOverlay("hide");
+                        dvcontainerObj.btnGoClick();
+                    }.bind(this),
+                });
+            }
         }
         else {
             counter++;
@@ -330,6 +342,13 @@ var DvContainerObj = function (settings) {
             dvcontainerObj.currentObj.DataSourceRefId = dvcontainerObj.previousObj.DataSourceRefId;
             dvcontainerObj.btnGoClick();
         }
+    };
+
+    this.xx = function () {
+        var Obj = {};
+        Obj.refid = this.dvRefid;
+        Obj.Params =JSON.parse(this.filterValues);
+        return Obj;
     };
 
     this.removeDupliateDV = function () {

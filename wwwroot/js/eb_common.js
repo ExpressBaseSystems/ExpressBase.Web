@@ -114,7 +114,7 @@ function isPrintable(e) {
 }
 
 function RefreshControl(obj) {
-    var NewHtml = obj.$Control.outerHTML();
+    var NewHtml = obj.$WrapedCtrl4Bot.outerHTML();
     var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
     $.each(metas, function (i, meta) {
         var name = meta.name;

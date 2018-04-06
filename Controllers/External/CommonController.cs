@@ -7,6 +7,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Common;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -52,6 +53,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("SignIn")]
         public IActionResult SignIn()
         {
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            ViewBag.errMsg = TempData["ErrorMessage"] as string;
             return View();
         }
 

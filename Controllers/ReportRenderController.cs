@@ -54,7 +54,7 @@ namespace ExpressBase.Web.Controllers
         }
         public bool Render(string refid, List<Param> Params)
         {
-            Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);
+            //Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);
             var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
             pclient.BearerToken = this.ServiceClient.BearerToken;
             pclient.Timeout = TimeSpan.FromMinutes(3);

@@ -208,7 +208,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.CountParameters = function () {
         commonO.flagRun = false;
-        var result = window["editor" + tabNum].getValue().match(/\@\w+/g);
+        var result = window["editor" + tabNum].getValue().match(/\:\w+|\@\w+/g);
         var filterparams = [];
         if (result !== null) {
             for (var i = 0; i < result.length; i++) {

@@ -1,5 +1,6 @@
 ﻿var EbOnBoarding = function () {
     this.objSubscription = {};
+    var _prevId = "#profimage";
 
     this.getSolutionName = function (e) {
         $('#Hidd-sname').val($(e.target).val());
@@ -32,17 +33,31 @@
     };
 
     this.ProfileImgUpload = function () {
-        var uploadProf = new EbImageCropper({
-            preview: 'profimage',
-            cropperContainer: 'cropsection',
-            toggleId:'profimage'
+        var profCrop = new cropfy({
+            Container: 'onboarding',
+            Toggle: '._cropify',
+            isUpload: true,
+            enableSE: true,
+            Browse: true,
+            Result: 'base64'
         });
+        profCrop.getFile = function (file) {
+            $("#profimage").attr("src", file);
+        }.bind(this);
     };
+
     this.LogoImageUpload = function () {
-        //var uploadLogo = new EbImageCropper({
-        //    preview: 's-logo-prev',
-        //    cropperContainer: 'eb-cropie-inner'
-        //});
+        var logoCrp = new cropfy({
+            Container: 'onboarding_logo',
+            Toggle: '._cropify',
+            isUpload: true,
+            enableSE: true,
+            Browse: true,
+            Result: 'base64'
+        });
+        logoCrp.getFile = function (file) {
+            $("#profimage").attr("src", file);
+        }.bind(this);
     };
 
     this.ValidateForm = function () {
@@ -158,7 +173,7 @@
 
     this.init = function () {     
         this.ProfileImgUpload();
-        this.LogoImageUpload();
+        //this.LogoImageUpload();
         $('#solutionname').on("change", this.getSolutionName.bind(this));
         $('#cid').on("change", this.getClientId.bind(this));
         $("#Desc").on("change", this.getDesc.bind(this));

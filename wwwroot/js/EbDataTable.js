@@ -831,30 +831,37 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.filterValues = this.getFilterValues("link");
         var splitarray = this.linkDV.split("-");
         if (splitarray[2] === "3") {
-            var url = "http://" + this.url + "/ReportRender/BeforeRender?refid="+this.linkDV;
-            $("#parent-div0").append(`<div class="modal fade" id="RptModal" role="dialog">
+            var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
+            var copycelldata = this.cellData.replace(/ /g, "_");
+            if ($(`#RptModal${copycelldata}`).length === 0) {
+                $("#parent-div0").append(`<div class="modal fade" id="RptModal${copycelldata}" role="dialog">
                     <div class="modal-dialog modal-sm">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>                              
                             </div>
-                            <div class="modal-body"> <iframe id="reportIframe" class="reportIframe"></iframe>
+                            <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe"></iframe>
                 </div>
                         </div>
                     </div>
                 </div>
                 `);
 
-            $.ajax({
-                type: "POST",
-                url: "../ReportRender/BeforeRender",
-                data: this.xx(),
-                success: function (result) {
-                    $("#reportIframe").attr("src", "../ReportRender/RenderReport");
-                    $("#RptModal").modal();
-                    $.LoadingOverlay("hide");
-                }.bind(this),
-            });
+                $.ajax({
+                    type: "POST",
+                    url: "../ReportRender/BeforeRender",
+                    data: this.xx(),
+                    success: function (result) {
+                        $(`#reportIframe${copycelldata}`).attr("src", "../ReportRender/RenderReport");
+                        $(`#RptModal${copycelldata}`).modal();
+                        $.LoadingOverlay("hide");
+                    }.bind(this),
+                });
+            }
+            else {
+                $(`#RptModal${copycelldata}`).modal();
+                $.LoadingOverlay("hide");
+            }
         }
         else {
             var url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;

@@ -410,9 +410,6 @@
         </div>
     </div>
 </section>
-@*<div class="bot-login-sec">
-    @await Component.InvokeAsync("EbSignIn")
-</div>*@
 <!--partners/-->
 @{
     Html.RenderPartial("PageFooter");
@@ -428,6 +425,7 @@
             }
             $(".message-box-indexpage").fadeOut();
             $(".ext-pageheader .navbar").css("top", "0");
+            $(".slider").css("padding-top", "0");
         });
     });
     function validate(form) {
@@ -458,11 +456,11 @@
                 $(e.target).children().find(".emailtxt").val("");
                 $(".message-box-indexpage").fadeIn().children("span").text(msg);
                 $(".ext-pageheader .navbar").css("top", "52px");
-                $(".slider").css("margin-top","100px");
+                $(".slider").css("padding-top","100px");
                 $("#close-msg").click(function (e) {
                     $(".message-box-indexpage").fadeOut();
                     $(".ext-pageheader .navbar").css("top", "0");
-                    $(".slider").css("margin-top", "0");
+                    $(".slider").css("padding-top", "0");
                 });
             });
         }
@@ -480,11 +478,11 @@
     <script>
             $(".message-box-indexpage").show();
             $(".ext-pageheader .navbar").css("top", "52px");
-            $(".slider").css("margin-top", "100px");
+            $(".slider").css("padding-top", "100px");
             $("#close-msg").click(function (e) {
                 $(".message-box-indexpage").fadeOut();
                 $(".ext-pageheader .navbar").css("top", "0");
-                $(".slider").css("margin-top", "0");
+                $(".slider").css("padding-top", "0");
             });
     </script>
 }

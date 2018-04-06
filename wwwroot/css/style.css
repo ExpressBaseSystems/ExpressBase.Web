@@ -12,13 +12,12 @@ body {
     --eb-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px -2px rgba(0, 0, 0, 0.1);
     --fontf: Montserrat;
 }
-.mb {padding-bottom: 3em;}
-.mt {padding-top: 3em;}
+.mb {padding-bottom: 5em;}
+.mt {padding-top: 5em;}
     .mt:first-child {padding-top: 4em;}
 .mt0{margin:0;}
 .h_b {margin-bottom: 2em;}
-.eb_font_H {
-    font-weight: 600;font-size: 2.6rem;color: #656565;font-family: Montserrat;}
+.eb_font_H {font-weight: 600;font-size: 2.6rem;color: #656565;font-family: Montserrat;}
 .eb_font_T {font-weight: 400;color: #828181;font-family: Montserrat;}
 .nopadding {padding: 0;}
 .pd-b-0{padding-bottom:0 !important;}
@@ -111,7 +110,7 @@ body {
 /*forgetpassword msgBox*/
 .message-box-indexpage {
     background: var(--eb-green);
-    position: absolute;
+    position: fixed;
     width: 100%;
     text-align: center;
     z-index: 1200;
@@ -316,7 +315,7 @@ Navigation bar
     }
     .bg-color-banner p {
         width: 90%;
-        font-size: 17px;
+        font-size: 16px;
         line-height: 3.2rem;
         color: white;
         font-family: Montserrat;
@@ -430,12 +429,14 @@ footer {
         text-decoration: none;
         color: #a7a7a7;
         font-size: 13px;
+        cursor:auto;
     }
 
         footer a:hover, footer a:focus {
             color: #aaa;
             text-decoration: none;
-            border-bottom: 1px dotted #999;
+            cursor: auto;
+            /*border-bottom: 1px dotted #999;*/
         }
     footer p {
         color: #a7a7a7;
@@ -600,6 +601,7 @@ footer {
     .team_lead_img{width:100% !important;}
     .flx {flex-direction: column-reverse;}
     .team_lead p {margin-bottom: 3em;}
+    .message-box-indexpage {font-size: 12px;}
 }
 .ml12_5 {
     margin-left:12.5%;
@@ -972,6 +974,7 @@ footer {
     font-weight: 400;
     font-size: 1.7rem;
     color: #828181;
+    margin-bottom: 1em;
 }
 .multi_db_supp_text {
     font-family: Montserrat;

@@ -832,7 +832,29 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var splitarray = this.linkDV.split("-");
         if (splitarray[2] === "3") {
             var url = "http://" + this.url + "/ReportRender/BeforeRender?refid="+this.linkDV;
-            //dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), this.cellData.toString());
+            $("#parent-div0").append(`<div class="modal fade" id="RptModal" role="dialog">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>                              
+                            </div>
+                            <div class="modal-body"> <iframe id="reportIframe" class="reportIframe"></iframe>
+                </div>
+                        </div>
+                    </div>
+                </div>
+                `);
+
+            $.ajax({
+                type: "POST",
+                url: "../ReportRender/BeforeRender",
+                data: this.xx(),
+                success: function (result) {
+                    $("#reportIframe").attr("src", "../ReportRender/RenderReport");
+                    $("#RptModal").modal();
+                    $.LoadingOverlay("hide");
+                }.bind(this),
+            });
         }
         else {
             var url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;
@@ -870,6 +892,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
     }    
+    this.xx = function () {
+        var Obj = {};
+        Obj.refid = this.linkDV;
+        Obj.Params = this.filterValues;
+        return Obj;
+    };
 
     this.ModifyingDVs = function (parentName, source) {
         $.each(dvcontainerObj.dvcol, function (key, obj) {

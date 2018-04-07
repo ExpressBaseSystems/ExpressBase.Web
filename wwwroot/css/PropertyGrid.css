@@ -47,11 +47,33 @@
     min-width: 100%;
     overflow: auto;
     width: 100%;
+    border-collapse: separate;
 }
+
+td {
+    border: solid 1px #000;
+}
+.pgGroupRow td:first-child {
+    padding-left: 3px;
+    border-top-left-radius: 1px;
+}
+
+.pgGroupRow td:last-child {
+    border-top-right-radius: 1px;
+}
+
+.pgGroupRow td:first-child {
+    border-bottom-left-radius: 1px;
+}
+
+.pgGroupRow td:last-child {
+    border-bottom-right-radius: 1px;
+}
+
 
 .pgHead {
     background-color: #4372a1;
-    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.5, #4473a3), color-stop(.75, #4775a5), color-stop(0.98, #369));
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));
     color: white;
     padding: 9px 5px;
     font-weight: bold;
@@ -241,9 +263,9 @@
 
 .pgGroupRow {
     background-color: rgba(51, 102, 153, 0.9215686274509803) !important;
-    /*background-image: var(--gbm);*/
     color: white;
     border-bottom: solid 2px white;
+    letter-spacing: 0.0225em;
 }
 
     .pgGroupRow > td:hover {

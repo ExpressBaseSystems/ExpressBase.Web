@@ -723,84 +723,6 @@ footer {
     padding: 0;
     padding-left: 10px;
 }
-
-#EbsideBar i {
-    padding-right: 2px;
-    padding-top: 10px;
-}
-/*ebObject list*/
-
-.objitems {
-    padding-bottom: 5px;
-    margin-top: 8px;
-    background-color: white;
-    border-radius: 5px;
-    height: 74px;
-    margin-right: 8px;
-    width: 100%;
-    cursor: pointer;
-    border: 1px solid beige;
-    box-shadow: 5px 2px 1px #ebeef1;
-}
-
-    .objitems:hover {
-        background-color: #e2ebff;
-    }
-
-.bottpadd {
-    margin-bottom: 50px;
-}
-
-.obj-list .list-group-item {
-    padding: 5px 5px 5px 5px;
-}
-
-.objList-menu .search-icon {
-    margin-left: -22px
-}
-
-.objbox-footer {
-    display: flex;
-    height: inherit;
-}
-
-.objitems h4 {
-    margin: 3px 0 2px;
-}
-
-.objitems p {
-    margin: 0;
-    height: 20px;
-}
-
-.objbox-footer form {
-    align-self: center;
-}
-
-.obj-icon {
-    display: flex;
-    height: inherit;
-    padding: 0;
-}
-
-    .obj-icon .obj-ic-cir {
-        align-self: center;
-    }
-
-        .obj-icon .obj-ic-cir i {
-            font-size: 28px;
-            color: #4f4f5a;
-        }
-
-.objbox-label {
-    background-color: #7e7e85;
-}
-
-#btnOpen {
-    background: transparent;
-    color: #4f4f5a;
-}
-/*objectlist END*/
 /*imageuploader*/
 .fup .modal-body .bootstrap-tagsinput {
     width: 100%;
@@ -832,29 +754,6 @@ footer {
     padding: 12px;
     border-radius: 50%;
     z-index:1;
-}
-#ObjModal .close {
-    margin-top: -48px;
-    margin-right: 4px;
-}
-
-.objbox-footer a {
-    padding-left: 0px;
-    padding-top: 25px;
-}
-
-#ObjModal .modal-header {
-    height: 50px;
-    padding: 0px;
-}
-
-.sub-menuObj {
-    padding-left: 10px;
-}
-
-#ObjListCont {
-    padding-right: 0px;
-    padding-left: 4px;
 }
 
 /*chart.....................................................*/

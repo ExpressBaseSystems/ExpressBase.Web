@@ -51,6 +51,7 @@
     <link rel="stylesheet" type="text/css" href="~/css/Survey/EbSurvey.css" />
     <link rel="stylesheet" type="text/css" href="~/css/Survey/EbSurvey.css" />
     <link rel="stylesheet" href="~/css/EbOnBoarding/AppDashBoard.css" />
+    <link rel="stylesheet" href="~/css/Eb_quickMenu.css" />
 
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -167,106 +168,74 @@
     <script src="~/lib/codemirror/addon/hint/anyword-hint.js"></script>
     <script src="~/lib/codemirror/mode/clike/clike.js"></script>
     <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
-
 </head>
 <body>
     <div id="tenatDtls" class="container-fluid">
 
         @{
             if (ViewBag.wc == "tc")
-            {          
-                    @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });              
+            {
+                @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
             }
             else
             {
 
-                 <div id="submen" class="togglemenu"><i class="fa fa-bars fa-lg" alt="Brand"></i></div>
+                <div id="submen" class="togglemenu"><i class="fa fa-bars fa-lg" alt="Brand"></i></div>
             }
         }
-       
+
         <div class="row">
             @{
                 if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
                 {
-                    <div class="modal fade" tabindex="-1" role="dialog" id='ObjModal'>
-                        <div class="modal-dialog modal-lg" role="document" style="width:90%">
+                    <div class="modal fade Eb_quick_menu" tabindex="-1" role="dialog" id='ObjModal'>
+                        <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <div id="headerDiv" style="height:100%;width:100%">
-                                        @{
-                                            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-                                            {
-                                                Html.RenderPartial("PageHeaderDev");
-
-                                            }
-                                        }
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="modal-body" style="height:500px;padding: 5px;">
-                                    <div id="EbsideBar" class="col-md-3" style="height:100%;">
-                                    </div>
-                                    <div class="col-md-9" style="height:100%;" id="ObjListCont">
-                                        @{
-                                            var hei = "93%";
-                                            if (ViewBag.wc == "dc")
-                                            {
-                                                <div class="Eb-CommonMenuStyle">
-                                                    <div id="topmenu" class="pull-right">
-                                                        <button class="btn"><i class="fa fa-download" aria-hidden="true"></i></button>
-                                                        <button class="btn"><i class="fa fa-upload" aria-hidden="true"></i></button>
-                                                        <a href="" class="btn"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                                    <div class="row mr-0">
+                                        <div class="col-md-3 col-lg-3 col-sm-3 pd-5">
+                                            
+                                        </div>
+                                        <div class="col-md-9 col-lg-9 col-sm-9 header_topmenu" id="topmenu">
+                                            <div class="searchBox">
+                                                <div class="input-group">
+                                                    <div class="input-group-btn">
+                                                        <button type="button" id="dropbuttn" class="btn drdwbtn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            All <span class="caret"></span>
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#">All</a>
+                                                        </div>
                                                     </div>
+                                                    <input type="text" class="form-control search_input" id="searchobj">
+                                                    <span class="input-group-addon search_icon"><i class="fa fa-search"></i></span>
                                                 </div>
-                                                hei = "86%";
-                                            }
-                                            <div id="objList" style="height:@hei; overflow-y:auto; width: 100%;"></div>
-                                        }
-                                        <div class="input-group">
-                                            <div class="input-group-btn">
-                                                <button type="button" id="dropbuttn" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    All<span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu" id="MyDropDownId">
-                                                    <li><a href="#">All</a></li>
-                                                </ul>
                                             </div>
-                                            <input type="text" class="form-control" id="searchobj">
-                                            <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                            @{
+                                                <button class="btn c_btn cls_btn pull-right" data-toggle="tooltip" title="Close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></button>
+                                                <a href="" class="btn c_btn new_builder pull-right" data-toggle="tooltip" title="New"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                                                <button class="btn c_btn pull-right" data-toggle="tooltip" title="Export"><i class="fa fa-upload" aria-hidden="true"></i></button>
+                                                <button class="btn c_btn pull-right" data-toggle="tooltip" title="Import"><i class="fa fa-download" aria-hidden="true"></i></button>
+                                            }
                                         </div>
                                     </div>
                                 </div>
+                                <div class="modal-body menu_wrapper">
+                                    <div class="col-md-3 col-lg-3 pd-0 menu_sidebar">
+                                        <div id="EbsideBar" class="menu_sidebar_sub"></div>
+                                    </div>
+                                    <div class="col-md-9 col-lg-9 menu_workpane" id="ObjListCont">
+                                            <div id="objList" class="objList_Container"></div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer pwrd_by"> 
+                                    Powered by expressbase
+                                </div>
                             </div>
                         </div>
                     </div>
-                }
+                                            }
             }
-
-            <div class="modal fade" id="qick_menu_wrapper_Mod" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document" style="width: 65%;">
-                    <div class="modal-content">
-                        <div class="qick_menu_wrapper">
-                            <div class="quick_menu_head">
-                                <img src="~/images/EB_Logo.png" class="p_i" />
-                            </div>
-                            <div class="quick_menu_body">
-                                <div class="quick_menu_tool">
-                                    <div class="tool_br">
-
-                                    </div>
-                                </div>
-                                <div class="quick_menu_pane">
-                                    <div class="pane_br">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div id="layout_div" class="container-fluid main-cont">
                 @RenderBody()
@@ -279,8 +248,6 @@
 <script>
     var menu = new menujs('@ViewBag.wc');
     $("#layout_div").data("menu", menu);
-
-    $("body").off("click").on("click", ".quik_menu", function (e) { $("#qick_menu_wrapper_Mod").modal("toggle"); });
 
     $('.list-group a').on('click', function () {
         var $this = $(this),

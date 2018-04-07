@@ -23,6 +23,11 @@ namespace ExpressBase.Web.BaseControllers
             this.ServiceClient = _ssclient as JsonServiceClient;
         }
 
+        public EbBaseController(IEbStaticFileClient _sfc)
+        {
+            this.FileClient = _sfc as EbStaticFileClient;
+        }
+
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;

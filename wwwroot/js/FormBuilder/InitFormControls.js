@@ -139,9 +139,17 @@
     this.initCards = function ($Ctrl) {
         $Ctrl.find(".cards-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl));
         this.SelectedCards = [];
+        this.sumFieldsName = [];
+        //$.each(this.Bot.curCtrl.cardFields, function (k, obj) {
+        //    if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
+        //        this.sumFieldsName.push(obj.name);
+        //    }
+        //}.bind(this));
+        this.sumFieldsName.push('Amount');
+
 
         $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {
-            $(evt.target).text() === 'Select' ? $(evt.target).text('Deselect') : $(evt.target).text('Select');
+            $(evt.target).text() === 'Select' ? $(evt.target).text('Remove') : $(evt.target).text('Select');
             var $card = $(evt.target).closest('.card-cont');
             var itempresent = $.grep(this.SelectedCards, function (a) {
                 if (a['cardid'] === $card.attr('card-id'))
@@ -152,34 +160,24 @@
                 var sObj = {};
                 sObj["cardid"] = $card.attr('card-id');
                 $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
-                    if (obj.summarize) {
-                        var $itemdiv = $card.find('.data-' + obj.name);
-                        var pval = "";
+                    if (obj.summarize) {                        
+                        var propval = "";
                         if (obj.hasOwnProperty('valueExpression') && obj.valueExpression !== "") {
                             var strFunc = window.atob(obj.valueExpression);
                             $.each(this.Bot.curCtrl.cardFields, function (l, obj1) {
-                                var str2 = "";
-                                if ($card.find('.data-' + obj1.name).children().length === 0)
-                                    str2 = "parseFloat($card.find('.data-" + obj1.name + "').children().text())";
-                                else
-                                    str2 = "parseFloat($($card.find('.data-" + obj1.name + "').children()[0]).val())";
-                                if (obj1.hasOwnProperty('value') && !obj1.hasOwnProperty('text')) {
-                                    str2.replace("parseFloat","");
-                                }
+                                var str2 = "parseFloat(" + this.getValueInDiv($card.find('.data-' + obj1.name)) + ")";
+                                if (obj1.hasOwnProperty('value') && !obj1.hasOwnProperty('text')) 
+                                    str2.replace("parseFloat","");                                
                                 strFunc = strFunc.replace(new RegExp('card.'+obj1.name, 'g'), str2);
-                            });
-
+                            }.bind(this));
                             var newFunc = Function("$card", strFunc);
-                            pval = newFunc($card).toString();
-                            $($card.find('.data-' + obj.name).children()[0]).val(pval);
+                            propval = newFunc($card).toString();
+                            this.setValueInDiv($card.find('.data-' + obj.name), propval);
                         }
                         else {
-                            if ($itemdiv.children().length === 0)
-                                pval = $itemdiv.text();
-                            else
-                                pval = $($itemdiv.children()[0]).val();
+                            propval = this.getValueInDiv($card.find('.data-' + obj.name));
                         }                        
-                        sObj[obj.name] = pval;
+                        sObj[obj.name] = propval;
                     }
                 }.bind(this));                
                 this.SelectedCards.push(sObj);
@@ -188,11 +186,9 @@
             else {
                 this.spliceCardArray($card.attr('card-id'));
                 this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find(".table tbody"));
-                //$(evt.target).closest('.cards-cont').next().find(".table tbody tr[card-id='" + $card.attr('card-id') + "']").remove();
-            }            
-            
-            
+            }           
         }.bind(this));
+
         $Ctrl.find('.cards-cont').not('.slick-initialized').slick({
             slidesToShow: 1,
             infinite: false,
@@ -210,6 +206,12 @@
 
     this.drawSummaryTable = function ($tbody) {
         $tbody.children().remove();
+        var tcols = $tbody.parent()["0"].firstElementChild.children["0"].cells.length;
+        if (this.SelectedCards.length === 0) {
+            $tbody.append("<tr><td style='text-align:center;' colspan=" + tcols + "><i> Nothing to Display </i></td></tr>");
+            return;
+        }
+        
         $.each(this.SelectedCards, function (k, obj) {
             var trhtml = "<tr card-id='" + obj.cardid + "'>";
             var ind = 0;
@@ -222,16 +224,24 @@
             $tbody.append(trhtml);
         }.bind(this));
 
+        var sumhtml = "<tr style='font-size: 14px;font-weight: 600;'><td style='padding-left:10%;' colspan=" + tcols + ">";
+        $.each(this.sumFieldsName, function (fi, fn) {
+            var sum = 0.0;
+            $.each(this.SelectedCards, function (k, obj) {
+                sum += parseFloat(obj[fn]);
+            }.bind(this));
+            sumhtml += "Total&nbsp" + fn + ":&nbsp&nbsp" + sum + "<br/>";
+        }.bind(this));
+        if (this.sumFieldsName.length !== 0)
+            $tbody.append(sumhtml+"</tr></td>");
+
         $('.remove-cart-item').off('click').on('click', function (evt) {
             var cardid = $(evt.target).closest('tr').attr('card-id');
             this.spliceCardArray(cardid);
             $('#' + this.Bot.curCtrl.ebSid).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").text("Select");
             this.drawSummaryTable($(evt.target).closest('tbody'));
-            //$(evt.target).closest('tr').remove();
         }.bind(this));
-
     };
-
     this.spliceCardArray = function (cardid) {
         for (var i = 0; i < this.SelectedCards.length; i++) {
             if (this.SelectedCards[i]['cardid'] == cardid) {
@@ -240,8 +250,18 @@
             }
         }
     };
-
-
+    this.getValueInDiv = function ($itemdiv) {
+        if ($itemdiv.children().length === 0)
+            return $itemdiv.text();
+        else
+            return $($itemdiv.children()[0]).val();
+    }
+    this.setValueInDiv = function ($itemdiv, value) {
+        if ($itemdiv.children().length === 0)
+            $itemdiv.text(value);
+        else
+            $($itemdiv.children()[0]).val(value);
+    }
 
 
 

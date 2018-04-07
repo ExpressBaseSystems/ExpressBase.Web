@@ -37,7 +37,7 @@
     flex-flow: column;
     height: inherit;
     font-family: Tahoma;
-    width: 100%;
+    width: calc( 100% + 2px);
     /*overflow-x: auto;*/
     overflow-x: hidden;
 }
@@ -50,12 +50,13 @@
 }
 
 .pgHead {
-    background-color: #369;
+    background-color: #4372a1;
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.5, #4473a3), color-stop(.75, #4775a5), color-stop(0.98, #369));
     color: white;
-    padding: 5px;
+    padding: 9px 5px;
     font-weight: bold;
     width: 100%;
-    border-radius: 4px 4px 0px 0px;
+    border-radius: 10px 10px 0px 0px;
 }
 /*.controls-dd-cont {
     border-bottom: var(--sild1pxDDD);
@@ -71,19 +72,22 @@
 }
 
 .pgCX-Editor-Btn {
-    width: 13px;
-    padding: 0px 0px;
+    position: relative;
+    z-index: 1000;
+    width: 17px;
+    padding: 3px;
+    margin-top: 1px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08), 0px 0px 1px rgba(0, 0, 0, 0.29);
     float: right;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
-    border: var(--sild1pxDDD);
-    margin: 3px;
+    border: none;
     font-size: 8px;
     text-align: center;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
 }
-
 .fup .imgup-Cont .modal-body {
     height: 68vh;
 }
@@ -146,7 +150,7 @@
     margin: 3px 1px;
     border-radius: 15px;
     font-size: 13px;
-    /*border: solid 1px #d6d6d6;*/
+    border: solid 1px #d6d6d6;
     cursor: pointer;
     color: #111;
 }
@@ -227,7 +231,8 @@
 
 .pg-wraper .pg-table td {
     font-size: 12px;
-    border: var(--pgTdBorder);
+    /*border: var(--pgTdBorder);*/
+    border: solid 1px transparent;
 }
 
 .pgGroupCell {
@@ -235,7 +240,7 @@
 }
 
 .pgGroupRow {
-    background-color: #369 !important;
+    background-color: rgba(51, 102, 153, 0.9215686274509803) !important;
     /*background-image: var(--gbm);*/
     color: white;
     border-bottom: solid 2px white;
@@ -477,7 +482,7 @@
 }
 
 .pg-wraper {
-    color: #114;
+    color: rgba(17, 17, 68, 0.86);
 }
 
 .form-buider-cont {

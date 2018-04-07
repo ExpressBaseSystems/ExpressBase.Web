@@ -1,10 +1,13 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.ServiceClients;
+using ExpressBase.Web.BaseControllers;
+using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using ServiceStack;
+using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +17,29 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
+    public class StaticFileExtController : EbBaseExtController
+    {
+        public StaticFileExtController(IEbStaticFileClient _sfc) : base(_sfc) { }
+
+        [HttpGet("static/logo/{filename}")]
+        public FileStream GetLogo(string filename)
+        {
+
+            filename = filename.Split('.')[0] + ".png";
+            string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
+            if (!System.IO.File.Exists(sFilePath))
+            {
+                byte[] fileByte = this.FileClient.Post<byte[]>(new DownloadFileExtRequest { FileName = filename });
+                if (fileByte.IsEmpty())
+                    return System.IO.File.OpenRead("wwwroot/images/proimg.jpg");
+                EbFile.Bytea_ToFile(fileByte, sFilePath);
+            }
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=604800";
+
+            return System.IO.File.OpenRead(sFilePath);
+        }
+    }
+
     public class StaticFileController : EbBaseIntController
     {
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
@@ -63,7 +89,7 @@ namespace ExpressBase.Web.Controllers
                 if (filename.ToLower().EndsWith(".pdf"))
                     HttpContext.Response.Headers[HeaderNames.ContentType] = "application/pdf";
             }
-            catch(Exception e) { }
+            catch (Exception e) { }
 
             return System.IO.File.OpenRead(sFilePath);
         }
@@ -203,6 +229,57 @@ namespace ExpressBase.Web.Controllers
             return url;
         }
 
+        [HttpPost]
+        public async Task<bool> UploadLogoAsync(int i, string tags)
+        {
+            tags = String.IsNullOrEmpty(tags) ? "Logo" : tags;
+
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+                uploadImageRequest.ImageInfo = new FileMeta();
+
+                if (!String.IsNullOrEmpty(tags))
+                {
+                    var tagarray = tags.ToString().Split(',');
+                    List<string> Tags = new List<string>(tagarray);
+                    uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+                    uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", Tags);
+                }
+
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        byte[] myFileContent;
+
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+
+                            uploadImageRequest.ImageByte = myFileContent;
+                        }
+
+                        uploadImageRequest.ImageInfo.FileType = "png";
+                        uploadImageRequest.ImageInfo.FileName = String.Format("logo_{0}.{1}", ViewBag.cid, uploadImageRequest.ImageInfo.FileType);
+                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+
+
+                        return this.FileClient.Post<bool>(uploadImageRequest);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString());
+            }
+            return true;
+        }
+
         public List<FileMeta> FindFilesByTags(int i, string tags, string bucketname)
         {
             FindFilesByTagRequest findFilesByTagRequest = new FindFilesByTagRequest();
@@ -220,8 +297,8 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public List<FileMeta> FindFilesByTenant(int type)
-        {            
-            List<FileMeta> resp= this.FileClient.Post(new InitialFileReq{ Type = (FileClass)type });
+        {
+            List<FileMeta> resp = this.FileClient.Post(new InitialFileReq { Type = (FileClass)type });
             return resp;
         }
     }

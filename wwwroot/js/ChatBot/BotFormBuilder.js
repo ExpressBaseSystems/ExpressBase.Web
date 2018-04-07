@@ -452,7 +452,7 @@
 
         setTimeout(function () {
             $("#minmize").click();
-        }), 3000;
+        }), 4000;
 
         var html = document.getElementsByTagName('html')[0]; html.style.setProperty("--botdpURL", this.botDpURL)
 

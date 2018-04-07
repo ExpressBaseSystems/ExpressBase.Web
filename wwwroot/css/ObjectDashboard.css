@@ -419,46 +419,4 @@ li:hover {
         padding: 2px;
     }
 
-    /*quick menu*/
-.qick_menu_wrapper {
-    background: #fafafa;
-    height: 500px;
-    width: 100%;
-}
-.quick_menu_head {
-    padding: 2px;
-    background: white;
-    float: left;
-    width: 100%;
-}
-.quick_menu_head .p_i {
-    float:left;
-    height:34px;
-}
-.quick_menu_body {
-    height: calc(100% - 40px);
-    float: left;
-    width:100%;
-}
-.quick_menu_tool {
-    float: left;
-    width: 25%;
-    height: 100%;
-    padding: 5px;
-}
-.quick_menu_pane {
-    float: left;
-    width: 75%;
-    height: 100%;
-    padding: 10px 10px 10px 0px;
-}
-.tool_br {
-    width: 100%;
-    height: 100%;
-    background-color: white;
-}
-.pane_br {
-    width: 100%;
-    height: 100%;
-    background-color: WHITE;
-}
+  

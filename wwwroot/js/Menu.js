@@ -36,7 +36,7 @@
         console.log(this.resultObj);
         $(".modal-body #objList").empty();
         if (this.login === "dc") {
-            $("#topmenu a").attr("href", "../Eb_Object/Index?objid=" + null + "&objtype=" + key + "");
+            $("#topmenu .new_builder").attr("href", "../Eb_Object/Index?objid=" + null + "&objtype=" + key + "");
             $.each(this.resultObj.Data[key].Objects, function (i, _obj) {
                 url = `../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
                 this.code4AppendList(_obj, url);
@@ -54,7 +54,7 @@
     }
 
     this.appendAppList = function (e) {
-        $("#topmenu a").attr("href", "../Dev/CreateApplication");
+        $("#topmenu .new_builder").attr("href", "../Dev/CreateApplication");
         $(".modal-body #objList").empty();
         $.each(this.resultObj.AppList, function (i, _obj) {
             var url = `../Dev/CreateApplication?itemid=${i}`;
@@ -90,7 +90,7 @@
         $(".modal-body #objList").empty();
         var srch = $(e.target).val().toLowerCase();
         if (srch !== "") {
-            if ($('#dropbuttn').text().trim() === 'All') {
+            if ($('.Eb_quick_menu #dropbuttn').text().trim() === 'All') {
                 var f = false;
                 if (this.login === "dc") {
                     $.each(this.resultObj.Data, function (i, Types) {
@@ -137,24 +137,19 @@
             appname = this.resultObj.AppList[_obj.AppId].AppName;
         $(".modal-body #objList").append(`
                 <div class='col-md-6 objitems' name='objBox'>
-                    <div class='col-md-1 obj-icon'>
-                        <div class='obj-ic-cir'>
-                            <i class='fa fa-file-text' aria-hidden='true'></i>
+                    <div class="object_container">
+                    <div class='col-md-11 col-lg-11 col-sm-11 pd-0'>
+                        <h4 name='head4'>${_obj.ObjName}</h4>
+                        <p class='text-justify'>${_obj.Description}</p>
+                        <div class="label_container">
+                                <span name="Version" class="label">V.${_obj.VersionNumber}</span>
+                                <span class="label">${_obj.EbType}</span>
+                                <span name="Application" class="label">${appname}</span>
                         </div>
                     </div>
-                    <div class='col-md-10'>
-                        <h4 name='head4' style='color:black;font-size: 14px;'>${_obj.ObjName}</h4>
-                        <p class='text-justify' style="font-size: 12px;">${_obj.Description}</p>
-                        <h6>
-                            <a>
-                                <span name="Version" class="label label-default">V.${_obj.VersionNumber}</span>
-                                <span class="label label-success">${_obj.EbType}</span>
-                                <span name="Application" class="label label-danger">${appname}</span>
-                            </a>
-                        </h6>
+                    <div class='col-md-1 pd-0 objbox-footer'>
+                        <a href='${url}' class='btn'><i class="fa fa-pencil" aria-hidden="true"></i></a>
                     </div>
-                    <div class='col-md-1 objbox-footer'>
-                        <a href='${url}' class='btn'><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
                 </div>`);
 

@@ -149,7 +149,14 @@
 
 
         $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {
-            $(evt.target).text() === 'Select' ? $(evt.target).text('Remove') : $(evt.target).text('Select');
+            if ($(evt.target).text() === 'Select') {
+                $(evt.target).text('Remove');
+                $($(evt.target).parent().siblings('.card-title-cont').children()[0]).show();
+            }
+            else {
+                $(evt.target).text('Select');
+                $($(evt.target).parent().siblings('.card-title-cont').children()[0]).hide();
+            }
             var $card = $(evt.target).closest('.card-cont');
             var itempresent = $.grep(this.SelectedCards, function (a) {
                 if (a['cardid'] === $card.attr('card-id'))
@@ -239,6 +246,7 @@
             var cardid = $(evt.target).closest('tr').attr('card-id');
             this.spliceCardArray(cardid);
             $('#' + this.Bot.curCtrl.ebSid).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").text("Select");
+            $($('#' + this.Bot.curCtrl.ebSid).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
             this.drawSummaryTable($(evt.target).closest('tbody'));
         }.bind(this));
     };
@@ -251,10 +259,10 @@
         }
     };
     this.getValueInDiv = function ($itemdiv) {
-        if ($itemdiv.children().length === 0)
-            return $itemdiv.text();
+        if ($itemdiv.children().length === 0 || $($itemdiv.children()[0]).hasClass('fa-check'))
+            return $itemdiv.text().trim();
         else
-            return $($itemdiv.children()[0]).val();
+            return $($itemdiv.children()[1]).val();
     }
     this.setValueInDiv = function ($itemdiv, value) {
         if ($itemdiv.children().length === 0)

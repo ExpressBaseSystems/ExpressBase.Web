@@ -512,21 +512,34 @@
         opacity: 0.5;
         color: rgba(0, 0, 0, 0.24);
     }
-        
-        .card-btn-cont {
-            padding: 0 12px 8px 12px;
-        }
 
-    .card-btn-cont .btn {
-        margin-top: 5px;
-        padding: 3px 12px;
-    }
+.card-btn-cont {
+	padding: 0 12px 8px 12px;
+	width: 100%;
+}
+.card-btn-cont .btn {
+    margin-top: 5px;
+    padding: 3px 12px;
+}
+.card-numeric-cont {
+	padding: 0px 5px 0px 5px;
+	width: 50%;
+	display: inline-block;
+	text-align:center;
+}
+.card-text-cont {
+	padding: 0px 5px 0px 5px;
+	width: 50%;
+	display: inline-block;
+	text-align: center;
+}
+
 
 .contct-cont {
-    padding: .5em;
-    text-align: center;
-    border-radius: 0.4em;
-    background-color: #1e6c7d;
+	padding: .5em;
+	text-align: center;
+	border-radius: 0.4em;
+	background-color: #1e6c7d;
 }
 
 .contact-inp-wrap {

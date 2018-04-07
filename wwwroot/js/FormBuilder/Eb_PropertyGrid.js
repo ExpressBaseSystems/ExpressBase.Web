@@ -411,7 +411,7 @@
         this.OSElist = {};
         this.uniqueProps = [];
         this.requiredProps = [];
-        this.innerHTML = '<table class="table-bordered table-hover pg-table">';
+        this.innerHTML = '<table class="table-hover pg-table">';
         this.$PGcontainer.empty();
 
         this.setBasic();

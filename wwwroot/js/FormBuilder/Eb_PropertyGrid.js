@@ -33,12 +33,7 @@
         var valueHTML;
         var type = meta.editor || '';
         var elemId = this.wraperId + name;
-        var subRow_html = '';
-        var subtypeOfAttr = '';
-        var req_html = '';
-        var NBSP = '';
-        var arrow = "&nbsp;";
-        var isExpandedAttr = '';
+        var subRow_html = '', subtypeOfAttr = '', req_html = '', arrow = '', isExpandedAttr = '';
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + (value || false) + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
@@ -160,12 +155,11 @@
         if (meta.OnChangeExec)
             this.OnChangeExec[name] = meta.OnChangeExec;
         if (SubtypeOf) {
-            NBSP = "&nbsp;&nbsp;&nbsp;";
             subtypeOfAttr = 'subtype-of="' + SubtypeOf + '"';
         }
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
-        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + NBSP + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
     // gives expandable prop values as array

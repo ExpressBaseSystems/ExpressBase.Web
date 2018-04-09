@@ -29,6 +29,7 @@
     overflow-x: hidden;
     max-height: 526px;
     background-color: white;
+    width:100%;
     /*min-width: 250px;*/
 }
 
@@ -53,6 +54,7 @@
 td {
     border: solid 1px #000;
 }
+
 .pgGroupRow td:first-child {
     padding-left: 3px;
     border-top-left-radius: 1px;
@@ -75,7 +77,7 @@ td {
     background-color: #4372a1;
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));
     color: white;
-    padding: 9px 5px;
+    padding: 2%;
     font-weight: bold;
     width: 100%;
     border-radius: 10px 10px 0px 0px;
@@ -94,11 +96,9 @@ td {
 }
 
 .pgCX-Editor-Btn {
-    position: relative;
-    z-index: 1000;
     width: 17px;
     padding: 3px;
-    margin-top: 1px;
+    margin-top: 2px;
     border-radius: 10px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08), 0px 0px 1px rgba(0, 0, 0, 0.29);
     float: right;
@@ -110,7 +110,11 @@ td {
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
 }
-.fup .imgup-Cont .modal-body {
+    .pgCX-Editor-Btn:focus {
+        outline: none;
+        box-shadow: 0px 0px 15px rgba(0, 50, 255, 0.8), 0px 0px 1px rgba(0, 0, 0, 0.29);
+    }
+    .fup .imgup-Cont .modal-body {
     height: 68vh;
 }
 
@@ -253,8 +257,9 @@ td {
 
 .pg-wraper .pg-table td {
     font-size: 12px;
-    /*border: var(--pgTdBorder);*/
-    border: solid 1px transparent;
+    height: 21px !important;
+    border: none;
+    word-break: break-word;
 }
 
 .pgGroupCell {
@@ -288,23 +293,28 @@ td {
 
 .pgTdval .dropdown-toggle {
     padding: 0px 12px;
-    border-radius: 0px;
-    height: 22px;
+    border-radius: 1px;
+    height: 100%;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
-    background: #FFF;
+    background-color: transparent;
     border: none;
     font-size: 13px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
-    box-shadow: none;
+    box-shadow: none !important;
 }
 
     .pgTdval .dropdown-toggle:hover {
         background-color: transparent;
     }
 
+    .pgTdval .dropdown-toggle:focus {
+        outline: none !important;
+    }
+
 .pg-wraper .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
     width: 100%;
+    height: 100%;
 }
 
 
@@ -490,13 +500,13 @@ td {
     outline: unset;
 }
 
-    .propgrid-table-cont .pg-table tr:focus td {
+    /*.propgrid-table-cont .pg-table tr:focus td {
         border: solid 1px #c8d4ef;
-    }
+    }*/
 
-.propgrid-table-cont .pg-table tr:hover td {
+/*.propgrid-table-cont .pg-table tr:hover td {
     border: solid 1px #ddf;
-}
+}*/
 
 .Otile-active {
     background-color: #b1bfc1;

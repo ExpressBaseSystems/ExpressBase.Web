@@ -29,6 +29,7 @@
     overflow-x: hidden;
     max-height: 526px;
     background-color: white;
+    width:100%;
     /*min-width: 250px;*/
 }
 

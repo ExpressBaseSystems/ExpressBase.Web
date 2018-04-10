@@ -432,6 +432,10 @@
             this.ReadOnly();
     };
 
+    this.refresh = function () {
+        this.setObject(this.PropsObj, this.Metas);
+    }.bind(this);
+
     // performs some basic tasks after initialization of variables 
     this.setBasic = function () {
         $.each(this.Metas, function (i, meta) {

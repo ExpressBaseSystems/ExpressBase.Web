@@ -413,6 +413,7 @@
                     data: { DataSourceRefId: PropsObj.DataSourceId },
                     success: function (Columns) {
                         PropsObj.Columns = JSON.parse(Columns);
+                        this.PGobj.refresh();
                         if (PropsObj.constructor.name === "EbCards")
                             this.setAllChildObjColumns(PropsObj);
                         $.LoadingOverlay('hide');
@@ -446,7 +447,9 @@
             });
         }.bind(this);
 
-        this.updateColumn = function (arr, a, p, PropsObj) { $.each(arr, function (i, item) { item.Columns = PropsObj.Columns; }); }.bind(this);
+        this.updateColumn = function (arr, a, p, PropsObj) {
+            $.each(arr, function (i, item) { item.Columns = PropsObj.Columns; });
+        }.bind(this);
 
         this.PGobj.Ebalert = new EbAlert({ id: this.wraperId + "BFBalertCont", top: 24, right: 24, });
 

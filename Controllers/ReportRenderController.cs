@@ -79,6 +79,11 @@ namespace ExpressBase.Web.Controllers
         {
             return Pdf;
         }
+        public IActionResult RenderforBot(string refid)
+        {
+            Render(refid, null);
+            return Pdf;
+        }
     }
 
     [DataContract]

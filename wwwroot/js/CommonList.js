@@ -174,8 +174,8 @@
     }
 
     this.tblProfPicRender = function (data, type, row, meta) {
-        //return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' />`;
-        return `error`;
+        return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' />`;
+        //return `error`;
     }
     this.tblFbProfPicRender = function (data, type, row, meta) {
         var id = data[9];

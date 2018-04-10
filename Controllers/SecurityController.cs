@@ -43,22 +43,22 @@ namespace ExpressBase.Web.Controllers
 		{
 			IServiceClient client = this.ServiceClient;
 			ViewBag.ListType = type;
-			if (type == "TestUser")
+			if (type == "Users")
 			{
 				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
-			else if (type == "TestRoles")
+			else if (type == "Roles")
 			{
 				var fr = this.ServiceClient.Get<GetRolesResponse1>(new GetRolesRequest1());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
-			else if (type == "TestUserGroup")
+			else if (type == "UserGroups")
 			{
 				var fr = this.ServiceClient.Get<GetUserGroupResponse1>(new GetUserGroupRequest1());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
-			else if (type == "AnonymousUser")
+			else if (type == "AnonymousUsers")
 			{
 				var fr = this.ServiceClient.Get<GetAnonymousUserResponse>(new GetAnonymousUserRequest());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);

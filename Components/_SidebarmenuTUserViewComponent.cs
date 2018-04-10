@@ -47,8 +47,8 @@ namespace ExpressBase.Web.Components
                 if (obj.Key != 0)
                 {
                     sb.Append(@" 
-                    <li><a href = '#' class='list-group-item collapsed' data-toggle='collapse' data-target='#dropdown1_" + obj.Key + @"'>
-                        <i class='fa fa-angle-right' aria-hidden='true'></i> " + resultlist.AppList[obj.Key].AppName + @"
+                    <li><a href = '#' class='list-group-item outer_li collapsed' data-toggle='collapse' data-target='#dropdown1_" + obj.Key + @"'>
+                       " + resultlist.AppList[obj.Key].AppName + @"
                     </a>
                     <ul class='sub-menuObj collapse' id='dropdown1_" + obj.Key + @"'>");
 
@@ -66,7 +66,7 @@ namespace ExpressBase.Web.Components
                             ctrlAction.Action = "Index";
                         }
                         var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
-                        sb.Append("<li><a class='list-group-item' href='#' data-key='" + val.Key + "' data-Appid='" + obj.Key + "' data-action = '" + ctrlaction + "'><i class='fa fa-caret-right'></i>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
+                        sb.Append("<li><a class='list-group-item inner_li Obj_link' href='#' data-key='" + val.Key + "' data-Appid='" + obj.Key + "' data-action = '" + ctrlaction + "'>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
                     }
                     sb.Append("</ul></li>");
                 }

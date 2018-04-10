@@ -1,6 +1,15 @@
-﻿using ExpressBase.Common.ServiceClients;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Constants;
+using ExpressBase.Common.ServiceClients;
+using ExpressBase.Common.ServiceStack.Auth;
+using ExpressBase.Web.BaseControllers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack;
+using ServiceStack.Messaging;
 using ServiceStack.Redis;
+using System;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -15,5 +24,22 @@ namespace ExpressBase.Web.BaseControllers
         public EbBaseExtController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 
         public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(RoutingConstants.DOT);
+            string solutionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);          
+            try
+            {               
+                var controller = context.Controller as Controller;
+                controller.ViewBag.SolLogoUrl =string.Format("static/logo/logo_{0}.png" , solutionId);
+                base.OnActionExecuting(context);
+            }
+            catch (System.ArgumentNullException ane)
+            {
+                Console.WriteLine("Exception:"+ ane.Message.ToString());
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
+    Html.RenderPartial("Eb_MenuBarCommon");
 }
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 <script src="~/js/validator.js" type="text/javascript"></script>
@@ -8,30 +9,24 @@
     var EbConnections = @Html.Raw(ViewBag.Connections);
 </script>
 <div class="row s-dash-container">
-    <div class="col-md-2 col-lg-2 pd-0 tdasboard-sidebar">
+    <div class="pd-0 tdasboard-sidebar">
         <div class="t-container">
-            <ul class="list-group">
-                <li class="list-group-item"><i class="fa fa-cog fa-lg tdash-icon" aria-hidden="true"></i> Solutions<div class="tr-on-hov"></div></li>
-                <li class="list-group-item"><i class="fa fa-usd fa-lg tdash-icon" aria-hidden="true"></i> Billing<div class="tr-on-hov"></div></li>
-                <li class="list-group-item"><i class="fa fa-life-ring fa-lg tdash-icon" aria-hidden="true"></i> Support<div class="tr-on-hov"></div></li>
+            <ul class="list-group menuwrapper_ul_outer">
+                <li class="list-group-item outer_li">Solutions<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
+                <li class="list-group-item outer_li">Billing<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
+                <li class="list-group-item outer_li">Support<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
 
             </ul>
         </div>
     </div>
-    <div class="col-md-10 col-lg-10 pull-right s-dash-workplace">
-        <div class="col-md-12 s-dash-solution-desc">
-            <div class="col-md-7 pd-0">
+    <div class="s-dash-workplace">
+        <div class="col-md-12 pd-0 s-dash-solution-desc">
+            <div class="col-md-10 pd-0">
                 <h3 class="mr-t-0">@ViewBag.SolutionInfo.SolutionName</h3>
                 <p class="small">@ViewBag.SolutionInfo.EsolutionId Created on @ViewBag.SolutionInfo.DateCreated</p>
                 <p>
                     @ViewBag.SolutionInfo.Description
                 </p>
-            </div>
-            <div class="col-md-3 pd-0">
-                <div class="form-inline text-center">
-                    <a class="btn btn-oval btn-blue" href="">Dev</a>
-                    <a class="btn btn-oval btn-orange" href="">User</a>
-                </div>
             </div>
             <div class="col-md-2 pd-0">
                 <img class="solution-logo" src="~/images/your-logo.png" />

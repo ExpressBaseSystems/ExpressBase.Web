@@ -65,7 +65,7 @@
         $("body").on("click", ".msg-cont [name=ctrlsend]", this.ctrlSend);
         $("body").on("click", ".msg-cont [name=ctrledit]", this.ctrlEdit);
         $("body").on("click", ".eb-chatBox [name=formsubmit]", this.formSubmit);
-        $("body").on("click", ".eb-chatBox [name=formcancel]", this.formSubmit);
+        $("body").on("click", ".eb-chatBox [name=formcancel]", this.formCancel);
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
@@ -581,7 +581,7 @@
         this.curCtrl = this.curForm.controls[idx];
         var name = this.curCtrl.name;
         //if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation" || this.curCtrl.objType === "Image")))
-        if (!(this.curCtrl && ["Cards", "Locations", "InputGeoLocation", "Image"].includes(this.curCtrl.objType)))
+        if (!(this.curCtrl && this.curCtrl.isFullViewContol))
             $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
         var lablel = this.curCtrl.label;
         if (lablel) {
@@ -631,7 +631,7 @@
     this.uploadImage = function (url, ctrlname, idx) {
         console.log("uploadImage");
         var URL = url.substring(url.indexOf(",/") + 1);
-        var EbSE = EbServerEvents({ 
+        var EbSE = EbServerEvents({
             ServerEventUrl: this.ServerEventUrl,
             Channels: ["baabu"],
         });
@@ -646,7 +646,7 @@
             "filename": ctrlname,
             "refreshToken": this.refreshToken,
             "bearerToken": this.bearerToken,
-            "type": URL.trim(".")[URL.trim(".").length-1]
+            "type": URL.trim(".")[URL.trim(".").length - 1]
         }).done(function (result) {
             $(`[for=${ctrlname}] .img-loader:last`).hide(100);
             this.callGetControl(idx);
@@ -775,7 +775,7 @@
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
 
-                    if (this.curCtrl && ["Cards", "Locations", "InputGeoLocation", "Image"].includes(this.curCtrl.objType)) {
+                    if (this.curCtrl && this.curCtrl.isFullViewContol) {
                         $msg.find(".ctrl-wraper").css("width", "100%").css("border", 'none');
                         $msg.find(".msg-wraper-bot").css("margin-left", "12px");
                     }
@@ -837,15 +837,28 @@
         this.showConfirm();
     }.bind(this);
 
+    this.formCancel = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        this.sendMsg($btn.text());
+        $('.msg-wraper-user [name=ctrledit]').remove();
+        $btn.closest(".msg-cont").remove();
+        this.DestructForm();
+        this.AskWhatU();
+    }.bind(this);
+
     this.showConfirm = function () {
-        this.formFunctions.visibleIfs = {};
-        this.nxtCtrlIdx = 0;
-        $(`[form=${this.curForm.name}]`).remove();
+        this.DestructForm();
         var msg = `Your ${this.curForm.name} application submitted successfully`;
         this.msgFromBot(msg);
         this.DataCollection();
         this.AskWhatU();
     }.bind(this);
+
+    this.DestructForm = function () {
+        this.formFunctions.visibleIfs = {};
+        this.nxtCtrlIdx = 0;
+        $(`[form=${this.curForm.name}]`).remove();
+    };
 
     this.DataCollection = function () {
         $.ajax({
@@ -871,7 +884,7 @@
     };
 
     this.ajaxsuccess = function () {
-
+        alert("DataCollection success");
     };
 
     this.AskWhatU = function () {

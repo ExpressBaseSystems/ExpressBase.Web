@@ -48,7 +48,7 @@
             if (!IsCElimitEditor)
                 this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
             else
-                this.getValueFuncs[name] = function () { var idx = parseInt($('#' + elemId).val()) , value = (idx !== 0) ? this.PropsObj[meta.source].$values[idx -1] : null; return value; }.bind(this);
+                this.getValueFuncs[name] = function () { var idx = parseInt($('#' + elemId).val()), value = (idx !== 0) ? this.PropsObj[meta.source].$values[idx - 1] : null; return value; }.bind(this);
             this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
 
         }

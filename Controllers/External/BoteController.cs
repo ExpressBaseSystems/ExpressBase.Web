@@ -190,7 +190,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (control is EbSimpleSelect)
                     {
-                        (control as EbSimpleSelect).GetOptionsHtml(this.ServiceClient);
+                        (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
                     }
                     else if (control is EbCards)
                     {

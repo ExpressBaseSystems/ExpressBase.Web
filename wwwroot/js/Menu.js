@@ -20,7 +20,7 @@
             $.get("../TenantUser/getSidebarMenu", function (result) {
                 $("#EbsideBar").append(result);
                 $.LoadingOverlay("hide");
-                $(".sub-menuObj a").off("click").on("click", this.appendObjList.bind(this));
+                $(".sub-menuObj .Obj_link").off("click").on("click", this.appendObjList.bind(this));
                 $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
                 $(".list-group-item[data-toggle=collapse]").off("click").on("click", this.changeIcon.bind(this));
             }.bind(this));

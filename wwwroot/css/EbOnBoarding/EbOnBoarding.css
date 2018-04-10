@@ -150,27 +150,21 @@
 /*ProfileSetup end*/
 /*tdashboard*/
 .tdasboard-sidebar {
-    height: 100vh;
-    padding: 0;
+    height: 100%;
     position: fixed;
-    /*background: #fbfbfb;*/
+    width:18%;
+    float:left;
 }
 
 .t-container {
     height: inherit;
     width: 100%;
     padding-top: 30px;
-    color: #666666;
     font-family: open sans;
+    background-color: var(--eb-black);
+    border: 0 solid #e7e7e7;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
-
-    .t-container .list-group-item {
-        padding: 10px 15px;
-        padding-right: 0;
-        margin-bottom: -1px;
-        background-color: transparent;
-        border: none;
-    }
 
 .t-dash-workplace {
     font-family: open sans;
@@ -203,7 +197,7 @@
 }
 
 .tdash-icon {
-    width: 30px;
+    color: #a0a0a0;
 }
 
 .newsolution-btn {
@@ -212,17 +206,6 @@
     border-radius: 20px;
     margin-top: 20px;
     margin-bottom: 20px;
-}
-
-.tr-on-hov {
-    visibility: hidden;
-    display: inline-block;
-    float: right;
-    border: 15px solid #f2f2f2;
-    border-bottom-color: transparent;
-    border-top-color: transparent;
-    border-left-color: transparent;
-    margin-top: -7px;
 }
 
 .solutionhead {
@@ -244,28 +227,28 @@
 /*tdashboard end*/
 /*solution dashboard */
 .s-dash-solution-desc {
-    background: white;
-    padding: 10px;
     margin-bottom: 20px;
-    border-radius: 4px;
-    box-shadow: var(--on-boarding-box-shadow);
 }
 
 .s-dash-container {
     min-height: 100vh;
+    padding-top: 37px;
 }
 
 .s-dash-workplace {
     font-family: open sans;
     font-weight: 300;
-    padding: 30px 10px 0px 0px;
+    padding: 30px 30px 15px 30px;
+    width: 82%;
+    float: right;
 }
 
     .s-dash-workplace .s-dash-workplace-tabs {
         background: white;
         min-height: 80vh;
         border-radius: 4px;
-        box-shadow: var(--on-boarding-box-shadow);
+        border: 0 solid #e7e7e7;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     }
 
     .s-dash-workplace .nav-tabs {
@@ -320,12 +303,15 @@
     }
 
     .s-dash-workplace .solution-logo {
-        width: 100%;
+        width: auto;
+        height: 50px;
+        float: right;
     }
 
     .s-dash-workplace .tab-pane {
         padding: 10px;
-        float:left;
+        float: left;
+        width: 100%;
     }
 
 .s-dash-container .connectons-container {

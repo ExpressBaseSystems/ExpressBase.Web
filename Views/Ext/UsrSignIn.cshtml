@@ -6,7 +6,7 @@
         document.getElementById("log_form").submit();
     }
     @{ 
-        string url = string.IsNullOrEmpty(ViewBag.logo)? "images/EB_Logo-png.png" : ViewBag.logo;
+        string url = string.IsNullOrEmpty(ViewBag.SolLogoUrl) ? "images/your-logo.png" : ViewBag.SolLogoUrl;
     }
 </script>
 <section class="eb_login">

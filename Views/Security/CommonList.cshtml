@@ -10,42 +10,22 @@
     string editor="";
     string whichController = "";
 
-    if (ViewBag.ListType == "user")
+    if (ViewBag.ListType == "Users")//new commonlist test version
     {
         editor = "ManageUser";
         whichController = "Security";
     }
-    else if (ViewBag.ListType == "TestUser")//new commonlist test version
-    {
-        editor = "ManageUser";
-        whichController = "Security";
-    }
-    else if (ViewBag.ListType == "AnonymousUser")//anonymous user test version
+    else if (ViewBag.ListType == "AnonymousUsers")//anonymous user test version
     {
         editor = "ManageAnonymousUser";
         whichController = "Security";
     }
-    else if (ViewBag.ListType == "roles")
+    else if (ViewBag.ListType == "Roles")//test new cmnlist
     {
         editor = "ManageRoles";
         whichController = "Security";
-    }
-    else if (ViewBag.ListType == "TestRoles")//test new cmnlist
-    {
-        editor = "ManageRoles";
-        whichController = "Security";
-    }
-    else if (ViewBag.ListType == "usergroup")
-    {
-        editor = "UserGroups";
-        whichController = "TenantUser";
-    }
-    //else if (ViewBag.ListType == "usergroup")
-    //{
-    //    editor = "ManageUserGroups";
-    //    whichController = "Security";
-    //}
-    else if (ViewBag.ListType == "TestUserGroup")//test
+    }    
+    else if (ViewBag.ListType == "UserGroups")//test
     {
         editor = "ManageUserGroups";
         whichController = "Security";
@@ -217,21 +197,21 @@
 
     <script>
         $(document).ready(function () {
-            if ("@ViewBag.ListType" === "TestUser") {
+            if ("@ViewBag.ListType" === "Users") {
                 //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
                 var _metadata = ["7", "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Status", "_user", "_profPic" ];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
             }
-            else if ("@ViewBag.ListType" === "AnonymousUser") {
+            else if ("@ViewBag.ListType" === "AnonymousUsers") {
                 var _metadata = ["8", "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic" ];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
             }
-            else if ("@ViewBag.ListType" === "TestUserGroup") {
+            else if ("@ViewBag.ListType" === "UserGroups") {
                 var _metadata = ["3", "Id", "Name", "Description", "_userGroup"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
 
             }
-            else if ("@ViewBag.ListType" === "TestRoles") {
+            else if ("@ViewBag.ListType" === "Roles") {
                 var _metadata = ["7", "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata);
             }

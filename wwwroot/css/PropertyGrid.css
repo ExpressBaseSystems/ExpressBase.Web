@@ -29,6 +29,7 @@
     overflow-x: hidden;
     max-height: 526px;
     background-color: white;
+    width: 100%;
     /*min-width: 250px;*/
 }
 
@@ -40,6 +41,8 @@
     width: calc( 100% + 2px);
     /*overflow-x: auto;*/
     overflow-x: hidden;
+    position: relative;
+    z-index: 1;
 }
 
 
@@ -50,9 +53,9 @@
     border-collapse: separate;
 }
 
-td {
+/*td {
     border: solid 1px #000;
-}
+}*/
 
 .pgGroupRow td:first-child {
     padding-left: 3px;
@@ -69,6 +72,14 @@ td {
 
 .pgGroupRow td:last-child {
     border-bottom-right-radius: 1px;
+}
+
+.pg-table [is-expanded] td {
+    padding: 0 0 0 0.4em;
+}
+
+.pg-table [subtype-of] td {
+    padding-left: 1.6em;
 }
 
 
@@ -109,11 +120,13 @@ td {
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
 }
+
     .pgCX-Editor-Btn:focus {
         outline: none;
         box-shadow: 0px 0px 15px rgba(0, 50, 255, 0.8), 0px 0px 1px rgba(0, 0, 0, 0.29);
     }
-    .fup .imgup-Cont .modal-body {
+
+.fup .imgup-Cont .modal-body {
     height: 68vh;
 }
 
@@ -251,7 +264,7 @@ td {
 }
 
 .pgTdName {
-    padding: 0px 4px;
+    padding: 0 0 0.4em 0.8em;
 }
 
 .pg-wraper .pg-table td {
@@ -263,6 +276,7 @@ td {
 
 .pgGroupCell {
     padding: 1px 2px;
+    vertical-align: inherit !important;
 }
 
 .pgGroupRow {
@@ -479,13 +493,13 @@ td {
 
 .pgTdName .fa-caret-right {
     font-size: 14px;
-    margin-left: -4px;
-    padding: 4px 2px;
+    height: 100%;
+    margin-left: -3px;
+    padding: 0.25em 0.15em 0 0.15em;
 }
 
     .pgTdName .fa-caret-right:hover {
         background-color: rgba(0, 0, 0, 0.32);
-        padding: 4px 4px;
     }
 
 .colTile .close {
@@ -499,7 +513,7 @@ td {
     outline: unset;
 }
 
-    /*.propgrid-table-cont .pg-table tr:focus td {
+/*.propgrid-table-cont .pg-table tr:focus td {
         border: solid 1px #c8d4ef;
     }*/
 

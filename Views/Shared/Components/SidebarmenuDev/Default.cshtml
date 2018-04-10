@@ -32,10 +32,11 @@
             <a href="#" class="list-group-item menuApp outer_li" data-toggle="collapse" data-target="#security">
                 Security<i class="fa fa-chevron-right pull-right"></i>
             </a>
-            <ul class="sub-menuObj collapse" id="security">              
-                 <li><a class="list-group-item inner_li" onclick="LoadCommonList('user')" href="CommonList?type='user'">Users</a></li>
-                <li><a class="list-group-item inner_li" onclick="LoadCommonList('usergroup')" href="CommonList?type='usergroup'">User Groups</a></li>
-                <li><a class="list-group-item inner_li" onclick="LoadCommonList('roles')" href="CommonList?type='roles'">Roles</a></li>
+            <ul class="sub-menuObj collapse" id="security">
+                <li><a class="list-group-item inner_li" onclick="LoadCommonList('Users')" href="CommonList">Users</a></li>
+                <li><a class="list-group-item inner_li" onclick="LoadCommonList('AnonymousUsers')" href="CommonList">Anonymous Users</a></li>
+                <li><a class="list-group-item inner_li" onclick="LoadCommonList('UserGroups')" href="CommonList">User Groups</a></li>
+                <li><a class="list-group-item inner_li" onclick="LoadCommonList('Roles')" href="CommonList">Roles</a></li>
             </ul>
         </li>
         <li>
@@ -74,8 +75,8 @@
         var _container = $("#layout_div");
         $.LoadingOverlay("show");
         $.ajax({
-            url: "../TenantUser/CommonList",
-            type: "GET",
+            url: "../Security/CommonList",
+            type: "POST",
             cache: false,
             data: { "type": type },
             success: function (result) {

@@ -834,7 +834,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
             var copycelldata = this.cellData.replace(/ /g, "_");
             if ($(`#RptModal${copycelldata}`).length === 0) {
-                $("#parent-div0").append(`<div class="modal fade" id="RptModal${copycelldata}" role="dialog">
+                $("#parent-div0").append(`<div class="modal fade RptModal" id="RptModal${copycelldata}" role="dialog">
                     <div class="modal-dialog modal-sm">
                         <div class="modal-content">
                             <div class="modal-header">

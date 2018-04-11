@@ -364,7 +364,7 @@
         //$("#save").on("click", this.save.bind(this));
         //$("#commit").on("click", this.commit.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
-        //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
+        //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" +r $(this).find("option:selected").val()).focus(); });
         this.PGobj.Close = function () {
             slideRight('.form-save-wraper', '#form-buider-propGrid');
         }

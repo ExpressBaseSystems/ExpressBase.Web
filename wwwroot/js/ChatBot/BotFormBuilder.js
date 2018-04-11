@@ -426,6 +426,9 @@
             if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'ComboBox') {
                 this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
             }
+            else if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'Labels') {
+                this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
+            }
             //if (CurProp === 'CardCollection')
             //    this.RefreshCardColl(PropsObj);
         }.bind(this);

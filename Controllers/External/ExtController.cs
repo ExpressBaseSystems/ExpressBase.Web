@@ -2,8 +2,8 @@
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Structures;
+using ExpressBase.Objects.Helpers;
 using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Security;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
@@ -17,21 +17,10 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
-using ExpressBase.Objects.Helpers;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.Threading;
-using JWT;
-using JWT.Serializers;
-using JWT.Algorithms;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
@@ -60,7 +49,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public bool JoinBeta()
-        {           
+        {
             string email = this.HttpContext.Request.Form["Email"];
             if (this.ServiceClient.Post<bool>(new JoinbetaReq { Email = email }))
                 return true;
@@ -305,7 +294,7 @@ namespace ExpressBase.Web.Controllers
         public bool TenantSingleSignOn(string btoken, string rtoken)
         {
             var host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split(RoutingConstants.DOT);
+            string[] hostParts = host.Host.Split(CharConstants.DOT);
             string whichconsole = RoutingConstants.DC;
 
             ////CHECK WHETHER SOLUTION ID IS VALID
@@ -368,7 +357,7 @@ namespace ExpressBase.Web.Controllers
         public async Task<IActionResult> TenantSignin(int i)
         {
             var host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split(RoutingConstants.DOT);
+            string[] hostParts = host.Host.Split(CharConstants.DOT);
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
 
@@ -490,7 +479,7 @@ namespace ExpressBase.Web.Controllers
             {
                 if (subDomain.EndsWith(RoutingConstants.DASHBOT) || subDomain.EndsWith(RoutingConstants.DASHMOB) || subDomain.EndsWith(RoutingConstants.DASHDEV))
                 {
-                    cid = subDomain.Substring(0, subDomain.LastIndexOf(RoutingConstants.DASH));
+                    cid = subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.DASH));
 
                     if (subDomain.EndsWith(RoutingConstants.DASHBOT))
                         whichconsole = EbAuthContext.BotUserContext;

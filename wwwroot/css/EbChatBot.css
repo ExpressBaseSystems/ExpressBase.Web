@@ -165,6 +165,10 @@
     background-color: var(--botThemeColor);
 }
 
+.msg-cont:last-child .bot-icon {
+    visibility: visible !important;
+}
+
 .bot-icon-user {
     background: url(https://png.icons8.com/small/1600/user.png)center center no-repeat;
     background-color: var(--botThemeColor);

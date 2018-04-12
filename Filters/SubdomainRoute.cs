@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Constants;
 using ExpressBase.Common.Enums;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Internal;
@@ -46,7 +47,7 @@ namespace ExpressBase.Web.Filters
 
             var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             var path = context.HttpContext.Request.Path;
-            string[] hostParts = host.Split(RoutingConstants.DOT);
+            string[] hostParts = host.Split(CharConstants.DOT);
 
             object _subDomain = null;
             if (Enum.TryParse(typeof(SubDomains), hostParts[0], out _subDomain))
@@ -55,7 +56,7 @@ namespace ExpressBase.Web.Filters
                 context.RouteData.Values[RoutingConstants.ACTION] = ((SubDomains)_subDomain).ToString();
             }
             
-            else if (path.Value.Equals(RoutingConstants.BACKSLASH.ToString())) // '/'
+            else if (path.Value.Equals(CharConstants.BACKSLASH.ToString())) // '/'
             {
                 if (host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
                     this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_3));

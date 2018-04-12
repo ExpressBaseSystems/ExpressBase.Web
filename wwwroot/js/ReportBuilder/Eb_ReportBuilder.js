@@ -651,6 +651,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                     this.getContainerId(this.EditObj[objPropIndex].$values);
             }
         }
+        if (this.EditObj.DataSourceRefId) {
+            this.getDataSourceColoums(this.EditObj.DataSourceRefId);
+        }
     };
 
     this.getContainerId = function ($secColl) {

@@ -47,7 +47,7 @@
             $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
-        if (this.editor > 6 && this.editor < 11)
+        if (this.editor > 6 && this.editor < 11 || this.editor === 22)
             this.initCE();
         else if (this.editor === 11)
             this.initJE();
@@ -129,7 +129,11 @@
             </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
 
-        if (this.editor === 7) {
+        if (this.editor === 7 || this.editor === 22) {
+            if (this.editor === 22) {
+                var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
+                getObjByval(this.PGobj.Metas, "name", sourceProp).source = this.PGobj.CurProp;
+            }
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0)").hide();
             $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp));
@@ -458,7 +462,16 @@
         var $tile = $(e.target).parent().remove();
         if (this.editor === 7) {
             this.PGobj.removeFromDD.bind(this.PGobj)($tile.attr("id"));
-            this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1);
+            var DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1)[0];
+            var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
+            if (sourceProp) {
+                $.each(this.PGobj.PropsObj[sourceProp].$values, function (i, obj) {
+                    $.each(obj, function (prop, val) {
+                        if (prop === DelObj.Name)
+                            delete obj[prop];
+                    });
+                });
+            }
         }
         else if (this.editor === 9 || this.editor === 8) {
             this.rowGrouping.splice(this.rowGrouping.indexOf(getObjByval(this.rowGrouping, "name", $tile.attr("id"))), 1)[0]
@@ -474,6 +487,7 @@
             return 0;
         }
         var obj = null;
+        var type = $e.attr("eb-type");
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
         $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
         if (this.editor === 7) {
@@ -485,7 +499,34 @@
         else if (this.editor === 9 || this.editor === 10) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
         }
-        this.CE_PGObj.setObject(obj, AllMetas[$(e.target).attr("eb-type")]);
+        else if (this.editor === 22) {
+            obj = this.getObjFor22(id, type);
+        }
+
+        this.CE_PGObj.setObject(obj, AllMetas[type]);
+    };
+
+    this.getObjFor22 = function (id, type) {
+        var objType = "EbCardNumericField";
+        var masterPropName = "Value";
+        var obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
+        var cardFields = this.PGobj.PropsObj.CardFields.$values;
+        $.each(cardFields, function (i, field) {
+            if (field.$type === "ExpressBase.Objects.EbCardNumericField, ExpressBase.Objects") {
+                var _propName = field.Name;
+                var fieldMeta = {};
+                Object.assign(fieldMeta, getObjByval(AllMetas[objType], "name", masterPropName));
+                fieldMeta.name = _propName;
+                if (!obj[_propName]) {
+                    AllMetas[type].push(fieldMeta)
+                    var addPropObj = {};
+                    addPropObj[_propName] = "daddy";
+                    $.extend(obj, obj, addPropObj);
+                }
+            }
+        });
+
+        return obj;
     };
 
     this.CE_AddFn = function () {

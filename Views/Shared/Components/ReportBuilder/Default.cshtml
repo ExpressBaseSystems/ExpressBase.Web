@@ -207,8 +207,8 @@
     if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
     }
-
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new RptBuilder('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
+    var  RBobj = new RptBuilder('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;
     $(document).ready(function () {
 
         $('#running-summary').treed();
@@ -262,6 +262,6 @@
         });
 
         //$('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container" });
-            
+
     });
 </script>

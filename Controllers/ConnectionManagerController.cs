@@ -27,12 +27,17 @@ namespace ExpressBase.Web.Controllers
         public IActionResult RefreshConnections(int i)
         {
             var req = this.HttpContext.Request.Form;
-
-            this.MqClient.Post<bool>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
+            try
             {
-                SolutionId = String.IsNullOrEmpty(req["solutionId"]) ? ViewBag.cid : req["solutionId"]
-            });
-
+                this.MqClient.Post<bool>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
+                {
+                    SolutionId = String.IsNullOrEmpty(req["solutionId"]) ? ViewBag.cid : req["solutionId"]
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.Message.ToString());
+            }
             return View();
         }
 

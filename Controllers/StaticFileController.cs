@@ -1,13 +1,12 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Constants;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Web.BaseControllers;
-using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using ServiceStack;
-using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +24,7 @@ namespace ExpressBase.Web.Controllers
         public FileStream GetLogo(string filename)
         {
 
-            filename = filename.Split('.')[0] + ".png";
+            filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
             string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
             if (!System.IO.File.Exists(sFilePath))
             {
@@ -47,13 +46,13 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("static/dp/{filename}")]
         public FileStream GetDP(string filename)
         {
-            if (filename.StartsWith("dp") && filename.Split('.').Length == 2)
+            if (filename.StartsWith(StaticFileConstants.DP) && filename.Split(CharConstants.DOT).Length == 2)
             {
-                filename = filename.Split('.')[0] + ".jpg";
+                filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTJPG;
                 string sFilePath = string.Format("StaticFiles/{0}/dp/{1}", ViewBag.cid, filename);
                 if (!System.IO.File.Exists(sFilePath))
                 {
-                    byte[] fileByte = this.FileClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = "jpg" } });
+                    byte[] fileByte = this.FileClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = StaticFileConstants.JPG } });
                     if (fileByte.IsEmpty())
                         return System.IO.File.OpenRead("wwwroot/images/proimg.jpg");
                     EbFile.Bytea_ToFile(fileByte, sFilePath);
@@ -80,13 +79,13 @@ namespace ExpressBase.Web.Controllers
                             FileDetails = new FileMeta
                             {
                                 FileName = filename,
-                                FileType = filename.Split('.')[1].ToLower()
+                                FileType = filename.Split(CharConstants.DOT)[1].ToLower()
                             }
                         });
                     EbFile.Bytea_ToFile(fileByte, sFilePath);
                 }
                 HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
-                if (filename.ToLower().EndsWith(".pdf"))
+                if (filename.ToLower().EndsWith(StaticFileConstants.DOTPDF))
                     HttpContext.Response.Headers[HeaderNames.ContentType] = "application/pdf";
             }
             catch (Exception e) { }
@@ -111,10 +110,10 @@ namespace ExpressBase.Web.Controllers
 
                 if (!String.IsNullOrEmpty(tags))
                 {
-                    var tagarray = tags.ToString().Split(',');
+                    var tagarray = tags.ToString().Split(CharConstants.COMMA);
                     List<string> Tags = new List<string>(tagarray);
                     uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
-                    uploadFileRequest.FileDetails.MetaDataDictionary.Add("Tags", Tags);
+                    uploadFileRequest.FileDetails.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
                 }
 
                 foreach (var formFile in req.Files)
@@ -134,7 +133,7 @@ namespace ExpressBase.Web.Controllers
                         }
 
                         uploadFileRequest.FileDetails.FileName = formFile.FileName;
-                        uploadFileRequest.FileDetails.FileType = formFile.FileName.Split('.')[1];
+                        uploadFileRequest.FileDetails.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
 
                         this.FileClient.Post<bool>(uploadFileRequest);
@@ -165,7 +164,7 @@ namespace ExpressBase.Web.Controllers
 
                 foreach (var formFile in req.Files)
                 {
-                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split('.')[1].ToLower()))
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split(CharConstants.DOT)[1].ToLower()))
                     {
                         byte[] myFileContent;
                         using (var memoryStream = new MemoryStream())
@@ -183,7 +182,7 @@ namespace ExpressBase.Web.Controllers
                             uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", dict[formFile.FileName]);
                         }
                         uploadImageRequest.ImageInfo.FileName = formFile.FileName;
-                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split('.')[1];
+                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         this.FileClient.Post<bool>(uploadImageRequest);
@@ -213,7 +212,7 @@ namespace ExpressBase.Web.Controllers
                 string base64Norm = base64.Replace("data:image/png;base64,", "");
                 myFileContent = System.Convert.FromBase64String(base64Norm);
                 uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = "png";
+                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
                 uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
@@ -245,7 +244,7 @@ namespace ExpressBase.Web.Controllers
                     var tagarray = tags.ToString().Split(',');
                     List<string> Tags = new List<string>(tagarray);
                     uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
-                    uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", Tags);
+                    uploadImageRequest.ImageInfo.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
                 }
 
                 foreach (var formFile in req.Files)
@@ -264,7 +263,7 @@ namespace ExpressBase.Web.Controllers
                             uploadImageRequest.ImageByte = myFileContent;
                         }
 
-                        uploadImageRequest.ImageInfo.FileType = "png";
+                        uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
                         uploadImageRequest.ImageInfo.FileName = String.Format("logo_{0}.{1}", ViewBag.cid, uploadImageRequest.ImageInfo.FileType);
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 

@@ -330,7 +330,7 @@
             slideRight('.form-save-wraper', '#form-buider-propGrid');
         }
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-            RefreshControl(PropsObj);
+            //RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
         }.bind(this);

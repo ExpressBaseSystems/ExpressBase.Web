@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo = new FileMeta();
                 myFileContent = System.Convert.FromBase64String(base64);
                 uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = "jpg";
+                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                 uploadImageRequest.ImageInfo.FileName = filename;
 

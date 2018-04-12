@@ -46,7 +46,7 @@ namespace ExpressBase.Web.Controllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-            string[] hostParts = host.Split(RoutingConstants.DOT);
+            string[] hostParts = host.Split(CharConstants.DOT);
             var path = context.HttpContext.Request.Path.Value.ToLower();
 
             try

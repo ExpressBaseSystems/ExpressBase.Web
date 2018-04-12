@@ -325,13 +325,18 @@
     font-family: 'Helvetica Neue', 'HelveticaNeue', Helvetica, Arial, sans-serif;
 }
 
-.location-cont {
+.location-cont, .pdf-frame {
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
     background-color: white;
 }
 
+.pdf-frame {
+    border: none;
+    border-radius: 3px;
+    height: 36.83em;
+}
 .card-label, .loc-label {
     font-size: 12pt;
     line-height: 15pt;

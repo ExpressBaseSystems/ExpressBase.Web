@@ -192,7 +192,7 @@
                 ctrlObj.Label = id;
                 ctrlObj.HelpText = "";
 
-                RefreshControl(ctrlObj);
+                this.RefreshControl(ctrlObj);
             }
             else
                 console.log("ondrop else : removed");
@@ -421,7 +421,7 @@
                 });
             }
             if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm") {
-                RefreshControl(PropsObj);
+                this.RefreshControl(PropsObj);
             }
             if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'ComboBox') {
                 this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
@@ -461,11 +461,67 @@
 
     }.bind(this);
 
+    this.RefreshControl = function (obj) {
+        //Cards are exceptional, So separate chk required
+        if (obj.EbSid.substring(0, 12) === 'DynamicCards') {
+            this.RefreshCardControl(obj);
+            return;
+        }
+        var NewHtml = obj.$WrapedCtrl4Bot.outerHTML();
+        var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + '@', obj[name]);
+            }
+        });
+        $("#" + obj.EbSid).html($(NewHtml).html());
+
+        //if (obj.$type.split(',')[0].split('.')[2] === 'EbCards') {
+        //    RedrawCardInEbCards(obj);
+        //}
+    };
+
+    this.RefreshCardControl = function (obj) {
+        var wrapHtml = obj.$WrapedCtrl4Bot.outerHTML();
+        var $cards = $("#" + obj.EbSid);
+        $cards.html($(wrapHtml).html());
+        $cards.find('.ctrl-wraper').html(obj.DesignHtml);
+        var $carddiv = $cards.find('.card-cont');
+        var cardbtn = $cards.find('.card-cont').html();
+        $carddiv.empty();
+        $.each(obj.CardFields.$values, function (k, fobj) {
+            $carddiv.append(fobj.DesignHtml);
+        });
+        if (obj.CardFields.$values.length === 0)
+            $carddiv.append("<div style='height: 57px;'></div>");
+        $carddiv.append(cardbtn);
+        if (!obj.MultiSelect) {
+            $carddiv.siblings('.card-summary-cont').empty();
+        }
+    };
+
+    this.RedrawCardInEbCards = function (obj) {
+        var crd = PropsObj.CardCollection.$values;
+        $("#" + obj.EbSid).children().remove();
+        var WholeHtml = "";
+        for (i = 0; i < crd.length; i++) {
+            var NewHtml = crd[i].$Control.outerHTML();
+            var metas = AllMetas[$("#" + crd[i].EbSid).attr("eb-type")];
+            $.each(metas, function (i, meta) {
+                var name = meta.name;
+                if (meta.IsUIproperty) {
+                    WholeHtml += NewHtml.replace('@' + name + '@', crd[i][name]);
+                }
+            });
+        }
+    }
+
 
     //this.RefreshCardColl = function (PropsObj) {
     //    var crd = PropsObj.CardCollection.$values;
     //    for (i = 0; i < crd.length; i++) {
-    //        RefreshControl(crd[i]);
+    //        this.RefreshControl(crd[i]);
     //    }
     //};
 

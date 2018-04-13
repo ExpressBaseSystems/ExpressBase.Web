@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common.Objects;
+using ExpressBase.Common.Structures;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -26,7 +27,20 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
             var resultlist = this.ServiceClient.Get<SidebarDevResponse>(new SidebarDevRequest ());
+            StringBuilder sb = new StringBuilder();
+            foreach (var obj in resultlist.Data)
+            {
+                    sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link'> " + resultlist.AppList[obj.Key].AppName + " </a></li>");
+            }
+            Dictionary<int, string> _dict = new Dictionary<int, string>();
+            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            {
+                _dict.Add(objectType.IntCode, objectType.Name);
+            }
+            ViewBag.Types = JsonConvert.SerializeObject(_dict);
+            ViewBag.menu = sb.ToString();
             ViewBag.Object = resultlist;
+
             return View();
         }
     }

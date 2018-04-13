@@ -56,15 +56,7 @@ namespace ExpressBase.Web.Controllers
             else
                 return false;
         }
-
-        public IActionResult DevSignIn()
-        {
-            ViewBag.errMsg = TempData["ErrorMessage"] as string;
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            return View();
-        }
-
-
+        
         public IActionResult SignupSuccess(string email)
         {
             ViewBag.SignupEmail = email;

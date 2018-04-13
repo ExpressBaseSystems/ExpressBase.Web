@@ -7,7 +7,8 @@
     this.apndObTypeClpsCont = function () {
         for (var otype in this.ObjTypes) {
             this.objectTab.append(`<div class="connectons-container col-md-6" style="width:33.3%;">
-                        <div class="s-dash-headComm form-inline app-dash-clps-head" obj_container="obtype_container${otype}" data-toggle="collapse" data-target="#obtype_container${otype}" style="cursor:pointer;">
+                        <div class="s-dash-headComm form-inline app-dash-clps-head" obj_container="obtype_container${otype}" 
+                            data-toggle="collapse" data-target="#obtype_container${otype}" style="cursor:pointer;">
                             <img src="/images/svg/${this.objTypesImages[otype].ImgSrc}" class="obtype_img">
                             ${otype} <div class="ob_count" id="ob_count${otype}"></div>
                             <button class="btn btn-sm table-btn pull-right newob_create"><i class="fa fa-plus"></i></button>

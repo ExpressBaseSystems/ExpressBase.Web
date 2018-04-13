@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo = new FileMeta();
                 myFileContent = System.Convert.FromBase64String(base64);
                 uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = "jpg";
+                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                 uploadImageRequest.ImageInfo.FileName = filename;
 
@@ -192,10 +192,11 @@ namespace ExpressBase.Web.Controllers
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
                     }
-                    else if (control is EbCards)
+                    else if (control is EbDynamicCards)
                     {
-                        (control as EbCards).InitFromDataBase(this.ServiceClient);
-                        (control as EbCards).BareControlHtml = (control as EbCards).GetBareHtml();
+						EbDynamicCards EbDynamicCards = (control as EbDynamicCards);
+						EbDynamicCards.InitFromDataBase(this.ServiceClient);
+						EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
                     }
                     //else if (control is EbImage)
                     //{

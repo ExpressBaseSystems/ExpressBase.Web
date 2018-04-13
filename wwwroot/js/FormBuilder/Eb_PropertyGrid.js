@@ -31,7 +31,7 @@
     //Builds property Grid rows
     this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf, IsCElimitEditor) {
         var valueHTML;
-        var type = meta.editor || '';
+        var type = meta.editor;
         var elemId = this.wraperId + name;
         var subRow_html = '', subtypeOfAttr = '', req_html = '', arrow = '', isExpandedAttr = '';
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
@@ -72,7 +72,7 @@
             valueHTML = '<input type="date" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
-        else if (type > 6 && type < 11) {
+        else if (type > 6 && type < 11 || type === 22) {
             if (meta.Limit === 0) {//  If collection editor
                 valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
                     + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';

@@ -9,6 +9,7 @@
     @* BOOTSTRAP CSS *@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     @*<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">*@
@@ -195,29 +196,24 @@
                                 <div class="modal-header">
                                     <div class="row mr-0">
                                         <div class="col-md-3 col-lg-3 col-sm-3 pd-5">
-                                            
+
                                         </div>
                                         <div class="col-md-9 col-lg-9 col-sm-9 header_topmenu" id="topmenu">
-                                            <div class="searchBox">
+                                            @{
+                                                if (ViewBag.wc == "dc")
+                                                {
+                                                    <button class="btn c_btn pull-left" data-toggle="tooltip" title="Export"><i class="material-icons">cloud_download</i></button>
+                                                    <button class="btn c_btn pull-left" data-toggle="tooltip" title="Import"><i class="material-icons">cloud_upload</i></button>
+                                                }
+                                            }
+
+                                            <button class="btn c_btn cls_btn pull-right" data-toggle="tooltip" title="Close" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
+                                            <div class="searchBox pull-left">
                                                 <div class="input-group">
-                                                    <div class="input-group-btn">
-                                                        <button type="button" id="dropbuttn" class="btn drdwbtn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            All <span class="caret"></span>
-                                                        </button>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#">All</a>
-                                                        </div>
-                                                    </div>
-                                                    <input type="text" class="form-control search_input" id="searchobj">
-                                                    <span class="input-group-addon search_icon"><i class="fa fa-search"></i></span>
+                                                    <input type="text" class="form-control search_input" id="searchobj" placeholder="Search from all.">
+                                                    <span class="input-group-addon search_icon"><i class="material-icons">search</i></span>
                                                 </div>
                                             </div>
-                                            @{
-                                                <button class="btn c_btn cls_btn pull-right" data-toggle="tooltip" title="Close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></button>
-                                                <a href="" class="btn c_btn new_builder pull-right" data-toggle="tooltip" title="New"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                                                <button class="btn c_btn pull-right" data-toggle="tooltip" title="Export"><i class="fa fa-upload" aria-hidden="true"></i></button>
-                                                <button class="btn c_btn pull-right" data-toggle="tooltip" title="Import"><i class="fa fa-download" aria-hidden="true"></i></button>
-                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -226,16 +222,19 @@
                                         <div id="EbsideBar" class="menu_sidebar_sub"></div>
                                     </div>
                                     <div class="col-md-9 col-lg-9 menu_workpane" id="ObjListCont">
-                                            <div id="objList" class="objList_Container"></div>
+                                        <div id="objList" class="objList_Container">
+                                            
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="modal-footer pwrd_by"> 
-                                    Powered by expressbase
+                                </div> 
+                                <div class="modal-footer pwrd_by">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-9 pwrd_by-text">Powered by expressbase</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                                            }
+                                                }
             }
 
             <div id="layout_div" class="container-fluid main-cont">

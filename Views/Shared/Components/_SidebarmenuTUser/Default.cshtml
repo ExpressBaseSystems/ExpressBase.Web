@@ -5,12 +5,75 @@
 
 
 <div class="side-menu-container">
-    <ul class="outer menuwrapper_ul_outer">
-        
+    <ul class="menuwrapper_ul_outer">
+        <li>
+            <a href="#" class="list-group-item collapsed outer_li" data-toggle="collapse" data-target="#dropdown2">
+                Application<i class="fa fa-chevron-right pull-right"></i>
+            </a>
+            <ul class="outer sub-menuObj collapse in" id="dropdown2">
+               
+            </ul>
+        </li>
+        <li>
+            <a href="#" class="list-group-item menuApp outer_li" data-toggle="collapse" data-target="#security">
+                Security<i class="fa fa-chevron-right pull-right"></i>
+            </a>
+            <ul class="sub-menuObj collapse" id="security">
+                <li><a class="list-group-item inner_li" onclick="LoadCommonList('Users')" href="CommonList">Users</a></li>
+                <li><a class="list-group-item inner_li" onclick="LoadCommonList('AnonymousUsers')" href="CommonList">Anonymous Users</a></li>
+                <li><a class="list-group-item inner_li" onclick="LoadCommonList('UserGroups')" href="CommonList">User Groups</a></li>
+                <li><a class="list-group-item inner_li" onclick="LoadCommonList('Roles')" href="CommonList">Roles</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" class="list-group-item menuApp outer_li">
+                Email Console
+            </a>
+            <ul class="sub-menuObj collapse" id="dropdown2">
+                <li><a class="list-group-item inner_li"></a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" class="list-group-item menuApp outer_li">
+                SMS Console
+            </a>
+            <ul class="sub-menuObj collapse" id="dropdown2">
+                <li><a class="list-group-item inner_li"></a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" class="list-group-item menuApp outer_li">
+                Document Console
+            </a>
+            <ul class="sub-menuObj collapse" id="dropdown2">
+                <li><a class="list-group-item inner_li"></a></li>
+            </ul>
+        </li>
     </ul>
 </div>
 <script>
-
     $(".outer").prepend(`@Html.Raw(ViewBag.menu)`);
     menu.resultObj = @Html.Raw(obj);
+    menu.objTypes =@Html.Raw(ViewBag.Types); 
+</script>
+<script>
+    //var chatBotObj = new Eb_chatBot();
+
+    function LoadCommonList(type) {
+        event.preventDefault();
+        var _container = $("#layout_div");
+        $.LoadingOverlay("show");
+        $.ajax({
+            url: "../Security/CommonList",
+            type: "POST",
+            cache: false,
+            data: { "type": type },
+            success: function (result) {
+                _container.html(result);
+                $.LoadingOverlay("hide");
+                $("#ObjModal").modal('hide');
+                //$('#EbsideBar').animate({ width: 'toggle' });
+            }
+        });
+    }
 </script>

@@ -7,6 +7,7 @@
     }
     @{ 
         string url = string.IsNullOrEmpty(ViewBag.SolLogoUrl) ? "images/your-logo.png" : ViewBag.SolLogoUrl;
+        string console = ViewBag.WhichConsole == "dc" ? "Dev" : "User";
     }
 </script>
 <section class="eb_login">
@@ -16,7 +17,7 @@
                 <div class="login-sec-image text-center">
                     <img src=@url />
                 </div>
-                <h1 class="text-center">Sign In</h1><br>
+                <h1 class="text-center">Sign In as @console</h1><br>
                 <div class="form-group mb-25">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>

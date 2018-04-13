@@ -651,6 +651,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
                     this.getContainerId(this.EditObj[objPropIndex].$values);
             }
         }
+        if (this.EditObj.DataSourceRefId) {
+            this.getDataSourceColoums(this.EditObj.DataSourceRefId);
+        }
     };
 
     this.getContainerId = function ($secColl) {
@@ -750,7 +753,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.ruler();
         this.createPage();
         this.DragDrop_Items();
-        this.renderOnedit();
+        this.renderOnedit();        
     };
 
     this.init = function () {

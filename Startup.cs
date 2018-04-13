@@ -109,11 +109,11 @@ namespace ExpressBase.Web2
 			app.UseMvc(routes =>
             {
                 routes.DefaultHandler = areaRouter;
-                routes.MapRoute(
-                 name: "developer",
-                 template: "dev",
-                 defaults: new { controller = RoutingConstants.EXTCONTROLLER, action = "DevSignIn" }
-                );
+                //routes.MapRoute(
+                // name: "developer",
+                // template: "dev",
+                // defaults: new { controller = RoutingConstants.EXTCONTROLLER, action = "DevSignIn" }
+                //);
 
                 routes.MapRoute(
                     name: "default",

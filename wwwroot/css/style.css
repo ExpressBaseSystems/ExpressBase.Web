@@ -80,7 +80,7 @@ body {
     font-family: var(--fontf);
     font-weight: 300;
     margin-top: 10%;
-    box-shadow: var(--eb-shadow);
+    box-shadow: var(--eb-shadow2);
 }
     .login_container h1 {
         font-size: 1.8em;

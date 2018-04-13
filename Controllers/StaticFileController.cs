@@ -3,6 +3,7 @@ using ExpressBase.Common.Constants;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Web2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
@@ -21,21 +22,35 @@ namespace ExpressBase.Web.Controllers
         public StaticFileExtController(IEbStaticFileClient _sfc) : base(_sfc) { }
 
         [HttpGet("static/logo/{filename}")]
-        public FileStream GetLogo(string filename)
+        public IActionResult GetLogo(string filename)
         {
 
             filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
-            string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
-            if (!System.IO.File.Exists(sFilePath))
-            {
-                byte[] fileByte = this.FileClient.Post<byte[]>(new DownloadFileExtRequest { FileName = filename });
-                if (fileByte.IsEmpty())
-                    return System.IO.File.OpenRead("wwwroot/images/proimg.jpg");
-                EbFile.Bytea_ToFile(fileByte, sFilePath);
-            }
-            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=604800";
 
-            return System.IO.File.OpenRead(sFilePath);
+            DownloadFileResponse dfs = null;
+
+            try
+            {
+                if (filename.StartsWith(StaticFileConstants.LOGO))
+                {
+                    HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
+                    dfs = this.FileClient.Get<DownloadFileResponse>
+                            (new DownloadFileExtRequest
+                            {
+                                FileName = filename,
+                            });
+                    if (dfs != null)
+                        dfs.StreamWrapper.Memorystream.Position = 0;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+
+            return (dfs != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
         }
     }
 
@@ -44,36 +59,49 @@ namespace ExpressBase.Web.Controllers
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 
         [HttpGet("static/dp/{filename}")]
-        public FileStream GetDP(string filename)
+        public IActionResult GetDP(string filename)
         {
-            if (filename.StartsWith(StaticFileConstants.DP) && filename.Split(CharConstants.DOT).Length == 2)
-            {
-                filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTJPG;
-                string sFilePath = string.Format("StaticFiles/{0}/dp/{1}", ViewBag.cid, filename);
-                if (!System.IO.File.Exists(sFilePath))
-                {
-                    byte[] fileByte = this.FileClient.Post<byte[]>(new DownloadFileRequest { FileDetails = new FileMeta { FileName = filename, FileType = StaticFileConstants.JPG } });
-                    if (fileByte.IsEmpty())
-                        return System.IO.File.OpenRead("wwwroot/images/proimg.jpg");
-                    EbFile.Bytea_ToFile(fileByte, sFilePath);
-                }
-                HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=604800";
+            filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
 
-                return System.IO.File.OpenRead(sFilePath);
+            DownloadFileResponse dfs = null;
+
+            try
+            {
+                if (filename.StartsWith(StaticFileConstants.DP))
+                {
+                    HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
+                    dfs = this.FileClient.Get<DownloadFileResponse>
+                            (new DownloadFileRequest
+                            {
+                                FileDetails = new FileMeta
+                                {
+                                    FileName = filename,
+                                    FileType = filename.Split(CharConstants.DOT)[1].ToLower()
+                                }
+                            });
+                    if (dfs != null)
+                        dfs.StreamWrapper.Memorystream.Position = 0;
+                }
+
             }
-            else
-                return null;
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+
+            return (dfs != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
         }
 
         [HttpGet("static/{filename}")]
-        public FileStream GetFile(string filename)
+        public IActionResult GetFile(string filename)
         {
-            string sFilePath = string.Format("StaticFiles/{0}/{1}", ViewBag.cid, filename);
+            DownloadFileResponse dfs = null;
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
             try
             {
-                if (!System.IO.File.Exists(sFilePath))
-                {
-                    byte[] fileByte = this.FileClient.Post<byte[]>
+                dfs = this.FileClient.Get<DownloadFileResponse>
                         (new DownloadFileRequest
                         {
                             FileDetails = new FileMeta
@@ -82,22 +110,20 @@ namespace ExpressBase.Web.Controllers
                                 FileType = filename.Split(CharConstants.DOT)[1].ToLower()
                             }
                         });
-                    EbFile.Bytea_ToFile(fileByte, sFilePath);
-                }
-                HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
-                if (filename.ToLower().EndsWith(StaticFileConstants.DOTPDF))
-                    HttpContext.Response.Headers[HeaderNames.ContentType] = "application/pdf";
+                dfs.StreamWrapper.Memorystream.Position = 0;
             }
-            catch (Exception e) { }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
 
-            return System.IO.File.OpenRead(sFilePath);
+            return (dfs != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
         }
 
         [HttpPost]
         public async Task<JsonResult> UploadFileAsync(int i, string tags)
         {
             JsonResult resp = null;
-            string Id = string.Empty;
             string url = string.Empty;
 
             tags = String.IsNullOrEmpty(tags) ? "FileUpload" : tags;
@@ -137,9 +163,6 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
 
                         this.FileClient.Post<bool>(uploadFileRequest);
-                        url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadFileRequest.FileDetails.FileType);
-
-                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK", initialPreview = url, objId = Id });
                     }
                 }
             }

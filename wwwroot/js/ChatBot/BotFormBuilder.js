@@ -427,7 +427,7 @@
                 this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
             }
             else if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'Labels') {
-                this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
+                this.refreshLabels(PropsObj.Name, PropsObj, CurProp);
             }
             //if (CurProp === 'CardCollection')
             //    this.RefreshCardColl(PropsObj);
@@ -455,10 +455,6 @@
         }.bind(this);
 
         this.PGobj.Ebalert = new EbAlert({ id: this.wraperId + "BFBalertCont", top: 24, right: 24, });
-
-        setTimeout(function () {
-            $("#minmize").click();
-        }), 4000;
 
         var html = document.getElementsByTagName('html')[0]; html.style.setProperty("--botdpURL", this.botDpURL)
 
@@ -527,6 +523,9 @@
     //        this.RefreshControl(crd[i]);
     //    }
     //};
+    this.refreshLabels = function (Name, PropsObj, CurProp) {
+
+    };
 
     this.refreshCombo = function (cmbid, PropsObj, CurProp) {
         //if (CurProp === 'DisplayMembers')

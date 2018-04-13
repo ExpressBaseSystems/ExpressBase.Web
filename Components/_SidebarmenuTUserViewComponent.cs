@@ -41,15 +41,12 @@ namespace ExpressBase.Web.Components
             }
 
             StringBuilder sb = new StringBuilder();
-
             foreach (var obj in resultlist.Data)
             {
                 if (obj.Key != 0)
                 {
                     sb.Append(@" 
-                    <li><a href = '#' class='list-group-item outer_li collapsed' data-toggle='collapse' data-target='#dropdown1_" + obj.Key + @"'>
-                       " + resultlist.AppList[obj.Key].AppName + @"
-                    </a>
+                    <li><a Appid='"+ obj.Key + "' class='list-group-item inner_li Obj_link'> " + resultlist.AppList[obj.Key].AppName + @" </a>
                     <ul class='sub-menuObj collapse' id='dropdown1_" + obj.Key + @"'>");
 
                     foreach (var val in obj.Value.Types)
@@ -72,6 +69,12 @@ namespace ExpressBase.Web.Components
                 }
             }
 
+            Dictionary<int, string> _dict = new Dictionary<int, string>();
+            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            {
+                _dict.Add( objectType.IntCode, objectType.Name);
+            }
+            ViewBag.Types = JsonConvert.SerializeObject(_dict);
             ViewBag.Object = resultlist;
             ViewBag.menu = sb.ToString();
             return View();

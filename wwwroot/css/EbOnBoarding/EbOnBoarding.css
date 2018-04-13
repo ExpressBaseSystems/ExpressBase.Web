@@ -506,7 +506,7 @@
 .tAddAcc {
     font-family: open sans;
     font-weight: 300;
-    background-color: #f8f8f8;
+    background-color: #eee;
 }
 
     .tAddAcc .btn {
@@ -654,25 +654,22 @@
 
 .height-100 {
     height: 100vh;
-    padding-top: 50px;
 }
 
 .card {
-    padding-top: 30px;
     display: flex;
     height: 100%;
     overflow-x: auto;
-    padding-bottom: 30px;
     overflow-y: hidden;
+    padding: 4em 0;
 }
 
 .card--content {
     background: white;
-    border: 1px solid #ccc;
     min-width: 60%;
     border-radius: 4px;
     height: 100%;
-    box-shadow: var(--on-boarding-box-shadow);
+    box-shadow: var(--eb-shadow2);
 }
 
 .card--content-large {

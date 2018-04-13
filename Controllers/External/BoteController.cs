@@ -192,9 +192,9 @@ namespace ExpressBase.Web.Controllers
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
                     }
-                    else if (control is EbDynamicCards)
+                    else if (control is EbDynamicCardSet)
                     {
-						EbDynamicCards EbDynamicCards = (control as EbDynamicCards);
+						EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
 						EbDynamicCards.InitFromDataBase(this.ServiceClient);
 						EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
                     }

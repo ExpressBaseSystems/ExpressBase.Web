@@ -140,13 +140,11 @@
         $Ctrl.find(".cards-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl));
         this.SelectedCards = [];
         this.sumFieldsName = [];
-        //$.each(this.Bot.curCtrl.cardFields, function (k, obj) {
-        //    if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
-        //        this.sumFieldsName.push(obj.name);
-        //    }
-        //}.bind(this));
-        this.sumFieldsName.push('Amount');
-
+        $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
+            if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
+                this.sumFieldsName.push(obj.name);
+            }
+        }.bind(this));
 
         $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {
             if ($(evt.target).text() === 'Select') {

@@ -49,6 +49,7 @@
 
 </script>
 <div id="object_Dashboard_main">
+
     @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _apps = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles })
 </div>
 

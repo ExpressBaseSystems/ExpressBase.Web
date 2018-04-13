@@ -1,13 +1,9 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.ServiceClients;
-using ExpressBase.Common.ServiceStack.Auth;
-using ExpressBase.Web.BaseControllers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack;
-using ServiceStack.Messaging;
 using ServiceStack.Redis;
 using System;
 
@@ -28,7 +24,7 @@ namespace ExpressBase.Web.BaseControllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-            string[] hostParts = host.Split(RoutingConstants.DOT);
+            string[] hostParts = host.Split(CharConstants.DOT);
             string solutionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);          
             try
             {               

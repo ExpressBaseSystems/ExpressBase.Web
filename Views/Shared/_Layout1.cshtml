@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -199,15 +200,24 @@
 
                                         </div>
                                         <div class="col-md-9 col-lg-9 col-sm-9 header_topmenu" id="topmenu">
-                                            @{
-                                                if (ViewBag.wc == "dc")
-                                                {
-                                                    <button class="btn c_btn pull-left" data-toggle="tooltip" title="Export"><i class="material-icons">cloud_download</i></button>
-                                                    <button class="btn c_btn pull-left" data-toggle="tooltip" title="Import"><i class="material-icons">cloud_upload</i></button>
-                                                }
-                                            }
-
+                                           
                                             <button class="btn c_btn cls_btn pull-right" data-toggle="tooltip" title="Close" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
+                                           
+                                                @{
+                                                    if (ViewBag.wc == "dc")
+                                                    {
+                                                        <button class="btn c_btn pull-left" data-toggle="tooltip" title="Export"><i class="material-icons">cloud_download</i></button>
+                                                        <button class="btn c_btn pull-left" data-toggle="tooltip" title="Import"><i class="material-icons">cloud_upload</i></button>
+                                                        <div class="dropdown drp_new pull-right">
+                                                            <button class="btn btn-default dropdown-toggle" type="button" id="newBuildermenu1" data-toggle="dropdown">
+                                                                New
+                                                                <span class="fa fa-plus"></span>
+                                                            </button>
+                                                            <ul class="dropdown-menu" role="menu" id="drp_new_wrapper" aria-labelledby="newBuildermenu1"></ul>
+                                                        </div>
+                                                    }
+                                                }
+
                                             <div class="searchBox pull-left">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control search_input" id="searchobj" placeholder="Search from all.">

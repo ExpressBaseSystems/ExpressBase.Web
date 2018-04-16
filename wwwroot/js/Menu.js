@@ -4,12 +4,11 @@
     this.objTypes = null;
 
     this.init = function () {
-        $('#submen').off("click").on("click", this.showModal.bind(this));
-        $('#MyDropDownId li').click(function () { $('#dropbuttn').text($(this).text()); });      
+        $('#submen').off("click").on("click", this.showModal.bind(this));    
         $("#searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $("body").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
     };
-
+    
     this.searchObjects = function (e) {
         var srchBody = $(e.target).attr("search_body");
         var srch = $(e.target).val().toLowerCase();
@@ -45,10 +44,18 @@
                 //$(".sub-menuObj .Obj_link").off("click").on("click", this.appendObjList.bind(this));
                 $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
                 $(".list-group-item[data-toggle=collapse]").off("click").on("click", this.changeIcon.bind(this));
+                this.login === "dc" ? this.newBuilderMenu():null;
             }.bind(this));
         }
         else {
             $('#EbsideBar').animate({ width: 'toggle' });
+        }
+    };
+
+    this.newBuilderMenu = function () {
+        for (t in this.objTypes) {
+            $(".drp_new #drp_new_wrapper").append(`<li role="presentation">
+                                                    <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${t}"">${this.objTypes[t]}</a></li>`);
         }
     };
 
@@ -219,7 +226,6 @@
     };
 
     this.code4AppendList = function (_obj, $container) {
-
         var appname = "Not Selected..";
         if (_obj.AppId > 0)
             appname = this.resultObj.AppList[_obj.AppId].AppName;
@@ -245,9 +251,9 @@
     this.changeIcon = function (e) {
         if (this.login === "uc") {
             if ($(e.target).hasClass("collapsed"))
-                $(e.target).children("i").attr("class", "fa fa-angle-down")
+                $(e.target).children("i").attr("class", "fa fa-chevron-down pull-right");
             else
-                $(e.target).children("i").attr("class", "fa fa-angle-right")
+                $(e.target).children("i").attr("class", "fa fa-chevron-right pull-right");
         }
     };
 

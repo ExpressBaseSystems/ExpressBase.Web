@@ -26,11 +26,12 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
-            var resultlist = this.ServiceClient.Get<SidebarDevResponse>(new SidebarDevRequest ());
+            var resultlist = this.ServiceClient.Get<SidebarDevResponse>(new SidebarDevRequest());
             StringBuilder sb = new StringBuilder();
             foreach (var obj in resultlist.Data)
             {
-                    sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link'> " + resultlist.AppList[obj.Key].AppName + " </a></li>");
+                if (obj.Key != 0)
+                    sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link for_brd'> " + resultlist.AppList[obj.Key].AppName + " </a></li>");
             }
             Dictionary<int, string> _dict = new Dictionary<int, string>();
             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)

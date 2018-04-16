@@ -402,8 +402,8 @@ namespace ExpressBase.Web.Controllers
 
 		public bool isValidRoleName(string reqRoleName)
 		{
-			var temp = this.ServiceClient.Post<bool>(new UniqueCheckRequest { roleName = reqRoleName });
-			return temp;
+			var result = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { roleName = reqRoleName });
+            return result.unrespose;
 		}
 
 

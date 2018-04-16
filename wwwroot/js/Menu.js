@@ -4,12 +4,13 @@
     this.objTypes = null;
 
     this.init = function () {
-        $('#submen').off("click").on("click", this.showModal.bind(this));
-        $('#MyDropDownId li').click(function () { $('#dropbuttn').text($(this).text()); });      
+        $('#submen').off("click").on("click", this.showModal.bind(this));    
         $("#searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $("body").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
+        $('body').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
+        $('body').off("click").on('click', ".for_brd", this.setBrdCrump.bind(this));
     };
-
+    
     this.searchObjects = function (e) {
         var srchBody = $(e.target).attr("search_body");
         var srch = $(e.target).val().toLowerCase();
@@ -34,7 +35,7 @@
     };
 
     this.showModal = function () {
-        if (this.login == "dc" || this.login == "uc") {
+        if ($.isEmptyObject(this.resultObj)) {
             $("#ObjModal").modal('show');
             $.LoadingOverlay("show");
             $("#EbsideBar").empty();
@@ -42,13 +43,20 @@
                 $("#EbsideBar").append(result);
                 $.LoadingOverlay("hide");
                 $(".Obj_link").off("click").on("click", this.appendObType.bind(this));
-                //$(".sub-menuObj .Obj_link").off("click").on("click", this.appendObjList.bind(this));
                 $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
                 $(".list-group-item[data-toggle=collapse]").off("click").on("click", this.changeIcon.bind(this));
+                this.login === "dc" ? this.newBuilderMenu():null;
             }.bind(this));
         }
         else {
-            $('#EbsideBar').animate({ width: 'toggle' });
+            $("#ObjModal").modal('show');
+        }
+    };
+
+    this.newBuilderMenu = function () {
+        for (t in this.objTypes) {
+            $(".drp_new #drp_new_wrapper").append(`<li class="drp_menuitems">
+                                                    <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${t}"">${this.objTypes[t]}</a></li>`);
         }
     };
 
@@ -72,18 +80,22 @@
                                                     </div>
                                                 </div>
                                             </div>`);
-            //this.appendObjList($("#obtype_container" + otype[appid]), otype);
             this.apndOTypeContainer($("#obtype_container" + otype), _obj);
             if (this.login == "dc") {
                 $(`#obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
                                                             <i class="material-icons">add</i></a>`);
             }
-
         }
         $(".obType_wrapper_head").on("click", this.actionCollapse.bind(this));
         $(".new_btn").on("click", function (e) { e.stopPropagation(); });
-        $(".obj_search_input").off("click").on("click",function (e) {e.stopPropagation();});
+        $(".obj_search_input").off("click").on("click", function (e) { e.stopPropagation(); });
     };
+
+    this.setBrdCrump = function(el){
+        var el_li = $(el.target).closest("li");
+        var url = `<span class='brd_cr_items'>${el_li.parent().prev().text().trim()}</span>/<span class='brd_cr_items active_lnk'>${$(el.target).text().trim()}</span>/`;
+        $(".breadcrumb_wrapper").empty().append(url);
+    }
 
     this.apndOTypeContainer = function ($ob, _objArray) {
         for (let i = 0; i < _objArray.length; i++) {
@@ -108,29 +120,6 @@
             $div.children(".btn_container").children(".ob_search").show();
         }
     };
-
-    this.appendObjList = function ($ob, otype) {
-        var key = otype;
-        var url;
-        //console.log(this.resultObj);
-        //$(".modal-body #objList").empty();
-        if (this.login === "dc") {
-            $("#topmenu .new_builder").attr("href", "../Eb_Object/Index?objid=" + null + "&objtype=" + key + "");
-            $.each(this.resultObj.Data[key].Objects, function (i, _obj) {
-                url = `../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
-                this.code4AppendList(_obj, url);
-            }.bind(this));
-        }
-        else {
-            //var ctrlActObj = JSON.parse($(e.target).attr("data-action"));
-            //var Appid = $(e.target).attr("data-Appid")
-            //$.each(this.resultObj.Data[appid].Types[key].Objects, function (i, _obj) {
-            //    //url = `../${ctrlActObj.Controller}/${ctrlActObj.Action}?refid=${_obj.Refid}`;
-            //    this.code4AppendList(_obj, url,$ob);
-            //}.bind(this));
-
-        }
-    }
 
     this.appendAppList = function (e) {
         $("#topmenu .new_builder").attr("href", "../Dev/CreateApplication");
@@ -176,32 +165,7 @@
                             }
                         }.bind(this));
                     }.bind(this));
-                }.bind(this));
-            //}
-            //else {
-            //    $.each(this.resultObj.Data, function (i, Apps) {
-            //        $.each(Apps.Types, function (j, Type) {
-            //            $.each(Type.Objects, function (l, _obj) {
-            //                if (_obj.ObjName.toLowerCase().indexOf(srch) !== -1) {
-            //                    f = true;
-            //                    if (_obj.EbType == "TableVisualization" || _obj.EbType == "ChartVisualization") {
-            //                        url = "../DV/dv?refid=" + _obj.Refid;
-            //                    }
-            //                    else if (_obj.EbType == "Report") {
-            //                        url = "../ReportRender/Index?refid=" + _obj.Refid;
-            //                    }
-            //                    this.code4AppendList(_obj, url);
-            //                }
-            //            }.bind(this));
-            //        }.bind(this));
-            //    }.bind(this));
-            //}
-
-            //if (!f)
-            //    $("#notfound").text('Item not found.......');
-            //else
-            //    $("#notfound").text('');
-            ////}
+                }.bind(this));           
         }
     };
 
@@ -219,8 +183,8 @@
     };
 
     this.code4AppendList = function (_obj, $container) {
-
         var appname = "Not Selected..";
+        var icon = this.login === "uc" ? `<i class="material-icons">open_in_new</i>`:`<i class="fa fa-pencil" aria-hidden="true"></i>`;
         if (_obj.AppId > 0)
             appname = this.resultObj.AppList[_obj.AppId].AppName;
         $container.append(`
@@ -236,7 +200,7 @@
                         </div>
                     </div>
                     <div class='col-md-1 pd-0 objbox-footer'>
-                        <a href='${this.decideUrl(_obj)}' class='btn'><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                        <a href='${this.decideUrl(_obj)}' class='btn'>${icon}</a>
                     </div>
                     </div>
                 </div>`);
@@ -245,9 +209,9 @@
     this.changeIcon = function (e) {
         if (this.login === "uc") {
             if ($(e.target).hasClass("collapsed"))
-                $(e.target).children("i").attr("class", "fa fa-angle-down")
+                $(e.target).children("i").attr("class", "fa fa-chevron-down pull-right");
             else
-                $(e.target).children("i").attr("class", "fa fa-angle-right")
+                $(e.target).children("i").attr("class", "fa fa-chevron-right pull-right");
         }
     };
 

@@ -31,7 +31,7 @@ namespace ExpressBase.Web.Components
             foreach (var obj in resultlist.Data)
             {
                 if (obj.Key != 0)
-                    sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link'> " + resultlist.AppList[obj.Key].AppName + " </a></li>");
+                    sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link for_brd'> " + resultlist.AppList[obj.Key].AppName + " </a></li>");
             }
             Dictionary<int, string> _dict = new Dictionary<int, string>();
             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)

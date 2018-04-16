@@ -46,7 +46,7 @@ namespace ExpressBase.Web.Components
                 if (obj.Key != 0)
                 {
                     sb.Append(@" 
-                    <li><a Appid='"+ obj.Key + "' class='list-group-item inner_li Obj_link'> " + resultlist.AppList[obj.Key].AppName + @" </a>
+                    <li><a Appid='"+ obj.Key + "' class='list-group-item inner_li Obj_link for_brd'> " + resultlist.AppList[obj.Key].AppName + @" </a>
                     <ul class='sub-menuObj collapse' id='dropdown1_" + obj.Key + @"'>");
 
                     foreach (var val in obj.Value.Types)

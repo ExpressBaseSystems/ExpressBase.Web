@@ -85,8 +85,9 @@
     border-bottom: none;
     background-color: var(--eb-black);
 }
-.Eb_quick_menu .modal-header .searchBox {
-}
+    .Eb_quick_menu .modal-header .searchBox {
+        margin-right: 15px;
+    }
 .Eb_quick_menu .cls_btn {
 }
 .Eb_quick_menu .modal-header .c_btn {
@@ -202,4 +203,29 @@
 }
 .drp_new{
     display:inline-block;
+}
+.drp_menuitems {
+    padding: 5px;
+}
+.drp_new_wrapper {
+    height: 500px;
+    overflow: auto;
+}
+.drp_new .btn{
+    border-radius:20px;
+}
+.breadcrumb_wrapper {
+    display: inline-block;
+    float: left;
+    padding: 6px 0px;
+    padding-right: 10px;
+    font-size:16px;
+}
+    .breadcrumb_wrapper .active_lnk {
+        color: #4e79a5;
+        font-size: 15px;
+    }
+.brd_cr_items {
+    padding: 0 2px;
+    font-size: 14px;
 }

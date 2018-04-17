@@ -53,6 +53,11 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("SignIn")]
         public IActionResult SignIn()
         {
+            if (!String.IsNullOrEmpty(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
+                if ((IsTokenValid(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN])))
+                {
+                    return RedirectToAction("SolutionDashBoard", "Tenant");
+                }
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.errMsg = TempData["ErrorMessage"] as string;
             return View();

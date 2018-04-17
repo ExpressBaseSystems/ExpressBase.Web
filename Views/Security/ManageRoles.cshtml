@@ -4,6 +4,8 @@
     @using ExpressBase.Common.Objects;
 }
 
+@await Component.InvokeAsync("PageHeaderCommon")
+
 <style>
     .outer-section-manageroles {
         height: 100vh;
@@ -15,7 +17,8 @@
         padding-bottom: 15px;
     }
 </style>
-
-<section class="outer-section-manageroles" style="height:625px; margin: 1% 6% 0% 6%; padding-top: 1%;">
-    @await Component.InvokeAsync("ManageRoles", new {itemid = ViewBag.itemid })
-</section>
+<div class="center" style="padding: 4% 7% 0% 7%; height: 100vh;">
+    <section class="outer-section-manageroles" style="height: 100%;">
+        @await Component.InvokeAsync("ManageRoles", new { itemid = ViewBag.itemid })
+    </section>
+</div>

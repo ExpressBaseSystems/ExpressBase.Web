@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
+    await Component.InvokeAsync("PageHeaderCommon");
 }
 
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
@@ -8,6 +9,7 @@
 <script>
     var EbConnections = @Html.Raw(ViewBag.Connections);
 </script>
+
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar">
         <div class="t-container">

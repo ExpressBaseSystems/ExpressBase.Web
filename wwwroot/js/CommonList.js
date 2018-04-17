@@ -1,6 +1,7 @@
-﻿var CommonListJs = function (itemList, metadata) {
+﻿var CommonListJs = function (itemList, metadata, mnuBarObj) {
     this.itemList = itemList;
     this.metadata = metadata;
+    this.menuBarObj = mnuBarObj;
 
     //MODAL FIELDS-------------------
     this.AnonymUserModal = $("#ManageAnonymUserModal");
@@ -55,15 +56,18 @@
             tblcols.push({ data: i, title: this.metadata[i].replace("_"," "), className: "dataTableColumnStyle", width: '150px' });
         tblcols.push({ data: null, title: "View/Edit", className: "dataTableColumnStyle", width: '80px', className: "text-center", render: this.tblEditColumnRender, searchable: false, orderable: false });
         
-        if (this.metadata.indexOf("_user") !== -1)// to fill tbldata with appropriate data
+        if (this.metadata.indexOf("_user") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
-        else if (this.metadata.indexOf("_userGroup") !== -1)
+        }
+        else if (this.metadata.indexOf("_userGroup") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]] });
-        else if (this.metadata.indexOf("_roles") !== -1)
+        }
+        else if (this.metadata.indexOf("_roles") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
+        }
 
         else if (this.metadata.indexOf("_anonymousUser") !== -1) {
             tblcols.push({ data: null, title: "Add as User", className: "dataTableColumnStyle", width: '100px', className: "text-center", render: this.tblConvertColumnRender, searchable: false, orderable: false });
@@ -73,11 +77,12 @@
             
         var tbl = "#tblCommonList";
         this.table = $(tbl).DataTable({
-            scrollY: "400px",
+            scrollY: "96%",
             scrollX: true,
             paging: false,
             autoWidth: false,
-            dom: 'frt',
+            //dom: 'frt',
+            dom: 't',
             ordering: true,
             columns: tblcols,
             data: tbldata,
@@ -90,6 +95,47 @@
         }.bind(this)).draw();
         $("#tblCommonList").on('click', '.editviewclass', this.onClickEdit.bind(this));
         $("#tblCommonList").on('click', '.convertuserclass', this.onClickConvert.bind(this));
+
+        this.setMenuBar();
+    }
+
+    this.setMenuBar = function () {
+        var headHtml = `<div class="form-group has-feedback" style="display:inline-block;">
+                            <input type="text" class="form-control" id="txtSrchCmnList" placeholder="Search" style="height: 32px;" title="Search"/>
+                            <span id="spanSrchCmnList" class="glyphicon glyphicon-search form-control-feedback" style="top:0px;"></span>
+                            <span id="spanRemvCmnList" class="glyphicon glyphicon-remove form-control-feedback" style="top:0px; display:none;"></span>
+                        </div>`;
+
+        if (this.metadata.indexOf("_user") !== -1) {
+            headHtml += `<button class='btn' title='Create User' onclick="window.open('../Security/ManageUser', '_blank');"><i class="fa fa-plus-circle"></i> New User </button>`;
+        }
+        else if (this.metadata.indexOf("_userGroup") !== -1) {
+            headHtml += `<button class='btn' title='Create UserGroup' onclick="window.open('../Security/ManageUserGroups', '_blank');"><i class="fa fa-plus-circle"></i> New UserGroup </button>`;
+        }
+        else if (this.metadata.indexOf("_roles") !== -1) {
+            headHtml += `<button class='btn' title='Create Role' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i> New Role </button>`;
+        }
+
+        this.menuBarObj.BuildMenu(headHtml);
+
+        $('#txtSrchCmnList').on('keyup', function (e) {
+            if ($(e.target).val() === "") {
+                $("#spanRemvCmnList").hide();
+                $("#spanSrchCmnList").show();
+            }
+            else {
+                $("#spanSrchCmnList").hide();
+                $("#spanRemvCmnList").show();
+            }
+            this.table.search($(e.target).val()).draw();
+        }.bind(this));
+        $("#spanRemvCmnList").on('click', function () {
+            $('#txtSrchCmnList').val("");
+            $("#spanRemvCmnList").hide();
+            $("#spanSrchCmnList").show();
+            this.table.search("").draw();
+        }.bind(this));
+
         
     }
 

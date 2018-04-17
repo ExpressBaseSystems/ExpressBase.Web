@@ -1,5 +1,7 @@
 ﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
     this.whichMode = mode;
+    this.menuBarObj = new MenuBarCommon();
+    this.menuBarObj.BuildMenu(`<button id="btnCreateUser" class='btn'><i class="material-icons">save</i></button>`);
     //CreateEdit = 1, View = 2, MyProfileView = 3
     this.userinfo = userinfo;
     this.customRoles = cusroles;
@@ -15,7 +17,7 @@
     this.dependentList = [];
     this.dominantList = [];
 
-    this.divFormHeading = $("#divFormHeading");
+    //this.divFormHeading = $("#divFormHeading");
     this.txtName = $("#txtFullName");
     this.txtNickName = $("#txtNickName");
     this.txtEmail = $("#txtEmail");
@@ -97,8 +99,9 @@
     this.initForm = function () {
         this.chkboxHide.parent().hide();
         if (this.itemId > 1) {
-            $(this.divFormHeading).text("Edit User");
-            this.btnCreateUser.text("Update");
+            this.menuBarObj.setName("Edit User");
+            //$(this.divFormHeading).text("Edit User");
+            //this.btnCreateUser.text("Update");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
             if(this.whichMode === 3)
@@ -112,8 +115,10 @@
             this.initUserInfo();
             this.initFbConnect();
         }
-        else if (this.itemId === 1){
-            $(this.divFormHeading).text("Create User");
+        else if (this.itemId === 1) {
+            this.menuBarObj.setName("New User");
+            //$(this.divFormHeading).text("Create User");
+            //this.btnCreateUser.text("Create");
             this.btnFbConnect.css("display", "none");
             this.anonymousUserId = this.userinfo["AnonymousUserID"];
             this.txtName.val(this.userinfo["FullName"]);
@@ -127,7 +132,9 @@
             this.initFbConnect();
         }
         else {
-            $(this.divFormHeading).text("Create User");
+            this.menuBarObj.setName("New User");
+            //$(this.divFormHeading).text("Create User");
+            //this.btnCreateUser.text("Create");
             this.btnFbConnect.css("display", "none");
             $("#btnFbInvite").show();
         }
@@ -532,6 +539,8 @@
 }
 
 var UserGroupJs = function (infoDict, usersList) {
+    this.menuBarObj = new MenuBarCommon();
+    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn'></button>`);
     this.infoDict = infoDict;
     this.usersList = usersList;
     this.txtUserGroupName = $("#txtUserGroupName");
@@ -551,10 +560,16 @@ var UserGroupJs = function (infoDict, usersList) {
         var initUserList = null;
         var metadata2 = ['id', 'name', 'email', 'ProfilePicture'];
         if (parseInt(this.infoDict['id']) > 0) {
+            this.btnSaveAll.text("Update");
+            this.menuBarObj.setName(this.infoDict['name']);
             initUserList = [];
             for (i = 0; i < this.usersList.length; i++) {
                 initUserList.push({ id: this.usersList[i].Id, name: this.usersList[i].Name, email: this.usersList[i].Email });
             }
+        }
+        else {
+            this.btnSaveAll.text("Create");
+            this.menuBarObj.setName("New User Group");
         }
         if (this.usersTile === null) {
             this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, null, metadata2, "../Security/GetUserDetails", null, this);

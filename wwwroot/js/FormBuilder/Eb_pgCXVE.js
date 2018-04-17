@@ -163,7 +163,7 @@
                 this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             }
 
-            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG",null, null, this.PGobj);
             this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
             this.CE_PGObj.parentId = this.PGobj.wraperId;
             this.setColTiles(true);
@@ -529,6 +529,7 @@
         var obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
         var cardFields = this.PGobj.PropsObj.CardFields.$values;
         var fieldMeta = {};
+        var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
         $.each(cardFields, function (i, field) {
             var _propName = field.Name;
             var objType = "Eb" + field.ObjType;
@@ -536,23 +537,15 @@
                 masterPropName = "Text";
                 Object.assign(fieldMeta, getObjByval(AllMetas[objType], "name", masterPropName));
                 fieldMeta.name = _propName;
+                fieldMeta.group = sourceProp;
                 if (!obj[_propName]) {
-                    AllMetas[type].push(fieldMeta)
+                    AllMetas[type].push(fieldMeta);
                     var addPropObj = {};
                     addPropObj[_propName] = "";
                     $.extend(obj, obj, addPropObj);
                 }
             }
-            ////dict mock obj
-            //var customeDict = {
-            //    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Object, System.Private.CoreLib]], System.Private.CoreLib",
-            //    "$values": {
-            //        "baabu": "babumon",
-            //        "saabu": "sabumon"
-            //    }
-            //};
-
-        });
+        }.bind(this));
         return obj;
     };
 

@@ -1,4 +1,6 @@
 ﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList) {
+    this.menuBarObj = new MenuBarCommon();
+    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn'><i class="material-icons">save</i></button>`);
     this.appCollection = appCollection.$values;
     this.roleId = roleId;
     this.roleInfo = roleInfo;
@@ -33,6 +35,8 @@
         //INIT FORM
         if (this.roleId > 0) {
             $(this.txtRoleName).val(roleInfo["RoleName"]);
+            this.menuBarObj.setName(roleInfo["RoleName"]);
+            //this.btnSaveAll.text("Update");
             $(this.txtRoleName).attr("disabled", "true");
             
             var apIndex = 0;
@@ -59,6 +63,8 @@
             this.findDominantRoles(this.roleId);
         }
         else {
+            this.menuBarObj.setName("New Role");
+            //this.btnSaveAll.text("Create");
             this.selectApp.on("change", this.selectAppChangeAction.bind(this));
             this.loadAppToSelect.bind(this)();
 
@@ -242,8 +248,8 @@
                 //$(tbl).DataTable().rows().recalcHeight();
             }
         });
-        $('#txtSrch' + t).on('keyup', function () {
-            if (this.value === "") {
+        $('#txtSrch' + t).on('keyup', function (e) {
+            if ($(e.target).val() === "") {
                 $("#spanRemv" + t).hide();
                 $("#spanSrch" + t).show();
             }
@@ -251,7 +257,7 @@
                 $("#spanSrch" + t).hide();
                 $("#spanRemv" + t).show();
             }
-            table.search(this.value).draw();
+            table.search($(e.target).val()).draw();
         });
         $("#spanRemv" + t).on('click', function () {
             $('#txtSrch' + t).val("");

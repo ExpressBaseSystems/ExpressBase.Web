@@ -1,7 +1,6 @@
 ﻿var imageUploader = function (option) {
-
+    var _Console = option.Console;
     var _container = option.Container;
-    var _controller = option.Controller;
     var _Tid = option.TenantId;
     var _ToggleId = option.toggleId;
     var _multiple = option.IsMultiple ? _multiple = "multiple" : "";
@@ -22,7 +21,7 @@
             + '<div class="modal-body">'
             + "<div id-'img-upload-body' style='margin-top:15px;'><input id='" + _container + "input-id' type='file' data-preview-file-type='text' " + _multiple + "></div>"
             + "<h6>Tags</h6>"
-            + "<input type= 'text' data-role='tagsinput' id= '" + _container + "tagval' value='' class='form-control' style='display:none;width:100%;'>"
+            + "<input type= 'text' data-role='tagsinput' id= '" + _container + "tagval' value='' class='form-control' style='width:100%;'>"
             + '</div>'
 
             + '<div class="modal-footer">'
@@ -54,9 +53,12 @@
         $("#" + _container + "input-id").fileinput({
             uploadUrl: "../StaticFile/UploadImageAsync",
             maxFileCount: 5,
+            initialPreview: _initialPrev,
+            initialPreviewConfig: _initialPrevConfig,
+            initialPreviewAsData: true,
             uploadAsync: true,
             uploadExtraData: this.uploadtag.bind(this)
-        }).on('fileloaded', this.addtagButton.bind(this))
+        }).on('fileloaded', this.fileloaded.bind(this))
           .on('filepreajax', this.filepreajax.bind(this))
           .on('fileclear', function (event) {
                 $("#" + _container + "tag-section").empty();
@@ -70,17 +72,15 @@
     
     this.filepreajax = function (event, previewId, index) {
         var f = $("#" + _container + "input-id").fileinput('getFileStack')[0];
-        _tag[f.name.toLowerCase()] = $("#" + _container + "tagval").tagsinput('items');
+        if ($("#" + _container + "tagval").tagsinput('items').length > 0)
+            _tag[f.name.toLowerCase()] = $("#" + _container + "tagval").tagsinput('items');
+        var t = _Console === "dc" ? "devresource" : "userresource";
+        $.isEmptyObject(_tag) ? _tag[f.name.toLowerCase()] = [t] : _tag[f.name.toLowerCase()].push(t);
     };
 
-    this.addtagButton = function (event, file, previewId, index, reader) {
-        if (option.IsTag) {
-            $("#" + previewId).children().find(".file-footer-buttons").append(`<button type='button' id='${_container}tagbtn${previewId}'
-                class='kv-file-upload btn btn-kv btn-default btn-outline-secondary' index='${index}'  title= 'Tag'> Tag</button> `);
-
-            $("#" + _container + "tagbtn" + previewId).on("click", this.tagimageOnClick.bind(this));
-        }       
+    this.fileloaded = function (event, file, previewId, index, reader) {
         $("#" + _container + "_close").prop('disabled', true);
+        $("#" + _container + "tagval").show().tagsinput('refresh');
     };//tadd tag btn
 
     this.imageOnSelect = function (e) {

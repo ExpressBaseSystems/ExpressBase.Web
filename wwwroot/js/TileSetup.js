@@ -109,6 +109,7 @@
         $(this.parentDiv).on('click', '#btnAddModal' + t, this.onClickBtnAddModal.bind(this));
         $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
         $(this.divSelectedDisplay).on('click', ".dropDownRemoveClass", this.onClickRemoveFromSelected.bind(this));
+        $(this.divSelectedDisplay).on('click', ".dropDownViewClass", this.onClickViewFromSelected.bind(this));
 
         if (this.objectMetadata.indexOf('ProfilePicture') > -1)
             this.profilePicStatus = true;
@@ -347,7 +348,7 @@
                             <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
                             <ul class="dropdown-menu" style="left:-140px; width:160px;">`;
         if (!this.readOnly)
-            temp +=             `<li><a href="#" class='dropDownRemoveClass'>Remove</a></li>`;
+            temp +=             `<li><a href="#" class='dropDownViewClass'>View</a></li><li><a href="#" class='dropDownRemoveClass'>Remove</a></li>`;
         temp += `           </ul>
                         </div>
                     </div>
@@ -373,6 +374,42 @@
             }
             if (this.resultObject.length === 0)
                 this.divSelectedDisplay.append(`<div style="text-align: center; margin-top: 10%; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
+        }
+    }
+
+    this.onClickViewFromSelected = function (e) {
+        if (this.readOnly) {
+            alert("Not Available in ReadOnly Mode");
+            return;
+        }
+        var id = $(e.target).parents("div.col-md-4").attr('data-id');
+        if (this.title === 'Add Users') {
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", "../Security/ManageUser");
+            _form.setAttribute("target", "_blank");
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "itemid";
+            input.value = id;
+            _form.appendChild(input);
+            var mode = document.createElement('input');
+            mode.type = 'hidden';
+            mode.name = "Mode";
+            mode.value = '1';
+            _form.appendChild(mode);
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
+        else if (this.title === 'Add Roles') {
+            if (id > 100)
+                window.open("../Security/ManageRoles?itemid=" + id, "_blank");
+            else
+                alert("SYSTEM ROLE");
+        }
+        else if (this.title === 'Add User Group') {
+            window.open("../Security/ManageUserGroups?itemid=" + id, "_blank");
         }
     }
 

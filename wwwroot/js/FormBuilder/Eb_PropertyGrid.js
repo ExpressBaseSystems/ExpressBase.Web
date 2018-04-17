@@ -119,9 +119,8 @@
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             this.ImgSlctrs[name] = new imageUploader({
                 Container: "mb_" + this.wraperId,
-                Controller: this.wc,
+                Console: this.wc,
                 TenantId: this.cid,
-                IsTag: true,
                 toggleId: "pgCXbtn_" + elemId
             });
         }

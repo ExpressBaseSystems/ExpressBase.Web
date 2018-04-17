@@ -175,18 +175,7 @@
 </head>
 <body>
     <div id="tenatDtls" class="container-fluid">
-
-        @{
-            if (ViewBag.wc == "tc")
-            {
-                @await Component.InvokeAsync("PageHeaderTenant", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
-            }
-            else
-            {
-                <div id="submen" class="togglemenu"><i class="fa fa-bars fa-lg" alt="Brand"></i></div>
-            }
-        }
-
+                @await Component.InvokeAsync("PageHeaderCommon")
         <div class="row">
             @{
                 if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
@@ -242,7 +231,7 @@
                             </div>
                         </div>
                     </div>
-                                                }
+                }
             }
 
             <div id="layout_div" class="container-fluid main-cont">

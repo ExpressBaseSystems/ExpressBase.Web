@@ -525,81 +525,83 @@
     };
 
     this.getObjFor22 = function (id, type) {
-        var objType = "EbCardTextField";
-        var masterPropName = "Text";
+        var masterPropName = "";
         var obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
         var cardFields = this.PGobj.PropsObj.CardFields.$values;
+        var fieldMeta = {};
         $.each(cardFields, function (i, field) {
-            if (field.$type === "ExpressBase.Objects.EbCardTextField, ExpressBase.Objects") {
-                var _propName = field.Name;
-                var fieldMeta = {};
+            var _propName = field.Name;
+            var objType = "Eb" + field.ObjType;
+            if (objType === "EbCardTextField") {
+                masterPropName = "Text";
                 Object.assign(fieldMeta, getObjByval(AllMetas[objType], "name", masterPropName));
                 fieldMeta.name = _propName;
                 if (!obj[_propName]) {
                     AllMetas[type].push(fieldMeta)
                     var addPropObj = {};
-                    addPropObj[_propName] = "daddy";
+                    addPropObj[_propName] = "";
                     $.extend(obj, obj, addPropObj);
                 }
             }
-            var customeDict = {
-                "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Object, System.Private.CoreLib]], System.Private.CoreLib",
-                "$values": [
-                    { "baabu": { name: "babumon" } },
-                    { "saabu": { name: "sabumon" } }
-                ]
-            };
-                
+            ////dict mock obj
+            //var customeDict = {
+            //    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Object, System.Private.CoreLib]], System.Private.CoreLib",
+            //    "$values": {
+            //        "baabu": "babumon",
+            //        "saabu": "sabumon"
+            //    }
+            //};
+
         });
-return obj;
+        return obj;
     };
 
-this.CE_AddFn = function () {
-    var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
-    var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
-    var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (lastItemCount + 1);
-    if (this.PGobj.CurProp === "Controls")////////////// need CE test and correction
-        this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-    else {
-        //if (this.editor === 22) {
-        //    var obj = new EbObjects[SelType](EbSid);
-        //    var newObj = {}
-        //    newObj.$type = obj.$type;
-        //    newObj.Name = obj.Name;
-        //    newObj.EbSid = obj.EbSid;
-        //    newObj.ObjType = obj.ObjType;
-        //    newObj.ObjType = obj.ObjType;
-        //    this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(newObj);
-        //}
-        //else
-        this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(new EbObjects[SelType](EbSid));
+    this.CE_AddFn = function () {
+        var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
+        var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
+        var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (lastItemCount + 1);
+        if (this.PGobj.CurProp === "Controls")////////////// need CE test and correction
+            this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
+        else {
+            //if (this.editor === 22) {
+            //    var obj = new EbObjects[SelType](EbSid);
+            //    var newObj = {}
+            //    newObj.$type = obj.$type;
+            //    newObj.Name = obj.Name;
+            //    newObj.EbSid = obj.EbSid;
+            //    newObj.ObjType = obj.ObjType;
+            //    newObj.ObjType = obj.ObjType;
+            //    this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(newObj);
+            //}
+            //else
+            this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(new EbObjects[SelType](EbSid));
+        }
+        this.setColTiles();
+        $("#" + EbSid).click();
+    };
+
+    this.Init = function () {
+        var CXVE_html = '<div class="pgCXEditor-bg">'
+            + `<div class="pgCXEditor-Cont" style="width:${window.screen.availWidth / 2}px;right:${window.screen.availWidth / 4}px;">`
+
+            + '<div class="modal-header">'
+            + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'
+            + '<h4 class="modal-title"> </h4>'
+            + '</div>'
+
+            + '<div class="modal-body"> </div>'
+            + '<div class="modal-footer">'
+            + '<div class="modal-footer-body">'
+            + '</div>'
+            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);">OK</button>'
+            + '</div>'
+
+            + '</div>'
+            + '</div>';
+        $(this.PGobj.$wraper).append(CXVE_html);
+
+        $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="fs_' + this.PGobj.wraperId + '"> </div>');
+        $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="mls_' + this.PGobj.wraperId + '"> </div>');
     }
-    this.setColTiles();
-    $("#" + EbSid).click();
-};
-
-this.Init = function () {
-    var CXVE_html = '<div class="pgCXEditor-bg">'
-        + `<div class="pgCXEditor-Cont" style="width:${window.screen.availWidth / 2}px;right:${window.screen.availWidth / 4}px;">`
-
-        + '<div class="modal-header">'
-        + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'
-        + '<h4 class="modal-title"> </h4>'
-        + '</div>'
-
-        + '<div class="modal-body"> </div>'
-        + '<div class="modal-footer">'
-        + '<div class="modal-footer-body">'
-        + '</div>'
-        + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);">OK</button>'
-        + '</div>'
-
-        + '</div>'
-        + '</div>';
-    $(this.PGobj.$wraper).append(CXVE_html);
-
-    $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="fs_' + this.PGobj.wraperId + '"> </div>');
-    $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="mls_' + this.PGobj.wraperId + '"> </div>');
-}
-this.Init();
+    this.Init();
 };

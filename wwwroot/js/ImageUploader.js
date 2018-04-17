@@ -54,9 +54,6 @@
         $("#" + _container + "input-id").fileinput({
             uploadUrl: "../StaticFile/UploadImageAsync",
             maxFileCount: 5,
-            initialPreview: _initialPrev,
-            initialPreviewConfig: _initialPrevConfig,
-            initialPreviewAsData: true,
             uploadAsync: true,
             uploadExtraData: this.uploadtag.bind(this)
         }).on('fileloaded', this.addtagButton.bind(this))

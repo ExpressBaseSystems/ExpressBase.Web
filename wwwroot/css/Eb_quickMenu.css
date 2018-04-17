@@ -83,7 +83,6 @@
 .Eb_quick_menu .modal-header {
     padding: 0;
     border-bottom: none;
-    background-color: var(--eb-black);
 }
     .Eb_quick_menu .modal-header .searchBox {
         margin-right: 15px;
@@ -228,4 +227,12 @@
 .brd_cr_items {
     padding: 0 2px;
     font-size: 14px;
+}
+.q_men_IMGsection {
+    background: white;
+    border-right: 1px solid #ccc;
+    padding: 5px 20px;
+}
+.q_men_IMGsection img{
+    height:38px;
 }

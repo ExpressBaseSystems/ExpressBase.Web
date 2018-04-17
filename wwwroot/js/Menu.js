@@ -4,7 +4,7 @@
     this.objTypes = null;
 
     this.init = function () {
-        $('#submen').off("click").on("click", this.showModal.bind(this));    
+        $('#quik_menu').off("click").on("click", this.showModal.bind(this));    
         $("#searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $("body").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
         $('body').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
@@ -37,7 +37,10 @@
     this.showModal = function () {
         if ($.isEmptyObject(this.resultObj)) {
             $("#ObjModal").modal('show');
-            $.LoadingOverlay("show");
+            $.LoadingOverlay("show", {
+                background: "rgb(20, 0, 0)",
+                fontawesomeColor:"#ffffff"
+            });
             $("#EbsideBar").empty();
             $.get("../TenantUser/getSidebarMenu", function (result) {
                 $("#EbsideBar").append(result);
@@ -93,7 +96,7 @@
 
     this.setBrdCrump = function(el){
         var el_li = $(el.target).closest("li");
-        var url = `<span class='brd_cr_items'>${el_li.parent().prev().text().trim()}</span>/<span class='brd_cr_items active_lnk'>${$(el.target).text().trim()}</span>/`;
+        var url = `<span class='brd_cr_items'>${el_li.parent().prev().text().trim()}</span>/<span class='brd_cr_items active_lnk'>${$(el.target).text().trim()}</span>`;
         $(".breadcrumb_wrapper").empty().append(url);
     }
 

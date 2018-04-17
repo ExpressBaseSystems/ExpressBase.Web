@@ -209,7 +209,9 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         this.FileClient.Post<bool>(uploadImageRequest);
-                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK" });
+                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK",
+                            initialPreview = "<img src='"+ Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>"
+                        });
                     }
                 }
             }

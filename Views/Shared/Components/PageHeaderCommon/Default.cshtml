@@ -1,17 +1,17 @@
 ﻿<div class="row" id="">
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-4 pd-0">
-            <button class="btn obj_list_shortCut quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
+            <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
             <div class="bread_cr_title">
                 <div class="brdCrumb col-md-12 pd-0">
                     <a href="#"> Home/</a>
                 </div>
-                @*<div class="col-md-12 pd-0">
-                    <h5 class="mr-0"> <label id="objname">@ViewBag.ObjName</label></h5>
-                </div>*@
+                <div class="col-md-12 pd-0">
+                        <h5 class="mr-0"> <label id="objname">@ViewBag.ObjName</label></h5>
+                    </div>
             </div>
         </div>
-        <div class="col-md-8 pd-0">
+        <div class="col-md-8 pd-0 comon_header_dy">
             <div class='toolicons form-inline pull-right'>
                 <div id="obj_icons" style="display:inline"></div>
                 <div class='form-group'>
@@ -39,3 +39,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    var MenuBarCommon = function () {
+        this.BuildMenu = function ($html) { 
+            $(".comon_header_dy .toolicons").prepend(`${$html}`);
+        };
+        this.setName = function (name) {
+            $(".bread_cr_title #objname").text(`${name}`);
+        };
+    };
+</script>

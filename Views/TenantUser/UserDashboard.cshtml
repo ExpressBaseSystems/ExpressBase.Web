@@ -2,3 +2,9 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
+@await Component.InvokeAsync("PageHeaderCommon")
+<script>
+    $(document).ready(function () {
+        $('#quik_menu').click();
+     });
+</script>

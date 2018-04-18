@@ -9,6 +9,8 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.js"></script>
 <script src="~/js/EbImageCropper.js" type="text/javascript"></script>
 
+@await Component.InvokeAsync("PageHeaderCommon")
+
 @*@using (Html.BeginForm(FormMethod.Post))
     {*@
 @*<div class="row">
@@ -40,13 +42,13 @@
         padding-bottom: 15px;
     }
 
-    .set-form-head {
+    /*.set-form-head {
         width: 100%;
         background: #339bb3;
         color: white;
         font-size: 20px;
         padding: 10px;
-    }
+    }*/
 
     .center {
         margin: auto;
@@ -109,8 +111,6 @@
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
-       
-
 </style>
 @{
     @using Newtonsoft.Json;
@@ -125,11 +125,11 @@
     var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
 }
-<div class="center">
-    <section class="outer-section-createuser" style="height: 660px;">
-        <div class="set-form-head">
+<div class="center" style="padding: 3% 2% 0% 2%; height: 100vh;">
+    <section class="outer-section-createuser" style="height: 100%;">
+        @*<div class="set-form-head">
             <div id="divFormHeading" class="">Create User</div>
-        </div>
+        </div>*@
         <div class="row">
             <br />
             <div class="col-md-9" style="padding-left:4%">
@@ -211,7 +211,7 @@
                                     <input id="txtAlternateEmail" class="form-control" type="text" title="Alternate Email ID">
                                 </div>
                             </div>
-                           
+
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
@@ -254,12 +254,12 @@
                             <div class="form-group">
                                 @*<span>Send mail. </span><input type="checkbox" id="sendmail" />*@
                             </div>
-                            <div class="input-group">
-                                <label id="" style="font-family: open sans; font-weight: 300;">API Key</label>
-                                <button class="form-control" title="Generate API Key">Generate JWT Key</button>
-                            </div>
+                            @*<div class="input-group">
+                                    <label id="" style="font-family: open sans; font-weight: 300;">API Key</label>
+                                    <button class="form-control" title="Generate API Key">Generate JWT Key</button>
+                                </div>*@
                         </div>
-                        <div class="col-md-2" id="" >
+                        <div class="col-md-2" id="">
                             <div class="form-group" id="divStatus" style="display: none;">
                                 <label style="font-family: open sans; font-weight: 300;">User Status</label>
                                 <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="0" checked>Active</label>
@@ -286,22 +286,22 @@
                                 <select class="form-control" id="sellocale" name="locale"></select>
                             </div>
                             <div class="form-group" id="divLocaleInfo">
-                                
+
                             </div>
                         </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
-                                    <select id="seltimezone" name="timezone" class="form-control"></select>
-                                </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
+                                <select id="seltimezone" name="timezone" class="form-control"></select>
                             </div>
                         </div>
                     </div>
+                </div>
             </div>
 
         </div>
         <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
-        <button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;">Create</button>
+        @*<button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;">Create</button>*@
         <label id="lblMessage" style="color:red;padding-left: 36px;display:none;font-family: open sans; font-weight: 500;">  </label>
     </section>
     <div class="prof-setup-cropie">
@@ -360,7 +360,7 @@
     $('document').ready(function () {
 
         $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "d-m-Y" });
-        
+
         var upload = new EbImageCropper({
             preview: 'profimage',
             cropperContainer: 'cropsection'

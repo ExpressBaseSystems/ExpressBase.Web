@@ -163,7 +163,7 @@
                 this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             }
 
-            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG",null, null, this.PGobj);
             this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
             this.CE_PGObj.parentId = this.PGobj.wraperId;
             this.setColTiles(true);
@@ -498,7 +498,8 @@
     }.bind(this);
 
     this.colTileFocusFn = function (e) {
-        var $e = $(e.target); var id = $e.attr("id");
+        var $e = $(e.target);
+        var id = $e.attr("id");
         $(':focus').blur();
         if (!$e.hasClass("colTile")) {
             this.colTileFocusFn.bind(this)({ target: $e.parent() });
@@ -512,48 +513,13 @@
             if (this.PGobj.CurProp === "Controls")///////////////////////need CE test and correction
                 obj = this.PropsObj.Controls.GetByName(id);
             else
-                obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];
+                obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];/////////// optimize
         }
-        else if (this.editor === 9 || this.editor === 10) {
-            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
-        }
-        else if (this.editor === 22) {
-            obj = this.getObjFor22(id, type);
+        else if (this.editor === 9 || this.editor === 10 || this.editor === 22) {
+            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", id);
         }
 
         this.CE_PGObj.setObject(obj, AllMetas[type]);
-    };
-
-    this.getObjFor22 = function (id, type) {
-        var masterPropName = "";
-        var obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
-        var cardFields = this.PGobj.PropsObj.CardFields.$values;
-        var fieldMeta = {};
-        $.each(cardFields, function (i, field) {
-            var _propName = field.Name;
-            var objType = "Eb" + field.ObjType;
-            if (objType === "EbCardTextField") {
-                masterPropName = "Text";
-                Object.assign(fieldMeta, getObjByval(AllMetas[objType], "name", masterPropName));
-                fieldMeta.name = _propName;
-                if (!obj[_propName]) {
-                    AllMetas[type].push(fieldMeta)
-                    var addPropObj = {};
-                    addPropObj[_propName] = "";
-                    $.extend(obj, obj, addPropObj);
-                }
-            }
-            ////dict mock obj
-            //var customeDict = {
-            //    "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Object, System.Private.CoreLib]], System.Private.CoreLib",
-            //    "$values": {
-            //        "baabu": "babumon",
-            //        "saabu": "sabumon"
-            //    }
-            //};
-
-        });
-        return obj;
     };
 
     this.CE_AddFn = function () {
@@ -562,20 +528,8 @@
         var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (lastItemCount + 1);
         if (this.PGobj.CurProp === "Controls")////////////// need CE test and correction
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-        else {
-            //if (this.editor === 22) {
-            //    var obj = new EbObjects[SelType](EbSid);
-            //    var newObj = {}
-            //    newObj.$type = obj.$type;
-            //    newObj.Name = obj.Name;
-            //    newObj.EbSid = obj.EbSid;
-            //    newObj.ObjType = obj.ObjType;
-            //    newObj.ObjType = obj.ObjType;
-            //    this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(newObj);
-            //}
-            //else
+        else 
             this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(new EbObjects[SelType](EbSid));
-        }
         this.setColTiles();
         $("#" + EbSid).click();
     };

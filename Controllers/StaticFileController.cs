@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
 
-            return (dfs != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
+            return (dfs.StreamWrapper != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
         }
     }
 

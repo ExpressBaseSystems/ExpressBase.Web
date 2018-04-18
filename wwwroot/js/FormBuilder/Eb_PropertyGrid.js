@@ -1,6 +1,7 @@
-﻿var Eb_PropertyGrid = function (id, wc, cid) {
+﻿var Eb_PropertyGrid = function (id, wc, cid, parentPG) {
     this.wc = wc;
     this.cid = cid;
+    this.ParentPG = parentPG;
     this.$wraper = $("#" + id);
     this.wraperId = id;
     this.parentId = null;
@@ -72,8 +73,8 @@
             valueHTML = '<input type="date" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
-        else if (type > 6 && type < 11 || type === 22) {
-            if (meta.Limit === 0) {//  If collection editor
+        else if (type > 6 && type < 11 || type === 22) {//  If collection editor
+            if (meta.Limit === 0) {
                 valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
                     + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             }
@@ -124,31 +125,42 @@
                 toggleId: "pgCXbtn_" + elemId
             });
         }
-        else if (type === 15) {  //  If expandable
-            valueHTML = '<input type="text" for="' + name + '" readonly value="' + this.getExpandedValue(value) + '" style="width:100%; direction: rtl;" />';
-            valueHTML += "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
-            subRow_html = "";
-            var _meta = meta.submeta;
-            var _obj = value;
+        else if (type === 23 || type === 15) {
+            if (type === 23) {    // If Dictionary Editor
+                var _meta_OBJ = this.getDictMeta_Obj(value);
+                var _meta = _meta_OBJ.meta;
+                var _obj = _meta_OBJ.obj;
+                this.getValueFuncs[name] = function () {
+                    var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                    $.each($subRows, function (i, row) {
+                        var key = $(row).attr("name").slice(0, -2);
+                        var val = $(row).find(".pgTdval input").val();
+                        value.$values[key] = val;
+                    });
+                    return value;
+                }.bind(this);
+            }
+            else {  //  If expandable
+                var _meta = meta.submeta;
+                var _obj = value;
+                this.getValueFuncs[name] = function () {
+                    var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                    $.each($subRows, function (i, row) {
+                        var key = $(row).attr("name").slice(0, -2);
+                        var val = $(row).find(".pgTdval input").val();
+                        value[key] = val;
+                    });
+                    $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
+                    return JSON.parse($('#' + elemId).val());
+                }.bind(this);
+            }
             arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
             isExpandedAttr = 'is-expanded="true"';
-            $.each(_obj, function (key, val) {
-                var CurMeta = getObjByval(_meta, "name", key);
-                if (CurMeta)
-                    subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
-            }.bind(this));
-            var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
-            this.getValueFuncs[name] = function () {
-                var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
-                $.each($subRows, function (i, row) {
-                    var key = $(row).attr("name").slice(0, -2);
-                    var val = $(row).find(".pgTdval input").val();
-                    value[key] = val;
-                });
-                $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
-                return JSON.parse($('#' + elemId).val());
-            }.bind(this);
-        } else {    // Default is textbox
+            subRow_html = this.getExpandedRows(_meta, _obj, name);
+            valueHTML = '<input type="text" for="' + name + '" readonly value="' + ((type === 15) ? this.getExpandedValue(value) : "") + '" style="width:100%; direction: rtl;" />' +
+                "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
+        }// If Dictionary Editor
+         else {    // Default is textbox
             valueHTML = 'editor Not implemented';
         }
         if (meta.OnChangeExec)
@@ -159,6 +171,36 @@
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
         return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+    };
+
+    // gives expandable prop values as array
+    this.getExpandedRows = function (_meta, _obj, name) {
+        var subRow_html = "";
+        $.each(_obj, function (key, val) {
+            var CurMeta = getObjByval(_meta, "name", key);
+            if (CurMeta)
+                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+        }.bind(this));
+        return subRow_html;
+    };
+
+    // gives dict Editor Sub metas
+    this.getDictMeta_Obj = function (value) {
+        var Obj = {};
+        var DictMetas = [];
+        var sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
+        var cardFields = this.ParentPG.PropsObj.CardFields.$values;
+        $.each(cardFields, function (i, field) {
+            var fieldMeta = {};
+            var objType = "Eb" + field.ObjType;
+            var _propName = field.Name;
+            Object.assign(fieldMeta, getObjByval(AllMetas[objType], "name", "FieldValue"));
+            fieldMeta.name = _propName;
+            fieldMeta.alias = null;
+            Obj[_propName] = value.$values[_propName];
+            DictMetas.push(fieldMeta);
+        }.bind(this));
+        return { meta: DictMetas, obj: Obj };
     };
 
     // gives expandable prop values as array
@@ -357,12 +399,9 @@
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", ".fa-times", this.CloseFn.bind(this));
-
         this.CXVE = new Eb_pgCXVE(this);
-
         $("#" + this.wraperId + " .pgHead").on("click", "[name=sort]", this.SortFn.bind(this));
         $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
-
         this.Ebalert = new EbAlert({
             id: this.wraperId + "PGalertCont",
             top: 24,

@@ -56,7 +56,7 @@ namespace ExpressBase.Web.Controllers
             else
                 return false;
         }
-        
+
         public IActionResult SignupSuccess(string email)
         {
             ViewBag.SignupEmail = email;
@@ -66,6 +66,12 @@ namespace ExpressBase.Web.Controllers
         // [AllowCrossSiteIFrame]  // for web forwarding with masking
         public IActionResult SignIn()
         {
+            if (!String.IsNullOrEmpty(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
+                if ((IsTokenValid(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN])))
+                {
+                    return RedirectToAction("SolutionDashBoard", "Tenant");
+                }
+
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.errMsg = TempData["ErrorMessage"] as string;
             return View();
@@ -106,7 +112,16 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult UsrSignIn()
         {
-            ViewBag.errMsg = TempData["ErrorMessage"] as string;
+            if (!String.IsNullOrEmpty(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
+                if (IsTokenValid(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
+                {
+                    var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+                    string[] hostParts = host.Split(CharConstants.DOT);
+                    if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                        return RedirectToAction("SolutionDashBoard", "Tenant");
+                    else
+                        return RedirectToAction("UserDashboard", "TenantUser");
+                }
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             return View();
         }
@@ -343,8 +358,6 @@ namespace ExpressBase.Web.Controllers
             return false;
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
@@ -532,7 +545,6 @@ namespace ExpressBase.Web.Controllers
                 return RedirectToAction("UsrSignIn", RoutingConstants.EXTCONTROLLER);
         }
 
-
         [HttpGet]
         public IActionResult AfterSignInSocial(string provider, string providerToken,
             string email, string socialId, int lg)
@@ -575,7 +587,6 @@ namespace ExpressBase.Web.Controllers
 
 
         }
-
 
         public IActionResult VerificationStatus()
         {
@@ -714,7 +725,6 @@ namespace ExpressBase.Web.Controllers
             }
             return string.Empty;
         }
-
 
     }
 

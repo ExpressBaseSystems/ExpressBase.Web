@@ -8,44 +8,46 @@
     var _userList = Html.Raw(ViewBag.UsersList);
 }
 
+@await Component.InvokeAsync("PageHeaderCommon")
+
 @*@using (Html.BeginForm(FormMethod.Post, new { itemid = 9 }))
-{
+    {
 
 
-    <div class="row">
-        <div class="col-md-6">
-            <h3 class="text-center">Create User groups</h3>
-            <div class="form-group">
-                <input type="text" class="form-control" name="groupname" placeholder="Group Name" value="@ViewBag.UGName" />
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control" name="description" placeholder="Description" value="@ViewBag.UGDescription" />
-            </div>
-        </div>
-    </div>
-    <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#users">Search for Users</a></li>
-    </ul>
-    <div class="tab-content">
-        <div id="users" class="tab-pane fade in active">
-            <div id="usr">
-                <div class='row'>
-                    <div id='div2' class='col-lg-6 well' style="height:300px">
-                        @Html.Raw(ViewBag.UserList)
-                    </div>
-                    @await Component.InvokeAsync("SearchUser", new { targetDivId = "div2" })
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="text-center">Create User groups</h3>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="groupname" placeholder="Group Name" value="@ViewBag.UGName" />
                 </div>
-                <input type="hidden" name="groupid" value="@ViewBag.itemid" />
+                <div class="form-group">
+                    <input type="text" class="form-control" name="description" placeholder="Description" value="@ViewBag.UGDescription" />
+                </div>
+            </div>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#users">Search for Users</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="users" class="tab-pane fade in active">
+                <div id="usr">
+                    <div class='row'>
+                        <div id='div2' class='col-lg-6 well' style="height:300px">
+                            @Html.Raw(ViewBag.UserList)
+                        </div>
+                        @await Component.InvokeAsync("SearchUser", new { targetDivId = "div2" })
+                    </div>
+                    <input type="hidden" name="groupid" value="@ViewBag.itemid" />
+                </div>
+
             </div>
 
+
         </div>
-
-
-    </div>
-    <div class="form-group">
-        <input type="submit" class="btn btn-primary" value="Create" />
-    </div>
-}*@
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Create" />
+        </div>
+    }*@
 
 
 <style>
@@ -54,6 +56,7 @@
         width: 90%;
         padding: 10px;
     }
+
     .outer-section-createuser {
         height: 100vh;
         font-family: open sans;
@@ -63,6 +66,7 @@
         border-radius: 4px;
         padding-bottom: 15px;
     }
+
     .searchRsulsItemsDiv:hover {
         background-color: #eee;
     }
@@ -112,16 +116,16 @@
         overflow: auto;
         margin: 0px;
     }
+
     .nav-tabs > li.active {
         border-top: 3px solid #339bb3;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
-
 </style>
 
-<div class="center">
-    <section class="outer-section-createuser" style="height: 640px;">
+<div class="center" style="padding: 3% 2% 0% 2%; height: 100vh;">
+    <section class="outer-section-createuser" style="height: 100%;">
         <form id="formManageUserGroups" data-toggle="validator" method="POST" action="">
             <div class="row" style="padding: 14px 16px 0px 16px;">
                 <div class="col-md-4">
@@ -148,7 +152,7 @@
                 <div id="divusers" class="row tab-pane fade in active" style="padding: 0px 18px;"></div>
             </div>
         </div>
-        <button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>
+        @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
         @*<label id="lblMessage" style="color:red;padding-left: 36px;font-family: open sans; font-weight: 500;"> Sorry, Unable to Continue! </label>*@
     </section>
 </div>

@@ -40,7 +40,7 @@ namespace ExpressBase.Web.Controllers
                             {
                                 FileName = filename,
                             });
-                    if (dfs != null)
+                    if (dfs.StreamWrapper != null)
                         dfs.StreamWrapper.Memorystream.Position = 0;
                 }
 

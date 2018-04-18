@@ -335,10 +335,10 @@
             apps = "0";
         var changeLog = $('#obj_changelog').val();
         var getNav = $("#versionNav li.active a").attr("href");
+        if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {
+            this.ObjCollection[getNav].BeforeSave();
+        }
         if (this.Current_obj.Validate === undefined || this.Current_obj.Validate()) {
-            if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {
-                this.ObjCollection[getNav].BeforeSave();
-            }
             $.post("../Eb_Object/CommitEbObject", {
                 _refid: this.ver_Refid, _changeLog: changeLog,
                 _json: JSON.stringify(this.Current_obj),

@@ -10,45 +10,34 @@
     this.editor = null;
 
     this.CXE_OKclicked = function () {
-        if (this.editor === 17) {
-            var imgId = this.PGobj.ImgSlctrs[this.PGobj.CurProp].getId();
-            this.PGobj.PropsObj[this.PGobj.CurProp] = imgId;
-            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(imgId);
+        var value = "";
+        if (this.editor === 11 || this.editor === 16 || this.editor === 18) {
+
+
+            if (this.editor === 16) {
+                value = $(`#StrE_txtEdtr${this.PGobj.wraperId}`).val();
+                this.PGobj.PropsObj[this.PGobj.CurProp] = value;
+            }
+            else if (this.editor === 11 || this.editor === 18) {
+                value = window.editor.getValue();
+                this.PGobj.PropsObj[this.PGobj.CurProp] = btoa(value);
+            }
+            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgTdval").attr("title", value);
+        }
+        else if (this.editor === 17) {
+            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(value);
+            this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.ImgSlctrs[this.PGobj.CurProp].getId();
         }
         else if (this.editor === 14) {
-            var FSObj = this.FontSelObj.fontEdSubmit();
-            this.PGobj.PropsObj[this.PGobj.CurProp] = FSObj;
-            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(FSObj));
+            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(value));
+            this.PGobj.PropsObj[this.PGobj.CurProp] = this.FontSelObj.fontEdSubmit();
         }
-        else if (this.editor === 21) {
-            var mlkey = this.MLEObj.get();
-            this.PGobj.PropsObj[this.PGobj.CurProp] = mlkey;
-        }
-        //else if (this.editor === 7) {
-        //    var DestinationProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
-
-        //    if (DestinationProp) {
-        //        var DestPropValues = this.PGobj.PropsObj[DestinationProp].$values;
-        //        var sourceFields = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
-        //        $.each(sourceFields, function (i, Sfield) {
-        //            if (!DestPropValues[0][Sfield.Name])
-        //                this.addProp2DestValues(DestPropValues, Sfield.Name);
-        //        });
-        //    }
-
-        //}
-        //else if (this.editor === 13)
-        //    this.PGobj.callOnchangeExecFns()
+        else if (this.editor === 21)
+            this.PGobj.PropsObj[this.PGobj.CurProp] = this.MLEObj.get();
 
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);
     };
-
-    //this.addProp2DestValues = function (DestPropValues, propName) {
-    //    $.each(DestPropValues, function (i, obj) {
-    //        obj[propName] = "defaultVVValue";
-    //    });
-    //};
 
     this.pgCXEshowCallback = function () {
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
@@ -116,7 +105,7 @@
 
     this.initStrE = function () {
         this.curEditorLabel = "String Editor";
-        var StrEbody = '<textarea id="StrE_txtEdtr' + this.PGobj.wraperId + '" class="strE-texarea" rows="15" cols="85" ></textarea>'
+        var StrEbody = '<textarea id="StrE_txtEdtr' + this.PGobj.wraperId + '" class="strE-texarea" rows="15" cols="85">' + (this.PGobj.PropsObj[this.PGobj.CurProp] || "") + '</textarea>';
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(StrEbody);
     };
 
@@ -163,7 +152,7 @@
                 this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             }
 
-            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG",null, null, this.PGobj);
+            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG", null, null, this.PGobj);
             this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
             this.CE_PGObj.parentId = this.PGobj.wraperId;
             this.setColTiles(true);
@@ -247,9 +236,6 @@
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
-        $(`${this.pgCXE_Cont_Slctr} .CodeMirror`).off("keyup").on("keyup", "textarea", function (e) {
-            this.PGobj.PropsObj[this.PGobj.CurProp] = btoa((window.editor.getValue()));
-        }.bind(this));
     };
 
     this.initJE = function () {
@@ -265,9 +251,6 @@
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
-        $(`${this.pgCXE_Cont_Slctr} .CodeMirror`).off("keyup").on("keyup", "textarea", function (e) {
-            this.PGobj.PropsObj[this.PGobj.CurProp] = btoa((window.editor.getValue()));
-        }.bind(this));
     };
 
     this.initOSE = function () {
@@ -528,7 +511,7 @@
         var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (lastItemCount + 1);
         if (this.PGobj.CurProp === "Controls")////////////// need CE test and correction
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-        else 
+        else
             this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(new EbObjects[SelType](EbSid));
         this.setColTiles();
         $("#" + EbSid).click();

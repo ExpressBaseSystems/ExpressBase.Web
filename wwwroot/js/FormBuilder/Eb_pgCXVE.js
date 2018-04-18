@@ -11,7 +11,7 @@
 
     this.CXE_OKclicked = function () {
         var value = "";
-        if (this.editor === 11 || this.editor === 12 || this.editor === 16 || this.editor === 18 || this.editor === 19 || this.editor === 16) {
+        if (this.editor === 11 || this.editor === 16 || this.editor === 18 || this.editor === 19) {
 
             if (this.editor === 11 || this.editor === 18) {
                 value = window.editor.getValue();
@@ -32,8 +32,8 @@
         else if (this.editor === 21) {
             value = this.MLEObj.get();
         }
-
-        this.PGobj.PropsObj[this.PGobj.CurProp] = (this.editor === 11 || this.editor === 18) ? btoa(value) : value;
+        if ([11, 16, 18, 19, 17, 14, 21].includes(this.editor))
+            this.PGobj.PropsObj[this.PGobj.CurProp] = (this.editor === 11 || this.editor === 18) ? btoa(value) : value;
 
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);

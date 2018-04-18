@@ -833,35 +833,36 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (splitarray[2] === "3") {
             var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
             var copycelldata = this.cellData.replace(/ /g, "_");
-            if ($(`#RptModal${copycelldata}`).length === 0) {
-                $("#parent-div0").append(`<div class="modal fade RptModal" id="RptModal${copycelldata}" role="dialog">
-                    <div class="modal-dialog modal-sm">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>                              
-                            </div>
-                            <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe"></iframe>
-                </div>
+            if ($(`#RptModal${copycelldata}`).length !== 0)
+                $(`#RptModal${copycelldata}`).remove();
+            $("#parent-div0").append(`<div class="modal fade RptModal" id="RptModal${copycelldata}" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>                              
                         </div>
+                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe"></iframe>
+            </div>
                     </div>
                 </div>
-                `);
+            </div>
+            `);
 
-                $.ajax({
-                    type: "POST",
-                    url: "../ReportRender/BeforeRender",
-                    data: this.xx(),
-                    success: function (result) {
-                        $(`#reportIframe${copycelldata}`).attr("src", "../ReportRender/RenderReport");
-                        $(`#RptModal${copycelldata}`).modal();
-                        $.LoadingOverlay("hide");
-                    }.bind(this),
-                });
-            }
-            else {
-                $(`#RptModal${copycelldata}`).modal();
-                $.LoadingOverlay("hide");
-            }
+            $.ajax({
+                type: "POST",
+                url: "../ReportRender/BeforeRender",
+                data: this.xx(),
+                success: function (result) {
+                    $(`#reportIframe${copycelldata}`).attr("src", "../ReportRender/RenderReport");
+                    $(`#RptModal${copycelldata}`).modal();
+                    $.LoadingOverlay("hide");
+                }.bind(this),
+            });
+            //}
+            //else {
+            //    $(`#RptModal${copycelldata}`).modal();
+            //    $.LoadingOverlay("hide");
+            //}
         }
         else {
             var url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;

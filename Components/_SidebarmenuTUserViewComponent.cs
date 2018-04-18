@@ -46,26 +46,7 @@ namespace ExpressBase.Web.Components
                 if (obj.Key != 0)
                 {
                     sb.Append(@" 
-                    <li><a Appid='"+ obj.Key + "' class='list-group-item inner_li Obj_link for_brd'> " + resultlist.AppList[obj.Key].AppName + @" </a>
-                    <ul class='sub-menuObj collapse' id='dropdown1_" + obj.Key + @"'>");
-
-                    foreach (var val in obj.Value.Types)
-                    {
-                        ControlAction ctrlAction = new ControlAction();
-                        if (val.Key == EbObjectTypes.TableVisualization || val.Key == EbObjectTypes.ChartVisualization)
-                        {
-                            ctrlAction.Controller = "DV";
-                            ctrlAction.Action = "dv";
-                        }
-                        else if (val.Key == EbObjectTypes.Report)
-                        {
-                            ctrlAction.Controller = "ReportRender";
-                            ctrlAction.Action = "Index";
-                        }
-                        var ctrlaction = JsonConvert.SerializeObject(ctrlAction);
-                        sb.Append("<li><a class='list-group-item inner_li Obj_link' href='#' data-key='" + val.Key + "' data-Appid='" + obj.Key + "' data-action = '" + ctrlaction + "'>" + (EbObjectType)val.Key + "(" + val.Value.Objects.Count + ")</a></li>");
-                    }
-                    sb.Append("</ul></li>");
+                    <li><a Appid='"+ obj.Key + "' class='list-group-item inner_li Obj_link for_brd'> " + resultlist.AppList[obj.Key].AppName + "</a></li>");
                 }
             }
 

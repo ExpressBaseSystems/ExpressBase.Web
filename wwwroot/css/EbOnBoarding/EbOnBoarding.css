@@ -428,11 +428,12 @@
     text-align: center;
     border: 1px solid #d7d7d7;
     margin-top: 10px;
-}
-
-.pro-icon-bx {
-    padding: 0;
-}
+    cursor: pointer;
+    position:relative;
+}    
+    .pro-icon-bx {
+        padding: 0;
+    }
 
     .pro-icon-bx img {
         height: 50px;
@@ -601,11 +602,6 @@
     border-radius: 4px;
 }
 
-.subscribed {
-    background: #69ea69;
-    border: none;
-}
-
 .price-selected .T-add-amount {
     font-size: 17px;
     color: #ffffff;
@@ -683,6 +679,7 @@
 
 .card--form {
     height: 100%;
+    padding: 0 30px;
 }
 
 .none {
@@ -756,14 +753,6 @@
 
 .subscript-submit {
     margin-top: 15px;
-}
-
-.company-logo {
-    margin-top: 10px;
-}
-
-.company-logo {
-    height: 80px;
 }
 
 .pro-icon-bx img {
@@ -842,41 +831,19 @@
     text-align: right;
 }
 
-.logo-upload-sec {
-    height: 87%;
-}
-
-.log-upload-btn {
-    background: #4aade3 !important;
-    color: white;
-    border-radius: 20px !important;
-}
 /*t addaacc latest----*/
-.sol-info {
+/*.sol-info {
     display: none;
 }
 
 .prod-info {
     display: none;
-}
+}*/
 
 .prof-info-skip {
     display: none;
 }
 
-.profimage {
-    text-align: center;
-    padding-top: 4%;
-}
-
-    .profimage img {
-        height: 90px;
-    }
-
-.company-logo-cont {
-    padding-left: 0;
-    border: 1px solid #ccc;
-}
 /*common message box*/
 .eb-mesageBox {
     position: fixed;
@@ -919,7 +886,7 @@
 }
 
 .solutiondetails-app {
-    border-bottom: 1px solid #909090;
+    border-bottom: 1px solid #d0d0d0;
     margin-bottom: 20px;
 }
 
@@ -928,9 +895,9 @@
     font-style: italic;
 }
 
-.app-info {
+/*.app-info {
     display: none;
-}
+}*/
 
 .apps-wrapper {
     padding: 15px;
@@ -1037,3 +1004,50 @@
         border-radius: 50%;
     }
 /*toggle btn end*/
+.log-upload-btn{
+    border-radius:4px;
+}
+.logo_img_cont {
+    height: 58px;
+}
+.logo_img_cont img{
+    height: 100%;
+    width:auto;
+}
+.grey_out {
+    background: #e6e5e5;
+}
+    .grey_out .btn {
+        background: #e6e5e5 !important;
+    }
+.mr-t-15{
+    margin-top:15px;
+}
+.no-pointer-action{
+    pointer-events:none;
+}
+.prdBTN_Click:hover {
+    background: #eee;
+
+}
+.overlay_mark {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    display:none;
+}
+.overlay_mark-flex {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    z-index:10;
+    background:white;
+    opacity:.8;
+}
+    .overlay_mark-flex .material-icons{
+        font-size:40px;
+        color:green;
+    }

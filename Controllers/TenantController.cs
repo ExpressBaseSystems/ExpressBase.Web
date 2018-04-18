@@ -44,7 +44,15 @@ namespace ExpressBase.Web.Controllers
         public void ProfileSetup(int i)
         {
             var req = this.HttpContext.Request.Form;
-            var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });           
+            var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest {
+                Op = "updatetenant",
+                Name = req["Name"],
+                Company = req["Company"],
+                Password = req["Password"],
+                Country = req["Country"],
+                Token = ViewBag.token,
+                Email = req["Email"] 
+            });           
             if (res.id >= 0)
             {
                 MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate

@@ -14,21 +14,16 @@
     };
 
     this.subscribeProd = function (e) {
-        var selector = $(e.target).closest("button");
+        var selector = $(e.target).closest(".eb_prd_link");
         selector.toggleClass('subscribed');
         if (selector.hasClass('subscribed')) {
             //$('#is-edit-clientid').show();
-            selector.text(' ').css({
-                "background": "#69ea69",
-                "border": "none"
-            }).append('<i class="fa fa-check" aria-hidden="true" style="color:white;"></i>');
-            this.objSubscription[selector.parent().attr("prod-id")] = 0;
+            selector.children(".overlay_mark").show();
+            this.objSubscription[selector.attr("prod-id")] = 0;
         }
         else {
-            selector.children('i').remove();
-            selector.text('Add');
-            selector.css({ "background": "white", "border": "1px solid #e1e0e0" });
-            delete this.objSubscription[selector.parent().attr("prod-id")];
+            selector.children(".overlay_mark").hide();
+            delete this.objSubscription[selector.attr("prod-id")];
         }
     };
 
@@ -172,12 +167,12 @@
     };
 
     this.init = function () {     
-        this.ProfileImgUpload();
+        //this.ProfileImgUpload();
         //this.LogoImageUpload();
         $('#solutionname').on("change", this.getSolutionName.bind(this));
         $('#cid').on("change", this.getClientId.bind(this));
         $("#Desc").on("change", this.getDesc.bind(this));
-        $('.btn-upload').on('click', this.subscribeProd.bind(this));
+        $('.eb_prd_link').on('click', this.subscribeProd.bind(this));
         $("#prof-submit").on("submit", this.submitProfile.bind(this));
         $("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));       
         $("#prof-info-skip,#plan-prev").on('click', this.scrollProfToLeft.bind(this));

@@ -11,29 +11,29 @@
 
     this.CXE_OKclicked = function () {
         var value = "";
-        if (this.editor === 11 || this.editor === 16 || this.editor === 18 || this.editor === 19) {
+        if (this.editor === 11 || this.editor === 16 || this.editor === 18) {
 
-            if (this.editor === 11 || this.editor === 18) {
-                value = window.editor.getValue();
-            }
-            if (this.editor === 16)
+
+            if (this.editor === 16) {
                 value = $(`#StrE_txtEdtr${this.PGobj.wraperId}`).val();
-
+                this.PGobj.PropsObj[this.PGobj.CurProp] = value;
+            }
+            else if (this.editor === 11 || this.editor === 18) {
+                value = window.editor.getValue();
+                this.PGobj.PropsObj[this.PGobj.CurProp] = btoa(value);
+            }
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgTdval").attr("title", value);
         }
         else if (this.editor === 17) {
-            value = this.PGobj.ImgSlctrs[this.PGobj.CurProp].getId();
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(value);
+            this.PGobj.PropsObj[this.PGobj.CurProp] = this.PGobj.ImgSlctrs[this.PGobj.CurProp].getId();
         }
         else if (this.editor === 14) {
-            value = this.FontSelObj.fontEdSubmit();
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(value));
+            this.PGobj.PropsObj[this.PGobj.CurProp] = this.FontSelObj.fontEdSubmit();
         }
-        else if (this.editor === 21) {
-            value = this.MLEObj.get();
-        }
-        if ([11, 16, 18, 19, 17, 14, 21].includes(this.editor))
-            this.PGobj.PropsObj[this.PGobj.CurProp] = (this.editor === 11 || this.editor === 18) ? btoa(value) : value;
+        else if (this.editor === 21)
+            this.PGobj.PropsObj[this.PGobj.CurProp] = this.MLEObj.get();
 
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(this.PGobj.PropsObj[this.PGobj.CurProp]);

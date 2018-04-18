@@ -21,50 +21,7 @@
                 <div class="card--content-body">
                     <form class="form-horizontal" id="prof-submit" method="post" data-toggle="validator">
                         <br />
-                        <div class="col-md-12 pd-0">
-                            <div class="col-md-8">
-                                <div class="form-group required">
-                                    <label>Name</label>
-                                    <input class="form-control" type="text" name="Name" id="name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Company</label>
-                                    <input class="form-control" type="text" name="Company" id="company" required>
-                                </div>
-                            </div>
-                            <div class="col-md-4 profimage">
-                                <img src="~/images/proimg.jpg" id="profimage" class="p-st-dp _cropify" />
-                            </div>
-                        </div>
                         <div class="col-md-12">
-                            <div class="form-group">
-                                <div class="pd-l-0 col-md-4">
-                                    <label>Employees</label>
-                                    <select id="employees" name="Employees" class="form-control">
-                                        <option value="1-10">1-10</option>
-                                        <option value="11-50">11-50</option>
-                                        <option value="51-100">51-100</option>
-                                        <option value="101-250">101-250</option>
-                                        <option value="251-500">250-500</option>
-                                        <option value="greater than 500">greater than 500</option>
-                                    </select>
-                                </div>
-                                <div class="pd-l-0 col-md-4">
-                                    <label>Designation</label>
-                                    <select id="desig" name="Designation" class="form-control">
-                                        <option value="1-10">1-10</option>
-                                        <option value="11-50">11-50</option>
-                                        <option value="51-100">51-100</option>
-                                        <option value="101-250">101-250</option>
-                                        <option value="251-500">250-500</option>
-                                        <option value="greater than 500">greater than 500</option>
-                                    </select>
-                                </div>
-                                <div class="pd-r-0 col-md-4">
-                                    <label>Country</label>
-                                    <input class="form-control" type="text" name="Country" id="country" required>
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label>Email/Username</label>
                                 <div class="input-group">
@@ -72,6 +29,15 @@
                                     <input class="form-control" type="text" value="@ViewBag.useremail" name="Email" id="email" readonly>
                                 </div>
                             </div>
+                            <div class="form-group required">
+                                <label>Name</label>
+                                <input class="form-control" type="text" name="Name" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Company</label>
+                                <input class="form-control" type="text" name="Company" id="company" required>
+                            </div>
+                            <input type="hidden" name="Country" id="country" required>                            
                             <div class="form-group required">
                                 <div class="pd-l-0 col-md-6">
                                     <label>Password</label>
@@ -86,12 +52,17 @@
                                     <input class="form-control" type="password" name="Repeat-password" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Whoops, these don't match" required>
                                     <div class="help-block with-errors"></div>
                                 </div>
-                                <input type="submit" id="prof-form-sub" style="display:none;"/>
+                                <input type="submit" id="prof-form-sub" style="display:none;" />
                             </div>
-
                         </div>
-                    </form>          
-                </div>               
+                    </form>
+                </div>
+                <div class="card--content-footer">
+                    <div class="form-inline">
+                        <a id="prof-info-skip" class="btn pull-right prof-info-skip">Next <span class="fa fa-chevron-right mr-l-10" aria-hidden="true"></span></a>
+                        <button id="save-profile" onclick="$('#prof-form-sub').click()" type="submit" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i><i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4 desc-section">
                 <div class="steps">
@@ -113,12 +84,6 @@
                     <h4>Your Personal Info</h4>
                     <p class="text-center">Select atleast one paid plan for custom Solution Id</p>
                 </div>
-                <div class="card--content-footer">
-                    <div class="form-inline">
-                        <a id="prof-info-skip" class="btn pull-right prof-info-skip">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
-                        <button id="save-profile" onclick="$('#prof-form-sub').click()" type="submit" class="btn btn-success pull-right">Save <i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="card--content mr-l-10 sol-info" id="basic-info">
@@ -126,31 +91,38 @@
                 <div class="products-head">
                     <h4>Solution Info</h4>
                 </div>
-                <div class="card--content-body">                  
+                <div class="card--content-body">
                     <form class="subscript-submit" method="post" id="sol-form-submit">
+                        <label>Solution URL</label>
+                        <div class="client-id-sec">
+                            <input type="text" required="required" id="cid" name="Esid" value="@ViewBag.iSid" readonly class="form-control input-clientId text-right" />
+                            <div class="clientId-auto">.expressbase.com</div>
+                        </div>
                         <div class="form-group">
                             <label>Solution Name</label>
                             <input type="text" id="solutionname" name="Sname" class="form-control" required />
                         </div>
-                        <label>Solution URL</label>
-                        <div class="client-id-sec">                           
-                            <input type="text" required="required" id="cid" name="Esid" value="@ViewBag.iSid" readonly class="form-control input-clientId"/>
-                            <div class="clientId-auto">.expressbase.com</div>
-                        </div>
                         <div class="form-group">
                             <label>Description</label>
                             <textarea class="form-control" id="Desc" name="Desc"></textarea>
-                        </div>   
-                        <input type="hidden" id="isid" name="Isid" value="@ViewBag.iSid" />                       
+                        </div>
+                        <input type="hidden" id="isid" name="Isid" value="@ViewBag.iSid" />
                         <input type="submit" id="sol-form-sub" style="display:none;" />
                     </form>
-                    <div class="company-logo">
-                        <div class="col-md-10 company-logo-cont" id="s-logo-prev">
-                            <img class="img-responsive" src="~/images/your_company_logo.png" />
+                    <div class="form-group">
+                        <div class="col-md-4 pd-0">
+                            <label>Upload Logo</label>
+                            <button id="log-upload-btn" class="btn log-upload-btn" data-toggle="modal" data-target="#eb-cropie-s-logo">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
-                        <div class="col-md-2 logo-upload-sec eb-flex-end pd-0">
-                            <button id="log-upload-btn" class="btn log-upload-btn pull-right" data-toggle="modal" data-target="#eb-cropie-s-logo">Upload</button>
+                        <div class="col-md-8 pd-0 logo_img_cont">
+                            <img src="" class="img-responsive" />
                         </div>
+                    </div>
+                </div>
+                <div class="card--content-footer">
+                    <div class="form-inline">
+                        <a id="s-info-skip" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                        <button id="prof-to-prev" class="btn pull-left mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
                     </div>
                 </div>
             </div>
@@ -170,15 +142,9 @@
                     </a>
                 </div>
                 <div class="small-desc-last flex-center">
-                    <img class="small-desc-img" src="~/images/svg/people.svg" />
+                    <img class="small-desc-img" src="~/images/svg/solutions.svg" />
                     <h4>Your Basic Info</h4>
                     <p class="text-center">Select atleast one paid plan for custom Solution Id</p>
-                </div>
-                <div class="card--content-footer">
-                    <div class="form-inline">
-                        <a id="s-info-skip" class="btn pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
-                        <button id="prof-to-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -190,64 +156,68 @@
                 <div class="card--content-body" id="product-container">
                     <div class="col-md-12 pd-0">
                         <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy" pid="Forms" prod-id="1">
+                            <div class="Eb-product-container-bdy eb_prd_link prdBTN_Click" pid="Report" prod-id="3">
                                 <div class="pro-icon-bx">
-                                    <img src="~/images/svg/form1.svg" />
-                                </div>
-                                <div class="pro-name-bx">
-                                    Forms
-                                </div>
-                                <button class="btn btn-sm btn-upload" id="add-form">Add</button>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy" pid="Visualization" prod-id="2">
-                                <div class="pro-icon-bx">
-                                    <img src="~/images/svg/dv1.svg" />
-                                </div>
-                                <div class="pro-name-bx">
-                                    BI
-                                </div>
-                                <button class="btn btn-sm btn-upload" id="add-viz">Add</button>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy" pid="Report" prod-id="3">
-                                <div class="pro-icon-bx">
-                                    <img src="~/images/svg/report1.svg" />
+                                    <img src="~/images/svg/report_wall.svg" />
                                 </div>
                                 <div class="pro-name-bx">
                                     Reports
                                 </div>
-                                <button class="btn btn-sm btn-upload" id="add-report">Add</button>
+                                <div class="overlay_mark"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-12 pd-0">
                         <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy" pid="ChatBot" prod-id="4">
+                            <div class="Eb-product-container-bdy eb_prd_link prdBTN_Click" pid="ChatBot" prod-id="4">
                                 <div class="pro-icon-bx">
-                                    <img src="~/images/svg/chat1.svg" />
+                                    <img src="~/images/svg/chat_.svg" />
                                 </div>
                                 <div class="pro-name-bx">
                                     Bots
                                 </div>
-                                <button class="btn btn-sm btn-upload" id="add-bot">Add</button>
+                                <div class="overlay_mark"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
                             </div>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy" pid="Documents" prod-id="5">
+                            <div class="Eb-product-container-bdy grey_out" pid="Visualization" prod-id="2">
                                 <div class="pro-icon-bx">
-                                    <img src="~/images/svg/document1.svg" />
+                                    <img src="~/images/svg/bi.svg" />
+                                </div>
+                                <div class="pro-name-bx">
+                                    BI
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 pd-0 mr-t-15">
+                        <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
+                            <div class="Eb-product-container-bdy grey_out" pid="Forms" prod-id="1">
+                                <div class="pro-icon-bx">
+                                    <img src="~/images/svg/form_.svg" />
+                                </div>
+                                <div class="pro-name-bx">
+                                    Forms
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
+                            <div class="Eb-product-container-bdy grey_out" pid="Documents" prod-id="5">
+                                <div class="pro-icon-bx">
+                                    <img src="~/images/svg/document_ .svg" />
                                 </div>
                                 <div class="pro-name-bx">
                                     Documents
                                 </div>
-                                <button class="btn btn-sm btn-upload" id="add-doc">Add</button>
                             </div>
                         </div>
                     </div>
-                </div>             
+                </div>
+                <div class="card--content-footer">
+                    <div class="form-inline">
+                        <button id="save-subscrip" type="submit" onclick="$('#sol-form-sub').click();" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i> <i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
+                        <button id="app-next" class="btn pull-right mr-10" style="display:none;"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button>
+                        <button id="plan-prev" class="btn pull-left mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4 desc-section">
                 <div class="steps">
@@ -268,21 +238,14 @@
                     <img class="small-desc-img" src="~/images/svg/product.svg" />
                     <h4>Heading</h4>
                     <p class="text-center">Select atleast one paid plan for custom Solution Id</p>
-                </div>
-                <div class="card--content-footer">
-                    <div class="form-inline">
-                        <button id="save-subscrip" type="submit" onclick="$('#sol-form-sub').click();" class="btn btn-success pull-right">Save <i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
-                        <button id="app-next" class="btn pull-right mr-10" style="display:none;"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button>
-                        <button id="plan-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</button>
-                    </div>
-                </div>
+                </div>                
             </div>
         </div>
         <div class="card--content mr-l-10 app-info" id="app-info">
             <div class="col-md-8 card--form">
                 <div class="products-head">
                     <h4>Create Your First Application</h4>
-                    
+
                 </div>
                 <div class="card--content-body" id="app-container">
                     <div class="col-md-12 pd-0 solutiondetails-app">
@@ -297,30 +260,30 @@
                     <form class="app-form" action="../Tenant/EbOnBoarding" method="post" id="app-form">
                         <label>Application Type</label>
                         <div class="col-md-12 pd-0 apptypes-cont">
-                           <div class="col-md-4 apps-wrapper">
-                               <div class="apps-wrapper-fchiled appselected" type="1" tabindex="1">
-                               <img class="apptype" src="~/images/svg/grid-world.svg" />
-                               <div class="app-type-name">Web</div>     
-                               </div>
-                           </div> 
+                            <div class="col-md-4 apps-wrapper">
+                                <div class="apps-wrapper-fchiled appselected" type="1" tabindex="1">
+                                    <img class="apptype" src="~/images/svg/grid-world.svg" />
+                                    <div class="app-type-name">Web</div>
+                                </div>
+                            </div>
                             <div class="col-md-4 apps-wrapper">
                                 <div class="apps-wrapper-fchiled" type="2" tabindex="1">
                                     <img class="apptype" src="~/images/svg/smartphone-call.svg" />
                                     <div class="app-type-name">Mobile</div>
                                 </div>
-                            </div> 
+                            </div>
                             <div class="col-md-4 apps-wrapper">
                                 <div class="apps-wrapper-fchiled" type="3" tabindex="1">
                                     <img class="apptype" src="~/images/svg/chat1.svg" />
                                     <div class="app-type-name">Bot</div>
                                 </div>
                             </div>
-                            <input type="hidden" name="AppType" value="1" id="apptype"/>                         
-                        </div>                    
+                            <input type="hidden" name="AppType" value="1" id="apptype" />
+                        </div>
                         <div class="form-group">
                             <label>Application Name</label>
-                            <input type="text" class="form-control" name="AppName" id="appName"/>
-                        </div>                       
+                            <input type="text" class="form-control" name="AppName" id="appName" />
+                        </div>
                         <div class="form-group">
                             <label>Description</label>
                             <textarea class="form-control" id="DescApp" name="DescApp"></textarea>
@@ -331,7 +294,7 @@
                                 <input type="text" class="form-control" name="AppIcon" value="fa fa-archive" id="AppIcon" />
                                 <span class="input-group-addon"><i class="fa fa-archive"></i></span>
                             </div>
-                        </div>                                              
+                        </div>
                         <input type="hidden" id="Sid" name="Sid" value="@ViewBag.iSid" />
                         <input type="hidden" id="AppId" name="AppId" value="@ViewBag.AppId" />
                         <input type="submit" id="app-form-sub" style="display:none;" />
@@ -361,7 +324,7 @@
                 <div class="card--content-footer">
                     <div class="form-inline">
                         <button id="save-application" type="submit" onclick="$('#app-form-sub').click();" class="btn btn-success pull-right">Create <i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
-                        <button id="prod-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Previous</button>
+                        <button id="prod-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
                     </div>
                 </div>
             </div>
@@ -369,7 +332,7 @@
         <div class="none"></div>
     </section>
 </div>
-<div class="eb-cropie" id="cropsection">   </div>   
+<div class="eb-cropie" id="cropsection">   </div>
 
 <div class="modal fade" id="eb-cropie-s-logo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -398,11 +361,11 @@
 </div>
 <script>
     $(document).ready(function () {
-        var boarding = new EbOnBoarding();       
-    });  
+        var boarding = new EbOnBoarding();
+    });
     $.getJSON("http://freegeoip.net/json/", function (data) {
         var country = data.country_name;
         $('#country').val(country);
     });
-    $("#AppIcon").iconpicker({ placement: 'top'});
+    $("#AppIcon").iconpicker({ placement: 'top' });
 </script>

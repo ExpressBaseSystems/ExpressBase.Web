@@ -132,7 +132,7 @@
         var EbCombo = new EbSelect(ctrl);
     };
 
-    this.Cards = function (ctrl) {
+    this.StaticCardSet = function (ctrl) {
         this.initCards($('#' + ctrl.ebSid));
     };
 

@@ -185,7 +185,7 @@
                                 <div class="pro-name-bx">
                                     BI
                                 </div>
-                                <div class="comming_soon"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
+                                <div class="comming_soon"><div class="overlay_mark-flex">Coming Soon</div></div>
                             </div>
                         </div>
                     </div>
@@ -198,7 +198,7 @@
                                 <div class="pro-name-bx">
                                     Forms
                                 </div>
-                                <div class="comming_soon"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
+                                <div class="comming_soon"><div class="overlay_mark-flex">Coming Soon</div></div>
                             </div>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-2 col-xs-6 Eb-product-container">
@@ -209,7 +209,7 @@
                                 <div class="pro-name-bx">
                                     Documents
                                 </div>
-                                <div class="comming_soon"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
+                                <div class="comming_soon"><div class="overlay_mark-flex">Coming Soon</div></div>
                             </div>
                         </div>
                     </div>
@@ -247,19 +247,9 @@
         <div class="card--content mr-l-10 app-info" id="app-info">
             <div class="col-md-8 card--form">
                 <div class="products-head">
-                    <h4>Create Your First Application</h4>
-
+                    <h4><span class="sname_fAppcreate" id="solutionName-app"></span><span class="slash">/</span>Create Your First Application</h4>
                 </div>
                 <div class="card--content-body" id="app-container">
-                    <div class="col-md-12 pd-0 solutiondetails-app">
-                        <div class="col-md-8 pd-0">
-                            <h5 id="solutionName-app"></h5>
-                            <p class="SolUrl">@ViewBag.AppId</p>
-                        </div>
-                        <div class="col-md-4 pd-0">
-                            <img class="img-responsive" src="~/images/your_company_logo.png" />
-                        </div>
-                    </div>
                     <form class="app-form" action="../Tenant/EbOnBoarding" method="post" id="app-form">
                         <label>Application Type</label>
                         <div class="col-md-12 pd-0 apptypes-cont">
@@ -279,7 +269,7 @@
                             </div>
                             <div class="col-md-4 apps-wrapper">
                                 <div class="apps-wrapper-fchiled" type="3" tabindex="1">
-                                    <img class="apptype" src="~/images/svg/chat1.svg" />
+                                    <img class="apptype" src="~/images/svg/chat_.svg" />
                                     <div class="app-type-name">Bot</div>
                                     <div class="overlay_mark"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
                                 </div>
@@ -294,7 +284,7 @@
                             <label>Description</label>
                             <textarea class="form-control" id="DescApp" name="DescApp"></textarea>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group appicon_box">
                             <label>Icon</label>
                             <div class="input-group iconpicker-container">
                                 <input type="text" class="form-control" name="AppIcon" value="fa fa-archive" id="AppIcon" />
@@ -305,6 +295,12 @@
                         <input type="hidden" id="AppId" name="AppId" value="@ViewBag.AppId" />
                         <input type="submit" id="app-form-sub" style="display:none;" />
                     </form>
+                </div>
+                <div class="card--content-footer">
+                    <div class="form-inline">
+                        <button id="save-application" type="submit" onclick="$('#app-form-sub').click();" class="btn btn-success pull-right">finish <i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
+                        <button id="prod-prev" class="btn pull-left mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 desc-section">
@@ -326,13 +322,7 @@
                     <img class="small-desc-img" src="~/images/svg/product.svg" />
                     <h4>Heading</h4>
                     <p class="text-center">Create your first application</p>
-                </div>
-                <div class="card--content-footer">
-                    <div class="form-inline">
-                        <button id="save-application" type="submit" onclick="$('#app-form-sub').click();" class="btn btn-success pull-right">Create <i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
-                        <button id="prod-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
-                    </div>
-                </div>
+                </div>               
             </div>
         </div>
         <div class="none"></div>

@@ -1,24 +1,17 @@
-﻿using System;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Constants;
+using ExpressBase.Objects;
+using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Security.Core;
+using ExpressBase.Web.Controllers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using ServiceStack;
+using ServiceStack.Redis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using ServiceStack;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Objects;
-using ExpressBase.Web.Filters;
-using ExpressBase.Data;
-using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
-using ExpressBase.Web.Controllers;
-using ExpressBase.Common;
-using ServiceStack.Redis;
-using ExpressBase.Common.Objects;
-using ExpressBase.Security;
-using ExpressBase.Security.Core;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -85,7 +78,8 @@ namespace ExpressBase.Web2.Controllers
             var abc = this.ServiceClient.Post(new Authenticate { provider = "logout" });
             HttpContext.Response.Cookies.Delete(RoutingConstants.BEARER_TOKEN);
             HttpContext.Response.Cookies.Delete(RoutingConstants.REFRESH_TOKEN);
-            return RedirectToAction("UsrSignIn", RoutingConstants.EXTCONTROLLER);
+            HttpContext.Response.Cookies.Delete(TokenConstants.USERAUTHID);
+            return Redirect("/");
         }
 
 		//public IActionResult ManageRoles2()

@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 <script src="~/js/EbOnBoarding/TenantDashBoard.js" type="text/javascript"></script>
 @{ 
-    string sso = ViewBag.IsSSO == true ? "true" : "false";
-    int aptype = ViewBag.AppType != null ? ViewBag.AppType :0;
+    var sso = ViewBag.IsSSO == "true" ? "true" : "false";
+    var aptype = ViewBag.AppType != null ? ViewBag.AppType :0;
 }
 <script>
 </script>     

@@ -504,7 +504,10 @@
             else
                 obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];/////////// optimize
         }
-        else if (this.editor === 9 || this.editor === 10 || this.editor === 22) {
+        else if (this.editor === 9 || this.editor === 10) {
+            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
+        }
+        else if (this.editor === 22) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", id);
         }
 

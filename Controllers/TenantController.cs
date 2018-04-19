@@ -77,18 +77,17 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult TenantDashboard()
         {
-            ViewBag.AppType = TempData.Peek("apptype");
-            ViewBag.IsSSO = TempData.Peek("SSO");
-            //ViewBag.Email = TempData.Peek("reqEmail");
+            ViewBag.AppType = TempData["apptype"];
+            ViewBag.IsSSO = TempData["SSO"];
             var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
             ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);
             return View();
         }
 
         [HttpGet]
-        public IActionResult SolutionDashBoard()
+        public IActionResult SolutionDashBoard(string Sid)
         {
-            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest ());       
+            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });       
             ViewBag.Connections = JsonConvert.SerializeObject(resp.EBSolutionConnections);
             ViewBag.SolutionInfo = resp.Data;
             return View();

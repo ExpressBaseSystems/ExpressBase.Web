@@ -1,15 +1,14 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout1.cshtml";
-    Html.RenderPartial("Eb_MenuBarCommon");
 }
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 <script src="~/js/EbOnBoarding/TenantDashBoard.js" type="text/javascript"></script>
+@{ 
+    string sso = ViewBag.IsSSO == true ? "true" : "false";
+    int aptype = ViewBag.AppType != null ? ViewBag.AppType :0;
+}
 <script>
-    var EbSolutions = @Html.Raw(ViewBag.Solutions);
-    var IsSSO = @ViewBag.IsSSO;
-    var apptype = @ViewBag.AppType;
-</script>
-<input type="hidden" name="Email" id="EmailForSSO" value="@ViewBag.Email" />     
+</script>     
 <div class="row t-dash-boardrow mr-t-50">
     <div class="col-md-2 col-lg-2 tdasboard-sidebar">
         <div class="t-container">
@@ -82,7 +81,7 @@
     </div>
 </div>
 <script>
-    var Tdb = TenantDashBoard(EbSolutions, IsSSO, $("#EmailForSSO").val(), apptype);
+    var Tdb = TenantDashBoard(@Html.Raw(ViewBag.Solutions), @sso, "@ViewBag.Email", @aptype);
     $(".t-container .list-group-item").focus(function () {
         $(this).children(".tr-on-hov").css("visibility", "visible");
     }, function () {

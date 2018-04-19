@@ -320,37 +320,45 @@ var DvContainerObj = function (settings) {
                 //`);
 
                     //var split = new splitWindow("parent-div" + this.tabNum, "contBox");
-                if ($('.splitdiv_parent').hasClass("slick-slider"))
-                    $('.splitdiv_parent').slick('unslick');
+                //var id = Object.keys(this.dvcol)[Object.keys(this.dvcol).length - 1];                
+
                 var obj = new Object();
                 obj.$type = "EbReport";
-                obj.EbSid = "container_Report" + counter;
-                $("#sub_window_dv" + dvcontainerObj.previousObj.EbSid + "_0_" + counter++).after(`<div class='sub-windows' id='sub_window_dv${obj.EbSid}_0_${counter}' tabindex= '1'">
+                obj.EbSid = "container_Report" + ++counter;
+                obj.Pippedfrom = "";
+                this.currentObj = obj;
+                var id = `${obj.EbSid}_0_${counter}`;
+                if ($('.splitdiv_parent').hasClass("slick-slider"))
+                    //$('.splitdiv_parent').slick('unslick');
+                    $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1'">
                              <div class='split-inner'>
                              <div class='col-md-12' id='content_dv' style='height:inherit;'>
-                             <iframe id="reportIframe${this.cellData}" class="reportIframe"></iframe>
+                             <iframe id="reportIframe_${this.cellData}_${id}" class="reportIframe" name="reportIframe_${this.cellData}_${id}" src='../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}'>                              
+                            </iframe>
                              </div>
                              </div>
                     </div>`);
-                focusedId = "sub_window_dv" + obj.EbSid + "_" + this.tabnum + "_" + counter;
-                //this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid);
-                    $.ajax({
-                        type: "POST",
-                        url: "../ReportRender/BeforeRender",
-                        data: this.xx(),
-                        success: function (result) {
-                            $("#reportIframe" + this.cellData ).attr("src", "../ReportRender/RenderReport");
-                            //$("#sub_window_dv" + this.cellData).focus();
-                            //$("#RptModal" + this.cellData).modal();
-                            $.LoadingOverlay("hide");
-                            this.modifyNavigation();
-                        }.bind(this),
-                    });
-                //}
-                //else {
-                //    $("#RptModal" + this.cellData).modal();
-                //    $.LoadingOverlay("hide");
-                //}
+
+                //$("body").append(`<form action="../ReportRender/RenderReport2" method="post" target="reportIframe${this.cellData}"></form>`);
+
+                //$("#" + id).after(`<div class='sub-windows' id='sub_window_dv${obj.EbSid}_0_${counter}' tabindex= '1'">
+                //             <div class='split-inner'>
+                //             <div class='col-md-12' id='content_dv' style='height:inherit;'>
+                //             <iframe id="reportIframe${this.cellData}" class="reportIframe" name="reportIframe${this.cellData}" src='../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}'>                              
+                //            </iframe>
+                //             </div>
+                //             </div>
+                //    </div>`);
+               
+                focusedId = "sub_window_dv" + obj.EbSid + "_0_" + counter;
+                this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid);
+                //$("#" + focusedId + " #reportIframe" + this.cellData).attr("src", `../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}`);
+                
+                $(`#reportIframe_${this.cellData}_${id}`).on('load', function () {
+                    $.LoadingOverlay("hide");
+                    this.modifyNavigation();
+                }.bind(this),true);
+                
             }
             else {
                 $.ajax({
@@ -536,8 +544,10 @@ var DvContainerObj = function (settings) {
                 $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
                 $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
             }
-            else
+            else {
                 this.clickDot = true;
+                $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
+            }
             //}
             //else {
             //    if ($('.splitdiv_parent').children().find("#" + focusedId).length === 0) {
@@ -668,8 +678,8 @@ var DvContainerObj = function (settings) {
         $(".dot").off("mouseenter").on("mouseenter", this.dotOnHover);
         $(".dot").off("mouseleave").on("mouseleave", this.dotOffHover);
         this.focusDot();
-        if (filterChanged)
-            this.rearrangeSubwindow();
+        //if (filterChanged)
+        //    this.rearrangeSubwindow();
     }
 
     this.focusDot = function () {

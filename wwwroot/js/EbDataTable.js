@@ -841,23 +841,23 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>                              
                         </div>
-                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe"></iframe>
+                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/RenderReport2?refid=${this.linkDV}&Params=${JSON.stringify(this.filterValues)}'></iframe>
             </div>
                     </div>
                 </div>
             </div>
             `);
-
-            $.ajax({
-                type: "POST",
-                url: "../ReportRender/BeforeRender",
-                data: this.xx(),
-                success: function (result) {
-                    $(`#reportIframe${copycelldata}`).attr("src", "../ReportRender/RenderReport");
-                    $(`#RptModal${copycelldata}`).modal();
-                    $.LoadingOverlay("hide");
-                }.bind(this),
-            });
+            $(`#RptModal${copycelldata}`).modal();
+            //$.ajax({
+            //    type: "POST",
+            //    url: "../ReportRender/BeforeRender",
+            //    data: this.xx(),
+            //    success: function (result) {
+            //        $(`#reportIframe${copycelldata}`).attr("src", "../ReportRender/RenderReport");
+            //        $(`#RptModal${copycelldata}`).modal();
+            //        $.LoadingOverlay("hide");
+            //    }.bind(this),
+            //});
             //}
             //else {
             //    $(`#RptModal${copycelldata}`).modal();

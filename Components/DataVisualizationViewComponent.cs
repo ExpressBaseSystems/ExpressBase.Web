@@ -66,7 +66,7 @@ namespace ExpressBase.Web.Components
             //DataSourceColumnsResponse columnresp = null;
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
             if (columnresp == null || columnresp.Columns.Count == 0)
-                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = dvobj.DataSourceRefId, TenantAccountId = ViewBag.cid });
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new TableColumnsRequest { RefId = dvobj.DataSourceRefId, TenantAccountId = ViewBag.cid });
 
             dvobj.AfterRedisGet(this.Redis);
 

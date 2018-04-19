@@ -5,6 +5,7 @@ using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -15,8 +16,10 @@ namespace ExpressBase.Web.Controllers
 {
     public class ReportRenderController : EbBaseIntController
     {
-        private static IActionResult Pdf { get; set; }
+        private IActionResult Pdf { get; set; }
+
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+
         public IActionResult Index(string refid)
         {
             ViewBag.Refid = refid;
@@ -37,6 +40,7 @@ namespace ExpressBase.Web.Controllers
             //List<Param> pp = EbSerializers.Json_Deserialize<List<Param>>(filterValues);
             var x = Render(dvreport.refid, dvreport.Params);
         }
+
         public bool Render(string refid, List<Param> Params)
         {
             //Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);
@@ -56,6 +60,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("--------------REPORT exception TS ---  " + DateTime.Now + "\n " + e.Message + "\n" + e.StackTrace);
 
             }
+
             Pdf = new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");
             return true;
         }
@@ -64,6 +69,15 @@ namespace ExpressBase.Web.Controllers
         {
             return Pdf;
         }
+
+        public IActionResult RenderReport2(string refid, string Params)
+        {
+            List<Param> param = JsonConvert.DeserializeObject<List<Param>>(Params);
+            Render(refid, param);
+
+            return Pdf;
+        }
+
         public IActionResult RenderforBot(string refid)
         {
             Render(refid, null);

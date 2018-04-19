@@ -428,7 +428,6 @@
     text-align: center;
     border: 1px solid #d7d7d7;
     margin-top: 10px;
-    cursor: pointer;
     position:relative;
 }    
     .pro-icon-bx {
@@ -885,16 +884,6 @@
     display: inline-block;
 }
 
-.solutiondetails-app {
-    border-bottom: 1px solid #d0d0d0;
-    margin-bottom: 20px;
-}
-
-.SolUrl {
-    font-size: 12px;
-    font-style: italic;
-}
-
 /*.app-info {
     display: none;
 }*/
@@ -902,10 +891,10 @@
 .apps-wrapper {
     padding: 15px;
     cursor: pointer;
+    padding-left: 2px;
 }
 
 .apptype {
-    width: 100%;
     height: 35px;
     margin: 10px;
 }
@@ -919,7 +908,7 @@
 }
 
 .appselected {
-    outline: 2px solid #4285F4;
+    outline: 2px solid #4aade3;
 }
 /*confirmation for solution*/
 
@@ -1014,12 +1003,6 @@
     height: 100%;
     width:auto;
 }
-.grey_out {
-    background: #e6e5e5;
-}
-    .grey_out .btn {
-        background: #e6e5e5 !important;
-    }
 .mr-t-15{
     margin-top:15px;
 }
@@ -1028,14 +1011,23 @@
 }
 .prdBTN_Click:hover {
     background: #eee;
-
+}
+.prdBTN_Click {
+    cursor: pointer;
 }
 .overlay_mark {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
-    display:none;
+    display: none;
+}
+.comming_soon {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    font-weight: bold;
 }
 .overlay_mark-flex {
     display: flex;
@@ -1051,3 +1043,18 @@
         font-size:40px;
         color:green;
     }
+.sname_fAppcreate {
+    color: #9a9797;
+}
+.slash {
+    color: #9a9797;
+    padding: 0 3px;
+}
+.appicon_box input[name="AppIcon"] {
+    border-color: #cccccc !important;
+}
+.appicon_box .input-group-addon {
+    color: #555;
+    background-color: #eee;
+    border: 1px solid #ccc;
+}

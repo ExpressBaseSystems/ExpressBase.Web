@@ -357,7 +357,7 @@ var DvContainerObj = function (settings) {
                 $(`#reportIframe_${this.cellData}_${id}`).on('load', function () {
                     $.LoadingOverlay("hide");
                     this.modifyNavigation();
-                }.bind(this),true);
+                }.bind(this));
                 
             }
             else {

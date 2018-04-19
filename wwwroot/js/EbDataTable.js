@@ -1653,7 +1653,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.Link) {
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-                alert(this.linkDV);
+                //alert(this.linkDV);
             }
             else if (this.ebSettings.Columns.$values[i].DecimalPlaces > 0) {
                 var deci = this.ebSettings.Columns.$values[i].DecimalPlaces;
@@ -1682,7 +1682,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
                 this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
-                alert(this.linkDV);
+                //alert(this.linkDV);
             }
             else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);

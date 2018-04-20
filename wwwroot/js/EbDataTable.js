@@ -1224,6 +1224,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dvcontainerObj.modifyNavigation();
             }
             this.addFilterEventListeners();
+            //$("#" + this.tableId + "_fileBtns").hide();
+            $("#btnTogglePPGrid" + this.tableId).hide();
         }
     };
 

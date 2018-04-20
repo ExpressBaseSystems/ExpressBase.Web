@@ -125,14 +125,14 @@
 }
 
 .slick-prev {
-    left: 0px !important;
+    left: 10px !important;
     z-index: 1 !important;
-    background-color: red !important;
+    background-color: #a29ede !important;
 }
 .slick-next {
-    right: 0px !important;
+    right: 10px !important;
     z-index: 1 !important;
-    background-color: red !important;
+    background-color: #a29ede !important;
 }
 .slick-next:hover {
     color: none !important;
@@ -154,7 +154,7 @@
     border: 1px solid #d6cacafa;
     border-radius: 10px;
     box-shadow: 4px 4px #dcd8d8fa;
-    padding: 1px 10px 10px 10px;
+    /*padding: 1px 10px 10px 10px;*/
     background: white;
     position: relative;
 }
@@ -168,7 +168,7 @@
     right: 0;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 34px;
+    margin-top: 40px;
     z-index:1;
 }
 
@@ -178,7 +178,7 @@
 .dotstable {
     display: table;
     margin: 0 auto;
-    margin-top: 2px;
+    margin-top: 10px;
 }
 .dot {
     border-radius: 50%;

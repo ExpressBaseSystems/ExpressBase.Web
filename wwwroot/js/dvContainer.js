@@ -326,13 +326,14 @@ var DvContainerObj = function (settings) {
                 obj.$type = "EbReport";
                 obj.EbSid = "container_Report" + ++counter;
                 obj.Pippedfrom = "";
+                obj.celldata = this.cellData;
                 this.currentObj = obj;
                 var id = `${obj.EbSid}_0_${counter}`;
                 if ($('.splitdiv_parent').hasClass("slick-slider"))
                     //$('.splitdiv_parent').slick('unslick');
                     $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1'">
                              <div class='split-inner'>
-                             <div class='col-md-12' id='content_dv' style='height:inherit;'>
+                             <div class='col-md-12' id='content_dv' style='height:inherit;padding-left: 0px !important;padding-right: 0px !important;'>
                              <iframe id="reportIframe_${this.cellData}_${id}" class="reportIframe" name="reportIframe_${this.cellData}_${id}" src='../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}'>                              
                             </iframe>
                              </div>
@@ -354,10 +355,7 @@ var DvContainerObj = function (settings) {
                 this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid);
                 //$("#" + focusedId + " #reportIframe" + this.cellData).attr("src", `../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}`);
                 
-                $(`#reportIframe_${this.cellData}_${id}`).on('load', function () {
-                    $.LoadingOverlay("hide");
-                    this.modifyNavigation();
-                }.bind(this));
+                $(`#reportIframe_${this.cellData}_${id}`).on('load', this.iframeLoad.bind(this));
                 
             }
             else {
@@ -388,6 +386,17 @@ var DvContainerObj = function (settings) {
             dvcontainerObj.currentObj.DataSourceRefId = dvcontainerObj.previousObj.DataSourceRefId;
             dvcontainerObj.btnGoClick();
         }
+    };
+
+    this.iframeLoad = function () {
+        $.LoadingOverlay("hide");
+        $("#obj_icons").hide();
+        $("#Common_obj_icons").show();
+        $("#Common_obj_icons").empty();
+        $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>
+                                <button id='Refresh_btn${focusedId}' class='btn'><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
+        this.eventBind();
+        this.modifyNavigation();
     };
 
     this.xx = function () {
@@ -535,10 +544,10 @@ var DvContainerObj = function (settings) {
                     cssEase: 'ease-in',
                     //arrows: false,
                     //dots: true,
-                    //prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
-                    //nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
-                    prevArrow: $("#prev"),
-                    nextArrow: $("#next")
+                    prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
+                    nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
+                    //prevArrow: $("#prev"),
+                    //nextArrow: $("#next")
                 });
                 //$('.splitdiv_parent').prepend(`<div id='divDots' class='dotsDiv'><div class='dotstable'></div></div>`);
                 $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
@@ -559,22 +568,7 @@ var DvContainerObj = function (settings) {
         //this.modifydivDots();
         //}
 
-        //if ($("#" + focusedId).prev().attr("id") == undefined) {
-        //    $("#prev").attr("disabled", true);
-        //    $("#first").attr("disabled", true);
-        //}
-        //else {
-        //    $("#prev").attr("disabled", false);
-        //    $("#first").attr("disabled", false);
-        //}
-        //if ($("#" + focusedId).next().attr("id") !== undefined) {
-        //    $("#next").attr("disabled", false);
-        //    $("#last").attr("disabled", false);
-        //}
-        //else {
-        //    $("#next").attr("disabled", true);
-        //    $("#last").attr("disabled", true);
-        //}
+        
     }
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
@@ -599,6 +593,9 @@ var DvContainerObj = function (settings) {
             if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
                 if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
                     this.dvcol[focusedId].GenerateButtons();
+                    $("[toggle=TooglePPGrid]").hide();
+                    $("#Common_obj_icons").hide();
+                    $("#obj_icons").show();
                 }
             }
             else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
@@ -607,7 +604,23 @@ var DvContainerObj = function (settings) {
                 }
             }
             else {
-                $(".toolicons").hide();
+                $("#obj_icons").hide();
+                $("#Common_obj_icons").show();
+                $("#Common_obj_icons").empty();
+                $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>
+                                <button id='Refresh_btn${focusedId}' class='btn'><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
+                this.eventBind();
+            }
+        }
+        else {
+            var dvobj = this.dvcol[focusedId].EbObject;
+            if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+                if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                    this.dvcol[focusedId].GenerateButtons();
+                    $("[toggle=TooglePPGrid]").hide();
+                    $("#Common_obj_icons").hide();
+                    $("#obj_icons").show();
+                }
             }
         }
         this.focusDot();
@@ -643,7 +656,7 @@ var DvContainerObj = function (settings) {
                     $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 else {
-                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 //}
                 //else {
@@ -754,7 +767,10 @@ var DvContainerObj = function (settings) {
                 $("#copydiv_" + temp).append(image);
             }
             else {
-
+                curdiv.next().children(".popover-title").text("Report-"+dvObj.EbObject.celldata);
+                curdiv.next().children().find(".dotsnapshot").empty();
+                curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
+                $("#copydiv_" + temp).append(`<img src="../images/pdf.png" style='width:inherit;'>`);
             }
         }
         curdiv.next().css("left", e.pageX - curdiv.next().width() / 2);
@@ -783,6 +799,23 @@ var DvContainerObj = function (settings) {
         });
         filterChanged = false;
     };
+
+    this.eventBind = function () {
+        $(`#Close_btn${focusedId}`).off("click").on("click", this.removeSlide.bind(this));
+        //$(`Close_btn${focusedId}`).off("click").on("click", this.removeSlide.bind(this));
+    };
+
+    this.removeSlide = function () {
+        var index = $("#" + focusedId).attr("data-slick-index")
+        $('.splitdiv_parent').slick('slickRemove', $("#" + focusedId).attr("data-slick-index"));
+        delete this.dvcol[focusedId];
+        //focusedId = $(`[data-slick-index=${index-1}]`).attr("id");
+        $('.splitdiv_parent').slick('slickGoTo', (index - 1), true);
+        this.modifyNavigation();
+        $.each($(".slick-track").children(), function (i, sub) {
+            $(sub).attr("data-slick-index",i);
+        });
+    }
 
     this.init();
 }

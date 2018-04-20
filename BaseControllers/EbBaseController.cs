@@ -1,8 +1,13 @@
-﻿using ExpressBase.Common.ServiceClients;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.Constants;
+using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack;
 using ServiceStack.Redis;
+using System;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -73,6 +78,27 @@ namespace ExpressBase.Web.BaseControllers
             this.Redis = _redis as RedisClient;
             this.MqClient = _mqc as EbMqClient;
             this.FileClient = _sfc as EbStaticFileClient;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+            base.OnActionExecuting(context);
+        }
+
+        public bool IsTokenValid(string rtoken)
+        {
+            bool isvalid = false;
+            var jwtToken = new JwtSecurityToken(rtoken);
+
+            DateTime startDate = new DateTime(1970, 1, 1);
+            DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(jwtToken.Payload[TokenConstants.EXP]));
+
+            if (exp_time > DateTime.Now)
+            {
+                isvalid = true;
+            }
+            return isvalid;
         }
     }
 }

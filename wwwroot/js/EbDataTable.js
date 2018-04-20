@@ -802,7 +802,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
-        this.contextMenu();
+        //this.contextMenu();
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
@@ -823,8 +823,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.isContextual = true;
         this.tabNum++;
         var idx;
-        if (opt !== undefined)
+        if (opt !== undefined) {
             idx = this.Api.row(opt.$trigger.parent().parent()).index();
+            this.cellData = opt.$trigger.text();
+        }
         else
             idx = key;
         this.rowData = this.Api.row(idx).data();
@@ -848,17 +850,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             </div>
             `);
             $(`#RptModal${copycelldata}`).modal();
-            //$.ajax({
-            //    type: "POST",
-            //    url: "../ReportRender/BeforeRender",
-            //    data: this.xx(),
-            //    success: function (result) {
-            //        $(`#reportIframe${copycelldata}`).attr("src", "../ReportRender/RenderReport");
-            //        $(`#RptModal${copycelldata}`).modal();
-            //        $.LoadingOverlay("hide");
-            //    }.bind(this),
-            //});
-            //}
+            $(`#reportIframe${copycelldata}`).css("height", "80vh");
             //else {
             //    $(`#RptModal${copycelldata}`).modal();
             //    $.LoadingOverlay("hide");
@@ -1732,11 +1724,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderlink4NewTable = function (data) {
-        return "<a href='#' class ='tablelink_" + this.tableId + "'>" + data + "</a>";
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "'>" + data + "</a>";
     };
 
     this.renderlinkandDecimal = function (deci, data) {
-        return "<a href='#' class ='tablelink_" + this.tableId + "'>" + parseFloat(data).toFixed(deci) + "</a>";
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "'>" + parseFloat(data).toFixed(deci) + "</a>";
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {

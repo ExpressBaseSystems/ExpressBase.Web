@@ -91,7 +91,7 @@
                     ParamsArray.push(new fltr_obj(type, name, value));
                 }
             }
-            $.post('../ReportRender/Render',
+            @*$.post('../ReportRender/Render',
             {
                 refid:'@ViewBag.Refid',
                 Params: ParamsArray
@@ -99,9 +99,11 @@
             function(data){
                 $("#reportIframe").attr("src","../ReportRender/RenderReport");
                  $("#RptModal").modal('hide');
-     $.LoadingOverlay("hide");
-            });
-
+                    $.LoadingOverlay("hide");
+            });*@
+            $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${'@ViewBag.Refid'}&Params=${JSON.stringify(ParamsArray)}`);
+            $("#RptModal").modal('hide');
+            $.LoadingOverlay("hide");
     }
 </script>
 <style>

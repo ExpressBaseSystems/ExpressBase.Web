@@ -1,8 +1,11 @@
-﻿using ExpressBase.Common.ServiceClients;
+﻿using ExpressBase.Common;
+using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack;
 using ServiceStack.Redis;
+using System;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -73,6 +76,11 @@ namespace ExpressBase.Web.BaseControllers
             this.Redis = _redis as RedisClient;
             this.MqClient = _mqc as EbMqClient;
             this.FileClient = _sfc as EbStaticFileClient;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT); 
         }
     }
 }

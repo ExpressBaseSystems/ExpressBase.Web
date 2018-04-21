@@ -439,6 +439,8 @@
     }
 
 .sub-controls-DD-cont {
+    position: relative;
+    z-index: 0;
     background-color: white;
     border: var(--sild1pxDDD);
 }

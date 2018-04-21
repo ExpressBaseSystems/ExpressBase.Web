@@ -48,7 +48,7 @@ namespace ExpressBase.Web.Controllers
             string bToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string rToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
 
-            if (rToken == null || !IsTokenValid(rToken))
+            if (rToken == null || !IsTokenNotExpired(rToken) || !VerifySignature(rToken))
                 context.Result = new RedirectResult("/");
             else
             {
@@ -95,7 +95,6 @@ namespace ExpressBase.Web.Controllers
                     controller.ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
                     controller.ViewBag.StaticFileServerUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STATICFILESERVER_EXT_URL);
                     controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
-                    base.OnActionExecuting(context);
                 }
 
                 catch (System.ArgumentNullException ane)
@@ -107,6 +106,7 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
+            base.OnActionExecuting(context);
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)

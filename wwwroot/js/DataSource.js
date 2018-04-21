@@ -291,7 +291,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 processing: true,
                 ajax: {
                     //url: this.Ssurl + "/ds/data/" + this.Refid,
-                    url: "../DV/getData",
+                    url: "../CE/getData",
                     type: "POST",
                     data: this.Load_tble_Data.bind(this),
                     crossDomain: true,

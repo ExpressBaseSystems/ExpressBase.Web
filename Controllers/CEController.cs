@@ -397,6 +397,20 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        public DataSourceDataResponse getData(DataSourceDataRequest request)
+        {
+            DataSourceDataResponse resultlist1 = null;
+            try
+            {
+                resultlist1 = this.ServiceClient.Get(request);
+            }
+            catch (Exception e)
+            {
+
+            }
+            return resultlist1;
+        }
+
         //public List<string> GetDiffer(string OldText, string NewText)
         //{
         //    List<string> Diff = new List<string>();

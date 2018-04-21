@@ -10,6 +10,7 @@
     this.editor = null;
 
     this.CXE_OKclicked = function () {
+        this.PGobj.CurMeta = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp);
         var value = "";
         if (this.editor === 11 || this.editor === 16 || this.editor === 18) {
 
@@ -46,15 +47,20 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
-        $(this.pgCXE_Cont_Slctr).css("right", ((window.screen.availWidth / 4) + $(".pgCXEditor-Cont").length * 10) + "px");//     
-        $(this.pgCXE_Cont_Slctr).css("top", (14 + $(".pgCXEditor-Cont").length) + "vh");//
+        var visibleModalLength = $('.pgCXEditor-bg').filter(function () { return $(this).css('display') !== 'none'; }).length;
+        var right = ((window.screen.availWidth / 4) + -visibleModalLength * 10) + "px";
+        $(this.pgCXE_Cont_Slctr).css("right", right);//     
+        $(this.pgCXE_Cont_Slctr).css("top", (14 + visibleModalLength + "vh"));//
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
-        this.CurProplabel = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp;
+        if ($(e.target).closest("tr").attr("tr-for") === "23")
+            this.CurProplabel = getObjByval(this.PGobj.CurDictMeta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
+        else
+            this.CurProplabel = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].alias || this.PGobj.CurProp;
         if (!(this.editor === 17 || this.editor === 14 || this.editor === 21))
             $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
-        this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
+        //this.CurEditor = this.PGobj.Metas[this.PGobj.propNames.indexOf(this.PGobj.CurProp.toLowerCase())].editor;
         if (this.editor > 6 && this.editor < 11 || this.editor === 22)
             this.initCE();
         else if (this.editor === 11)

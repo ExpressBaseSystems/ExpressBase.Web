@@ -126,10 +126,12 @@
             });
         }
         else if (type === 23 || type === 15) {
+            var value23 = "";
             if (type === 23) {    // If Dictionary Editor
-                var _meta_OBJ = this.getDictMeta_Obj(value);
-                var _meta = _meta_OBJ.meta;
-                var _obj = _meta_OBJ.obj;
+                var _obj = this.getDictMeta_Obj(value);
+                var _meta = this.CurDictMeta;
+                var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                $subRows.attr("tr-for", type);
                 this.getValueFuncs[name] = function () {
                     var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                     $.each($subRows, function (i, row) {
@@ -139,6 +141,12 @@
                     });
                     return value;
                 }.bind(this);
+                $subRow_html = $(this.getExpandedRows(_meta, _obj, name));
+                $subRow_html.find("tr").addBack("tr").attr("tr-for", type);
+                if ($subRow_html.length > 0)
+                    subRow_html = $subRow_html[0].outerHTML;
+                else
+                    value23 = `(!?No ${(meta.alias || name)} found!)`;
             }
             else {  //  If expandable
                 var _meta = meta.submeta;
@@ -153,14 +161,14 @@
                     $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
                     return JSON.parse($('#' + elemId).val());
                 }.bind(this);
+                subRow_html = this.getExpandedRows(_meta, _obj, name);
             }
             arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
             isExpandedAttr = 'is-expanded="true"';
-            subRow_html = this.getExpandedRows(_meta, _obj, name);
-            valueHTML = '<input type="text" for="' + name + '" readonly value="' + ((type === 15) ? this.getExpandedValue(value) : "") + '" style="width:100%; direction: rtl;" />' +
+            valueHTML = '<input type="text" for="' + name + '" readonly value="' + ((type === 15) ? this.getExpandedValue(value) : value23) + '" style="width:100%; direction: rtl;" />' +
                 "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
         }// If Dictionary Editor
-         else {    // Default is textbox
+        else {    // Default is textbox
             valueHTML = 'editor Not implemented';
         }
         if (meta.OnChangeExec)
@@ -199,8 +207,9 @@
             fieldMeta.alias = null;
             Obj[_propName] = value.$values[_propName];
             DictMetas.push(fieldMeta);
+            this.CurDictMeta = DictMetas;
         }.bind(this));
-        return { meta: DictMetas, obj: Obj };
+        return Obj;
     };
 
     // gives expandable prop values as array
@@ -350,8 +359,10 @@
     //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) {
         this.getvaluesFromPG();
-        if (e)
-            this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);;
+        if (e) {
+            this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);
+            this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
+        }
         var res = this.getvaluesFromPG();
         $('#txtValues').val(JSON.stringify(res) + '\n\n');
         this.PropertyChanged(this.PropsObj, this.CurProp);
@@ -438,7 +449,7 @@
         this.getValueFuncs = {};
         this.currGroup = null;
         this.CurProp = null;
-        this.CurEditor = null;
+        //this.CurEditor = null;
         this.$hiddenProps = {};
         this.OSElist = {};
         this.uniqueProps = [];

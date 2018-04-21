@@ -594,8 +594,8 @@
         var name = e.target.value;
         $("#M_SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
         $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
-
-        $("#" + this.PropsObj.EbSid + ' span').text(name);
+        if ($(e.target).closest("tr").attr("tr-for") !== "23")
+            $("#" + this.PropsObj.EbSid + ' span').text(name);
 
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
         this.nameChanged(this.PropsObj);

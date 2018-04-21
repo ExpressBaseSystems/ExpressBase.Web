@@ -72,6 +72,8 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult RenderReport2(string refid, string Params)
         {
+            Console.WriteLine("Params: "+ Params.ToJson());
+
             List<Param> param = JsonConvert.DeserializeObject<List<Param>>(Params);
             Render(refid, param);
 

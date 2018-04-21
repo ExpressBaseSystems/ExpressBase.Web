@@ -141,7 +141,7 @@ namespace ExpressBase.Web.Controllers
 			//	Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
 			//}
 			//ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
-			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, TenantAccountId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, RqstMode = Mode, TenantAccountId = ViewBag.cid });
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
 			{
 				fr.Roles.Add(new EbRole() {
@@ -159,6 +159,11 @@ namespace ExpressBase.Web.Controllers
 				UserStatus.Add(status.ToString());
 			}
 			ViewBag.UserStatusList = UserStatus;
+
+			if(Mode == 3)
+			{
+				itemid = Convert.ToInt32(fr.UserData["id"]);
+			}
 
 			if(itemid == 1)
 			{

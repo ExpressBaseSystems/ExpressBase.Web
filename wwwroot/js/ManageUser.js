@@ -1,8 +1,8 @@
 ﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
     this.whichMode = mode;
+    //CreateEdit = 1, View = 2, MyProfileView = 3
     this.menuBarObj = new MenuBarCommon();
     this.menuBarObj.BuildMenu(`<button id="btnCreateUser" class='btn'><i class="material-icons">save</i></button>`);
-    //CreateEdit = 1, View = 2, MyProfileView = 3
     this.userinfo = userinfo;
     this.customRoles = cusroles;
     this.culture = culture;
@@ -104,8 +104,10 @@
             //this.btnCreateUser.text("Update");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
-            if(this.whichMode === 3)
+            if (this.whichMode === 3) {
+                this.menuBarObj.setName("My Profile");
                 this.divChangePassword.css("display", "block");
+            }                
             if (this.whichMode === 1) {
                 this.chkboxHide.parent().show();
                 $("#divStatus").show();

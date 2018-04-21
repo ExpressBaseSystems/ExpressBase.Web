@@ -175,7 +175,8 @@
                             var strFunc = window.atob(obj.valueExpression);
                             $.each(this.Bot.curCtrl.cardFields, function (l, obj1) {
                                 var str2 = "parseFloat(" + this.getValueInDiv($card.find('.data-' + obj1.name)) + ")";
-                                if (obj1.hasOwnProperty('value') && !obj1.hasOwnProperty('text')) 
+                                //if (obj1.hasOwnProperty('value') && !obj1.hasOwnProperty('text')) 
+                                if (!(obj1.objType === 'CardNumericField'))
                                     str2.replace("parseFloat","");                                
                                 strFunc = strFunc.replace(new RegExp('card.'+obj1.name, 'g'), str2);
                             }.bind(this));
@@ -185,8 +186,11 @@
                         }
                         else {
                             propval = this.getValueInDiv($card.find('.data-' + obj.name));
-                        }                        
-                        sObj[obj.name] = propval;
+                        }
+                        if (obj.objType === 'CardNumericField')
+                            sObj[obj.name] = parseFloat(propval);
+                        else
+                            sObj[obj.name] = propval;
                     }
                 }.bind(this));                
                 this.SelectedCards.push(sObj);
@@ -227,8 +231,9 @@
             var trhtml = "<tr card-id='" + obj.cardid + "'>";
             var ind = 0;
             for (obprop in obj) {
+                var isNum = (typeof (obj[obprop]) === "number");
                 if (ind++) {
-                    trhtml += "<td>" + obj[obprop] + "</td>";
+                    trhtml += "<td "+ (isNum? "style='text-align: right;'": "") +">" + (isNum? obj[obprop].toFixed(2): obj[obprop]) + "</td>";
                 }
             }
             trhtml += "<td><i class='fa fa-trash-o remove-cart-item' aria-hidden='true' style='cursor: pointer;'></i></td></tr>";
@@ -241,7 +246,7 @@
             $.each(this.SelectedCards, function (k, obj) {
                 sum += parseFloat(obj[fn]);
             }.bind(this));
-            sumhtml += "Total&nbsp" + fn + ":&nbsp&nbsp" + sum + "<br/>";
+            sumhtml += "Total&nbsp" + fn + ":&nbsp&nbsp" + sum.toFixed(2) + "<br/>";
         }.bind(this));
         if (this.sumFieldsName.length !== 0)
             $tbody.append(sumhtml+"</tr></td>");

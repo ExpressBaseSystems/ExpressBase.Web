@@ -665,6 +665,7 @@
     border-radius: 4px;
     height: 100%;
     box-shadow: var(--eb-shadow2);
+    position: relative;
 }
 
 .card--content-large {

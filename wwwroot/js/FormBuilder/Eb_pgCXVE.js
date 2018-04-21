@@ -47,10 +47,10 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
-        var right = ((window.screen.availWidth / 4) + $(".pgCXEditor-Cont").length * 10) + "px";
-        console.log(right);
+        var visibleModalLength = $('.pgCXEditor-bg').filter(function () { return $(this).css('display') !== 'none'; }).length;
+        var right = ((window.screen.availWidth / 4) + -visibleModalLength * 10) + "px";
         $(this.pgCXE_Cont_Slctr).css("right", right);//     
-        $(this.pgCXE_Cont_Slctr).css("top", (14 + $(".pgCXEditor-Cont").length) + "vh");//
+        $(this.pgCXE_Cont_Slctr).css("top", (14 + visibleModalLength + "vh"));//
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
         if ($(e.target).closest("tr").attr("tr-for") === "23")

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -41,19 +40,6 @@ namespace ExpressBase.Web.BaseControllers
             }
         }
 
-        public bool IsTokenValid(string rtoken)
-        {
-            bool isvalid = false;
-            var jwtToken = new JwtSecurityToken(rtoken);
 
-            DateTime startDate = new DateTime(1970, 1, 1);
-            DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(jwtToken.Payload[TokenConstants.EXP]));
-
-            if (exp_time > DateTime.Now)
-            {
-                isvalid = true;   
-            }
-            return isvalid;
-        }
     }
 }

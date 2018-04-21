@@ -54,7 +54,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SignIn()
         {
             if (!String.IsNullOrEmpty(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
-                if ((IsTokenValid(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN])))
+                if ((IsTokenNotExpired(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN])))
                 {
                     return RedirectToAction("SolutionDashBoard", "Tenant");
                 }

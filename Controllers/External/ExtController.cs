@@ -67,7 +67,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SignIn()
         {
             if (!String.IsNullOrEmpty(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
-                if ((IsTokenValid(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN])))
+                if ((IsTokenNotExpired(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN])))
                 {
                     return RedirectToAction("SolutionDashBoard", "Tenant");
                 }
@@ -113,7 +113,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult UsrSignIn()
         {
             if (!String.IsNullOrEmpty(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
-                if (IsTokenValid(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
+                if (IsTokenNotExpired(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
                 {
                     var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
                     string[] hostParts = host.Split(CharConstants.DOT);
@@ -464,7 +464,7 @@ namespace ExpressBase.Web.Controllers
                         Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
                         Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
                         Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
-                        Response.Cookies.Append(CacheConstants.X_SS_PID, authResponse.SessionId, options);
+                        //Response.Cookies.Append(CacheConstants.X_SS_PID, authResponse.SessionId, options);
 
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
@@ -627,52 +627,6 @@ namespace ExpressBase.Web.Controllers
             sMSSentRequest.To = req["to"];
             sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
             this.ServiceClient.Post(sMSSentRequest);
-        }
-
-
-        public byte[] FromBase64Url(string base64Url)
-        {
-            string padded = base64Url.Length % 4 == 0
-                ? base64Url : base64Url + "====".Substring(base64Url.Length % 4);
-            string base64 = padded.Replace("_", "/")
-                                  .Replace("-", "+");
-            return Convert.FromBase64String(base64);
-        }
-
-        public bool VerifySignature(string token)
-        {
-            string PublicKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_JWT_PUBLIC_KEY_XML);
-            int pos1 = PublicKey.IndexOf("<Modulus>");
-            int pos2 = PublicKey.IndexOf("</Modulus>");
-            int pos3 = PublicKey.IndexOf("<Exponent>");
-            int pos4 = PublicKey.IndexOf("</Exponent>");
-            string modkeypub = PublicKey.Substring(pos1 + 9, pos2 - pos1 - 9);
-            string expkeypub = PublicKey.Substring(pos3 + 10, pos4 - pos3 - 10);
-
-            try
-            {
-                string[] tokenParts = token.Split('.');
-                RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-                rsa.ImportParameters(
-                  new RSAParameters()
-                  {
-                      Modulus = FromBase64Url(modkeypub),
-                      Exponent = FromBase64Url(expkeypub)
-                  });
-
-                SHA256 sha256 = SHA256.Create();
-                byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(tokenParts[0] + '.' + tokenParts[1]));
-
-                RSAPKCS1SignatureDeformatter rsaDeformatter = new RSAPKCS1SignatureDeformatter(rsa);
-                rsaDeformatter.SetHashAlgorithm("SHA256");
-                if (rsaDeformatter.VerifySignature(hash, FromBase64Url(tokenParts[2])))
-                {
-                    Console.WriteLine("Signature is verified");
-                    return true;
-                }
-            }
-            catch (Exception e) { Console.WriteLine("Exception from VerifySignature:" + e.ToString()); }
-            return false;
         }
 
         public string ValidateTokensAndGetUserName(string btoken, string rtoken, string _wc = RoutingConstants.TC, string _cid = CoreConstants.EXPRESSBASE)

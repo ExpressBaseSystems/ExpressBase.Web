@@ -85,12 +85,12 @@ namespace ExpressBase.Web2
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-			app.UseForwardedHeaders(new ForwardedHeadersOptions
-			{
-				ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
-			});
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+            });
 
-			app.UseApplicationInsightsRequestTelemetry();
+            app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())
             {
@@ -106,7 +106,7 @@ namespace ExpressBase.Web2
 
             app.UseStaticFiles();
 
-			app.UseMvc(routes =>
+            app.UseMvc(routes =>
             {
                 routes.DefaultHandler = areaRouter;
                 //routes.MapRoute(
@@ -124,7 +124,13 @@ namespace ExpressBase.Web2
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Remove("X-Frame-Options");
-                context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM http://expressbase.com");
+                if (env.IsStaging())
+                {
+                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN *.eb-test.info");
+                    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.info *.eb-test.info;");
+                }
+                if (env.IsProduction())
+                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM https://*.expressbase.com");
                 await next();
             }); // for web forwarding with masking
         }

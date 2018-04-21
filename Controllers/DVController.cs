@@ -227,7 +227,7 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("GoogleRelated");
         }
 
-        public DataSourceDataResponse getData(DataSourceDataRequest request)
+        public DataSourceDataResponse getData(TableDataRequest request)
         {
             DataSourceDataResponse resultlist1 = null;
             try

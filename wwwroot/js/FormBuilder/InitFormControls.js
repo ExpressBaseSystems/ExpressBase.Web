@@ -132,7 +132,11 @@
         var EbCombo = new EbSelect(ctrl);
     };
 
-    this.Cards = function (ctrl) {
+    this.StaticCardSet = function (ctrl) {
+        this.initCards($('#' + ctrl.ebSid));
+    };
+    
+    this.DynamicCardSet = function (ctrl) {
         this.initCards($('#' + ctrl.ebSid));
     };
 
@@ -186,12 +190,14 @@
                     }
                 }.bind(this));                
                 this.SelectedCards.push(sObj);
+                this.Bot.curCtrl.selectedCards.push(parseInt($card.attr('card-id')));
                 this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find('.table tbody'));
+                this.setCardFieldValues($card);
             }
             else {
                 this.spliceCardArray($card.attr('card-id'));
                 this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find(".table tbody"));
-            }           
+            } 
         }.bind(this));
 
         $Ctrl.find('.cards-cont').not('.slick-initialized').slick({
@@ -255,18 +261,47 @@
                 break;
             }
         }
+        for (var i = 0; i < this.Bot.curCtrl.selectedCards.length; i++) {
+            if (this.Bot.curCtrl.selectedCards[i] == cardid) {
+                this.Bot.curCtrl.selectedCards.splice(i, 1);
+                break;
+            }
+        }
     };
     this.getValueInDiv = function ($itemdiv) {
         if ($itemdiv.children().length === 0 || $($itemdiv.children()[0]).hasClass('fa-check'))
             return $itemdiv.text().trim();
         else
-            return $($itemdiv.children()[1]).val();
+            return $itemdiv.children().find('input').val();
     }
     this.setValueInDiv = function ($itemdiv, value) {
         if ($itemdiv.children().length === 0)
             $itemdiv.text(value);
         else
-            $($itemdiv.children()[0]).val(value);
+            $itemdiv.children().find('input').val(value)
+    }
+
+    this.setCardFieldValues = function ($card) {
+        var cardId = parseInt($card.attr('card-id'));
+        var card = this.getCardReference(cardId);
+        if (card === null)
+            return;
+        $.each(this.Bot.curCtrl.cardFields, function (k, fObj) {
+            if (!fObj.doNotPersist) {
+                var fVal = this.getValueInDiv($card.find('.data-' + fObj.name));
+                card.customFields[fObj.name] = fVal;
+            }
+        }.bind(this));
+    }
+    this.getCardReference = function(cardid){
+        var card = null;
+        $.each(this.Bot.curCtrl.cardCollection, function (k, cardObj) {
+            if (cardObj.cardId === cardid) {
+                card = cardObj;
+                return;
+            }               
+        }.bind(this));
+        return card;
     }
 
 

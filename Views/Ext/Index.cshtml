@@ -46,8 +46,9 @@
             <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd get-start-sec" style="padding-bottom: 3em;padding-top: 4em;">
                 <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 callfaction_cont">
                     @*<div class="no-creditcared">No credit card required.</div>*@
-
-                    <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
+                    @if (ViewBag.Env == "Staging" || ViewBag.Env == "Development")
+                    {
+                        <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
                             <div class="input-group">
                                 <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
                                 <span class="input-group-btn">
@@ -55,14 +56,18 @@
                                 </span>
                             </div>
                         </form>
-                    @*<form action="" method="post" class="joinbeta">
-                        <div class="input-group jumb">
-                            <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
-                            <span class="input-group-btn">
-                                <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
-                            </span>
-                        </div>
-                    </form>*@
+                    }
+                    @if (ViewBag.Env == "Production")
+                    {
+                        <form action="" method="post" class="joinbeta">
+                            <div class="input-group jumb">
+                                <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                    }
                     @*<div class="form-group social-btn-sec">
                             <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
                             <div class="form-inline">
@@ -141,7 +146,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">                
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
                 <div class="service-box text-center">
                     <div class="icon-box">
                         <i class="fa fa-database"></i>
@@ -214,7 +219,7 @@
                 <div class="pr_text">
                     <h4 class="text-center">Dynamic.Forms</h4>
                     <p class="text-center">
-                        Create Embeddable Forms using our Drag n Drop 
+                        Create Embeddable Forms using our Drag n Drop
                         builder with custom validations & field level permissions.
                     </p>
                     @*<div class="pr_link text-center">forms.expressbase.com</div>*@
@@ -313,7 +318,7 @@
                     </div>
                     <br />
                     <div class="img_main_callout">
-                            <img src="~/images/gartner .png" alt="Gartner logo">
+                        <img src="~/images/gartner .png" alt="Gartner logo">
                     </div>
                 </div>
             </div>
@@ -332,7 +337,7 @@
                     </div>
                     <div class="img_main_callout">
                         <img src="~/images/forester.png" alt="Gartner logo">
-                    </div>                   
+                    </div>
                 </div>
             </div>
         </div>
@@ -347,12 +352,12 @@
             <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://vue.js.org/"><img class="img-responsive" src="~/images/vue.png" /></a></div>
             <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.microsoft.com/net/"><img class="img-responsive" src="~/images/aspnetcore.png" /></a></div>
             <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://servicestack.net/"><img class="img-responsive" src="~/images/servicestack.png" /></a></div>
-            
+
             <div class="col-md-2 col-md-offset-2 col-sm-2 col-sm-offset-2 col-xs-6 techstack"><a href="https://www.postgresql.org/"><img class="img-responsive" src="~/images/postgresql.png" /></a></div>
             <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://redis.io/"><img class="img-responsive" src="~/images/redis-logo.png" /></a></div>
             <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.rabbitmq.com/"><img class="img-responsive" src="~/images/rabitMq.png" /></a></div>
             <div class="col-md-2 col-xs-6 col-sm-2 techstack b40"><a href="https://www.mongodb.com/"><img class="img-responsive" src="~/images/MongodB.png" style="padding: 3px;" /></a></div>
-            
+
             <div class="col-md-2 col-md-offset-1 col-sm-offset-1 col-xs-6 col-sm-2 techstack"><a href="https://www.docker.com/"><img class="img-responsive" src="~/images/docker.png" style="padding: 9px;" /></a></div>
             <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://www.nginx.com/"><img class="img-responsive" src="~/images/nginx.png" /></a></div>
             <div class="col-md-2 col-xs-6 col-sm-2 techstack"><a href="https://www.kubernetes.io/"><img class="img-responsive" src="~/images/kubernetes-logo.png" style="" /></a></div>
@@ -457,7 +462,7 @@
                 $(e.target).children().find(".emailtxt").val("");
                 $(".message-box-indexpage").fadeIn().children("span").text(msg);
                 $(".ext-pageheader .navbar").css("top", "52px");
-                $(".slider").css("padding-top","100px");
+                $(".slider").css("padding-top", "100px");
                 $("#close-msg").click(function (e) {
                     $(".message-box-indexpage").fadeOut();
                     $(".ext-pageheader .navbar").css("top", "0");
@@ -468,22 +473,22 @@
     });
 </script>
 @*@if (ViewBag.useremail != null)
-{
-    <script>
-            $("#login-modal").modal('toggle');
-            $("#email-login").val("@ViewBag.useremail");
-    </script>
-}*@
+    {
+        <script>
+                $("#login-modal").modal('toggle');
+                $("#email-login").val("@ViewBag.useremail");
+        </script>
+    }*@
 @if (ViewBag.message != null)
 {
     <script>
-            $(".message-box-indexpage").show();
-            $(".ext-pageheader .navbar").css("top", "52px");
-            $(".slider").css("padding-top", "100px");
-            $("#close-msg").click(function (e) {
-                $(".message-box-indexpage").fadeOut();
-                $(".ext-pageheader .navbar").css("top", "0");
-                $(".slider").css("padding-top", "0");
-            });
+        $(".message-box-indexpage").show();
+        $(".ext-pageheader .navbar").css("top", "52px");
+        $(".slider").css("padding-top", "100px");
+        $("#close-msg").click(function (e) {
+            $(".message-box-indexpage").fadeOut();
+            $(".ext-pageheader .navbar").css("top", "0");
+            $(".slider").css("padding-top", "0");
+        });
     </script>
 }

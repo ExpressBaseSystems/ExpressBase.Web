@@ -527,15 +527,22 @@
 }
 .card-numeric-cont {
 	padding: 0px 5px 0px 5px;
-	width: 50%;
-	display: inline-block;
-	text-align:center;
+	/*width: 50%;*/
+	/*display: inline-block;*/
+	/*text-align:center;*/
+}
+.removeArrows::-webkit-inner-spin-button,
+.removeArrows::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	margin: 0;
 }
 .card-text-cont {
 	padding: 0px 5px 0px 5px;
-	width: 50%;
-	display: inline-block;
-	text-align: center;
+	/*width: 50%;*/
+	/*display: inline-block;*/
+	/*text-align: center;*/
 }
 
 

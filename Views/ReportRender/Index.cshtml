@@ -10,72 +10,76 @@
             dsobj = ViewBag.Fd.EbDataSource.FilterDialog;
         }
     }
+    Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
 
 <script type="text/javascript" src="~/js/eb_common.js"></script>
-<body>
-    <div class="col-md-12 col-sm-12 c0l-lg-12">
-        <button class="btn run pull-right" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div">
-            <i class="fa fa-filter" aria-hidden="true"></i>
-        </button>
-    </div>
-    <div class="modal fade" id="RptModal" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"> <i class="fa fa-filter" aria-hidden="true"></i>Parameter div</h4>
-                </div>
-                <div class="modal-body">
-                    @{
-                        if (ViewBag.Fd.EbDataSource != null)
+@await Component.InvokeAsync("PageHeaderCommon")
+<div class="row splitdiv_parent">
+    <div class='sub-windows' id='sub_window_dv' tabindex='1'>
+        <div class='split-inner'>
+            <div class='col-md-3 padd-2 fd' id='sub_windows_sidediv_dv' style='display:block'>
+                <div class="pgHead"> Param window <div class="icon-cont  pull-right"><i class="fa fa-times" aria-hidden="true"></i></div></div>
+                @{
+                    if (ViewBag.Fd.EbDataSource != null)
+                    {
+                        if (ViewBag.Fd.EbDataSource.FilterDialog != null)
                         {
-                            if (ViewBag.Fd.EbDataSource.FilterDialog != null)
-                            {
-                                @await Component.InvokeAsync("ParameterDiv", new { paramDiv = dsobj });
-                                fd = true;
-                            }
+                            @await Component.InvokeAsync("ParameterDiv", new { paramDiv = dsobj });
+                            fd = true;
                         }
                     }
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" id="run">Submit</button>
-                </div>
+                }
+            </div>
+            <div class='col-md-9' id='content_dv' style='height:inherit;padding-left: 0px !important;padding-right: 0px !important;'>
+                <iframe id="reportIframe" class="reportIframe"></iframe>
             </div>
         </div>
     </div>
-    <iframe id="reportIframe" class="reportIframe"></iframe>
-</body>
+</div>
 
-
-<script>
-    $(document).ready(function () {
+@section EbHead {
+    <script>
+    this.menuBarObj = new MenuBarCommon();
+    $("#obj_icons").append(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>`);
+    $("#obj_icons").append(`<button class="btn run" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div"><i class="fa fa-filter" aria-hidden="true"></i></button>`);
+    //$(document).ready(function () {
         if ('@fd' === 'True') {
-            $("#RptModal").modal();
+            $("#sub_windows_sidediv_dv").show();
         }
         else {
+            $("#sub_windows_sidediv_dv").hide();
+            $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
             render();
         }
         $("#filter").on("click", function () {
-            $("#RptModal").modal();
+            if ($("#sub_windows_sidediv_dv").css("display") === "none") {
+                $("#sub_windows_sidediv_dv").show();
+                $("#content_dv").removeClass("col-md-12").addClass("col-md-9");
+            }
+            else {
+                $("#sub_windows_sidediv_dv").hide();
+                $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
+            }
         })
 
         $("#run").on("click", function () {
             render();
         });
 
-    });
+   // });
 
     function render() {
+        $("#sub_windows_sidediv_dv").css("display", "none");
+        $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
                 $.LoadingOverlay("show");
             var ParamsArray = [];
             var filter_control_list = $("#all_control_names").val();
@@ -91,7 +95,7 @@
                     ParamsArray.push(new fltr_obj(type, name, value));
                 }
             }
-            $.post('../ReportRender/Render',
+            @*$.post('../ReportRender/Render',
             {
                 refid:'@ViewBag.Refid',
                 Params: ParamsArray
@@ -99,12 +103,18 @@
             function(data){
                 $("#reportIframe").attr("src","../ReportRender/RenderReport");
                  $("#RptModal").modal('hide');
-     $.LoadingOverlay("hide");
-            });
-
+                    $.LoadingOverlay("hide");
+            });*@
+            $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${'@ViewBag.Refid'}&Params=${JSON.stringify(ParamsArray)}`);
+            $("#RptModal").modal('hide');
+            $.LoadingOverlay("hide");
     }
-</script>
+    </script>
+    }
 <style>
+    .sub-windows {
+        padding: 38px 0px 10px 0px !important;
+    } 
     select.selectpicker {
         display: block;
         margin: 0 auto;
@@ -116,7 +126,8 @@
     }
 
     .reportIframe {
-        width: 100%;
-        height: 90vh;
+        /*width: 100%;
+        height: 90vh;*/
+        border-radius: 0px !important;
     }
 </style>

@@ -1,6 +1,6 @@
 ﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList) {
     this.menuBarObj = new MenuBarCommon();
-    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn'><i class="material-icons">save</i></button>`);
+    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.appCollection = appCollection.$values;
     this.roleId = roleId;
     this.roleInfo = roleInfo;
@@ -219,20 +219,20 @@
     this.setTable = function (t, cols, dt) {
         var tbl = "#tbl" + t;
         var table = $(tbl).DataTable({
-            scrollY: "300px",
-            scrollX: true,
-            scrollCollapse: true,
+            //scrollY: true,
+            //scrollX: true,
+            //scrollCollapse: true,
             paging: false,
             dom: 't',
             //ordering: false,
-            fixedHeader: true,
-            autoWidth: true,
+            //fixedHeader: true,
+            //autoWidth: true,
             columns: cols,
             data: dt,
-            fixedColumns: {
-                leftColumns: 1,
-                //rightColumns: 1
-            },
+            //fixedColumns: {
+            //    leftColumns: 1,
+            //    //rightColumns: 1
+            //},
             //drawCallback: function () {
             //    $(".dataTables_scrollHeadInner").css({ "width": "100%" });
             //    $(".dataTables_scrollHeadInner .table ").css({ "width": "100%" });
@@ -316,10 +316,12 @@
     //    });
     //}
     this.tblColumnRender = function (data, type, row, meta) {
+        var perstr = data.substring(0, 14);
+        var title = data.substring(14);
         var checked = '';
-        if (this.permission.indexOf(data) !== -1)
+        if (this.permission.indexOf(perstr) !== -1)
             checked = 'checked';
-        return `<input type='checkbox' ${checked} class="checkboxclass" data-id=${data}>`;
+        return `<input type='checkbox' ${checked} class="checkboxclass" data-id=${perstr} title='${title}'>`;
     }.bind(this);
 
 
@@ -368,7 +370,7 @@
                         var appindex = $("#selectApp").find(":selected").attr("data-index");
                         for (y = 0; y < value.Operations.$values.length; y++) {
                             var permissionString = this.appCollection[appindex].Id.toString().padStart(2, "0") + "-" + value.Op_Id.toString().padStart(2, "0") + "-" + b.Obj_Id.toString().padStart(5, "0") + "-" + y.toString().padStart(2, "0");
-                            obt["x" + (y + 1)] = permissionString;
+                            obt["x" + (y + 1)] = permissionString + b.Obj_Name + " -> " + value.Operations.$values[y] ;
                         }
                         tblData.push(obt);
                     }.bind(this));
@@ -394,7 +396,7 @@
             //}
         }.bind(this));
         if ($('#divObjList').children().length === 0) 
-            $('#divObjList').append(`<div style="text-align: center; margin-top: 12%; font-size: 28px; color: #bbb; "> Nothing to Display </div>`);
+            $('#divObjList').append(`<div style="text-align: center; margin-top: 20%; font-size: 28px; color: #bbb; "> Nothing to Display </div>`);
         
 
 

@@ -2,7 +2,7 @@
     this.whichMode = mode;
     //CreateEdit = 1, View = 2, MyProfileView = 3
     this.menuBarObj = new MenuBarCommon();
-    this.menuBarObj.BuildMenu(`<button id="btnCreateUser" class='btn'><i class="material-icons">save</i></button>`);
+    this.menuBarObj.BuildMenu(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.userinfo = userinfo;
     this.customRoles = cusroles;
     this.culture = culture;

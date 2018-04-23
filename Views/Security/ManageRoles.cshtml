@@ -17,8 +17,8 @@
         padding-bottom: 15px;
     }
 </style>
-<div class="center" style="padding: 4% 7% 0% 7%; height: 100vh;">
-    <section class="outer-section-manageroles" style="height: 100%;">
+<div class="center" style="padding: 4% 0% 0% 1%; height: 100vh; background: white;font-family: open sans;font-weight: 300;">
+    @*<section class="outer-section-manageroles" style="height: 100%;">*@
         @await Component.InvokeAsync("ManageRoles", new { itemid = ViewBag.itemid })
-    </section>
+    @*</section>*@
 </div>

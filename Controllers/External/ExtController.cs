@@ -251,7 +251,7 @@ namespace ExpressBase.Web.Controllers
                     var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
-                        return RedirectToAction("EbOnBoarding", new RouteValueDictionary(new { controller = "Tenant", action = "EbOnBoarding" })); // convert get to post
+                        return RedirectToAction("EbOnBoarding"); // convert get to post
                 }
                 else
                     return RedirectToAction(RoutingConstants.INDEX, new RouteValueDictionary(new { controller = RoutingConstants.EXTCONTROLLER, action = RoutingConstants.INDEX })); // convert get to post;
@@ -265,6 +265,51 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult EbOnBoarding()
+        {
+            ViewBag.useremail = TempData.Peek("reqEmail");
+            var ebids = this.ServiceClient.Get<AutoGenEbIdResponse>(new AutoGenEbIdRequest() { WhichId = "signup" });
+            //for solution id WhichId = "sid",for appid WhichId = "appid"
+            ViewBag.iSid = ebids.Sid;
+            ViewBag.AppId = ebids.AppId;
+            return View();
+        }
+
+        [HttpPost]
+        public void ProfileSetup(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
+            {
+                Op = "updatetenant",
+                Name = req["Name"],
+                Company = req["Company"],
+                Password = req["Password"],
+                Country = req["Country"],
+                Token = ViewBag.token,
+                Email = req["Email"]
+            });
+            if (res.id >= 0)
+            {
+                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = req["Email"],
+                    Password = (req["Password"] + req["Email"]).ToMD5Hash(),
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
+                    //UseTokenCookie = true
+                });
+                if (authResponse != null)
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    this.ServiceClient.BearerToken = authResponse.BearerToken;
+                    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+                }
+            }
+        }
 
         private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
         {

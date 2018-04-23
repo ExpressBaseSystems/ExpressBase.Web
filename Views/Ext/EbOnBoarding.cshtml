@@ -15,7 +15,7 @@
 <div class="row tAddAcc height-100">
     <section class="card">
         <div class="card--content mr-l-20" id="prof-info">
-            <div class="loader_top"></div>
+            <div class="loader_top" id="loader_profile"></div>
             <div class="col-md-8 card--form">
                 <div class="products-head">
                     <h4>Profile Setup</h4>
@@ -61,8 +61,8 @@
                 </div>
                 <div class="card--content-footer">
                     <div class="form-inline">
-                        <a id="prof-info-skip" class="btn pull-right prof-info-skip">Next <span class="fa fa-chevron-right mr-l-10" aria-hidden="true"></span></a>
-                        <button id="save-profile" onclick="$('#prof-form-sub').click()" type="submit" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i><i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
+                        <a id="prof-info-skip" class="btn pull-right btn-success prof-info-skip">Next <span class="fa fa-chevron-right mr-l-10" aria-hidden="true"></span></a>
+                        <button id="save-profile" onclick="$('#prof-form-sub').click()" type="submit" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>
@@ -151,6 +151,7 @@
             </div>
         </div>
         <div class="card--content mr-l-10 prod-info" id="product-info">
+            <div class="loader_top" id="loader_product-info"></div>
             <div class="col-md-8 card--form">
                 <div class="products-head">
                     <h4>Select Products</h4>
@@ -218,7 +219,7 @@
                 </div>
                 <div class="card--content-footer">
                     <div class="form-inline">
-                        <button id="save-subscrip" type="submit" onclick="$('#sol-form-sub').click();" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i> <i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
+                        <button id="save-subscrip" type="submit" onclick="$('#sol-form-sub').click();" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
                         <button id="app-next" class="btn pull-right mr-10" style="display:none;"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button>
                         <button id="plan-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
                     </div>
@@ -247,12 +248,13 @@
             </div>
         </div>
         <div class="card--content mr-l-10 app-info" id="app-info">
+            <div class="loader_top" id="loader_app_info"></div>
             <div class="col-md-8 card--form">
                 <div class="products-head">
                     <h4><span class="sname_fAppcreate" id="solutionName-app"></span><span class="slash">/</span>Create Your First Application</h4>
                 </div>
                 <div class="card--content-body" id="app-container">
-                    <form class="app-form" action="../Tenant/EbOnBoarding" method="post" id="app-form">
+                    <form class="app-form" action="../Tenant/CreateApplication" method="post" id="app-form">
                         <label>Application Type</label>
                         <div class="col-md-12 pd-0 apptypes-cont">
                             <div class="col-md-4 apps-wrapper">
@@ -271,7 +273,7 @@
                             </div>
                             <div class="col-md-4 apps-wrapper">
                                 <div class="apps-wrapper-fchiled" type="3" tabindex="1">
-                                    <img class="apptype" src="~/images/svg/chat_.svg" />
+                                    <img class="apptype" src="~/images/svg/chat1.svg" />
                                     <div class="app-type-name">Bot</div>
                                     <div class="overlay_mark"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
                                 </div>
@@ -300,7 +302,7 @@
                 </div>
                 <div class="card--content-footer">
                     <div class="form-inline">
-                        <button id="save-application" type="submit" onclick="$('#app-form-sub').click();" class="btn btn-success pull-right">finish <i class="fa fa-spinner fa-lg fa-spin" style="display:none;color:white;" aria-hidden="true"></i></button>
+                        <button id="save-application" type="submit" onclick="$('#app-form-sub').click();" class="btn btn-success pull-right">finish</button>
                         <button id="prod-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
                     </div>
                 </div>
@@ -360,7 +362,6 @@
 <script>
     $(document).ready(function () {
         var boarding = new EbOnBoarding();
-        $(".loader_top").EbLoader("show");
     });
     $.getJSON("http://freegeoip.net/json/", function (data) {
         var country = data.country_name;

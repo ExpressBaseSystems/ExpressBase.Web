@@ -24,8 +24,6 @@ using Newtonsoft.Json;
 using ExpressBase.Common.Connections;
 using ExpressBase.Common.Constants;
 
-
-
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -38,40 +36,6 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index()
         {
             return View();
-        }
-
-        [HttpPost]
-        public void ProfileSetup(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest {
-                Op = "updatetenant",
-                Name = req["Name"],
-                Company = req["Company"],
-                Password = req["Password"],
-                Country = req["Country"],
-                Token = ViewBag.token,
-                Email = req["Email"] 
-            });           
-            if (res.id >= 0)
-            {
-                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
-                {
-                    provider = CredentialsAuthProvider.Name,
-                    UserName = req["Email"],
-                    Password = (req["Password"] + req["Email"]).ToMD5Hash(),
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
-                    //UseTokenCookie = true
-                });
-                if (authResponse != null)
-                {
-                    CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                    this.ServiceClient.BearerToken = authResponse.BearerToken;
-                    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-                }               
-            }
         }
 
         [HttpGet]
@@ -91,18 +55,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Connections = JsonConvert.SerializeObject(resp.EBSolutionConnections);
             ViewBag.SolutionInfo = resp.Data;
             return View();
-        }     
-
-        [HttpGet]
-        public IActionResult EbOnBoarding()
-        {
-            ViewBag.useremail = TempData.Peek("reqEmail");
-            var ebids = this.ServiceClient.Get<AutoGenEbIdResponse>(new AutoGenEbIdRequest() { WhichId = "signup" });
-            //for solution id WhichId = "sid",for appid WhichId = "appid"
-            ViewBag.iSid = ebids.Sid;
-            ViewBag.AppId = ebids.AppId;
-            return View();
-        }
+        }            
         
         [HttpPost]
         public void EbCreateSolution(int i)
@@ -116,7 +69,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult EbOnBoarding(int i)
+        public IActionResult CreateApplication(int i)
         {
             var req = this.HttpContext.Request.Form;
             string apptype = req["AppType"];

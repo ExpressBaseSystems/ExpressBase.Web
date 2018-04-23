@@ -158,10 +158,16 @@
     background: white;
     position: relative;
 }
+.slick-slider {
+    user-select:text !important;
+}
+.pgHead {
+    border-radius:0px;
+}
 .dotsDiv {
     height: 40px;
     position: absolute;
-    background: white;
+    /*background: white;*/
     width: auto;
     top: 0;
     left: 0;
@@ -169,7 +175,7 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 40px;
-    z-index:1;
+    z-index: 1;
 }
 
 .dotstable .dottool {

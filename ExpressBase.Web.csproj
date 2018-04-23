@@ -32,7 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
     <Folder Include="Views\Shared\Components\FilterDialogBuilder\" />
     <Folder Include="Views\Shared\Components\TenantSideMenu\" />
   </ItemGroup>

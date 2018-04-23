@@ -136,7 +136,7 @@
                     var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                     $.each($subRows, function (i, row) {
                         var key = $(row).attr("name").slice(0, -2);
-                        var val = $(row).find(".pgTdval input").val();
+                        var val = $(row).data("pgValue");
                         value.$values[key] = val;
                     });
                     return value;
@@ -197,8 +197,8 @@
         var Obj = {};
         var DictMetas = [];
         var sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
-        var cardFields = this.ParentPG.PropsObj.CardFields.$values;
-        $.each(cardFields, function (i, field) {
+        var customFields = this.ParentPG.PropsObj[sourceProp].$values;
+        $.each(customFields, function (i, field) {
             var fieldMeta = {};
             var objType = "Eb" + field.ObjType;
             var _propName = field.Name;
@@ -363,8 +363,8 @@
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);
             this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
         }
-        var res = this.getvaluesFromPG();
-        $('#txtValues').val(JSON.stringify(res) + '\n\n');
+        //var res = this.getvaluesFromPG();
+        //$('#txtValues').val(JSON.stringify(res) + '\n\n');
         this.PropertyChanged(this.PropsObj, this.CurProp);
     };
 

@@ -694,10 +694,12 @@ var DvContainerObj = function (settings) {
 
     this.focusDot = function () {
         $(".dot").each(function (i, obj) {
-            if ($(obj).attr("data-mapid") === focusedId)
-                $(this).children().find("i").css("color", "blue");
-            else
-                $(this).children().find("i").css("color", "black");
+            if ($(obj).attr("data-mapid") === focusedId) {
+                $(this).css("box-shadow", "rgb(19, 118, 218) 0px 0px 6px 1px");
+            }
+            else {
+                $(this).css("box-shadow", "#444");
+            }
         });
 
         if ($("#prev").hasClass("slick-disabled"))

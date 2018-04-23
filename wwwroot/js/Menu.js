@@ -37,11 +37,11 @@
     this.showModal = function () {
         if ($.isEmptyObject(this.resultObj)) {
             $("#ObjModal").modal('show');
-            $("#quick_menu_load").EbLoader("show");
+            //$("#quick_menu_load").EbLoader("show");
             $("#EbsideBar").empty();
             $.get("../TenantUser/getSidebarMenu", function (result) {
                 $("#EbsideBar").append(result);
-                $("#quick_menu_load").EbLoader("hide");
+                //$("#quick_menu_load").EbLoader("hide");
                 $(".Obj_link").off("click").on("click", this.appendObType.bind(this));
                 $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
                 $(".list-group-item[data-toggle=collapse]").off("click").on("click", this.changeIcon.bind(this));

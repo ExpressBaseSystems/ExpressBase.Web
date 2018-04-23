@@ -54,7 +54,7 @@
 }
 
 .padd-2 {
-    padding: 4px;
+
 }
 
 .dv .toolbar-com {
@@ -199,9 +199,9 @@
     background-color: #ccc;
     padding: 6px;
 }
-.dot a i:hover{
-    color:blue!important;
-}
+    /*.dot a i:hover {
+        color: #444 !important;
+    }*/
 
 .ppcont {
     width: 225px;
@@ -211,15 +211,18 @@
     z-index: 3;
     box-shadow: -4px 5px 8px 0px rgba(189,189,189,1);
 }
+#filterBox {
+    padding: 5px 15px;
+}
 
 .filterCont {
-    width: 200px;
+    width: 300px;
     position: absolute;
     height: 100%;
+    overflow: hidden;
     z-index: 4;
-    border-radius: 10px 10px 4px 4px;
-    //box-shadow: 11px 6px 21px 1px rgba(189,189,189,1);
-    box-shadow: 0px 0px 14px 0px rgba(189,189,189,1);
+    border-radius: 2px;
+    box-shadow: 10px 0px 10px 0px rgba(0, 0, 0, 0.12), 5px 0px 5px 0px rgba(0, 0, 0, 0.15);
 }
 .relatedCont {
     width: 300px;

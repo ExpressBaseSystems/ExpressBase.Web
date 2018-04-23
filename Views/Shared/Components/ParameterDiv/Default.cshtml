@@ -5,24 +5,30 @@
 @section EbHead {
     <script>
     @Html.Raw(ViewBag.HtmlHead);
-        </script>
-    }
+    </script>
+}
 
 <div id='filterBox'>
     @Html.Raw(ViewBag.HtmlBody);
 </div>
+
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css">
+
 <script>
-    
-    //$(document).ready(function () {
-    //    initFilterDialogCtrls($('#filterBox'));    //});
-    //function initFilterDialogCtrls($filterBox) {
-    //    this.$filterBox = $filterBox;
-    //    $.each(this.$filterBox.children('div'), function (k, cObj) {
-    //        if ($(cObj).attr('ctype') === 'Date') {
-    //            var $input = $(cObj).children().find('input');
-    //            $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
-    //            $input.next().children('i').off('click').on('click', function () { $input.datetimepicker('show'); });
-    //        }
-    //    }.bind(this));
-    //}
+
+    $(document).ready(function () {
+        initFilterDialogCtrls($('#filterBox'));
+    });
+
+    function initFilterDialogCtrls($filterBox) {
+        this.$filterBox = $filterBox;
+        $.each(this.$filterBox.children('div'), function (k, cObj) {
+            if ($(cObj).attr('ctype') === 'Date') {
+                var $input = $(cObj).children().find('input');
+                $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
+                $input.next().children('i').off('click').on('click', function () { $input.datetimepicker('show'); });
+            }
+        }.bind(this));
+    }
 </script>

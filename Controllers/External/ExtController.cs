@@ -507,6 +507,8 @@ namespace ExpressBase.Web.Controllers
                         Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
                         Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
                         Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+                        Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
+
                         //Response.Cookies.Append(CacheConstants.X_SS_PID, authResponse.SessionId, options);
 
                         if (req.ContainsKey("remember"))

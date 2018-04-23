@@ -144,9 +144,9 @@
                 $subRow_html = $(this.getExpandedRows(_meta, _obj, name));
                 $subRow_html.find("tr").addBack("tr").attr("tr-for", type);
                 if ($subRow_html.length > 0)
-                    subRow_html = $subRow_html[0].outerHTML;
+                    subRow_html = $subRow_html.wrapAll('<div>').parent().html();
                 else
-                    value23 = `(!?No ${(meta.alias || name)} found!)`;
+                    value23 = `(!No ${(meta.alias || name)} found)`;
             }
             else {  //  If expandable
                 var _meta = meta.submeta;

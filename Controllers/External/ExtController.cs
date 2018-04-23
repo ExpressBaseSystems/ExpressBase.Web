@@ -269,10 +269,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult EbOnBoarding()
         {
             ViewBag.useremail = TempData.Peek("reqEmail");
-            var ebids = this.ServiceClient.Get<AutoGenEbIdResponse>(new AutoGenEbIdRequest() { WhichId = "signup" });
-            //for solution id WhichId = "sid",for appid WhichId = "appid"
+            var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
             ViewBag.iSid = ebids.Sid;
-            ViewBag.AppId = ebids.AppId;
             return View();
         }
 

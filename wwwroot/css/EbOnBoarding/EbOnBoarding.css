@@ -832,13 +832,13 @@
 }
 
 /*t addaacc latest----*/
-/*.sol-info {
+.sol-info {
     display: none;
 }
 
 .prod-info {
     display: none;
-}*/
+}
 
 .prof-info-skip {
     display: none;
@@ -885,9 +885,9 @@
     display: inline-block;
 }
 
-/*.app-info {
+.app-info {
     display: none;
-}*/
+}
 
 .apps-wrapper {
     padding: 15px;
@@ -1059,3 +1059,4 @@
     background-color: #eee;
     border: 1px solid #ccc;
 }
+.

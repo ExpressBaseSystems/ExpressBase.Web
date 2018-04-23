@@ -52,7 +52,7 @@
     }
 
     .textdiv1 {
-        width: 70%;
+        width: 65%;
         display: inline-block;
         vertical-align: top;
     }
@@ -68,7 +68,7 @@
         border: 1px solid;
         border-color: #ccc;
         padding: 10px;
-        height: 300px;
+        height: 450px;
         border-radius: 6px;
         overflow: auto;
         margin: 0px;
@@ -101,53 +101,51 @@
 
 
 </style>
-<div>
-    <form id="formManageRoles" data-toggle="validator" method="POST" action="">
-        <div class="row" style="margin:0px">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Name</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="txtRoleName" data-id=@ViewBag.RoleId title="Role Name" required />
-                        <span class="input-group-addon" id="spanRoleName" style="background-color: transparent;border: none;"><i class="fa fa-times" aria-hidden="true" style="color: transparent"></i></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label style="font-family: open sans; font-weight: 300; display:inline-block">Application</label>
-                    <select class="form-control" id="selectApp" title="Application"></select>
+<div class="row">
+    <div class="col-md-3" style="padding-right:0px;">
+        <form id="formManageRoles" data-toggle="validator" method="POST" action="">
+            <div class="form-group">
+                <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Name</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="txtRoleName" data-id=@ViewBag.RoleId title="Role Name" required />
+                    <span class="input-group-addon" id="spanRoleName" style="background-color: transparent;border: none;"><i class="fa fa-times" aria-hidden="true" style="color: transparent"></i></span>
                 </div>
             </div>
-            <div class="col-md-8">
-                <div class="form-group">
-                    <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Description</label>
-                    <textarea class="form-control" id="txtRoleDescription" style="height:58px;width:100%;resize:none;" title="Role Description" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label style="font-family: open sans; font-weight: 300; display:inline-block">Is Anonymous Role</label>
-                    <input id="chkboxAnonymous" type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No">
-                </div>
+            <div class="form-group" style="width: 89%;">
+                <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Description</label>
+                <textarea class="form-control" id="txtRoleDescription" style="height:58px;width:100%;resize:none;" title="Role Description" required></textarea>
+            </div>
+            <div class="form-group" style="width: 89%;">
+                <label style="font-family: open sans; font-weight: 300; display:inline-block">Application</label>
+                <select class="form-control" id="selectApp" title="Application"></select>
+            </div>
+            <div class="form-group">
+                <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Type</label>
+                <input id="chkboxAnonymous" type="checkbox" data-toggle="toggle" data-on="Anonymous" data-off="Normal">
             </div>
             <input type="submit" id="hiddenSubmitRole" style="display:none;" />
-        </div>
-    </form>
-    <div style="padding: 0px 15px;">
-        <ul id="ulTabOnMngRole" class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#divObjList">Permissions</a></li>
-            <li><a data-toggle="tab" href="#divroles">Sub Roles</a></li>
-            <li><a data-toggle="tab" href="#divusers">Users</a></li>
-            <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
-        </ul>
-        <div class="tab-content" style="padding: 15px 0px;">
-            <div id="divObjList" class="row tab-pane fade in active" style="margin:0px; height: 345px; overflow: auto;"></div>
-            <div id="divroles" class="tab-pane fade"></div>
-            <div id="divusers" class="tab-pane fade"></div>
-            <div id="divconstraints" class="tab-pane fade">
-                <div style="text-align: center; margin: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>
+        </form>
+    </div>
+    <div class="col-md-9">
+        <div style="padding: 0px 15px;">
+            <ul id="ulTabOnMngRole" class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#divObjList">Permissions</a></li>
+                <li><a data-toggle="tab" href="#divroles">Sub Roles</a></li>
+                <li><a data-toggle="tab" href="#divusers">Users</a></li>
+                <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
+            </ul>
+            <div class="tab-content" style="padding: 15px 0px;">
+                <div id="divObjList" class="row tab-pane fade in active" style="margin:0px; height: 530px; overflow-x: auto; overflow-y:auto; width: 955px;"></div>
+                <div id="divroles" class="tab-pane fade"></div>
+                <div id="divusers" class="tab-pane fade"></div>
+                <div id="divconstraints" class="tab-pane fade">
+                    <div style="text-align: center; padding-top: 22%; font-size: 32px; color: #bbb; "> Coming Soon </div>
+                </div>
             </div>
         </div>
+        @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
+        @*onclick="$('#hiddenSubmitRole').click()"*@
     </div>
-    @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
-    @*onclick="$('#hiddenSubmitRole').click()"*@
 </div>
 
 

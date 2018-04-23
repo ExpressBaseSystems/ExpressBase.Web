@@ -40,19 +40,19 @@
                     }
                     <button class="btn notification_menu">
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
-                    </button> 
-                    <div class="dropdown obj_dash_proimage_drp">                        
+                    </button>
+                    <div class="dropdown obj_dash_proimage_drp">
                         <img src="~/images/proimg.jpg" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle" />
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <ul class="drp_ul">
                                 <li class="drp_item border_b" style="height:50px;">
                                     <img src="~/images/proimg.jpg" class="proimage_inner" /><div class="user_info">
-                                    <h4>Sample name</h4>
-                                    <p>sample@gmail.com</p>
+                                        <h4>@ViewBag.UserDisplayName</h4>
+                                        <p>@ViewBag.email</p>
                                     </div>
                                 </li>
-                                <li class="drp_item border_b"><a><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
-                                <li class="drp_item"><a><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
+                                <li class="drp_item border_b"><a onclick="LoadMyProfile()"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                <li class="drp_item"><a href="./Logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                             </ul>
                         </div>
                     </div>
@@ -232,6 +232,14 @@
 
 
 
+
+
+
+
+
+
+
+
 <path style="fill:#FFFFFF;" d="M117.586,71.673h276.828v311.43l-57.218,57.221h-219.61V71.673z" />
 
 
@@ -240,7 +248,23 @@
 
 
 
+
+
+
+
+
+
+
+
 <path style="fill:#FFCA4F;" d="M337.193,383.106h57.218l-57.218,57.221V383.106z" />
+
+
+
+
+
+
+
+
 
 
 
@@ -261,7 +285,23 @@
 
 
 
+
+
+
+
+
+
+
+
 <path style="fill:#FFCA4F;" d="M242.616,290.481l-40.247,21.682l18.587,18.589l21.663-40.271H242.616z" />
+
+
+
+
+
+
+
+
 
 
 
@@ -277,6 +317,14 @@
 
 
 
+
+
+
+
+
+
+
+
 <path style="fill:#15BDB1;" d="M207.801,317.602c0.391-3.714-1.199-5.718-5.435-5.437L56.998,457.534l5.435,5.435L207.801,317.602z" />
 
 
@@ -285,7 +333,23 @@
 
 
 
+
+
+
+
+
+
+
+
 <path style="fill:#ECF0F1;" d="M75.584,476.12l-18.587-18.587l-4.59,4.59l18.587,18.587L75.584,476.12z" />
+
+
+
+
+
+
+
+
 
 
 
@@ -302,7 +366,23 @@
 
 
 
+
+
+
+
+
+
+
+
 <path style="fill:#666666;" d="M245.234,288.626l-0.774-0.774l-16.937,10.754l6.93,6.933L245.234,288.626z" />
+
+
+
+
+
+
+
+
 
 
 
@@ -312,6 +392,10 @@
 
 <path style="fill:#15BDB1;" d="M215.518,325.316c3.714-0.391,5.718,1.199,5.435,5.437L75.584,476.123l-5.435-5.437L215.518,325.316z
 	" />
+
+
+
+
 
 
 
@@ -448,6 +532,24 @@
                 $('#minmize').css("transform", "none");
                 $(".tab-cont-common").css("height","calc(100vh - 178px)");
             }
+        }
+
+        function LoadMyProfile() {
+            event.preventDefault();
+            //window.open("../Security/ManageUser?itemid=" + $("#hiddenTxtUserId").val(), "_blank");
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", "../Security/ManageUser");
+            _form.setAttribute("target", "_blank");
+            var input = document.createElement('input');
+            input.type = 'hidden'; input.name = "itemid"; input.value = "-1";
+            _form.appendChild(input);
+            var mode = document.createElement('input');
+            mode.type = 'hidden'; mode.name = "Mode";
+            mode.value = '3'; _form.appendChild(mode);
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
         }
 
 </script>

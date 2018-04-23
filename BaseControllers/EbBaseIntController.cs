@@ -90,6 +90,7 @@ namespace ExpressBase.Web.Controllers
                     controller.ViewBag.cid = jwtToken.Payload[TokenConstants.CID];
                     controller.ViewBag.wc = jwtToken.Payload[TokenConstants.WC];
                     controller.ViewBag.email = jwtToken.Payload[TokenConstants.EMAIL];
+                    controller.ViewBag.UserDisplayName = context.HttpContext.Request.Cookies["UserDisplayName"];
                     controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
                     controller.ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
                     controller.ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);

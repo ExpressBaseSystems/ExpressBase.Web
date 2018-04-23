@@ -46,14 +46,6 @@
             <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd get-start-sec" style="padding-bottom: 3em;padding-top: 4em;">
                 <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 callfaction_cont">
                     @*<div class="no-creditcared">No credit card required.</div>*@
-                    <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
-                        <div class="input-group">
-                            <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email">
-                            <span class="input-group-btn">
-                                <button type="submit" class="btn getstarted">Get Started</button>
-                            </span>
-                        </div>
-                    </form>
                     @if (ViewBag.Env == "Staging" || ViewBag.Env == "Development")
                     {
                         <form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">

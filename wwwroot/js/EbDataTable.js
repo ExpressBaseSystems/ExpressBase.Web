@@ -337,6 +337,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.table_jQO.append($(this.getFooterFromSettingsTbl()));
 
+        this.table_jQO.children("tfoot").hide();
+
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
@@ -392,7 +394,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
         chkObj.sWidth = "10px";
         chkObj.orderable = false;
-        chkObj.bVisible = true;
+        chkObj.bVisible = false;
         chkObj.name = "checkbox";
         chkObj.Type = 3;
         chkObj.render = this.renderCheckBoxCol.bind(this);
@@ -1227,10 +1229,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //if (!this.isContextual)
                 dvcontainerObj.appendRelatedDv(this.tableId);
                 dvcontainerObj.modifyNavigation();
+                $("#btnTogglePPGrid" + this.tableId).hide();
+                $("#"+this.tableId +"_fileBtns").hide();
             }
             this.addFilterEventListeners();
             //$("#" + this.tableId + "_fileBtns").hide();
-            $("#btnTogglePPGrid" + this.tableId).hide();
+           
         }
     };
 

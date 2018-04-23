@@ -128,8 +128,8 @@
         else if (type === 23 || type === 15) {
             var value23 = "";
             if (type === 23) {    // If Dictionary Editor
-                var _obj = this.getDictMeta_Obj(value);
-                var _meta = this.CurDictMeta;
+                var _obj = this.getDictObj(value);
+                var _meta = this.getDictMeta(value);
                 var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                 $subRows.attr("tr-for", type);
                 this.getValueFuncs[name] = function () {
@@ -192,9 +192,22 @@
         return subRow_html;
     };
 
-    // gives dict Editor Sub metas
-    this.getDictMeta_Obj = function (value) {
+    // gives dict Editor SubObj
+    this.getDictObj = function (value) {
         var Obj = {};
+        var DictMetas = [];
+        var sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
+        var customFields = this.ParentPG.PropsObj[sourceProp].$values;
+        $.each(customFields, function (i, field) {
+            var objType = "Eb" + field.ObjType;
+            var _propName = field.Name;
+            Obj[_propName] = value.$values[_propName];
+        }.bind(this));
+        return Obj;
+    };
+
+    // gives dict Editor Sub metas
+    this.getDictMeta = function (value) {
         var DictMetas = [];
         var sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
         var customFields = this.ParentPG.PropsObj[sourceProp].$values;
@@ -205,11 +218,10 @@
             Object.assign(fieldMeta, getObjByval(AllMetas[objType], "name", "FieldValue"));
             fieldMeta.name = _propName;
             fieldMeta.alias = null;
-            Obj[_propName] = value.$values[_propName];
             DictMetas.push(fieldMeta);
             this.CurDictMeta = DictMetas;
         }.bind(this));
-        return Obj;
+        return DictMetas;
     };
 
     // gives expandable prop values as array

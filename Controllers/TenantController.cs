@@ -73,7 +73,14 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string apptype = req["AppType"];
-            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), });
+            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest {
+                AppName=req["AppName"],
+                AppType = Convert.ToInt32(req["AppType"]),
+                Description=req["DescApp"],
+                AppIcon=req["AppIcon"],
+                Sid = req["Sid"]
+            });
+
             if (resultlist.id > 0)
             {
                 TempData["SSO"] = "true";

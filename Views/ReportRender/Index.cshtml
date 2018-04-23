@@ -89,7 +89,10 @@
                     console.log($("#" + myarray[i]).val());
                     var type = $('#' + myarray[i]).attr('data-ebtype');
                     var name = $('#' + myarray[i]).attr('name');
-                    var value = $('#' + myarray[i]).val();
+                    if (type === "3")
+                        value = $("[name=" + myarray[i] + "]:checked").val()
+                    else
+                        value = $('#' + myarray[i]).val();
                     if (type === '6')
                         value = value.substring(0, 10);
                     ParamsArray.push(new fltr_obj(type, name, value));

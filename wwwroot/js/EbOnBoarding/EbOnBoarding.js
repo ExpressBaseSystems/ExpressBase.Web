@@ -85,12 +85,13 @@
         if (info) {
             $.ajax({
                 type: 'POST',
-                url: "../Tenant/ProfileSetup",
+                url: "../Ext/ProfileSetup",
                 beforeSend: function () {
-                    $("#save-profile i").show();
+                    $("#loader_profile").EbLoader("show");
                 },
                 data: $(e.target).serializeArray()
             }).done(function (data) {
+                $("#loader_profile").EbLoader("hide");
                 $('#eb-mesageBox').show().text("Profile Saved");
                 $('#eb-mesageBox').fadeOut(5000);
                 $("#save-profile").hide();
@@ -113,7 +114,7 @@
                 type: 'POST',
                 url: "../Tenant/EbCreateSolution",
                 beforeSend: function () {
-                    $("#save-subscrip i").show();
+                    $("#loader_product-info").EbLoader("show");
                 },
                 data: {
                     Sname: $("[name='Sname']").val().trim(),
@@ -124,6 +125,7 @@
                     ProfileInfo: $("[name='ProfileInfo']").val()
                 }
             }).done(function (data) {
+                $("#loader_product-info").EbLoader("hide");
                 $('#eb-mesageBox').show().text("Solution Created");
                 $('#eb-mesageBox').fadeOut(5000);
                 $("#app-info").show();
@@ -153,7 +155,7 @@
             scrollLeft: 1900
         }, 500);
     };
-   
+
     this.whichAppType = function (e) {
         var ob = $(e.target).closest(".apps-wrapper-fchiled");
         ob.addClass("appselected");
@@ -163,7 +165,7 @@
         $("[name='AppType']").val(parseInt(ob.attr("type")));
     };
     this.showLoaderOnAppSub = function (e) {
-        $("#save-application i").show();
+        $("#loader_app_info").EbLoader("show");
     };
 
     this.init = function () {     
@@ -177,7 +179,7 @@
         $("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));       
         $("#prof-info-skip,#plan-prev").on('click', this.scrollProfToLeft.bind(this));
         $("#prof-to-prev").on('click', this.scrollToProfSec.bind(this));
-        $("#s-info-skip").on('click', this.scrollToLast.bind(this));
+        $("#s-info-skip").on('click', this.scrollToProd.bind(this));
         $("#app-next").on('click', this.scrollToLast.bind(this));
         $("#prod-prev").on('click', this.scrollToProd.bind(this));
         $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));

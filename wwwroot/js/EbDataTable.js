@@ -463,7 +463,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
-        o.deferRender = true;
+        //o.deferRender = true;
         //o.scroller = true;
         o.language = {
             processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>", info: "_START_ - _END_ / _TOTAL_",
@@ -475,10 +475,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.aoColumns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
         //o.deferRender = true;
-        o.filter = true;
+        //o.filter = true;
         //o.select = true;
-        o.retrieve = true;
-        o.keys = true;
+        //o.retrieve = true;
+        //o.keys = true;
         //this.filterValues = this.getFilterValues();
         filterChanged = false;
         if (!this.isTagged)
@@ -803,6 +803,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
         //this.contextMenu();
+        //this.contextMenu4Label();
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
@@ -815,6 +816,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             selector: ".tablelink_" + this.tableId,
             items: {
                 "OpenNewTab": { name: "Open in New Tab", icon: "fa-external-link-square", callback: this.OpeninNewTab.bind(this) }
+            }
+        });
+    }
+
+    this.contextMenu4Label = function () {
+        $.contextMenu({
+            selector: ".labeldata",
+            items: {
+                "Copy": { name: "Copy", icon: "fa-external-link-square", callback: this.copyLabelData.bind(this) }
             }
         });
     }
@@ -898,6 +908,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         Obj.Params = this.filterValues;
         return Obj;
     };
+    this.copyLabelData = function (key, opt, event) {
+
+    }
 
     this.ModifyingDVs = function (parentName, source) {
         $.each(dvcontainerObj.dvcol, function (key, obj) {
@@ -1655,6 +1668,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     return parseFloat(data).toFixed(deci);
                 }
             }
+            else {
+                //this.ebSettings.Columns.$values[i].render = this.renderDataAsLabel.bind(this);
+            }
             this.ebSettings.Columns.$values[i].sClass = this.ebSettings.Columns.$values[i].className;
         }
         if (col.Type == parseInt(gettypefromString("Boolean"))) {
@@ -1668,6 +1684,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.Icon) {
                     this.ebSettings.Columns.$values[i].render = this.renderIconCol.bind(this);
                     //this.ebSettings.Columns.$values[i].mRender = this.renderIconCol.bind(this);
+                }
+                else {
+                    //this.ebSettings.Columns.$values[i].render = this.renderDataAsLabel.bind(this);
                 }
             }
         }
@@ -1686,6 +1705,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
                 this.ebSettings.Columns.$values[i].render = this.renderFBImage.bind(this);
+            }
+            else {
+                //this.ebSettings.Columns.$values[i].render = this.renderDataAsLabel.bind(this);
             }
         }
         //if (col.fontfamily !== 0) {
@@ -1837,6 +1859,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' />`;
         else
             return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' />`;
+    };
+
+    this.renderDataAsLabel = function (data) {
+        return `<label class='labeldata'>${data}</label>`;
     };
 
     this.start();

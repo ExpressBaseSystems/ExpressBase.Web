@@ -271,3 +271,11 @@ table.dataTable tbody td.dt-body-right {
 {
     width:100%;
 }
+
+.input-group .form-control:last-child, .input-group-addon:last-child, .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group > .btn, .input-group-btn:last-child > .dropdown-toggle, .input-group-btn:first-child > .btn:not(:first-child), .input-group-btn:first-child > .btn-group:not(:first-child) > .btn {
+    border-top-left-radius: 0;
+    border-radius: 0;
+    border-bottom: solid 1px #889;
+    margin-bottom: 5px;
+    height: 25px;
+}

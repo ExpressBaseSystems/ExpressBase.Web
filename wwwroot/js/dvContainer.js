@@ -297,7 +297,8 @@ var DvContainerObj = function (settings) {
     }.bind(this);
 
     this.drawdvFromTable = function (row, filter, celldata) {
-        $.LoadingOverlay("show");
+        //$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show", { maskItem: $("body") });
         this.rowData = row;
         this.filterValues = filter;
         this.cellData = celldata;
@@ -335,8 +336,10 @@ var DvContainerObj = function (settings) {
                             focusedId = key;
                     }.bind(this));
                     $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"));
-                    $.LoadingOverlay("hide");
+                    //$.LoadingOverlay("hide");
                 }
+
+                $("#eb_common_loader").EbLoader("hide", { maskItem: $("body") });
                 
             }
             else {
@@ -525,8 +528,8 @@ var DvContainerObj = function (settings) {
                     cssEase: 'ease-in',
                     //arrows: false,
                     //dots: true,
-                    prevArrow: "<button type='button' class='slick-prev pull-left'><i class='fa fa-angle-left' aria-hidden='true'></i></button>",
-                    nextArrow: "<button type='button' class='slick-next pull-right'><i class='fa fa-angle-right' aria-hidden='true'></i></button>"
+                    prevArrow: "<i class='pull-left fa fa-angle-left ' aria-hidden='true'></i>",
+                    nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 0;' aria-hidden='true'></i>"
                     //prevArrow: $("#prev"),
                     //nextArrow: $("#next")
                 });

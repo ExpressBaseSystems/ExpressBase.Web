@@ -28,7 +28,7 @@
                                         <p>sample@gmail.com</p>
                                     </div>
                                 </li>
-                                <li class="drp_item border_b"><a><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                <li class="drp_item border_b"><a onclick="LoadMyProfile()"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
                                 <li class="drp_item"><a href="./Logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                             </ul>
                         </div>
@@ -49,4 +49,23 @@
             $(".bread_cr_title #objname").text(`${name}`);
         };
     };
+
+    function LoadMyProfile() {
+        event.preventDefault();
+        //window.open("../Security/ManageUser?itemid=" + $("#hiddenTxtUserId").val(), "_blank");
+        var _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", "../Security/ManageUser");
+        _form.setAttribute("target", "_blank");
+        var input = document.createElement('input');
+        input.type = 'hidden'; input.name = "itemid"; input.value = "-1";
+        _form.appendChild(input);
+        var mode = document.createElement('input');
+        mode.type = 'hidden'; mode.name = "Mode";
+        mode.value = '3'; _form.appendChild(mode);
+        document.body.appendChild(_form);
+        _form.submit();
+        document.body.removeChild(_form);
+    }
+
 </script>

@@ -947,3 +947,52 @@ footer {
     padding-left: 15px;
     float: left;
 }
+
+/*eb loader css*/
+.eb-loader-prcbar {
+    width: 100%;
+    position: absolute;
+    overflow: hidden;
+    background-color: #ddd;
+    height: 5px;
+    z-index: 2;
+}
+
+    .eb-loader-prcbar:before {
+        display: block;
+        position: absolute;
+        content: "";
+        left: -200px;
+        width: 200px;
+        height: 5px;
+        background-color: #2eb959;
+        animation: loading 2s linear infinite;
+    }
+
+@keyframes loading {
+    from {
+        left: -200px;
+        width: 30%;
+    }
+
+    50% {
+        width: 30%;
+    }
+
+    70% {
+        width: 70%;
+    }
+
+    80% {
+        left: 50%;
+    }
+
+    95% {
+        left: 120%;
+    }
+
+    to {
+        left: 100%;
+    }
+}
+/*eb loader css end*/

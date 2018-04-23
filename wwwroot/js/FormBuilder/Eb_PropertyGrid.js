@@ -136,7 +136,7 @@
                     var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                     $.each($subRows, function (i, row) {
                         var key = $(row).attr("name").slice(0, -2);
-                        var val = $(row).find(".pgTdval input").val();
+                        var val = $(row).data("pgValue");
                         value.$values[key] = val;
                     });
                     return value;
@@ -144,9 +144,9 @@
                 $subRow_html = $(this.getExpandedRows(_meta, _obj, name));
                 $subRow_html.find("tr").addBack("tr").attr("tr-for", type);
                 if ($subRow_html.length > 0)
-                    subRow_html = $subRow_html[0].outerHTML;
+                    subRow_html = $subRow_html.wrapAll('<div>').parent().html();
                 else
-                    value23 = `(!?No ${(meta.alias || name)} found!)`;
+                    value23 = `(!No ${(meta.alias || name)} found)`;
             }
             else {  //  If expandable
                 var _meta = meta.submeta;
@@ -197,8 +197,8 @@
         var Obj = {};
         var DictMetas = [];
         var sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
-        var cardFields = this.ParentPG.PropsObj.CardFields.$values;
-        $.each(cardFields, function (i, field) {
+        var customFields = this.ParentPG.PropsObj[sourceProp].$values;
+        $.each(customFields, function (i, field) {
             var fieldMeta = {};
             var objType = "Eb" + field.ObjType;
             var _propName = field.Name;
@@ -363,8 +363,8 @@
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);
             this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
         }
-        var res = this.getvaluesFromPG();
-        $('#txtValues').val(JSON.stringify(res) + '\n\n');
+        //var res = this.getvaluesFromPG();
+        //$('#txtValues').val(JSON.stringify(res) + '\n\n');
         this.PropertyChanged(this.PropsObj, this.CurProp);
     };
 
@@ -594,8 +594,8 @@
         var name = e.target.value;
         $("#M_SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
         $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
-
-        $("#" + this.PropsObj.EbSid + ' span').text(name);
+        if ($(e.target).closest("tr").attr("tr-for") !== "23")
+            $("#" + this.PropsObj.EbSid + ' span').text(name);
 
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
         this.nameChanged(this.PropsObj);

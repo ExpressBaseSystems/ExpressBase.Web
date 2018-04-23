@@ -83,6 +83,7 @@
 .Eb_quick_menu .modal-header {
     padding: 0;
     border-bottom: none;
+    position:relative;
 }
     .Eb_quick_menu .modal-header .searchBox {
         margin-right: 15px;
@@ -235,4 +236,7 @@
 }
 .q_men_IMGsection img{
     height:38px;
+}
+.quick_menu_load{
+    bottom:0;
 }

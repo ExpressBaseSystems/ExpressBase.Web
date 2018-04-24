@@ -29,6 +29,8 @@ namespace ExpressBase.Web.Controllers
 
             DownloadFileResponse dfs = null;
 
+            ActionResult resp = new EmptyResult(); 
+
             try
             {
                 if (filename.StartsWith(StaticFileConstants.LOGO))
@@ -40,9 +42,14 @@ namespace ExpressBase.Web.Controllers
                             {
                                 FileName = filename,
                             });
-                    if (dfs.StreamWrapper != null)
-                        dfs.StreamWrapper.Memorystream.Position = 0;
                 }
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+                else
+                    resp = File("~/images/your_company_logo.png", "image/png");
 
             }
             catch (Exception e)
@@ -50,7 +57,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
 
-            return (dfs.StreamWrapper != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
+            return resp; 
         }
     }
 
@@ -64,6 +71,7 @@ namespace ExpressBase.Web.Controllers
             filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
 
             DownloadFileResponse dfs = null;
+            ActionResult resp = new EmptyResult();
 
             try
             {
@@ -80,17 +88,24 @@ namespace ExpressBase.Web.Controllers
                                     FileType = filename.Split(CharConstants.DOT)[1].ToLower()
                                 }
                             });
-                    if (dfs != null)
-                        dfs.StreamWrapper.Memorystream.Position = 0;
+
                 }
 
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+                else
+                    resp = File("~/images/nulldp.png", "image/png");
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
+                resp = new EmptyResult();
             }
 
-            return (dfs != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
+            return resp;
         }
 
         [HttpGet("static/{filename}")]
@@ -98,6 +113,7 @@ namespace ExpressBase.Web.Controllers
         {
             DownloadFileResponse dfs = null;
             HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ActionResult resp = new EmptyResult();
 
             try
             {
@@ -110,14 +126,20 @@ namespace ExpressBase.Web.Controllers
                                 FileType = filename.Split(CharConstants.DOT)[1].ToLower()
                             }
                         });
-                dfs.StreamWrapper.Memorystream.Position = 0;
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+                else
+                    resp = File("~/images/nullimage.png", "image/png");
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
+            return resp;
 
-            return (dfs != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
         }
 
         [HttpPost]
@@ -209,8 +231,10 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         this.FileClient.Post<bool>(uploadImageRequest);
-                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK",
-                            initialPreview = "<img src='"+ Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>"
+                        resp = new JsonResult(new UploadFileMqResponse
+                        {
+                            Uploaded = "OK",
+                            initialPreview = "<img src='" + Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>"
                         });
                     }
                 }

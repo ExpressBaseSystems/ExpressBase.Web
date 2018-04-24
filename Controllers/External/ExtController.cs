@@ -123,6 +123,8 @@ namespace ExpressBase.Web.Controllers
                         return RedirectToAction("UserDashboard", "TenantUser");
                 }
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            ViewBag.ErrorMsg = TempData["ErrorMessage"];
+
             return View();
         }
 
@@ -584,10 +586,8 @@ namespace ExpressBase.Web.Controllers
         {
             if (console == RoutingConstants.TC)
                 return RedirectToAction("SignIn", RoutingConstants.EXTCONTROLLER);
-            else if (console == RoutingConstants.DC)
-                return RedirectToAction("DevSignIn", RoutingConstants.EXTCONTROLLER);
             else
-                return RedirectToAction("UsrSignIn", RoutingConstants.EXTCONTROLLER);
+                return Redirect("/");
         }
 
         [HttpGet]

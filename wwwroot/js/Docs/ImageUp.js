@@ -174,7 +174,9 @@
         this.makeFup();
         _tComm.tagsinput();
         _tImg.tagsinput();
-        $(".upload_btn_docs").on("click", function () { $(".upload_sec").toggle("slide", { direction: "down" }, 300); });
+        $(".upload_btn_docs").on("click", function () {
+            $(".upload_sec").toggle("slide", { direction: "down" }, 300);
+        });
         $("body").off("click").on("click", ".save_tag", this._saveTag.bind(this));
     };
 

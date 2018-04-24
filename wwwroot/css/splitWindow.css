@@ -1,6 +1,7 @@
-﻿.closebtn{
-    cursor:pointer;
+﻿.closebtn {
+    cursor: pointer;
 }
+
 .my-container {
     background-color: #2b95a8;
     width: 100%;
@@ -8,17 +9,15 @@
 }
 
 .sub-windows-head {
-        height: 30px;
-        background-color: #489097;
-        width: 100%;
-    }
+    height: 30px;
+    background-color: #489097;
+    width: 100%;
+}
 
 .sub-windows {
-    background-color: #fafafa;
     float: none;
-    border: 1px solid #808080;
     display: inline-block;
-    /*height: calc(100vh - 60px);*/
+    height: calc(100vh - 60px);
     height: 100%;
     width: 100%;
     padding: 80px 60px 10px 60px;
@@ -43,7 +42,7 @@
     color: white;
 }
 
- .fd {
+.fd {
     background-color: white;
     height: inherit;
     //border-right: 1px solid;
@@ -54,7 +53,6 @@
 }
 
 .padd-2 {
-
 }
 
 .dv .toolbar-com {
@@ -68,7 +66,7 @@
     background-color: white;
 }
 
- .cont-wnd {
+.cont-wnd {
     overflow-x: scroll;
     white-space: nowrap;
     height: inherit;
@@ -88,30 +86,31 @@
     /*border-bottom: 1px solid #e7e7e7;*/
 }
 
- .toggled {
+.toggled {
     margin-left: -230px;
     z-index: 100;
 }
 
- .pg-toggled {
+.pg-toggled {
     margin-right: -230px;
     z-index: 100;
 }
 
- .sub-w {
+.sub-w {
     width: 100%;
     height: inherit;
     background-color: #2b95a8;
     display: inline-block;
 }
 
- .rotated {
+.rotated {
     -webkit-transform: rotate(180deg); /* Chrome, Safari 3.1+ */
     -moz-transform: rotate(180deg); /* Firefox 3.5-15 */
     -ms-transform: rotate(180deg); /* IE 9 */
     -o-transform: rotate(180deg); /* Opera 10.50-12.00 */
     transform: rotate(180deg); /* Firefox 16+, IE 10+, Opera 12.10+ */
 }
+
 .splitdiv_parent {
     white-space: nowrap;
     /*margin-top: 25px;*/
@@ -127,23 +126,29 @@
 .slick-prev {
     left: 10px !important;
 }
+
 .slick-next {
     right: 10px !important;
 }
-.slick-next:hover {
-    color: none !important;
-    background-color: none !important;
-}
+
+    .slick-next:hover {
+        color: none !important;
+        background-color: none !important;
+    }
+
 .slick-prev:hover {
     color: none !important;
     background-color: none !important;
 }
-.slick-track{
-    height:inherit !important;
+
+.slick-track {
+    height: inherit !important;
 }
+
 .slick-list {
     height: inherit !important;
 }
+
 .slick-arrow {
     z-index: 99;
     width: auto !important;
@@ -154,8 +159,9 @@
     background-color: #00000000 !important;
     top: calc(50vh - 40px) !important;
     position: absolute;
-    color: #336699; 
+    color: #336699;
 }
+
 .split-inner {
     width: 100%;
     height: 100%;
@@ -166,12 +172,15 @@
     background: white;
     position: relative;
 }
+
 .slick-slider {
-    user-select:text !important;
+    user-select: text !important;
 }
+
 .pgHead {
-    border-radius:0px;
+    border-radius: 0px;
 }
+
 .dotsDiv {
     height: 40px;
     position: absolute;
@@ -189,28 +198,33 @@
 .dotstable .dottool {
     display: inline;
 }
+
 .dotstable {
     display: table;
     margin: 0 auto;
     margin-top: 10px;
 }
+
 .dot {
     border-radius: 50%;
     background-color: #ccc;
     padding: 6px;
 }
-    /*.dot a i:hover {
+/*.dot a i:hover {
         color: #444 !important;
     }*/
 
 .ppcont {
-    width: 225px;
-    height: 100%;
+    width: 350px;
     position: absolute;
-    right: 8px;
+    right: 2px;
+    max-height: 100%;
+    height: 100%;
+    top: 2px;
     z-index: 3;
-    box-shadow: -4px 5px 8px 0px rgba(189,189,189,1);
+    box-shadow: -4px 2px 6px 0px rgba(0, 0, 0, 0.23), -14px 14px 16px 8px rgba(0, 0, 0, 0.01), -22px 24px 26px 16px rgba(0, 0, 0, 0.01);
 }
+
 #filterBox {
     padding: 5px 15px;
 }
@@ -220,10 +234,13 @@
     position: absolute;
     height: 100%;
     overflow: hidden;
+    left: 2px;
+    top: 2px;
     z-index: 4;
     border-radius: 2px;
-    box-shadow: 10px 0px 10px 0px rgba(0, 0, 0, 0.12), 5px 0px 5px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 2px 6px 0px rgba(0, 0, 0, 0.23), 14px 14px 16px 8px rgba(0, 0, 0, 0.01), 22px 24px 26px 16px rgba(0, 0, 0, 0.02);
 }
+
 .relatedCont {
     width: 300px;
     height: 100vh;
@@ -241,17 +258,20 @@
     margin: 5px 5px 5px 20px;
     list-style: none;
 }
-.relatedli:hover {
-    background-color: #e4e8f7;
-    cursor:unset;
-}
+
+    .relatedli:hover {
+        background-color: #e4e8f7;
+        cursor: unset;
+    }
+
 .relatedlabel {
     font-size: 13px;
     margin-left: 10px;
     font-family: open sans;
     font-weight: 100;
-    cursor:pointer;
+    cursor: pointer;
 }
+
 .relatedHeader {
     background-color: var(--ebbg);
     color: white;
@@ -265,9 +285,9 @@
     cursor: pointer;
 }
 
-.relatedIcon:hover{
-    background-color:red;
-}
+    .relatedIcon:hover {
+        background-color: red;
+    }
 
 #dotsDetail {
     /*width: 200px;
@@ -285,8 +305,8 @@
     padding: 7px;
 }
 
-#copydiv canvas{
-    width:200px;
+#copydiv canvas {
+    width: 200px;
 }
 /*#dotsul {
     padding-top: 10px;

@@ -38,7 +38,7 @@
     flex-flow: column;
     height: inherit;
     font-family: Tahoma;
-    width: calc( 100% + 2px);
+    width: 100%;
     /*overflow-x: auto;*/
     overflow-x: hidden;
     position: relative;

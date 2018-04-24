@@ -235,7 +235,7 @@ table.dataTable tbody td.dt-body-right {
 }
 
 .dataTables_scroll {
-    height: calc(100vh - 234px);
+    height: calc(100vh - 176px);
 }
 
 .dataTable tbody tr td {

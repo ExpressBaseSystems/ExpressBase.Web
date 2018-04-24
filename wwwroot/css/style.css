@@ -41,9 +41,10 @@ body {
     border-radius: 4px;
     font-family: var(--fontf);
     padding: 15px;
-    margin-top: 1em;
-    position: relative;
+    margin-top: 2em;
+    position: fixed;
     font-size: 15px;
+    margin-left: 28.2%;
 }
 .eb_login {
     height: 100vh;
@@ -70,7 +71,6 @@ body {
     height:inherit;
 }
 .login_container {
-    padding: 30px;
     max-width: 400px;
     width: 100% !important;
     background-color: white;
@@ -81,7 +81,11 @@ body {
     font-weight: 300;
     margin-top: 10%;
     box-shadow: var(--eb-shadow2);
+    position:relative;
 }
+    .login_container form {
+        padding: 30px;
+    }
     .login_container h1 {
         font-size: 1.8em;
         margin-bottom: 10px;

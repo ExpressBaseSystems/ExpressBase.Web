@@ -5,6 +5,7 @@
 <section class="eb_login">
     <div class="container">
         <div class="row">
+            <div class="log_error">Incorrect username or password.<i class="fa fa-close log_error_close" onclick="$('.log_error').hide();"></i></div>
             <form class="login_container" id="log_form" action="" method="post" data-toggle="validator">
                 <div class="login-sec-image text-center">
                     <img src="~/images/EB_Logo-png.png" />
@@ -71,7 +72,6 @@
                 </div>*@
             </form>
         </div>
-        <div class="log_error">Incorrect username or password.<i class="fa fa-close log_error_close" onclick="$('.log_error').hide();"></i></div>
     </div>
 </section>
 <script>$("#logNow").click(function (e) {

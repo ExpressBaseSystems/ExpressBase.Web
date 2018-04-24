@@ -414,14 +414,14 @@
         if (regex.test(val)) {
             this.txtEmail.css("border-color", "rgb(204, 204, 204)");
             this.spanEmail.children().remove();
-            this.spanEmail.append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
+            this.spanEmail.append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true" style="padding: 9px;"></i>`);
             this.spanEmail.attr("title", "Validating...");
             this.timer1 = setTimeout(function () { this.validateEmailAjaxCall() }.bind(this), 3000);
         }
         else {
             this.txtEmail.css("border-color", "rgb(204, 0, 0)");
             this.spanEmail.children().remove();
-            this.spanEmail.append(`<i class="fa fa-times" aria-hidden="true" style="color:red;"></i>`);
+            this.spanEmail.append(`<i class="fa fa-times" aria-hidden="true" style="color:red; padding: 9px;"></i>`);
             this.spanEmail.attr("title", "Invalid Email ID");
         }
     }
@@ -435,12 +435,12 @@
                 if (result) {
                     this.txtEmail.css("border-color", "rgb(204, 0, 0)");
                     this.spanEmail.children().remove();
-                    this.spanEmail.append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red;"></i>`);
+                    this.spanEmail.append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red; padding: 9px;"></i>`);
                     this.spanEmail.attr("title", "Email ID Already Exists");
                 }
                 else {
                     this.spanEmail.children().remove();
-                    this.spanEmail.append(`<i class="fa fa-check" aria-hidden="true" style="color:green;"></i>`);
+                    this.spanEmail.append(`<i class="fa fa-check" aria-hidden="true" style="color:green; padding: 9px;"></i>`);
                     this.spanEmail.attr("title", "Valid Email ID");
                     this.isInfoValidEmail = true;
                 }
@@ -545,7 +545,7 @@
 
 var UserGroupJs = function (infoDict, usersList) {
     this.menuBarObj = new MenuBarCommon();
-    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn'></button>`);
+    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.infoDict = infoDict;
     this.usersList = usersList;
     this.txtUserGroupName = $("#txtUserGroupName");
@@ -565,7 +565,7 @@ var UserGroupJs = function (infoDict, usersList) {
         var initUserList = null;
         var metadata2 = ['id', 'name', 'email', 'ProfilePicture'];
         if (parseInt(this.infoDict['id']) > 0) {
-            this.btnSaveAll.text("Update");
+            //this.btnSaveAll.text("Update");
             this.menuBarObj.setName(this.infoDict['name']);
             initUserList = [];
             for (i = 0; i < this.usersList.length; i++) {
@@ -573,7 +573,7 @@ var UserGroupJs = function (infoDict, usersList) {
             }
         }
         else {
-            this.btnSaveAll.text("Create");
+            //this.btnSaveAll.text("Create");
             this.menuBarObj.setName("New User Group");
         }
         if (this.usersTile === null) {

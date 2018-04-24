@@ -26,7 +26,7 @@
 <div class="row splitdiv_parent">
     <div class='sub-windows' id='sub_window_dv' tabindex='1'>
         <div class='split-inner'>
-            <div class='col-md-3 padd-2 fd' id='sub_windows_sidediv_dv' style='display:block'>
+            <div class='col-md-3 fdCont padd-2 fd' id='sub_windows_sidediv_dv' style='display: block;padding-left: 0px;padding-right: 0px;'>
                 <div class="pgHead"> Param window <div class="icon-cont  pull-right"><i class="fa fa-times" aria-hidden="true"></i></div></div>
                 @{
                     if (ViewBag.Fd.EbDataSource != null)
@@ -54,10 +54,12 @@
     //$(document).ready(function () {
         if ('@fd' === 'True') {
             $("#sub_windows_sidediv_dv").show();
+            $(".icon-cont").hide();
         }
         else {
             $("#sub_windows_sidediv_dv").hide();
             $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
+            $("#filter").hide();
             render();
         }
         $("#filter").on("click", function () {
@@ -129,8 +131,14 @@
     }
 
     .reportIframe {
-        /*width: 100%;
-        height: 90vh;*/
         border-radius: 0px !important;
+    }
+    .fdCont {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        z-index: 4;
+        border-radius: 2px;
+        box-shadow: 10px 0px 10px 0px rgba(0, 0, 0, 0.12), 5px 0px 5px 0px rgba(0, 0, 0, 0.15);
     }
 </style>

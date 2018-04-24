@@ -101,143 +101,26 @@ var DvContainerObj = function (settings) {
     };
 
     this.gotoNext = function () {
-        //prevfocusedId = focusedId;
-        //    focusedId = $("#" + focusedId).next().attr("id");
-        //    $("#" + focusedId).focus();
-        //    var dvobj = this.dvcol[focusedId].EbObject;
-        //    this.dvRefid = this.dvcol[focusedId].Refid;
-        //    dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        //    dvcontainerObj.currentObj = dvobj;
-        //    if (dvcontainerObj.currentObj.Pippedfrom !== "")
-        //        $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
-        //    else
-        //        $("#Pipped").text("");
-        //    if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-        //        if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-        //            this.dvcol[focusedId].GenerateButtons();
-        //        }
-        //    }
-        //    else{
-        //        if ($("#" + focusedId).find("canvas").length > 0) {
-        //            this.dvcol[focusedId].GenerateButtons();
-        //        }
-        //    }
-        //    this.modifyNavigation();
         this.clickDot = true;
     };
 
     this.gotoPrevious = function () {
-        //prevfocusedId = focusedId;
-        //focusedId = $("#" + focusedId).prev().attr("id");
-        //$("#" + focusedId).focus();
-        //var dvobj = this.dvcol[focusedId].EbObject;
-        //this.dvRefid = this.dvcol[focusedId].Refid;
-        //dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        //dvcontainerObj.currentObj = dvobj;
-        //if (dvcontainerObj.currentObj.Pippedfrom !== "")
-        //    $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
-        //else
-        //    $("#Pipped").text("");
-        //if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-        //    if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-        //        this.dvcol[focusedId].GenerateButtons();
-        //    }
-        //}
-        //else {
-        //    if ($("#" + focusedId).find("canvas").length > 0) {
-        //        this.dvcol[focusedId].GenerateButtons();
-        //    }
-        //}
-        //this.modifyNavigation();
         this.clickDot = true;
     };
 
     this.gotoFirst = function () {
-        //    focusedId = $("#" + focusedId).siblings().first().attr("id");
-        //    $("#" + focusedId).focus();
-        //    var dvobj = this.dvcol[focusedId];
-        //    dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        //    dvcontainerObj.currentObj = dvobj;
-        //    if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-        //        $("#Toolbar").children(":not(.commonControls)").remove();
-        //        if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-        //            this.ebdtable[focusedId].GenerateButtons();
-        //        }
-        //    }
-        //    else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
-        //        $("#Toolbar").children(":not(.commonControls)").remove();
-        //        if ($("#" + focusedId).find("canvas").length > 0) {
-        //            this.chartJs[focusedId].createButtons();
-        //        }
-        //    }
-        //    if ($("#" + focusedId).prev().attr("id") == undefined) {
-        //        $("#prev").attr("disabled", true).css("color", "darkgray");
-        //        $("#first").attr("disabled", true).css("color", "darkgray");
-        //    }
-        //    if ($("#" + focusedId).next().attr("id") !== undefined) {
-        //        $("#next").attr("disabled", false).css("color", "black");
-        //        $("#last").attr("disabled", false).css("color", "black");
-        //    }
     };
 
     this.gotoLast = function () {
-        //    focusedId = $("#" + focusedId).siblings().last().attr("id");
-        //    $("#" + focusedId).focus();
-        //    var dvobj = this.dvcol[focusedId];
-        //    dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-        //    dvcontainerObj.currentObj = dvobj;
-        //    if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-        //        $("#Toolbar").children(":not(.commonControls)").remove();
-        //        if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-        //            this.ebdtable[focusedId].GenerateButtons();
-        //        }
-        //    }
-        //    else if (dvobj.$type.indexOf("EbChartVisualization") !== -1) {
-        //        $("#Toolbar").children(":not(.commonControls)").remove();
-        //        if ($("#" + focusedId).find("canvas").length > 0) {
-        //            this.chartJs[focusedId].createButtons();
-        //        }
-        //    }
-        //    if ($("#" + focusedId).next().attr("id") == undefined) {
-        //        $("#next").attr("disabled", true).css("color", "darkgray");
-        //        $("#last").attr("disabled", true).css("color", "darkgray");
-        //    }
-        //    if ($("#" + focusedId).prev().attr("id") !== undefined) {
-        //        $("#prev").attr("disabled", false).css("color", "black");
-        //        $("#first").attr("disabled", false).css("color", "black");
-        //    }
     };
 
     this.saveSettings = function () {
-        //$.LoadingOverlay("show");
-        //if (dvcontainerObj.currentObj.$type.indexOf("EbTableVisualization") !== -1)
-        //    $.post('../Eb_Object/SaveEbObject', { _refid: this.dvRefid, _json: JSON.stringify(dvcontainerObj.currentObj), _rel_obj: "aaa", _tags: "aa" }, this.saveSuccess.bind(this));
-        //else
-        //    $.post('../Eb_Object/SaveEbObject', { _refid: this.dvRefid, _json: JSON.stringify(dvcontainerObj.currentObj), _rel_obj: "aaa", _tags: "aaa" }, this.saveSuccess.bind(this));
     };
 
     this.saveSuccess = function () {
         alert("Success!!!!!!!");
         $.LoadingOverlay("hide");
-    }
-
-    //this.ToggleParamDiv = function () {
-    //    $("#" + focusedId).children(".fd").toggle();
-    //    if ($("#" + focusedId).children(".fd").css("display") === "none")
-    //        $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-8").addClass("col-md-10");
-    //    else
-    //        $("#" + focusedId).children("div:not(.fd)").removeClass("col-md-10").addClass("col-md-8");
-
-    //};
-
-    //this.TogglePPGrid = function () {
-    //    $("#ppgrid").toggle();
-    //    if ($("#ppgrid").css("display") === "none")
-    //        $($("#" + focusedId).children()[2]).removeClass("col-md-10").addClass("col-md-12");
-    //    else
-    //        $($("#" + focusedId).children()[2]).removeClass("col-md-12").addClass("col-md-10");
-
-    //};
+    }    
 
     this.drawDv = function (e) {
         this.rowData = undefined;
@@ -297,8 +180,8 @@ var DvContainerObj = function (settings) {
     }.bind(this);
 
     this.drawdvFromTable = function (row, filter, celldata) {
-        //$.LoadingOverlay("show");
-        $("#eb_common_loader").EbLoader("show", { maskItem: $("body") });
+        $.LoadingOverlay("show");
+        //$("#eb_common_loader").EbLoader("show", { maskItem: $("body") });
         this.rowData = row;
         this.filterValues = filter;
         this.cellData = celldata;
@@ -326,7 +209,6 @@ var DvContainerObj = function (settings) {
                     </div>`);
 
                     this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid);
-                    //$("#" + focusedId + " #reportIframe" + this.cellData).attr("src", `../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}`);
 
                     $(`#reportIframe_${this.cellData}`).on('load', this.iframeLoad.bind(this));
                 }
@@ -336,7 +218,7 @@ var DvContainerObj = function (settings) {
                             focusedId = key;
                     }.bind(this));
                     $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"));
-                    //$.LoadingOverlay("hide");
+                    $.LoadingOverlay("hide");
                 }
 
                 $("#eb_common_loader").EbLoader("hide", { maskItem: $("body") });
@@ -376,8 +258,7 @@ var DvContainerObj = function (settings) {
         $("#obj_icons").hide();
         $("#Common_obj_icons").show();
         $("#Common_obj_icons").empty();
-        $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>
-                                <button id='Refresh_btn${focusedId}' class='btn'><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
+        $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
         this.eventBind();
         this.modifyNavigation();
         $.LoadingOverlay("hide");
@@ -591,8 +472,7 @@ var DvContainerObj = function (settings) {
                 $("#obj_icons").hide();
                 $("#Common_obj_icons").show();
                 $("#Common_obj_icons").empty();
-                $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>
-                                <button id='Refresh_btn${focusedId}' class='btn'><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
+                $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                 this.eventBind();
             }
         }
@@ -615,8 +495,7 @@ var DvContainerObj = function (settings) {
                 $("#obj_icons").hide();
                 $("#Common_obj_icons").show();
                 $("#Common_obj_icons").empty();
-                $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>
-                                <button id='Refresh_btn${focusedId}' class='btn'><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
+                $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                 this.eventBind();
             }
         }
@@ -698,7 +577,7 @@ var DvContainerObj = function (settings) {
                 $(this).css("box-shadow", "rgb(19, 118, 218) 0px 0px 6px 1px");
             }
             else {
-                $(this).css("box-shadow", "#444");
+                $(this).css("box-shadow", "0px 0px 4px 1px #00000024, 0 0 1px 1px #00000003"); 
             }
         });
 
@@ -801,7 +680,6 @@ var DvContainerObj = function (settings) {
 
     this.eventBind = function () {
         $(`#Close_btn${focusedId}`).off("click").on("click", this.removeSlide.bind(this));
-        //$(`Close_btn${focusedId}`).off("click").on("click", this.removeSlide.bind(this));
     };
 
     this.removeSlide = function () {

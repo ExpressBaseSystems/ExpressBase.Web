@@ -93,8 +93,14 @@
         width: 100% !important;
     }
 
+#filterBox .Eb-ctrlContainer {
+    margin: 10px 0;
+}
 
-.Eb-ctrlContainer input {
+.Eb-ctrlContainer [type="RadioGroup"]{
+    padding:5px;
+} 
+.Eb-ctrlContainer input:not([type=radio]) {
     /*height: auto !important;*/
     height: auto;
     min-height: 28px;
@@ -195,6 +201,16 @@
 
 .radiog-cont {
     border: dashed 1px #ddd;
+    padding: 3px;
+    position: relative;
+}
+
+.radiog-label {
+    display:inline-block;
+    position: absolute;
+    background: white;
+    top: -11px;
+    left: 8px;
 }
 
 .gridCont {

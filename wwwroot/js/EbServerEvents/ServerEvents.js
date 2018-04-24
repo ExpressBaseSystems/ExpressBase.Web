@@ -27,7 +27,9 @@
     };
 
     this.stopListening = function () {
+        this.ES.close();
         this.sEvent.eventSourceStop = true;
+        console.log("stoped listening");
     };
 
     this.ES = new EventSourcePolyfill(this.Url, {

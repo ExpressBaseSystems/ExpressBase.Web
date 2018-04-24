@@ -242,7 +242,6 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                 Id = this.FileClient.Post<string>(uploadImageRequest);
-                url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
             }
             catch (Exception e)
             {
@@ -254,48 +253,24 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> UploadLogoAsync(int i, string tags)
+        public async Task<bool> UploadLogoAsync(string base64)
         {
-            tags = String.IsNullOrEmpty(tags) ? "Logo" : tags;
-
+            List<string> Tags = new List<string>() { "Logo" };
+            byte[] myFileContent;
             try
             {
-                var req = this.HttpContext.Request.Form;
                 UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new FileMeta();
+                string base64Norm = base64.Replace("data:image/png;base64,", "");
+                myFileContent = System.Convert.FromBase64String(base64Norm);
+                uploadImageRequest.ImageByte = myFileContent;
+                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
+                uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+                uploadImageRequest.ImageInfo.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
 
-                if (!String.IsNullOrEmpty(tags))
-                {
-                    var tagarray = tags.ToString().Split(',');
-                    List<string> Tags = new List<string>(tagarray);
-                    uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
-                    uploadImageRequest.ImageInfo.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
-                }
-
-                foreach (var formFile in req.Files)
-                {
-                    if (formFile.Length > 0)
-                    {
-                        byte[] myFileContent;
-
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await formFile.CopyToAsync(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            myFileContent = new byte[memoryStream.Length];
-                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
-
-                            uploadImageRequest.ImageByte = myFileContent;
-                        }
-
-                        uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
-                        uploadImageRequest.ImageInfo.FileName = String.Format("logo_{0}.{1}", ViewBag.cid, uploadImageRequest.ImageInfo.FileType);
-                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
-
-
-                        return this.FileClient.Post<bool>(uploadImageRequest);
-                    }
-                }
+                this.FileClient.Post<string>(uploadImageRequest);
             }
             catch (Exception e)
             {

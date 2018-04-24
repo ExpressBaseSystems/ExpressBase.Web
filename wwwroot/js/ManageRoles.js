@@ -103,7 +103,7 @@
         var val = $(e.target).val();
         $(e.target).css("border-color", "rgb(204, 204, 204)");
         $("#spanRoleName").children().remove();
-        $("#spanRoleName").append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
+        $("#spanRoleName").append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" padding: 9px;"></i>`);
         $("#spanRoleName").attr("title", "Validating...");
         this.timer1 = setTimeout(function () { this.validateRoleNameAjaxCall(val, e) }.bind(this), 3000);
     }
@@ -116,12 +116,12 @@
                 if (result) {
                     $(e.target).css("border-color", "rgb(204, 0, 0)");
                     $("#spanRoleName").children().remove();
-                    $("#spanRoleName").append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red;"></i>`);
+                    $("#spanRoleName").append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red; padding: 9px;"></i>`);
                     $("#spanRoleName").attr("title", "Give Role Name Already Exists");
                 }
                 else {
                     $("#spanRoleName").children().remove();
-                    $("#spanRoleName").append(`<i class="fa fa-check" aria-hidden="true" style="color:green;"></i>`);
+                    $("#spanRoleName").append(`<i class="fa fa-check" aria-hidden="true" style="color:green; padding: 9px;"></i>`);
                     $("#spanRoleName").attr("title", "Valid Role Name");
                     this.isInfoValid = true;
                 }
@@ -488,7 +488,7 @@
 
     this.alertFunc = function tempAlert(msg, duration) {
         var el = document.createElement("div");
-        el.setAttribute("style", "position:absolute;top:10%;left:30%;background-color:white;");
+        el.setAttribute("style", "position:absolute;top:10%;left:60%;background-color:white;");
         el.innerHTML = msg;
         setTimeout(function () {
             el.parentNode.removeChild(el);

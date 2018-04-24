@@ -111,6 +111,14 @@
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
+
+    /*for remove flickering https://stackoverflow.com/questions/26595481/bootstrap-3-tabs-active-tab-flicker-on-hover-only-in-firefox?rq=1&utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa*/
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+            border-width: 1px;
+        }
+        .nav-tabs > li:hover{
+            background-color:#eee ;
+        }
 </style>
 @{
     @using Newtonsoft.Json;
@@ -127,7 +135,7 @@
 }
 <div class="" style="padding: 4% 0% 0% 1%; height: 100vh; background: white;font-family: open sans;font-weight: 300;">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" style="padding-right: 0px">
             <div style="text-align:center;">
                 <img src="~/images/proimg.jpg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" style="height:100px" />
             </div>
@@ -149,12 +157,12 @@
                 <label style="font-family: open sans; font-weight: 300;">Email ID</label>
                 <div class="input-group">
                     <span class="input-group-addon" id=""><i class="fa fa-envelope" aria-hidden="true"></i></span>
-                    <input id="txtEmail" style="display:inline-block; width:100%" class="form-control" type="text" placeholder="Email ID" title="Email ID">
-                    <span class="input-group-addon" id="spanEmail" style="background-color: transparent;border: none;"><i class="fa fa-times" aria-hidden="true" style="color: transparent"></i></span>
+                    <input id="txtEmail" style="display:inline-block; width:100%; padding-right: 25px; border-radius: 0px 4px 4px 0px;" class="form-control" type="text" placeholder="Email ID" title="Email ID">
+                    <span class="input-group-addon form-control-feedback" id="spanEmail" style="border: none; background-color: transparent; padding: 0px; right: 26px;top: 0px;"><i class="fa fa-times" aria-hidden="true" style="color: transparent; padding: 9px;"></i></span>
                 </div>
             </div>
             <div class="form-group">
-                <div id="divPassword" style="width: 89%;">
+                <div id="divPassword" style="width: 100%;">
                     <label style="font-family: open sans; font-weight: 300;">Password</label>
                     <div class="input-group">
                         <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
@@ -164,6 +172,16 @@
                 <div id="divChangePassword" style="padding-top: 28px; display:none;">
                     <button id="btnChangePassword" class="" title="Change Password">Change Password</button>
                 </div>
+            </div>
+            <div class="form-group">
+                <div class="form-group" id="divStatus" style="display: none;">
+                    <label style="font-family: open sans; font-weight: 300;">User Status</label>
+                    <br />
+                    <label class="radio-inline"><input type="radio" name="status" value="0" checked>Active</label>
+                    <label class="radio-inline"><input type="radio" name="status" value="1">Suspend</label>
+                    <label class="radio-inline"><input type="radio" name="status" value="2">Terminate</label>
+                </div>
+                <input id="chkboxHide" type="checkbox" data-toggle="toggle" data-on="Hidden" data-off="Exposed">
             </div>
         </div>
 
@@ -179,7 +197,7 @@
                 <div class="tab-content">
                     <div id="home" class="tab-pane fade in active" style="padding-top:30px">
                         <div class="row tilediv1">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label style="font-family: open sans; font-weight: 300;">Date of Birth</label>
                                     <div class="input-group" style="width:150px">
@@ -231,7 +249,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label id="lblFbId" style="font-family: open sans; font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
                                     <br />
@@ -249,15 +267,7 @@
                                 <button class="form-control" title="Generate API Key">Generate JWT Key</button>
                             </div>*@
                             </div>
-                            <div class="col-md-2" id="">
-                                <div class="form-group" id="divStatus" style="display: none;">
-                                    <label style="font-family: open sans; font-weight: 300;">User Status</label>
-                                    <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="0" checked>Active</label>
-                                    <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="1">Suspend</label>
-                                    <label class="radio-inline" style="width:100%;margin-left: 0%;"><input type="radio" name="status" value="2">Terminate</label>
-                                </div>
-                                <input id="chkboxHide" type="checkbox" data-toggle="toggle" data-on="Hidden" data-off="Exposed">
-                            </div>
+                            
                         </div>
                     </div>
                     <div id="menu1" class="tab-pane fade"></div>

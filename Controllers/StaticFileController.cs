@@ -65,6 +65,49 @@ namespace ExpressBase.Web.Controllers
     {
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 
+        [HttpGet("static/mydp/{filename}")]
+        public IActionResult GetMyDP()
+        {
+            string filename = String.Format("dp_{0}.png", ViewBag.UId);
+
+            DownloadFileResponse dfs = null;
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                if (filename.StartsWith(StaticFileConstants.DP))
+                {
+                    HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
+                    dfs = this.FileClient.Get<DownloadFileResponse>
+                            (new DownloadFileRequest
+                            {
+                                FileDetails = new FileMeta
+                                {
+                                    FileName = filename,
+                                    FileType = filename.Split(CharConstants.DOT)[1].ToLower()
+                                }
+                            });
+
+                }
+
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+                else
+                    resp = File("~/images/businessman.png", "image/png");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+                resp = new EmptyResult();
+            }
+
+            return resp;
+        }
+
         [HttpGet("static/dp/{filename}")]
         public IActionResult GetDP(string filename)
         {

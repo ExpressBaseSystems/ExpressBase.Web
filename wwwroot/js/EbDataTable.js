@@ -342,7 +342,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
-
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {

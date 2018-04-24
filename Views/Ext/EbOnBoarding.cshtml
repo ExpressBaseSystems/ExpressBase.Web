@@ -113,10 +113,10 @@
                     <div class="form-group">
                         <div class="col-md-4 pd-0">
                             <label>Upload Logo</label>
-                            <button id="log-upload-btn" class="btn log-upload-btn" data-toggle="modal" data-target="#eb-cropie-s-logo">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                            <button id="log-upload-btn" class="btn log-upload-btn">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
                         <div class="col-md-8 pd-0 logo_img_cont">
-                            <img src="" class="img-responsive" />
+                            <img src="" class="img-responsive pull-right" id="oB_logo-prev"/>
                         </div>
                     </div>
                 </div>
@@ -332,25 +332,6 @@
 </div>
 <div class="eb-cropie" id="cropsection"></div>
 
-<div class="modal fade" id="eb-cropie-s-logo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Crop Image</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="eb-cropie-inner">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="eb-mesageBox" id="eb-mesageBox">
     <div class="mesageBox-head"><i class="fa fa-times pull-right" onclick="$('#eb-mesageBox').hide();" aria-hidden="true"></i></div>
 </div>

@@ -27,31 +27,20 @@
         }
     };
 
-    this.ProfileImgUpload = function () {
-        var profCrop = new cropfy({
-            Container: 'onboarding',
-            Toggle: '._cropify',
-            isUpload: true,
-            enableSE: true,
-            Browse: true,
-            Result: 'base64'
-        });
-        profCrop.getFile = function (file) {
-            $("#profimage").attr("src", file);
-        }.bind(this);
-    };
-
     this.LogoImageUpload = function () {
         var logoCrp = new cropfy({
             Container: 'onboarding_logo',
-            Toggle: '._cropify',
+            Toggle: '#log-upload-btn',
             isUpload: true,
             enableSE: true,
             Browse: true,
-            Result: 'base64'
+            Result: 'base64',
+            Type: 'logo',
+            ResizeViewPort: true,
+            Preview:"#oB_logo-prev"
         });
         logoCrp.getFile = function (file) {
-            $("#profimage").attr("src", file);
+
         }.bind(this);
     };
 
@@ -168,9 +157,8 @@
         $("#loader_app_info").EbLoader("show");
     };
 
-    this.init = function () {     
-        //this.ProfileImgUpload();
-        //this.LogoImageUpload();
+    this.init = function () { 
+        this.LogoImageUpload();
         $('#solutionname').on("change", this.getSolutionName.bind(this));
         $('#cid').on("change", this.getClientId.bind(this));
         $("#Desc").on("change", this.getDesc.bind(this));

@@ -41,7 +41,8 @@
         var $c = $("#bg_" + _container + " .imgup-bg");
         $c.toggle(350, function () {
             if ($c.is(":visible"))
-               this.startSE();           
+                this.startSE(); 
+                $("#" + _container + "tagval").tagsinput('refresh');
         }.bind(this));
     };
 
@@ -80,7 +81,6 @@
 
     this.fileloaded = function (event, file, previewId, index, reader) {
         $("#" + _container + "_close").prop('disabled', true);
-        $("#" + _container + "tagval").show().tagsinput('refresh');
     };//tadd tag btn
 
     this.imageOnSelect = function (e) {
@@ -102,7 +102,7 @@
             "tags": this.currtag
         }, function (result) {
             for (var objid = 0; objid < result.length; objid++) {
-                var url = "http://" + __Tid + ".localhost:41500/static/" + result[objid].objectId + "." + result[objid].fileType;
+                var url = "https://" + __Tid + ".localhost:41500/static/" + result[objid].objectId + "." + result[objid].fileType;
                 var config = { caption: result[objid].fileName, size: result[objid].length };
                 __initialPrev.push(url);
                 __initialPrevConfig.push(config);
@@ -116,11 +116,17 @@
         return this.FileId;
     };
 
+    this.getUrl = function (id) {
+        var protocol = window.location.protocol;
+        var host = window.location.host.indexOf("-dev") > -1 ? window.location.host.replace("-dev", "") : window.location.host;
+        return protocol + "//" + host + "/static/" + id + ".JPG";
+    };
+
     this.startSE = function () {
         this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.info", Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (m, e) {
             $("#" + _container + "sub-upload").show();
-            this.FileId = m.objectId;
+            this.FileId = this.getUrl(m.objectId);    
             $('#' + _container + 'obj-id').text(this.FileId);
             $(".file-preview-initial").attr("tabindex", "1");
             $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));

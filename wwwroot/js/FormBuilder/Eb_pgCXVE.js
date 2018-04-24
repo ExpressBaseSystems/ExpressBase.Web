@@ -467,7 +467,10 @@
                 $("#" + this.CEctrlsContId).append($tile);
                 //this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
             }.bind(this));
-            for (var i = 0; i < SubTypes.length; i++) { options += '<option>' + SubTypes[i] + '</option>' }
+            for (var i = 0; i < SubTypes.length; i++) {
+                var ObjName = SubTypes[i].split("-/-")[0]; var DispName = SubTypes[i].split("-/-")[1];
+                options += '<option value=' + ObjName + '>' + DispName + '</option>'
+            }
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
         $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn);

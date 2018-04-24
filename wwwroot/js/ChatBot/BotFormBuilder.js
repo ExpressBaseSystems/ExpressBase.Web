@@ -462,7 +462,7 @@
 
     this.RefreshControl = function (obj) {
         //Cards are exceptional, So separate chk required
-        if (obj.EbSid.substring(0, 12) === 'DynamicCards') {
+        if (obj.EbSid.substring(0, 13) === 'StaticCardSet' || obj.EbSid.substring(0, 14) === 'DynamicCardSet') {
             this.RefreshCardControl(obj);
             return;
         }

@@ -8,6 +8,7 @@ var summaryFunc = {
 }
 var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
     var containment = ".page";
+    this.Tenantid = 
     this.EbObject = dsobj;
     this.isNew = $.isEmptyObject(this.EbObject) ? true : false;
     this.objCollection = {};
@@ -477,7 +478,8 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.addImageFn = function (obj) {
-        obj.Source = 'url(' + 'http://eb_dbpjl5pgxleq20180130063835-dev.localhost:41500/static/' + obj.Image + '.JPG) center no-repeat';
+        if (obj.Image)
+            obj.Source = 'url('+ obj.Image + ') center no-repeat';
         this.RefreshControl(obj);
     };
     this.onDrag_stop = function (event, ui) {

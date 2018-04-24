@@ -279,15 +279,19 @@ table.dataTable tbody td.dt-body-right {
     border: none;
 }
 
-    .addedbyeb .input-group .form-control:first-child, .input-group-addon:first-child, .input-group-btn:first-child > .btn, .input-group-btn:first-child > .btn-group > .btn, .input-group-btn:first-child > .dropdown-toggle, .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle), .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        border-top-left-radius: 0;
-        border-radius: 0;
-        background: #f9f9f9;
-        border: none;
-        border-right: solid 1px #0000000d;
-    }
+.addedbyeb .input-group .form-control:first-child, .addedbyeb .input-group-addon:first-child, .addedbyeb .input-group-btn:first-child > .btn,
+.addedbyeb .input-group-btn:first-child > .btn-group > .btn, .addedbyeb .input-group-btn:first-child > .dropdown-toggle,
+.addedbyeb .input-group-btn:last-child > .addedbyeb .btn:not(:last-child):not(.dropdown-toggle), .addedbyeb .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0;
+    border-radius: 0;
+    background: #f9f9f9;
+    border: none;
+    border-top: solid 1px #f9f9f9;
+    border-bottom: solid 1px #f9f9f9;
+    border-right: solid 1px #0000000d;
+}
 
 [eb-type=EbTableVisualization] .dataTable {
     border: 0;

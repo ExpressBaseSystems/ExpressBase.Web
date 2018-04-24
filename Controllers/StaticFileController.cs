@@ -29,6 +29,8 @@ namespace ExpressBase.Web.Controllers
 
             DownloadFileResponse dfs = null;
 
+            ActionResult resp = new EmptyResult(); 
+
             try
             {
                 if (filename.StartsWith(StaticFileConstants.LOGO))
@@ -40,9 +42,14 @@ namespace ExpressBase.Web.Controllers
                             {
                                 FileName = filename,
                             });
-                    if (dfs.StreamWrapper != null)
-                        dfs.StreamWrapper.Memorystream.Position = 0;
                 }
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+                else
+                    resp = File("~/images/your_company_logo.png", "image/png");
 
             }
             catch (Exception e)
@@ -50,7 +57,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
 
-            return (dfs.StreamWrapper != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
+            return resp; 
         }
     }
 
@@ -64,6 +71,7 @@ namespace ExpressBase.Web.Controllers
             filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
 
             DownloadFileResponse dfs = null;
+            ActionResult resp = new EmptyResult();
 
             try
             {
@@ -80,17 +88,24 @@ namespace ExpressBase.Web.Controllers
                                     FileType = filename.Split(CharConstants.DOT)[1].ToLower()
                                 }
                             });
-                    if (dfs != null)
-                        dfs.StreamWrapper.Memorystream.Position = 0;
+
                 }
 
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+                else
+                    resp = File("~/images/nulldp.png", "image/png");
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
+                resp = new EmptyResult();
             }
 
-            return (dfs != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
+            return resp;
         }
 
         [HttpGet("static/{filename}")]
@@ -98,6 +113,7 @@ namespace ExpressBase.Web.Controllers
         {
             DownloadFileResponse dfs = null;
             HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ActionResult resp = new EmptyResult();
 
             try
             {
@@ -110,14 +126,20 @@ namespace ExpressBase.Web.Controllers
                                 FileType = filename.Split(CharConstants.DOT)[1].ToLower()
                             }
                         });
-                dfs.StreamWrapper.Memorystream.Position = 0;
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+                else
+                    resp = File("~/images/nullimage.png", "image/png");
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
+            return resp;
 
-            return (dfs != null) ? new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]) : null;
         }
 
         [HttpPost]
@@ -209,8 +231,10 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         this.FileClient.Post<bool>(uploadImageRequest);
-                        resp = new JsonResult(new UploadFileMqResponse { Uploaded = "OK",
-                            initialPreview = "<img src='"+ Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>"
+                        resp = new JsonResult(new UploadFileMqResponse
+                        {
+                            Uploaded = "OK",
+                            initialPreview = "<img src='" + Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>"
                         });
                     }
                 }
@@ -242,7 +266,6 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                 Id = this.FileClient.Post<string>(uploadImageRequest);
-                url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
             }
             catch (Exception e)
             {
@@ -254,48 +277,24 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> UploadLogoAsync(int i, string tags)
+        public async Task<bool> UploadLogoAsync(string base64)
         {
-            tags = String.IsNullOrEmpty(tags) ? "Logo" : tags;
-
+            List<string> Tags = new List<string>() { "Logo" };
+            byte[] myFileContent;
             try
             {
-                var req = this.HttpContext.Request.Form;
                 UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new FileMeta();
+                string base64Norm = base64.Replace("data:image/png;base64,", "");
+                myFileContent = System.Convert.FromBase64String(base64Norm);
+                uploadImageRequest.ImageByte = myFileContent;
+                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
+                uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+                uploadImageRequest.ImageInfo.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
 
-                if (!String.IsNullOrEmpty(tags))
-                {
-                    var tagarray = tags.ToString().Split(',');
-                    List<string> Tags = new List<string>(tagarray);
-                    uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
-                    uploadImageRequest.ImageInfo.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
-                }
-
-                foreach (var formFile in req.Files)
-                {
-                    if (formFile.Length > 0)
-                    {
-                        byte[] myFileContent;
-
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await formFile.CopyToAsync(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            myFileContent = new byte[memoryStream.Length];
-                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
-
-                            uploadImageRequest.ImageByte = myFileContent;
-                        }
-
-                        uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
-                        uploadImageRequest.ImageInfo.FileName = String.Format("logo_{0}.{1}", ViewBag.cid, uploadImageRequest.ImageInfo.FileType);
-                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
-
-
-                        return this.FileClient.Post<bool>(uploadImageRequest);
-                    }
-                }
+                this.FileClient.Post<string>(uploadImageRequest);
             }
             catch (Exception e)
             {

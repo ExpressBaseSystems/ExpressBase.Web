@@ -97,7 +97,7 @@ namespace ExpressBase.Web.Controllers
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
                 else
-                    resp = File("~/images/nulldp.png", "image/png");
+                    resp = File("~/images/businessman.png", "image/png");
             }
             catch (Exception e)
             {

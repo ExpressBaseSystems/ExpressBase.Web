@@ -290,6 +290,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.getColumnsSuccess = function () {
+        $(".icon-cont").hide();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
@@ -341,6 +342,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
+
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
@@ -389,25 +391,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();
-        var chkObj = new Object();
-        chkObj.data = null;
-        chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-        chkObj.sWidth = "10px";
-        chkObj.orderable = false;
-        chkObj.bVisible = false;
-        chkObj.name = "checkbox";
-        chkObj.Type = 3;
-        chkObj.render = this.renderCheckBoxCol.bind(this);
-        chkObj.pos = "-1";
-        //this.ebSettings.columns.unshift(chkObj);
-        //this.ebSettings.columnsext.unshift(JSON.parse('{"name":"checkbox"}'));
-        //Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2
-        //
         var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
-
         this.extraCol.push(serialObj);
-        this.extraCol.push(chkObj);
-        //this.ebSettings.columnsext.unshift(JSON.parse('{"name":"serial"}'));
+        this.addcheckbox();
     }
 
     this.CheckforColumnID = function () {
@@ -418,15 +404,22 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 return false;
             }
         }.bind(this));
-        //if (col.name === "id") {
-        //    //this.FlagPresentId = true;
-        //    this.ebSettings.Columns.$values[i].bVisible = false;
-        //    //this.ebSettings.Columns.$values[1].bVisible = true;
-        //    //this.ebSettings.Columns.$values[1].sTitle = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-        //    //this.ebSettings.Columns.$values[1].render = this.renderCheckBoxCol.bind(this);
-        //    return false;
-        //}
     };
+
+    this.addcheckbox = function () {
+        var chkObj = new Object();
+        chkObj.data = null;
+        chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
+        chkObj.sWidth = "10px";
+        chkObj.orderable = false;
+        chkObj.bVisible = false;
+        chkObj.name = "checkbox";
+        chkObj.Type = 3;
+        chkObj.render = this.renderCheckBoxCol.bind(this);
+        chkObj.pos = "-1";
+
+        this.extraCol.push(chkObj);
+    }
 
     this.createTblObject = function () {
         var o = new Object();
@@ -801,7 +794,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.createFooter(1);
         }
         this.addFilterEventListeners();
-        this.Api.columns.adjust();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
         //this.contextMenu();
@@ -811,6 +803,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.isSecondTime) { }
                 this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
+
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
+
+        this.Api.columns.adjust();
     }
 
     this.contextMenu = function () {
@@ -1052,8 +1048,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var ScrollY = this.ebSettings.scrollY;
         var ResArray = [];
         var tableId = this.tableId;
-        $.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
-        //$.each(this.Api.settings().init().aoColumns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        //$.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        $.each(this.Api.settings().init().aoColumns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
         return ResArray;
     };
 
@@ -1067,7 +1063,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var data_colum = "data-column=" + col.name;
                 var data_table = "data-table=" + this.tableId;
                 var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
-                var data_decip = "data-decip=" + this.ebSettings.Columns.$values[i].DecimalPlaces;
+                var data_decip = "data-decip=" + this.Api.settings().init().aoColumns[i].DecimalPlaces;
 
                 _ls = "<div class='input-group input-group-sm'>" +
                     "<div class='input-group-btn dropup'>" +
@@ -1223,17 +1219,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.FD) {
                 $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
             }
-            $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'> <i class='fa fa-th' aria-hidden='true'></i></button>")
+            $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class='material-icons'>settings</i></button>");
             //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
             if (this.login == "uc") {
                 //if (!this.isContextual)
                 dvcontainerObj.appendRelatedDv(this.tableId);
                 dvcontainerObj.modifyNavigation();
                 $("#btnTogglePPGrid" + this.tableId).hide();
-                $("#"+this.tableId +"_fileBtns").hide();
             }
             this.addFilterEventListeners();
-            //$("#" + this.tableId + "_fileBtns").hide();
+
+            $("#" + this.tableId + "_fileBtns").hide();
            
         }
     };
@@ -1458,17 +1454,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.toggleFilterdialog = function () {
         if ($("#sub_windows_sidediv_" + this.tableId).css("display") === "none") {
             $("#sub_windows_sidediv_" + this.tableId).css("display", "inline");
-            //if ($("#content_" + this.tableId).hasClass("col-md-12"))
-            //    $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
-            //else
-            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
+            $(event.target).closest("button").css("background-color", "#e4e4e4");
         }
         else {
             $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-            //if ($("#content_" + this.tableId).hasClass("col-md-10"))
-            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-            //else
-            //    $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
+            $(event.target).closest("button").css("background-color", "white");
         }
     };
 
@@ -1477,19 +1467,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#ppgrid_" + this.tableId).css("display", "inline");
             $("#ppgrid_" + this.tableId).parent().css("z-index", "3");
             $("#Relateddiv").hide();
-            //if ($("#content_" + this.tableId).hasClass("col-md-12"))
-            //    $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
-            //else
-            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
+            $(event.target).closest("button").css("background-color", "#e4e4e4");
         }
         else {
             $("#ppgrid_" + this.tableId).css("display", "none");
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
             $("#Relateddiv").hide();
-            //if ($("#content_" + this.tableId).hasClass("col-md-10"))
-            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-            //else
-            //    $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
+            
+            $(event.target).closest("button").css("background-color", "white");
         }
     };
 
@@ -1562,6 +1547,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)').toggle();
         //else
         //    $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
+        this.Api.columns.adjust();
     };
 
     this.link2NewTable = function (e) {

@@ -20,7 +20,7 @@
     height: calc(100vh - 60px);
     height: 100%;
     width: 100%;
-    padding: 80px 60px 10px 60px;
+    padding: 80px 60px 30px 60px;
 }
 
 .sub-window-first {
@@ -156,10 +156,14 @@
     font-size: 60px;
     top: 50vh;
     padding: 0 20px !important;
-    background-color: #00000000 !important;
+    /*background-color: #00000000 !important;*/
     top: calc(50vh - 40px) !important;
     position: absolute;
-    color: #336699;
+    color: #336699; 
+    cursor:pointer;
+}
+.slick-disabled {
+    cursor: auto;
 }
 
 .split-inner {

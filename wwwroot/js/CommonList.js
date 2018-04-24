@@ -220,7 +220,7 @@
     }
 
     this.tblProfPicRender = function (data, type, row, meta) {
-        return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' />`;
+        return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' style = 'max-width: 80% !important;'/>`;
         //return `error`;
     }
     this.tblFbProfPicRender = function (data, type, row, meta) {

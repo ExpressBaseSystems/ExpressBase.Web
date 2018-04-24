@@ -149,13 +149,13 @@
             </tbody>
             </table>
             </div>`;
-        var DD_html = `<div class="sub-controls-DD-cont pull-left">
-            <select class="selectpicker"> </select>
-            <button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>
-            </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
 
         if (this.editor === 7 || this.editor === 22) {
+            var DD_html = `<div class="sub-controls-DD-cont pull-left">
+            <select class="selectpicker"> </select>
+            <button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>
+            </div>`;
             var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
             if (sourceProp)
                 getObjByval(this.PGobj.Metas, "name", sourceProp).source = this.PGobj.CurProp;

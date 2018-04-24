@@ -156,10 +156,14 @@
     font-size: 60px;
     top: 50vh;
     padding: 0 20px !important;
-    background-color: #00000000 !important;
+    /*background-color: #00000000 !important;*/
     top: calc(50vh - 40px) !important;
     position: absolute;
-    color: #336699;
+    color: #336699; 
+    cursor:pointer;
+}
+.slick-disabled {
+    cursor: auto;
 }
 
 .split-inner {

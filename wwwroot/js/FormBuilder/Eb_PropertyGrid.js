@@ -136,7 +136,7 @@
                     var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                     $.each($subRows, function (i, row) {
                         var key = $(row).attr("name").slice(0, -2);
-                        var val = $(row).data("pgValue");
+                        var val = ($(row).find(".pgCX-Editor-Btn").length > 0) ? value.$values[key] : $(row).find(".pgTdval input").val();
                         value.$values[key] = val;
                     });
                     return value;

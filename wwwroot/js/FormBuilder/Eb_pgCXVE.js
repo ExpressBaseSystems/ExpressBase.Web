@@ -10,38 +10,38 @@
     this.editor = null;
 
     this.CXE_OKclicked = function () {
-        this.PGobj.CurMeta = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp);
+        var _CurProp = this.PGobj.CurProp;
+        this.PGobj.CurMeta = getObjByval(this.PGobj.Metas, "name", _CurProp);
         var value = "";
         var PropsObj = this.getPropsObj();
+        var $curRowInp = $("#" + this.PGobj.wraperId + " [name=" + _CurProp + "Tr] input");
         if (this.editor === 11 || this.editor === 16 || this.editor === 18) {// script editors
-
 
             if (this.editor === 16) {
                 value = $(`#StrE_txtEdtr${this.PGobj.wraperId}`).val();
-                PropsObj[this.PGobj.CurProp] = value;
+                PropsObj[_CurProp] = value;
             }
             else if (this.editor === 11 || this.editor === 18) {
                 value = window.editor.getValue();
-                PropsObj[this.PGobj.CurProp] = btoa(value);
+                PropsObj[_CurProp] = btoa(value);
             }
-            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr] .pgTdval").attr("title", value);
-            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").data("pgValue", value);
+            $("#" + this.PGobj.wraperId + " [name=" + _CurProp + "Tr] .pgTdval").attr("title", value);
         }
         else if (this.editor === 17) {
-            value = this.PGobj.ImgSlctrs[this.PGobj.CurProp].getId();
-            PropsObj[this.PGobj.CurProp] = value;
-            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(value);
+            value = this.PGobj.ImgSlctrs[_CurProp].getId();
+            PropsObj[_CurProp] = value;
+            $curRowInp.val(value);
         }
         else if (this.editor === 14) {
             value = this.FontSelObj.fontEdSubmit();
-            PropsObj[this.PGobj.CurProp] = value;
-            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(JSON.stringify(value));
+            PropsObj[_CurProp] = value;
+            $curRowInp.val(JSON.stringify(value));
         }
         else if (this.editor === 21)
-            PropsObj[this.PGobj.CurProp] = this.MLEObj.get();
+            PropsObj[_CurProp] = this.MLEObj.get();
 
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
-        this.OnCXE_OK(PropsObj[this.PGobj.CurProp]);
+        this.OnCXE_OK(PropsObj[_CurProp]);
     };
 
     this.pgCXEshowCallback = function () {
@@ -51,9 +51,10 @@
             window.editor.setValue(atob(PropsObj[this.PGobj.CurProp]));
             window.editor.focus();
         }
-        else
-            if (this.editor === 7 || this.editor === 22)
-                $("#" + this.CEctrlsContId + " .colTile:eq(0)").click();
+        else if (this.editor === 7 || this.editor === 22)
+            $("#" + this.CEctrlsContId + " .colTile:eq(0)").click();
+        else if (this.editor === 16)
+            $(".strE-texarea").focus();
     };
 
     this.pgCXE_BtnClicked = function (e) {

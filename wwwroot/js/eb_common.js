@@ -135,3 +135,9 @@ function getEbObjectTypes() {
     } 
     return Eb_ObjectTypes;
 }
+
+function getDp() {
+    $.get("../StaticFile/GetMyDP", function (data) {
+        console.log("fdg");
+    });
+};

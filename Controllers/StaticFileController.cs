@@ -48,8 +48,6 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
-                else
-                    resp = File("~/images/your_company_logo.png", "image/png");
 
             }
             catch (Exception e)
@@ -96,8 +94,7 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
-                else
-                    resp = File("~/images/businessman.png", "image/png");
+
             }
             catch (Exception e)
             {
@@ -139,8 +136,7 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
-                else
-                    resp = File("~/images/businessman.png", "image/png");
+
             }
             catch (Exception e)
             {
@@ -174,8 +170,7 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
-                else
-                    resp = File("~/images/nullimage.png", "image/png");
+
             }
             catch (Exception e)
             {

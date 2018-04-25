@@ -42,7 +42,7 @@
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
                     </button>
                     <div class="dropdown obj_dash_proimage_drp">
-                        <img src="~/images/proimg.jpg" onload="this.onload=null; this.src=getDp();" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle" />
+                        <img src="~/images/proimg.jpg" id="header_dp" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle" />
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <ul class="drp_ul">
                                 <li class="drp_item border_b" style="height:50px;">
@@ -533,6 +533,8 @@
                 $(".tab-cont-common").css("height","calc(100vh - 178px)");
             }
         }
+        //getdp from ajax
+        getDp(document.getElementById("header_dp"));
 
         function LoadMyProfile() {
             event.preventDefault();

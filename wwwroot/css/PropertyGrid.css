@@ -423,7 +423,9 @@
         /*border: solid 1px #cdcdcd;*/
     }
 
-
+.propgrid-table-cont .bootstrap-select > select {
+    height: .5px !important;
+}
 
 .sub-controls-DD-cont .btn-group > .btn:first-child {
     margin-left: 0;

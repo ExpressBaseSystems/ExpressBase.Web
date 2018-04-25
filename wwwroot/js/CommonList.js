@@ -226,7 +226,7 @@
     this.tblFbProfPicRender = function (data, type, row, meta) {
         var id = data[9];
         if (id == "")//if fbid is not available then
-            id = '12345678';//assinging a sample value to get a default user profpic from graph.fb
+            return `<img class='img-thumbnail' src='' />`//id = '12345678';//assinging a sample value to get a default user profpic from graph.fb
         return `<img class='img-thumbnail' src='http://graph.facebook.com/${id}/picture?type=square' />`;
     }
 

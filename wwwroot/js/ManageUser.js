@@ -98,6 +98,7 @@
 
     this.initForm = function () {
         this.chkboxHide.parent().hide();
+        this.chkboxHide.parent().prev().hide();
         if (this.itemId > 1) {
             this.menuBarObj.setName("Edit User");
             //$(this.divFormHeading).text("Edit User");
@@ -110,6 +111,7 @@
             }                
             if (this.whichMode === 1) {
                 this.chkboxHide.parent().show();
+                this.chkboxHide.parent().prev().show();
                 $("#divStatus").show();
             }
                 
@@ -255,12 +257,17 @@
                 xfbml: true,  // parse social plugins on this page
                 version: 'v2.11'//'v2.8' // use graph api version 2.8
             });
-            FB.getLoginStatus(updateStatusCallback);
-        });
+            FB.getLoginStatus(updateStatusCallback.bind(this));
+        }.bind(this));
         function updateStatusCallback(response) {
             if (response.authResponse !== null) {
                 if ($("#lblFbId").attr("data-id") === "") {
-                    $("#btnFbConnect").show();
+                    if (this.whichMode === 3) {
+                        $("#btnFbConnect").show();
+                    }
+                    else {
+                        $("#btnFbInvite").show();
+                    }
                 }
                 else {
                     $("#userFbLink").attr("href", "www.facebook.com/" + $("#lblFbId").attr("data-id"));
@@ -272,7 +279,12 @@
             }
             else {
                 if ($("#lblFbId").attr("data-id") === "")
-                    $("#btnFbConnect").show();
+                    if (this.whichMode === 3) {
+                        $("#btnFbConnect").show();
+                    }
+                    else {
+                        $("#btnFbInvite").show();
+                    }
                 else {
                     $("#imgUserFbProfPic").attr("src", "http://graph.facebook.com/" + $("#lblFbId").attr("data-id") + "/picture?type=square");
                     $("#imgUserFbProfPic").show();

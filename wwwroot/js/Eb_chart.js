@@ -485,8 +485,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $.LoadingOverlay("show");
                 $.ajax({
                     type: 'POST',
-                    url: this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId,
-                    data: { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: JSON.stringify(this.getFilterValues()) },
+                    url: "../DV/getdata",
+                    data: { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.getFilterValues() },
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("Authorization", "Bearer " + getToken());
                     },

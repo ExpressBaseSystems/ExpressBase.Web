@@ -486,6 +486,14 @@
         this.ctrlSend(e);
     }.bind(this);
 
+    this.getCardsetvalue = function (obj) {
+        var res = {};
+        // processing
+        res["name"] = obj.objType + "pppppp";
+        res["vaue"] = obj.objType + "vvvvvvvvv";
+        return res;
+    }
+
     this.getValue = function ($input) {
         var inpVal;
         if ($input[0].tagName === "SELECT")
@@ -504,9 +512,13 @@
         else if (this.curCtrl.objType === "InputGeoLocation") {
             inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();
         }
+        else if (this.curCtrl.objType === "StaticCardSet") {
+            inpVal = this.getCardsetvalue(this.curCtrl);
+        }
         else
             inpVal = $input.val();
-        return inpVal.trim();
+        //return inpVal.trim();
+        return inpVal;
     }
 
     this.ctrlSend = function (e) {
@@ -812,7 +824,7 @@
             return;
         if (this.initControls[this.curCtrl.objType] !== undefined)
             this.initControls[this.curCtrl.objType](this.curCtrl);
-    }.bind(this);
+    };
 
     this.formSubmit_fm = function (e) {
         var $btn = $(e.target).closest(".btn");

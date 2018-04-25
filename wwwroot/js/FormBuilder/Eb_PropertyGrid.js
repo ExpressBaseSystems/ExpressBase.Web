@@ -136,7 +136,7 @@
                     var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                     $.each($subRows, function (i, row) {
                         var key = $(row).attr("name").slice(0, -2);
-                        var val = $(row).data("pgValue");
+                        var val = ($(row).find(".pgCX-Editor-Btn").length > 0) ? value.$values[key] : $(row).find(".pgTdval input").val();
                         value.$values[key] = val;
                     });
                     return value;
@@ -332,7 +332,9 @@
             this.innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
         }
         // Close the table and apply it to the div
-        this.$PGcontainer.html(this.innerHTML);
+        var $innerHTML = $(this.innerHTML).hide();
+        this.$PGcontainer.html($innerHTML);
+        $innerHTML.fadeIn(300);
         $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) });
     };
 

@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Controllers
 
             DownloadFileResponse dfs = null;
 
-            ActionResult resp = new EmptyResult(); 
+            ActionResult resp = new EmptyResult();
 
             try
             {
@@ -48,8 +48,6 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
-                else
-                    resp = File("~/images/your_company_logo.png", "image/png");
 
             }
             catch (Exception e)
@@ -57,13 +55,84 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
 
-            return resp; 
+            return resp;
         }
+
+        [HttpGet]
+        public IActionResult GetMyLogo()
+        {
+
+            string filename = string.Format("logo_{0}.png", ViewBag.SolutionId);
+            //filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
+
+            DownloadFileResponse dfs = null;
+
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadFileExtRequest
+                        {
+                            FileName = filename,
+                        });
+
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+                resp = null;
+            }
+
+            return resp;
+        }
+
     }
 
     public class StaticFileController : EbBaseIntController
     {
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
+
+        //[HttpGet("static/mydp/{filename}")]
+        [HttpGet]
+        public string GetMyDP()
+        {
+            string filename = String.Format("dp_{0}.png", ViewBag.UId);
+
+            DownloadFileResponse dfs = null;
+            string b64 = null;
+            try
+            {
+                HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadFileRequest
+                        {
+                            FileDetails = new FileMeta
+                            {
+                                FileName = filename,
+                                FileType = filename.Split(CharConstants.DOT)[1].ToLower()
+                            }
+                        });
+
+                if (dfs.StreamWrapper != null)
+                    b64 = "data:image/png;base64," + Convert.ToBase64String(dfs.StreamWrapper.Memorystream.GetBuffer());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+
+            return b64;
+        }
 
         [HttpGet("static/dp/{filename}")]
         public IActionResult GetDP(string filename)
@@ -96,8 +165,7 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
-                else
-                    resp = File("~/images/businessman.png", "image/png");
+
             }
             catch (Exception e)
             {
@@ -131,8 +199,7 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
-                else
-                    resp = File("~/images/nullimage.png", "image/png");
+
             }
             catch (Exception e)
             {

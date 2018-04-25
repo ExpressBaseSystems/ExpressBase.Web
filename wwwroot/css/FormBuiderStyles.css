@@ -99,7 +99,7 @@
 
 .Eb-ctrlContainer [type="RadioGroup"]{
     padding:5px;
-} 
+}
 .Eb-ctrlContainer input:not([type=radio]) {
     /*height: auto !important;*/
     height: auto;
@@ -112,6 +112,9 @@
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
+}
+.Eb-ctrlContainer input:not([type=radio]) {
+    border: none!important;
 }
 
     .Eb-ctrlContainer input[type="color"] {
@@ -142,10 +145,12 @@
 }
 
 .property-grid-cont {
+    position: relative;
     float: right;
     width: 30%;
     height: 86vh;
     visibility: hidden;
+    z-index: 3;
 }
 
 .tool {

@@ -51,6 +51,9 @@
             window.editor.setValue(atob(PropsObj[this.PGobj.CurProp]));
             window.editor.focus();
         }
+        else
+            if (this.editor === 7 || this.editor === 22)
+                $("#" + this.CEctrlsContId + " .colTile:eq(0)").click();
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -173,7 +176,8 @@
             this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG", null, null, this.PGobj);
             this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
             this.CE_PGObj.parentId = this.PGobj.wraperId;
-            this.setColTiles(true);
+            this.setColTiles();
+            this.setObjTypeDD();
         }
         else if (this.editor > 7 && this.editor < 11) {
             if (this.editor === 8)
@@ -450,10 +454,9 @@
         }
     };
 
-    this.setColTiles = function (f) {
-        var options = "";
-        var SubTypes = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).options;
+    this.setColTiles = function () {
         $("#" + this.CEctrlsContId).empty();
+        var SubTypes = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).options;
         if (SubTypes) {
             $.each(this.CElist, function (i, control) {
                 var type = control.$type.split(",")[0].split(".")[2];
@@ -467,14 +470,20 @@
                 $("#" + this.CEctrlsContId).append($tile);
                 //this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
             }.bind(this));
+        }
+        $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn);
+    };
+
+    this.setObjTypeDD = function () {
+        var options = "";
+        var SubTypes = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).options;
+        if (SubTypes) {
             for (var i = 0; i < SubTypes.length; i++) {
                 var ObjName = SubTypes[i].split("-/-")[0]; var DispName = SubTypes[i].split("-/-")[1];
                 options += '<option value=' + ObjName + '>' + DispName + '</option>'
             }
+            $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
         }
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
-        $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn);
-        if (f) setTimeout(function () { $("#" + this.CEctrlsContId + " .colTile:eq(0)").click(); }.bind(this), 451);
     };
 
     this.colTileCloseFn = function (e) {

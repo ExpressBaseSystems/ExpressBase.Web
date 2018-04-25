@@ -539,7 +539,7 @@
         $.ajax({
             type: "POST",
             url: "../Security/SaveUser",
-            data: { userid: this.itemid, usrinfo: JSON.stringify(dict) },
+            data: { userid: this.itemId, usrinfo: JSON.stringify(dict) },
             success: function (result) {
                 if (result > -1) {
                     alert("Saved Successfully");

@@ -332,7 +332,9 @@
             this.innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
         }
         // Close the table and apply it to the div
-        this.$PGcontainer.html(this.innerHTML);
+        var $innerHTML = $(this.innerHTML).hide();
+        this.$PGcontainer.html($innerHTML);
+        $innerHTML.show(300);
         $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) });
     };
 

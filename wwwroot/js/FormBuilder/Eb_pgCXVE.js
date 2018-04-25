@@ -542,9 +542,10 @@
     };
 
     this.CE_AddFn = function () {
-        var SelType = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected").val();
+        var $DD = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected");
+        var SelType = $DD.val();
         var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
-        var EbSid = this.PGobj.PropsObj.EbSid + "_" + SelType + (lastItemCount + 1);
+        var EbSid = this.PGobj.PropsObj.EbSid + "_" + $DD.text() + (lastItemCount + 1);
         if (this.PGobj.CurProp === "Controls")////////////// need CE test and correction
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         else

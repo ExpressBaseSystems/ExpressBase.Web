@@ -334,7 +334,7 @@
         // Close the table and apply it to the div
         var $innerHTML = $(this.innerHTML).hide();
         this.$PGcontainer.html($innerHTML);
-        $innerHTML.show(300);
+        $innerHTML.fadeIn(300);
         $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) });
     };
 

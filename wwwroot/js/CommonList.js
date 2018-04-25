@@ -219,14 +219,16 @@
         return `<i class="fa fa-pencil fa-2x editviewclass" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]}></i>`;
     }
 
-    this.tblProfPicRender = function (data, type, row, meta) {
-        return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' style = 'max-width: 80% !important;'/>`;
-        //return `error`;
+    this.tblProfPicRender = function (data, type, row, meta) {        
+        //return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' style = 'max-width: 80% !important;'/>`;
+        if (data[4] === 'Female')
+            return `<img class='img-thumbnail pull-right' src='../images/businesswoman.png' style = 'max-width: 80% !important;'/>`;
+        return `<img class='img-thumbnail pull-right' src='../images/businessman.png' style = 'max-width: 80% !important;'/>`;
     }
     this.tblFbProfPicRender = function (data, type, row, meta) {
         var id = data[9];
         if (id == "")//if fbid is not available then
-            return `<img class='img-thumbnail' src='' />`//id = '12345678';//assinging a sample value to get a default user profpic from graph.fb
+            return `<img class='img-thumbnail' src='../images/businessman.png' />`//id = '12345678';//assinging a sample value to get a default user profpic from graph.fb
         return `<img class='img-thumbnail' src='http://graph.facebook.com/${id}/picture?type=square' />`;
     }
 

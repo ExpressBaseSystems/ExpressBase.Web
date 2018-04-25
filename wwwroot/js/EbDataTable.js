@@ -142,6 +142,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.initCompleteflag = false;
     this.isTagged = false;
     //this.filterChanged = false;
+    this.isRun = false;
 
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -475,7 +476,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.keys = true;
         //this.filterValues = this.getFilterValues();
         filterChanged = false;
-        if (!this.isTagged)
+        if (!this.isTagged || counter === 0)
             this.compareFilterValues();
         if (this.MainData !== null && this.login == "uc" && !filterChanged && this.isPipped) {
             //o.serverSide = false;
@@ -497,7 +498,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";   
             o.paging = true;
             o.lengthChange = true;
-            if (this.ebSettings.IsPaged == "False") {
+            if (this.ebSettings.IsPaged == "False" && !this.ebSettings.IsPaging) {
                 o.dom = "<'col-md-12 noPadding'B>rt";
                 o.paging = false;
                 o.lengthChange = false;
@@ -512,7 +513,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //url: this.ssurl + '/ds/data/' + this.dsid,
                 url: "../dv/getData",
                 type: 'POST',
-                //timeout: 180000,
+                timeout:180000,
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
                 //beforeSend: function (xhr) {
@@ -554,6 +555,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (serachItems.length > 0) {
             this.filterFlag = true;
         }
+        dq.Ispaging = this.EbObject.IsPaging;
 
         //var x = new Object();
         //x.xx = JSON.stringify(dq);
@@ -615,6 +617,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.receiveAjaxData = function (dd) {
+        this.isRun = true;
+        this.ebSettings.IsPaged = dd.ispaged.toString();
         //if (!dd.ispaged) {
         //    this.Api.paging = dd.ispaged;
         //    this.Api.lengthChange = false;
@@ -630,9 +634,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.compareFilterValues = function () {
         var filter = this.getFilterValues("compare");
-        if (focusedId !== undefined) {
+        if (focusedId !== undefined && this.isRun) {
             $.each(filter, function (i, obj) {
-                if (obj.value !== dvcontainerObj.dvcol[focusedId].filterValues[i].value) {
+                if (obj.Value !== dvcontainerObj.dvcol[focusedId].filterValues[i].Value) {
                     filterChanged = true;
                     return false;
                 }

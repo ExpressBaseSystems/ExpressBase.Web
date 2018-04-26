@@ -1,4 +1,6 @@
-﻿var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serverEventUrl) {
+﻿//import { Array, Object } from "core-js/library/web/timers";
+
+var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serverEventUrl) {
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
     this.ebbotThemeColor = _themeColor;
@@ -486,12 +488,24 @@
         this.ctrlSend(e);
     }.bind(this);
 
-    this.getCardsetvalue = function (obj) {
-        var res = {};
-        // processing
-        res["name"] = obj.objType + "pppppp";
-        res["vaue"] = obj.objType + "vvvvvvvvv";
-        return res;
+    this.getCardsetvalue = function (cardCtrl) {
+        var resObj = {};
+        //var resObj = new Array();
+        $.each(cardCtrl.cardCollection, function (k, cObj) {
+            if (cardCtrl.selectedCards.indexOf(cObj.cardId) !== -1) {
+                var tempArray = new Array();
+                $.each(cardCtrl.cardFields, function (h, fObj) {
+                    if (!fObj.doNotPersist) {
+                        //resObj[fObj.name] = [cObj.customFields[fObj.name], fObj.ebDbType];
+                        //resObj.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name}));
+                        tempArray.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name }));                        
+                    }
+                }.bind(this));
+                resObj[cObj.cardId] = tempArray;
+            }
+        }.bind(this));
+
+        return (JSON.stringify(resObj));
     }
 
     this.getValue = function ($input) {
@@ -871,7 +885,7 @@
         this.nxtCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
     };
-
+    //save botform
     this.DataCollection = function () {
         $.ajax({
             type: "POST",

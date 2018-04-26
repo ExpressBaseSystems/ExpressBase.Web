@@ -294,7 +294,11 @@
         $.each(this.Bot.curCtrl.cardFields, function (k, fObj) {
             if (!fObj.doNotPersist) {
                 var fVal = this.getValueInDiv($card.find('.data-' + fObj.name));
-                card.customFields[fObj.name] = fVal;
+                //fObj.ebDbType always returns 16 <string>!!! if ebDbType return correct value then this checking can be avoided
+                if (fObj.objType === 'CardNumericField')
+                    card.customFields[fObj.name] = parseFloat(fVal);
+                else
+                    card.customFields[fObj.name] = fVal;
             }
         }.bind(this));
     }

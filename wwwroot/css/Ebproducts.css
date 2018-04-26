@@ -59,7 +59,7 @@ margin-bottom:15px;
     background: white;
     height: 450px;
     margin-top: -160px;
-    box-shadow: var(--eb-shadow);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px -2px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
 }
 .eb-bot-pdF-motion-frame {
@@ -346,7 +346,7 @@ float:left;
 /*end login*/
 
 .bot-section2, .embed_scriptBot {
-    font-family:var(--fontf);
+    font-family:Montserrat;
 }
     .bot-section2 .tiles {
         padding: 10px;
@@ -383,7 +383,7 @@ float:left;
         border:1px solid #ccc;
     }
 .bot-pricing {
-    font-family: var(--fontf);
+    font-family: Montserrat;
 }
 .bot-pricing-body .col-md-3{
     

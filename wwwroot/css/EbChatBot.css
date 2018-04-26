@@ -155,7 +155,7 @@
 }
 
 .bot-icon {
-    background: var(--botdpURL)!important;
+    background: var(--botdpURL) !important;
     width: 26px;
     background-size: 100% !important;
     height: 26px;
@@ -478,28 +478,28 @@
 }
 
 .eb-chatBox .card-cont {
-	border-radius: 1.3em;
-	border: none;
-	margin: 0;
-	width: 100%;
-	height: inherit;
+    border-radius: 1.3em;
+    border: none;
+    margin: 0;
+    width: 100%;
+    height: inherit;
 }
 
 .eb-chatBox .cards-cont {
-	padding: 0px;
-	box-shadow: 0px 0px 20px #ccc;
-	border-radius: 1.3em;
+    padding: 0px;
+    box-shadow: 0px 0px 20px #ccc;
+    border-radius: 1.3em;
 }
 
 .eb-chatBox .card-summary-cont {
-	box-shadow: 0px 0px 20px #ccc;
-	border-radius: 0;
-	margin-top: 20px;
+    box-shadow: 0px 0px 20px #ccc;
+    border-radius: 0;
+    margin-top: 20px;
 }
 
 
 .slick-track {
-	display: flex !important;
+    display: flex !important;
 }
 
 .slick-next {
@@ -518,39 +518,43 @@
     }
 
 .card-btn-cont {
-	padding: 0 12px 8px 12px;
-	width: 100%;
+    padding: 0 12px 8px 12px;
+    width: 100%;
 }
-.card-btn-cont .btn {
-    margin-top: 5px;
-    padding: 3px 12px;
-}
+
+    .card-btn-cont .btn {
+        margin-top: 5px;
+        padding: 3px 12px;
+    }
+
 .card-numeric-cont {
-	padding: 0px 5px 0px 5px;
-	/*width: 50%;*/
-	/*display: inline-block;*/
-	/*text-align:center;*/
+    padding: 0px 5px 0px 5px;
+    /*width: 50%;*/
+    /*display: inline-block;*/
+    /*text-align:center;*/
 }
+
 .removeArrows::-webkit-inner-spin-button,
 .removeArrows::-webkit-outer-spin-button {
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-	margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
 }
+
 .card-text-cont {
-	padding: 0px 5px 0px 5px;
-	/*width: 50%;*/
-	/*display: inline-block;*/
-	/*text-align: center;*/
+    padding: 0px 5px 0px 5px;
+    /*width: 50%;*/
+    /*display: inline-block;*/
+    /*text-align: center;*/
 }
 
 
 .contct-cont {
-	padding: .5em;
-	text-align: center;
-	border-radius: 0.4em;
-	background-color: #1e6c7d;
+    padding: .5em;
+    text-align: center;
+    border-radius: 0.4em;
+    background-color: #1e6c7d;
 }
 
 .contact-inp-wrap {
@@ -649,6 +653,7 @@
     font-size: 13px;
     color: rgba(0, 0, 0, 0.5);
 }
+
 .loc-opt-btn {
     text-align: center;
     display: inline-block;
@@ -683,9 +688,9 @@
 
 .locinp {
     height: 1.2em !important;
-    min-height:0!important;
+    min-height: 0 !important;
     margin-left: 5px;
-    border:none !important;
+    border: none !important;
     border-bottom: solid 1px #e4e4e4 !important;
     font-size: calc(1em - 1px);
     float: right;
@@ -700,6 +705,24 @@
     }
 
 
-    .radio-wrap:hover, .radio-wrap:focus {
-        background-color: #eee;
+.radio-wrap:hover, .radio-wrap:focus {
+    background-color: #eee;
+}
+
+.pdf-extbtn {
+    position: absolute;
+    right: -1px;
+    top: 10px;
+    padding: 0 3px;
+    background-color: #323639;
+    border-radius: 3px;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
+}
+
+    .pdf-extbtn:hover {
+        box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .pdf-extbtn .fa {
+        color: white;
     }

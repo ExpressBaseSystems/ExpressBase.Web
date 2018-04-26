@@ -16,7 +16,6 @@
         var PropsObj = this.getPropsObj();
         var $curRowInp = $("#" + this.PGobj.wraperId + " [name=" + _CurProp + "Tr] input");
         if (this.editor === 11 || this.editor === 16 || this.editor === 18) {// script editors
-
             if (this.editor === 16) {
                 value = $(`#StrE_txtEdtr${this.PGobj.wraperId}`).val();
                 PropsObj[_CurProp] = value;

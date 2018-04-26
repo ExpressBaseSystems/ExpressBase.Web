@@ -235,7 +235,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.isPipped || this.isContextual) {
                 if (this.filterValues.length > 0) {
                     $.each(this.filterValues, function (i, param) {
-                        $(sideDivId + ' #' + param.name).val(param.value);
+                        $(sideDivId + ' #' + param.Name).val(param.Value);
                     });
                 }
                 $("#btnGo" + this.tabNum).trigger("click");
@@ -437,7 +437,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.lengthMenu = this.ebSettings.lengthMenu;
         o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
         o.pagingType = "full";
-        if (this.ebSettings.IsPaged == "false") {
+        if (!this.ebSettings.IsPaging) {
 
             o.dom = "<'col-md-12 noPadding'B>rt";
         }
@@ -476,7 +476,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.keys = true;
         //this.filterValues = this.getFilterValues();
         filterChanged = false;
-        if (!this.isTagged || counter === 0)
+        if (!this.isTagged)
             this.compareFilterValues();
         if (this.MainData !== null && this.login == "uc" && !filterChanged && this.isPipped) {
             //o.serverSide = false;
@@ -498,7 +498,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";   
             o.paging = true;
             o.lengthChange = true;
-            if (this.ebSettings.IsPaged == "False" && !this.ebSettings.IsPaging) {
+            if (!this.ebSettings.IsPaging) {
                 o.dom = "<'col-md-12 noPadding'B>rt";
                 o.paging = false;
                 o.lengthChange = false;
@@ -546,7 +546,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         dq.RefId = this.EbObject.DataSourceRefId;
         var serachItems = this.repopulate_filter_arr();
         dq.TFilters = serachItems ;
-        if (this.filterValues === null || this.filterValues === undefined || this.filterValues.length === 0 || filterChanged)
+        if (this.filterValues === null || this.filterValues === undefined || this.filterValues.length === 0 || filterChanged || this.login === "dc" || this.login === "uc")
             this.filterValues = this.getFilterValues("filter");
         dq.Params =  this.filterValues ;
         //dq.rowData = this.rowData;
@@ -563,6 +563,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getFilterValues = function (from) {
+        this.filterChanged = false;
         var fltr_collection = [];
         var FdCont = "#sub_windows_sidediv_" + this.tableId;
         var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
@@ -589,7 +590,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             else {
                 if (this.rowData !== null) {
-                    $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection, from));
+                    if (this.Api !== null)
+                        $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection, from));
                 }
             }
         }
@@ -598,27 +600,27 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.rowObj2filter = function (fltr_collection, from, i, data) {
-        if (from === "link") {
-            var type = this.Api.settings().init().aoColumns[i + 2].Type;
-            fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i + 2].name, data));
-        }
-        else {
-            if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
-                var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
-                fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
+        if (i+2 < this.Api.settings().init().aoColumns.length) {
+            if (from === "link") {
+                var type = this.Api.settings().init().aoColumns[i + 2].Type;
+                fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i + 2].name, data));
+            }
+            else {
+                if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
+                    var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
+                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
+                }
             }
         }
-        //if (type === "System.Int32" || type === "System.Int16")
-        //    type = 12;
-        //else if (type === "System.Decimal" || type === "System.Double" || type === "System.Int64")
-        //    type = 7;
-        //else if (type === "System.String")
-        //    type = 16;
+    };
+
+    this.getfilter = function (fltr_collection, i, data) {
+        fltr_collection.push(new fltr_obj(data.Type, data.name, this.rowData[i]));
     };
 
     this.receiveAjaxData = function (dd) {
         this.isRun = true;
-        this.ebSettings.IsPaged = dd.ispaged.toString();
+        //this.ebSettings.IsPaged = dd.ispaged.toString();
         //if (!dd.ispaged) {
         //    this.Api.paging = dd.ispaged;
         //    this.Api.lengthChange = false;
@@ -634,7 +636,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.compareFilterValues = function () {
         var filter = this.getFilterValues("compare");
-        if (focusedId !== undefined && this.isRun) {
+        if (focusedId !== undefined) {
             $.each(filter, function (i, obj) {
                 if (obj.Value !== dvcontainerObj.dvcol[focusedId].filterValues[i].Value) {
                     filterChanged = true;
@@ -642,59 +644,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
 
             }.bind(this));
-            //if (f == null)
-            //    return true;
-            //else
-            //    return false;
         }
         else
-            //return false;
             filterChanged = true;
     }
-
-    this.btnGoClick = function (e) {
-        var controlIds = ["datefrom", "dateto"];// temp
-
-        //if (isValid(controlIds)) {
-        //this.btnGo.attr("disabled", true);
-        if (this.columnDefDuplicate !== JSON.stringify(this.ebSettings.Columns.$values)) {
-            this.dragNdrop = true;
-            this.columnDefDuplicate = JSON.stringify(this.ebSettings.Columns.$values);
-        }
-        if (!this.isSecondTime) {
-            this.isSecondTime = true;
-            this.RenderGraphModal();
-            if (this.ebSettings !== null)
-                this.getColumnsSuccess(this.ebSettings);
-            else
-                this.getColumns();
-        }
-        else if (this.dragNdrop) {
-            this.ebSettings.Columns.$values.sort(this.ColumnsComparer);
-            $.each(this.ebSettings.Columns.$values, function (i, obj) {
-                if (obj.fontfamily != 0) {
-                    var style = document.createElement('style');
-                    style.type = 'text/css';
-                    var fontName = obj.fontfamily.replace(/_/g, " ");
-                    var replacedName = obj.fontfamily;
-                    style.innerHTML = '.font_' + replacedName + '{font-family: ' + fontName + ';}';
-                    document.getElementsByTagName('body')[0].appendChild(style);
-                    obj.className = "font_" + replacedName + " tdheight";
-                    obj.sClass = "font_" + replacedName + " tdheight";
-                }
-            });
-            //this.ebSettings.columnsext.sort(this.ColumnsComparer);
-            $('#' + this.tableId + 'divcont').children("#" + this.tableId + "_wrapper").remove();
-            var table = $(document.createElement('table')).addClass('table table-striped table-bordered').attr('id', this.tableId);
-            $('#' + this.tableId + 'divcont').append(table);
-            this.Init();
-            this.dragNdrop = false
-        }
-        else {
-            this.Api.ajax.reload();
-        }
-        e.preventDefault();
-    };
 
     this.ColumnsComparer = function (a, b) {
         //var a1 = parseInt(a.pos);
@@ -841,7 +794,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else
             idx = key;
         this.rowData = this.Api.row(idx).data();
-        this.filterValues = this.getFilterValues("link");
+        //this.filterValues = this.getFilterValues("link");
         var splitarray = this.linkDV.split("-");
         if (splitarray[2] === "3") {
             var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
@@ -1915,22 +1868,4 @@ function renderLineGraphs(id) {
 
 function GPointPopup(e) {
     //alert(e.pageX);
-};
-
-function getFilterValues() {
-    var fltr_collection = [];
-    var paramstxt = "datefrom,dateto";//$('#hiddenparams').val().trim();datefrom,dateto
-    if (paramstxt.length > 0) {
-        var params = paramstxt.split(',');
-        $.each(params, function (i, id) {
-            var v = null;
-            var dtype = $('#' + id).attr('data-ebtype');
-            if (dtype === '6')
-                v = $('#' + id).val().substring(0, 10);
-            else
-                v = $('#' + id).val();
-            fltr_collection.push(new fltr_obj(dtype, id, v));
-        });
-    }
-    return fltr_collection;
 };

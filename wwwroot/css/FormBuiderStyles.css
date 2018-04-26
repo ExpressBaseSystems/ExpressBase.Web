@@ -113,7 +113,8 @@
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
 }
-.Eb-ctrlContainer input:not([type=radio]) {
+
+.ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
     border: none!important;
 }
 

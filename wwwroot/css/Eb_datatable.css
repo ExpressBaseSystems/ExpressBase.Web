@@ -238,6 +238,16 @@ table.dataTable tbody td.dt-body-right {
     height: calc(100vh - 176px);
 }
 
+/*/////////*/ 
+.dataTables_wrapper {
+    height: 100%;
+}
+
+.dataTables_scrollBody {
+    height: calc(100% - 47px) !important;
+}
+
+/*///////////*/
 .dataTable tbody tr td {
     height: 15px; /* or whatever height you need to make them all consistent */
     white-space: nowrap;
@@ -271,6 +281,7 @@ table.dataTable tbody td.dt-body-right {
     border-radius: 2px;
     border: none;
 }
+
 .RptModal .modal-dialog {
     width: 100%;
 }
@@ -293,12 +304,9 @@ table.dataTable tbody td.dt-body-right {
     border-right: solid 1px #0000000d;
 }
 
-[eb-type=EbTableVisualization] .dataTable {
-    border: 0;
-}
 
 [eb-type=EbTableVisualization] .noPadding {
-   // display: none;
+    // display: none;
 }
 
 [eb-type=EbTableVisualization] .dataTable:first-child {

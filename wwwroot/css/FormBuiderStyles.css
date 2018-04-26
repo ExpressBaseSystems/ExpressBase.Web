@@ -113,8 +113,9 @@
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
 }
+
 .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
-    border: none !important;
+    border: none!important;
 }
 
     .Eb-ctrlContainer input[type="color"] {

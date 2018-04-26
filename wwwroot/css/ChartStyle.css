@@ -20,9 +20,9 @@
 .tag-cont .colTile:hover {
     cursor: move;
 }
-/*canvas{
-    height:100% !important;
-}*/
+.chartCont canvas {
+    height: 100% !important;
+}
 .botdata_cont{
 height: 100%; 
 z-index: 4; 

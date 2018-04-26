@@ -39,7 +39,7 @@ body {
     border-color: rgba(27,31,35,0.15);
     margin: 0 auto;
     border-radius: 4px;
-    font-family: var(--fontf);
+    font-family: Montserrat;
     padding: 15px;
     margin-top: 2em;
     position: fixed;
@@ -49,7 +49,7 @@ body {
 .eb_login {
     height: 100vh;
     max-height: 100vh;
-    background: #f9f9f9;
+    background-color: #f9f9f9;
 }
 .log_error_close {
     position: absolute;
@@ -77,11 +77,11 @@ body {
     margin: 0 auto;
     border-radius: 4px;
     overflow: hidden;
-    font-family: var(--fontf);
+    font-family: Montserrat;
     font-weight: 300;
     margin-top: 10%;
-    box-shadow: var(--eb-shadow2);
-    position:relative;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    position: relative;
 }
     .login_container form {
         padding: 30px;
@@ -101,7 +101,7 @@ body {
 
 .login_container .signin-btn {
     width: 100%;
-    background: #31d031;
+    background-color: #31d031;
     color: white;
 }
 .login-sec-image {
@@ -116,7 +116,7 @@ body {
 /*       Slider       */
 /*forgetpassword msgBox*/
 .message-box-indexpage {
-    background: var(--eb-green);
+    background-color: #31d031;
     position: fixed;
     width: 100%;
     text-align: center;
@@ -124,7 +124,7 @@ body {
     color: white;
     padding: 15px;
     font-size: 16px;
-    font-family: var(--fontf);
+    font-family: Montserrat;
     font-weight: 400;
     display: none;
 }
@@ -170,7 +170,7 @@ Navigation bar
     z-index: -1;
     right: 100%;
     bottom: 0;
-    background: #168ac2;
+    background-color: #168ac2;
     height: 3px;
     -webkit-transition-property: right;
     transition-property: right;
@@ -204,7 +204,7 @@ Navigation bar
 }
     .ext-pageheader .navbar-nav > li > a:hover {
         color: #0f86cb;
-        font-family: var(--fontf);
+        font-family: Montserrat;
     }
 .ext-pageheader .navbar-right {
     margin-right: 0;
@@ -215,7 +215,7 @@ Navigation bar
 }
 
 .ext-pageheader .btn-trial a {
-    background: #23c523;
+    background-color: #23c523;
     border: none;
     border-radius: 2px;
     padding: 7px !important;
@@ -223,12 +223,12 @@ Navigation bar
     box-shadow: 0 6px 20px 2px rgb(180, 228, 180);
 }
 .ext-pageheader .btn-trial a:hover {
-    background: #31d031 !important;
+    background-color: #31d031 !important;
 }
 
 @media(max-width: 768px) {
     .navbar-collapse {
-        background: white;
+        background-color: white;
     }
 }
 
@@ -251,15 +251,15 @@ Navigation bar
 }
 
 .eb-banner {
-    background: var(--ebbg);
+    background-color: #0280db;
     padding: 15px 15px 15px 15px;
-    background-image: var(--ebbgimage);
+    background-image: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
 }
 .eb-banner-text-img-sec {
     width: 100%;
 }
 .get-start-sec {
-    font-family: var(--fontf);
+    font-family: Montserrat;
 }
 .no-creditcared {
     text-align: center;
@@ -275,8 +275,8 @@ Navigation bar
     box-shadow: none;
 }
 .get-start-sec span {
-    background: #23c523;
-    font-family: var(--fontf);
+    background-color: #23c523;
+    font-family: Montserrat;
     font-weight: 300;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
@@ -284,11 +284,11 @@ Navigation bar
     border: none;
 }
     .get-start-sec span button {
-        background: transparent;
+        background-color: transparent;
         height: 45px;
         border: none;
         color: white;
-        font-family: var(--fontf);
+        font-family: Montserrat;
     }
         .get-start-sec span button:hover {
             color: white;
@@ -378,7 +378,7 @@ Navigation bar
     }
 /*team*/
 .team {
-    font-family: var(--fontf);
+    font-family: Montserrat;
     font-weight: 300;
 }
 
@@ -424,7 +424,7 @@ footer {
     background-color: #1c3c4c;
     color: white;
     padding-bottom: 30px;
-    font-family: var(--fontf);
+    font-family: Montserrat;
     font-weight: 300;
 }
     footer h5 {
@@ -462,7 +462,7 @@ footer {
     }
 
 .f_social {
-    background: #2e7dfd;
+    background-color: #2e7dfd;
     padding: 5px;
     text-align: center;
     border-radius: 50%;
@@ -620,7 +620,7 @@ footer {
 .aboutus-header {
     min-height: 480px;
     width: 100%;
-    font-family: var(--fontf);
+    font-family: Montserrat;
     font-weight: 300;
     background-image: url(../images/wall_people.jpg);
     background-position: center;
@@ -648,7 +648,7 @@ footer {
 }
 .mv_com {
     padding: 5px;
-    font-family: var(--fontf);
+    font-family: Montserrat;
     font-weight: 300;
     font-size: 17px;
     line-height: 3.4rem;
@@ -660,7 +660,7 @@ footer {
     padding: 0px 10px 0px 40px;
 }
 .founder {  
-    font-family: var(--fontf);
+    font-family: Montserrat;
 }
     .founder .detail-info {
         line-height: 3rem;
@@ -685,7 +685,7 @@ footer {
 
 .log-form {
     height: inherit;
-    background: white;
+    background-color: white;
 }
 
 .subscript {
@@ -916,8 +916,8 @@ footer {
     padding: 10px 40px;
 }
 .speakers {
-    background-color: var(--ebbg);
-    background-image: var(--ebbgimage);
+    background-color: #0280db;
+    background-image: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
     font-family: Montserrat;
     font-weight: 300;
 }
@@ -1005,7 +1005,7 @@ footer {
     position: absolute;
     top: 0;
     z-index: 100;
-    background: #585656;
+    background-color: #585656;
     opacity: .3;
 }
 .eb_common_loader {

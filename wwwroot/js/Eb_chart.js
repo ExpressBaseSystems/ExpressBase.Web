@@ -309,7 +309,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append(
-                "<div id='graphcontainer_tab" + this.tableId + "' style='height:inherit;'>" +
+                "<div id='graphcontainer_tab" + this.tableId + "' style='height:inherit;' class='chartCont'>" +
                 "<div class='col-md-2 no-padd' id='columnsDisplay" + this.tableId + "' style='height:inherit;'>" +
                 "<div class='tag-cont'>" +
                 "  <div class='tag-wraper'><div class='pgHead'>Dimensions</div><div class='tag-scroll'><div id='diamension" + this.tableId + "'></div></div></div>" +

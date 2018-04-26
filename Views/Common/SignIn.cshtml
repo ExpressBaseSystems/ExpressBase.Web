@@ -6,38 +6,40 @@
     <div class="container">
         <div class="row">
             <div class="log_error">Incorrect username or password.<i class="fa fa-close log_error_close" onclick="$('.log_error').hide();"></i></div>
-            <form class="login_container" id="log_form" action="" method="post" data-toggle="validator">
-                <div class="login-sec-image text-center">
-                    <img src="~/images/EB_Logo-png.png" />
-                </div>
-                <h1 class="text-center">Sign In</h1><br>
-                <div class="form-group mb-25">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                        <input type="email" name="uname" class="form-control inputEmail" placeholder="Email" id="inputEmail" data-error="Email address is invalid." required><br />
+            <div class="login_container">
+                <div class="loader_top" id="loader_profile"></div>
+                <form id="log_form" action="" method="post" data-toggle="validator">
+                    <div class="login-sec-image text-center">
+                        <img src="~/images/EB_Logo-png.png" />
                     </div>
-                    <div class="help-block with-errors f12 text-right"></div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                        <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                    <h1 class="text-center">Sign In</h1><br>
+                    <div class="form-group mb-25">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                            <input type="email" name="uname" class="form-control inputEmail" placeholder="Email" id="inputEmail" data-error="Email address is invalid." required><br />
+                        </div>
+                        <div class="help-block with-errors f12 text-right"></div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox icheck remembrpw text-right">
-                        <label>
-                            <input type="checkbox" id="loginrem"> Remember Me
-                        </label>
-                        @*<div class="text-right nopadding">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                            <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox icheck remembrpw text-right">
+                            <label>
+                                <input type="checkbox" id="loginrem"> Remember Me
+                            </label>
+                            @*<div class="text-right nopadding">
                             <a href="~/Ext/ForgotPassword">Forgot password?</a>
                         </div>*@
+                        </div>
+                        <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmitLogin'>
+                            Sign In <i class="fa fa-spinner fa-spin login_spiner"></i>
+                        </button>
                     </div>
-                    <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmitLogin'>
-                        Sign In <i class="fa fa-spinner fa-spin login_spiner"></i>
-                    </button>
-                </div>
-                @*<div class="text-center">Or Sign In by</div>
+                    @*<div class="text-center">Or Sign In by</div>
                 <div style="padding-left: 34px;">
                     <div class="col-xs-2 col-sm-2">
                         <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
@@ -70,12 +72,14 @@
                         </a>
                     </div>
                 </div>*@
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </section>
 <script>$("#logNow").click(function (e) {
     $(".login_spiner").show();
-    setTimeout(function () { $(".login_spiner").hide(); $(".log_error").show();}, 3000);
+    $(".loader_top").EbLoader("show");
+    setTimeout(function () { $(".login_spiner").hide(); $(".log_error").show(); $(".loader_top").EbLoader("hide");}, 3000);
 
     });</script>

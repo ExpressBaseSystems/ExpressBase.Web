@@ -19,7 +19,7 @@
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
                     </button>
                     <div class="dropdown obj_dash_proimage_drp">
-                        <img src="~/images/proimg.jpg" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle" />
+                        <img src="~/images/proimg.jpg" id="header_dp" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle" />
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <ul class="drp_ul">
                                 <li class="drp_item border_b" style="height:50px;">
@@ -29,7 +29,7 @@
                                     </div>
                                 </li>
                                 <li class="drp_item border_b"><a onclick="LoadMyProfile()"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
-                                <li class="drp_item"><a href="./Logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
+                                <li class="drp_item"><a onclick="location.href='@Url.Action("Logout","Tenantuser")'"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                             </ul>
                         </div>
                     </div>
@@ -50,6 +50,8 @@
             $(".bread_cr_title #objname").text(`${name}`);
         };
     };
+    ///getdp by ajax
+    getDp(document.getElementById("header_dp"));
 
     function LoadMyProfile() {
         event.preventDefault();

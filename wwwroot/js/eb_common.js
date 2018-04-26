@@ -135,3 +135,24 @@ function getEbObjectTypes() {
     } 
     return Eb_ObjectTypes;
 }
+
+function getDp(context) {
+    $.ajax({
+        type: "GET",
+        url: "../StaticFile/GetMyDP",
+        success: function (data) {
+            context.src = data;
+        }
+    });
+};
+
+function getLogo() {
+    $.ajax({
+        type: "GET",
+        url: "../StaticFile/GetMyLogo",
+        success: function (data) {
+            if (data)
+                return data;
+        }
+    });
+};

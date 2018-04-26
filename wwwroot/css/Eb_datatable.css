@@ -298,7 +298,7 @@ table.dataTable tbody td.dt-body-right {
 }
 
 [eb-type=EbTableVisualization] .noPadding {
-    display: none;
+   // display: none;
 }
 
 [eb-type=EbTableVisualization] .dataTable:first-child {

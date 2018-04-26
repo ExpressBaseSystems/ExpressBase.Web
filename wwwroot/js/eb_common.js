@@ -141,7 +141,11 @@ function getDp(context) {
         type: "GET",
         url: "../StaticFile/GetMyDP",
         success: function (data) {
-            context.src = data;
+            if (data) {
+                for (var i = 0; i < context.length; i++) {
+                    context[i].src = data;
+                }
+            }
         }
     });
 };

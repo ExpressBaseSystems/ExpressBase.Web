@@ -214,6 +214,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
+        console.log(text);
         $(sideDivId).find("input").on("keyup", function (e) {
             if (e.which === 13)
                 $("#btnGo0").click();

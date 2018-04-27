@@ -6,40 +6,51 @@
         var operation = action;
         var settings = $.extend({
             color:"#ec9351",
-            bgColor: 'transparent', // Default background color
-            fontAwesome: null, // Default null
-            imagePath: null, // Default Path custom image
-            elMask: false,
-            maskItem:null
+            bgColor: 'transparent', // Default background color 
+            maskItem:{}
         }, options);
+
+        //maskItem:{
+        //Id: "",
+        //Style:{}   //jquery css
+        //}
 
         //Apply styles
         el.css("background-color", settings.bgColor);
 
+        maskItem = $(settings.maskItem.Id);
+
         if (!el.hasClass('eb-loader-prcbar')) {
             el.addClass('eb-loader-prcbar');
-            if (!$.isEmptyObject(settings.maskItem))
-                settings.maskItem.append(`<div class="loader_mask_EB" id="${el.attr("id")}loader_mask_item"></div>`);
-            if (settings.elMask)
-                el.parent().append(`<div class="loader_mask_EB" id="${el.attr("id")}loader_mask_EB"></div>`);
+            if (!$.isEmptyObject(settings.maskItem)) {
+                maskItem.append(`<div class="loader_mask_EB" id="${el.attr("id")}loader_mask_item">
+                                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div>
+                                    <div></div><div></div><div></div><div></div><div>
+                                    </div><div></div><div></div></div></div>`);
+                appendMaskStyle();
+            }
         }
-            
+        else {
+            showPrc();
+        }
+
+        function appendMaskStyle() {
+            if (!$.isEmptyObject(settings.maskItem.Style)) {
+                $(`#${el.attr("id")}loader_mask_item`).css(settings.maskItem.Style);
+            }
+        };
+        
         //show function for processbar
         function showPrc() {
             el.show();
             if (!$.isEmptyObject(settings.maskItem))
                 $(`#${el.attr("id")}loader_mask_item`).show();
-            if (settings.elMask)
-                $(`#${el.attr("id")}loader_mask_EB`).show();
         };
         
         //hide function for processbar
         function hidePrc() {
             el.hide();
-            if (!$.isEmptyObject(settings.maskItem))
-                $(`#${el.attr("id")}loader_mask_item`).hide();
-            if (settings.elMask)
-                $(`#${el.attr("id")}loader_mask_EB`).hide();
+            $(`#${el.attr("id")}loader_mask_item`).hide();
         };
 
         if (operation === "show")

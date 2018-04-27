@@ -998,7 +998,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.initConnectionCheck = function () {
         Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://www.expressbase.com/images/EB_Logo.png?' + Date.now() }, active: 'image' } };
-        setInterval(this.connectionPing, 2000);
+        setInterval(this.connectionPing, 2000000);///////////////////////////////////////////////////////////////
     };
 
     this.connectionPing = function () {

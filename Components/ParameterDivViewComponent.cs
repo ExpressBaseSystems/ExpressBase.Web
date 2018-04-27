@@ -15,6 +15,7 @@ namespace ExpressBase.Web.Components
             {
                 ViewBag.HtmlHead = paramDiv.GetHead();
                 ViewBag.HtmlBody = paramDiv.GetHtml();
+                ViewBag.Controls = "hii ladies";
             }
 
             return View();

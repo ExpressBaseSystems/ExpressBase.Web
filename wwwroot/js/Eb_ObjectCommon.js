@@ -103,6 +103,10 @@
 
     this.UpdateDashboard_Success = function (data) {
         $('#object_Dashboard_main').empty().append(data);
+
+        menu.resultObj = null;//reload menu by amal on 27/04/2018
+        menu.init();//reload menu by amal on 27/04/2018
+
         commonObj.init();
         $('#tags').tagsinput('add', this.tags);
     };

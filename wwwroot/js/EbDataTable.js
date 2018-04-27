@@ -179,7 +179,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.call2FD = function () {
         this.relatedObjects = this.EbObject.DataSourceRefId;
-        $.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
@@ -232,7 +232,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if ($(sideDivId + " #filterBox").children().length == 0) {
             this.FD = false;
             $(sideDivId).css("display", "none");
-            $.LoadingOverlay("hide");
+            $("#eb_common_loader").EbLoader("hide");
             $("#btnGo" + this.tabNum).trigger("click");
         }
         else {
@@ -248,7 +248,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 $(sideDivId).css("display", "inline");
             }
-            $.LoadingOverlay("hide");
+            $("#eb_common_loader").EbLoader("hide");
         }
         $(subDivId).focus();
     }.bind(this);
@@ -296,6 +296,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.getColumnsSuccess = function () {
+        //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
         $(".icon-cont").hide();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
@@ -346,6 +347,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.table_jQO.children("tfoot").hide();
 
+        this.table_jQO.on('processing.dt', function (e, settings, processing) {
+            if (processing == true) {
+                $(".toolicons .btn").prop("disabled", true);
+                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+            }
+            else {
+                $(".toolicons .btn").prop("disabled", false);
+                $("#eb_common_loader").EbLoader("hide");
+            }
+        }.bind(this));
+
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
@@ -380,18 +392,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.table_jQO.on('length.dt', function (e, settings, len) {
             console.log('New page length: ' + len);
-            //this.Api.ajax.reload();
         });
-
-        this.table_jQO.on('processing.dt', function (e, settings, processing) {
-            if (processing == true)
-                $(".toolicons .btn").prop("disabled", true);
-            else {
-                $(".toolicons .btn").prop("disabled", false);
-                //if (this.login === "uc")
-                //    dvcontainerObj.modifyNavigation();
-            }
-        }.bind(this));
+        
     };
 
     this.addSerialAndCheckboxColumns = function () {
@@ -466,7 +468,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.deferRender = true;
         //o.scroller = true;
         o.language = {
-            processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>", info: "_START_ - _END_ / _TOTAL_",
+            //processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>",
+            info: "_START_ - _END_ / _TOTAL_",
             paginate: {
                 "previous": "Prev"
             },
@@ -521,9 +524,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 timeout: 300000,
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
-                //beforeSend: function (xhr) {
-                //    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                //},
+                beforeSend: function () {
+                    //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+                    //$.LoadingOverlay("show");
+                },
                 //crossDomain: true,
                 //timeout: 180000,
                 //async: true,
@@ -640,6 +644,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
         return dd.data;
+        $("#eb_common_loader").EbLoader("hide");
+        //$.LoadingOverlay("hide");
     };
 
     this.compareFilterValues = function () {
@@ -771,6 +777,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
 
         this.Api.columns.adjust();
+        $("#eb_common_loader").EbLoader("hide");
     }
 
     this.contextMenu = function () {

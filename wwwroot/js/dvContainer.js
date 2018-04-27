@@ -153,7 +153,7 @@ var DvContainerObj = function (settings) {
                 }
             }.bind(this));
             dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-            $.LoadingOverlay("show");
+            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
             $.ajax({
                 type: "POST",
                 url: "../DV/getdv",
@@ -171,7 +171,7 @@ var DvContainerObj = function (settings) {
                     else
                         this.RelatedDvlist = dvObj.DvList.$values;
                     //this.removeDupliateDV();
-                    $.LoadingOverlay("hide");
+                    $("#eb_common_loader").EbLoader("hide");
                     dvcontainerObj.btnGoClick();
                 }.bind(this),
             });
@@ -180,16 +180,16 @@ var DvContainerObj = function (settings) {
     }.bind(this);
 
     this.drawdvFromTable = function (row, filter, celldata) {
-        $.LoadingOverlay("show");
-        //$("#eb_common_loader").EbLoader("show", { maskItem: $("body") });
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
         this.rowData = row;
         this.filterValues = filter;
         this.cellData = celldata;
+        var copycelldata = this.cellData.replace(/ /g, "_");
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
         if (this.dvRefid !== null) {
             if (this.dvRefid.split("-")[2] === "3") { 
-                if ($(`#reportIframe_${this.cellData}`).length === 0) {
+                if ($(`#reportIframe_${copycelldata}`).length === 0) {
                     var obj = new Object();
                     obj.$type = "EbReport";
                     obj.EbSid = "container_Report" + ++counter;
@@ -202,7 +202,7 @@ var DvContainerObj = function (settings) {
                         $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1'">
                              <div class='split-inner'>
                              <div class='col-md-12' id='content_dv' style='height:inherit;padding-left: 0px !important;padding-right: 0px !important;'>
-                             <iframe id="reportIframe_${this.cellData}" class="reportIframe" name="reportIframe_${this.cellData}" src='../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}'>                              
+                             <iframe id="reportIframe_${copycelldata}" class="reportIframe" name="reportIframe_${copycelldata}" src='../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}'>                              
                             </iframe>
                              </div>
                              </div>
@@ -210,7 +210,7 @@ var DvContainerObj = function (settings) {
 
                     this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid);
 
-                    $(`#reportIframe_${this.cellData}`).on('load', this.iframeLoad.bind(this));
+                    $(`#reportIframe_${copycelldata}`).on('load', this.iframeLoad.bind(this));
                 }
                 else {
                     $.each(this.dvcol, function (key, value) {
@@ -218,11 +218,9 @@ var DvContainerObj = function (settings) {
                             focusedId = key;
                     }.bind(this));
                     $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"));
-                    $.LoadingOverlay("hide");
+                    
+                    $("#eb_common_loader").EbLoader("hide");
                 }
-
-                $("#eb_common_loader").EbLoader("hide", { maskItem: $("body") });
-                
             }
             else {
                 $.ajax({
@@ -238,7 +236,7 @@ var DvContainerObj = function (settings) {
                             this.RelatedDvlist = dvObj.DvList.$values;
                         }
                         //this.removeDupliateDV();
-                        $.LoadingOverlay("hide");
+                        $("#eb_common_loader").EbLoader("hide");
                         dvcontainerObj.btnGoClick();
                     }.bind(this),
                 });
@@ -255,13 +253,14 @@ var DvContainerObj = function (settings) {
     };
 
     this.iframeLoad = function () {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
         $("#obj_icons").hide();
         $("#Common_obj_icons").show();
         $("#Common_obj_icons").empty();
         $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
         this.eventBind();
         this.modifyNavigation();
-        $.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.xx = function () {
@@ -637,10 +636,6 @@ var DvContainerObj = function (settings) {
                 image.src = canvas.toDataURL();
                 image.style.width = "inherit";
                 curdiv.next().children().find(".dotsnapshot").empty();
-                //curdiv.next().children().find(".dotsnapshot").append(`<canvas id="copyCanvas_${temp}" style="width:200px;"></canvas>`);
-                //var dest = document.getElementById('copyCanvas_'+temp),
-                //destcontext = dest.getContext('2d');
-                //destcontext.drawImage(image, 10, 10, 200, 200);
                 curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
                 $("#copydiv_" + temp).append(image);
             }

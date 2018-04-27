@@ -150,13 +150,16 @@ function getDp(context) {
     });
 };
 
-function getLogo() {
+function getLogo(context) {
     $.ajax({
         type: "GET",
-        url: "../StaticFile/GetMyLogo",
+        url: "../StaticFileExt/GetMyLogo",
         success: function (data) {
-            if (data)
-                return data;
+            if (data) {
+                for (var i = 0; i < context.length; i++) {
+                    context[i].src = data;
+                }
+            }
         }
     });
 };

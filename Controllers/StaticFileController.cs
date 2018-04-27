@@ -58,21 +58,16 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet]
-        public IActionResult GetMyLogo()
+        [HttpGet("StaticFileExt/GetMyLogo")]
+        public string GetMyLogo()
         {
 
             string filename = string.Format("logo_{0}.png", ViewBag.SolutionId);
-            //filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
-
+            string b64 = null;
             DownloadFileResponse dfs = null;
-
-            ActionResult resp = new EmptyResult();
-
             try
             {
                 HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
-
                 dfs = this.FileClient.Get<DownloadFileResponse>
                         (new DownloadFileExtRequest
                         {
@@ -80,19 +75,14 @@ namespace ExpressBase.Web.Controllers
                         });
 
                 if (dfs.StreamWrapper != null)
-                {
-                    dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
-                }
-
+                    b64 = "data:image/png;base64," + Convert.ToBase64String(dfs.StreamWrapper.Memorystream.GetBuffer());
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
-                resp = null;
             }
 
-            return resp;
+            return b64;
         }
 
     }
@@ -100,13 +90,11 @@ namespace ExpressBase.Web.Controllers
     public class StaticFileController : EbBaseIntController
     {
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
-
-        //[HttpGet("static/mydp/{filename}")]
+       
         [HttpGet]
         public string GetMyDP()
         {
             string filename = String.Format("dp_{0}.png", ViewBag.UId);
-
             DownloadFileResponse dfs = null;
             string b64 = null;
             try
@@ -122,7 +110,6 @@ namespace ExpressBase.Web.Controllers
                                 FileType = filename.Split(CharConstants.DOT)[1].ToLower()
                             }
                         });
-
                 if (dfs.StreamWrapper != null)
                     b64 = "data:image/png;base64," + Convert.ToBase64String(dfs.StreamWrapper.Memorystream.GetBuffer());
             }
@@ -130,7 +117,6 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
-
             return b64;
         }
 

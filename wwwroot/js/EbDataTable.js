@@ -1212,9 +1212,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.orderingEvent = function (e) {
         //var col = $(e.target).children('span').text();
         var col = $(e.target).text();
+        var tempobj = $.grep(this.Api.settings().init().aoColumns, function (obj) { return obj.sTitle === col })
         var cls = $(e.target).attr('class');
         if (col !== '') {
-            this.order_info.col = col;
+            this.order_info.col = tempobj[0].name;
             this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
         }
     };

@@ -41,7 +41,7 @@
 
     this.InitMap4inpG = function (ctrl) {
 
-        var name = ctrl.ebSid
+        var name = ctrl.name;
         $('#' + name).locationpicker({
             location: {
                 latitude: this.Bot.userLoc.lat,
@@ -70,7 +70,7 @@
             $(`#${name} .loc-opt-btn`).off("click").on("click", function (e) {
                 var $optBtn = $(e.target);
                 var loc = $optBtn.attr("for");
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.ebSid === loc; });
+                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.name === loc; });
                 var ctrl = ctrlArr[0];
                 var $locDiv = $(`#${ctrl.name}`);
                 $(`#${name} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
@@ -90,7 +90,7 @@
         else {
             $(`#${name} .loc-opt-DD`).off("change").on("change", function (e) {
                 var loc = $(e.target).children().filter(":selected").val();
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.ebSid === loc; });
+                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.name === loc; });
                 var ctrl = ctrlArr[0];
                 var $locDiv = $(`#${ctrl.name}`);
                 if ($locDiv.closest(".location-box").css("display") === "none") {
@@ -112,7 +112,7 @@
 
     this.initMap = function (ctrl) {
         var uluru = { lat: ctrl.position.latitude, lng: ctrl.position.longitude };
-        var map = new google.maps.Map(document.getElementById(ctrl.ebSid), {
+        var map = new google.maps.Map(document.getElementById(ctrl.name), {
             zoom: 15,
             center: uluru
         });
@@ -133,11 +133,11 @@
     };
 
     this.StaticCardSet = function (ctrl) {
-        this.initCards($('#' + ctrl.ebSid));
+        this.initCards($('#' + ctrl.name));
     };
     
     this.DynamicCardSet = function (ctrl) {
-        this.initCards($('#' + ctrl.ebSid));
+        this.initCards($('#' + ctrl.name));
     };
 
     this.initCards = function ($Ctrl) {
@@ -254,8 +254,8 @@
         $('.remove-cart-item').off('click').on('click', function (evt) {
             var cardid = $(evt.target).closest('tr').attr('card-id');
             this.spliceCardArray(cardid);
-            $('#' + this.Bot.curCtrl.ebSid).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").text("Select");
-            $($('#' + this.Bot.curCtrl.ebSid).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
+            $('#' + this.Bot.curCtrl.name).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").text("Select");
+            $($('#' + this.Bot.curCtrl.name).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
             this.drawSummaryTable($(evt.target).closest('tbody'));
         }.bind(this));
     };

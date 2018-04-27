@@ -517,7 +517,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //url: this.ssurl + '/ds/data/' + this.dsid,
                 url: "../dv/getData",
                 type: 'POST',
-                timeout: 180000,
+                timeout: 300000,
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
                 //beforeSend: function (xhr) {
@@ -526,8 +526,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //crossDomain: true,
                 //timeout: 180000,
                 //async: true,
-                //error: function (req, status, xhr) {
-                //}
+                error: function (req, status, xhr) {
+                }
             };
         }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
@@ -587,15 +587,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }
         if (this.isContextual && from !== "compare") {
-            if (from === "filter") {
+            if (from === "filter" && prevfocusedId !== undefined) {
                 $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
                     fltr_collection.push(obj);
                 });
             }
             else {
                 if (this.rowData !== null) {
-                    if (this.Api !== null)
+                    if (this.Api !== null) {
+                        if (prevfocusedId === undefined)
+                            from = "link";
                         $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection, from));
+                    }
                 }
             }
         }
@@ -1516,6 +1519,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.cellData = $(e.target).closest("a").attr("data-latlong");
         else
             this.cellData = $(e.target).text();
+        this.linkDV = $(e.target).closest("a").attr("data-link");
         var idx = this.Api.row($(e.target).parent().parent()).index();
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues("link");
@@ -1695,12 +1699,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
     };
 
-    this.renderlink4NewTable = function (data) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "'>" + data + "</a>";
+    this.renderlink4NewTable = function (data, type, row, meta) {
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.ebSettings.Columns.$values[meta.col - 2].LinkRefId+"'>" + data + "</a>";
     };
 
     this.renderlinkandDecimal = function (deci, data) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "'>" + parseFloat(data).toFixed(deci) + "</a>";
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.linkDV +"'>" + parseFloat(data).toFixed(deci) + "</a>";
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {

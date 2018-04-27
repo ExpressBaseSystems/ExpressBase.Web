@@ -517,7 +517,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //url: this.ssurl + '/ds/data/' + this.dsid,
                 url: "../dv/getData",
                 type: 'POST',
-                timeout: 180000,
+                timeout: 300000,
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
                 //beforeSend: function (xhr) {
@@ -526,8 +526,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //crossDomain: true,
                 //timeout: 180000,
                 //async: true,
-                //error: function (req, status, xhr) {
-                //}
+                error: function (req, status, xhr) {
+                }
             };
         }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
@@ -587,7 +587,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }
         if (this.isContextual && from !== "compare") {
-            if (from === "filter") {
+            if (from === "filter" && prevfocusedId !== undefined) {
                 $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
                     fltr_collection.push(obj);
                 });

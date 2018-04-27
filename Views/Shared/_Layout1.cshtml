@@ -240,21 +240,8 @@
 </body>
 </html>
 <script>
-
     var menu = new menujs('@ViewBag.wc');
     $("#layout_div").data("menu", menu);
-
-    $('.list-group a').on('click', function () {
-        var $this = $(this),
-            $bc = $('<div class="brdCrumb"></div>');
-
-        $this.parents('li').each(function (i, parent) {
-            var i = $(parent).children('a').text();
-            $bc.prepend(' / ', i);
-            parent = i;
-        });
-        $('.brdCrumb').html($bc.prepend('<a href="#"> Home</a>'));
-    });
 
     EbFonts = {};
     EbFontsCallback = function (data, status) {

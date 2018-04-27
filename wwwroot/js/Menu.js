@@ -8,7 +8,7 @@
             if (event.which === 10 && event.ctrlKey)
                 this.showModal();
         }.bind(this));
-        $('#quik_menu').off("click").on("click",this.showModal.bind(this));    
+        $('body #quik_menu').off("click").on("click",this.showModal.bind(this));    
         $("#searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $("body").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
         $('body').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });

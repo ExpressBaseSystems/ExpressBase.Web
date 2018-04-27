@@ -8,7 +8,7 @@
             if (event.which === 10 && event.ctrlKey)
                 this.showModal();
         }.bind(this));
-        $('#quik_menu').off("click").on("click",this.showModal.bind(this));    
+        $('body #quik_menu').off("click").on("click",this.showModal.bind(this));    
         $("#searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $("body").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
         $('body').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
@@ -67,9 +67,10 @@
     this.appendObType = function (e) {
         var appid = $(e.target).attr("Appid");
         $(".modal-body #objList").empty();
-        for (var otype in this.resultObj.Data[appid].Types) {
-            var _obj = this.resultObj.Data[appid].Types[otype].Objects;
-            $(".modal-body #objList").append(`<div class="objContainer_f_app">
+        if (!$.isEmptyObject(this.resultObj.Data[appid])) {
+            for (var otype in this.resultObj.Data[appid].Types) {
+                var _obj = this.resultObj.Data[appid].Types[otype].Objects;
+                $(".modal-body #objList").append(`<div class="objContainer_f_app">
                                                 <div class="objContainer2">
                                                     <div class="form-inline obType_wrapper_head" obj_container="obtype_container${otype}" id="obType_wrapper_head${otype}"
                                                         len="${_obj.length}" data-toggle="collapse" data-target="#obtype_container${otype}" style="cursor:pointer;">
@@ -84,10 +85,11 @@
                                                     </div>
                                                 </div>
                                             </div>`);
-            this.apndOTypeContainer($("#obtype_container" + otype), _obj);
-            if (this.login == "dc") {
-                $(`#obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
+                this.apndOTypeContainer($("#obtype_container" + otype), _obj);
+                if (this.login == "dc") {
+                    $(`#obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
                                                             <i class="material-icons">add</i></a>`);
+                }
             }
         }
         $(".obType_wrapper_head").on("click", this.actionCollapse.bind(this));

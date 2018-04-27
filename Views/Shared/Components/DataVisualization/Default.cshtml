@@ -25,7 +25,7 @@
     }*@
 <script>
     @Html.Raw(ViewBag.HtmlHead);
-    if ('@ViewBag.wc' === 'uc') {
+    if ('@ViewBag.wc' === 'uc' || prevfocusedId !== undefined) {
         $.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));
     }
     else {

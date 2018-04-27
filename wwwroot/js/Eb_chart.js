@@ -252,6 +252,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.init = function () {
         this.columnInfo = this.EbObject;
+        if (this.EbObject.Type !== "")
+            this.type = this.EbObject.Type;
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         $.event.props.push('dataTransfer');
         this.createChartDivs();
@@ -344,7 +346,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tableId).click(this.init.bind(this));
-        $("#obj_icons").append(`<div style='display: inline;'>
+        if (this.login === "dc") {
+            $("#obj_icons").append(`<div style='display: inline;'>
             <div class='dropdown' id='graphDropdown_tab${ this.tableId}' style='display: inline-block;padding-top: 1px;'>
             <button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>
             <span class='caret'></span>
@@ -424,6 +427,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             <button id='btnColumnCollapse${ this.tableId}' class='btn' style='display: inline-block;'>
             <i class='fa fa-cog' aria-hidden='true'></i>
             </button>`);
+        }
         //<div class="divHLType">
         //    <div class="chartHeader">Other</div>
         //    <div id="Other" class="chartBody">
@@ -1165,7 +1169,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 accepts: this.acceptDrop.bind(this)
             });
             this.drake.on("drop", this.colDrop.bind(this));
-            if (this.type !== "")
+            if (this.type === "")
                 this.type = "bar";
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
         }

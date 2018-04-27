@@ -1631,9 +1631,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     return parseFloat(data).toFixed(deci);
                 }
             }
-            else {
-                //this.ebSettings.Columns.$values[i].render = this.renderDataAsLabel.bind(this);
-            }
+            //else {
+            //    this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) { return data; };
+            //}
             this.ebSettings.Columns.$values[i].sClass = this.ebSettings.Columns.$values[i].className;
         }
         if (col.Type == parseInt(gettypefromString("Boolean"))) {
@@ -1648,9 +1648,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     this.ebSettings.Columns.$values[i].render = this.renderIconCol.bind(this);
                     //this.ebSettings.Columns.$values[i].mRender = this.renderIconCol.bind(this);
                 }
-                else {
-                    //this.ebSettings.Columns.$values[i].render = this.renderDataAsLabel.bind(this);
-                }
+                //else {
+                //    this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) { return data; };
+                //}
             }
         }
         if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
@@ -1669,9 +1669,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
                 this.ebSettings.Columns.$values[i].render = this.renderFBImage.bind(this);
             }
-            else {
-                //this.ebSettings.Columns.$values[i].render = this.renderDataAsLabel.bind(this);
-            }
+            //else {
+            //    this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) { return data; };
+            //}
         }
         //if (col.fontfamily !== 0) {
         //    var style = document.createElement('style');

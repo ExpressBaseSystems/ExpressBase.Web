@@ -44,11 +44,8 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult DevConsole()
-        {
-             //var result = this.ServiceClient.Post<EbDbCreateResponse>(new EbDbCreateRequest { dbName = "TESTDB" });
-            var resultlist = this.ServiceClient.Post<TestResponse>(new TestRequest { });
-           // var x = resultlist;
+        public IActionResult DevDashboard()
+        {           
             return View();
         }
         public IActionResult AppDashWeb()
@@ -418,18 +415,7 @@ namespace ExpressBase.Web.Controllers
         //        return Json("Failed");
         //    }
         //}
-
-        public IActionResult Logout()
-        {
-            ViewBag.Fname = null;
-            IServiceClient client = this.ServiceClient;
-            var abc = client.Post(new Authenticate { provider = "logout" });
-            HttpContext.Response.Cookies.Delete(RoutingConstants.BEARER_TOKEN);
-            HttpContext.Response.Cookies.Delete(RoutingConstants.REFRESH_TOKEN);
-            return RedirectToAction("DevSignIn", RoutingConstants.EXTCONTROLLER);
-
-        }
-       
+        
         [HttpGet]
         public IActionResult Eb_EmailBuilder()
         {

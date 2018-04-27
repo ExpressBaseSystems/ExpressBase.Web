@@ -595,8 +595,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             else {
                 if (this.rowData !== null) {
-                    if (this.Api !== null)
+                    if (this.Api !== null) {
+                        if (prevfocusedId === undefined)
+                            from = "link";
                         $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection, from));
+                    }
                 }
             }
         }
@@ -1210,9 +1213,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.orderingEvent = function (e) {
         //var col = $(e.target).children('span').text();
         var col = $(e.target).text();
+        var tempobj = $.grep(this.Api.settings().init().aoColumns, function (obj) { return obj.sTitle === col })
         var cls = $(e.target).attr('class');
         if (col !== '') {
-            this.order_info.col = col;
+            this.order_info.col = tempobj[0].name;
             this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
         }
     };
@@ -1517,6 +1521,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.cellData = $(e.target).closest("a").attr("data-latlong");
         else
             this.cellData = $(e.target).text();
+        this.linkDV = $(e.target).closest("a").attr("data-link");
         var idx = this.Api.row($(e.target).parent().parent()).index();
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues("link");
@@ -1696,12 +1701,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return (data === true) ? "<i class='fa fa-lock' aria-hidden='true'></i>" : "";
     };
 
-    this.renderlink4NewTable = function (data) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "'>" + data + "</a>";
+    this.renderlink4NewTable = function (data, type, row, meta) {
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.ebSettings.Columns.$values[meta.col - 2].LinkRefId+"'>" + data + "</a>";
     };
 
     this.renderlinkandDecimal = function (deci, data) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "'>" + parseFloat(data).toFixed(deci) + "</a>";
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.linkDV +"'>" + parseFloat(data).toFixed(deci) + "</a>";
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {

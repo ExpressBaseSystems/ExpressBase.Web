@@ -566,8 +566,8 @@ namespace ExpressBase.Web.Controllers
             {
                 if (hasSystemRole && whichconsole == RoutingConstants.DC)
                 {
-                    _controller = "Tenant";
-                    _action = "SolutionDashBoard";
+                    _controller = "Dev";
+                    _action = "DevDashboard";
                 }
                 else if (whichconsole == RoutingConstants.UC)
                 {

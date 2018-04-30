@@ -11,7 +11,7 @@
     this.cropie = null;
     this.getFile = function (b65) { return b65; }//return b65 croped image
     this.Type = option.Type;//type of image logo or dp
-    this.ResizeViewPort = option.ResizeViewPort ? true : false;//enable resizing of viewport
+    //this.ResizeViewPort = option.ResizeViewPort ? true : false;//enable resizing of viewport
     this.Preview = option.Preview||null;//previw el should be uniq and it sould be an img tag
 
     var _typeRatio = {
@@ -31,14 +31,14 @@
 
     this.appendModal = function () {
         $('body').append(`<div class="modal fade" id="${this.Container}_modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document" style="margin-top: 10%;">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content cropfy_modal" style="border-radius:0;border:none;">
         <div class="modal-header cropfy_header" style="background: #3e8ef7;color: white;">
           <h5 class="modal-title" id="exampleModalLongTitle">Crop Image</h5>
             <i class="material-icons cropfy_close pull-right" data-dismiss="modal" style="margin-top:-4%;cursor: context-menu" id="${this.Container}_close">close</i>
         </div>
         <div class="modal-body">
-            <div class="cropy_container" style="height:250px;width:100%;">
+            <div class="cropy_container" style="height:450px;width:100%;padding-bottom:50px;">
                 <div id="${this.Container}_cropy_container">
                 </div>
             </div>
@@ -75,8 +75,6 @@
 
             $("#" + this.Container + "_browse_file").on("change", this.browse.bind(this));
         }
-
-        
     };
 
     this.toggleModal = function (e) {
@@ -101,11 +99,9 @@
     this.__cropfy = function () {
         this.cropie = $("#" + this.Container + "_cropy_container").croppie({
             viewport: _typeRatio[this.Type],
-            showZoomer: false,
-            enableResize: this.ResizeViewPort,
             enableOrientation: true,
-            enableExif: true,
-            mouseWheelZoom: 'ctrl'
+            enforceBoundary: false,
+            enableExif: true
         });
     };
 

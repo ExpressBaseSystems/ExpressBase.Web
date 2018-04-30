@@ -36,7 +36,6 @@
             Browse: true,
             Result: 'base64',
             Type: 'logo',
-            ResizeViewPort: true,
             Preview:"#oB_logo-prev"
         });
         logoCrp.getFile = function (file) {

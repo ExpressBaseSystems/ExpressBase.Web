@@ -803,28 +803,9 @@
     right: 10px;
     margin-left: 78px;
 }
-._head_vert1 {
-    width: 0;
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #5555ff;
-    margin-left: -11px;
-    margin-top: -7px;
-    cursor:pointer;
-}
-._head_vert2 {
-    width: 0;
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #5555ff;
-    margin-left: -11px;
-    margin-top: -7px;
-    cursor: pointer;
-}
 .page .context-menu-list {   
     z-index: 20;
+}
+.tracker_drag {
+    cursor:col-resize;
 }

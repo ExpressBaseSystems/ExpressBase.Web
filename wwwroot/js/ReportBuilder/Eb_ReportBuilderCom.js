@@ -122,6 +122,7 @@
     };
 
     this.start = function () {
+        this.RbObj.margin.Right = $(".track_line_vert2").position().left;
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
         $(window).on("scroll", this.windowscroll.bind(this));
     };

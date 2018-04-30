@@ -188,6 +188,7 @@
     this.keyClickDoc = function () {
         $(document).on("keydown", this.keydownDocument.bind(this));
     };
+
     this.keydownDocument = function (e) {
         this.ctrl = e.which;
         switch (e.which) {

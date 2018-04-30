@@ -150,55 +150,30 @@
             }
         }.bind(this));
 
-        $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {
-            if ($(evt.target).text() === 'Select') {
-                $(evt.target).text('Remove');
-                $($(evt.target).parent().siblings('.card-title-cont').children()[0]).show();
-            }
-            else {
-                $(evt.target).text('Select');
-                $($(evt.target).parent().siblings('.card-title-cont').children()[0]).hide();
-            }
+        //resetting cards. required for reopening same cardset
+        this.resetSelectedCardDisplay($Ctrl);
+
+        $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {            
             var $card = $(evt.target).closest('.card-cont');
+            
+            if (!this.Bot.curCtrl.multiSelect) {
+                this.SelectedCards = [];
+                this.resetSelectedCardDisplay($('#' + this.Bot.curCtrl.name));
+            }
+
             var itempresent = $.grep(this.SelectedCards, function (a) {
                 if (a['cardid'] === $card.attr('card-id'))
                     return true;
             });
-            
+
             if (itempresent.length === 0) {
-                var sObj = {};
-                sObj["cardid"] = $card.attr('card-id');
-                $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
-                    if (obj.summarize) {                        
-                        var propval = "";
-                        if (obj.hasOwnProperty('valueExpression') && obj.valueExpression !== "") {
-                            var strFunc = window.atob(obj.valueExpression);
-                            $.each(this.Bot.curCtrl.cardFields, function (l, obj1) {
-                                var str2 = "parseFloat(" + this.getValueInDiv($card.find('.data-' + obj1.name)) + ")";
-                                //if (obj1.hasOwnProperty('value') && !obj1.hasOwnProperty('text')) 
-                                if (!(obj1.objType === 'CardNumericField'))
-                                    str2.replace("parseFloat","");                                
-                                strFunc = strFunc.replace(new RegExp('card.'+obj1.name, 'g'), str2);
-                            }.bind(this));
-                            var newFunc = Function("$card", strFunc);
-                            propval = newFunc($card).toString();
-                            this.setValueInDiv($card.find('.data-' + obj.name), propval);
-                        }
-                        else {
-                            propval = this.getValueInDiv($card.find('.data-' + obj.name));
-                        }
-                        if (obj.objType === 'CardNumericField')
-                            sObj[obj.name] = parseFloat(propval);
-                        else
-                            sObj[obj.name] = propval;
-                    }
-                }.bind(this));                
-                this.SelectedCards.push(sObj);
-                this.Bot.curCtrl.selectedCards.push(parseInt($card.attr('card-id')));
-                this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find('.table tbody'));
-                this.setCardFieldValues($card);
+                $(evt.target).text('Remove');
+                $($(evt.target).parent().siblings('.card-title-cont').children()[0]).show();
+                this.processSelectedCard($card, evt);                
             }
             else {
+                $(evt.target).text('Select');
+                $($(evt.target).parent().siblings('.card-title-cont').children()[0]).hide();
                 this.spliceCardArray($card.attr('card-id'));
                 this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find(".table tbody"));
             } 
@@ -219,7 +194,41 @@
         });
     };
 
+    this.processSelectedCard = function ($card, evt) {
+        var sObj = {};
+        sObj["cardid"] = $card.attr('card-id');
+        $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
+            if (obj.summarize) {
+                var propval = "";
+                if (obj.hasOwnProperty('valueExpression') && obj.valueExpression !== "") {
+                    var strFunc = window.atob(obj.valueExpression);
+                    $.each(this.Bot.curCtrl.cardFields, function (l, obj1) {
+                        var str2 = "parseFloat(" + this.getValueInDiv($card.find('.data-' + obj1.name)) + ")";
+                        if (!(obj1.objType === 'CardNumericField'))
+                            str2.replace("parseFloat", "");
+                        strFunc = strFunc.replace(new RegExp('card.' + obj1.name, 'g'), str2);
+                    }.bind(this));
+                    var newFunc = Function("$card", strFunc);
+                    propval = newFunc($card).toString();
+                    this.setValueInDiv($card.find('.data-' + obj.name), propval);
+                }
+                else {
+                    propval = this.getValueInDiv($card.find('.data-' + obj.name));
+                }
+                if (obj.objType === 'CardNumericField')
+                    sObj[obj.name] = parseFloat(propval);
+                else
+                    sObj[obj.name] = propval;
+            }
+        }.bind(this));
+        this.SelectedCards.push(sObj);
+        this.Bot.curCtrl.selectedCards.push(parseInt($card.attr('card-id')));
+        this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find('.table tbody'));
+        this.setCardFieldValues($card);
+    }
     this.drawSummaryTable = function ($tbody) {
+        if ($tbody.length === 0)//if summary is not required(internal meaning)
+            return;
         $tbody.children().remove();
         var tcols = $tbody.parent()["0"].firstElementChild.children["0"].cells.length;
         if (this.SelectedCards.length === 0) {
@@ -312,7 +321,15 @@
         }.bind(this));
         return card;
     }
-
+    this.resetSelectedCardDisplay = function ($Ctrl) {
+        //reset cardset for reopening
+        this.Bot.curCtrl.selectedCards = [];
+        $.each($Ctrl.find(".card-btn-cont .btn"), function (h, elemt) {
+            $(elemt).text('Select');
+            $($(elemt).parent().siblings('.card-title-cont').children()[0]).hide();
+        });
+        this.drawSummaryTable($Ctrl.find(".table tbody"));
+    }
 
 
     this.ImageUploader = function (ctrl) {

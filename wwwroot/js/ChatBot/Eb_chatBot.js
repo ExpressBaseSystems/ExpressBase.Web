@@ -490,21 +490,27 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.getCardsetvalue = function (cardCtrl) {
         var resObj = {};
-        //var resObj = new Array();
+        if (!cardCtrl.multiSelect) {
+            $(event.target).parents().find('.slick-current .card-btn-cont .btn').click();
+        }
+        this.curDispValue = '';
         $.each(cardCtrl.cardCollection, function (k, cObj) {
             if (cardCtrl.selectedCards.indexOf(cObj.cardId) !== -1) {
                 var tempArray = new Array();
                 $.each(cardCtrl.cardFields, function (h, fObj) {
                     if (!fObj.doNotPersist) {
-                        //resObj[fObj.name] = [cObj.customFields[fObj.name], fObj.ebDbType];
-                        //resObj.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name}));
-                        tempArray.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name }));                        
+                        tempArray.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name })); 
+                    }
+                    if (fObj.objType === 'CardTitleField') {//for display selected card names on submit
+                        this.curDispValue += cObj.customFields[fObj.name] + '<br/>';
                     }
                 }.bind(this));
                 resObj[cObj.cardId] = tempArray;
             }
         }.bind(this));
-
+        if (this.curDispValue === '' && cardCtrl.multiSelect)
+            this.curDispValue = 'Nothing Selected';
+        //cardCtrl.selectedCards = [];
         return (JSON.stringify(resObj));
     }
 
@@ -526,7 +532,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         else if (this.curCtrl.objType === "InputGeoLocation") {
             inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();
         }
-        else if (this.curCtrl.objType === "StaticCardSet") {
+        else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
             inpVal = this.getCardsetvalue(this.curCtrl);
         }
         else
@@ -557,13 +563,16 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.nxtCtrlIdx);
         }
-        else {
-            if (this.curCtrl.objType === "Cards") {
-                this.curVal = $btn.closest(".card-cont").find(".card-label").text();
-            }
-            else {
-                this.curVal = this.curVal || $('#' + id).val();
-            }
+        else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
+            //this.curVal = $btn.closest(".card-cont").find(".card-label").text();
+
+            this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.formValues[id] = this.curVal;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
+            this.callGetControl(this.nxtCtrlIdx);
+        }
+        else{
+            this.curVal = this.curVal || $('#' + id).val();
             this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];

@@ -118,8 +118,6 @@ var DvContainerObj = function (settings) {
     };
 
     this.saveSuccess = function () {
-        alert("Success!!!!!!!");
-        $.LoadingOverlay("hide");
     }    
 
     this.drawDv = function (e) {

@@ -7,7 +7,8 @@
         var settings = $.extend({
             color:"#ec9351",
             bgColor: 'transparent', // Default background color 
-            maskItem:{}
+            maskItem: {},
+            maskLoader:true
         }, options);
 
         //maskItem:{
@@ -23,11 +24,13 @@
         if (!el.hasClass('eb-loader-prcbar')) {
             el.addClass('eb-loader-prcbar');
             if (!$.isEmptyObject(settings.maskItem)) {
-                maskItem.append(`<div class="loader_mask_EB" id="${el.attr("id")}loader_mask_item">
-                                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div>
-                                    <div></div><div></div><div></div><div></div><div>
-                                    </div><div></div><div></div></div></div>`);
+                maskItem.append(`<div class="loader_mask_EB" id="${el.attr("id")}loader_mask_item"></div>`);
                 appendMaskStyle();
+            }
+            if (settings.maskLoader) {
+                $(`#${el.attr("id")}loader_mask_item`).append(`<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div>
+                                    <div></div><div></div><div></div><div></div><div>
+                                    </div><div></div><div></div></div>`);
             }
         }
         else {

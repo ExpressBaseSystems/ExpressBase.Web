@@ -57,12 +57,6 @@ namespace ExpressBase.Web.Controllers
                 return false;
         }
 
-        public IActionResult SignupSuccess(string email)
-        {
-            ViewBag.SignupEmail = email;
-            return View();
-        }
-
         // [AllowCrossSiteIFrame]  // for web forwarding with masking
         public IActionResult SignIn()
         {
@@ -127,30 +121,13 @@ namespace ExpressBase.Web.Controllers
 
             return View();
         }
-
-        // [AllowCrossSiteIFrame]
-        public IActionResult SignUp()
-        {
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            return View();
-        }
-
-
+        
         public IActionResult test()
         {
 
             ViewBag.StripePublishKey = "pk_test_s1b6p5MmoOrYVcev3IPk3UMd";
             return View();
         }
-
-        public IActionResult TestFeb()
-        {
-            EbXmlSerializer s = new EbXmlSerializer();
-            SamClass obj = new SamClass { id = 1, name = "asdfg" };
-            ViewBag.str = s.Serialize<SamClass>(obj);
-            return View();
-        }
-
 
         [HttpPost]
         public IActionResult StripeResponse()
@@ -201,13 +178,6 @@ namespace ExpressBase.Web.Controllers
 
             return View();
         }
-
-
-        public IActionResult TenanatAcc()
-        {
-            return View();
-        }
-
 
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()

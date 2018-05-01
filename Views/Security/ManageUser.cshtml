@@ -3,11 +3,13 @@
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.css" />
-<link rel="stylesheet" href="~/css/EbImageCropper.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.5.1/croppie.min.js"></script>
-<script src="~/js/EbImageCropper.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
+<script src="~/js/EbCropper.js" type="text/javascript"></script>
+
+
 
 @await Component.InvokeAsync("PageHeaderCommon")
 
@@ -112,13 +114,14 @@
         border-top-right-radius: 5px;
     }
 
-    /*for remove flickering https://stackoverflow.com/questions/26595481/bootstrap-3-tabs-active-tab-flicker-on-hover-only-in-firefox?rq=1&utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa*/
+        /*for remove flickering https://stackoverflow.com/questions/26595481/bootstrap-3-tabs-active-tab-flicker-on-hover-only-in-firefox?rq=1&utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa*/
         .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
             border-width: 1px;
         }
-        .nav-tabs > li:hover{
-            background-color:#eee ;
-        }
+
+    .nav-tabs > li:hover {
+        background-color: #eee;
+    }
 </style>
 @{
     @using Newtonsoft.Json;
@@ -136,8 +139,8 @@
 <div class="" style="padding: 4% 0% 0% 1%; height: 100vh; background: white;font-family: open sans;font-weight: 300;">
     <div class="row">
         <div class="col-md-3" style="padding-right: 0px">
-            <div style="text-align:center;">
-                <img src="~/images/proimg.jpg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" style="height:100px" />
+            <div id="profimage" style ="text-align:center;">
+                <img src="~/images/proimg.jpg" id="imgprofimage" data-toggle="modal" data-target="#eb-cropie-mod" style="height:100px" />
             </div>
             <div class="form-group">
                 <label style="font-family: open sans; font-weight: 300;">Full Name</label>
@@ -264,11 +267,11 @@
                                     @*<span>Send mail. </span><input type="checkbox" id="sendmail" />*@
                                 </div>
                                 @*<div class="input-group">
-                                <label id="" style="font-family: open sans; font-weight: 300;">API Key</label>
-                                <button class="form-control" title="Generate API Key">Generate JWT Key</button>
-                            </div>*@
+                                        <label id="" style="font-family: open sans; font-weight: 300;">API Key</label>
+                                        <button class="form-control" title="Generate API Key">Generate JWT Key</button>
+                                    </div>*@
                             </div>
-                            
+
                         </div>
                     </div>
                     <div id="menu1" class="tab-pane fade"></div>
@@ -364,9 +367,16 @@
 
         $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "d-m-Y" });
 
-        var upload = new EbImageCropper({
-            preview: 'profimage',
-            cropperContainer: 'cropsection'
+        var logoCrp = new cropfy({
+            Container: 'DisplayPicture',
+            Toggle: '#profimage',
+            isUpload: true,
+            enableSE: true,
+            Browse: true,
+            Result: 'base64',
+            Type: 'dp',
+            ResizeViewPort: true,
+            Preview: "#profimage"
         });
 
     });

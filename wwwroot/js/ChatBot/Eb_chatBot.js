@@ -142,7 +142,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     }.bind(this);
 
     this.collectContacts = function () {
-        this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
+        this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that I can understand you better.");
         this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" class="plain-inp"><i class="fa fa-envelope-o" aria-hidden="true"></i></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" class="plain-inp"><i class="fa fa-phone" aria-hidden="true"></i></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
     };
 
@@ -490,21 +490,39 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.getCardsetvalue = function (cardCtrl) {
         var resObj = {};
-        //var resObj = new Array();
-        $.each(cardCtrl.cardCollection, function (k, cObj) {
-            if (cardCtrl.selectedCards.indexOf(cObj.cardId) !== -1) {
-                var tempArray = new Array();
-                $.each(cardCtrl.cardFields, function (h, fObj) {
-                    if (!fObj.doNotPersist) {
-                        //resObj[fObj.name] = [cObj.customFields[fObj.name], fObj.ebDbType];
-                        //resObj.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name}));
-                        tempArray.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name }));                        
-                    }
-                }.bind(this));
-                resObj[cObj.cardId] = tempArray;
-            }
+        var isPersistAnyField = false;
+        this.curDispValue = '';
+        $.each(cardCtrl.cardFields, function (h, fObj) {
+            if (!fObj.doNotPersist) {
+                isPersistAnyField = true;
+            }           
         }.bind(this));
 
+        if (!cardCtrl.multiSelect && isPersistAnyField) {
+            $(event.target).parents().find('.slick-current .card-btn-cont .btn').click();
+        }        
+        if (isPersistAnyField) {
+            $.each(cardCtrl.cardCollection, function (k, cObj) {
+                if (cardCtrl.selectedCards.indexOf(cObj.cardId) !== -1) {
+                    var tempArray = new Array();
+                    $.each(cardCtrl.cardFields, function (h, fObj) {
+                        if (!fObj.doNotPersist) {
+                            tempArray.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name }));
+                        }
+                        if (fObj.objType === 'CardTitleField') {//for display selected card names on submit
+                            this.curDispValue += cObj.customFields[fObj.name] + '<br/>';
+                        }
+                    }.bind(this));
+                    resObj[cObj.cardId] = tempArray;
+                }
+            }.bind(this));
+            if (cardCtrl.selectedCards.length === 0 && cardCtrl.multiSelect)
+                this.curDispValue = 'Nothing Selected';
+        }
+        else {
+            this.curDispValue = '';
+        }           
+        //cardCtrl.selectedCards = [];
         return (JSON.stringify(resObj));
     }
 
@@ -526,7 +544,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         else if (this.curCtrl.objType === "InputGeoLocation") {
             inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();
         }
-        else if (this.curCtrl.objType === "StaticCardSet") {
+        else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
             inpVal = this.getCardsetvalue(this.curCtrl);
         }
         else
@@ -557,13 +575,16 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.nxtCtrlIdx);
         }
-        else {
-            if (this.curCtrl.objType === "Cards") {
-                this.curVal = $btn.closest(".card-cont").find(".card-label").text();
-            }
-            else {
-                this.curVal = this.curVal || $('#' + id).val();
-            }
+        else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
+            //this.curVal = $btn.closest(".card-cont").find(".card-label").text();
+
+            this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.formValues[id] = this.curVal;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
+            this.callGetControl(this.nxtCtrlIdx);
+        }
+        else{
+            this.curVal = this.curVal || $('#' + id).val();
             this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
@@ -914,7 +935,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     };
 
     this.AskWhatU = function () {
-        this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
+        this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
     };
 
     this.showDate = function () {
@@ -983,7 +1004,8 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.FBNotLogined = function () {
         this.isAlreadylogined = false;
-        this.Query("Hello I am EBbot, Nice to meet you. Do you mind loging into facebook?", ["Login to facebook", "No, Sorry"], "fblogin");
+        this.msgFromBot("Hi, I am EBbot from EXPRESSbase!");
+        this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook", "I don't have facebook account"], "fblogin");
     }.bind(this);
 
     this.login2FB = function () {

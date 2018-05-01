@@ -142,7 +142,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     }.bind(this);
 
     this.collectContacts = function () {
-        this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that i can understand you better.");
+        this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that I can understand you better.");
         this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" class="plain-inp"><i class="fa fa-envelope-o" aria-hidden="true"></i></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" class="plain-inp"><i class="fa fa-phone" aria-hidden="true"></i></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
     };
 
@@ -490,26 +490,38 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.getCardsetvalue = function (cardCtrl) {
         var resObj = {};
-        if (!cardCtrl.multiSelect) {
-            $(event.target).parents().find('.slick-current .card-btn-cont .btn').click();
-        }
+        var isPersistAnyField = false;
         this.curDispValue = '';
-        $.each(cardCtrl.cardCollection, function (k, cObj) {
-            if (cardCtrl.selectedCards.indexOf(cObj.cardId) !== -1) {
-                var tempArray = new Array();
-                $.each(cardCtrl.cardFields, function (h, fObj) {
-                    if (!fObj.doNotPersist) {
-                        tempArray.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name })); 
-                    }
-                    if (fObj.objType === 'CardTitleField') {//for display selected card names on submit
-                        this.curDispValue += cObj.customFields[fObj.name] + '<br/>';
-                    }
-                }.bind(this));
-                resObj[cObj.cardId] = tempArray;
-            }
+        $.each(cardCtrl.cardFields, function (h, fObj) {
+            if (!fObj.doNotPersist) {
+                isPersistAnyField = true;
+            }           
         }.bind(this));
-        if (this.curDispValue === '' && cardCtrl.multiSelect)
-            this.curDispValue = 'Nothing Selected';
+
+        if (!cardCtrl.multiSelect && isPersistAnyField) {
+            $(event.target).parents().find('.slick-current .card-btn-cont .btn').click();
+        }        
+        if (isPersistAnyField) {
+            $.each(cardCtrl.cardCollection, function (k, cObj) {
+                if (cardCtrl.selectedCards.indexOf(cObj.cardId) !== -1) {
+                    var tempArray = new Array();
+                    $.each(cardCtrl.cardFields, function (h, fObj) {
+                        if (!fObj.doNotPersist) {
+                            tempArray.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name }));
+                        }
+                        if (fObj.objType === 'CardTitleField') {//for display selected card names on submit
+                            this.curDispValue += cObj.customFields[fObj.name] + '<br/>';
+                        }
+                    }.bind(this));
+                    resObj[cObj.cardId] = tempArray;
+                }
+            }.bind(this));
+            if (cardCtrl.selectedCards.length === 0 && cardCtrl.multiSelect)
+                this.curDispValue = 'Nothing Selected';
+        }
+        else {
+            this.curDispValue = '';
+        }           
         //cardCtrl.selectedCards = [];
         return (JSON.stringify(resObj));
     }
@@ -923,7 +935,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     };
 
     this.AskWhatU = function () {
-        this.Query("What do you want to do ?", this.formNames, "form-opt", Object.keys(this.formsDict));
+        this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
     };
 
     this.showDate = function () {
@@ -992,7 +1004,8 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.FBNotLogined = function () {
         this.isAlreadylogined = false;
-        this.Query("Hello I am EBbot, Nice to meet you. Do you mind loging into facebook?", ["Login to facebook", "No, Sorry"], "fblogin");
+        this.msgFromBot("Hi, I am EBbot from EXPRESSbase!");
+        this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook", "I don't have facebook account"], "fblogin");
     }.bind(this);
 
     this.login2FB = function () {

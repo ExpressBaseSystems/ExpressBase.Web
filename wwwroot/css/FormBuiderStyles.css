@@ -395,11 +395,25 @@
     width: 100%;
 }
 
-.slick-arrow {
-    width: auto;
-    height: 36px;
-    padding-top: 4px;
+/*copied from css, for card img fieldset temp*/
+.pr_img_cont {
+	height: 70px;
+	display: flex;
+	justify-content: center;
 }
+	.pr_img_cont img {
+		height: 70px;
+	}
+/*.pr_text {
+	font-family: Montserrat;
+}*/
+
+
+	.slick-arrow {
+		width: auto;
+		height: 36px;
+		padding-top: 4px;
+	}
 /*FontStyle Editor Styles*/
 .FEhead {
     background: #abd7ec;

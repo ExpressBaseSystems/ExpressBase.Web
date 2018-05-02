@@ -97,7 +97,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": null,
                 "wc": "bc",
-
+                "anon_email": email,
                 "anon_phno": phno,
                 "user_ip": this.userDtls.ip,
                 "user_browser": this.userDtls.browser,
@@ -939,7 +939,16 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     };
 
     this.showDate = function () {
-        this.$chatBox.append(`<div class="chat-date"><span>13-Nov-17</span></div>`);
+        var today = new Date();
+        var dd = today.getDate();
+        var m_names = new Array("Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep","Oct", "Nov", "Dec");
+        var mmm = m_names[today.getMonth()]; //January is 0!
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        var today = dd + '-' + mmm + '-' + yyyy;
+        this.$chatBox.append(`<div class="chat-date"><span>${today}</span></div>`);
     };
 
     this.getTime = function () {

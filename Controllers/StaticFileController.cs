@@ -330,7 +330,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> UploadLogoAsync(string base64)
+        public async Task<bool> UploadLogoAsync(string base64,string tid)
         {
             List<string> Tags = new List<string>() { "Logo" };
             byte[] myFileContent;
@@ -342,7 +342,7 @@ namespace ExpressBase.Web.Controllers
                 myFileContent = System.Convert.FromBase64String(base64Norm);
                 uploadImageRequest.ImageByte = myFileContent;
                 uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
-                uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
+                uploadImageRequest.ImageInfo.FileName = String.Format("logo_{0}.{1}", tid, uploadImageRequest.ImageInfo.FileType);
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                 uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                 uploadImageRequest.ImageInfo.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);

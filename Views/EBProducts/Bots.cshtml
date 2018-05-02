@@ -43,10 +43,14 @@
     </script>*@
 @*<svg id="boticon" height="0"></svg>*@
 <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
-<section class="slider" id="signupcall" style="background: var(--ebbg);background-image: var(--ebbgimage);">
-    <div class="container-fluid">
-        <div class="row eb-banner eb-bot-pdF-motion-frame">
-            <div class="col-md-12 no-padd eb-banner-text-img-sec bg-color-banner text-center">
+<section class="message-box-indexpage">
+    <span>@ViewBag.message</span>
+    <i class="fa fa-close pull-right" id="close-msg"></i>
+</section>
+@*<section class="slider botsBanner" id="signupcall">
+    <div class="container">
+        <div class="row eb-bot-pdF-motion-frame">
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd eb-banner-text-img-sec bg-color-banner text-center">
                 <div class="carousel slide" data-ride="carousel" id="bote-carousel">
                     <div class="carousel-inner">
                         <!-- Quote 1 -->
@@ -73,8 +77,10 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 no-padd get-start-sec">
-                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3">
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd get-start-sec">
+                <br class="hidden-xs"/>
+                <br class="hidden-xs"/>
+                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-4">
                     <div class="no-creditcared">No credit card required.</div>
 
                     <form id="signup_form" class="form-inline text-center" action="~/Ext/TenantExtSignup" method="post">
@@ -82,17 +88,25 @@
                             <input type="email" name="email" class="form-control" placeholder="Enter your email">
                             <span class="btn input-group-addon no-hover-tw" id="btnGroupAddon">Get Started</span>
                         </div>
-                        @*<a class="btn btn_liveDemos" href="#idF_botDemOCl">Live Demos</a>*@
+                        @*<a class="btn btn_liveDemos" href="#idF_botDemOCl">Live Demos</a>
+                    </form>
+                    <form action="" method="post" class="joinbeta">
+                        <div class="input-group jumb">
+                            <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
+                            </span>
+                        </div>
                     </form>
                     <div class="form-group social-btn-sec form-inline">
                         <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
-                        @*<div class="form-inline">*@
+                        <div class="form-inline">
                         <a class="btn socialbtns" href="/auth/facebook">
                             <i class="fa fa-facebook fa-lg"></i>
                         </a>
-                        @*<a class="btn socialbtns" href="/auth/twitter">
+                        <a class="btn socialbtns" href="/auth/twitter">
                                 <i class="fa fa-twitter fa-lg"></i>
-                            </a>*@
+                            </a>
                         <a class="btn socialbtns" href="#">
                             <i class="fa fa-linkedin fa-lg"></i>
                         </a>
@@ -102,7 +116,7 @@
                         <a class="btn socialbtns" href="/auth/github">
                             <i class="fa fa-github fa-lg"></i>
                         </a>
-                        @*</div>*@
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
@@ -115,15 +129,98 @@
             </div>
         </div>
     </div>
-    <section class="bot_video_promo">
+    <br class="hidden-xs"/>
+    <br class="hidden-xs"/>
+    <section class="bot_video_promo hidden-xs">
         <div class="container">
             <div class="col-md-10 col-md-offset-1 eb_bot_motion_frame pd-0">
-
             </div>
         </div>
     </section>
+</section>*@
+<section class="slider botsBanner" id="signupcall">
+    <div class="container">
+        <div class="row eb-bot-pdF-motion-frame">
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd eb-banner-text-img-sec bg-color-banner text-center" style="margin-top: 135px;">               
+                    <h2>Convert complex business workflows into <br />simple Bot conversations.</h2>
+                    <p class="w-100">
+                        Build & Deploy enterprise grade bots with just drag-n-drop.
+                    </p>               
+            </div>
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd get-start-sec">
+                <br /><br />
+                <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3">
+                    @*<div class="no-creditcared">No credit card required.</div>*@
+
+                    @*<form id="signup_form" class="form-inline text-center" action="~/Ext/TenantExtSignup" method="post">
+                            <div class="input-group eb-btn-tw">
+                                <input type="email" name="email" class="form-control" placeholder="Enter your email">
+                                <span class="btn input-group-addon no-hover-tw" id="btnGroupAddon">Get Started</span>
+                            </div>
+                            @*<a class="btn btn_liveDemos" href="#idF_botDemOCl">Live Demos</a>
+                        </form>*@
+                    <form action="" method="post" onsubmit="return validate(this)" class="joinbeta">
+                        <div class="input-group jumb">
+                            <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                    @*<div class="form-group social-btn-sec form-inline">
+                            <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                            <div class="form-inline">
+                            <a class="btn socialbtns" href="/auth/facebook">
+                                <i class="fa fa-facebook fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="/auth/twitter">
+                                    <i class="fa fa-twitter fa-lg"></i>
+                                </a>
+                            <a class="btn socialbtns" href="#">
+                                <i class="fa fa-linkedin fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="/auth/googleoauth">
+                                <i class="fa fa-google-plus fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="/auth/github">
+                                <i class="fa fa-github fa-lg"></i>
+                            </a>
+                            </div>
+                        </div>*@
+                </div>
+                @*<div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
+                        <div class="no-creditcared">No sign-up required</div>
+                        <a class="btn btn_liveDemos eb-btn-tw no-hover-tw" href="#idF_botDemOCl">Explore our Live Demo Bots</a>
+                        <div class="form-group social-btn-sec">
+                            <a class="btn socialbtns live-scenarios-text">Checkout 7 compelling USE CASES</a>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
 </section>
-<section class="platform-desc">
+<section class="bot_video_promo">
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1 col-sm-10 col-xs-12 col-sm-offset-1 eb_bot_motion_frame pd-0">           
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 bot_video_promo_content">
+                <img src="~/images/icons8-conference-64 (1).png" />
+                <h4>One Bot. Many User Experiences.</h4>
+                <p>Authorise your customers or employees & Customize their interactions.</p>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 bot_video_promo_content">
+                <img src="~/images/icons8-database-64 (2).png" />
+                <h4>Build Bots that directly talk to <i>your</i> Database.</h4>
+                <p>Bye Bye Webhooks and API calls.</p>
+            </div>
+            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 bot_video_promo_content">
+                <img src="~/images/icons8-id-verified-64 (1).png" />
+                <h4>Know your Visitors/Users better.</h4>
+                <p>Our bots use Facebook to auto-login.</p>
+            </div>
+        </div>
+    </div>
+</section>
+@*<section class="platform-desc">
     <div class="container">
         <div class="col-md-4 descript_cont">
             <div class="descript_cont_second b">
@@ -145,8 +242,8 @@
             </div>
         </div>
     </div>
-</section>
-<section class="bot-section2" id="idF_botDemOCl">
+</section>*@
+@*<section class="bot-section2" id="idF_botDemOCl">
     <div class="container">
         <div class="row demo-cont">
             <div class="demo-col1">
@@ -467,19 +564,19 @@
             </div>
         </div>
     </div>
-</section>
-<section class="embed_scriptBot mt mb alt">
+</section>*@
+<section class="embed_scriptBot mt mb">
     <div class="container">
         <h3 class="mt0 eb_font_H text-center h_b">Botify your Websites &amp; private Web Apps</h3>
         <div class="row">
             <div class="col-md-7 col-lg-7 col-sm-7 col-xs-12 eb-codeedit">
                 <div class="eb-codeedit-Container float-l w-100">
                     <div class="eb-codeedit-pgno float-l">
-                        <pn>1</pn><pn>2</pn><pn>3</pn><pn>4</pn><pn>5</pn><pn>6</pn><pn>7</pn><pn>8</pn><pn>9</pn><pn>10</pn><pn>11</pn><pn>12</pn><pn>13</pn><pn>14</pn>
+                        <pn>1</pn><pn>2</pn><pn>3</pn><pn>4</pn><pn>5</pn><pn>6</pn><pn>7</pn><pn>8</pn><pn>9</pn><pn>10</pn><pn>11</pn><pn>12</pn><pn>13</pn><pn class="hidden-xs">14</pn>
                     </div>
                     <div class="eb-codeedit-code float-l">
                         <div class="pg-line w-100"><span class="htmlTags"><</span><span class="jsCode">script </span><span class="htmlTags">type="text/javascript"></span></div>
-                        <div class="pg-line w-100">window.EXPRESSbase_SOLUTION_ID=<span class="eb-text">"eb_dbpjl5pgxleq20180130063835"</span>;</div>
+                        <div class="pg-line w-100">window.EXPRESSbase_SOLUTION_ID=<span class="eb-text">"your_id"</span>;</div>
                         <div class="pg-line w-100">window.EXPRESSbase_APP_ID = 13;</div>
                         <div class="pg-line w-100">(<span class="htmlTags">function</span> () {</div>
                         <div class="pg-line w-100 eb-codeedit-intentation">d = document;</div>
@@ -489,7 +586,7 @@
                         <div class="pg-line w-100 eb-codeedit-intentation">d.getElementsByTagName(<span class="eb-text">"head"</span>)[0].appendChild(s);</div>
                         <div class="pg-line w-100 eb-codeedit-intentation">d.ebbotName = <span class="eb-text">"Live ChatBot"</span>;</div>
                         <div class="pg-line w-100 eb-codeedit-intentation">d.ebbotThemeColor = <span class="eb-text">"#31d031"</span>;</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">d.botdpURL = <span class="eb-text">'http://expressbase.com/images/svg/bot2.svg'</span>;</div>
+                        <div class="pg-line w-100 eb-codeedit-intentation hidden-xs">d.botdpURL = <span class="eb-text">'http://expressbase.com/images/svg/bot2.svg'</span>;</div>
                         <div class="pg-line w-100">})();</div>
                         <div class="pg-line w-100"><span class="htmlTags"><</span><span class="jsCode">/script</span><span class="htmlTags">></span></div>
                     </div>
@@ -508,65 +605,54 @@
 <section class="bot-section2 mt mb" id="features">
     <div class="container">
         <h3 class="mt0 eb_font_H text-center h_b">Features</h3>
-        <div class="row">
-            <div class="col-md-6 tiles">
-                <div class="tile-body">
-                    <div class="col-md-2 pd-0 fature-img-sec">
-                        <img class="w-120" src="~/images/dbfeatures.png" />
-                    </div>
-                    <div class="col-md-10">
-                        <h4>EXPRESSbots & Your Apps cohabit</h4>
-                        <p class="eb-small-text">
-                            For seamless integration of your apps and EXPRESSbots, you can connect your existing database. It’s you who decides what data bots have access to. If you don’t have a database, we setup an exclusive one for you in our infrastructure.
-                        </p>
-                        <p class="small">For eg., a restaurant bot takes order from the customer, and their legacy app does the rest.</p>
-                    </div>
-                </div>
+        <div class="col-md-12 collg-12 col-sm-12 col-xs-12 feature_row pd-t-0">
+            <div class="col-md-3 col-lg-3 col-sm-3 hidden-xs flex_imgWrapper">
+                <img class="w" src="/images/dbfeatures.png">
             </div>
-            <div class="col-md-6 tiles">
-                <div class="tile-body">
-                    <div class="col-md-2 pd-0 fature-img-sec">
-                        <img class="w-120" src="~/images/authority.jpg" />
-                    </div>
-                    <div class="col-md-10">
-                        <h4>Authorize &amp; Customize User interactions</h4>
-                        <p class="eb-small-text">
-                            Users assigned to different roles* gain access to completely different user experiences, even anonymous users/potential customers. Users don’t login, bots use Facebook to identify/authenticate them.
-                        </p>
-                        <p class="small">For eg: In a Sales bot, existing customers can track the status of previous transactions and prospective customers get to see promotional content.</p>
-                        <p class="xsmall">*We use Role Based Access Control, a NIST standard for app security.</p>
-                    </div>
-                </div>
+            <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+                <h4>EXPRESSbots & Your Apps cohabit</h4>
+                <p class="f_content">For seamless integration of your apps and EXPRESSbots, you can connect your existing database.
+                It’s you who decides what data bots have access to. If you don’t have a database,
+                we setup an exclusive one for you in our infrastructure.</p>
+                <p class="small">For eg., a restaurant bot takes order from the customer, and their legacy app does the rest.</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6 tiles">
-                <div class="tile-body">
-                    <div class="col-md-2 pd-0 fature-img-sec">
-                        <img class="w-120" src="~/images/map.jpg" />
-                    </div>
-                    <div class="col-md-10">
-                        <h4>Powerful UI controls & Integrations</h4>
-                        <p class="eb-small-text">
-                            Rich UI controls form magnificent user experiences. You can add Tables, Charts, Image/File Upload, date-time, cards menu, Google maps or even shopping carts to bot interactions.
-                        </p>
-                        <p class="small">For eg: In a logistics bot, users get to track their consignment.</p>
-                    </div>
-                </div>
+        <div class="col-md-12 collg-12 col-sm-12 col-xs-12 feature_row">
+            <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+                <h4>Authorize & Customize User interactions</h4>
+                <p class="f_content">
+                    Users assigned to different roles* gain access to completely different user experiences, 
+                    even anonymous users/potential customers. Users don’t login, bots use Facebook to identify/authenticate them.
+                </p>
+                <p class="small">For eg: In a Sales bot, existing customers can track the 
+                status of previous transactions and prospective customers get to see promotional content.</p>
+                <p class="small">*We use Role Based Access Control, a NIST standard for app security.</p>
             </div>
-            <div class="col-md-6 tiles">
-                <div class="tile-body">
-                    <div class="col-md-2 pd-0 fature-img-sec">
-                        <img class="w-120" src="~/images/drag-and-drop-icon.png" />
-                    </div>
-                    <div class="col-md-10">
-                        <h4>Innovative Drag-N-Drop Bot Builder</h4>
-                        <p class="eb-small-text">
-                            Quickly Build and Deploy complex forms by simple drag-n-drop. For advanced requirements, put your JavaScript and SQL skills into use.
-                        </p>
-                        <p class="small">For eg: While developing a bot for a service-centre, implementing the ticketing feature only takes max of 30 min.</p>
-                    </div>
-                </div>
+            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs flex_imgWrapper">
+                <img class="w" src="/images/authority.jpg">
+            </div>
+        </div>
+        <div class="col-md-12 collg-12 col-sm-12 col-xs-12 feature_row">
+            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs flex_imgWrapper"><img class="w" src="/images/map.jpg"></div>
+            <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+                <h4>Powerful UI controls & Integrations</h4>
+                <p class="f_content">
+                    Rich UI controls form magnificent user experiences. You can add Tables, 
+                    Charts, Image/File Upload, date-time, cards menu, Google maps or even shopping carts to bot interactions.
+                </p>
+                <p class="small">For eg: In a logistics bot, users get to track their consignment.</p>
+            </div>
+        </div>
+        <div class="col-md-12 collg-12 col-sm-12 col-xs-12 feature_row">
+            <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+                <h4>Innovative Drag-N-Drop Bot Builder</h4>
+                <p class="f_content">
+                    Quickly Build and Deploy complex forms by simple drag-n-drop. For advanced requirements, put your JavaScript and SQL skills into use.
+                </p>
+                <p class="small">For eg: While developing a bot for a service-centre, implementing the ticketing feature only takes max of 30 min.</p>
+            </div>
+            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs flex_imgWrapper">
+                <img class="w" src="/images/drag-and-drop-icon.png">
             </div>
         </div>
     </div>
@@ -575,8 +661,8 @@
 <section class="bot-pricing mt mb alt" id="pricing">
     <div class="container">
         <h3 class="mt0 eb_font_H text-center h_b">Pricing</h3>
-        <div class="col-md-12 nopadding bot-pricing-body">
-            <div class="col-md-3">
+        <div class="col-md-12 collg-12 col-sm-12 col-xs-12 nopadding bot-pricing-body">
+            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
                 <div class="price-tile">
                     <div class="price-tile-headsec">
                         <div class="headsec-textarea">Free For Ever </div>
@@ -595,7 +681,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
                 <div class="price-tile">
                     <div class="price-tile-headsec">
                         <div class="headsec-textarea">Standard</div>
@@ -614,7 +700,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
                 <div class="price-tile">
                     <div class="price-tile-headsec">
                         <div class="headsec-textarea">Pro</div>
@@ -633,7 +719,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
                 <div class="price-tile">
                     <div class="price-tile-headsec">
                         <div class="headsec-textarea">Enterprise</div>
@@ -655,54 +741,75 @@
         </div>
     </div>
 </section>
-<section class="container-fluid getStarted">
-    <div class="text-center">
-        <h3>Sign Up now. Start building your Business Apps...</h3>
-    </div>
-    <div class="col-md-12 no-padd get-start-sec">
-        <div class="col-md-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-xs-12 col-sm-offset-4">
-            <div class="no-creditcared">No credit card required.</div>
-            <form id="signup_form" action="~/Ext/TenantExtSignup" method="post">
-                <div class="input-group eb-btn-tw">
-                    <input type="email" class="form-control" name="email" placeholder="Enter your email">
-                    <span class="btn input-group-addon no-hover-tw" id="btnGroupAddon">Get Started</span>
-                </div>
-            </form>
-            <div class="form-group social-btn-sec">
-                <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
-                <div class="form-inline">
-                    <a class="btn socialbtns" href="/auth/facebook">
-                        <i class="fa fa-facebook fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="/auth/twitter">
-                        <i class="fa fa-twitter fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="#">
-                        <i class="fa fa-linkedin fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="/auth/googleoauth">
-                        <i class="fa fa-google-plus fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="/auth/github">
-                        <i class="fa fa-github fa-lg"></i>
-                    </a>
-                </div>
-            </div>
+<section class="getStarted mt mb">
+    <div class="container">
+        <div class="text-center">
+            @*<h3>Sign Up now. Start building your Business Apps...</h3>*@
+            <h3 class="mt0 eb_font_H text-center h_b">Join Us</h3>
         </div>
-        <div class="col-md-4">
-            <canvas id="can_container" width="200" height="200"></canvas>
+        <div class="col-md-12 collg-12 col-sm-12 col-xs-12 no-padd get-start-sec">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 callfaction_cont">
+                @*<div class="no-creditcared">No credit card required.</div>
+                <div class="no-creditcared">No credit card required.</div>
+                @*<form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
+                        <div class="input-group">
+                            <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn getstarted">Get Started</button>
+                            </span>
+                        </div>
+                    </form>*@
+                <form action="" method="post" onsubmit="return validate(this)" class="joinbeta">
+                    <div class="input-group jumb">
+                        <input type="email" id="emailtxt" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn getstarted">Join our Private Beta <i class="fa fa-spinner fa-spin jb"></i></button>
+                        </span>
+                    </div>
+                </form>
+                @*<div class="form-group social-btn-sec">
+                        <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
+                        <div class="form-inline">
+                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                                <i class="fa fa-facebook fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                                <i class="fa fa-twitter fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="#">
+                                <i class="fa fa-linkedin fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                                <i class="fa fa-google-plus fa-lg"></i>
+                            </a>
+                            <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                                <i class="fa fa-github fa-lg"></i>
+                            </a>
+                        </div>
+                    </div>*@
+            </div>
         </div>
     </div>
 </section>
 @{
             Html.RenderPartial("PageFooter");
 }
-<div class="bot-login-sec">
-    @*@await Component.InvokeAsync("EbProductPage")*@
-</div>
-@*<a href="https://icons8.com">Icon pack by Icons8</a>*@
 
+@if (ViewBag.message != null)
+{
+    <script>
+        $(".message-box-indexpage").show();
+        $(".ext-pageheader .navbar").css("top", "52px");
+        $(".slider").css("padding-top", "100px");
+        $("#close-msg").click(function (e) {
+            $(".message-box-indexpage").fadeOut();
+            $(".ext-pageheader .navbar").css("top", "0");
+            $(".slider").css("padding-top", "0");
+        });
+    </script>
+}
 <script>
+
 
     $(document).scroll(function () {
         var y = $(this).scrollTop();
@@ -717,6 +824,44 @@
         $('#btnGroupAddon').click(function () {
             document.getElementById("signup_form").submit();
         })
+        });
+
+    function validate(form) {
+        var email = form.Email.value.trim();
+        if (ValidateEmail(email))
+            return true;
+        else
+            return false;
+    }
+    function ValidateEmail(mail) {
+        if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+            return (true);
+        return (false);
+    }
+    $(".joinbeta").submit(function (e) {
+        e.preventDefault();
+        if (validate(this)) {
+            $.ajax({
+                type: 'POST',
+                url: "../Ext/JoinBeta",
+                beforeSend: function () {
+                    $(e.target).children().find('i').show();
+                },
+                data: $(e.target).serializeArray()
+            }).done(function (data) {
+                var msg = data ? "Thank you for your interest in our private beta. We will get back to you shortly." : "You have already specified your interest to join our private beta. We will get back to you shortly.";
+                $(e.target).children().find('i').hide();
+                $(e.target).children().find(".emailtxt").val("");
+                $(".message-box-indexpage").fadeIn().children("span").text(msg);
+                $(".ext-pageheader .navbar").css("top", "52px");
+                $(".slider").css("padding-top", "100px");
+                $("#close-msg").click(function (e) {
+                    $(".message-box-indexpage").fadeOut();
+                    $(".ext-pageheader .navbar").css("top", "0");
+                    $(".slider").css("padding-top", "0");
+                });
+            });
+        }
     });
 
     $(".icon-round, .icon-round i").on("click", function (e) {

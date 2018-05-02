@@ -1059,4 +1059,9 @@
     background-color: #eee;
     border: 1px solid #ccc;
 }
-
+.appicon_btn {
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    background: white;
+    border: 1px solid #e1e0e0 !important;
+}

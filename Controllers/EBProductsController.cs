@@ -23,6 +23,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Bots()
         {
+            ViewBag.message = TempData["Message"];
             return View();
         }
         public IActionResult Demos()

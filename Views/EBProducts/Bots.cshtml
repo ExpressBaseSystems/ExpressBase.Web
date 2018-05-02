@@ -1,765 +1,933 @@
-﻿@{
-    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPageHeader");
-}
-<script type="text/javascript">$("#products").hide();</script>
-<script type="text/javascript">
-    window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
-    window.EXPRESSbase_APP_IDS = [13, 93, 94, 95, 96, 97, 98];
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-92530019-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-92530019-1');
+    </script>
+    <title>EXPRESSbots: Build & Deploy enterprise grade bots with drag-n-drop.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Convert complex business workflows into simple Bot conversations." />
+    <meta name="hpapaas" content="hpapaas" />
+    <meta name="apaas" content="apaas" />
+    <meta name="apaas:platform" content="high productivity platform" />
+    <meta name="hpapaas:platform" content="high productivity application platform as a service" />
+    <meta name="saas" content="saas" />
+    <meta name="rad" content="rad" />
+    <meta name="rad:platform" content="rapid application development platform" />
+    <meta name="cloud" content="cloud" />
+    <meta name="smb" content="smb" />
+    <meta name="business" content="business" />
+    <meta name="google" content="Results from expressbase.com" />
+    <meta name="bot:service" content="Bots as a Service" />
+    <meta name="bot:builder" content="Bots builder as a Service" />
+    <meta name="bot:drag-drop" content="Drag-n-Drop bot Builder" />
+    <meta name="bot:multi-db" content="Multidatabse support" />
+    <meta name="bot:rbac" content="Bots with RBAC security" />
+    <meta name="bot:embed" content="Embeddable Bots" />
 
-    $(document).ready(function () {
-        d = document;
-        d.appIdColl = window.EXPRESSbase_APP_IDS;
-        d.ebbotThemeColorColl = ["#9400D3", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
-        d.ebbotNameColl = ["Hotel", "Hospital", "School", "Service Center", "Human Resource", "Tracking", "E-Commerce"];
-        d.botdpURLColl = ["http://localhost:5000/images/svg/restaurant.svg", "http://localhost:5000/images/svg/doctor-stethoscope.svg", "http://localhost:5000/images/svg/college-graduation.svg", "http://localhost:5000/images/svg/call-center-worker-with-headset.svg", "http://localhost:5000/images/svg/human-head-silhouette-with-cogwheels.svg", "http://localhost:5000/images/svg/route.svg", "http://localhost:5000/images/svg/shopping-cart.svg"];
-        d.appIdCount = 0;
-        d.createBotFns = [];
-        for (var i = 0; i < d.appIdColl.length; i++) {
-            d = document;
-            d.createBotFns.push(function () {
-                s = d.createElement("script");
-                s.src = "/js/ChatBot/ebbot-ext.js";
-                //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
-                s.async = 1;
-                d.getElementsByTagName("head")[0].appendChild(s);
-            });
-        }
-    });
-</script>
+    <link async rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
+    <link async rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
+    <link rel="icon" href="~/images/favicon.ico">
+    <link async href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
 
-@*<script type="text/javascript">
-        (function () {
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+</head>
+<body>
+    @{
+        Html.RenderPartial("ExtPageHeader");
+    }
+    <script type="text/javascript">$("#products").hide();</script>
+    <script type="text/javascript">
+        window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
+        window.EXPRESSbase_APP_IDS = [13, 93, 94, 95, 96, 97, 98];
+
+        $(document).ready(function () {
             d = document;
-            s = d.createElement("script");
-            s.src = "/js/ChatBot/ebbot-ext.js";
-            //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
-            s.async = 1;
-            d.getElementsByTagName("head")[0].appendChild(s);
-            d.ebbotName = "Live ChatBot";
-            d.ebbotThemeColor = "#31d031";
-            d.isebdemo = true;
-        })();
-    </script>*@
-@*<svg id="boticon" height="0"></svg>*@
-<link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
-<section class="slider" id="signupcall" style="background: var(--ebbg);background-image: var(--ebbgimage);">
-    <div class="container-fluid">
-        <div class="row eb-banner eb-bot-pdF-motion-frame">
-            <div class="col-md-12 no-padd eb-banner-text-img-sec bg-color-banner text-center">
-                <div class="carousel slide" data-ride="carousel" id="bote-carousel">
-                    <div class="carousel-inner">
-                        <!-- Quote 1 -->
-                        <div class="item active text-center">
-                            <h2 class="pd-b-0">Build Bots that directly talk to <i>your</i> Database.</h2>
-                            <p class="w-100">
-                                Bye Bye Webhooks and API calls.
-                            </p>
+            d.appIdColl = window.EXPRESSbase_APP_IDS;
+            d.ebbotThemeColorColl = ["#9400D3", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
+            d.ebbotNameColl = ["Hotel", "Hospital", "School", "Service Center", "Human Resource", "Tracking", "E-Commerce"];
+            d.botdpURLColl = ["http://localhost:5000/images/svg/restaurant.svg", "http://localhost:5000/images/svg/doctor-stethoscope.svg", "http://localhost:5000/images/svg/college-graduation.svg", "http://localhost:5000/images/svg/call-center-worker-with-headset.svg", "http://localhost:5000/images/svg/human-head-silhouette-with-cogwheels.svg", "http://localhost:5000/images/svg/route.svg", "http://localhost:5000/images/svg/shopping-cart.svg"];
+            d.appIdCount = 0;
+            d.createBotFns = [];
+            for (var i = 0; i < d.appIdColl.length; i++) {
+                d = document;
+                d.createBotFns.push(function () {
+                    s = d.createElement("script");
+                    s.src = "/js/ChatBot/ebbot-ext.js";
+                    //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
+                    s.async = 1;
+                    d.getElementsByTagName("head")[0].appendChild(s);
+                });
+            }
+        });
+    </script>
+    <section class="message-box-indexpage">
+        <span>@ViewBag.message</span>
+        <i class="fa fa-close pull-right" id="close-msg"></i>
+    </section>
+    @*<section class="slider botsBanner" id="signupcall">
+            <div class="container">
+                <div class="row eb-bot-pdF-motion-frame">
+                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd eb-banner-text-img-sec bg-color-banner text-center">
+                        <div class="carousel slide" data-ride="carousel" id="bote-carousel">
+                            <div class="carousel-inner">
+                                <!-- Quote 1 -->
+                                <div class="item active text-center">
+                                    <h2 class="pd-b-0">Build Bots that directly talk to <i>your</i> Database.</h2>
+                                    <p class="w-100">
+                                        Bye Bye Webhooks and API calls.
+                                    </p>
+                                </div>
+                                <!-- Quote 2 -->
+                                <div class="item text-center">
+                                    <h2 class="pd-b-0">One Bot. Many User Experiences.</h2>
+                                    <p class="w-100">
+                                        Authorise your customers/employees & Customize their interactions.
+                                    </p>
+                                </div>
+                                <!-- Quote 3 -->
+                                <div class="item text-center">
+                                    <h2 class="pd-b-0">Know your Visitors/Users better.</h2>
+                                    <p class="w-100">
+                                        Our bots use Facebook to auto-login.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <!-- Quote 2 -->
-                        <div class="item text-center">
-                            <h2 class="pd-b-0">One Bot. Many User Experiences.</h2>
-                            <p class="w-100">
-                                Authorise your customers/employees & Customize their interactions.
-                            </p>
+                    </div>
+                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd get-start-sec">
+                        <br class="hidden-xs"/>
+                        <br class="hidden-xs"/>
+                        <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-4">
+                            <div class="no-creditcared">No credit card required.</div>
+
+                            <form id="signup_form" class="form-inline text-center" action="~/Ext/TenantExtSignup" method="post">
+                                <div class="input-group eb-btn-tw">
+                                    <input type="email" name="email" class="form-control" placeholder="Enter your email">
+                                    <span class="btn input-group-addon no-hover-tw" id="btnGroupAddon">Get Started</span>
+                                </div>
+                                @*<a class="btn btn_liveDemos" href="#idF_botDemOCl">Live Demos</a>
+                            </form>
+                            <form action="" method="post" class="joinbeta">
+                                <div class="input-group jumb">
+                                    <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
+                                    </span>
+                                </div>
+                            </form>
+                            <div class="form-group social-btn-sec form-inline">
+                                <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                                <div class="form-inline">
+                                <a class="btn socialbtns" href="/auth/facebook">
+                                    <i class="fa fa-facebook fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="/auth/twitter">
+                                        <i class="fa fa-twitter fa-lg"></i>
+                                    </a>
+                                <a class="btn socialbtns" href="#">
+                                    <i class="fa fa-linkedin fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="/auth/googleoauth">
+                                    <i class="fa fa-google-plus fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="/auth/github">
+                                    <i class="fa fa-github fa-lg"></i>
+                                </a>
+                                </div>
+                            </div>
                         </div>
-                        <!-- Quote 3 -->
-                        <div class="item text-center">
-                            <h2 class="pd-b-0">Know your Visitors/Users better.</h2>
-                            <p class="w-100">
-                                Our bots use Facebook to auto-login.
-                            </p>
+                        <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
+                            <div class="no-creditcared">No sign-up required</div>
+                            <a class="btn btn_liveDemos eb-btn-tw no-hover-tw" href="#idF_botDemOCl">Explore our Live Demo Bots</a>
+                            <div class="form-group social-btn-sec">
+                                <a class="btn socialbtns live-scenarios-text">Checkout 7 compelling USE CASES</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 no-padd get-start-sec">
-                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3">
-                    <div class="no-creditcared">No credit card required.</div>
-
-                    <form id="signup_form" class="form-inline text-center" action="~/Ext/TenantExtSignup" method="post">
-                        <div class="input-group eb-btn-tw">
-                            <input type="email" name="email" class="form-control" placeholder="Enter your email">
-                            <span class="btn input-group-addon no-hover-tw" id="btnGroupAddon">Get Started</span>
-                        </div>
-                        @*<a class="btn btn_liveDemos" href="#idF_botDemOCl">Live Demos</a>*@
-                    </form>
-                    <div class="form-group social-btn-sec form-inline">
-                        <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
-                        @*<div class="form-inline">*@
-                        <a class="btn socialbtns" href="/auth/facebook">
-                            <i class="fa fa-facebook fa-lg"></i>
-                        </a>
-                        @*<a class="btn socialbtns" href="/auth/twitter">
-                                <i class="fa fa-twitter fa-lg"></i>
-                            </a>*@
-                        <a class="btn socialbtns" href="#">
-                            <i class="fa fa-linkedin fa-lg"></i>
-                        </a>
-                        <a class="btn socialbtns" href="/auth/googleoauth">
-                            <i class="fa fa-google-plus fa-lg"></i>
-                        </a>
-                        <a class="btn socialbtns" href="/auth/github">
-                            <i class="fa fa-github fa-lg"></i>
-                        </a>
-                        @*</div>*@
+            <br class="hidden-xs"/>
+            <br class="hidden-xs"/>
+            <section class="bot_video_promo hidden-xs">
+                <div class="container">
+                    <div class="col-md-10 col-md-offset-1 eb_bot_motion_frame pd-0">
                     </div>
                 </div>
-                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
-                    <div class="no-creditcared">No sign-up required</div>
-                    <a class="btn btn_liveDemos eb-btn-tw no-hover-tw" href="#idF_botDemOCl">Explore our Live Demo Bots</a>
-                    <div class="form-group social-btn-sec">
-                        <a class="btn socialbtns live-scenarios-text">Checkout 7 compelling USE CASES</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <section class="bot_video_promo">
+            </section>
+        </section>*@
+    <section class="slider botsBanner" id="signupcall">
         <div class="container">
-            <div class="col-md-10 col-md-offset-1 eb_bot_motion_frame pd-0">
+            <div class="row eb-bot-pdF-motion-frame">
+                <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd eb-banner-text-img-sec bg-color-banner text-center" style="margin-top: 135px;">
+                    <h2>Convert your business workflows into <br />simple Bot conversations.</h2>
+                    <p class="w-100">
+                        Build & Deploy enterprise grade bots with just drag-n-drop.
+                    </p>
+                </div>
+                <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd get-start-sec">
+                    <br /><br />
+                    <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3">
+                        @*<div class="no-creditcared">No credit card required.</div>*@
 
+                        @*<form id="signup_form" class="form-inline text-center" action="~/Ext/TenantExtSignup" method="post">
+                                <div class="input-group eb-btn-tw">
+                                    <input type="email" name="email" class="form-control" placeholder="Enter your email">
+                                    <span class="btn input-group-addon no-hover-tw" id="btnGroupAddon">Get Started</span>
+                                </div>
+                                @*<a class="btn btn_liveDemos" href="#idF_botDemOCl">Live Demos</a>
+                            </form>*@
+                        <form action="" method="post" onsubmit="return validate(this)" class="joinbeta">
+                            <div class="input-group jumb">
+                                <input type="email" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn getstarted">Join our Private Beta<i class="fa fa-spinner fa-spin jb"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                        @*<div class="form-group social-btn-sec form-inline">
+                                <a style="color: #cad4d3;font-size: 12px;">Or Sign In with</a>
+                                <div class="form-inline">
+                                <a class="btn socialbtns" href="/auth/facebook">
+                                    <i class="fa fa-facebook fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="/auth/twitter">
+                                        <i class="fa fa-twitter fa-lg"></i>
+                                    </a>
+                                <a class="btn socialbtns" href="#">
+                                    <i class="fa fa-linkedin fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="/auth/googleoauth">
+                                    <i class="fa fa-google-plus fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="/auth/github">
+                                    <i class="fa fa-github fa-lg"></i>
+                                </a>
+                                </div>
+                            </div>*@
+                    </div>
+                    @*<div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
+                            <div class="no-creditcared">No sign-up required</div>
+                            <a class="btn btn_liveDemos eb-btn-tw no-hover-tw" href="#idF_botDemOCl">Explore our Live Demo Bots</a>
+                            <div class="form-group social-btn-sec">
+                                <a class="btn socialbtns live-scenarios-text">Checkout 7 compelling USE CASES</a>
+                            </div>
+                        </div>*@
+                </div>
             </div>
         </div>
     </section>
-</section>
-<section class="platform-desc">
-    <div class="container">
-        <div class="col-md-4 descript_cont">
-            <div class="descript_cont_second b">
-                Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Proin sit amet libero velit. Sed nec congue tortor. Aenean vel nisi laoreet,.
+    <section class="bot_video_promo alt">
+        <div class="container">
+            <div class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1 col-sm-10 col-xs-12 col-sm-offset-1 eb_bot_motion_frame pd-0">
+                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 bot_video_promo_content">
+                    <img src="~/images/icons8-conference-64 (1).png" />
+                    <h4>One Bot. Many User Experiences.</h4>
+                    <p>Authorise your customers or employees & Customize their interactions.</p>
+                </div>
+                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 bot_video_promo_content">
+                    <img src="~/images/icons8-database-64 (2).png" />
+                    <h4>Build Bots that directly talk to <i>your</i> Database.</h4>
+                    <p>Bye Bye Webhooks and API calls.</p>
+                </div>
+                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 bot_video_promo_content">
+                    <img src="~/images/icons8-id-verified-64 (1).png" />
+                    <h4>Know your Visitors/Users better.</h4>
+                    <p>Our bots use Facebook to auto-login.</p>
+                </div>
             </div>
+        </div>
+    </section>
+    @*<section class="platform-desc">
+            <div class="container">
+                <div class="col-md-4 descript_cont">
+                    <div class="descript_cont_second b">
+                        Lorem ipsum dolor sit amet, consectetur
+                        adipiscing elit. Proin sit amet libero velit. Sed nec congue tortor. Aenean vel nisi laoreet,.
+                    </div>
 
-        </div>
-        <div class="col-md-4 descript_cont">
-            <div class="descript_cont_second b">
-                Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Proin sit amet libero velit. Sed nec congue tortor. Aenean vel nisi laoreet,.
+                </div>
+                <div class="col-md-4 descript_cont">
+                    <div class="descript_cont_second b">
+                        Lorem ipsum dolor sit amet, consectetur
+                        adipiscing elit. Proin sit amet libero velit. Sed nec congue tortor. Aenean vel nisi laoreet,.
+                    </div>
+                </div>
+                <div class="col-md-4 descript_cont">
+                    <div class="descript_cont_second">
+                        Lorem ipsum dolor sit amet, consectetur
+                        adipiscing elit. Proin sit amet libero velit. Sed nec congue tortor. Aenean vel nisi laoreet,.
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4 descript_cont">
-            <div class="descript_cont_second">
-                Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Proin sit amet libero velit. Sed nec congue tortor. Aenean vel nisi laoreet,.
-            </div>
-        </div>
-    </div>
-</section>
-<section class="bot-section2" id="idF_botDemOCl">
-    <div class="container">
-        <div class="row demo-cont">
-            <div class="demo-col1">
-                <div class="usecase-icon-cont">
-                    <h3 class="demo-head">Live Demos</h3>
-                    <div class="row">
-                        <div class="livDemo_icons float-l">
-                            <div class="liveDemos_iconContainers float-l">
-                                <div class="liveDemos_iconContainers_sub float-l icon-round" appid="13" tabindex="1">
-                                    <div class="icon_noSec float-l">
-                                        <span>1</span>
+        </section>*@
+    @*<section class="bot-section2" id="idF_botDemOCl">
+            <div class="container">
+                <div class="row demo-cont">
+                    <div class="demo-col1">
+                        <div class="usecase-icon-cont">
+                            <h3 class="demo-head">Live Demos</h3>
+                            <div class="row">
+                                <div class="livDemo_icons float-l">
+                                    <div class="liveDemos_iconContainers float-l">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="13" tabindex="1">
+                                            <div class="icon_noSec float-l">
+                                                <span>1</span>
+                                            </div>
+                                            <div class="icon_imgSec float-l">
+                                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJgSURBVFhH7ZM/axtBEMWFA27dJUXaFPkE7ozw3d5JGAxxcY0LNWpUBGMXKkQQwoULB2P3rlykCm7yAVye/iYEQowNAYGCSAgEETmJTYxhPe88EkFa7Z1P8UXCN/Bgd3Zm3m/3pMS/jLIQSYi3kxdl0zyCeBt9qF7oteM8qBjGq7JhdCumKSFvTTmccZkXd/bCrmU9rBrGIpm7ENbI8XGCYB6RTnqA3ppyfOzbf6tQ3bKcTD4hw9ZfAC3k+NgL+rRveudYc9qLQP1+r+t3S/ps2Z4B1pzuB5keUM8ChDWn+zGqP/Dr+t2Shq6Tcqx1TgeOUf1BXrcf1Kh9pcF4K8ScK4RZEeJFPZ0+qtl2B8IaOZyhhstHRmBf3IykfKWPjjNLuXnS80YqdVi37XbVsv68X1n58Smbvfyaz8vu1pYnrJHDGWpQix70YgZm8Vgv4EVS+ipDlkozrm0/pR97pp5K7TfS6VN6kct3y8vd00zmvL2xITubm/J8d1de7O1phRrUoge9mIFZmInZ8IAXPNl+OIj6sWsYz2pCvKSmRsWyLhpLSz+PV1fPPq+tye/Fovy9s6MECCPMwkzMhge84AlvMIAFTIxH/0D69h8cp9vM5a6+FQry1/a2cvBdCp7wBgNYwMR4N4Cqpv+pGHBcaQGx1ymqWsZTA8pmU6koaxkvBgxdy3hTCqhTVLWMNww4CYoBx5UWEHudoqplPDWg6p8GRVnLeDFg6FrGm1JAnQZrVYaQqlanwVrGGwa8jdCrgoPGnct4MWAoTR/gl3w+lPwAVT1BFANC9wtwEsV4kxyJxDVZqSoJAhsa7wAAAABJRU5ErkJggg==" />
+                                                <div class="demo_nameFIC">Hotel</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="icon_imgSec float-l">
-                                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJgSURBVFhH7ZM/axtBEMWFA27dJUXaFPkE7ozw3d5JGAxxcY0LNWpUBGMXKkQQwoULB2P3rlykCm7yAVye/iYEQowNAYGCSAgEETmJTYxhPe88EkFa7Z1P8UXCN/Bgd3Zm3m/3pMS/jLIQSYi3kxdl0zyCeBt9qF7oteM8qBjGq7JhdCumKSFvTTmccZkXd/bCrmU9rBrGIpm7ENbI8XGCYB6RTnqA3ppyfOzbf6tQ3bKcTD4hw9ZfAC3k+NgL+rRveudYc9qLQP1+r+t3S/ps2Z4B1pzuB5keUM8ChDWn+zGqP/Dr+t2Shq6Tcqx1TgeOUf1BXrcf1Kh9pcF4K8ScK4RZEeJFPZ0+qtl2B8IaOZyhhstHRmBf3IykfKWPjjNLuXnS80YqdVi37XbVsv68X1n58Smbvfyaz8vu1pYnrJHDGWpQix70YgZm8Vgv4EVS+ipDlkozrm0/pR97pp5K7TfS6VN6kct3y8vd00zmvL2xITubm/J8d1de7O1phRrUoge9mIFZmInZ8IAXPNl+OIj6sWsYz2pCvKSmRsWyLhpLSz+PV1fPPq+tye/Fovy9s6MECCPMwkzMhge84AlvMIAFTIxH/0D69h8cp9vM5a6+FQry1/a2cvBdCp7wBgNYwMR4N4Cqpv+pGHBcaQGx1ymqWsZTA8pmU6koaxkvBgxdy3hTCqhTVLWMNww4CYoBx5UWEHudoqplPDWg6p8GRVnLeDFg6FrGm1JAnQZrVYaQqlanwVrGGwa8jdCrgoPGnct4MWAoTR/gl3w+lPwAVT1BFANC9wtwEsV4kxyJxDVZqSoJAhsa7wAAAABJRU5ErkJggg==" />
-                                        <div class="demo_nameFIC">Hotel</div>
+                                    <div class="liveDemos_iconContainers float-l">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="93" tabindex="1">
+                                            <div class="icon_noSec float-l">
+                                                <span>2</span>
+                                            </div>
+                                            <div class="icon_imgSec float-l">
+                                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQxSURBVFhH7VdNS1RhFJ5aBEWLdrWrbetatBtmHB1NRQhSTBQqNLKwwEWBgiAZJWWLQEHpF0Q/oC9alDpj9m1YqGWffqGSM6Pj6MzpPKf31jvO/ZjRsYx64MHrec85zzP3vPedO65/Br1u954+v/8+8163x7Nbhf88Bg4f3hLMzW1kzr+vrV16f/JkLJCbG0EMayrtzyDg9XqCeXkfBsrKwt9aWmjh2jUhrgdKS8O8Ntrj87lV+u9D0O3eFcjLu9VXUBAZP3dOTIUuXaLBqip6U1lJocuXJTZ+/jwhJ+j33+z1eneq8vUDNTVtDvh8p3mEoeHq6sXIlSti5NPZs/S4oIBGTpygkZoauf505oysIQe5PPIQatFDtcsugj7f/oDfP/ji0KHQbHOziM80NRH/T69KS8mIgbhGDGvIMWKoRY+Ax7NPtV07HrjdO3r9/hs8pvnP9fWJhbY2Cre20tCxY/T44EH6Ul9PiBnmfpJjWEPO0PHjUoMYenCvSF9+fhd6K5nMQS7XJh5JJW/02bdHjy6IAAt/ZdF+iLJBI2bHMO9H5PYXFkqtxLgOPdEbGtBSsumh1+fby6Poe1pSEpo2RnThAr3ksT3nsRmxTIga1KIHehkxaPAdDUJTyVujv6hoG3+iq/zJIh/q6uLzPBJs8ndq43/kjY/YSvF0idqPdXXSCz3RGzFoQRPaPQcObFV2ktHj9Rbz0TE5WFERwZGBhjgmnhQX0xs+PoxYNohe6PmkqEg0jBi04QFelK0fCOTn3+W7F55qaJDkbxcv0usjR+hZSQlNqth6EL2hAS1oGjF4CbInZY/3XE6O3Gpw9NQpHK40WlvrOM5oezvF7tyh+MgIJWZmiGIxIa6Xh4dlDTlmtQZFk7VEk7UNH/Ck7P0wONXYKLf8dXm5fFWZNfvJ69dpqbubaHGRnJCIRiUXNaa9FKEJ7X7eUvCSYpBnP4W/ZsU6o11dFJ+YUPLpIz4+LrVmPXXCAz8w4kXZY4NebysfmtudDEIgMTenJJOBWp1mQK2TSdSKF/ak7P0CFs2KhDwiuzun11oZBHAn7caNWmUnFXYGZc/ZIF2DwNKjR0m9da7KYLSjw/GByMQg8YODnrqGXqvspMLKII4LJ2RkkBG7fTtJQ69VdlJhZRBnmhMyNbg8NJSkodcqO6mwMiiHsAJyrGjkm60ZNICeuoZeq+ykAotmRfr+s8pJh7pB9LTKUXZS8dca3PAjxoZ2gl6rG7FCVh+SDX/MyEHNh6sdMjGINxyr17BVGQTx9WSHTAwuPXyY1Fvnqg3KywJ/0VshXYPxsbH1eVkAf9frlrKTCiyaFemEgN2dtALuXLSz07SnzjUbFPKIsCex2Z0gr/zYczZj1Zkdg4ryo4mPC5xpienpXz+a+BoxrDn9aFrJrBpcD/43uFY6GtwIVHb+Brhc3wExJAPDlC8yCgAAAABJRU5ErkJggg==">
+                                                <div class="demo_nameFIC">Hospital</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="liveDemos_iconContainers float-l">
-                                <div class="liveDemos_iconContainers_sub float-l icon-round" appid="93" tabindex="1">
-                                    <div class="icon_noSec float-l">
-                                        <span>2</span>
+                                    <div class="liveDemos_iconContainers float-l">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="94" tabindex="1">
+                                            <div class="icon_noSec float-l">
+                                                <span>3</span>
+                                            </div>
+                                            <div class="icon_imgSec float-l">
+                                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOVSURBVFhH7ZdJT1NRFMefw7fxC7hDQgGJhmHBwo0bluwNlkIjLRZoGYpEI9KJQQMyVLBUYxtMsEARQaMEEFugKBA6pIylTMd7Xi+kpe9JH22QaP/JP73vnHPP+fW2i/uY/0L21NRrIxkZMntmpgvNrkmMpv+OwqE+ZmVtzhYUBL1SKaBxjbFzh+WDCtTUQKC2NtIkdi6wQqD8cjnrk/GEwwqFmi8s3B/Pzl4je/xoXGMsobDxQA1nZmqG09JudOTnX0HjGmMJgx1JT3fEA0XbRCke2OGMDCdtwzCkScKg+CQUFpnoVgpIkxTqIBFQfOKBPQiHjQIMhyL/haZEQ/HpCBZnhsNGAopEq1gwJBKlgFR6mYbPXTgbGdgDEoncNBxK0GVIAJfuVTdeF6s0srJHrcOlar27uEYbKFI2AX7iM8Yl1bpyrKO7ooQ5rOHt0dAyhDO4enAfFAErUjXeKa0zuB4+eb5utNh2pn4swIrbBxtb23B4eAiBnSB4/euA8VeWoT0yZJvUL+I+3H/cQ61fqNZ0BYYmpg+cy15Y9KwTb8CCGz/XweVeA8eSF2yfZ3brm41bWH/cg0+kaLRO17X5ff4nHEJswrrZ+V9Qo+3cKFUb7FK1YVTf/W5rbsXHwsRqJ6k39FgQdITiRAuPH0/pLMJ95vf24NikY58LIFYjA8WJFibjFddQIeYEzJWYbudKzL6LAogseWLzLYrHMDkSs7ek3cUm4xXXUCFGBmTJk5g9FI9hssUmUJr9FwYQWZCJ4iUBBTkJyDVUiJOAXEOFOAnINVSIk4BcQ4U4Ccg1VIjPDHhALqTbgZ1Tb9pcQ8Ptcoeu/XyOCTC4uwdfphzQ3j8ISk03SGoNIFZpoaSuGcTVOpDWt0JVUxd0vrXB15k5tv5IR4Nc5L3DseQB28QMPOu0QEXjS9JHH+pBej1oaANdjxUGx6fZOqyPCdBoGYFSdQvIm/pB1vYJFN1zoDR52fyRq8gzxjFfruknwC3Qa7XD5naAPSH7NwconnZA+TMTyFrHQNHlJHs8J3p42Djm5aSu/PELGJ10/BnwPvlmMt0AVPatRDQ7zZV9y+w+PNkKAlamtUJl7xJnLZ+xXqazQpFKwz5HAOKNWtK+CIqe+aiNQoz7K7rj7EF+GWSJuFHj/T9H0u9F6rP6btWHLblxFdC45qqJ1QiXV/z6JsWLXynSgavkRUeZV/LGh8Y1xmj6XxbD/AbkU0NJsuP7SQAAAABJRU5ErkJggg==">
+                                                <div class="demo_nameFIC">School</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="icon_imgSec float-l">
-                                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQxSURBVFhH7VdNS1RhFJ5aBEWLdrWrbetatBtmHB1NRQhSTBQqNLKwwEWBgiAZJWWLQEHpF0Q/oC9alDpj9m1YqGWffqGSM6Pj6MzpPKf31jvO/ZjRsYx64MHrec85zzP3vPedO65/Br1u954+v/8+8163x7Nbhf88Bg4f3hLMzW1kzr+vrV16f/JkLJCbG0EMayrtzyDg9XqCeXkfBsrKwt9aWmjh2jUhrgdKS8O8Ntrj87lV+u9D0O3eFcjLu9VXUBAZP3dOTIUuXaLBqip6U1lJocuXJTZ+/jwhJ+j33+z1eneq8vUDNTVtDvh8p3mEoeHq6sXIlSti5NPZs/S4oIBGTpygkZoauf505oysIQe5PPIQatFDtcsugj7f/oDfP/ji0KHQbHOziM80NRH/T69KS8mIgbhGDGvIMWKoRY+Ax7NPtV07HrjdO3r9/hs8pvnP9fWJhbY2Cre20tCxY/T44EH6Ul9PiBnmfpJjWEPO0PHjUoMYenCvSF9+fhd6K5nMQS7XJh5JJW/02bdHjy6IAAt/ZdF+iLJBI2bHMO9H5PYXFkqtxLgOPdEbGtBSsumh1+fby6Poe1pSEpo2RnThAr3ksT3nsRmxTIga1KIHehkxaPAdDUJTyVujv6hoG3+iq/zJIh/q6uLzPBJs8ndq43/kjY/YSvF0idqPdXXSCz3RGzFoQRPaPQcObFV2ktHj9Rbz0TE5WFERwZGBhjgmnhQX0xs+PoxYNohe6PmkqEg0jBi04QFelK0fCOTn3+W7F55qaJDkbxcv0usjR+hZSQlNqth6EL2hAS1oGjF4CbInZY/3XE6O3Gpw9NQpHK40WlvrOM5oezvF7tyh+MgIJWZmiGIxIa6Xh4dlDTlmtQZFk7VEk7UNH/Ck7P0wONXYKLf8dXm5fFWZNfvJ69dpqbubaHGRnJCIRiUXNaa9FKEJ7X7eUvCSYpBnP4W/ZsU6o11dFJ+YUPLpIz4+LrVmPXXCAz8w4kXZY4NebysfmtudDEIgMTenJJOBWp1mQK2TSdSKF/ak7P0CFs2KhDwiuzun11oZBHAn7caNWmUnFXYGZc/ZIF2DwNKjR0m9da7KYLSjw/GByMQg8YODnrqGXqvspMLKII4LJ2RkkBG7fTtJQ69VdlJhZRBnmhMyNbg8NJSkodcqO6mwMiiHsAJyrGjkm60ZNICeuoZeq+ykAotmRfr+s8pJh7pB9LTKUXZS8dca3PAjxoZ2gl6rG7FCVh+SDX/MyEHNh6sdMjGINxyr17BVGQTx9WSHTAwuPXyY1Fvnqg3KywJ/0VshXYPxsbH1eVkAf9frlrKTCiyaFemEgN2dtALuXLSz07SnzjUbFPKIsCex2Z0gr/zYczZj1Zkdg4ryo4mPC5xpienpXz+a+BoxrDn9aFrJrBpcD/43uFY6GtwIVHb+Brhc3wExJAPDlC8yCgAAAABJRU5ErkJggg==">
-                                        <div class="demo_nameFIC">Hospital</div>
+                                    <div class="liveDemos_iconContainers float-l">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="95" tabindex="1">
+                                            <div class="icon_noSec float-l">
+                                                <span>4</span>
+                                            </div>
+                                            <div class="icon_imgSec float-l">
+                                                <img src="data:image/png;base64,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">
+                                                <div class="demo_nameFIC">Service</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="liveDemos_iconContainers float-l">
-                                <div class="liveDemos_iconContainers_sub float-l icon-round" appid="94" tabindex="1">
-                                    <div class="icon_noSec float-l">
-                                        <span>3</span>
+                                    <div class="liveDemos_iconContainers float-l">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="96" tabindex="1">
+                                            <div class="icon_noSec float-l">
+                                                <span>5</span>
+                                            </div>
+                                            <div class="icon_imgSec float-l">
+                                                <img src="data:image/png;base64,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">
+                                                <div class="demo_nameFIC">HR</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="icon_imgSec float-l">
-                                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOVSURBVFhH7ZdJT1NRFMefw7fxC7hDQgGJhmHBwo0bluwNlkIjLRZoGYpEI9KJQQMyVLBUYxtMsEARQaMEEFugKBA6pIylTMd7Xi+kpe9JH22QaP/JP73vnHPP+fW2i/uY/0L21NRrIxkZMntmpgvNrkmMpv+OwqE+ZmVtzhYUBL1SKaBxjbFzh+WDCtTUQKC2NtIkdi6wQqD8cjnrk/GEwwqFmi8s3B/Pzl4je/xoXGMsobDxQA1nZmqG09JudOTnX0HjGmMJgx1JT3fEA0XbRCke2OGMDCdtwzCkScKg+CQUFpnoVgpIkxTqIBFQfOKBPQiHjQIMhyL/haZEQ/HpCBZnhsNGAopEq1gwJBKlgFR6mYbPXTgbGdgDEoncNBxK0GVIAJfuVTdeF6s0srJHrcOlar27uEYbKFI2AX7iM8Yl1bpyrKO7ooQ5rOHt0dAyhDO4enAfFAErUjXeKa0zuB4+eb5utNh2pn4swIrbBxtb23B4eAiBnSB4/euA8VeWoT0yZJvUL+I+3H/cQ61fqNZ0BYYmpg+cy15Y9KwTb8CCGz/XweVeA8eSF2yfZ3brm41bWH/cg0+kaLRO17X5ff4nHEJswrrZ+V9Qo+3cKFUb7FK1YVTf/W5rbsXHwsRqJ6k39FgQdITiRAuPH0/pLMJ95vf24NikY58LIFYjA8WJFibjFddQIeYEzJWYbudKzL6LAogseWLzLYrHMDkSs7ek3cUm4xXXUCFGBmTJk5g9FI9hssUmUJr9FwYQWZCJ4iUBBTkJyDVUiJOAXEOFOAnINVSIk4BcQ4U4Ccg1VIjPDHhALqTbgZ1Tb9pcQ8Ptcoeu/XyOCTC4uwdfphzQ3j8ISk03SGoNIFZpoaSuGcTVOpDWt0JVUxd0vrXB15k5tv5IR4Nc5L3DseQB28QMPOu0QEXjS9JHH+pBej1oaANdjxUGx6fZOqyPCdBoGYFSdQvIm/pB1vYJFN1zoDR52fyRq8gzxjFfruknwC3Qa7XD5naAPSH7NwconnZA+TMTyFrHQNHlJHs8J3p42Djm5aSu/PELGJ10/BnwPvlmMt0AVPatRDQ7zZV9y+w+PNkKAlamtUJl7xJnLZ+xXqazQpFKwz5HAOKNWtK+CIqe+aiNQoz7K7rj7EF+GWSJuFHj/T9H0u9F6rP6btWHLblxFdC45qqJ1QiXV/z6JsWLXynSgavkRUeZV/LGh8Y1xmj6XxbD/AbkU0NJsuP7SQAAAABJRU5ErkJggg==">
-                                        <div class="demo_nameFIC">School</div>
+                                    <div class="liveDemos_iconContainers float-l">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="97" tabindex="1">
+                                            <div class="icon_noSec float-l">
+                                                <span>6</span>
+                                            </div>
+                                            <div class="icon_imgSec float-l">
+                                                <img src="data:image/png;base64,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">
+                                                <div class="demo_nameFIC">Tracking</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="liveDemos_iconContainers float-l">
-                                <div class="liveDemos_iconContainers_sub float-l icon-round" appid="95" tabindex="1">
-                                    <div class="icon_noSec float-l">
-                                        <span>4</span>
-                                    </div>
-                                    <div class="icon_imgSec float-l">
-                                        <img src="data:image/png;base64,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">
-                                        <div class="demo_nameFIC">Service</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="liveDemos_iconContainers float-l">
-                                <div class="liveDemos_iconContainers_sub float-l icon-round" appid="96" tabindex="1">
-                                    <div class="icon_noSec float-l">
-                                        <span>5</span>
-                                    </div>
-                                    <div class="icon_imgSec float-l">
-                                        <img src="data:image/png;base64,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">
-                                        <div class="demo_nameFIC">HR</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="liveDemos_iconContainers float-l">
-                                <div class="liveDemos_iconContainers_sub float-l icon-round" appid="97" tabindex="1">
-                                    <div class="icon_noSec float-l">
-                                        <span>6</span>
-                                    </div>
-                                    <div class="icon_imgSec float-l">
-                                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAVySURBVFhH7ZhbTxtHFMepWlVVpapS+x36UKkXtW9V+9ZPUKmV2pe+VJGCFxvKVaitUxEIF+/a5u7b7vqCbWwCGAjXAAEDwQYTkrYoSSGhSWgDCSipkoAD9HTOZJZg7DQ2wagP/KW/fHbn7Mxv5oxnMRlHOtKRniNeJX6j18j3eE6CNHpbr5GCFfnWN9iwyQvhBu1uWAj60uarIz6oy5eiPCdmsmGTl0EjLTZXObbO+z2QLgc9HtBny4+xWmzY5EUeek9Qy3eqCr3/VJzsSItZmXnIgJfYsKlJl+O8oK0fB83EvbQYAXWZtk/ZcKmLz3aESxomEnb+os6euH8wgJWmEPwcfgQnDtDa0CMoCW/EAZqOmV5nYXJSAEunNtLi3YCCSvyIV0l/04GTFQXkh6C8Y3HfLh1ZozBlA7fj7iEggcoWONvn+InXGOvU8se+L30vM4xnS5/jmKGdvIBddW0QvjIFdcWuuHu78/Za4MRFBGUoiWXIdc6ec7kherM1LUaQuXwzrBaZYnyr0Awute0Wab9Rfsz0JsOJlwK4Nncauk1NtNOH11uho85FP/Ea72M7xsMkdynip3Go1Qvz5G2B8aVeLzXG+AbBNowVwKVCEwQK7ODPf+JgsQOWCWg1J63oOLGB4cRLAbx+3kc7w05XfztNY/xUBsF2jE3FMvzS10xjT7kTlNXvrHdRYzxB3iDYpjyLgKO5Vqgp9ILDEQKHPAmCxgEzPzrhUp75Edmb26TcnzGkWB3WCg4TQNPJDhi4FqV2uSPQkOeCFbKyPo3tDp8pXtF+K73GsJ7qsPbgXsD++XWo/6EF+r+3wp+k1EZOfKDjpDKG9VQH8S1+nhMBogNjt0DIkmChwAzTuZZtkrvJc7YPGNoTHcQ5+F9WAMdzLWDIcYKlrCvGBrIXw6QNv9keje2hoJJmYs7Hw3iTIOBKkRnGyCpiSXcbwVfY0XOD7Ec9Jz7WqcTvGN7hAd4mAL/mWWCelHP3ebjXZ3Ks5OgR+xje4QFiGTE2q8WEYIpxrxo5KczwDg8wEUwixwBWHpff57PkZV2Bd7OypGs9HUZAm1qMOjXiejJuzBI3BU5arsqyvZuhV9sXzaWBLbd5BP5PRiZeIy9k4Oy6u+dgNPJXQg+NL0JP/xU4N3kzYft+PTK1BL0DV6H/3AKMTse3IxOyUcAz5GL84grMXF7bcXDiD7CWBmgSNTlMm2oHIXRxOSYvZc+tQntTCPTkPFT6rinywEDv3E4OsiATtiUEnJheAmNeEzSUtoHHdx78nTPgdAWhptgL1rIATM/d3clN1S3SGBhyXWC3DIEvEAFvaxhsxh4gvyzhbN9lmhMHuLfE9uoBqNO2QEv3LLT0XKAdtfTMQnP7NO28zR+JyU/WZ0evk0rI4HIGaX84cX/3BRpbCWRtcfNO7k6JCfk1c2nHVrM0DoqVGeKDpnJSZlJe2TL45LqiAxpPtO7kpmKJ7wVjvpv24yaVETR2MBa6KSSuJAK5zaM0F5mQjR4zJGjTaxxjiknipl0aph3V/uSnD+IM8dqs6yTlkO7uzk/WZJzfqwvcUewHVxH7RUhcSawSXpNTJcJy25CNnoV7RRp7G08FtrAjLKtDHqGzRBsKXBvkPalhqSlJnyl9KHDytud0iE4WIT2+SRrbrUPAq6X7Wq32FZb+bOFPRJ6TN8X6frYPZ8HXFYHGU+1bAjnU+RzLWyw1ZZHtMmAs8kQVSAWUrGSUrGA+S3u+dJzta/LAAyHH8bi6yLNOZrfFq+UFXAWWsi/hjyOExJUk5d4w5Dk38M99MlZVyv+7qVHZ3xYy5a94lVhYxYlfaLW+V1nTC0uXJX6iU0kq4iydyv4Ou32kA1ZGxr89vWQ+HlMGgQAAAABJRU5ErkJggg==">
-                                        <div class="demo_nameFIC">Tracking</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="liveDemos_iconContainers float-l">
-                                <div class="liveDemos_iconContainers_sub float-l icon-round" appid="98" tabindex="1">
-                                    <div class="icon_noSec float-l">
-                                        <span>7</span>
-                                    </div>
-                                    <div class="icon_imgSec float-l">
-                                        <img src="data:image/png;base64,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">
-                                        <div class="demo_nameFIC">E-Commerce</div>
+                                    <div class="liveDemos_iconContainers float-l">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="98" tabindex="1">
+                                            <div class="icon_noSec float-l">
+                                                <span>7</span>
+                                            </div>
+                                            <div class="icon_imgSec float-l">
+                                                <img src="data:image/png;base64,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">
+                                                <div class="demo_nameFIC">E-Commerce</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="demo-col2">
+                        <div class="usecase-content-cont">
+                            <div class="content">
+                                <h3>Doctor appointments for Hospitals.</h3>
+                                <div class="col-md-12 pd-0">
+                                    <div class="bot-prob">
+                                        <div class="bot-prob-img-sec pd-r-15">
+                                            <img src="~/images/doctor.png" />
+                                        </div>
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-container">
+                                                <div class="prob-container-text">
+                                                    Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
+                                                    Wish I had an alternate to take orders over the phone
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 pd-0 mr-t-10">
+                                    <div class="bot-solution">
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-sol-container pull-right">
+                                                <div class="prob-container-text w-100">
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bot-prob-img-sec pd-l-15">
+                                            <img src="~/images/bulb.png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <h3>Hospital</h3>
+                                <div class="col-md-12 pd-0">
+                                    <div class="bot-prob">
+                                        <div class="bot-prob-img-sec pd-r-15">
+                                            <img src="~/images/doctor.png" />
+                                        </div>
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-container">
+                                                <div class="prob-container-text">
+                                                    Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
+                                                    Wish I had an alternate to take orders over the phone
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 pd-0 mr-t-10">
+                                    <div class="bot-solution">
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-sol-container pull-right">
+                                                <div class="prob-container-text w-100">
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bot-prob-img-sec pd-l-15">
+                                            <img src="~/images/bulb.png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <h3>School management.</h3>
+                                <div class="col-md-12 pd-0">
+                                    <div class="bot-prob">
+                                        <div class="bot-prob-img-sec pd-r-15">
+                                            <img src="~/images/doctor.png" />
+                                        </div>
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-container">
+                                                <div class="prob-container-text">
+                                                    Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
+                                                    Wish I had an alternate to take orders over the phone
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 pd-0 mr-t-10">
+                                    <div class="bot-solution">
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-sol-container pull-right">
+                                                <div class="prob-container-text w-100">
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bot-prob-img-sec pd-l-15">
+                                            <img src="~/images/bulb.png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <h3>Service Center.</h3>
+                                <div class="col-md-12 pd-0">
+                                    <div class="bot-prob">
+                                        <div class="bot-prob-img-sec pd-r-15">
+                                            <img src="~/images/doctor.png" />
+                                        </div>
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-container">
+                                                <div class="prob-container-text">
+                                                    Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
+                                                    Wish I had an alternate to take orders over the phone
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 pd-0 mr-t-10">
+                                    <div class="bot-solution">
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-sol-container pull-right">
+                                                <div class="prob-container-text w-100">
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bot-prob-img-sec pd-l-15">
+                                            <img src="~/images/bulb.png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <h3>Human Resource.</h3>
+                                <div class="col-md-12 pd-0">
+                                    <div class="bot-prob">
+                                        <div class="bot-prob-img-sec pd-r-15">
+                                            <img src="~/images/doctor.png" />
+                                        </div>
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-container">
+                                                <div class="prob-container-text">
+                                                    Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
+                                                    Wish I had an alternate to take orders over the phone
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 pd-0 mr-t-10">
+                                    <div class="bot-solution">
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-sol-container pull-right">
+                                                <div class="prob-container-text w-100">
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bot-prob-img-sec pd-l-15">
+                                            <img src="~/images/bulb.png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <h3>Tracking for Logistics Companies</h3>
+                                <div class="col-md-12 pd-0">
+                                    <div class="bot-prob">
+                                        <div class="bot-prob-img-sec pd-r-15">
+                                            <img src="~/images/doctor.png" />
+                                        </div>
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-container">
+                                                <div class="prob-container-text">
+                                                    Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
+                                                    Wish I had an alternate to take orders over the phone
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 pd-0 mr-t-10">
+                                    <div class="bot-solution">
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-sol-container pull-right">
+                                                <div class="prob-container-text w-100">
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bot-prob-img-sec pd-l-15">
+                                            <img src="~/images/bulb.png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <h3>Tracking for Logistics Companies</h3>
+                                <div class="col-md-12 pd-0">
+                                    <div class="bot-prob">
+                                        <div class="bot-prob-img-sec pd-r-15">
+                                            <img src="~/images/doctor.png" />
+                                        </div>
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-container">
+                                                <div class="prob-container-text">
+                                                    Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
+                                                    Wish I had an alternate to take orders over the phone
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 pd-0 mr-t-10">
+                                    <div class="bot-solution">
+                                        <div class="bot-prob-text-sec pd-l-0">
+                                            <div class="prob-sol-container pull-right">
+                                                <div class="prob-container-text w-100">
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bot-prob-img-sec pd-l-15">
+                                            <img src="~/images/bulb.png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="usecase-bots-cont pd-0">
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="demo-col2">
-                <div class="usecase-content-cont">
-                    <div class="content">
-                        <h3>Doctor appointments for Hospitals.</h3>
-                        <div class="col-md-12 pd-0">
-                            <div class="bot-prob">
-                                <div class="bot-prob-img-sec pd-r-15">
-                                    <img src="~/images/doctor.png" />
-                                </div>
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-container">
-                                        <div class="prob-container-text">
-                                            Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
-                                            Wish I had an alternate to take orders over the phone
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        </section>*@
+    <section class="embed_scriptBot mt mb alt">
+        <div class="container">
+            <h3 class="mt0 eb_font_H text-center h_b">Botify your Websites &amp; private Web Apps</h3>
+            <div class="row flx">
+                <div class="col-md-7 col-lg-7 col-sm-7 col-xs-12 eb-codeedit">
+                    <div class="eb-codeedit-Container float-l w-100">
+                        <div class="eb-codeedit-pgno float-l hidden-xs">
+                            <pn>1</pn><pn>2</pn><pn>3</pn><pn>4</pn><pn>5</pn><pn>6</pn><pn>7</pn><pn>8</pn><pn>9</pn><pn>10</pn><pn>11</pn><pn>12</pn><pn>13</pn><pn class="hidden-xs">14</pn>
                         </div>
-                        <div class="col-md-12 pd-0 mr-t-10">
-                            <div class="bot-solution">
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-sol-container pull-right">
-                                        <div class="prob-container-text w-100">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bot-prob-img-sec pd-l-15">
-                                    <img src="~/images/bulb.png" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h3>Hospital</h3>
-                        <div class="col-md-12 pd-0">
-                            <div class="bot-prob">
-                                <div class="bot-prob-img-sec pd-r-15">
-                                    <img src="~/images/doctor.png" />
-                                </div>
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-container">
-                                        <div class="prob-container-text">
-                                            Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
-                                            Wish I had an alternate to take orders over the phone
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 pd-0 mr-t-10">
-                            <div class="bot-solution">
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-sol-container pull-right">
-                                        <div class="prob-container-text w-100">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bot-prob-img-sec pd-l-15">
-                                    <img src="~/images/bulb.png" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h3>School management.</h3>
-                        <div class="col-md-12 pd-0">
-                            <div class="bot-prob">
-                                <div class="bot-prob-img-sec pd-r-15">
-                                    <img src="~/images/doctor.png" />
-                                </div>
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-container">
-                                        <div class="prob-container-text">
-                                            Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
-                                            Wish I had an alternate to take orders over the phone
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 pd-0 mr-t-10">
-                            <div class="bot-solution">
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-sol-container pull-right">
-                                        <div class="prob-container-text w-100">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bot-prob-img-sec pd-l-15">
-                                    <img src="~/images/bulb.png" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h3>Service Center.</h3>
-                        <div class="col-md-12 pd-0">
-                            <div class="bot-prob">
-                                <div class="bot-prob-img-sec pd-r-15">
-                                    <img src="~/images/doctor.png" />
-                                </div>
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-container">
-                                        <div class="prob-container-text">
-                                            Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
-                                            Wish I had an alternate to take orders over the phone
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 pd-0 mr-t-10">
-                            <div class="bot-solution">
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-sol-container pull-right">
-                                        <div class="prob-container-text w-100">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bot-prob-img-sec pd-l-15">
-                                    <img src="~/images/bulb.png" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h3>Human Resource.</h3>
-                        <div class="col-md-12 pd-0">
-                            <div class="bot-prob">
-                                <div class="bot-prob-img-sec pd-r-15">
-                                    <img src="~/images/doctor.png" />
-                                </div>
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-container">
-                                        <div class="prob-container-text">
-                                            Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
-                                            Wish I had an alternate to take orders over the phone
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 pd-0 mr-t-10">
-                            <div class="bot-solution">
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-sol-container pull-right">
-                                        <div class="prob-container-text w-100">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bot-prob-img-sec pd-l-15">
-                                    <img src="~/images/bulb.png" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h3>Tracking for Logistics Companies</h3>
-                        <div class="col-md-12 pd-0">
-                            <div class="bot-prob">
-                                <div class="bot-prob-img-sec pd-r-15">
-                                    <img src="~/images/doctor.png" />
-                                </div>
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-container">
-                                        <div class="prob-container-text">
-                                            Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
-                                            Wish I had an alternate to take orders over the phone
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 pd-0 mr-t-10">
-                            <div class="bot-solution">
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-sol-container pull-right">
-                                        <div class="prob-container-text w-100">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bot-prob-img-sec pd-l-15">
-                                    <img src="~/images/bulb.png" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <h3>Tracking for Logistics Companies</h3>
-                        <div class="col-md-12 pd-0">
-                            <div class="bot-prob">
-                                <div class="bot-prob-img-sec pd-r-15">
-                                    <img src="~/images/doctor.png" />
-                                </div>
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-container">
-                                        <div class="prob-container-text">
-                                            Incorrect Delivery Addresses…..Operator Forgetting to mention Dishes of the day….Wrong Item rates……Language barriers…..Miscommunication…..
-                                            Wish I had an alternate to take orders over the phone
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 pd-0 mr-t-10">
-                            <div class="bot-solution">
-                                <div class="bot-prob-text-sec pd-l-0">
-                                    <div class="prob-sol-container pull-right">
-                                        <div class="prob-container-text w-100">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis ex eget dui viverra accumsan.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bot-prob-img-sec pd-l-15">
-                                    <img src="~/images/bulb.png" />
-                                </div>
-                            </div>
+                        <div class="eb-codeedit-code float-l">
+                            <div class="pg-line w-100"><span class="htmlTags"><</span><span class="jsCode">script </span><span class="htmlTags">type="text/javascript"></span></div>
+                            <div class="pg-line w-100">window.EXPRESSbase_SOLUTION_ID=<span class="eb-text">"your_id"</span>;</div>
+                            <div class="pg-line w-100">window.EXPRESSbase_APP_ID = 13;</div>
+                            <div class="pg-line w-100">(<span class="htmlTags">function</span> () {</div>
+                            <div class="pg-line w-100 eb-codeedit-intentation">d = document;</div>
+                            <div class="pg-line w-100 eb-codeedit-intentation">s = d.createElement(<span class="eb-text">"script"</span>);</div>
+                            <div class="pg-line w-100 eb-codeedit-intentation">s.src = <span class="eb-text">"/js/ChatBot/ebbot-ext.js"</span>;</div>
+                            <div class="pg-line w-100 eb-codeedit-intentation">s.async = 1;</div>
+                            <div class="pg-line w-100 eb-codeedit-intentation">d.getElementsByTagName(<span class="eb-text">"head"</span>)[0].appendChild(s);</div>
+                            <div class="pg-line w-100 eb-codeedit-intentation">d.ebbotName = <span class="eb-text">"Live ChatBot"</span>;</div>
+                            <div class="pg-line w-100 eb-codeedit-intentation">d.ebbotThemeColor = <span class="eb-text">"#31d031"</span>;</div>
+                            <div class="pg-line w-100 eb-codeedit-intentation hidden-xs">d.botdpURL = <span class="eb-text">'http://expressbase.com/images/svg/bot2.svg'</span>;</div>
+                            <div class="pg-line w-100">})();</div>
+                            <div class="pg-line w-100"><span class="htmlTags"><</span><span class="jsCode">/script</span><span class="htmlTags">></span></div>
                         </div>
                     </div>
                 </div>
-                <div class="usecase-bots-cont pd-0">
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="embed_scriptBot mt mb alt">
-    <div class="container">
-        <h3 class="mt0 eb_font_H text-center h_b">Botify your Websites &amp; private Web Apps</h3>
-        <div class="row">
-            <div class="col-md-7 col-lg-7 col-sm-7 col-xs-12 eb-codeedit">
-                <div class="eb-codeedit-Container float-l w-100">
-                    <div class="eb-codeedit-pgno float-l">
-                        <pn>1</pn><pn>2</pn><pn>3</pn><pn>4</pn><pn>5</pn><pn>6</pn><pn>7</pn><pn>8</pn><pn>9</pn><pn>10</pn><pn>11</pn><pn>12</pn><pn>13</pn><pn>14</pn>
-                    </div>
-                    <div class="eb-codeedit-code float-l">
-                        <div class="pg-line w-100"><span class="htmlTags"><</span><span class="jsCode">script </span><span class="htmlTags">type="text/javascript"></span></div>
-                        <div class="pg-line w-100">window.EXPRESSbase_SOLUTION_ID=<span class="eb-text">"eb_dbpjl5pgxleq20180130063835"</span>;</div>
-                        <div class="pg-line w-100">window.EXPRESSbase_APP_ID = 13;</div>
-                        <div class="pg-line w-100">(<span class="htmlTags">function</span> () {</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">d = document;</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">s = d.createElement(<span class="eb-text">"script"</span>);</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">s.src = <span class="eb-text">"/js/ChatBot/ebbot-ext.js"</span>;</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">s.async = 1;</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">d.getElementsByTagName(<span class="eb-text">"head"</span>)[0].appendChild(s);</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">d.ebbotName = <span class="eb-text">"Live ChatBot"</span>;</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">d.ebbotThemeColor = <span class="eb-text">"#31d031"</span>;</div>
-                        <div class="pg-line w-100 eb-codeedit-intentation">d.botdpURL = <span class="eb-text">'http://expressbase.com/images/svg/bot2.svg'</span>;</div>
-                        <div class="pg-line w-100">})();</div>
-                        <div class="pg-line w-100"><span class="htmlTags"><</span><span class="jsCode">/script</span><span class="htmlTags">></span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5 col-lg-5 col-sm-5 col-xs-12 embedscript-text">
-                <p>
-                    Add a few lines of JavaScript to your HTML page and Voila.
-                    Embed as many bots as you want in a website or web app, with completely different look & feel and purpose.
-                </p>
-                <p class="small">For eg: You could use a general bot in Landing page or a support bot in a support section.</p>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="bot-section2 mt mb" id="features">
-    <div class="container">
-        <h3 class="mt0 eb_font_H text-center h_b">Features</h3>
-        <div class="row">
-            <div class="col-md-6 tiles">
-                <div class="tile-body">
-                    <div class="col-md-2 pd-0 fature-img-sec">
-                        <img class="w-120" src="~/images/dbfeatures.png" />
-                    </div>
-                    <div class="col-md-10">
-                        <h4>EXPRESSbots & Your Apps cohabit</h4>
-                        <p class="eb-small-text">
-                            For seamless integration of your apps and EXPRESSbots, you can connect your existing database. It’s you who decides what data bots have access to. If you don’t have a database, we setup an exclusive one for you in our infrastructure.
-                        </p>
-                        <p class="small">For eg., a restaurant bot takes order from the customer, and their legacy app does the rest.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 tiles">
-                <div class="tile-body">
-                    <div class="col-md-2 pd-0 fature-img-sec">
-                        <img class="w-120" src="~/images/authority.jpg" />
-                    </div>
-                    <div class="col-md-10">
-                        <h4>Authorize &amp; Customize User interactions</h4>
-                        <p class="eb-small-text">
-                            Users assigned to different roles* gain access to completely different user experiences, even anonymous users/potential customers. Users don’t login, bots use Facebook to identify/authenticate them.
-                        </p>
-                        <p class="small">For eg: In a Sales bot, existing customers can track the status of previous transactions and prospective customers get to see promotional content.</p>
-                        <p class="xsmall">*We use Role Based Access Control, a NIST standard for app security.</p>
-                    </div>
+                <div class="col-md-5 col-lg-5 col-sm-5 col-xs-12 embedscript-text">
+                    <p>
+                        Add a few lines of JavaScript to your HTML page and Voila.
+                        Embed as many bots as you want in a website or web app, with completely different look & feel and purpose.
+                    </p>
+                    <p class="small">For eg: You could use a general bot in Landing page or a support bot in a support section.</p>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6 tiles">
-                <div class="tile-body">
-                    <div class="col-md-2 pd-0 fature-img-sec">
-                        <img class="w-120" src="~/images/map.jpg" />
-                    </div>
-                    <div class="col-md-10">
-                        <h4>Powerful UI controls & Integrations</h4>
-                        <p class="eb-small-text">
-                            Rich UI controls form magnificent user experiences. You can add Tables, Charts, Image/File Upload, date-time, cards menu, Google maps or even shopping carts to bot interactions.
-                        </p>
-                        <p class="small">For eg: In a logistics bot, users get to track their consignment.</p>
-                    </div>
+    </section>
+    <section class="bot-section2 mt mb" id="features">
+        <div class="container">
+            <h3 class="mt0 eb_font_H text-center h_b">Features</h3>
+            <div class="col-md-12 collg-12 col-sm-12 col-xs-12 feature_row pd-t-0">
+                <h4 class="col-md-offset-3 col-lg-offset-3 col-sm-offset-3 pd-l-15">EXPRESSbots & Your Apps cohabit</h4>
+                <div class="col-md-3 col-lg-3 col-sm-3 hidden-xs flex_imgWrapper">
+                    <img class="w" src="/images/dbfeatures.png">
+                </div>
+                <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+                    <p class="f_content">
+                        For seamless integration of your apps and EXPRESSbots, you can connect your existing database.
+                        It’s you who decides what data bots have access to. If you don’t have a database,
+                        we setup an exclusive one for you in our infrastructure.
+                    </p>
+                    <p class="small">For eg., a restaurant bot takes order from the customer, and their legacy app does the rest.</p>
                 </div>
             </div>
-            <div class="col-md-6 tiles">
-                <div class="tile-body">
-                    <div class="col-md-2 pd-0 fature-img-sec">
-                        <img class="w-120" src="~/images/drag-and-drop-icon.png" />
-                    </div>
-                    <div class="col-md-10">
-                        <h4>Innovative Drag-N-Drop Bot Builder</h4>
-                        <p class="eb-small-text">
-                            Quickly Build and Deploy complex forms by simple drag-n-drop. For advanced requirements, put your JavaScript and SQL skills into use.
-                        </p>
-                        <p class="small">For eg: While developing a bot for a service-centre, implementing the ticketing feature only takes max of 30 min.</p>
-                    </div>
+            <div class="col-md-12 collg-12 col-sm-12 col-xs-12 feature_row">
+                <h4 class="pd-l-15">Authorize & Customize User interactions</h4>
+                <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+                    <p class="f_content">
+                        Users assigned to different roles* gain access to completely different user experiences,
+                        even anonymous users/potential customers. Users don’t login, bots use Facebook to identify/authenticate them.
+                    </p>
+                    <p class="small">
+                        For eg: In a Sales bot, existing customers can track the
+                        status of previous transactions and prospective customers get to see promotional content.
+                    </p>
+                    <p class="small">*We use Role Based Access Control, a NIST standard for app security.</p>
+                </div>
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs flex_imgWrapper">
+                    <img class="w" src="/images/authority.jpg">
+                </div>
+            </div>
+            <div class="col-md-12 collg-12 col-sm-12 col-xs-12 feature_row">
+                <h4 class="col-md-offset-3 col-lg-offset-3 col-sm-offset-3 pd-l-15">Powerful UI controls & Integrations</h4>
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs flex_imgWrapper"><img class="w" src="/images/map.jpg"></div>
+                <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+                    <p class="f_content">
+                        Rich UI controls form magnificent user experiences. You can add Tables,
+                        Charts, Image/File Upload, date-time, cards menu, Google maps or even shopping carts to bot interactions.
+                    </p>
+                    <p class="small">For eg: In a logistics bot, users get to track their consignment.</p>
+                </div>
+            </div>
+            <div class="col-md-12 collg-12 col-sm-12 col-xs-12 feature_row">
+                <h4 class="pd-l-15">Innovative Drag-N-Drop Bot Builder</h4>
+                <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+                    <p class="f_content">
+                        Quickly Build and Deploy complex forms by simple drag-n-drop. For advanced requirements, put your JavaScript and SQL skills into use.
+                    </p>
+                    <p class="small">For eg: While developing a bot for a service-centre, implementing the ticketing feature only takes max of 30 min.</p>
+                </div>
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs flex_imgWrapper">
+                    <img class="w" src="/images/drag-and-drop-icon.png">
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="bot-pricing mt mb alt" id="pricing">
-    <div class="container">
-        <h3 class="mt0 eb_font_H text-center h_b">Pricing</h3>
-        <div class="col-md-12 nopadding bot-pricing-body">
-            <div class="col-md-3">
-                <div class="price-tile">
-                    <div class="price-tile-headsec">
-                        <div class="headsec-textarea">Free For Ever </div>
-                        <div class="headsec-amount">$0</div>
-                    </div>
-                    <div class="price-tile-bdy">
-                        <div class="pricing-items">1 Anonymous users</div>
-                        <div class="pricing-items">Single Bot</div>
-                        <div class="pricing-items">100 Users</div>
-                        <div class="pricing-items">3 Surveys</div>
-                        <div class="pricing-items">5 Bot-form</div>
-                        <div class="pricing-items">500 Responses/month </div>
-                        <div class="pricing-items strikethrough">Customizable Look & Feel</div>
-                        <div class="pricing-items strikethrough">Customizable Dashboard</div>
-                        <div class="pricing-items strikethrough">No 'powered by EXPRESSbase'</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="price-tile">
-                    <div class="price-tile-headsec">
-                        <div class="headsec-textarea">Standard</div>
-                        <div class="headsec-amount">$9</div>
-                    </div>
-                    <div class="price-tile-bdy">
-                        <div class="pricing-items">1 Anonymous users</div>
-                        <div class="pricing-items">5 Bots</div>
-                        <div class="pricing-items">250 Users</div>
-                        <div class="pricing-items">10 Surveys</div>
-                        <div class="pricing-items">25 Bot-form</div>
-                        <div class="pricing-items">5000 Responses/month </div>
-                        <div class="pricing-items">Customizable Look & Feel</div>
-                        <div class="pricing-items strikethrough">Customizable Dashboard</div>
-                        <div class="pricing-items strikethrough">No 'powered by EXPRESSbase'</div>
+    <section class="bot-pricing mt mb alt" id="pricing">
+        <div class="container">
+            <h3 class="mt0 eb_font_H text-center h_b">Pricing</h3>
+            <div class="col-md-12 collg-12 col-sm-12 col-xs-12 nopadding bot-pricing-body">
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
+                    <div class="price-tile">
+                        <div class="price-tile-headsec">
+                            <div class="headsec-textarea">Free For Ever </div>
+                            <div class="headsec-amount">$0</div>
+                        </div>
+                        <div class="price-tile-bdy">
+                            <div class="pricing-items">Anonymous User</div>
+                            <div class="pricing-items">Single Bot</div>
+                            <div class="pricing-items">100 Users</div>
+                            <div class="pricing-items">3 Surveys</div>
+                            <div class="pricing-items">5 Bot-form</div>
+                            <div class="pricing-items">500 Responses/month </div>
+                            <div class="pricing-items strikethrough">Customizable Look & Feel</div>
+                            <div class="pricing-items strikethrough">Customizable Dashboard</div>
+                            <div class="pricing-items strikethrough">No 'powered by EXPRESSbase'</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="price-tile">
-                    <div class="price-tile-headsec">
-                        <div class="headsec-textarea">Pro</div>
-                        <div class="headsec-amount">$19</div>
-                    </div>
-                    <div class="price-tile-bdy">
-                        <div class="pricing-items">1 Anonymous users</div>
-                        <div class="pricing-items">10 Bots</div>
-                        <div class="pricing-items">500 Users</div>
-                        <div class="pricing-items">25 Surveys</div>
-                        <div class="pricing-items">50 Bot-form</div>
-                        <div class="pricing-items">10000 Responses/month </div>
-                        <div class="pricing-items">Customizable Look & Feel</div>
-                        <div class="pricing-items">Customizable Dashboard</div>
-                        <div class="pricing-items strikethrough">No 'powered by EXPRESSbase'</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="price-tile">
-                    <div class="price-tile-headsec">
-                        <div class="headsec-textarea">Enterprise</div>
-                        <div class="headsec-amount">$29</div>
-                    </div>
-                    <div class="price-tile-bdy">
-                        <div class="pricing-items">1 Anonymous users</div>
-                        <div class="pricing-items">25 Bots</div>
-                        <div class="pricing-items">1000 Users</div>
-                        <div class="pricing-items">50 Surveys</div>
-                        <div class="pricing-items">100 Bot-form</div>
-                        <div class="pricing-items">25000 Responses/month </div>
-                        <div class="pricing-items">Customizable Look & Feel</div>
-                        <div class="pricing-items">Customizable Dashboard</div>
-                        <div class="pricing-items">No 'powered by EXPRESSbase'</div>
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
+                    <div class="price-tile">
+                        <div class="price-tile-headsec">
+                            <div class="headsec-textarea">Standard</div>
+                            <div class="headsec-amount">$29</div>
+                        </div>
+                        <div class="price-tile-bdy">
+                            <div class="pricing-items">Anonymous User</div>
+                            <div class="pricing-items">5 Bots</div>
+                            <div class="pricing-items">250 Users</div>
+                            <div class="pricing-items">10 Surveys</div>
+                            <div class="pricing-items">25 Bot-form</div>
+                            <div class="pricing-items">5000 Responses/month </div>
+                            <div class="pricing-items">Customizable Look & Feel</div>
+                            <div class="pricing-items strikethrough">Customizable Dashboard</div>
+                            <div class="pricing-items strikethrough">No 'powered by EXPRESSbase'</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="container-fluid getStarted">
-    <div class="text-center">
-        <h3>Sign Up now. Start building your Business Apps...</h3>
-    </div>
-    <div class="col-md-12 no-padd get-start-sec">
-        <div class="col-md-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-xs-12 col-sm-offset-4">
-            <div class="no-creditcared">No credit card required.</div>
-            <form id="signup_form" action="~/Ext/TenantExtSignup" method="post">
-                <div class="input-group eb-btn-tw">
-                    <input type="email" class="form-control" name="email" placeholder="Enter your email">
-                    <span class="btn input-group-addon no-hover-tw" id="btnGroupAddon">Get Started</span>
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
+                    <div class="price-tile">
+                        <div class="price-tile-headsec">
+                            <div class="headsec-textarea">Pro</div>
+                            <div class="headsec-amount">$49</div>
+                        </div>
+                        <div class="price-tile-bdy">
+                            <div class="pricing-items">Anonymous User</div>
+                            <div class="pricing-items">10 Bots</div>
+                            <div class="pricing-items">500 Users</div>
+                            <div class="pricing-items">25 Surveys</div>
+                            <div class="pricing-items">50 Bot-form</div>
+                            <div class="pricing-items">10000 Responses/month </div>
+                            <div class="pricing-items">Customizable Look & Feel</div>
+                            <div class="pricing-items">Customizable Dashboard</div>
+                            <div class="pricing-items strikethrough">No 'powered by EXPRESSbase'</div>
+                        </div>
+                    </div>
                 </div>
-            </form>
-            <div class="form-group social-btn-sec">
-                <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
-                <div class="form-inline">
-                    <a class="btn socialbtns" href="/auth/facebook">
-                        <i class="fa fa-facebook fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="/auth/twitter">
-                        <i class="fa fa-twitter fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="#">
-                        <i class="fa fa-linkedin fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="/auth/googleoauth">
-                        <i class="fa fa-google-plus fa-lg"></i>
-                    </a>
-                    <a class="btn socialbtns" href="/auth/github">
-                        <i class="fa fa-github fa-lg"></i>
-                    </a>
+                <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12">
+                    <div class="price-tile">
+                        <div class="price-tile-headsec">
+                            <div class="headsec-textarea">Enterprise</div>
+                            <div class="headsec-amount">$99</div>
+                        </div>
+                        <div class="price-tile-bdy">
+                            <div class="pricing-items">Anonymous User</div>
+                            <div class="pricing-items">25 Bots</div>
+                            <div class="pricing-items">1000 Users</div>
+                            <div class="pricing-items">50 Surveys</div>
+                            <div class="pricing-items">100 Bot-form</div>
+                            <div class="pricing-items">25000 Responses/month </div>
+                            <div class="pricing-items">Customizable Look & Feel</div>
+                            <div class="pricing-items">Customizable Dashboard</div>
+                            <div class="pricing-items">No 'powered by EXPRESSbase'</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <canvas id="can_container" width="200" height="200"></canvas>
+    </section>
+    <section class="getStarted mt mb">
+        <div class="container">
+            <div class="text-center">
+                @*<h3>Sign Up now. Start building your Business Apps...</h3>*@
+                <h3 class="mt0 eb_font_H text-center h_b">Join Us</h3>
+            </div>
+            <div class="col-md-12 collg-12 col-sm-12 col-xs-12 no-padd get-start-sec">
+                <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 callfaction_cont">
+                    @*<div class="no-creditcared">No credit card required.</div>
+                        <div class="no-creditcared">No credit card required.</div>
+                        @*<form action="~/Ext/TenantExtSignup" onsubmit="return validate(this)" method="post">
+                                <div class="input-group">
+                                    <input type="email" id="emailtxt" name="email" class="form-control emailtxt" placeholder="Enter your email">
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn getstarted">Get Started</button>
+                                    </span>
+                                </div>
+                            </form>*@
+                    <form action="" method="post" onsubmit="return validate(this)" class="joinbeta">
+                        <div class="input-group jumb">
+                            <input type="email" id="emailtxt" name="Email" class="form-control emailtxt" placeholder="Enter your email">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn getstarted">Join our Private Beta <i class="fa fa-spinner fa-spin jb"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                    @*<div class="form-group social-btn-sec">
+                            <a style="color: #7b7b7b;font-size: 12px;">Or Sign In with</a>
+                            <div class="form-inline">
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/facebook">
+                                    <i class="fa fa-facebook fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/twitter">
+                                    <i class="fa fa-twitter fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="#">
+                                    <i class="fa fa-linkedin fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/googleoauth">
+                                    <i class="fa fa-google-plus fa-lg"></i>
+                                </a>
+                                <a class="btn socialbtns" href="@ViewBag.ServiceUrl/auth/github">
+                                    <i class="fa fa-github fa-lg"></i>
+                                </a>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
         </div>
-    </div>
-</section>
-@{
-            Html.RenderPartial("PageFooter");
-}
-<div class="bot-login-sec">
-    @*@await Component.InvokeAsync("EbProductPage")*@
-</div>
-@*<a href="https://icons8.com">Icon pack by Icons8</a>*@
+    </section>
+    @{
+        Html.RenderPartial("PageFooter");
+    }
 
-<script>
-
-    $(document).scroll(function () {
-        var y = $(this).scrollTop();
-        if (y > $('.slider').height()) {
-            $('#trial-btn').fadeIn();
-            //$('.navbar-default').css({ "background-color": "var(--ebbg)", "background-image": "var(--ebbgimage)" });
-        } else {
-            $('#trial-btn').fadeOut();
-            //$('.navbar-default').css({ "background-color": "transparent", "background-image": "none" });
-        }
-
-        $('#btnGroupAddon').click(function () {
-            document.getElementById("signup_form").submit();
-        })
-    });
-
-    $(".icon-round, .icon-round i").on("click", function (e) {
-        d = document;
-        //$(d).scrollTop(1050);
-        var $round = $(event.target).closest(".icon-round");
-        var appid = $round.attr("appid");
-        if (d.latestAppid === appid)
-            return;
-        var roundIdx = $(".icon-round").toArray().indexOf($round[0]);
-        d.appIdCount = roundIdx;
-        $round.css({
-            "border-bottom": "4px solid green",
-            "background": "#e5f3f5",
-            "outline": "none"
-        });
-        $(".icon-round").siblings(".icon-label").css("border-bottom", "solid 1px #ccc").css("color", "#8A939E");
-
-        $round.parent(".liveDemos_iconContainers").siblings().each(function (i, obj) {
-            $(obj).children(".icon-round").css({
-                "border-bottom": "none",
-                "background": "none",
-                "outline": "none"
+    @if (ViewBag.message != null)
+    {
+        <script>
+            $(".message-box-indexpage").show();
+            $(".ext-pageheader .navbar").css("top", "52px");
+            $(".slider").css("padding-top", "100px");
+            $("#close-msg").click(function (e) {
+                $(".message-box-indexpage").fadeOut();
+                $(".ext-pageheader .navbar").css("top", "0");
+                $(".slider").css("padding-top", "0");
             });
-        });
-        var html = d.getElementsByTagName('html')[0];
-        html.style.setProperty("--ebbotThemeColor", d.ebbotThemeColorColl[roundIdx]);
-
-        if (appid === undefined)
-            return;
-        if ($(`.usecase-bots-cont [appid=${appid}]`).length === 0)
-            d.createBotFns[roundIdx]();
-        $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 0).css("right", "-5%").hide(300);
-        $(`.usecase-bots-cont [appid=${appid}]`).show(0, function () { $(this).animate({ opacity: '1', right: '5%' }, 400); });
-
-        $(".content").css("opacity", "0").hide(200);
-        $(`.content:eq(${roundIdx})`).show(0, function () { $(this).animate({ opacity: '1' }, 400); });
+        </script>
+    }
+    <script>
 
 
+            $(document).scroll(function () {
+                var y = $(this).scrollTop();
+                if (y > $('.slider').height()) {
+                    $('#trial-btn').fadeIn();
+                } else {
+                    $('#trial-btn').fadeOut();
+                }
 
-        d.latestAppid = appid;
-    });
-    $(document).ready(function () {
-        //$(".icon-round")[0].click();
-    });
-</script>
+                $('#btnGroupAddon').click(function () {
+                    document.getElementById("signup_form").submit();
+                })
+            });
+
+            function validate(form) {
+                var email = form.Email.value.trim();
+                if (ValidateEmail(email))
+                    return true;
+                else
+                    return false;
+            }
+            function ValidateEmail(mail) {
+                if (/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+                    return (true);
+                return (false);
+            }
+            $(".joinbeta").submit(function (e) {
+                e.preventDefault();
+                if (validate(this)) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "../Ext/JoinBeta",
+                        beforeSend: function () {
+                            $(e.target).children().find('i').show();
+                        },
+                        data: $(e.target).serializeArray()
+                    }).done(function (data) {
+                        var msg = data ? "Thank you for your interest in our private beta. We will get back to you shortly." : "You have already specified your interest to join our private beta. We will get back to you shortly.";
+                        $(e.target).children().find('i').hide();
+                        $(e.target).children().find(".emailtxt").val("");
+                        $(".message-box-indexpage").fadeIn().children("span").text(msg);
+                        $(".ext-pageheader .navbar").css("top", "52px");
+                        $(".slider").css("padding-top", "100px");
+                        $("#close-msg").click(function (e) {
+                            $(".message-box-indexpage").fadeOut();
+                            $(".ext-pageheader .navbar").css("top", "0");
+                            $(".slider").css("padding-top", "0");
+                        });
+                    });
+                }
+            });
+
+            $(".icon-round, .icon-round i").on("click", function (e) {
+                d = document;
+                //$(d).scrollTop(1050);
+                var $round = $(event.target).closest(".icon-round");
+                var appid = $round.attr("appid");
+                if (d.latestAppid === appid)
+                    return;
+                var roundIdx = $(".icon-round").toArray().indexOf($round[0]);
+                d.appIdCount = roundIdx;
+                $round.css({
+                    "border-bottom": "4px solid green",
+                    "background": "#e5f3f5",
+                    "outline": "none"
+                });
+                $(".icon-round").siblings(".icon-label").css("border-bottom", "solid 1px #ccc").css("color", "#8A939E");
+
+                $round.parent(".liveDemos_iconContainers").siblings().each(function (i, obj) {
+                    $(obj).children(".icon-round").css({
+                        "border-bottom": "none",
+                        "background": "none",
+                        "outline": "none"
+                    });
+                });
+                var html = d.getElementsByTagName('html')[0];
+                html.style.setProperty("--ebbotThemeColor", d.ebbotThemeColorColl[roundIdx]);
+
+                if (appid === undefined)
+                    return;
+                if ($(`.usecase-bots-cont [appid=${appid}]`).length === 0)
+                    d.createBotFns[roundIdx]();
+                $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 0).css("right", "-5%").hide(300);
+                $(`.usecase-bots-cont [appid=${appid}]`).show(0, function () { $(this).animate({ opacity: '1', right: '5%' }, 400); });
+
+                $(".content").css("opacity", "0").hide(200);
+                $(`.content:eq(${roundIdx})`).show(0, function () { $(this).animate({ opacity: '1' }, 400); });
+                d.latestAppid = appid;
+            });
+    </script>
+</body>
+</html>

@@ -197,12 +197,12 @@
 /*code section*/
 
 .eb-codeedit{
-    background:white;
     padding:0;
 }
 .eb-codeedit-Container {
     width: 100%;
     box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+    background: white;
 }
 .eb-codeedit-pgno {
     width: 6%;
@@ -485,6 +485,7 @@ float:left;
     }
     .eb-codeedit {
         margin-bottom: 3rem;
+        padding: 12px;
     }
     .embedscript-text {
          padding-left: 15px;

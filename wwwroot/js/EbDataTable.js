@@ -358,13 +358,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }.bind(this));
 
+        jQuery.fn.dataTable.ext.errMode = 'alert';
+
+        //this.table_jQO.on('error.dt', function (settings, techNote, message) {
+        //    console.log('An error has been reported by DataTables: ', message);
+        //});        
+
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
-
-        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-            alert("ajax erpttt......");
-        };
 
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
@@ -393,6 +395,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.table_jQO.on('length.dt', function (e, settings, len) {
             console.log('New page length: ' + len);
         });
+
+        //$.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+        //    alert("ajax erpttt......");
+        //};
         
     };
 
@@ -519,23 +525,28 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.isPipped = false;
             }
             //o.dom = "<'col-md-12 noPadding'B>rt";
-            o.ajax = {
-                //url: this.ssurl + '/ds/data/' + this.dsid,
-                url: "../dv/getData",
-                type: 'POST',
-                timeout: 300000,
-                data: this.ajaxData.bind(this),
-                dataSrc: this.receiveAjaxData.bind(this),
-                beforeSend: function () {
-                    //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
-                    //$.LoadingOverlay("show");
-                },
-                //crossDomain: true,
-                //timeout: 180000,
-                //async: true,
-                error: function (req, status, xhr) {
-                }
-            };
+            try {
+                o.ajax = {
+                    //url: this.ssurl + '/ds/data/' + this.dsid,
+                    url: "../dv/getData",
+                    type: 'POST',
+                    timeout: 0,
+                    data: this.ajaxData.bind(this),
+                    dataSrc: this.receiveAjaxData.bind(this),
+                    beforeSend: function () {
+                        //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+                        //$.LoadingOverlay("show");
+                    },
+                    //crossDomain: true,
+                    //timeout: 180000,
+                    //async: true,
+                    error: function (req, status, xhr) {
+                    }
+                };
+            }
+            catch (Error){
+                alert(Error);
+            }
         }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);

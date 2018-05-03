@@ -13,7 +13,13 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a class="hvr-underline-from-center" id="products" href="#prd">Products</a></li>
+                    <li class="dropdown nav_drp_li">
+                    <a class="hvr-underline-from-center dropdown-toggle" data-toggle="dropdown" id="products">Products <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a class="sub" href="https://reports.expressbase.com">Expressbase Reports</a></li>
+                            <li><a class="sub" href="https://bots.expressbase.com">Expressbase Bots</a></li>
+                        </ul>
+                    </li>
                     <li><a class="hvr-underline-from-center" href="~/AboutUs">About Us</a></li>
                     <li id="signIn"><a class="hvr-underline-from-center" href="~/SignIn">Sign in</a></li>
                 </ul>

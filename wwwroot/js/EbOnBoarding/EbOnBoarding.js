@@ -1,6 +1,7 @@
-﻿var EbOnBoarding = function () {
+﻿var EbOnBoarding = function (tid) {
     this.objSubscription = {};
     var _prevId = "#profimage";
+    var _tid = tid;
 
     this.getSolutionName = function (e) {
         $('#Hidd-sname').val($(e.target).val());
@@ -31,11 +32,12 @@
         var logoCrp = new cropfy({
             Container: 'onboarding_logo',
             Toggle: '#log-upload-btn',
-            isUpload: true,
-            enableSE: true,
-            Browse: true,
+            isUpload: true,  //upload to cloud
+            enableSE: true, //enable server event
+            Browse: true,  //browse image
             Result: 'base64',
             Type: 'logo',
+            Tid: _tid, //if type is logo
             Preview:"#oB_logo-prev"
         });
         logoCrp.getFile = function (file) {

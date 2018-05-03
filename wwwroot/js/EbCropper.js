@@ -13,6 +13,7 @@
     this.Type = option.Type;//type of image logo or dp
     //this.ResizeViewPort = option.ResizeViewPort ? true : false;//enable resizing of viewport
     this.Preview = option.Preview||null;//previw el should be uniq and it sould be an img tag
+    this.Tid = option.Tid || null;
 
     var _typeRatio = {
         'logo': {
@@ -118,7 +119,8 @@
         var url = this.Type === "logo" ? "../StaticFile/UploadLogoAsync" : "../StaticFile/UploadDPAsync";
         if (this.fileurl) {
             $.post(url, {
-                'base64': this.fileurl
+                'base64': this.fileurl,
+                'tid':this.Tid
             });
             this.toggleModal();
         }

@@ -197,6 +197,13 @@
     height: 570px;
 }
 
+.filter-form-buider-cont .toolbox-cont {
+    width: 18%;
+}
+.filter-form-buider-cont .tool {
+    width: calc( 100% - 6px);
+}
+
 .web-form-buider-cont .toolbox-cont {
     width: 12%;
 }

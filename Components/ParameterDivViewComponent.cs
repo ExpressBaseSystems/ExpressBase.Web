@@ -15,7 +15,7 @@ namespace ExpressBase.Web.Components
             {
                 ViewBag.HtmlHead = paramDiv.GetHead();
                 ViewBag.HtmlBody = paramDiv.GetHtml();
-                ViewBag.Controls = "hii ladies";
+                ViewBag.FilterObj = Common.EbSerializers.Json_Serialize(paramDiv);
             }
 
             return View();

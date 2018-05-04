@@ -678,7 +678,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.uploadImage = function (url, ctrlname, idx) {
         console.log("uploadImage");
         var URL = url.substring(url.indexOf(",/") + 1);
-        var EbSE = EbServerEvents({
+        var EbSE = new EbServerEvents({
             ServerEventUrl: this.ServerEventUrl,
             Channels: ["baabu"],
         });

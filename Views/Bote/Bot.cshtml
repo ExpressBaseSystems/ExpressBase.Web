@@ -44,6 +44,7 @@
 </style>
 
 <script>
+    $(document).ready(function () {
     var solid = "@ViewBag.tid";
     var appid = "@ViewBag.appid";
     var themeColor = "@ViewBag.themeColor";
@@ -99,5 +100,6 @@
     js = d.createElement(s); js.id = id;
     js.src = "//connect.facebook.net/en_US/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
+        }(document, 'script', 'facebook-jssdk'));
+    });
 </script>

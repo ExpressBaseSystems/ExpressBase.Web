@@ -1005,7 +1005,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.FBLogined = function () {
         this.FB.api('/me?fields=id,name,picture', function (response) {
             this.FBResponse = response;
-            chatBotObj.userDtls.name = this.FBResponse.name;
+            this.userDtls.name = this.FBResponse.name;
             this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
             this.greetings();
         }.bind(this));

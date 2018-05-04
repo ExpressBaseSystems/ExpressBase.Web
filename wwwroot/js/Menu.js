@@ -44,6 +44,7 @@
             $("#quick_menu_load").EbLoader("show");
             $("#EbsideBar").empty();
             $.get("../TenantUser/getSidebarMenu", function (result) {
+                $("#EbsideBar").empty();
                 $("#EbsideBar").append(result);
                 $("#quick_menu_load").EbLoader("hide");
                 $(".Obj_link").off("click").on("click", this.appendObType.bind(this));

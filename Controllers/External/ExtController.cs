@@ -555,7 +555,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult errorredirect(string console)
         {
             if (console == RoutingConstants.TC)
-                return RedirectToAction("SignIn", RoutingConstants.EXTCONTROLLER);
+                return RedirectToAction("SignIn", "Common");
             else
                 return Redirect("/");
         }

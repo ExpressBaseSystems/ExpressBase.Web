@@ -179,7 +179,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.call2FD = function () {
         this.relatedObjects = this.EbObject.DataSourceRefId;
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } }, maskLoader: false });
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
@@ -296,7 +296,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.getColumnsSuccess = function () {
-        //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
         $(".icon-cont").hide();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
@@ -311,14 +310,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.login == "uc") {
             $("#ppgrid_" + this.tableId).hide();
             $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
-
-            if (this.FD) {
-                //$("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-                //$("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
-            }
-            else {
-                //$("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-            }
         }
 
         this.addSerialAndCheckboxColumns();
@@ -349,11 +340,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.table_jQO.on('processing.dt', function (e, settings, processing) {
             if (processing == true) {
-                $(".toolicons .btn").prop("disabled", true);
+                $("#obj_icons .btn").prop("disabled", true);
                 $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
             }
             else {
-                $(".toolicons .btn").prop("disabled", false);
+                $("#obj_icons .btn").prop("disabled", false);
                 $("#eb_common_loader").EbLoader("hide");
             }
         }.bind(this));
@@ -534,12 +525,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     data: this.ajaxData.bind(this),
                     dataSrc: this.receiveAjaxData.bind(this),
                     beforeSend: function () {
-                        //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
-                        //$.LoadingOverlay("show");
                     },
-                    //crossDomain: true,
-                    //timeout: 180000,
-                    //async: true,
                     error: function (req, status, xhr) {
                     }
                 };
@@ -578,9 +564,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-
-        //var x = new Object();
-        //x.xx = JSON.stringify(dq);
+        
         return dq;
     };
 
@@ -651,20 +635,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.receiveAjaxData = function (dd) {
         this.isRun = true;
-        //this.ebSettings.IsPaged = dd.ispaged.toString();
-        //if (!dd.ispaged) {
-        //    this.Api.paging = dd.ispaged;
-        //    this.Api.lengthChange = false;
-        //    //this.Api.dom = "<'col-md-12 noPadding'B>rt";
-        //}
         if (this.login == "uc") {
             dvcontainerObj.currentObj.data = dd;
             this.MainData = dd;
         }
 
         return dd.data;
-        $("#eb_common_loader").EbLoader("hide");
-        //$.LoadingOverlay("hide");
     };
 
     this.compareFilterValues = function () {
@@ -1244,7 +1220,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var col = $(e.target).text();
         var tempobj = $.grep(this.Api.settings().init().aoColumns, function (obj) { return obj.sTitle === col });
         var cls = $(e.target).attr('class');
-        if (col !== '') {
+        if (col !== '' && col !== "#") {
             this.order_info.col = tempobj[0].name;
             this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
         }
@@ -1278,7 +1254,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             _ls += "<th style='vertical-align:top; padding: 0px; margin: 0px; height: 28px!important;'>";
             if (col.name === "serial") {
-                _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-times' aria-hidden='true' style='color:red'></i></a>");
+                _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:red'></i></a>");
             }
             else {
                 if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric")))
@@ -1402,7 +1378,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (flag || this.filterFlag) {
             this.Api.ajax.reload();
             this.filterFlag = false;
-
+            $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-times").addClass("fa-filter");
         }
     };
 
@@ -1438,7 +1414,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.call_filter = function (e) {
         if (e.keyCode === 13)
             $('#' + $(e.target).attr('data-table')).DataTable().ajax.reload();
-    };
+        if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+            $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+    }.bind(this);
 
     this.toggleInFilter = function (e) {
         var table = $(e.target).attr('data-table');

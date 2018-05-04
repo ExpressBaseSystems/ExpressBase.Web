@@ -206,6 +206,14 @@
             $(".advanced-tr").hide();
     };
 
+    this.signInLink = function () {
+        var protocol = window.location.protocol;
+        var sid = window.location.search.split("=")[1];
+        var devUrl = window.location.protocol +'//'+ sid + "-dev." + window.location.host+'/';
+        $("a[linkTo='Dev']").attr("href", devUrl);
+        $("a[linkTo='User']").attr("href", devUrl.replace("-dev",""));
+    };
+
     this.init = function () {
         this.appendDataDb(this.Connections.DataDbConnection);
         this.appendFilesDb(this.Connections.FilesDbConnection);
@@ -219,6 +227,7 @@
         $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
+        this.signInLink();
     };
 
     this.init();

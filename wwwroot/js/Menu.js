@@ -198,7 +198,7 @@
                     <div class="object_container">
                     <div class='col-md-11 col-lg-11 col-sm-11 pd-0'>
                         <h4 class='head4'>${_obj.ObjName}</h4>
-                        <p class='text-justify'>${_obj.Description}</p>
+                        <p class='text-justify'>${_obj.Description || 'no description'}</p>
                         <div class="label_container">
                                 <span name="Version" class="label">V.${_obj.VersionNumber}</span>
                                 <span class="label">${_obj.EbType}</span>

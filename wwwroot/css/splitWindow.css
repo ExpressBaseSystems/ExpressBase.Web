@@ -23,8 +23,12 @@
     padding: 80px 60px 30px 60px;
 }
 
+.sub-windows:focus {
+    outline:none;
+}
+
 .sub-window-first {
-    margin-right: 15px !important;
+margin-right: 15px !important;
 }
 
 .sub-window-last {
@@ -181,6 +185,15 @@
 
 .slick-slider {
     user-select: text !important;
+}
+
+.slick-initialized .slick-slide {
+    display: block;
+    outline: none;
+}
+
+.slick-initialized .slick-slide:focus {
+    outline: none;
 }
 
 .pgHead {

@@ -11,7 +11,7 @@
 <style>
 </style>
 @{ 
-    if (ViewBag.data.EbDataSource.FilterDialog != null)
+    if (ViewBag.data.EbDataSource.FilterDialog != null && ViewBag.data.EbDataSource.FilterDialog != "")
     {
             @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
                                

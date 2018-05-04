@@ -49,23 +49,33 @@
     };
 
     this.createContentWindow = function (id, type, prev) {// style='height:inherit;'
-        if ($('.splitdiv_parent').hasClass("slick-slider"))
-            $('.splitdiv_parent').slick('unslick');
-        if (prev === undefined) {
-            $("#" + this.parent_div).append(`<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
+        if ($('.splitdiv_parent').hasClass("slick-slider")) {
+            //$('.splitdiv_parent').slick('unslick');
+            if (prev === undefined) {
+                $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
+                    <div class='split-inner'>
+                    <div class='filterCont padd-2 fd' id= 'sub_windows_sidediv_dv${id}' style= 'display:block'></div>
+                    <div class='col-md-12' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
+                    <div class='ppcont'><div class='no-padd pull-right' id='ppgrid_dv${id}'></div></div></div>
+           </div>`);
+            }
+            else
+                $("#" + prev).after(`<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
                     <div class='split-inner'>
                     <div class='filterCont padd-2 fd' id= 'sub_windows_sidediv_dv${id}' style= 'display:block'></div>
                     <div class='col-md-12' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
                     <div class='ppcont'><div class='no-padd pull-right' id='ppgrid_dv${id}'></div></div></div>
            </div>`);
         }
-        else
-            $("#" + prev).after(`<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
+        else {
+            $('#'+this.parent_div).append( `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
                     <div class='split-inner'>
                     <div class='filterCont padd-2 fd' id= 'sub_windows_sidediv_dv${id}' style= 'display:block'></div>
                     <div class='col-md-12' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
                     <div class='ppcont'><div class='no-padd pull-right' id='ppgrid_dv${id}'></div></div></div>
            </div>`);
+        }
+
         
         $('#sub_window_dv' + id).focusin(this.windowOnFocus.bind(this));
     };

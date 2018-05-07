@@ -344,23 +344,9 @@ namespace ExpressBase.Web.Controllers
             
         }
 
-        [HttpGet][HttpPost]
-        public IActionResult CreateApplication(int itemid)
+        [HttpGet]
+        public IActionResult CreateApplication()
         {
-            if(itemid > 0)
-            {
-                IServiceClient client = this.ServiceClient;
-                var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest { id = itemid });
-                ViewBag.applicationname = resultlist.Data["applicationname"];
-                ViewBag.description = resultlist.Data["description"];
-                ViewBag.Obj_id = itemid;
-            }
-            else
-            {
-                ViewBag.applicationname = "";
-                ViewBag.description = "";
-                ViewBag.Obj_id = "";
-            }
             return View();
         }
 

@@ -183,7 +183,7 @@ var DvContainerObj = function (settings) {
         this.rowData = row;
         this.filterValues = filter;
         this.cellData = celldata;
-        var copycelldata = this.cellData.replace(/ /g, "_");
+        var copycelldata = this.cellData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
         if (this.dvRefid !== null) {
@@ -446,6 +446,7 @@ var DvContainerObj = function (settings) {
         //focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
         if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) {
             focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
+            var __count = focusedId.split("_")[5];
             $("#" + focusedId).focus();
             var dvobj = this.dvcol[focusedId].EbObject;
             this.dvRefid = this.dvcol[focusedId].Refid;
@@ -461,6 +462,10 @@ var DvContainerObj = function (settings) {
                     $("[toggle=TooglePPGrid]").hide();
                     $("#Common_obj_icons").hide();
                     $("#obj_icons").show();
+                    if (__count !== "0") {
+                        $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
+                        this.eventBind();
+                    }
                 }
             }
             else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
@@ -478,12 +483,17 @@ var DvContainerObj = function (settings) {
         }
         else {
             var dvobj = this.dvcol[focusedId].EbObject;
+            var __count = focusedId.split("_")[5];
             if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
                 if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
                     this.dvcol[focusedId].GenerateButtons();
                     $("[toggle=TooglePPGrid]").hide();
                     $("#Common_obj_icons").hide();
                     $("#obj_icons").show();
+                    if (__count !== "0") {
+                        $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
+                        this.eventBind();
+                    }
                 }
             }
             else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {

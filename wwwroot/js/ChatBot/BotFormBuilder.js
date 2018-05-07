@@ -47,7 +47,7 @@
 
     this.initCtrl = function (ctrl) {
         var $el = ctrl.$Control;
-        var type = $el.attr("ctype").trim();
+        var type = ctrl.ObjType;
         $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type).attr("id", ctrl.EbSid);
@@ -82,7 +82,7 @@
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");
-        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
+        this.PGobj.setObject(control, AllMetas["Eb" + control.ObjType]);
         $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));////////
     };
 

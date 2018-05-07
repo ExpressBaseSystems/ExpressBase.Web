@@ -495,12 +495,12 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         $.each(cardCtrl.cardFields, function (h, fObj) {
             if (!fObj.doNotPersist) {
                 isPersistAnyField = true;
-            }           
+            }
         }.bind(this));
 
         if (!cardCtrl.multiSelect && isPersistAnyField) {
             $(event.target).parents().find('.slick-current .card-btn-cont .btn').click();
-        }        
+        }
         if (isPersistAnyField) {
             $.each(cardCtrl.cardCollection, function (k, cObj) {
                 if (cardCtrl.selectedCards.indexOf(cObj.cardId) !== -1) {
@@ -521,7 +521,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         }
         else {
             this.curDispValue = '';
-        }           
+        }
         //cardCtrl.selectedCards = [];
         return (JSON.stringify(resObj));
     }
@@ -583,7 +583,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.nxtCtrlIdx);
         }
-        else{
+        else {
             this.curVal = this.curVal || $('#' + id).val();
             this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
@@ -630,21 +630,32 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         //if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation" || this.curCtrl.objType === "Image")))
         if (!(this.curCtrl && this.curCtrl.isFullViewContol))
             $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
-        var lablel = this.curCtrl.label;
-        if (lablel) {
+        var label = this.curCtrl.label;
+        if (label) {
             if (this.curCtrl.helpText)
-                lablel += ` (${this.curCtrl.helpText})`;
-            this.msgFromBot(lablel);
+                label += ` (${this.curCtrl.helpText})`;
+            this.msgFromBot(label);
         }
-        if (["Label", "Image"].includes(this.curCtrl.objType)) {
-            if (this.curCtrl.objType === "Image")
-                this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
+        if (this.curCtrl.objType === "Image") {
+            this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
             this.nxtCtrlIdx++;
             this.callGetControl();
+        }
+        else if (this.curCtrl.objType === "Labels") {
+            this.sendLabels(this.curCtrl);
         }
         else
             this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
     }.bind(this);
+
+    this.sendLabels = function (ctrl) {
+        $.each(ctrl.labelCollection, function (idx, label) {
+            var lbl = label.label.trim();
+            if (lbl === "")
+                return true;
+            this.msgFromBot(label.label);
+        }.bind(this));
+    }
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
         return '<div class="chat-ctrl-cont">' + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
@@ -941,7 +952,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.showDate = function () {
         var today = new Date();
         var dd = today.getDate();
-        var m_names = new Array("Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep","Oct", "Nov", "Dec");
+        var m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
         var mmm = m_names[today.getMonth()]; //January is 0!
         var yyyy = today.getFullYear();
         if (dd < 10) {

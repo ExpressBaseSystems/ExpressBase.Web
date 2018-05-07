@@ -1120,3 +1120,15 @@ footer {
 .nav_drp_li .dropdown-menu {
     padding: 10px;
 }
+/*EbMsgBox*/
+.eb_messageBox_container {
+    width: 100%;
+    padding: 10px;
+    font-family: Montserrat;
+    font-size: 15px;
+    display: none;
+    text-align: center;
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+}

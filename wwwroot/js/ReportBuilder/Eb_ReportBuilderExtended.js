@@ -6,6 +6,7 @@
     this.dpiX = $(".get_ScreenDpi_div").height();
     this.GroupSelect = [];
 
+
     if (!this.Rpt.isNew) {
         ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'].forEach(function (item) {
             $("head").append($("<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family='" + item +"'/>"));
@@ -185,26 +186,24 @@
             }
         }
     };
-    this.keyClickDoc = function () {
-        $(document).on("keydown", this.keydownDocument.bind(this));
-    };
 
     this.keydownDocument = function (e) {
-        this.ctrl = e.which;
+        this.key = e.which;
+        this.ctrl = e.ctrlKey
+        $('.dropped').on("click", this.mark.bind(this));
         switch (e.which) {
             case 17:    //ctrl key
-                this.ctrlClickForMulSel();
-                this.ctrl = null;
+                
                 break;           
         }
     };
 
-    this.ctrlClickForMulSel = function () {
-        if (this.ctrl === 17)
-            $('.dropped').on("click", this.mark.bind(this)); 
-    };
     this.mark = function (event) {
-        $(event.target).addClass("marked");        
+        event.stopPropagation();
+        if (this.ctrl) {
+            $(event.target).toggleClass("marked"); 
+            this.ctrl = false;
+        } 
     };
 
     this.alignGroup = function (eType, selector, action, originalEvent) {
@@ -353,5 +352,5 @@
     };
     
     this.minMaxToolbar();
-    this.keyClickDoc();
+    $(document).bind("keydown keypress keyup", this.keydownDocument.bind(this));
 }

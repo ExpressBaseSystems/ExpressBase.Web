@@ -179,6 +179,7 @@ var DvContainerObj = function (settings) {
 
     this.drawdvFromTable = function (row, filter, celldata) {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+        $("#obj_icons .btn").prop("disabled", true);
         this.rowData = row;
         this.filterValues = filter;
         this.cellData = celldata;
@@ -218,6 +219,7 @@ var DvContainerObj = function (settings) {
                     $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"));
                     
                     $("#eb_common_loader").EbLoader("hide");
+                    $("#obj_icons .btn").prop("disabled", false);
                 }
             }
             else {
@@ -235,6 +237,7 @@ var DvContainerObj = function (settings) {
                         }
                         //this.removeDupliateDV();
                         $("#eb_common_loader").EbLoader("hide");
+                        $("#obj_icons .btn").prop("disabled", false);
                         dvcontainerObj.btnGoClick();
                     }.bind(this),
                 });
@@ -251,7 +254,7 @@ var DvContainerObj = function (settings) {
     };
 
     this.iframeLoad = function () {
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } }, maskLoader: false });
         $("#obj_icons").hide();
         $("#Common_obj_icons").show();
         $("#Common_obj_icons").empty();

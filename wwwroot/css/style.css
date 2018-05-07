@@ -1109,3 +1109,14 @@ footer {
         opacity: 0;
     }
 }
+
+/*home page dropdown*/
+.nav_drp_li .sub{
+    padding: 7px 20px !important;
+    color: #1488c5 !important;
+    font-size: 15px;
+    font-family:open sans;
+}
+.nav_drp_li .dropdown-menu {
+    padding: 10px;
+}

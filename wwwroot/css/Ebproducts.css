@@ -511,3 +511,26 @@ float:left;
     background-color: #0280db;
     background-image: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
 }
+
+/*Report style ---------------------------------*/
+.report-wall {
+    font-family: Montserrat;
+    line-height: 3.5rem;
+}
+.report-wall-text h2 {
+    margin-bottom: 26px;
+}
+.report-wall-text p {
+    font-weight: 400;
+    font-size: 1.7rem;
+    color: #828181;
+    margin-bottom: 1em;
+}
+.report-wall-img {
+    padding: 30px 100px;
+}
+.report-wall-img img{
+    width:100%;
+    height:auto;
+}
+/*Report style -------------end--------------------*/

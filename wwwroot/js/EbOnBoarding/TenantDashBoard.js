@@ -6,16 +6,20 @@
 
     this.drawSolutionTiles = function () {
         for (var item = 0; item < this.EbSolutionColl.length; item++) {
-            $(".tdash-box-body").prepend(`<div class="tdash-sol-box">
-                        <div class="solutionhead">
-                            <h4>${this.EbSolutionColl[item].SolutionName}</h4>
-                            <p>${this.EbSolutionColl[item].Description}</p>
-                            <p class="small">${this.EbSolutionColl[item].DateCreated}</p>
-                        </div>
-                        <div class="solutionbdy">
-                            <a href="SolutionDashBoard?Sid=${this.EbSolutionColl[item].IsolutionId}" target="_blank" class="btn newsolution-btn">Open</a>
-                        </div>
-                    </div>`);
+            $(".tdash-box-body").prepend(`<div class="solution_container">
+                <div class="solution_container_pd">
+                    <div class="col-md-10">
+                        <h4>${this.EbSolutionColl[item].SolutionName}</h4>
+                        <p>${this.EbSolutionColl[item].Description || 'no description'}</p>
+                        <p class="small">${this.EbSolutionColl[item].DateCreated }</p>   
+                    </div>
+                    <div class="col-md-2 flex-center">
+                        <a href="SolutionDashBoard?Sid=${this.EbSolutionColl[item].IsolutionId}" target="_blank" class="btn newsolution-btn">
+                            <i class="material-icons">open_in_new</i>
+                        </a>
+                    </div>
+                </div>
+            </div>`);
         }
     };
     this.goToSolutionWindow = function (e) {  

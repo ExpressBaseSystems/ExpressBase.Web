@@ -10,8 +10,6 @@
 .btn-orange {
     background: #f37e1a;
     color: white;
-    padding: 6px 25px 6px 25px;
-    border-radius: 20px;
     border: 2px #f37e1a;
     margin: 0px 5px 0px 5px;
 }
@@ -24,8 +22,6 @@
 .btn-blue {
     background: #4aade3;
     color: white;
-    padding: 6px 25px 6px 25px;
-    border-radius: 20px;
     border: 2px #f37e1a;
     margin: 0px 5px 0px 5px;
 }
@@ -149,6 +145,19 @@
 }
 /*ProfileSetup end*/
 /*tdashboard*/
+.solution_container {
+    width:50%;
+    float:left;
+    padding:5px;
+}
+.solution_container_pd {
+    width: 100%;
+    float: left;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display:flex;
+}
+
 .tdasboard-sidebar {
     height: 100%;
     position: fixed;
@@ -166,47 +175,29 @@
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
 
-.t-dash-workplace {
-    font-family: open sans;
-    font-weight: 300;
-}
-
-.tdash-box {
-    /*background: white;*/
-    width: 100%;
-}
-
-.tdash-box-head {
-    padding: 5px 0px 5px 10px;
-    font-size: 18px;
-    /*background: #339bb3;*/
-    /*color: white;*/
-}
-
 .tdash-box-body {
-    padding: 10px;
-    display: flex;
-    flex-direction: row;
-}
-
-.tdash-sol-box {
-    width: 150px;
-    border: 1px solid #ccc;
-    margin-right: 15px;
-    background: white;
-}
-
-.tdash-icon {
-    color: #a0a0a0;
+    padding: 20px;
+    float: left;
+    width: 100%;
 }
 
 .newsolution-btn {
     background-color: transparent;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
 }
+.new_sol_lk {
+    background-color: transparent;
+    font: bold 11px;
+    color: rgba(0, 0, 0, 0.75);
+}
+    .new_sol_lk:hover {
+        color: rgba(0, 0, 0, 0.75);
+        background: rgb(230, 230, 230);
+        border-radius: 3px;
+    }
+
+    .new_sol_lk :focus {
+        outline: none;
+    }
 
 .solutionhead {
     width: 100%;
@@ -215,11 +206,6 @@
     padding: 10px;
     color: white;
 }
-
-.solutionbdy {
-    text-align: center;
-}
-
 .solution-footer-new {
     text-align: center;
     margin-top: 30px;
@@ -232,7 +218,7 @@
 
 .s-dash-container {
     min-height: 100vh;
-    padding-top: 37px;
+    padding-top: 35px;
 }
 
 .s-dash-workplace {

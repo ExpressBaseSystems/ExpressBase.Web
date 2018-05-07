@@ -19,12 +19,14 @@ using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Constants;
 using System.Net.Http;
+using ExpressBase.Common.ServiceClients;
 
 namespace ExpressBase.Web.Controllers
 {
     public class BoteController : EbBaseExtController
-    {
-        public BoteController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+    {      
+
+        public BoteController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc) { }
 
         [HttpGet]
         public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL)
@@ -72,8 +74,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<bool> UploadFileAsync(string base64, string filename,string type, string refreshToken, string bearerToken)
         {
-            this.ServiceClient.BearerToken = bearerToken;
-            this.ServiceClient.RefreshToken = refreshToken;
+            this.FileClient.BearerToken = bearerToken;
+            this.FileClient.RefreshToken = refreshToken;
             string Id = string.Empty;
             string url = string.Empty;
             try

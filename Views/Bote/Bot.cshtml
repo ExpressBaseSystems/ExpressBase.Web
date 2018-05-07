@@ -20,12 +20,14 @@
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js"></script>
 <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
 <script type="text/javascript" src="~/js/Eb_select.js"></script>
-<script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js"></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/ss-utils.js"></script>@*amal*@
 <script type="text/javascript" src="~/js/Common/offline.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/eb_common.js"></script>@*amal*@
 <script type="text/javascript" src="~/js/EbServerEvents/eventsource.min.js"></script>@*amal*@
 <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js"></script>@*amal*@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-confirmation/1.0.7/bootstrap-confirmation.min.js"></script>@*jith*@
+<script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js"></script>@*jith*@
 
 
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
@@ -44,26 +46,21 @@
 </style>
 
 <script>
+    $(document).ready(function () {
     var solid = "@ViewBag.tid";
     var appid = "@ViewBag.appid";
     var themeColor = "@ViewBag.themeColor";
     var botdpURL = "@ViewBag.botdpURL";
     var ServerEventUrl = "@ViewBag.ServerEventUrl";
-    var chatBotObj = null;
-    $(document).ready(function () {
-        
-        chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl', ServerEventUrl);
-
-        var html = document.getElementsByTagName('html')[0];
-        html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
-    });
+    var chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl', ServerEventUrl);
 
     $.get("http://ipinfo.io", function (response) {
         chatBotObj.userDtls.ip = response.ip;
         chatBotObj.userDtls.browser = getBrowserName();
     }, "jsonp");
 
-    
+    var html = document.getElementsByTagName('html')[0];
+    html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {
         console.log('statusChangeCallback');
@@ -84,28 +81,27 @@
     };
 
     window.fbAsyncInit = function () {
-        FB.init({
-            appId: '141908109794829',//,'1525758114176201',//
-            cookie: true,  // enable cookies to allow the server to access
-            // the session
-            xfbml: true,  // parse social plugins on this page
-            version: 'v2.11'//'v2.8' // use graph api version 2.8
-        });
-        FB.getLoginStatus(function (response) {
-            statusChangeCallback(response);
-        });
+    FB.init({
+    appId: '141908109794829',//,'1525758114176201',//
+    cookie: true,  // enable cookies to allow the server to access
+    // the session
+    xfbml: true,  // parse social plugins on this page
+    version: 'v2.11'//'v2.8' // use graph api version 2.8
+    });
+    FB.getLoginStatus(function (response) {
+    statusChangeCallback(response);
+    });
 
     };
 
 
     // Load the SDK asynchronously
     (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-    
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    });
 </script>
-<body></body>

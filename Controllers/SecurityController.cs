@@ -33,10 +33,10 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-		public IActionResult ConnectToFb()
-		{
-			return View();
-		}
+		//public IActionResult ConnectToFb()
+		//{
+		//	return View();
+		//}
 
 		
 		public IActionResult CommonList(string type)
@@ -63,22 +63,6 @@ namespace ExpressBase.Web.Controllers
 				var fr = this.ServiceClient.Get<GetAnonymousUserResponse>(new GetAnonymousUserRequest());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
-			else if (type == "usergroup")
-			{
-				var fr = this.ServiceClient.Get<GetUserGroupResponse>(new GetUserGroupRequest());
-				ViewBag.dict = fr.Data;
-			}
-			
-			else if (type == "roles")
-			{
-				var fr = this.ServiceClient.Get<GetRolesResponse>(new GetRolesRequest());
-				ViewBag.dict = fr.Data;
-			}
-			else
-			{
-				var fr = this.ServiceClient.Get<GetUsersResponse>(new GetUsersRequest());
-				ViewBag.dict = fr.Data;
-			}
 			if (ViewBag.isAjaxCall)
 				return PartialView();
 			else
@@ -86,31 +70,31 @@ namespace ExpressBase.Web.Controllers
 		}
 		
 
-		[HttpGet]
-		public IActionResult UserPreferences()
-		{
-			var res = this.ServiceClient.Post<EditUserPreferenceResponse>(new EditUserPreferenceRequest());
-			if (res.Data != null)
-			{
-				ViewBag.dateformat = res.Data["dateformat"];
-				ViewBag.timezone = res.Data["timezone"];
-				ViewBag.numformat = res.Data["numformat"];
-				ViewBag.timezoneabbre = res.Data["timezoneabbre"];
-				ViewBag.timezonefull = res.Data["timezonefull"];
-				ViewBag.locale = res.Data["locale"];
+		//[HttpGet]
+		//public IActionResult UserPreferences()
+		//{
+		//	var res = this.ServiceClient.Post<EditUserPreferenceResponse>(new EditUserPreferenceRequest());
+		//	if (res.Data != null)
+		//	{
+		//		ViewBag.dateformat = res.Data["dateformat"];
+		//		ViewBag.timezone = res.Data["timezone"];
+		//		ViewBag.numformat = res.Data["numformat"];
+		//		ViewBag.timezoneabbre = res.Data["timezoneabbre"];
+		//		ViewBag.timezonefull = res.Data["timezonefull"];
+		//		ViewBag.locale = res.Data["locale"];
 
-			}
+		//	}
 
-			return View();
-		}
+		//	return View();
+		//}
 
-		[HttpPost]
-		public IActionResult UserPreferences(int i)
-		{
-			var req = this.HttpContext.Request.Form;
-			var res = this.ServiceClient.Post<UserPreferenceResponse>(new UserPreferenceRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-			return View();
-		}
+		//[HttpPost]
+		//public IActionResult UserPreferences(int i)
+		//{
+		//	var req = this.HttpContext.Request.Form;
+		//	var res = this.ServiceClient.Post<UserPreferenceResponse>(new UserPreferenceRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
+		//	return View();
+		//}
 
 		//--------------MANAGE USER START------------------------------------
 		

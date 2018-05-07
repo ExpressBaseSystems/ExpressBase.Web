@@ -126,6 +126,6 @@
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
         $(window).on("scroll", this.windowscroll.bind(this));
     };
-
+    
     this.start();
 }

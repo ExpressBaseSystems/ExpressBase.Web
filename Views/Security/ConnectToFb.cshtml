@@ -11,60 +11,60 @@ Layout = "~/Views/Shared/_Layout1.cshtml";
 <button class="btn btn-info" id="test222" style=" margin:2%">check status</button>
 <button class="btn btn-info" id="test333" style=" margin:2%">prof img</button>
 <script>
+    //this is a test page, it can be deleted any time (febin)
+    //$('document').ready(function () {
 
-    $('document').ready(function () {
+    //    $.ajaxSetup({ cache: true });
+    //    $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+    //        FB.init({
+    //            appId: '149537802493867',
+    //            version: 'v2.11' // or v2.1, v2.2, v2.3, ...
+    //        });
+    //        //$('#loginbutton,#feedbutton').removeAttr('disabled');
+    //        FB.getLoginStatus(updateStatusCallback);
+    //    });
+    //    function updateStatusCallback(r) {
+    //        console.log(r);
+    //        if (r.authResponse !== null)
+    //            console.log("UserId :" + r.authResponse.userID);
+    //    };
 
-        $.ajaxSetup({ cache: true });
-        $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
-            FB.init({
-                appId: '149537802493867',
-                version: 'v2.11' // or v2.1, v2.2, v2.3, ...
-            });
-            //$('#loginbutton,#feedbutton').removeAttr('disabled');
-            FB.getLoginStatus(updateStatusCallback);
-        });
-        function updateStatusCallback(r) {
-            console.log(r);
-            if (r.authResponse !== null)
-                console.log("UserId :" + r.authResponse.userID);
-        };
+    //    $('#loginbutton').click(FBlogin);
+    //   function FBlogin () {
+    //        FB.login(loginCallBack);
+    //   }
+    //   function loginCallBack(respose) {
+    //       console.log(respose);
+    //   }
 
-        $('#loginbutton').click(FBlogin);
-       function FBlogin () {
-            FB.login(loginCallBack);
-       }
-       function loginCallBack(respose) {
-           console.log(respose);
-       }
+    //   $('#test').click(FBlogout);
+    //   function FBlogout() {
+    //       FB.logout(logoutCallBack);
+    //   }
+    //   function logoutCallBack(respose) {
+    //       console.log(respose);
+    //   }
 
-       $('#test').click(FBlogout);
-       function FBlogout() {
-           FB.logout(logoutCallBack);
-       }
-       function logoutCallBack(respose) {
-           console.log(respose);
-       }
+    //   $('#test222').click(FBstatus);
+    //   function FBstatus() {
+    //       FB.getLoginStatus(updateStatusCallback);
+    //   }
 
-       $('#test222').click(FBstatus);
-       function FBstatus() {
-           FB.getLoginStatus(updateStatusCallback);
-       }
+    //   $('#test333').click(FBpicture);
+    //   function FBpicture() {
 
-       $('#test333').click(FBpicture);
-       function FBpicture() {
-
-           FB.api(
-               '/me?fields=name,picture.type(large)',
-               function (response) {
-                   alert(response.picture.data.url);
-               }
-           );
-       }
-
-
+    //       FB.api(
+    //           '/me?fields=name,picture.type(large)',
+    //           function (response) {
+    //               alert(response.picture.data.url);
+    //           }
+    //       );
+    //   }
 
 
-    });
+
+
+    //});
 
 
 

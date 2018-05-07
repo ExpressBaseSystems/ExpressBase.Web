@@ -464,7 +464,7 @@
         permissionlist = permissionlist.substring(0, permissionlist.length - 1);
 
         if (roleName === "" || roleDescription === "") {
-            this.alertFunc("Fill Role Name/Description",4000);
+            EbMessage("show", { Message: 'Fill Role Name/Description', AutoHide: true, Backgorund: '#bf1e1e'});
             return false;
         }
         $(this.btnSaveAll).attr("disabled", "true");
@@ -486,15 +486,15 @@
         $(this.btnSaveAll).removeAttr("disabled");
     }
 
-    this.alertFunc = function tempAlert(msg, duration) {
-        var el = document.createElement("div");
-        el.setAttribute("style", "position:absolute;top:10%;left:60%;background-color:white;");
-        el.innerHTML = msg;
-        setTimeout(function () {
-            el.parentNode.removeChild(el);
-        }, duration);
-        document.body.appendChild(el);
-    }
+    //this.alertFunc = function tempAlert(msg, duration) {
+    //    var el = document.createElement("div");
+    //    el.setAttribute("style", "position:absolute;top:10%;left:60%;background-color:white;");
+    //    el.innerHTML = msg;
+    //    setTimeout(function () {
+    //        el.parentNode.removeChild(el);
+    //    }, duration);
+    //    document.body.appendChild(el);
+    //}
 
     
 

@@ -296,6 +296,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.getColumnsSuccess = function () {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
         $(".icon-cont").hide();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
@@ -641,6 +642,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
         return dd.data;
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.compareFilterValues = function () {
@@ -810,7 +812,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var splitarray = this.linkDV.split("-");
         if (splitarray[2] === "3") {
             var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
-            var copycelldata = this.cellData.replace(/ /g, "_");
+            var copycelldata = this.cellData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
             if ($(`#RptModal${copycelldata}`).length !== 0)
                 $(`#RptModal${copycelldata}`).remove();
             $("#parent-div0").append(`<div class="modal fade RptModal" id="RptModal${copycelldata}" role="dialog">

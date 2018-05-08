@@ -57,20 +57,6 @@ namespace ExpressBase.Web.Controllers
                 return false;
         }
 
-        // [AllowCrossSiteIFrame]  // for web forwarding with masking
-        public IActionResult SignIn()
-        {
-            if (!String.IsNullOrEmpty(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
-                if ((IsTokenNotExpired(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN])))
-                {
-                    return RedirectToAction("SolutionDashBoard", "Tenant");
-                }
-
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            ViewBag.errMsg = TempData["ErrorMessage"] as string;
-            return View();
-        }
-
         [HttpGet]
         public IActionResult ResetPassword()
         {
@@ -112,7 +98,7 @@ namespace ExpressBase.Web.Controllers
                     var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
                     string[] hostParts = host.Split(CharConstants.DOT);
                     if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
-                        return RedirectToAction("SolutionDashBoard", "Tenant");
+                        return RedirectToAction("DevDashboard", "Dev");
                     else
                         return RedirectToAction("UserDashboard", "TenantUser");
                 }

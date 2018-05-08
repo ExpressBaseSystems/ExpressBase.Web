@@ -48,6 +48,7 @@ namespace ExpressBase.Web.Controllers
         {           
             return View();
         }
+
         public IActionResult AppDashWeb()
         {
             Dictionary<string, int> _dict = new Dictionary<string, int>();
@@ -347,6 +348,27 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult CreateApplication()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateApplication(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            string apptype = req["AppType"];
+            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest
+            {
+                AppName = req["AppName"],
+                AppType = Convert.ToInt32(req["AppType"]),
+                Description = req["DescApp"],
+                AppIcon = req["AppIcon"],
+                Sid = req["Sid"]
+            });
+
+            if (resultlist.id > 0)
+            {
+                return Redirect("/");
+            }
             return View();
         }
 

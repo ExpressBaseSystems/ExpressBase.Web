@@ -1,5 +1,4 @@
 ﻿function EbMessage(action, options) {
-
         var operation = action;
         var settings = $.extend({
             Backgorund: "#31d031",
@@ -8,6 +7,14 @@
             AutoHide:true
         }, options);       
 
+        function onHide() {
+            return options.onHide();
+        }
+
+        function onShow() {
+            return options.onShow();
+        }
+    
         function div() {
             if ($('#eb_messageBox_container').length === 0)
                 $('body').append(`<div class="eb_messageBox_container" id="eb_messageBox_container" style="background-color:${settings.Backgorund};color:${settings.FontColor}">
@@ -21,11 +28,15 @@
         function showMsg() {
             div();
             $(`#eb_messageBox_container`).fadeIn();
-            settings.AutoHide ? setTimeout(function () { hideMsg(); }, 4000):null;
+            settings.AutoHide ? setTimeout(function () { hideMsg(); }, 4000) : null;
+            if (options.onShow)
+                onShow();
         };
 
         function hideMsg() {
             $(`#eb_messageBox_container`).fadeOut();
+            if (options.onHide)
+                onHide();
         };
     
         if (operation === "show")

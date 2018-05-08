@@ -500,11 +500,11 @@
         if (this.txtName.val() === "" || this.txtEmail.val() === "")
             this.isInfoValidEmail = false;
         if (!this.isInfoValidEmail || !this.isInfoValidEmail2) {
-            alert("Validation Failed. Check all Fields");
+            EbMessage("show", { Message: 'Validation Failed. Check all Fields', AutoHide: true, Backgorund: '#bf1e1e'});
             return;
         }
         if (this.pwdPassword.val().length < 8 && this.whichMode === 1 && this.itemId < 2) {
-            alert("Password Too Short");
+            EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Backgorund: '#bf1e1e' });
             return;
         }            
 
@@ -595,6 +595,10 @@ var UserGroupJs = function (infoDict, usersList) {
     }
     this.clickbtnSaveAll = function () {
         var dict = new Object();
+        if (this.txtUserGroupName.val() === '' || this.txtUserGroupDescription.val()) {
+            EbMessage("show", { Message: 'Please Enter UserGroup Name/Description', AutoHide: true, Backgorund: '#bf1e1e' });
+            return;
+        }            
         dict["name"] = this.txtUserGroupName.val();
         dict["description"] = this.txtUserGroupDescription.val();
         dict["users"] = this.usersTile.getItemIds();
@@ -607,10 +611,12 @@ var UserGroupJs = function (infoDict, usersList) {
         });
     }
     this.saveUserGroupSuccess = function (result) {
-        if (result > 0)
-            alert("Submitted Successfully");
+        if (result > 0) {
+            alert("Saved Successfully");
+            window.top.close();
+        }            
         else
-            alert("Something went wrong");
+            EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e'});
         this.btnSaveAll.removeAttr("disabled");
     }
 

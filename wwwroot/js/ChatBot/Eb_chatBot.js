@@ -900,19 +900,19 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.sendMsg($btn.text());
         $('.msg-wraper-user [name=ctrledit]').remove();
         $btn.closest(".msg-cont").remove();
-        this.DestructForm();
+        this.ClearFormVariables();
         this.AskWhatU();
     }.bind(this);
 
     this.showConfirm = function () {
-        this.DestructForm();
+        this.ClearFormVariables();
         var msg = `Your ${this.curForm.name} application submitted successfully`;
         this.msgFromBot(msg);
         this.DataCollection();
         this.AskWhatU();
     }.bind(this);
 
-    this.DestructForm = function () {
+    this.ClearFormVariables = function () {
         this.formFunctions.visibleIfs = {};
         this.nxtCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
@@ -933,6 +933,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         });
         this.formValues = {};
     };
+
     this.getFormValuesWithTypeColl = function () {
         var FVWTcoll = [];
         $.each(this.formValuesWithType, function (key, val) {

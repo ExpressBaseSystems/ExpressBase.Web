@@ -6,5 +6,8 @@
 <script>
     $(document).ready(function () {
         $('#quik_menu').click();
-     });
+    });
+     if ('@ViewBag.Msg') {
+        EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
+    }
 </script>

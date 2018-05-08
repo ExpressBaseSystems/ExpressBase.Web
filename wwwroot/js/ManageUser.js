@@ -595,6 +595,10 @@ var UserGroupJs = function (infoDict, usersList) {
     }
     this.clickbtnSaveAll = function () {
         var dict = new Object();
+        if (this.txtUserGroupName.val() === '' || this.txtUserGroupDescription.val()) {
+            EbMessage("show", { Message: 'Please Enter UserGroup Name/Description', AutoHide: true, Backgorund: '#bf1e1e' });
+            return;
+        }            
         dict["name"] = this.txtUserGroupName.val();
         dict["description"] = this.txtUserGroupDescription.val();
         dict["users"] = this.usersTile.getItemIds();
@@ -607,8 +611,10 @@ var UserGroupJs = function (infoDict, usersList) {
         });
     }
     this.saveUserGroupSuccess = function (result) {
-        if (result > 0)
-            EbMessage("show", { Message: 'Submitted Successfully', AutoHide: true });
+        if (result > 0) {
+            alert("Saved Successfully");
+            window.top.close();
+        }            
         else
             EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e'});
         this.btnSaveAll.removeAttr("disabled");

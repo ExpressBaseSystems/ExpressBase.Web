@@ -440,14 +440,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.FD) {
             $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
         }
-        $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'> <i class='fa fa-th' aria-hidden='true'></i></button>")
+        $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'> <i class='material-icons' aria-hidden='true'></i></button>")
 
         if (this.EbObject !== null && this.EbObject.Type !== null)
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.EbObject.Type.trim() + "&nbsp;<span class = 'caret'></span>");
         if (this.login == "uc") {
             //if (!this.isContextual)
                 dvcontainerObj.appendRelatedDv(this.tableId);
-            dvcontainerObj.modifyNavigation();
+                dvcontainerObj.modifyNavigation();
+                $("#btnTogglePPGrid" + this.tableId).hide();
         }
         this.bindEvents();
 

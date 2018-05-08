@@ -212,7 +212,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
         $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).empty();
         $(sideDivId).empty();
-        $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
+        $(sideDivId).append("<div class='pgHead'> Param window ");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
         $(sideDivId).append(text);
         console.log(text);
         $(sideDivId).find("input").on("keyup", function (e) {
@@ -1414,8 +1414,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.call_filter = function (e) {
-        if (e.keyCode === 13)
+        if (e.keyCode === 13) {
             $('#' + $(e.target).attr('data-table')).DataTable().ajax.reload();
+        }
         if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
             $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
     }.bind(this);

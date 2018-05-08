@@ -117,8 +117,41 @@
         Html.RenderPartial("_PageheaderDev");
     }
 
+    @*Sample Bot 1 by febin*@
+    @*<script type="text/javascript">
+        window.EXPRESSbase_SOLUTION_ID = "ebdbhppwxyokxs20180502070745";
+        window.EXPRESSbase_APP_ID = 1;
+        (function () {
+            d = document;
+            s = d.createElement("script");
+            s.src = "/js/ChatBot/ebbot-ext.js";
+            //s.src = "https://expressbase.com/js/ChatBot/ebbot-ext.js";
+            s.async = 1;
+            d.getElementsByTagName("head")[0].appendChild(s);
+            d.ebbotName = "EXPRESSbase";
+            d.ebbotThemeColor = "#39c928";
+            d.botdpURL = 'https://expressbase.com/images/assistant.png';
+            //d.botdpURL = '../images/assistant.png';
+        })();
+    </script>*@
 
-
+    @*Sample Bot 2 by febin*@
+    @*<script type="text/javascript">
+        window.EXPRESSbase_SOLUTION_ID = "ebdbhppwxyokxs20180502070745";
+        window.EXPRESSbase_APP_ID = 2;
+        (function () {
+            d = document;
+            s = d.createElement("script");
+            s.src = "/js/ChatBot/ebbot-ext.js";
+            //s.src = "https://expressbase.com/js/ChatBot/ebbot-ext.js";
+            s.async = 1;
+            d.getElementsByTagName("head")[0].appendChild(s);
+            d.ebbotName = "Event";
+            d.ebbotThemeColor = "#d031a7";
+            d.botdpURL = 'https://expressbase.com/images/assistant.png';
+            //d.botdpURL = '../images/assistant.png';
+        })();
+    </script>*@
 
 
     <script type="text/javascript">
@@ -137,27 +170,27 @@
                 //d.botdpURL = '../images/assistant.png';
             })();
         </script>
-        @*<svg id="boticon" class="boticon" height="0"></svg>*@
+    @*<svg id="boticon" class="boticon" height="0"></svg>*@
 
 
 
     @*<script type="text/javascript">
-        window.EXPRESSbase_SOLUTION_ID = "ebdblg5luz0jcz20180219061635";
-        window.EXPRESSbase_APP_ID = 23;
-        (function () {
-            d = document;
-            s = d.createElement("script");
-            s.src = "/js/ChatBot/ebbot-ext.js";
-            //s.src = "https://expressbase.com/js/ChatBot/ebbot-ext.js";
-            s.async = 1;
-            d.getElementsByTagName("head")[0].appendChild(s);
-            d.ebbotName = "ob Assistant";
-            d.ebbotThemeColor = "#9b33b3";
-            //d.botdpURL = 'https://expressbase.com/images/assistant.png';
-            d.botdpURL = '../images/assistant.png';
-        })();
-    </script>
-    <svg id="boticon" class="boticon" height="0"></svg>*@
+            window.EXPRESSbase_SOLUTION_ID = "ebdblg5luz0jcz20180219061635";
+            window.EXPRESSbase_APP_ID = 23;
+            (function () {
+                d = document;
+                s = d.createElement("script");
+                s.src = "/js/ChatBot/ebbot-ext.js";
+                //s.src = "https://expressbase.com/js/ChatBot/ebbot-ext.js";
+                s.async = 1;
+                d.getElementsByTagName("head")[0].appendChild(s);
+                d.ebbotName = "ob Assistant";
+                d.ebbotThemeColor = "#9b33b3";
+                //d.botdpURL = 'https://expressbase.com/images/assistant.png';
+                d.botdpURL = '../images/assistant.png';
+            })();
+        </script>
+        <svg id="boticon" class="boticon" height="0"></svg>*@
 
 
 
@@ -217,14 +250,14 @@
                                     <div class="input-group">
                                         <div class="embededscript-box">
                                             @Html.Raw(@"&lt;script type = 'text/javascript'&gt;
-                                                                                                window.EXPRESSbase_bot_id = '$botid';
-                                                                                                (function() {
-                                                                                                    d = document;
-                                                                                                    s = d.createElement('script');
-                                                                                                    s.src = '/js/ebbot-ext.js';
-                                                                                                    s.async = 1;
-                                                                                                    d.getElementsByTagName('head')[0].appendChild(s);
-                                                                                                })();&lt;/script&gt;".Replace("$botid", ViewBag.chatid));
+                                                                                                                                                        window.EXPRESSbase_bot_id = '$botid';
+                                                                                                                                                        (function() {
+                                                                                                                                                            d = document;
+                                                                                                                                                            s = d.createElement('script');
+                                                                                                                                                            s.src = '/js/ebbot-ext.js';
+                                                                                                                                                            s.async = 1;
+                                                                                                                                                            d.getElementsByTagName('head')[0].appendChild(s);
+                                                                                                                                                        })();&lt;/script&gt;".Replace("$botid", ViewBag.chatid));
                                         </div>
                                         <span class="input-group-addon" id="basic-addon2" style="background-color:#337ab7;color:white;border: none;"><i class="fa fa-clipboard" aria-hidden="true"></i></span>
                                     </div>

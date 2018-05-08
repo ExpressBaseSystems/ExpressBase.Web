@@ -34,6 +34,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class DevController : EbBaseIntController
     {
+        public const string Msg = "Msg";
 
         public DevController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
@@ -45,7 +46,8 @@ namespace ExpressBase.Web.Controllers
         }
 
         public IActionResult DevDashboard()
-        {           
+        {
+            ViewBag.Msg = TempData[Msg];
             return View();
         }
 
@@ -356,7 +358,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string apptype = req["AppType"];
-            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest
+            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationDevRequest
             {
                 AppName = req["AppName"],
                 AppType = Convert.ToInt32(req["AppType"]),
@@ -367,6 +369,7 @@ namespace ExpressBase.Web.Controllers
 
             if (resultlist.id > 0)
             {
+                TempData[Msg] = "Application Created succesfully.";
                 return Redirect("/");
             }
             return View();

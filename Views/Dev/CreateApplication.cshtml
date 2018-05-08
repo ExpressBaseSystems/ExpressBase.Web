@@ -94,4 +94,7 @@
     $("#app-form").on("submit", function () { 
         $("#loader_app_info").EbLoader("show");
     });
+    if ('@ViewBag.Msg') {
+        EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
+    }
 </script>

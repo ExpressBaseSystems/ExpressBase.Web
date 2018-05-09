@@ -4,7 +4,7 @@
     @using ExpressBase.Common;
     @using ExpressBase.Common.Objects;
     @using ExpressBase.Common.Structures;
-    var versionObj = ViewBag.dsObj;
+    var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
 <style>
     .codedit .tab-section-common {

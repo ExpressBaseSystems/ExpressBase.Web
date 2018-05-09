@@ -173,10 +173,7 @@
     <script src="~/lib/codemirror/mode/clike/clike.js"></script>
     <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
 </head>
-<body>
-    @{
-        string url = "/static/logo/logo_" + ViewBag.cid + ".png";
-    }
+<body>   
     <div id="tenatDtls" class="container-fluid">
         @{
             if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
@@ -187,7 +184,7 @@
                             <div class="modal-header">
                                 <div class="row mr-0">
                                     <div class="col-md-3 col-lg-3 col-sm-3 pd-5 q_men_IMGsection text-center">
-                                        <img src="@url" />
+                                        <img src="~/images/your_company_logo.png" class="solution_logo"/>
                                     </div>
                                     <div class="col-md-9 col-lg-9 col-sm-9 header_topmenu" id="topmenu">
                                         <div class="breadcrumb_wrapper"></div>
@@ -221,7 +218,7 @@
                                 </div>
                                 <div class="col-md-9 col-lg-9 menu_workpane" id="ObjListCont">
                                     <div id="objList" class="objList_Container">
-
+                                        <div class="menu_notifiction">Application empty.</div>
                                     </div>
                                 </div>
                             </div>
@@ -242,8 +239,10 @@
 </body>
 </html>
 <script>
-    var menu = new menujs('@ViewBag.wc');
+    var menu = new menujs('@ViewBag.wc');//init menu
     $("#layout_div").data("menu", menu);
+
+    getLogo(document.getElementsByClassName("solution_logo"));//get logo by ajax
 
     EbFonts = {};
     EbFontsCallback = function (data, status) {

@@ -373,8 +373,7 @@ namespace ExpressBase.Web.Controllers
                 return Redirect("/");
             }
             return View();
-        }
-
+        }      
 
         //public IActionResult CreateApplication(int i)
         //{

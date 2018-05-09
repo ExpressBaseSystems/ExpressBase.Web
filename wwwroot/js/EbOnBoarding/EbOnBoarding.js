@@ -1,8 +1,8 @@
-﻿var EbOnBoarding = function (tid) {
+﻿var EbOnBoarding = function (tid,context) {
     this.objSubscription = {};
     var _prevId = "#profimage";
     var _tid = tid;
-
+    var _context = context;
     this.getSolutionName = function (e) {
         $('#Hidd-sname').val($(e.target).val());
         $("#solutionName-app").text($(e.target).val());
@@ -116,12 +116,17 @@
                 }
             }).done(function (data) {
                 $("#loader_product-info").EbLoader("hide");
-                $('#eb-mesageBox').show().text("Solution Created");
-                $('#eb-mesageBox').fadeOut(5000);
-                $("#app-info").show();
-                $("#save-subscrip").hide();
-                $("#app-next").show();
-                this.scrollToLast();
+                if (_context) {
+                    window.history.back();
+                }
+                else {
+                    $('#eb-mesageBox').show().text("Solution Created");
+                    $('#eb-mesageBox').fadeOut(5000);
+                    $("#app-info").show();
+                    $("#save-subscrip").hide();
+                    $("#app-next").show();
+                    this.scrollToLast();
+                }
             }.bind(this));
         }
         else

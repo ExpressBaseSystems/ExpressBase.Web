@@ -79,40 +79,64 @@
 
    // });
 
+    function validateFD() {
+        var isValid = true;
+        var $ctrls = $("#filterBox").find("[required]");
+        $.each($ctrls, function (idx, ctrl) {
+            if ($(ctrl).val().trim() === "") {
+                alert(ctrl.id + " is empty");
+                isValid = false;
+                $(ctrl).focus();
+                $(ctrl).css("border-color", "red");
+            }
+            else
+                $(ctrl).css("border-color", "rgba(34, 36, 38, .15)");
+        });
+        return isValid;
+    }
+
     function render() {
         $("#sub_windows_sidediv_dv").css("display", "none");
         $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
-                $.LoadingOverlay("show");
-            var ParamsArray = [];
-            var filter_control_list = $("#all_control_names").val();
-            if (filter_control_list !== undefined) {
-                var myarray = filter_control_list.split(',');
-                for (var i = 0; i < myarray.length; i++) {
-                    console.log($("#" + myarray[i]).val());
-                    var type = $('#' + myarray[i]).attr('data-ebtype');
-                    var name = $('#' + myarray[i]).attr('name');
-                    if (type === "3")
-                        value = $("[name=" + myarray[i] + "]:checked").val()
-                    else
-                        value = $('#' + myarray[i]).val();
-                    if (type === '6')
-                        value = value.substring(0, 10);
-                    ParamsArray.push(new fltr_obj(type, name, value));
-                }
+            //$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
+        var ParamsArray = [];
+        var filter_control_list = $("#all_control_names").val();
+        if (filter_control_list !== undefined) {
+            var myarray = filter_control_list.split(',');
+            for (var i = 0; i < myarray.length; i++) {
+                console.log($("#" + myarray[i]).val());
+                var type = $('#' + myarray[i]).attr('data-ebtype');
+                var name = $('#' + myarray[i]).attr('name');
+                if (type === "3")
+                    value = $("[name=" + myarray[i] + "]:checked").val()
+                else
+                    value = $('#' + myarray[i]).val();
+                if (type === '6')
+                    value = value.substring(0, 10);
+                ParamsArray.push(new fltr_obj(type, name, value));
             }
-            @*$.post('../ReportRender/Render',
-            {
-                refid:'@ViewBag.Refid',
-                Params: ParamsArray
-            },
-            function(data){
-                $("#reportIframe").attr("src","../ReportRender/RenderReport");
-                 $("#RptModal").modal('hide');
-                    $.LoadingOverlay("hide");
-            });*@
-            $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${'@ViewBag.Refid'}&Params=${JSON.stringify(ParamsArray)}`);
-            $("#RptModal").modal('hide');
-            $.LoadingOverlay("hide");
+        }
+        @*$.post('../ReportRender/Render',
+        {
+            refid:'@ViewBag.Refid',
+            Params: ParamsArray
+        },
+        function(data){
+            $("#reportIframe").attr("src","../ReportRender/RenderReport");
+                $("#RptModal").modal('hide');
+                $.LoadingOverlay("hide");
+        });*@
+        if (!validateFD()) {
+            //$.LoadingOverlay("hide");
+            $("#eb_common_loader").EbLoader("hide");
+            $("#filter").trigger("click");
+            return;
+        }
+        $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${'@ViewBag.Refid'}&Params=${JSON.stringify(ParamsArray)}`);
+        $("#RptModal").modal('hide');
+        //$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
     }
     </script>
     }

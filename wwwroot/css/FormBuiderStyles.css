@@ -100,7 +100,7 @@
 .Eb-ctrlContainer [type="RadioGroup"]{
     padding:5px;
 }
-.Eb-ctrlContainer input:not([type=radio]) {
+.Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
     height: auto;
     min-height: 28px;
@@ -130,7 +130,10 @@
         box-shadow: none;
     }
 
-.bot-form-wraper {
+.Eb-ctrlContainer select {
+      width: 100%;
+}
+    .bot-form-wraper {
     display: inline-block;
     width: 30%;
     margin: 0px 6vw;

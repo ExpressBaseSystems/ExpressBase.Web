@@ -598,6 +598,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     var dtype = $(FdCont + ' #' + id).attr('data-ebtype');
                     if (dtype === '6')
                         v = $(FdCont + ' #' + id).val().substring(0, 10);
+                    else if (dtype === '3')
+                        v =$(FdCont).children().find("[name=" + id + "]:checked").val();
                     else
                         v = $(FdCont + ' #' + id).val();
                     if (v !== "")

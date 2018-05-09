@@ -118,7 +118,7 @@
     margin-top: 5px;
 }
 .bread_cr_title {
-    float:left;
+    float: left;
 }
 .obj_list_shortCut {
     float: left;
@@ -419,4 +419,18 @@ li:hover {
         padding: 2px;
     }
 
-  
+.eb_slash {
+    margin:0 3px;
+}
+.eb_context {
+    color: #494e52;
+}
+.objectDashB-toolbar .solution_logo_cont {
+    height: 33px;
+    padding: 2px;
+    margin-right: 10px;
+}
+.objectDashB-toolbar .solution_logo {
+    height:100%;
+    width:auto;
+}

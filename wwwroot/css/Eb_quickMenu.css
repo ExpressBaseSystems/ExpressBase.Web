@@ -240,3 +240,9 @@
 .quick_menu_load{
     bottom:0;
 }
+.menu_notifiction {
+    position: absolute;
+    display: none;
+    margin-left: 40%;
+    margin-top: 25%;
+}

@@ -1,13 +1,13 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutExternal.cshtml";
 }
+<script src="~/js/eb_common.js"></script>
 <script>
     function onSubmit(token) {
         document.getElementById("log_form").submit();
         $(".loader_top").EbLoader("show");
     }
     @{
-        string url = string.IsNullOrEmpty(ViewBag.SolLogoUrl) ? "images/your-logo.png" : ViewBag.SolLogoUrl;
         string console = ViewBag.WhichConsole == "dc" ? "Dev" : "User";
     }
 </script>
@@ -19,7 +19,7 @@
                 <div class="loader_top" id="loader_profile"></div>
                 <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
                     <div class="login-sec-image text-center">
-                        <img src=@url class="T_logo" />
+                        <img src="~/images/your_company_logo.png" class="T_logo" />
                     </div>
                     <h1 class="text-center">Sign In as @console</h1><br>
                     <div class="form-group mb-25">
@@ -88,7 +88,7 @@
 </section>
 <script>    
     $(document).ready(function () {
-        //getLogo(document.getElementsByClassName("T_logo"));
+        getLogo(document.getElementsByClassName("T_logo"));
 
      if ('@ViewBag.ErrorMsg')
             $(".log_error").show();
@@ -96,5 +96,4 @@
         $(".loader_top").EbLoader("show");
      });
     });
-    //getLogo(document.getElementsByClassName("T_logo"));
 </script>

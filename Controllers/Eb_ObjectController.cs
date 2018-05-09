@@ -146,19 +146,19 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
-			else if (type.Equals(EbObjectTypes.BotForm))
-			{
-				var typeArray = typeof(EbBotForm).GetTypeInfo().Assembly.GetTypes();
-				_c2js = new Context2Js(typeArray, BuilderType.BotForm, typeof(EbBotForm));
-				if (dsobj != null)
-				{
-					dsobj.AfterRedisGet(this.Redis);
-					var settings = new JsonSerializerSettings();
-					settings.TypeNameHandling = TypeNameHandling.All;
-					settings.Converters.Add(new DictionaryConverter());
-					ViewBag.dsObj = EbSerializers.Json_Serialize(dsobj, settings);
-				}
-			}
+			//else if (type.Equals(EbObjectTypes.BotForm))
+			//{
+			//	var typeArray = typeof(EbBotForm).GetTypeInfo().Assembly.GetTypes();
+			//	_c2js = new Context2Js(typeArray, BuilderType.BotForm, typeof(EbBotForm));
+			//	if (dsobj != null)
+			//	{
+			//		dsobj.AfterRedisGet(this.Redis);
+			//		var settings = new JsonSerializerSettings();
+			//		settings.TypeNameHandling = TypeNameHandling.All;
+			//		settings.Converters.Add(new DictionaryConverter());
+			//		ViewBag.dsObj = EbSerializers.Json_Serialize(dsobj, settings);
+			//	}
+			//}
 
 			ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;

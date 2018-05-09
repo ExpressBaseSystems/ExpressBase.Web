@@ -180,7 +180,16 @@ namespace ExpressBase.Web.Controllers
             dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
 
             if (!string.IsNullOrEmpty(dvobj) && !string.IsNullOrEmpty(dvRefId) && !flag && dvObject.EbDataSource.FilterDialogRefId != null && dvObject.EbDataSource.FilterDialogRefId != "")
+            {
+                foreach (EbControl control in dvObject.EbDataSource.FilterDialog.Controls)
+                {
+                    if (control is EbSimpleSelect)
+                    {
+                        (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+                    }
+                }
                 return ViewComponent("ParameterDiv", new { paramDiv = dvObject.EbDataSource.FilterDialog });
+            }
             else
                 return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId });
         }

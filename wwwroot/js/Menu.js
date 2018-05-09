@@ -42,7 +42,6 @@
         if ($.isEmptyObject(this.resultObj)) {
             $("#ObjModal").modal('show');
             $("#quick_menu_load").EbLoader("show");
-            $("#EbsideBar").empty();
             $.get("../TenantUser/getSidebarMenu", function (result) {
                 $("#EbsideBar").empty();
                 $("#EbsideBar").append(result);
@@ -67,8 +66,9 @@
 
     this.appendObType = function (e) {
         var appid = $(e.target).attr("Appid");
-        $(".modal-body #objList").empty();
+        $(".modal-body #objList").children(".objContainer_f_app").remove();
         if (!$.isEmptyObject(this.resultObj.Data[appid])) {
+            $(".menu_notifiction").hide();
             for (var otype in this.resultObj.Data[appid].Types) {
                 var _obj = this.resultObj.Data[appid].Types[otype].Objects;
                 $(".modal-body #objList").append(`<div class="objContainer_f_app">
@@ -93,6 +93,8 @@
                 }
             }
         }
+        else
+            $(".menu_notifiction").show();
         $(".obType_wrapper_head").on("click", this.actionCollapse.bind(this));
         $(".new_btn").on("click", function (e) { e.stopPropagation(); });
         $(".obj_search_input").off("click").on("click", function (e) { e.stopPropagation(); });

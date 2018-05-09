@@ -29,7 +29,9 @@ using ExpressBase.Common.Constants;
 namespace ExpressBase.Web.Controllers
 {
     public class TenantController : EbBaseIntController
-    {       
+    {
+        public const string Msg = "Msg";
+
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         // GET: /<controller>/
@@ -43,6 +45,7 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.AppType = TempData["apptype"];
             ViewBag.IsSSO = TempData["SSO"];
+            ViewBag.Msg = TempData[Msg];
             var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
             ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);
             return View();
@@ -64,8 +67,14 @@ namespace ExpressBase.Web.Controllers
             string DbName = req["Isid"];
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
-                Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value)
-            });            
+               SolutionName = req["Sname"],
+               Isid = req["Isid"],
+               Esid = req["Esid"],
+               Description = req["Desc"],
+               Subscription = req["Subscription"]
+            });
+            if (res.Solnid > 0)
+                TempData[Msg] = "New Solution Created.";
         }
 
         [HttpPost]
@@ -89,6 +98,14 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
+
+        public IActionResult CreateSolution()
+        {
+            var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
+            ViewBag.iSid = ebids.Sid;
+            return View();
+        }
+
 
         [HttpGet]
         public IActionResult TenantAddAccount()

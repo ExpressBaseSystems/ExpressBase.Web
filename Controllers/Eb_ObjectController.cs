@@ -17,6 +17,7 @@ using System.Text;
 using ExpressBase.Objects.ReportRelated;
 using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
+using ExpressBase.Common.JsonConverters;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -145,8 +146,21 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+			else if (type.Equals(EbObjectTypes.BotForm))
+			{
+				var typeArray = typeof(EbBotForm).GetTypeInfo().Assembly.GetTypes();
+				_c2js = new Context2Js(typeArray, BuilderType.BotForm, typeof(EbBotForm));
+				if (dsobj != null)
+				{
+					dsobj.AfterRedisGet(this.Redis);
+					var settings = new JsonSerializerSettings();
+					settings.TypeNameHandling = TypeNameHandling.All;
+					settings.Converters.Add(new DictionaryConverter());
+					ViewBag.dsObj = EbSerializers.Json_Serialize(dsobj, settings);
+				}
+			}
 
-            ViewBag.Meta = _c2js.AllMetas;
+			ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;
             ViewBag.EbObjectTypes = _c2js.EbObjectTypes;
 

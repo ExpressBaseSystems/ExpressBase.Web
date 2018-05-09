@@ -1,5 +1,5 @@
-﻿@await Component.InvokeAsync("PageHeaderCommon")
-@{
+﻿
+@*@{
     if (ViewBag.isAjaxCall)
     {
         Layout = null;
@@ -8,9 +8,11 @@
     {
         Layout = "~/Views/Shared/_Layout1.cshtml";
     }
+}*@
+@{ 
+    Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-
-
+@await Component.InvokeAsync("PageHeaderCommon")
 <style>
     .outer-section-createuser {
         height: 100%;

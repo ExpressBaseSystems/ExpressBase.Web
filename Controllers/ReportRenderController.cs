@@ -26,24 +26,16 @@ namespace ExpressBase.Web.Controllers
             EbObjectParticularVersionResponse resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             EbReport Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
             Report.AfterRedisGet(this.Redis, this.ServiceClient);
-            ViewBag.Fd = Report; /*if (Report.EbDataSource.FilterDialog != null)*/
+            ViewBag.Fd = Report; 
             {
                 ViewBag.Fd = Report;
-                //  return ViewComponent("ParameterDiv", new { paramDiv = Report.EbDataSource.FilterDialog });
             }
 
             return View();
         }
 
-        public void BeforeRender(dvreport dvreport)
-        {
-            //List<Param> pp = EbSerializers.Json_Deserialize<List<Param>>(filterValues);
-            var x = Render(dvreport.refid, dvreport.Params);
-        }
-
         public bool Render(string refid, List<Param> Params)
-        {
-            //Console.WriteLine("--------------REPORT start ts ---  " + DateTime.Now);
+        {           
             var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
             pclient.BearerToken = this.ServiceClient.BearerToken;
             pclient.Timeout = TimeSpan.FromMinutes(3);
@@ -65,10 +57,10 @@ namespace ExpressBase.Web.Controllers
             return true;
         }
 
-        public IActionResult RenderReport()
-        {
-            return Pdf;
-        }
+        //public IActionResult RenderReport()
+        //{
+        //    return Pdf;
+        //}
 
         public IActionResult RenderReport2(string refid, string Params)
         {
@@ -86,14 +78,5 @@ namespace ExpressBase.Web.Controllers
             return Pdf;
         }
     }
-
-    [DataContract]
-    public class dvreport
-    {
-        [DataMember(Order =1)]
-        public string refid { get; set; }
-
-        [DataMember(Order = 2)]
-        public List<Param> Params { get; set; }
-    }
+    
 }

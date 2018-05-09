@@ -30,7 +30,6 @@ namespace ExpressBase.Web.BaseControllers
             try
             {
                 var controller = context.Controller as Controller;
-                controller.ViewBag.SolLogoUrl = string.Format("static/logo/logo_{0}.png", solutionId);
                 controller.ViewBag.SolutionId = solutionId;
                 controller.ViewBag.WhichConsole = hostParts[0].EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : RoutingConstants.UC;
                 base.OnActionExecuting(context);

@@ -1277,7 +1277,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             _ls += "<th style='vertical-align:top; padding: 0px; margin: 0px; height: 28px!important;'>";
             if (col.name === "serial") {
-                _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:red'></i></a>");
+                _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:black'></i></a>");
             }
             else {
                 if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric")))
@@ -1437,9 +1437,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.call_filter = function (e) {
         if (e.keyCode === 13) {
             $('#' + $(e.target).attr('data-table')).DataTable().ajax.reload();
+            if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+                $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
         }
-        if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-            $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
     }.bind(this);
 
     this.toggleInFilter = function (e) {

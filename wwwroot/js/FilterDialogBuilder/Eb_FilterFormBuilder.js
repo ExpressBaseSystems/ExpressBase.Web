@@ -358,6 +358,22 @@
             //RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
+
+            if (CurProp === 'DataSourceId') {
+                $.LoadingOverlay('show');
+                $.ajax({
+                    type: "POST",
+                    url: "../DS/GetColumns",
+                    data: { DataSourceRefId: PropsObj.DataSourceId },
+                    success: function (Columns) {
+                        PropsObj.Columns = JSON.parse(Columns);
+                        this.PGobj.refresh();
+                        $.LoadingOverlay('hide');
+                    }.bind(this)
+                });
+            }
+
+
         }.bind(this);
     };
 

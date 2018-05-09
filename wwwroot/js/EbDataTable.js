@@ -328,11 +328,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var $ctrls = $("#filterBox").find("[required]");
         $.each($ctrls, function (idx, ctrl) {
             if ($(ctrl).val().trim() === "") {
-                alert(ctrl.id + " is empty");
+                EbMessage("show", { Message: ctrl.id + " is empty" });
+                //alert(ctrl.id + " is empty");
                 isValid = false;
                 $(ctrl).focus();
                 $(ctrl).css("border-color", "red");
             }
+            else
+                $(ctrl).css("border-color", "rgba(34, 36, 38, .15)");
         });
         return isValid;
     }

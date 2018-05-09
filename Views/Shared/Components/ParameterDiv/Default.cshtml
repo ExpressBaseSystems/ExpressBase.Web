@@ -32,7 +32,7 @@
         this.$filterBox = $filterBox;
         $.each(FilterObj.Controls.$values, function (k, cObj) {
             if (cObj.ObjType === 'Date') {
-                var $input = $("#" + cObj.Name);
+                var $input = $("[name=" + cObj.Name +"]");
                 if (cObj.ShowDateAs_ === 1) {
                     $input.MonthPicker({ Button: false });
                 }

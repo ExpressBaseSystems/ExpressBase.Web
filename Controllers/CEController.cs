@@ -341,6 +341,13 @@ namespace ExpressBase.Web.Controllers
         {
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
             dsObject.AfterRedisGet(this.Redis);
+            foreach (EbControl control in dsObject.FilterDialog.Controls)
+            {
+                if (control is EbSimpleSelect)
+                {
+                    (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+                }
+            }
             return ViewComponent("ParameterDiv", new { paramDiv = dsObject.FilterDialog });
         }
 

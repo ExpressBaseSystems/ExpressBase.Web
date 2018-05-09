@@ -34,6 +34,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class DevController : EbBaseIntController
     {
+        public const string Msg = "Msg";
 
         public DevController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
@@ -45,9 +46,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         public IActionResult DevDashboard()
-        {           
+        {
+            ViewBag.Msg = TempData[Msg];
             return View();
         }
+
         public IActionResult AppDashWeb()
         {
             Dictionary<string, int> _dict = new Dictionary<string, int>();
@@ -347,6 +350,28 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult CreateApplication()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateApplication(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            string apptype = req["AppType"];
+            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationDevRequest
+            {
+                AppName = req["AppName"],
+                AppType = Convert.ToInt32(req["AppType"]),
+                Description = req["DescApp"],
+                AppIcon = req["AppIcon"],
+                Sid = req["Sid"]
+            });
+
+            if (resultlist.id > 0)
+            {
+                TempData[Msg] = "Application Created succesfully.";
+                return Redirect("/");
+            }
             return View();
         }
 

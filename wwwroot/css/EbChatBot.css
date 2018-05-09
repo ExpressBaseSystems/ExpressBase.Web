@@ -219,6 +219,7 @@
     min-width: inherit;
     resize: none;
     line-height: 1.4;
+    border: none;
 }
 
 .eb-chat-inp-cont .btn {

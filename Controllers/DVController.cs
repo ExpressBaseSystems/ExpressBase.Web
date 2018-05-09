@@ -20,8 +20,9 @@ namespace ExpressBase.Web.Controllers
     {
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        [HttpGet] [HttpPost]
-        public IActionResult dv(string refid,string rowData, string filterValues, int tabNum)
+        [HttpGet]
+        [HttpPost]
+        public IActionResult dv(string refid, string rowData, string filterValues, int tabNum)
         {
             //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -36,7 +37,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
 
-            var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid=null });
+            var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid = null });
             var dsobj = resultlist.Dsobj;
             dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
             ViewBag.dvObject = dsobj;
@@ -49,7 +50,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        
+
         //[HttpGet][HttpPost]
         //public IActionResult dvTable(string objid, EbObjectType objtype)
         //{
@@ -171,8 +172,8 @@ namespace ExpressBase.Web.Controllers
 
         //    return View();
         //}
-        
-        
+
+
         public IActionResult dvCommon(string dvobj, string dvRefId, bool flag)
         {
             var dvObject = EbSerializers.Json_Deserialize(dvobj);
@@ -219,7 +220,7 @@ namespace ExpressBase.Web.Controllers
                 //dsobj.Status = resultlist.Data[0].Status;
                 //dsobj.VersionNumber = resultlist.Data[0].VersionNumber;                
             }
-             return EbSerializers.Json_Serialize(Obj); 
+            return EbSerializers.Json_Serialize(Obj);
         }
 
         public IActionResult dvgoogle()

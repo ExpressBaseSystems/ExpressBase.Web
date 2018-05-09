@@ -212,7 +212,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
         $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).empty();
         $(sideDivId).empty();
-        $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
+        $(sideDivId).append("<div class='pgHead'> Param window ");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
         $(sideDivId).append(text);
         console.log(text);
         $(sideDivId).find("input").on("keyup", function (e) {
@@ -296,6 +296,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.getColumnsSuccess = function () {
+        if (!this.validateFD())
+            return;
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
         $(".icon-cont").hide();
         this.extraCol = [];
@@ -320,6 +322,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.Init();
         }
     };
+
+    this.validateFD = function () {
+        var isValid = true;
+        var $ctrls = $("#filterBox").find("[required]");
+        $.each($ctrls, function (idx, ctrl) {
+            if ($(ctrl).val().trim() === "") {
+                alert(ctrl.id + " is empty");
+                isValid = false;
+                $(ctrl).focus();
+                $(ctrl).css("border-color", "red");
+            }
+        });
+        return isValid;
+    }
 
     this.Init = function () {
         //this.MainData = null;
@@ -352,9 +368,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         jQuery.fn.dataTable.ext.errMode = 'alert';
 
-        //this.table_jQO.on('error.dt', function (settings, techNote, message) {
-        //    console.log('An error has been reported by DataTables: ', message);
-        //});        
+        this.table_jQO.on('error.dt', function (settings, techNote, message) {
+            console.log('An error has been reported by DataTables: ', message);
+        });        
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
@@ -388,10 +404,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             console.log('New page length: ' + len);
         });
 
-        //$.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-        //    alert("ajax erpttt......");
-        //};
-        
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+            alert("ajax erpttt......");
+        };
+
     };
 
     this.addSerialAndCheckboxColumns = function () {
@@ -531,7 +547,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     }
                 };
             }
-            catch (Error){
+            catch (Error) {
                 alert(Error);
             }
         }
@@ -565,7 +581,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-        
+
         return dq;
     };
 
@@ -1414,8 +1430,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.call_filter = function (e) {
-        if (e.keyCode === 13)
+        if (e.keyCode === 13) {
             $('#' + $(e.target).attr('data-table')).DataTable().ajax.reload();
+        }
         if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
             $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
     }.bind(this);
@@ -1725,11 +1742,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderlink4NewTable = function (data, type, row, meta) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.ebSettings.Columns.$values[meta.col - 2].LinkRefId+"'>" + data + "</a>";
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.ebSettings.Columns.$values[meta.col - 2].LinkRefId + "'>" + data + "</a>";
     };
 
     this.renderlinkandDecimal = function (deci, data) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.linkDV +"'>" + parseFloat(data).toFixed(deci) + "</a>";
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.linkDV + "'>" + parseFloat(data).toFixed(deci) + "</a>";
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {

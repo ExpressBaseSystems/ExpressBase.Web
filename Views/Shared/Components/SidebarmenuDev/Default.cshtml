@@ -17,13 +17,18 @@
                 Application<i class="fa fa-chevron-right pull-right"></i>
             </a>
             <ul class="outer sub-menuObj collapse in" id="dropdown2">
+                <li>
+                    <a href="@Url.Action("CreateApplication", "Dev")" class="list-group-item inner_li">
+                        New Application<i class="fa fa-plus pull-right"></i>
+                    </a>
+                </li>
 
             </ul>
         </li>       
     </ul>
 </div>
 <script>
-    $(".outer").prepend(`@Html.Raw(ViewBag.menu)`);
+    $(".outer").append(`@Html.Raw(ViewBag.menu)`);
     menu.resultObj = @Html.Raw(obj);
     menu.objTypes =@Html.Raw(ViewBag.Types);
 </script>

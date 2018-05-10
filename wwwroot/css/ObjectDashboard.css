@@ -102,14 +102,24 @@
     width: 219px;
 }
 
-    .objectDashB-toolbar .brdCrumb {
-        font-size: 11px;
-    }
-
 .mr-0 {
     margin: 0 !important;
 }
-
+.brd_cr_t {
+    float: left;
+    max-width: 350px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+    .brd_cr_t .brd_row {
+        font-size: 11px;
+        color: #3b89ce;
+    }
+.Obj_title {
+    font-size: 13px;
+    font-weight: bold;
+}
 .pd-0 {
     padding: 0;
 }
@@ -117,9 +127,8 @@
 .toolbar2 {
     margin-top: 5px;
 }
-.bread_cr_title {
-    float: left;
-}
+
+
 .obj_list_shortCut {
     float: left;
     background-color: transparent;

@@ -47,22 +47,15 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DevDashboard()
         {
+            GetAllApplicationResponse apps = this.ServiceClient.Get(new GetAllApplicationRequest());
+            ViewBag.apps = apps.Data;
             ViewBag.Msg = TempData[Msg];
             return View();
         }
 
-        public IActionResult AppDashWeb()
-        {
-            Dictionary<string, int> _dict = new Dictionary<string, int>();
-            foreach(EbObjectType objectType in EbObjectTypes.Enumerator)
-            {
-                if (objectType.IsAvailableIn(EbApplicationTypes.Web))
-                {
-                    _dict.Add(objectType.Name, objectType.IntCode);
-                }
-            }
-            GetObjectResponse _objects = this.ServiceClient.Get(new GetObjectRequest());
-            ViewBag.Types = JsonConvert.SerializeObject(_dict);
+        public IActionResult AppDashWeb(int Id, EbApplicationTypes Type)
+        {          
+            GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });
             ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
             return View();
         }

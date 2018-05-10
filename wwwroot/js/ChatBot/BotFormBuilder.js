@@ -414,7 +414,7 @@
                     success: function (Columns) {
                         PropsObj.Columns = JSON.parse(Columns);
                         this.PGobj.refresh();
-                        if (PropsObj.constructor.name === "EbCards")
+                        if (PropsObj.constructor.name === "EbDynamicCardSet")
                             this.setAllChildObjColumns(PropsObj);
                         $.LoadingOverlay('hide');
                     }.bind(this)

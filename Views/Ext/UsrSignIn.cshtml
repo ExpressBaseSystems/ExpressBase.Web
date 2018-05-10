@@ -9,8 +9,11 @@
     }
     @{
         string console = ViewBag.WhichConsole == "dc" ? "Dev" : "User";
+
+        string LogoUrl = "/static/logo/logo_" + ViewBag.SolutionId + ".png";
     }
 </script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
 <section class="eb_login">
     <div class="container">
         <div class="row">
@@ -19,7 +22,7 @@
                 <div class="loader_top" id="loader_profile"></div>
                 <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
                     <div class="login-sec-image text-center">
-                        <img src="~/images/your_company_logo.png" class="T_logo" />
+                        <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="T_logo Eb_Image" />
                     </div>
                     <h1 class="text-center">Sign In as @console</h1><br>
                     <div class="form-group mb-25">
@@ -86,9 +89,10 @@
         </div>
     </div>
 </section>
-<script>    
+<script>
+
     $(document).ready(function () {
-        getLogo(document.getElementsByClassName("T_logo"));
+        $('.Eb_Image').Lazy();
 
      if ('@ViewBag.ErrorMsg')
             $(".log_error").show();

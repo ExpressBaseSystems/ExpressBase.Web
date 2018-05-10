@@ -401,8 +401,9 @@
 }
 
 .card-img {
-    border-radius: 1.3em 1.3em 0 0;
-    width: 100%;
+	/*border-radius: 1.3em 1.3em 0 0;*/
+	height: 100%;
+	width: auto;
 }
 
 /*copied from css, for card img fieldset temp*/

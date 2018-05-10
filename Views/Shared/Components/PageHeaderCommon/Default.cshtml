@@ -1,30 +1,28 @@
-﻿<div class="row" id="">
+﻿@{
+    string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
+    string DpUrl = "/static/dp/dp_" + ViewBag.UId + ".png";
+    string ml = "0px";
+}
+<div class="row" id="">
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-5 pd-0">
-            @{
-                string ml = "0px";
-
-                if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-                {
-                    <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
+                @{
+                    if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+                    {
+                        <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
+                    }
+                    else
+                    {
+                        ml = "10px";
+                    }
                 }
-                else
-                {
-                    ml = "10px";
-                }
-
-            }
-                    <div class="solution_logo_cont pull-left">
-                        <img src="~/images/your_company_logo.png" class="solution_logo" />
-                    </div>
-            <div class="bread_cr_title" style="margin-left:@ml">
-                <div class="brdCrumb col-md-12 pd-0">
-                    <a href=""><span class="eb_context">@ViewBag.cid</span><span class="eb_slash">/</span> Home <span class="eb_slash">/</span></a>
+                <div class="solution_logo_cont pull-left" style="margin-left:@ml">
+                    <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
                 </div>
-                <div class="col-md-12 pd-0">
-                    <h5 class="mr-0"> <label id="objname" style="margin-bottom:0;text-overflow:ellipsis;">@ViewBag.ObjName</label></h5>
+                <div class="brd_cr_t">
+                    <div class="brd_row"><span class="eb_context">@ViewBag.cid</span><span class="eb_slash">/</span> Home <span class="eb_slash">/</span></div>
+                    <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>
                 </div>
-            </div>
         </div>
         <div class="col-md-7 pd-0 comon_header_dy">
             <div class='toolicons form-inline pull-right'>
@@ -34,11 +32,11 @@
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
                     </button>
                     <div class="dropdown obj_dash_proimage_drp">
-                        <img src="~/images/proimg.jpg" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle header_dp" />
+                        <img src="~/images/proimg.jpg" data-src=@DpUrl data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image" />
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <ul class="drp_ul">
                                 <li class="drp_item border_b" style="height:50px;">
-                                    <img src="~/images/proimg.jpg" class="proimage_inner header_dp" />
+                                    <img src="~/images/proimg.jpg" data-src=@DpUrl class="proimage_inner Eb_Image" />
                                     <div class="user_info">
                                         <h4>@ViewBag.UserDisplayName</h4>
                                         <p>@ViewBag.email</p>
@@ -66,8 +64,6 @@
             $(".bread_cr_title #objname").text(`${name}`);
         };
     };
-    ///getdp by ajax
-    getDp(document.getElementsByClassName("header_dp"));
 
     function LoadMyProfile() {
         event.preventDefault();

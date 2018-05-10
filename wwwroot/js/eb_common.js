@@ -135,31 +135,3 @@ function getEbObjectTypes() {
     } 
     return Eb_ObjectTypes;
 }
-
-function getDp(context) {
-    $.ajax({
-        type: "GET",
-        url: "../StaticFile/GetMyDP",
-        success: function (data) {
-            if (data) {
-                for (var i = 0; i < context.length; i++) {
-                    context[i].src = data;
-                }
-            }
-        }
-    });
-};
-
-function getLogo(context) {
-    $.ajax({
-        type: "GET",
-        url: "../StaticFileExt/GetMyLogo",
-        success: function (data) {
-            if (data) {
-                for (var i = 0; i < context.length; i++) {
-                    context[i].src = data;
-                }
-            }
-        }
-    });
-};

@@ -1,4 +1,5 @@
-﻿body {
+﻿
+body {
     --eb-blue: #339bb3;
     --eb-grey: #efefef;
     --eb-font: open sans;
@@ -1050,4 +1051,11 @@
     border-bottom-right-radius: 4px !important;
     background: white;
     border: 1px solid #e1e0e0 !important;
+}
+/*DevDash*/
+.appIconContainer {
+    padding: 3px 0;
+    font-size: 25px;
+    color: #989c9e;
+    text-align:center;
 }

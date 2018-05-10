@@ -1,20 +1,20 @@
 ﻿@{
-    var appdata = @Html.Raw(ViewBag.Apps);
+    var appdata = Html.Raw(ViewBag.Apps);
+
+    string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
+
+    string DpUrl = "/static/dp/dp_" + ViewBag.UId + ".png";
 }
 <div class="row" id="">
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-5 pd-0">
             <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
             <div class="solution_logo_cont pull-left">
-                <img src="~/images/your_company_logo.png" class="solution_logo" />
+                <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
             </div>
-            <div class="bread_cr_title">
-                <div class="brdCrumb col-md-12 pd-0">
-                    <a href="#"> Home/</a>
-                </div>
-                <div class="col-md-12 pd-0">
-                    <h5 class="mr-0"> <label id="objname" style="margin-bottom:0;text-overflow:ellipsis;">@ViewBag.ObjName</label></h5>
-                </div>
+            <div class="brd_cr_t">
+                <div class="brd_row"><span class="eb_context">@ViewBag.cid</span><span class="eb_slash">/</span> Home <span class="eb_slash">/</span></div>
+                <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>
             </div>
         </div>
         <div class="col-md-7 pd-0">
@@ -45,11 +45,11 @@
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
                     </button>
                     <div class="dropdown obj_dash_proimage_drp">
-                        <img src="~/images/proimg.jpg" id="header_dp" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle header_dp" />
+                        <img src="~/images/proimg.jpg"  data-src=@DpUrl id="header_dp" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image" />
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <ul class="drp_ul">
                                 <li class="drp_item border_b" style="height:50px;">
-                                    <img src="~/images/proimg.jpg" class="proimage_inner header_dp" /><div class="user_info">
+                                    <img src="~/images/proimg.jpg"  data-src=@DpUrl class="proimage_inner Eb_Image" /><div class="user_info">
                                         <h4>@ViewBag.UserDisplayName</h4>
                                         <p>@ViewBag.email</p>
                                     </div>
@@ -535,9 +535,7 @@
                 $('#minmize').css("transform", "none");
                 $(".tab-cont-common").css("height","calc(100vh - 178px)");
             }
-        }
-        //getdp from ajax
-        getDp(document.getElementsByClassName("header_dp"));
+    }
 
         function LoadMyProfile() {
             event.preventDefault();

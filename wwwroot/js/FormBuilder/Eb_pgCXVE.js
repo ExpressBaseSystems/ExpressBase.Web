@@ -75,7 +75,7 @@
             $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         //this.CurEditor = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).editor;
-        if (this.editor > 6 && this.editor < 11 || this.editor === 22)
+        if (this.editor > 6 && this.editor < 11 || this.editor === 22 || this.editor === 24)
             this.initCE();
         else if (this.editor === 11)// JS
             this.initJE();
@@ -155,47 +155,52 @@
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(CEbody);
 
         if (this.editor === 7 || this.editor === 22) {
-            var DD_html = `<div class="sub-controls-DD-cont pull-left">
-            <select class="selectpicker"> </select>
-            <button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button>
-            </div>`;
-            var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
-            if (sourceProp)
-                getObjByval(this.PGobj.Metas, "name", sourceProp).source = this.PGobj.CurProp;
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0)").hide();
-            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp));
-
-            if (this.PGobj.CurProp === "Controls") {/////////////////////////need CE test and correction
-                this.CElist = this.PGobj.PropsObj.Controls.$values;
-            }
-            else {
-                this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
-            }
-
-            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG", null, null, this.PGobj);
-            this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
-            this.CE_PGObj.parentId = this.PGobj.wraperId;
-            this.setColTiles();
-            this.setObjTypeDD();
+            this.initHelper7_22();
         }
-        else if (this.editor > 7 && this.editor < 11) {
-            if (this.editor === 8)
-                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
-            else if (this.editor === 10) {
-                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
-                $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
-            }
+        else if ((this.editor > 7 && this.editor < 11) || this.editor === 24) {
             var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
-            this.allCols = this.PGobj.PropsObj[sourceProp].$values;
-            this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
-            this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
-            this.setSelColtiles();
-            this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+            this.CEeditorsHelper(sourceProp);
         }
         this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
+    };
+
+    this.initHelper7_22 = function () {
+        var DD_html = `<div class="sub-controls-DD-cont pull-left"> <select class="selectpicker"> </select> <button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button> </div>`;
+        var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
+        if (sourceProp)
+            getObjByval(this.PGobj.Metas, "name", sourceProp).source = this.PGobj.CurProp;
+        $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0)").hide();
+        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
+        $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp));
+
+        if (this.PGobj.CurProp === "Controls") {/////////////////////////need CE test and correction
+            this.CElist = this.PGobj.PropsObj.Controls.$values;
+        }
+        else {
+            this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+        }
+
+        this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG", null, null, this.PGobj);
+        this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
+        this.CE_PGObj.parentId = this.PGobj.wraperId;
+        this.setColTiles();
+        this.setObjTypeDD();
+    };
+
+    this.CEeditorsHelper = function (sourceProp) {
+        if (this.editor === 8)
+            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
+        else if (this.editor === 10) {
+            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
+            $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        }
+        this.allCols = this.PGobj.PropsObj[sourceProp].$values;
+        this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+        this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
+        this.setSelColtiles();
+        this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
     };
 
     this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10) && !this.PGobj.IsReadonly; };

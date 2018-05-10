@@ -19,6 +19,10 @@
     float: left;
 }
 
+.display-none {
+    display: none;
+}
+
 .Displaycols {
     margin: 0px 1px;
     padding: 2px 1px;
@@ -238,7 +242,7 @@ table.dataTable tbody td.dt-body-right {
     height: calc(100vh - 176px);
 }
 
-/*/////////*/ 
+/*/////////*/
 .dataTables_wrapper {
     height: 100%;
 }
@@ -322,3 +326,19 @@ table.dataTable tbody td.dt-body-right {
     .dotstable .dottool .fa {
         color: rgba(0, 0, 0, 0.79);
     }
+
+.between-inp2 {
+    width: calc(100% - 29px) !important;
+    position: absolute !important;
+    top: 100%;
+    z-index: 0 !important;
+    box-shadow: 0px 1px 5px 0px rgba(2, 2, 2, 0.25098039215686274);
+}
+
+.between-inp {
+    width: 100% !important;
+    height: 15px !important;
+    padding: 0 !important;
+    font-weight: normal;
+    border: none;
+}

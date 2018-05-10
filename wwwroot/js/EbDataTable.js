@@ -71,14 +71,6 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url) {
-    //this.dtsettings = settings;
-    //this.data = this.dtsettings.data;
-    //this.dsid = this.dtsettings.ds_id;
-    //this.dvName = null;
-    //this.ssurl = this.dtsettings.ss_url;
-    //this.ebSettings = this.dtsettings.settings;
-    //this.tableId = this.dtsettings.tid;
-    //this.eb_agginfo = null;
     this.isSecondTime = false;
     this.Api = null;
     this.order_info = new Object();
@@ -526,7 +518,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.paging = true;
             o.lengthChange = true;
             if (!this.ebSettings.IsPaging) {
-                o.dom = "<'col-md-12 noPadding'B>rt";
+                o.dom = "<'col-md-12 noPadding display-none'B>rt";
                 o.paging = false;
                 o.lengthChange = false;
             }
@@ -780,6 +772,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.eb_agginfo.length > 0) {
             this.createFooter(0);
             this.createFooter(1);
+            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
         }
         this.addFilterEventListeners();
         this.Api.fixedColumns().relayout();
@@ -795,7 +788,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //else
         //    $(".sub-windows").css("padding-top", "50px")
 
-        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
+        //$("#" + this.tableId + "_wrapper .dataTables_scrollHeadInner table").css("width", "100%");
+        //$("#" + this.tableId + "_wrapper .dataTables_scrollBody table").css("width", "100%");
+        //$("#" + this.tableId + "_wrapper .dataTables_scrollFootInner table").css("width", "100%");
 
         this.Api.columns.adjust();
         $("#eb_common_loader").EbLoader("hide");
@@ -929,6 +924,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.doRowgrouping();
         this.summarize2();
         this.addFilterEventListeners();
+        //$("#" + this.tableId + "_wrapper .dataTables_scrollHeadInner table").css("width", "100%");
+        //$("#" + this.tableId + "_wrapper .dataTables_scrollBody table").css("width", "100%");
+        //$("#" + this.tableId + "_wrapper .dataTables_scrollFootInner table").css("width", "100%");
         this.Api.columns.adjust();
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
@@ -1416,17 +1414,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$(e.target).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
-                $(e.target).parents('.input-group').append("<input type='" + ctype + "' style='width:100%!important' class='form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
-                //$($(e.target).parents('.input-group-btn')).attr("style='height:100% !important'");
-                //$($(e.target).parents('ul').siblings("button")).css("height", "100%!important");
+                $(e.target).parents('.input-group').append("<input type='" + ctype + "' class='between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
+                $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp"); 
+                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keypress", this.call_filter);
             }
             //flag = true;
         }
         else if (selText.trim() !== 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 2) {
                 $(e.target).parents('.input-group').find("input").eq(1).remove();
-                //$(e.target).parents('.input-group-btn').css("height", " ");
-                //$(e.target).parents('ul').siblings("button").css("height", " ");
+                $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp"); 
+                //$("#" + this.tableId + "_" + colum + "_hdr_txt1").style("width", "100%", "important"); 
             }
             //flag = false;
         }
@@ -1434,11 +1432,37 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         e.preventDefault();
     };
 
-    this.call_filter = function (e) {
+    this.call_filter = function(e) {
         if (e.keyCode === 13) {
-            $('#' + $(e.target).attr('data-table')).DataTable().ajax.reload();
-            if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
-                $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+            var flag = true;
+            if ($(e.target).siblings(".eb_finput").length === 1) {
+                if ($(e.target).val() === "") {
+                    $(e.target).css("border-color", "red");
+                    flag = false;
+                }
+                else
+                    $(e.target).css("border-color", "#ccc");
+                if ($(e.target).siblings(".eb_finput").val() === "") {
+                    $(e.target).siblings(".eb_finput").css("border-color", "red");
+                    flag = false;
+                }
+                else
+                    $(e.target).siblings(".eb_finput").css("border-color", "#ccc");
+            }
+            else {
+                if ($(e.target).val().trim() == "") {
+                    flag = false;
+                    $(e.target).css("border-color", "red");
+                }
+                else
+                    $(e.target).css("border-color", "#ccc");
+            }
+
+            if (flag) {
+                $('#' + this.tableId).DataTable().ajax.reload();
+                if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+                    $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+            }
         }
     }.bind(this);
 

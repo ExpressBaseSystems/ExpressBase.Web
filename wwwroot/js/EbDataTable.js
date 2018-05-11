@@ -70,7 +70,7 @@ var coldef4Setting = function (d, t, cls, rnd, wid) {
 };
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url, cellData) {
     this.isSecondTime = false;
     this.Api = null;
     this.order_info = new Object();
@@ -135,6 +135,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.isTagged = false;
     //this.filterChanged = false;
     this.isRun = false;
+    this.cellData = cellData;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -784,9 +785,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
             //$(".sub-windows").css("padding-top", "80px");
+            if (!this.ebSettings.IsPaging)
+                $("#" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "calc(100% - 8px)", "important");
         }
-        //else
-        //    $(".sub-windows").css("padding-top", "50px")
+        else {
+            if (!this.ebSettings.IsPaging)
+                $("#" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "100%", "important");
+            else
+                $("#" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "calc(100% - 18px)", "important");
+        }
 
         //$("#" + this.tableId + "_wrapper .dataTables_scrollHeadInner table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollBody table").css("width", "100%");
@@ -815,11 +822,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.OpeninNewTab = function (key, opt, event) {
+        var cData = opt;
         this.isContextual = true;
         var idx;
-        if (opt !== undefined) {
+        if (event !== undefined) {
             idx = this.Api.row(opt.$trigger.parent().parent()).index();
-            this.cellData = opt.$trigger.text();
+            cData = opt.$trigger.text();
         }
         else
             idx = key;
@@ -828,7 +836,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var splitarray = this.linkDV.split("-");
         if (splitarray[2] === "3") {
             var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
-            var copycelldata = this.cellData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
+            var copycelldata = cData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
             if ($(`#RptModal${copycelldata}`).length !== 0)
                 $(`#RptModal${copycelldata}`).remove();
             $("#parent-div0").append(`<div class="modal fade RptModal" id="RptModal${copycelldata}" role="dialog">
@@ -1278,16 +1286,33 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:black'></i></a>");
             }
             else {
-                if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric")))
-                    _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+                    if (parseInt(EbEnums.ControlType.Text) === col.FilterControl)
+                        _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                    else if (parseInt(EbEnums.ControlType.Date) === col.FilterControl)
+                        _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                    else
+                        _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                }
                 else if (col.Type == parseInt(gettypefromString("String"))) {
                     //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
-                    _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                    if (parseInt(EbEnums.ControlType.Numeric) === col.FilterControl)
+                        _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                    else if (parseInt(EbEnums.ControlType.Date) === col.FilterControl)
+                        _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                    else
+                        _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                     //else
                     //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
                 }
-                else if (col.Type == parseInt(gettypefromString("DateTime")))
-                    _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                else if (col.Type == parseInt(gettypefromString("DateTime"))) {
+                    if (parseInt(EbEnums.ControlType.Numeric) === col.FilterControl)
+                        _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                    else if (parseInt(EbEnums.ControlType.Text) === col.FilterControl)
+                        _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                    else
+                        _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+                }
                 else if (col.Type == parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
                     _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
                 else
@@ -1571,19 +1596,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.link2NewTable = function (e) {
+        var cData;
         this.isContextual = true;
         if ($(e.target).closest("a").attr("data-latlong") !== undefined)
-            this.cellData = $(e.target).closest("a").attr("data-latlong");
+            cData = $(e.target).closest("a").attr("data-latlong");
         else
-            this.cellData = $(e.target).text();
+            cData = $(e.target).text();
         this.linkDV = $(e.target).closest("a").attr("data-link");
         var idx = this.Api.row($(e.target).parent().parent()).index();
         this.rowData = this.Api.row(idx).data();
         this.filterValues = this.getFilterValues("link");
         if (this.login === "uc")
-            dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), this.cellData.toString());//, JSON.stringify(this.filterValues)
+            dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
         else
-            this.OpeninNewTab(idx);
+            this.OpeninNewTab(idx, cData);
     };
 
 

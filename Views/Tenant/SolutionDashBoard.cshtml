@@ -26,19 +26,16 @@
     </div>
     <div class="s-dash-workplace">
         <div class="col-md-12 pd-0 s-dash-solution-desc">
-            <div class="col-md-7 pd-0">
+            <div class="col-md-9 pd-0">
                 <h3 class="mr-t-0">@ViewBag.SolutionInfo.SolutionName</h3>
                 <p class="small">@ViewBag.SolutionInfo.EsolutionId Created on @ViewBag.SolutionInfo.DateCreated</p>
                 <p>
                     @ViewBag.SolutionInfo.Description
                 </p>
             </div>
-            <div class="col-md-2 pd-0">
-                <img class="solution-logo" src="~/images/your-logo.png" />
-            </div>
             <div class="col-md-3 pd-0 form-inline">
-                <a class="btn pull-right btn-orange" linkTo="Dev"><i class="fa fa-wrench"></i> Dev</a>
-                <a class="btn pull-right btn-blue" linkTo="User"><i class="fa fa-user-o" aria-hidden="true"></i> User</a>
+                <a class="btn pull-right btn-orange single__sso" wc="dc"><i class="fa fa-wrench"></i> Dev</a>
+                <a class="btn pull-right btn-blue single__sso" wc="uc"><i class="fa fa-user-o" aria-hidden="true"></i> User</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
@@ -428,5 +425,5 @@
     </div>
 </div>
 <script>
-    var sdb = new SolutionDashBoard(EbConnections);
+    var sdb = new SolutionDashBoard(EbConnections,'@ViewBag.SolutionInfo.EsolutionId');
 </script>

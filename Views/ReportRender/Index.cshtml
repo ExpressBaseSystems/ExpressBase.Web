@@ -77,6 +77,10 @@
             render();
         });
 
+        $(`#reportIframe`).on('load', function () { 
+            $("#eb_common_loader").EbLoader("hide");
+        });
+
    // });
 
     function validateFD() {
@@ -117,16 +121,7 @@
                 ParamsArray.push(new fltr_obj(type, name, value));
             }
         }
-        @*$.post('../ReportRender/Render',
-        {
-            refid:'@ViewBag.Refid',
-            Params: ParamsArray
-        },
-        function(data){
-            $("#reportIframe").attr("src","../ReportRender/RenderReport");
-                $("#RptModal").modal('hide');
-                $.LoadingOverlay("hide");
-        });*@
+        
         if (!validateFD()) {
             //$.LoadingOverlay("hide");
             $("#eb_common_loader").EbLoader("hide");
@@ -134,10 +129,9 @@
             return;
         }
         $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${'@ViewBag.Refid'}&Params=${JSON.stringify(ParamsArray)}`);
-        $("#RptModal").modal('hide');
+       // $("#RptModal").modal('hide');
         //$.LoadingOverlay("hide");
-        $("#eb_common_loader").EbLoader("hide");
-    }
+        }
     </script>
     }
 <style>

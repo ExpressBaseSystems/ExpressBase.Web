@@ -182,24 +182,6 @@ body {
     width: 100%;
 }
 
-.newsolution-btn {
-    background-color: transparent;
-}
-.new_sol_lk {
-    background-color: transparent;
-    font: bold 11px;
-    color: rgba(0, 0, 0, 0.75);
-}
-    .new_sol_lk:hover {
-        color: rgba(0, 0, 0, 0.75);
-        background: rgb(230, 230, 230);
-        border-radius: 3px;
-    }
-
-    .new_sol_lk :focus {
-        outline: none;
-    }
-
 .solutionhead {
     width: 100%;
     /* height: 100px; */
@@ -1058,4 +1040,39 @@ body {
     font-size: 25px;
     color: #989c9e;
     text-align:center;
+}
+.application_t_wrapper {
+    width:100%;
+    float:left;
+}
+    .application_t_wrapper h4 {
+        color: #0090bb;
+    }
+    .application_t_wrapper h4 .apps_count{
+        color: #908787;
+        margin-left: .3em;
+    }
+.application_t_wrapper_body {
+    width: 100%;
+    float: left;
+    padding: 15px 0px 25px 0px;
+}
+.apptype_icon_devd {
+    height: 25px;
+    width: auto;
+    margin-top: -10px;
+    margin-right: .3em;
+}
+/*app dash*/
+.appicon_style {
+    font-size: 30px;
+    color: #e49a4c;
+}
+.apptype_icon {
+    height: 15px;
+    width: auto;
+    margin-right: 0.4em;
+}
+.f16{
+    font-size:16px;
 }

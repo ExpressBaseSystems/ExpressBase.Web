@@ -112,7 +112,8 @@
     .Eb_quick_menu .search_icon i {
     }
 .Eb_quick_menu .search_input {
-    border-radius: 20px !important;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 .header_topmenu {
     background: white;
@@ -211,9 +212,7 @@
     height: 500px;
     overflow: auto;
 }
-.drp_new .btn{
-    border-radius:20px;
-}
+
 .breadcrumb_wrapper {
     display: inline-block;
     float: left;
@@ -245,4 +244,29 @@
     display: none;
     margin-left: 40%;
     margin-top: 25%;
+}
+
+/*for app dashboard*/
+.appdash_obj_container .objitems {
+    padding: 9px 9px;
+}
+
+    .appdash_obj_container .objitems .object_container {
+        width: 100%;
+        height: 100%;
+        float: left;
+        background-color: white;
+        padding: 6px;
+        border-radius: 2px;
+        border: 1px solid #e8e6e6;
+    }
+.appdash_obj_container .objContainer2 {
+    width: 100%;
+    float: left;
+    box-shadow: none;
+    border-radius: 2px;
+    border: 1px solid #eee;
+}
+.appdash_obj_container .obj_count, .Eb_quick_menu .obj_count {
+    margin-left: 0.4em;
 }

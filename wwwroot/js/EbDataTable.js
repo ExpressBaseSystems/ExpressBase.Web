@@ -161,7 +161,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
                 var id = $(ev.target).attr("id");
                 focusedId = id;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+                //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
                 //if ($('#' + id).is(':last-child'))
                 //if(this.login === "uc")
                 //$(".splitdiv_parent").scrollTo($("#" + focusedId));

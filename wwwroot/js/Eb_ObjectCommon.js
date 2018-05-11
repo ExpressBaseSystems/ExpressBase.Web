@@ -48,7 +48,8 @@
         this.messg.alert({
             head: "alert",
             body: this.alertMsg,
-            type: this.alertType
+			type: this.alertType,
+			delay: 3000
         })
         $.LoadingOverlay("hide");
         $('#close_popup').trigger('click');

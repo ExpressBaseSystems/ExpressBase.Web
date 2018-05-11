@@ -179,6 +179,12 @@
             } 
         }.bind(this));
 
+
+        $Ctrl.find(".card-filter-cont select").off('change').on('change', function () {
+            $Ctrl.find('.cards-cont').slick('slickUnfilter');
+            $Ctrl.find('.cards-cont').slick('slickFilter', '.card-cont[filter-value="' + $(event.target).val() + '"]');
+        }.bind(this, $Ctrl));
+
         $Ctrl.find('.cards-cont').not('.slick-initialized').slick({
             slidesToShow: 1,
             infinite: false,

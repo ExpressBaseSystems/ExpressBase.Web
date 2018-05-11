@@ -34,7 +34,9 @@
             if (cObj.ObjType === 'Date') {
                 var $input = $("[name=" + cObj.Name +"]");
                 if (cObj.ShowDateAs_ === 1) {
-                    $input.MonthPicker({ Button: false });
+                    $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
+                    $input.MonthPicker('option', 'ShowOn', 'both');
+                    $input.MonthPicker('option', 'UseInputMask', true);
                 }
                 else {
                     $input.datetimepicker({ timepicker: false, format: "Y-m-d" });

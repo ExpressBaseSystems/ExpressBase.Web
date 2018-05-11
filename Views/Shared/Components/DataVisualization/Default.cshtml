@@ -14,15 +14,15 @@
 <style>
 </style>
 @{
-    if (ViewBag.data.EbDataSource.FilterDialog != null && ViewBag.data.EbDataSource.FilterDialog != "")
+    if (ViewBag.data.EbDataSource.FilterDialogRefId != null && ViewBag.data.EbDataSource.FilterDialogRefId != "")
     {
-        foreach (EbControl control in ViewBag.data.EbDataSource.FilterDialog.Controls)
-        {
-            if (control is EbSimpleSelect)
-            {
-                (control as EbSimpleSelect).InitFromDataBase(ViewBag.serviceclient as JsonServiceClient);
-            }
-        }
+        //foreach (EbControl control in ViewBag.data.EbDataSource.FilterDialog.Controls)
+        //{
+        //    if (control is EbSimpleSelect)
+        //    {
+        //        (control as EbSimpleSelect).InitFromDataBase(ViewBag.serviceclient as JsonServiceClient);
+        //    }
+        //}
         @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
 
     }

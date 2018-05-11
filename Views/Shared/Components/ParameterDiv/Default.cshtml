@@ -34,7 +34,6 @@
             if (cObj.ObjType === 'Date') {
                 var $input = $("[name=" + cObj.Name + "]");
                 if (cObj.ShowDateAs_ === 1) {
-                    $input.mask("00-0000", { placeholder: "__-___" });
                     $input.MonthPicker({ Button: false });
                 }
                 else {
@@ -43,10 +42,9 @@
                     $input.next().children('i').off('click').on('click', function () { $input.datetimepicker('show'); });
                 }
             }
-            else if (cObj.ObjType === 'Numeric') {
-                var $input = $("[name=" + cObj.Name + "]");
-                    $input.mask("000000000000000000000000000000000000000000000000000000000000000000000000");
-            }
+            //else if (cObj.ObjType === 'Numeric') {
+            //    var $input = $("[name=" + cObj.Name + "]");
+            //}
         }.bind(this));
     }
 </script>

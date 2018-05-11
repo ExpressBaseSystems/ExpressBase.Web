@@ -37,6 +37,7 @@ namespace ExpressBase.Web.Components
         {
             var dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            ViewBag.serviceclient = this.ServiceClient;
             if (dvobj != null)
             {
                 //if (!string.IsNullOrEmpty(dvRefId))

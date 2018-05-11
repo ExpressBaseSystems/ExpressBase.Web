@@ -22,12 +22,14 @@
             </div>`);
         }
     };
-    this.goToSolutionWindow = function (e) {  
+
+    this.goToSolutionWindow = function (e) {
+        var console = $(e.target).closest(".btn").attr("wc");
         var tk = getToken();
         var rtk = getrToken();
         var form = document.createElement("form");
         form.setAttribute("method", "post");
-        form.setAttribute("action", "http://" + this.EbSolutionColl[0].IsolutionId + "-dev.localhost:5000/Ext/GoToApplication");
+        form.setAttribute("action", "http://" + this.Sid + "-dev." + window.location.host + "/Ext/SwitchContext");
         form.setAttribute("target", "_blank");
         var token = document.createElement("input");
         token.setAttribute("name", "Btoken");
@@ -38,15 +40,15 @@
         rtoken.setAttribute("value", rtk);
         form.appendChild(rtoken);
         var AppType = document.createElement("input");
-        AppType.setAttribute("name", "AppType");
-        AppType.setAttribute("value", this.apptype);
+        AppType.setAttribute("name", "WhichConsole");
+        AppType.setAttribute("value", console);
         form.appendChild(AppType);
-        document.body.appendChild(form);          
-        form.submit();            
-        $("#confTo-solution").modal("toggle");
+        document.body.appendChild(form);
+        form.submit();
     };
     
     this.init = function () {
+        $(".apps_count").text("(" + this.EbSolutionColl.length + ")");
         if (this.IsSSO)           
             $("#confTo-solution").modal("toggle");
 
@@ -54,6 +56,7 @@
         $("#skip").on("click", function () {
             $("#confTo-solution").modal("toggle");
         });
+        //$(".single__sso").on("click", this.goToSolutionWindow.bind(this));
     };
   
     this.init();

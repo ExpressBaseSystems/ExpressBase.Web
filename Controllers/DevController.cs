@@ -53,26 +53,20 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult AppDashWeb(int Id, EbApplicationTypes Type)
-        {          
-            GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });
-            ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
-            return View();
-        }
-
-        public IActionResult AppDashBot()
+        public IActionResult AppDashBoard(int Id, EbApplicationTypes Type)
         {
-            Dictionary<string, int> _dict = new Dictionary<string, int>();
+            Dictionary<int, string> _dict = new Dictionary<int, string>();
             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
             {
-                if (objectType.IsAvailableIn(EbApplicationTypes.Bot))
+                if (objectType.IsAvailableIn(Type))
                 {
-                    _dict.Add(objectType.Name, objectType.IntCode);
+                    _dict.Add(objectType.IntCode, objectType.Name);
                 }
             }
-            GetObjectResponse _objects = this.ServiceClient.Get(new GetObjectRequest());
+            GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });
             ViewBag.Types = JsonConvert.SerializeObject(_dict);
             ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
+            ViewBag.AppInfo = _objects.AppInfo;
             return View();
         }
 
@@ -350,7 +344,6 @@ namespace ExpressBase.Web.Controllers
         public IActionResult CreateApplication(int i)
         {
             var req = this.HttpContext.Request.Form;
-            string apptype = req["AppType"];
             var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationDevRequest
             {
                 AppName = req["AppName"],
@@ -363,7 +356,7 @@ namespace ExpressBase.Web.Controllers
             if (resultlist.id > 0)
             {
                 TempData[Msg] = "Application Created succesfully.";
-                return Redirect("/");
+                return RedirectToAction("AppDashBoard", new RouteValueDictionary(new { Id = resultlist.id,Type = Convert.ToInt32(req["AppType"]) })); 
             }
             return View();
         }      

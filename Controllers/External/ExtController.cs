@@ -278,32 +278,28 @@ namespace ExpressBase.Web.Controllers
             return d;
         }
 
-        public IActionResult GoToApplication()
+        public IActionResult SwitchContext()
         {
             var req = this.HttpContext.Request.Form;
             string btoken = req["Btoken"].ToString();
             string rtoken = req["Rtoken"].ToString();
-            int apptype = Convert.ToInt32(req["AppType"]);
-            string Email = req["Email"].ToString();
+            string console = req["WhichConsole"];
 
-            if (TenantSingleSignOn(btoken, rtoken))
+            if (TenantSingleSignOn(btoken, rtoken, console))
             {
-                if (apptype == 1)
-                    return RedirectToAction("AppDashWeb", "Dev");
-                else if (apptype == 3)
-                    return RedirectToAction("AppDashBot", "Dev");
-                else
-                    return RedirectToAction("AppDashMob", "Dev");
+                if(console == RoutingConstants.DC)
+                    return RedirectToAction("DevDashBoard","Dev");
+                else if(console == RoutingConstants.UC)
+                    return RedirectToAction("UserDashboard", "TenantUser");
             }
-
             return View();
         }
 
-        public bool TenantSingleSignOn(string btoken, string rtoken)
+        public bool TenantSingleSignOn(string btoken, string rtoken, string wc)
         {
             var host = this.HttpContext.Request.Host;
             string[] hostParts = host.Host.Split(CharConstants.DOT);
-            string whichconsole = RoutingConstants.DC;
+            string whichconsole = wc;
 
             ////CHECK WHETHER SOLUTION ID IS VALID
 

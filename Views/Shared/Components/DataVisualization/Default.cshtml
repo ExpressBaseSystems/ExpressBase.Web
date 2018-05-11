@@ -2,6 +2,9 @@
     @using Newtonsoft.Json;
     @using ExpressBase.Common;
     @using ExpressBase.Objects;
+    @using ExpressBase.Common.Objects;
+    @using ServiceStack;
+    @using System.Runtime.Serialization;
     var dvobj = EbSerializers.Json_Serialize(ViewBag.data);
     //var dvobj = JsonConvert.SerializeObject(ViewBag.data);
 }
@@ -10,11 +13,18 @@
 <script src="~/js/splitWindow.js" type="text/javascript"></script>
 <style>
 </style>
-@{ 
-    if (ViewBag.data.EbDataSource.FilterDialog != null && ViewBag.data.EbDataSource.FilterDialog != "")
+@{
+    if (ViewBag.data.EbDataSource.FilterDialogRefId != null && ViewBag.data.EbDataSource.FilterDialogRefId != "")
     {
-            @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
-                               
+        //foreach (EbControl control in ViewBag.data.EbDataSource.FilterDialog.Controls)
+        //{
+        //    if (control is EbSimpleSelect)
+        //    {
+        //        (control as EbSimpleSelect).InitFromDataBase(ViewBag.serviceclient as JsonServiceClient);
+        //    }
+        //}
+        @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
+
     }
 }
 

@@ -32,14 +32,20 @@
         this.$filterBox = $filterBox;
         $.each(FilterObj.Controls.$values, function (k, cObj) {
             if (cObj.ObjType === 'Date') {
-                var $input = $("[name=" + cObj.Name +"]");
+                var $input = $("[name=" + cObj.Name + "]");
                 if (cObj.ShowDateAs_ === 1) {
+                    $input.mask("00-0000", { placeholder: "__-___" });
                     $input.MonthPicker({ Button: false });
                 }
                 else {
+                    $input.mask("0000-00-00", { placeholder: "____-__-___" });
                     $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
                     $input.next().children('i').off('click').on('click', function () { $input.datetimepicker('show'); });
                 }
+            }
+            else if (cObj.ObjType === 'Numeric') {
+                var $input = $("[name=" + cObj.Name + "]");
+                    $input.mask("000000000000000000000000000000000000000000000000000000000000000000000000");
             }
         }.bind(this));
     }

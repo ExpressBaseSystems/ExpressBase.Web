@@ -1,6 +1,7 @@
-﻿var SolutionDashBoard = function (connections) {
+﻿var SolutionDashBoard = function (connections,sid) {
     this.Connections = connections;
     this.whichModal = "";
+    this.Sid = sid;
     this.customElementLoader = $("<div>", {
         id: "connecting",
         css: {
@@ -206,12 +207,28 @@
             $(".advanced-tr").hide();
     };
 
-    this.signInLink = function () {
-        var protocol = window.location.protocol;
-        var sid = window.location.search.split("=")[1];
-        var devUrl = window.location.protocol +'//'+ sid + "-dev." + window.location.host+'/';
-        $("a[linkTo='Dev']").attr("href", devUrl);
-        $("a[linkTo='User']").attr("href", devUrl.replace("-dev",""));
+    this.goToSolutionWindow = function (e) {
+        var console = $(e.target).closest(".btn").attr("wc");
+        var tk = getToken();
+        var rtk = getrToken();
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "http://" + this.Sid + "-dev." + window.location.host +"/Ext/SwitchContext");
+        form.setAttribute("target", "_blank");
+        var token = document.createElement("input");
+        token.setAttribute("name", "Btoken");
+        token.setAttribute("value", tk);
+        form.appendChild(token);
+        var rtoken = document.createElement("input");
+        rtoken.setAttribute("name", "Rtoken");
+        rtoken.setAttribute("value", rtk);
+        form.appendChild(rtoken);
+        var AppType = document.createElement("input");
+        AppType.setAttribute("name", "WhichConsole");
+        AppType.setAttribute("value", console );
+        form.appendChild(AppType);
+        document.body.appendChild(form);
+        form.submit();
     };
 
     this.init = function () {
@@ -227,7 +244,7 @@
         $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
-        this.signInLink();
+        $(".single__sso").on("click", this.goToSolutionWindow.bind(this));
     };
 
     this.init();

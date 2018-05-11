@@ -8,11 +8,11 @@
             if (event.which === 10 && event.ctrlKey)
                 this.showModal();
         }.bind(this));
-        $('body #quik_menu').off("click").on("click",this.showModal.bind(this));    
-        $("#searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
-        $("body").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
-        $('body').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
-        $('body').off("click").on('click', ".for_brd", this.setBrdCrump.bind(this));
+        $('#quik_menu').off("click").on("click",this.showModal.bind(this));    
+        $(".Eb_quick_menu #searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
+        $(".Eb_quick_menu").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
+        $('.Eb_quick_menu').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
+        $('.Eb_quick_menu').off("click").on('click', ".for_brd", this.setBrdCrump.bind(this));
     };
     
     this.searchObjects = function (e) {
@@ -29,13 +29,9 @@
                 $(obj).hide();
         });
         if (count === 0)
-            $("#" + srchBody + " .not-found").show().text("Item not found....");
+            $(".Eb_quick_menu #" + srchBody + " .not-found").show().text("Item not found....");
         else
-            $("#" + srchBody + " .not-found").hide().text("");
-    };
-
-    this.setMainMenu = function () {
-        console.log(this.result);
+            $(".Eb_quick_menu #" + srchBody + " .not-found").hide().text("");
     };
 
     this.showModal = function () {
@@ -48,8 +44,7 @@
                 $("#quick_menu_load").EbLoader("hide");
                 $(".Obj_link").off("click").on("click", this.appendObType.bind(this));
                 $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
-                $(".list-group-item[data-toggle=collapse]").off("click").on("click", this.changeIcon.bind(this));
-                this.login === "dc" ? this.newBuilderMenu():null;
+                this.login === "dc" ? this.newBuilderMenu() : null;
             }.bind(this));
         }
         else {
@@ -59,23 +54,23 @@
 
     this.newBuilderMenu = function () {
         for (t in this.objTypes) {
-            $(".drp_new #drp_new_wrapper").append(`<li class="drp_menuitems">
+            $(".Eb_quick_menu .drp_new #drp_new_wrapper").append(`<li class="drp_menuitems">
                                                     <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${t}"">${this.objTypes[t]}</a></li>`);
         }
     };
 
     this.appendObType = function (e) {
         var appid = $(e.target).attr("Appid");
-        $(".modal-body #objList").children(".objContainer_f_app").remove();
+        $(".Eb_quick_menu .modal-body #objList").children(".objContainer_f_app").remove();
         if (!$.isEmptyObject(this.resultObj.Data[appid])) {
-            $(".menu_notifiction").hide();
+            $(".Eb_quick_menu .menu_notifiction").hide();
             for (var otype in this.resultObj.Data[appid].Types) {
                 var _obj = this.resultObj.Data[appid].Types[otype].Objects;
-                $(".modal-body #objList").append(`<div class="objContainer_f_app">
+                $(".Eb_quick_menu .modal-body #objList").append(`<div class="objContainer_f_app">
                                                 <div class="objContainer2">
                                                     <div class="form-inline obType_wrapper_head" obj_container="obtype_container${otype}" id="obType_wrapper_head${otype}"
                                                         len="${_obj.length}" data-toggle="collapse" data-target="#obtype_container${otype}" style="cursor:pointer;">
-                                                       ${this.objTypes[otype]}<span class="obj_count">(${_obj.length})</span>
+                                                       ${this.objTypes[otype]}s<span class="obj_count">(${_obj.length})</span>
                                                         <div class="btn_container pull-right">
                                                        <a class="btn btn-sm table-btn ob_search"><i class="material-icons">search</i></a>
                                                         <input type="text" search_body="obtype_container${otype}" class="form-control obj_search_input" placeholder="Search" style="display:none;">                                    
@@ -86,24 +81,24 @@
                                                     </div>
                                                 </div>
                                             </div>`);
-                this.apndOTypeContainer($("#obtype_container" + otype), _obj);
+                this.apndOTypeContainer($(".Eb_quick_menu #obtype_container" + otype), _obj);
                 if (this.login == "dc") {
-                    $(`#obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
-                                                            <i class="material-icons">add</i></a>`);
+                    $(`.Eb_quick_menu #obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
+                                                            <i class="material-icons" style="pointer-events:none;">add</i></a>`);
                 }
             }
         }
         else
-            $(".menu_notifiction").show();
-        $(".obType_wrapper_head").on("click", this.actionCollapse.bind(this));
-        $(".new_btn").on("click", function (e) { e.stopPropagation(); });
-        $(".obj_search_input").off("click").on("click", function (e) { e.stopPropagation(); });
+            $(".Eb_quick_menu .menu_notifiction").show();
+        $(".Eb_quick_menu .obType_wrapper_head").on("click", this.actionCollapse.bind(this));
+        $(".Eb_quick_menu .new_btn").on("click", function (e) { e.stopPropagation(); });
+        $(".Eb_quick_menu .obj_search_input").off("click").on("click", function (e) { e.stopPropagation(); });
     };
 
     this.setBrdCrump = function(el){
         var el_li = $(el.target).closest("li");
         var url = `<span class='brd_cr_items'>${el_li.parent().prev().text().trim()}</span>/<span class='brd_cr_items active_lnk'>${$(el.target).text().trim()}</span>`;
-        $(".breadcrumb_wrapper").empty().append(url);
+        $(".Eb_quick_menu .breadcrumb_wrapper").empty().append(url);
     }
 
     this.apndOTypeContainer = function ($ob, _objArray) {
@@ -113,29 +108,31 @@
     };
 
     this.actionCollapse = function (e) {
-        var $div = $(e.target).closest(".obType_wrapper_head");
-        if ($div.attr("aria-expanded") !== "true") {
-            $div.closest(".objContainer_f_app").addClass("brd");
-            $div.addClass("collapse_headBG").children(".btn_container").children("input").show();
-            $div.children(".btn_container").children(".ob_search").hide();
-            if (parseInt($div.attr("len")) < 1)
-                $("#" + $div.attr("obj_container")).children(".not-found").show().text("empty.");
-            else
-                $("#" + $div.attr("obj_container")).children(".not-found").hide().text(" ");
-        }
-        else {
-            $div.closest(".objContainer_f_app").removeClass("brd");
-            $div.removeClass("collapse_headBG").children(".btn_container").children("input").hide();
-            $div.children(".btn_container").children(".ob_search").show();
+        if (!$(e.target).hasClass("new_btn")) {
+            var $div = $(e.target).closest(".obType_wrapper_head");
+            if ($div.attr("aria-expanded") !== "true") {
+                $div.closest(".objContainer_f_app").addClass("brd");
+                $div.addClass("collapse_headBG").children(".btn_container").children("input").show();
+                $div.children(".btn_container").children(".ob_search").hide();
+                if (parseInt($div.attr("len")) < 1)
+                    $("#" + $div.attr("obj_container")).children(".not-found").show().text("empty.");
+                else
+                    $("#" + $div.attr("obj_container")).children(".not-found").hide().text(" ");
+            }
+            else {
+                $div.closest(".objContainer_f_app").removeClass("brd");
+                $div.removeClass("collapse_headBG").children(".btn_container").children("input").hide();
+                $div.children(".btn_container").children(".ob_search").show();
+            }
         }
     };
 
     this.appendAppList = function (e) {
-        $("#topmenu .new_builder").attr("href", "../Dev/CreateApplication");
-        $(".modal-body #objList").empty();
+        $(".Eb_quick_menu #topmenu .new_builder").attr("href", "../Dev/CreateApplication");
+        $(".Eb_quick_menu .modal-body #objList").empty();
         $.each(this.resultObj.AppList, function (i, _obj) {
             var url = `../Dev/CreateApplication?itemid=${i}`;
-            $(".modal-body #objList").append(`
+            $(".Eb_quick_menu .modal-body #objList").append(`
                 <div class='col-md-6 objitems' name='objBox'>
                     <div class='col-md-1 obj-icon'>
                         <div class='obj-ic-cir'>
@@ -163,14 +160,14 @@
     }
 
     this.searchFAllObjects = function (e) {
-        $(".modal-body #objList").empty();
+        $(".Eb_quick_menu .modal-body #objList").empty();
         var srch = $(e.target).val().toLowerCase();
         if (srch !== "") {
                 $.each(this.resultObj.Data, function (i, Types) {
                     $.each(Types.Types, function (i, _obj) {
                         _obj.Objects.forEach(function (obItem) {
                             if (obItem.ObjName.toLowerCase().indexOf(srch) !== -1) {
-                                this.code4AppendList(obItem, $(".modal-body #objList"));
+                                this.code4AppendList(obItem, $(".Eb_quick_menu .modal-body #objList"));
                             }
                         }.bind(this));
                     }.bind(this));
@@ -213,15 +210,6 @@
                     </div>
                     </div>
                 </div>`);
-    };
-
-    this.changeIcon = function (e) {
-        if (this.login === "uc") {
-            if ($(e.target).hasClass("collapsed"))
-                $(e.target).children("i").attr("class", "fa fa-chevron-down pull-right");
-            else
-                $(e.target).children("i").attr("class", "fa fa-chevron-right pull-right");
-        }
     };
 
     this.init();

@@ -1,11 +1,13 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts
 @using ExpressBase.Common
-@{   
-Layout = "~/Views/Shared/_Layout1.cshtml";
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
-
+<script>
+    var cm = new MenuBarCommon().setName("Developer Console");
+</script>
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 
 <div class="row s-dash-container">
@@ -24,7 +26,7 @@ Layout = "~/Views/Shared/_Layout1.cshtml";
                 <h3 class="mr-t-0">Applications</h3>
             </div>
             <div class="col-md-2 pd-0">
-                <a href='@Url.Action("CreateApplication","Dev")' class="btn pull-right new_sol_lk"><i class="fa fa-plus"></i> New Application</a>
+                <a href='@Url.Action("CreateApplication","Dev")' class="btn btn-info pull-right new_sol_lk"><i class="fa fa-plus"></i> New Application</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
@@ -33,37 +35,99 @@ Layout = "~/Views/Shared/_Layout1.cshtml";
                     List<AppWrapper> appList = ViewBag.apps;
                     if (appList != null)
                     {
-                        foreach (AppWrapper aw in appList)
-                        {
-                            var apptype = (EbApplicationTypes)aw.AppType;
+                        <div class="application_t_wrapper">
+                            <h4><img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Web Applications <span class="apps_count"></span></h4>
+                            <div class="application_t_wrapper_body">
+                                @foreach (AppWrapper aw in appList)
+                                {
+                                    var apptype = (EbApplicationTypes)aw.AppType;
 
-                            string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                            string wdash = null;
-
-                            if (aw.AppType == 1) { wdash = "AppDashWeb"; }
-
-                            else if (aw.AppType == 2) { wdash = "AppDashMob"; }
-
-                            else if (aw.AppType == 3) { wdash = "AppDashBot"; }
-
-                            <div class="solution_container">
-                                <div class="solution_container_pd">
-                                    <div class="col-md-1 appIconContainer">
-                                        <span class="@aw.Icon"></span>
-                                    </div>
-                                    <div class="col-md-10">
-                                        <h4>@aw.Name</h4>
-                                        <p>@desc</p>
-                                        <p class="small"><span>@apptype</span> Application</p>
-                                    </div>
-                                    <div class="col-md-1 flex-center">
-                                        <a href="@Url.Action(wdash,"Dev",new {Id = aw.Id ,Type = aw.AppType})" class="btn newsolution-btn">
-                                            <i class="material-icons">open_in_new</i>
-                                        </a>
-                                    </div>
-                                </div>
+                                    string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                    if (aw.AppType == 1)
+                                    {
+                                        <div class="solution_container">
+                                            <div class="solution_container_pd">
+                                                <div class="col-md-1 appIconContainer">
+                                                    <span class="@aw.Icon"></span>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <h5 class="f16">@aw.Name</h5>
+                                                    <p>@desc</p>
+                                                    <p class="small"><span>@apptype</span> Application</p>
+                                                </div>
+                                                <div class="col-md-1 flex-center">
+                                                    <a href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})" class="btn newsolution-btn">
+                                                        <i class="material-icons">open_in_new</i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
                             </div>
-                        }
+                        </div>
+                        <div class="application_t_wrapper">
+                            <h4><img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Mobile Applications <span class="apps_count"></span></h4>
+                            <div class="application_t_wrapper_body">
+                                @foreach (AppWrapper aw in appList)
+                                {
+                                    var apptype = (EbApplicationTypes)aw.AppType;
+
+                                    string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                    if (aw.AppType == 2)
+                                    {
+                                        <div class="solution_container">
+                                            <div class="solution_container_pd">
+                                                <div class="col-md-1 appIconContainer">
+                                                    <span class="@aw.Icon"></span>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <h5 class="f16">@aw.Name</h5>
+                                                    <p>@desc</p>
+                                                    <p class="small"><span>@apptype</span> Application</p>
+                                                </div>
+                                                <div class="col-md-1 flex-center">
+                                                    <a href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})" class="btn newsolution-btn">
+                                                        <i class="material-icons">open_in_new</i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="application_t_wrapper">
+                            <h4><img class="apptype_icon_devd" src="/images/svg/chat1.svg" /> Bot Applications <span class="apps_count"></span></h4>
+                            <div class="application_t_wrapper_body">
+                                @foreach (AppWrapper aw in appList)
+                                {
+                                    var apptype = (EbApplicationTypes)aw.AppType;
+
+                                    string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                    if (aw.AppType == 3)
+                                    {
+                                        <div class="solution_container">
+                                            <div class="solution_container_pd">
+                                                <div class="col-md-1 appIconContainer">
+                                                    <span class="@aw.Icon"></span>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <h5 class="f16">@aw.Name</h5>
+                                                    <p>@desc</p>
+                                                    <p class="small"><span>@apptype</span> Application</p>
+                                                </div>
+                                                <div class="col-md-1 flex-center">
+                                                    <a href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})" class="btn newsolution-btn">
+                                                        <i class="material-icons">open_in_new</i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
                     }
                 }
             </div>
@@ -74,4 +138,10 @@ Layout = "~/Views/Shared/_Layout1.cshtml";
      if ('@ViewBag.Msg') {
         EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
     }
+    $(document).ready(function () {
+        $.each($(".application_t_wrapper"), function (i, obj) {
+            var length = $(obj).children(".application_t_wrapper_body").children().length;
+            $(obj).children("h4").children(".apps_count").text("(" + length +")");
+        });
+    });
 </script>

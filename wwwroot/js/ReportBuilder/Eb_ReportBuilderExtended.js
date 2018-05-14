@@ -155,35 +155,32 @@
         this.obj = obj;
         this.control = control;
         if (this.control.css("left") !== 0 || this.control.css("top") !== 0 ){
-            switch (event.which) {
-                case 46:    //delete key
-                    this.control.remove();
-                    break;
-                case 37:    //left arrow key
-                    this.control.finish().animate({
-                        left: "-=1"
-                    });
-                    this.obj.Left -= 1;
-                    break;
-                case 38:    //up arrow key
-                    this.control.finish().animate({
-                        top: "-=1"
-                    });
-                    this.obj.Top -= 1;
-                    break;
-                case 39:    //right arrow key
-                    this.control.finish().animate({
-                        left: "+=1"
-                    });
-                    this.obj.Left += 1;
-                    break;
-                case 40:    //bottom arrow key
-                    this.control.finish().animate({
-                        top: "+=1"
-                    });
-                    this.obj.Top += 1;
-                    break;
+            if (event.which === 46) {
+                delete this.Rpt.objCollection[this.control.attr("id")];
+                this.control.remove();
             }
+            else if (event.which === 37) {
+                this.control.finish().animate({
+                    left: "-=1"
+                });
+            }
+            else if (event.which === 38) {
+                this.control.finish().animate({
+                    top: "-=1"
+                });
+            }
+            else if (event.which === 39) {
+                this.control.finish().animate({
+                    left: "+=1"
+                });
+            }
+            else if (event.which === 40) {
+                this.control.finish().animate({
+                    top: "+=1"
+                });
+            }
+            this.obj.Left = this.control.position().left;
+            this.obj.Top = this.control.position().top;
         }
     };
 
@@ -352,5 +349,5 @@
     };
     
     this.minMaxToolbar();
-    $(document).bind("keydown keypress keyup", this.keydownDocument.bind(this));
+    //$(document).bind("keydown keypress keyup", this.keydownDocument.bind(this));
 }

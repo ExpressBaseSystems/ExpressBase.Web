@@ -31,7 +31,18 @@ body {
         background: #4aade3;
         color: white;
     }
+.btn-normal {
 
+}
+.c-blue {
+    color: #4aade3;
+}
+.c-orange {
+    color: #f37e1a;
+}
+.c-normal {
+    color: #7d7979;
+}
 .eb-flex-center {
     display: flex;
     align-items: center;
@@ -746,7 +757,15 @@ body {
     justify-content: center;
     font-family: open sans;
 }
-
+.flex-center_rowwise {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: open sans;
+}
+.tdash_btn {
+    font-size:16px;
+}
 .small-desc-last {
     height: calc(100% - 75px);
     padding-top: 30px;

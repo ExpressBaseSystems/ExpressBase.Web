@@ -54,6 +54,7 @@
 
     this.contextMenudelete = function (eType, selector, action, originalEvent) {
         if (!$(selector.selector).hasClass("pageHeaders")) {
+            delete this.Rep.objCollection[$(selector.selector).attr("id")];
             $(selector.selector).remove();
         }
         else
@@ -146,30 +147,53 @@
         });
     };
 
+    this.getsummaryfns = function (eb_type) {//neeed to change
+        var fn = null;
+        switch (eb_type) {
+            case "DataFieldText":
+                fn = "SummaryFunctionsText";
+                break;
+            case "DataFieldDateTime":
+                fn = "SummaryFunctionsDateTime";
+                break;
+            case "DataFieldBoolean":
+                fn = "SummaryFunctionsBoolean";
+                break;
+            case "DataFieldNumeric":
+                fn = "SummaryFunctionsNumeric";
+                break;
+        }
+        return EbEnums[fn];
+    }
+
     this.addSummeryField = function (eType, selector, action, originalEvent) {
         $("#summarry-editor-modal-container").modal("toggle");
         this.selector = selector;
         this.$funcselect = $("#summarry-editor-modal-container #summary-func").empty();
         this.$sectionselect = $("#summarry-editor-modal-container #summary-sections").empty();
         var sections = this.getSectionToAddSum($(selector.selector));
+        var summaryFunc = this.getsummaryfns($(selector.selector).attr("eb-type"));//object
         if ($(selector.selector).hasClass("EbCol")) {
             $("#summarry-editor-modal-container #summary-fieldname").val($(selector.selector).text().trim());
             for (var func in summaryFunc) {
                 this.$funcselect.append(`<option 
-                value="${summaryFunc[func]}">${summaryFunc[func]}</option>`);
+                value="${func}">${func}</option>`);
             }
             for (var i = 0; i < sections.length; i++) {
                 this.$sectionselect.append(`<option 
                 value="#${sections[i].attr("id")}">${sections[i].attr("eb-type") + sections[i].attr("id").slice(-1)}</option>`);
             }
-            $("#submit-summary").off("click").on("click", this.appendSummaryField.bind(this));
         }
+        else if ($(selector.selector).hasClass("EbCalc")) {
+
+        }
+        $("#submit-summary").off("click").on("click", this.appendSummaryField.bind(this));
     };
 
     this.appendSummaryField = function (e) {
         $("#summarry-editor-modal-container").modal("toggle");
         var type = $(this.selector.selector).attr("eb-type");
-        var Objid = type + "Summary" + this.Rep.idCounter["Eb" + type + "SummaryCounter"]++;
+        var Objid = type + "Summary" + this.Rep.idCounter[type + "SummaryCounter"]++;
         var obj = new EbObjects["Eb" + type + "Summary"](Objid);
         $(this.$sectionselect.val()).append(obj.$Control.outerHTML());
         obj.DataField = $(this.selector.selector).text().trim();

@@ -73,6 +73,9 @@
             valueHTML = '<input type="date" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
+        else if (type === 25) {
+            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, IsCElimitEditor);
+        }
         else if (type > 6 && type < 11 || type === 22 || type === 24) {//  If collection editor
             if (meta.Limit === 0) {
                 valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'

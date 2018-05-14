@@ -188,7 +188,7 @@ var DvContainerObj = function (settings) {
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
 
-        if (counter === 2) {
+        if (counter === 24) {
             this.ReportExist();
             if (!this.isExistReport) {
                 EbMessage("show", { Message: "Max Limit(25) reached. Please close some visualizations....", AutoHide: false, Backgorund: "#f94a41" });

@@ -31,6 +31,8 @@ var DvContainerObj = function (settings) {
     this.PippedColl = {};
     this.TaggedColl = {};
     this.clickDot = false;
+    this.cellData = null;
+    this.isExistReport = false;
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -77,7 +79,8 @@ var DvContainerObj = function (settings) {
                 data = this.MainData,
                 rowData = this.rowData,
                 filterValues = this.filterValues,
-                url = this.url
+                url = this.url,
+                cellData = this.cellData,
             );
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
@@ -178,14 +181,26 @@ var DvContainerObj = function (settings) {
     }.bind(this);
 
     this.drawdvFromTable = function (row, filter, celldata) {
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
-        $("#obj_icons .btn").prop("disabled", true);
         this.rowData = row;
         this.filterValues = filter;
         this.cellData = celldata;
         var copycelldata = this.cellData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+
+        if (counter === 24) {
+            this.ReportExist();
+            if (!this.isExistReport) {
+                EbMessage("show", { Message: "Max Limit(25) reached. Please close some visualizations....", AutoHide: false, Backgorund: "#f94a41" });
+                var __count = focusedId.split("_")[5];
+                if (__count === "0")
+                    $('.splitdiv_parent').slick('slickGoTo', "1");
+            }
+            return;
+        }
+
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+        $("#obj_icons .btn").prop("disabled", true);
         if (this.dvRefid !== null) {
             if (this.dvRefid.split("-")[2] === "3") { 
                 if ($(`#reportIframe_${copycelldata}`).length === 0) {
@@ -193,7 +208,8 @@ var DvContainerObj = function (settings) {
                     obj.$type = "EbReport";
                     obj.EbSid = "container_Report" + ++counter;
                     obj.Pippedfrom = "";
-                    obj.celldata = this.cellData;
+                    obj.cellData = this.cellData;
+                    obj.Name = "Report";
                     this.currentObj = obj;
                     var id = `${obj.EbSid}_0_${counter}`;
                     focusedId = "sub_window_dv" + obj.EbSid + "_0_" + counter;
@@ -207,13 +223,13 @@ var DvContainerObj = function (settings) {
                              </div>
                     </div>`);
 
-                    this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid);
+                    this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid, cellData = this.cellData);
 
                     $(`#reportIframe_${copycelldata}`).on('load', this.iframeLoad.bind(this));
                 }
                 else {
                     $.each(this.dvcol, function (key, value) {
-                        if (value.EbObject.celldata !== undefined && value.EbObject.celldata === this.cellData)
+                        if (value.EbObject.cellData !== undefined && value.EbObject.cellData === this.cellData)
                             focusedId = key;
                     }.bind(this));
                     $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"));
@@ -263,6 +279,20 @@ var DvContainerObj = function (settings) {
         this.modifyNavigation();
         $("#eb_common_loader").EbLoader("hide");
     };
+
+    this.ReportExist = function () {
+        var copycelldata = this.cellData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
+        if ($(`#reportIframe_${copycelldata}`).length === 1) {
+            $.each(this.dvcol, function (key, value) {
+                if (value.EbObject.cellData !== undefined && value.EbObject.cellData === this.cellData)
+                    focusedId = key;
+            }.bind(this));
+            this.isExistReport = true;
+            $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"));
+        }
+        else
+            this.isExistReport = false;
+    }
 
     this.xx = function () {
         var Obj = {};
@@ -509,6 +539,10 @@ var DvContainerObj = function (settings) {
                 this.eventBind();
             }
         }
+        if (this.dvcol[focusedId].cellData !== null && this.dvcol[focusedId].cellData !== "")
+            $("#objname").text(this.dvcol[focusedId].EbObject.Name + " - " + this.dvcol[focusedId].cellData);
+        else
+            $("#objname").text(this.dvcol[focusedId].EbObject.Name);
         this.focusDot();
     };
 
@@ -651,7 +685,7 @@ var DvContainerObj = function (settings) {
                 $("#copydiv_" + temp).append(image);
             }
             else {
-                curdiv.next().children(".popover-title").text("Report-"+dvObj.EbObject.celldata);
+                curdiv.next().children(".popover-title").text("Report-"+dvObj.EbObject.cellData);
                 curdiv.next().children().find(".dotsnapshot").empty();
                 curdiv.next().children().find(".dotsnapshot").append(`<div id="copydiv_${temp}" style="width:200px;"></div>`);
                 $("#copydiv_" + temp).append(`<img src="../images/pdf.png" style='width:inherit;'>`);
@@ -698,6 +732,7 @@ var DvContainerObj = function (settings) {
         $.each($(".slick-track").children(), function (i, sub) {
             $(sub).attr("data-slick-index",i);
         });
+        counter--;
     }
 
     this.init();

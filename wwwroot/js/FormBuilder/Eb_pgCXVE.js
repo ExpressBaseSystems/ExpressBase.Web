@@ -159,7 +159,7 @@
         }
         else if ((this.editor > 7 && this.editor < 11) || this.editor === 24) {
             var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
-            this.CEeditorsHelper(sourceProp);
+            this.CEHelper(sourceProp);
         }
         this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
         this.drake.on("drag", this.onDragFn.bind(this));
@@ -181,7 +181,6 @@
         else {
             this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         }
-
         this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG", null, null, this.PGobj);
         this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
         this.CE_PGObj.parentId = this.PGobj.wraperId;
@@ -189,43 +188,62 @@
         this.setObjTypeDD();
     };
 
-    this.CEeditorsHelper = function (sourceProp) {
-        if (this.editor === 8)
+    this.CEHelper = function (sourceProp) {
+        this.Dprop = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Dprop;
+        this.allCols = this.PGobj.PropsObj[sourceProp].$values;
+        if (this.editor === 8) {
+            this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
+        }
         else if (this.editor === 10) {
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
             $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         }
-        this.allCols = this.PGobj.PropsObj[sourceProp].$values;
-        this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+        else if (this.editor === 24)
+            this.rowGrouping = this.getRowGroupingByProp(this.allCols);
+        else
+            this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
         this.setSelColtiles();
         this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+    };
+
+    this.getRowGroupingByProp = function (allCols) {
+        var res = [];
+        $.each(allCols, function (i, obj) {
+            if (obj[this.Dprop] === true)// hard code
+                res.push(obj);
+        }.bind(this));
+        return res;
     };
 
     this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10) && !this.PGobj.IsReadonly; };
 
     this.onDragFn = function (el, source) {
         $(':focus').blur();
-        if (source.id !== this.CE_all_ctrlsContId) {
+        if (source.id !== this.CE_all_ctrlsContId) {// target 2nd source
             if (this.editor === 7)
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
             else if (this.editor === 9 || this.editor === 8)
                 this.movingObj = this.rowGrouping.splice(this.rowGrouping.indexOf(getObjByval(this.rowGrouping, "name", el.id)), 1)[0];
+            else if (this.editor === 24)
+                this.movingObj = getObjByval(this.allCols, "name", el.id);
         }
-        else if (this.editor === 10)
-            this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
-        else
-            this.movingObj = null;
-        if (this.editor === 9 || this.editor === 8)
-            this.movingObj = getObjByval(this.allCols, "name", el.id);
+        else {
+            if (this.editor === 9 || this.editor === 8 || this.editor === 24)
+                this.movingObj = getObjByval(this.allCols, "name", el.id);
+            else if (this.editor === 10)
+                this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
+            else
+                this.movingObj = null;
+        }
     };
 
     this.onDragendFn = function (el) {
         var sibling = $(el).next();
         var target = $(el).parent()[0];
         var idx = sibling.index() - 1;
-        if (target.id !== this.CE_all_ctrlsContId) {
+        if (target.id !== this.CE_all_ctrlsContId) {// target 2nd column
             if (this.editor === 7) {
                 if (sibling.length > 0)
                     this.CElist.splice(idx, 0, this.movingObj);
@@ -236,6 +254,13 @@
                     this.rowGrouping.splice(idx, 0, this.movingObj);
                 else
                     this.rowGrouping.push(this.movingObj);
+            } else if (this.editor === 24) {
+                this.movingObj[this.Dprop] = true;//////// hard code
+                this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
+                if (sibling.length > 0)
+                    this.allCols.splice(idx, 0, this.movingObj);
+                else
+                    this.allCols.push(this.movingObj);
             }
         }
         else if (this.editor === 10) {
@@ -243,6 +268,9 @@
                 this.allCols.splice(idx, 0, this.movingObj);
             else
                 this.allCols.push(this.movingObj);
+        }
+        else if (this.editor === 24) {
+            this.movingObj[this.Dprop] = false;//////// hard code
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn);
     };
@@ -433,27 +461,33 @@
     };
 
     this.set9ColTiles = function (containerId, values) {
+        var idField = "name";//////////////////////
+        if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
+            idField = "ColumnName";////////////////////////
         $.each(values, function (i, control) {
-            var name = (control.Name || control.name);
+            var name = (control.Name || control.name || control.ColumnName);
             var type = control.$type.split(",")[0].split(".").pop();
             if (!(control.Name || control.name))
                 var label = control.EbSid;
             var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
-            if (!getObjByval(this.rowGrouping, "name", control.name)) {
-                $("#" + containerId).append($tile);
+            if (!getObjByval(this.rowGrouping, idField, control[idField])) {
+                $("#" + containerId).append($tile);// 1st column
             } else {
                 if (containerId === this.CEctrlsContId)
-                    $("#" + this.CEctrlsContId).append($tile);
+                    $("#" + this.CEctrlsContId).append($tile);// 2nd column
             }
         }.bind(this));
         $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn);
     };
 
     this.setSelColtiles = function () {
+        var idField = "name";//////////////////////
         var selObjs = [];
         if (this.rowGrouping.length !== 0) {
-            $.each(this.rowGrouping, function (i, name) {
-                selObjs.push(getObjByval(this.allCols, "name", name.name));
+            if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
+                idField = "ColumnName";////////////////////////
+            $.each(this.rowGrouping, function (i, ctrl) {
+                selObjs.push(getObjByval(this.allCols, idField, ctrl[idField]));
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
         }
@@ -511,6 +545,10 @@
             this.rowGrouping.splice(this.rowGrouping.indexOf(getObjByval(this.rowGrouping, "name", $tile.attr("id"))), 1)[0]
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
+        else if (this.editor === 24) {
+            getObjByval(this.rowGrouping, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+            $("#" + this.CE_all_ctrlsContId).prepend($tile);
+        }
     }.bind(this);
 
     this.colTileFocusFn = function (e) {
@@ -531,7 +569,7 @@
             else
                 obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];/////////// optimize
         }
-        else if (this.editor === 9 || this.editor === 10) {
+        else if (this.editor === 9 || this.editor === 10 || this.editor === 24) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
         }
         else if (this.editor === 22) {

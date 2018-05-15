@@ -443,7 +443,7 @@
                 writable: false,
                 value: function () {
                     for (var i = 0, n = this.length, l = arguments.length; i < l; i++ , n++) {
-                        _this.updateColumn(this, n, this[n] = arguments[i], PropsObj); // assign/raise your event
+                        _this.updateColumn(this, n, this[n] = arguments[i], PropsObj); // assign  ||raise your event
                     }
                     return n;
                 }

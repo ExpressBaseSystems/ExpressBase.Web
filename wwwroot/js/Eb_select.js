@@ -42,6 +42,10 @@ var EbSelect = function (ctrl) {
     this.Msearch_colName = '';
     this.cols = [];
 
+
+    Vue.component('v-select', VueSelect.VueSelect);
+    Vue.config.devtools = true;
+
     // functions
 
     //init() for event binding....

@@ -31,7 +31,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.pg = new Eb_PropertyGrid("propGrid");
     this.RM = new ReportMenu(this);
 
-    this.idCounter = this.RbCommon.EbidCounter;
+    this.idCounter = CtrlCounters; //from c# //this.RbCommon.EbidCounter;
     this.subSecIdCounter = this.RbCommon.subSecCounter;
     this.EbObjectSections = this.RbCommon.EbObjectSections;
     this.msBoxSubNotation = this.RbCommon.msBoxSubNotation;
@@ -362,7 +362,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         else
             Title = this.col.text().trim();
         if (!this.col.hasClass('dropped')) {
-            var Objid = this.Objtype + (this.idCounter["Eb" + this.Objtype + "Counter"])++;
+            var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++;
             var obj = new EbObjects["Eb" + this.Objtype](Objid);
             this.dropLoc.append(obj.$Control.outerHTML());
             this.objCollection[Objid] = obj;
@@ -461,11 +461,11 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.editElement = function (control) {
         this.control = control;
-        this.control.on('keydown', this.keyBoardShortcuts.bind(this));
+        this.control.off("keydown").on('keydown', this.keyBoardShortcuts.bind(this));
     };//control edit options
 
     this.keyBoardShortcuts = function (e) {
-        e.preventDefault();
+        e.preventDefault(); event.stopPropagation();
         var obj = this.repExtern.keyboardevents(e, this.control, this.objCollection[this.control.attr('id')]);
         this.pg.setObject(this.objCollection[this.control.attr('id')], AllMetas["Eb" + this.control.attr('eb-type')]);
     }
@@ -670,7 +670,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             var editControl = $controlColl[i];
             var eb_type = editControl.$type.split(",")[0].split(".").pop().substring(2);
             var Objid = editControl.EbSid;
-            eb_type + (this.idCounter["Eb" + eb_type + "Counter"])++;
+            var id = this.idCounter[eb_type + "Counter"]++;
             var $control = new EbObjects["Eb" + eb_type](Objid);
             if (container)
                 this.containerId = $("#page-reportLayer");

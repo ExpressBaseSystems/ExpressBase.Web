@@ -209,7 +209,7 @@
 
     this.goToSolutionWindow = function (e) {
         var console = $(e.target).closest(".btn").attr("wc");
-        var tk = getToken();
+        var tk = getTok();
         var rtk = getrToken();
         var form = document.createElement("form");
         form.setAttribute("method", "post");

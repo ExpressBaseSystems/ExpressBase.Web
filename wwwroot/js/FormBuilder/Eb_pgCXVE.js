@@ -159,7 +159,7 @@
         }
         else if ((this.editor > 7 && this.editor < 11) || this.editor === 24) {
             var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
-            this.CEeditorsHelper(sourceProp);
+            this.CEHelper(sourceProp);
         }
         this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
         this.drake.on("drag", this.onDragFn.bind(this));
@@ -188,11 +188,13 @@
         this.setObjTypeDD();
     };
 
-    this.CEeditorsHelper = function (sourceProp) {
+    this.CEHelper = function (sourceProp) {
         this.Dprop = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Dprop;
         this.allCols = this.PGobj.PropsObj[sourceProp].$values;
-        if (this.editor === 8)
+        if (this.editor === 8) {
+            this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
+        }
         else if (this.editor === 10) {
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
             $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
@@ -459,13 +461,16 @@
     };
 
     this.set9ColTiles = function (containerId, values) {
+        var idField = "name";//////////////////////
+        if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
+            idField = "ColumnName";////////////////////////
         $.each(values, function (i, control) {
-            var name = (control.Name || control.name);
+            var name = (control.Name || control.name || control.ColumnName);
             var type = control.$type.split(",")[0].split(".").pop();
             if (!(control.Name || control.name))
                 var label = control.EbSid;
             var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
-            if (!getObjByval(this.rowGrouping, "name", control.name)) {
+            if (!getObjByval(this.rowGrouping, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
                 if (containerId === this.CEctrlsContId)
@@ -476,10 +481,13 @@
     };
 
     this.setSelColtiles = function () {
+        var idField = "name";//////////////////////
         var selObjs = [];
         if (this.rowGrouping.length !== 0) {
-            $.each(this.rowGrouping, function (i, name) {
-                selObjs.push(getObjByval(this.allCols, "name", name.name));
+            if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
+                idField = "ColumnName";////////////////////////
+            $.each(this.rowGrouping, function (i, ctrl) {
+                selObjs.push(getObjByval(this.allCols, idField, ctrl[idField]));
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
         }

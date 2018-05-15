@@ -248,6 +248,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                     value = $('#' + myarray[i]).val();
                 if (type === '6')
                     value = value.substring(0, 10);
+                if (type === '16' && !(Number.isNaN(value)))
+                {
+                    value = parseInt(value);
+                    type = 8;
+                }
                 ParamsArray.push(new fltr_obj(type, name, value));
                 //ObjString += '{\"name\":\"' + name + '\",';
                 //ObjString += '\"type\":\"' + type + '\",';

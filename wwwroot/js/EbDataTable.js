@@ -596,9 +596,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     if (dtype === '6')
                         v = $(FdCont + ' #' + id).val().substring(0, 10);
                     else if (dtype === '3')
-                        v =$(FdCont).children().find("[name=" + id + "]:checked").val();
-                    else
+                        v = $(FdCont).children().find("[name=" + id + "]:checked").val();
+                    else {
                         v = $(FdCont + ' #' + id).val();
+                        if (dtype === '16' && !(Number.isNaN(v))) {
+                            v = parseInt(v);
+                            dtype = 8;
+                        }
+                    }
+
                     if (v !== "")
                         fltr_collection.push(new fltr_obj(dtype, id, v));
                 });

@@ -38,7 +38,10 @@
         var form = document.createElement("form");
         form.style.display = "none";
         form.setAttribute("method", "post");
-        form.setAttribute("action", "http://" + sid + "-dev." + window.location.host + "/Ext/SwitchContext");
+        if (console === "dc")
+            form.setAttribute("action", "http://" + sid + "-dev." + window.location.host + "/Ext/SwitchContext");
+        else if (console === "uc")
+            form.setAttribute("action", "http://" + sid + "." + window.location.host + "/Ext/SwitchContext");
         form.setAttribute("target", "_blank");
         var token = document.createElement("input");
         token.setAttribute("name", "Btoken");

@@ -208,10 +208,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window ");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
         $(sideDivId).append(text);
+        $(sideDivId + " #filterBox").append(`<button id="btnGo_${this.tableId}" class="btn commonControl pull-right"><i class="fa fa-play" aria-hidden="true"></i></button>`)
+        $("#btnGo_" + this.tableId).click(this.getColumnsSuccess.bind(this));
         console.log(text);
         $(sideDivId).find("input").on("keyup", function (e) {
             if (e.which === 13)
-                $("#btnGo0").click();
+                $("#btnGo" + this.tabNum).click();
         })
         if (text !== "") {
             if (this.login === 'dc' && this.tabNum === 0)
@@ -227,7 +229,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.FD = false;
             $(sideDivId).css("display", "none");
             $("#eb_common_loader").EbLoader("hide");
-            $("#btnGo" + this.tabNum).trigger("click");
+            $("#btnGo_" + this.tableId).trigger("click");
         }
         else {
             this.FD = true;
@@ -237,7 +239,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         $(sideDivId + ' #' + param.Name).val(param.Value);
                     });
                 }
-                $("#btnGo" + this.tabNum).trigger("click");
+                $("#btnGo_" + this.tableId).trigger("click");
             }
             else {
                 $(sideDivId).css("display", "inline");
@@ -520,7 +522,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.paging = true;
             o.lengthChange = true;
             if (!this.ebSettings.IsPaging) {
-                o.dom = "<'col-md-12 noPadding display-none'B>rt";
+                o.dom = "<'col-md-12 noPadding'Bi>rt";
                 o.paging = false;
                 o.lengthChange = false;
             }
@@ -776,7 +778,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.createFooter(1);
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
         }
-        this.addFilterEventListeners();
+        //this.addFilterEventListeners();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
         //this.contextMenu();
@@ -932,7 +934,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.ebSettings.rowGrouping.$values.length > 0)
             this.doRowgrouping();
         this.summarize2();
-        this.addFilterEventListeners();
+        //this.addFilterEventListeners();
         //$("#" + this.tableId + "_wrapper .dataTables_scrollHeadInner table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollBody table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollFootInner table").css("width", "100%");
@@ -1180,7 +1182,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
         //this.printAllbtn.off("click").on("click", this.printAll.bind(this));
         this.printSelectedbtn.off("click").on("click", this.printSelected.bind(this));
-        this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
+        $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
@@ -1226,9 +1228,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dvcontainerObj.modifyNavigation();
                 $("#btnTogglePPGrid" + this.tableId).hide();
             }
-            this.addFilterEventListeners();
 
-            $("#" + this.tableId + "_fileBtns").hide();
+            $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
+            this.addFilterEventListeners();
 
         }
     };

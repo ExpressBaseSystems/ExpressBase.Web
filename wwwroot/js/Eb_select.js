@@ -10,8 +10,11 @@ var EbSelect = function (ctrl) {
     //parameters   
     this.name = ctrl.name;
     this.dsid = ctrl.dataSourceId;
-    this.vmName = ctrl.valueMembers["0"].name; //ctrl.vmName;
-    this.dmNames = ctrl.displayMembers.map(function (obj) { return obj.name; });;//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
+    this.idField = "name";
+    if (!(Object.keys(ctrl.valueMember).includes("name")))//////////////////
+        this.idField = "columnName";////////////////////////
+    this.vmName = ctrl.valueMember[this.idField]; //ctrl.vmName;
+    this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; });;//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
     this.maxLimit = ctrl.maxLimit;//ctrl.maxLimit;
     this.minLimit = ctrl.minLimit;//ctrl.minLimit;
     this.multiSelect = (ctrl.maxLimit > 1);
@@ -38,7 +41,6 @@ var EbSelect = function (ctrl) {
     this.cellTr = null;
     this.Msearch_colName = '';
     this.cols = [];
-
     // functions
 
     //init() for event binding....
@@ -110,7 +112,7 @@ var EbSelect = function (ctrl) {
                 data: function (dq) {
                     delete dq.columns; delete dq.order; delete dq.search;
                     dq.RefId = this.dsid;
-                    dq.Params = { Name: "id", Value: "ac", Type:"11"};
+                    dq.Params = { Name: "id", Value: "ac", Type: "11" };
                 }.bind(this),
                 dataSrc: function (dd) {
                     return dd.data;
@@ -121,7 +123,7 @@ var EbSelect = function (ctrl) {
                 this.AskWhatU();
                 $tableCont.show(100);
             }.bind(this)
-            
+
         });
         //settings: {
         //    hideCheckbox: (this.multiSelect === false) ? true : false,
@@ -200,9 +202,9 @@ var EbSelect = function (ctrl) {
                 valueMembers: [],
                 DDstate: false
             },
-            watch: {
-                valueMembers: this.V_watchVMembers.bind(this),
-            },
+            //watch: {
+            //    valueMembers: this.V_watchVMembers.bind(this),
+            //},
             methods: {
                 toggleDD: this.V_toggleDD.bind(this),
                 showDD: this.V_showDD.bind(this),

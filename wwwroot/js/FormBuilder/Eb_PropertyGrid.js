@@ -73,15 +73,19 @@
             valueHTML = '<input type="date" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
-        else if (type > 6 && type < 11 || type === 22 || type === 24) {//  If collection editor
-            if (meta.Limit === 0) {
+        //else if (type === 25) {
+        //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
+        //}
+        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25) {//  If collection editor
+            if (meta.Limit === 0 && type !==25) {
                 valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
                     + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             }
             else {
                 var _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
-                _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.name || a.ColumnName))];
+                _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.Name || a.ColumnName))];
+                //_meta.enumoptions = ["--none--","one"];
                 value = value ? _meta.enumoptions.indexOf(value.name || value.ColumnName) : 0;
                 return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf, true);
             }

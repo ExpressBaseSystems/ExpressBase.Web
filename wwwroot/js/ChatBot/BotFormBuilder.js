@@ -23,6 +23,8 @@
     this.movingObj = {};
 
     this.controlOnFocus = function (e) {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
         if (e.target.id === "form-buider-form") {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
@@ -101,15 +103,20 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if (source.id === "form-buider-toolBox" && target.id === "form-buider-toolBox") {
+        var toolBoxId = "form-buider-toolBox";
+        var formId = "form-buider-form";
+        if (source.id === toolBoxId && target.id === toolBoxId) {
             return false;
         }
         // allow copy except toolbox
-        if (source.id === "form-buider-toolBox" && target.id !== "form-buider-toolBox") {
+        if (source.id === toolBoxId && target.id === formId) {
             return true;
         }
+        if (source.id === formId && target.id === toolBoxId) {
+            return false;
+        }
         // sortable with in the container
-        if (source.id !== "form-buider-toolBox" && source === target) {
+        if (source.id === formId && target.id === formId) {
             return true;
         }
         else {
@@ -443,7 +450,7 @@
                 writable: false,
                 value: function () {
                     for (var i = 0, n = this.length, l = arguments.length; i < l; i++ , n++) {
-                        _this.updateColumn(this, n, this[n] = arguments[i], PropsObj); // assign/raise your event
+                        _this.updateColumn(this, n, this[n] = arguments[i], PropsObj); // assign  ||raise your event
                     }
                     return n;
                 }

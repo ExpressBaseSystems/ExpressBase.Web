@@ -41,11 +41,6 @@ var EbSelect = function (ctrl) {
     this.cellTr = null;
     this.Msearch_colName = '';
     this.cols = [];
-
-
-    Vue.component('v-select', VueSelect.VueSelect);
-    Vue.config.devtools = true;
-
     // functions
 
     //init() for event binding....
@@ -207,9 +202,9 @@ var EbSelect = function (ctrl) {
                 valueMembers: [],
                 DDstate: false
             },
-            watch: {
-                valueMembers: this.V_watchVMembers.bind(this),
-            },
+            //watch: {
+            //    valueMembers: this.V_watchVMembers.bind(this),
+            //},
             methods: {
                 toggleDD: this.V_toggleDD.bind(this),
                 showDD: this.V_showDD.bind(this),

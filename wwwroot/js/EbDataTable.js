@@ -1,4 +1,26 @@
-﻿function gettypefromNumber(num) {
+﻿$.fn.setCursorPosition = function (pos) {
+    this.each(function (index, elem) {
+        if (elem.setSelectionRange) {
+            elem.setSelectionRange(pos, pos);
+        } else if (elem.createTextRange) {
+            var range = elem.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', pos);
+            range.moveStart('character', pos);
+            range.select();
+        }
+    });
+    return this;
+};
+
+function splitval(val) {
+    return val.split(/\|\s*/);
+}
+function extractLast(term) {
+    return splitval(term).pop();
+}
+
+function gettypefromNumber(num) {
     if (num == 16)
         return "String";
     else if (num == 6)
@@ -522,7 +544,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.paging = true;
             o.lengthChange = true;
             if (!this.ebSettings.IsPaging) {
-                o.dom = "<'col-md-12 noPadding'Bi>rt";
+                o.dom = "<'col-md-12 noPadding dispaly-none'B>rt";
                 o.paging = false;
                 o.lengthChange = false;
             }
@@ -784,7 +806,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.createFooter(1);
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
         }
-        //this.addFilterEventListeners();
+        this.addFilterEventListeners();
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
         //this.contextMenu();
@@ -1242,15 +1264,40 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.setFilterboxValue = function (i, obj) {
-        //if (this.dtsettings.filterParams !== null && this.dtsettings.filterParams !== undefined) {
-        //var colum = $(obj).children('span').text();
-        //if (colum === this.dtsettings.filterParams.column) {
-        //    $(obj).children('div').children('.eb_finput').val(this.dtsettings.filterParams.key);
-        //}
-        //}
-        //else
         $(obj).children('div').children('.eb_finput').off("keypress").on("keypress", this.call_filter);
-
+        $(obj).children('div').children('.eb_finput').on("keydown", function (event) {
+            if (event.keyCode === $.ui.keyCode.TAB &&
+                $(this).autocomplete("instance").menu.active) {
+                event.preventDefault();
+            }
+        });
+        var name = $(obj).children('span').text();
+        var idx = this.Api.columns(name + ':name').indexes()[0];
+        var data = this.Api.columns(idx).data()[0];
+        $(obj).children('div').children('.eb_finput').autocomplete({
+            //source: $.unique(this.Api.columns(idx).data()[0]),
+            source: function (request, response) {
+                // delegate back to autocomplete, but extract the last term
+                response($.ui.autocomplete.filter(
+                    $.unique(data), extractLast(request.term)));
+            }.bind(this),
+            focus: function () {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function (event, ui) {
+                var terms = splitval(this.value);
+                // remove the current input
+                terms.pop();
+                // add the selected item
+                terms.push(ui.item.value);
+                // add placeholder to get the comma-and-space at the end
+                terms.push("");
+                this.value = terms.join(" | ");
+                //$(this).setCursorPosition(this.value.length-1);
+                return false;
+            }
+        });
     };
 
     this.orderingEvent = function (e) {

@@ -358,6 +358,8 @@ namespace ExpressBase.Web.Controllers
                 TempData[Msg] = "Application Created succesfully.";
                 return RedirectToAction("AppDashBoard", new RouteValueDictionary(new { Id = resultlist.id,Type = Convert.ToInt32(req["AppType"]) })); 
             }
+            else
+                TempData[Msg] = "Application Creation failed.";
             return View();
         }      
 

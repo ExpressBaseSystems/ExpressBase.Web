@@ -184,27 +184,19 @@
         }.bind(this));
 
 
-        $Ctrl.find(".card-head-filterdiv select").off('change').on('change', function () {
-            if(this.slickFiltered)
-                $Ctrl.find('.cards-cont').slick('slickUnfilter');
-            this.filterVal = null;
-            if ($($(event.target)[0]).find(":selected")["0"].index !== 0) {
-                this.filterVal = $(event.target).val();
-                var $cards = this.getJqryObjOfCards($Ctrl, this.searchTxt, this.filterVal);
-                $Ctrl.find('.cards-cont').slick('slickFilter', $cards);
-                this.slickFiltered = true;
+        $Ctrl.find(".card-head-filterdiv select").off('change').on('change', function () {                
+            this.filterVal = $(event.target).val();
+            if ($($(event.target)[0]).find(":selected")["0"].index === 0) {
+                this.filterVal = null;
             }
-            $Ctrl.find(".card-head-cardno").text("1 of " + $Ctrl.find('.cards-cont').children().length);   
+            this.filterCards($Ctrl);
         }.bind(this, $Ctrl));
 
-        $Ctrl.find(".card-head-searchdiv input").off('keyup').on('keyup', function () {
-            if(this.slickFiltered)
-                $Ctrl.find('.cards-cont').slick('slickUnfilter');
+        $Ctrl.find(".card-head-searchdiv input").off('keyup').on('keyup', function () {              
             this.searchTxt = $(event.target).val().trim();
-            var $cards = this.getJqryObjOfCards($Ctrl, this.searchTxt, this.filterVal);
-            $Ctrl.find('.cards-cont').slick('slickFilter', $cards);
-            this.slickFiltered = true;
-            $Ctrl.find(".card-head-cardno").text("1 of " + $Ctrl.find('.cards-cont').children().length);
+            if (this.searchTxt === "")
+                this.searchTxt = null;
+            this.filterCards($Ctrl);
         }.bind(this, $Ctrl));
 
         this.slickObjOfCards = $Ctrl.find('.cards-cont').not('.slick-initialized').slick({
@@ -227,6 +219,18 @@
         }.bind($Ctrl));
     };
 
+    this.filterCards = function ($Ctrl) {
+        if (this.slickFiltered) {
+            $Ctrl.find('.cards-cont').slick('slickUnfilter');
+            $Ctrl.find('.cards-cont').slick('slickGoTo', 0);
+        }
+        var $cards = this.getJqryObjOfCards($Ctrl, this.searchTxt, this.filterVal);
+        $Ctrl.find('.cards-cont').slick('slickFilter', $cards);
+        this.slickFiltered = true;
+        var cardLength = $Ctrl.find('.cards-cont')["0"].slick.$slides.length;
+        $Ctrl.find(".card-head-cardno").text("1 of " + cardLength);
+    }
+
     //it will return card array(jqry object) of all condition satisfying cards
     this.getJqryObjOfCards = function ($Ctrl, searchTxt, filterVal) {
         var ftemp = "";
@@ -236,21 +240,24 @@
         }
         if (searchTxt !== null) {
             $.each($Ctrl.find('.card-cont'), function (k, cObj) {
-                if ($($(cObj).find('.card-title-cont')[0]).text().trim().toLowerCase().search(searchTxt.toLowerCase()) !== -1)
+                if ($(cObj).attr('search-value').trim().toLowerCase().search(searchTxt.toLowerCase()) !== -1)
                     stemp.push('[card-id=' + $(cObj).attr('card-id') + ']');
             }.bind(this));
         }
         var selQuery = '.card-cont';
-        if (filterVal !== null && stemp.length !== 0) {
+        if (filterVal !== null && searchTxt !== null) {
+            if (stemp.length === 0) {
+                stemp[0] = -1;
+            }
             selQuery = '.card-cont' + stemp[0] + ftemp;
             for (var i = 1; i < stemp.length; i++) {
                 selQuery += ',' + stemp[i] + ftemp;
             }
         }
-        else if (stemp.length === 0) {
+        else if (searchTxt === null && filterVal !== null) {
             selQuery = '.card-cont' + ftemp;
         }
-        else if (filterVal === null){
+        else if (filterVal === null && searchTxt !== null){
             selQuery = '.card-cont' + stemp[0] ;
             for (var i = 1; i < stemp.length; i++) {
                 selQuery += ',' + stemp[i];

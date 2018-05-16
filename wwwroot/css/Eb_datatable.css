@@ -168,7 +168,10 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
 }
 
 .eb_finput {
-    width: auto !important;
+    //width: auto !important;
+    width: 100% !important;
+    padding: 1px !important;
+    font-size: 11px !important;
 }
 
 .columnDrag {

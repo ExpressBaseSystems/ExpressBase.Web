@@ -553,8 +553,7 @@
 	padding: 0px;
 }
 	.eb-chatBox .card-head-filter-box:focus {
-		width: 100px;
-		border: 1px solid #aaa;
+		width: 117px;
 	}
 .eb-chatBox .card-head-filter-icon {
 	position: relative;

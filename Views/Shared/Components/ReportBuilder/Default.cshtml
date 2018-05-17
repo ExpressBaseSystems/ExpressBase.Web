@@ -157,6 +157,7 @@
                     <div class='ruler' style="display:none"></div>
                 </div>
                 <div class='rulerleft' style="display:none"></div>
+                <div class='rulerleft_Lyr_rpt' style="display:none"></div>
                 <div id="PageContainer" class="PageContainer">
                 </div>
             </div>
@@ -209,8 +210,8 @@
     }
     var  RBobj = new RptBuilder('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;
-    $(document).ready(function () {
 
+    $(document).ready(function () {
         $('#running-summary').treed();
         $('#calculated-fields').treed();
         $('#special-fields').treed();
@@ -260,8 +261,5 @@
             $("#Rptbgimg").change(function () {
                 setBackgroud(this);
         });
-
-        //$('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container" });
-
     });
 </script>

@@ -148,7 +148,8 @@
         this.filterVal = null;
         this.searchTxt = null;
         this.slickFiltered = false;
-        $Ctrl.find(".card-head-cardno").text("1 of " + $Ctrl.find('.cards-cont').children().length);
+        var noOfCard = $Ctrl.find('.cards-cont').children().length;
+        $Ctrl.find(".card-head-cardno").text((noOfCard === 0 ? "0": "1") + " of " + noOfCard);
         $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
             if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
                 this.sumFieldsName.push(obj.name);
@@ -216,7 +217,7 @@
         });
 
         $Ctrl.find('.cards-cont').on('afterChange', function (event, slick, currentSlide, nextSlide) {
-            $Ctrl.find(".card-head-cardno").text((currentSlide + 1) + " of " + slick.$slides.length);
+            $Ctrl.find(".card-head-cardno").text((slick.$slides.length === 0 ? "0" : (currentSlide + 1)) + " of " + slick.$slides.length);
         }.bind($Ctrl));
     };
 
@@ -229,7 +230,7 @@
         $Ctrl.find('.cards-cont').slick('slickFilter', $cards);
         this.slickFiltered = true;
         var cardLength = $Ctrl.find('.cards-cont')["0"].slick.$slides.length;
-        $Ctrl.find(".card-head-cardno").text("1 of " + cardLength);
+        $Ctrl.find(".card-head-cardno").text((cardLength === 0 ? "0": "1") + " of " + cardLength);
     }
 
     //it will return card array(jqry object) of all condition satisfying cards

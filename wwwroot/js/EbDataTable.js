@@ -623,7 +623,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         v = $(FdCont).children().find("[name=" + id + "]:checked").val();
                     else {
                         v = $(FdCont + ' #' + id).val();
-                        if (dtype === '16' && !(Number.isNaN(v))) {
+                        if (dtype === '16' && !(isNaN(v))) {
                             v = parseInt(v);
                             dtype = 8;
                         }
@@ -829,6 +829,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$("#" + this.tableId + "_wrapper .dataTables_scrollHeadInner table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollBody table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollFootInner table").css("width", "100%");
+        $('[data-toggle="tooltip"]').tooltip({
+            placement: 'bottom'
+        });
+        $('[data-toggle="tooltip"]').on('show.bs.tooltip', function () {
+            if (typeof $(this).attr("data-coltyp") !== typeof undefined && $(this).attr("data-coltyp") !== false) {
+                var text = "aaaa";
+                $(this).attr("data-original-title", text);
+            }
+        })
 
         this.Api.columns.adjust();
         $("#eb_common_loader").EbLoader("hide");
@@ -1274,30 +1283,32 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var name = $(obj).children('span').text();
         var idx = this.Api.columns(name + ':name').indexes()[0];
         var data = this.Api.columns(idx).data()[0];
-        $(obj).children('div').children('.eb_finput').autocomplete({
-            //source: $.unique(this.Api.columns(idx).data()[0]),
-            source: function (request, response) {
-                // delegate back to autocomplete, but extract the last term
-                response($.ui.autocomplete.filter(
-                    $.unique(data), extractLast(request.term)));
-            }.bind(this),
-            focus: function () {
-                // prevent value inserted on focus
-                return false;
-            },
-            select: function (event, ui) {
-                var terms = splitval(this.value);
-                // remove the current input
-                terms.pop();
-                // add the selected item
-                terms.push(ui.item.value);
-                // add placeholder to get the comma-and-space at the end
-                terms.push("");
-                this.value = terms.join(" | ");
-                //$(this).setCursorPosition(this.value.length-1);
-                return false;
-            }
-        });
+        if ($(obj).children('div').children('.eb_finput').attr("data-coltyp") === "string") {
+            $(obj).children('div').children('.eb_finput').autocomplete({
+                //source: $.unique(this.Api.columns(idx).data()[0]),
+                source: function (request, response) {
+                    // delegate back to autocomplete, but extract the last term
+                    response($.ui.autocomplete.filter(
+                        $.unique(data), extractLast(request.term)));
+                }.bind(this),
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function (event, ui) {
+                    var terms = splitval(this.value);
+                    // remove the current input
+                    terms.pop();
+                    // add the selected item
+                    terms.push(ui.item.value);
+                    // add placeholder to get the comma-and-space at the end
+                    terms.push("");
+                    this.value = terms.join(" | ");
+                    //$(this).setCursorPosition(this.value.length-1);
+                    return false;
+                }
+            });
+        }
     };
 
     this.orderingEvent = function (e) {
@@ -1396,7 +1407,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             "<li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='number' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='number' data-toggle='tooltip' title='' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -1417,7 +1428,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='date' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='date' data-toggle='tooltip' title='' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -1437,7 +1448,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='text' style='width:100%!important'  class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' data-toggle='tooltip' title='' style='width:100%!important'  class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             " </div> ";
         return drptext;
     };
@@ -1446,7 +1457,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var filter = "";
         var id = tableId + "_" + colum + "_hdr_txt1";
         var cls = tableId + "_hchk";
-        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool" + this.tableId + "' style='vertical-align: middle;'></center>";
+        filter = "<center><input type='checkbox' id='" + id + "' data-toggle='tooltip' title='' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool" + this.tableId + "' style='vertical-align: middle;'></center>";
         return filter;
     };
 

@@ -39,13 +39,13 @@ namespace ExpressBase.Web.Controllers
 		//}
 
 		
-		public IActionResult CommonList(string type)
+		public IActionResult CommonList(string type, string show)
 		{
 			IServiceClient client = this.ServiceClient;
 			ViewBag.ListType = type;
 			if (type == "Users")
 			{
-				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1());
+				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1() { Show = show });
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
 			else if (type == "Roles")

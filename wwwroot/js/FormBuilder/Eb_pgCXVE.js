@@ -41,6 +41,28 @@
 
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(PropsObj[_CurProp]);
+        if (this.editor === 7)
+            this.reDrawRelatedPGrows();
+    };
+
+    this.reDrawRelatedPGrows = function () {
+        var curprop = this.PGobj.CurProp;
+        var relatedPropNames = this.getRltdNames(curprop);////
+        relatedPropNames.forEach(function (name, i) {
+            var _meta = getObjByval(this.PGobj.Metas, "name", name);
+            var trHtml = this.PGobj.getPropertyRowHtml(name, this.PGobj.PropsObj[name], _meta, _meta.options, false, true);
+            $("#" + this.PGobj.wraperId + " [name=" + name + "Tr]").replaceWith(trHtml);
+            this.PGobj.postCreateInitFuncs[name]();
+        }.bind(this));
+    };
+
+    this.getRltdNames = function (source) {
+        var names = [];
+        this.PGobj.Metas.forEach(function (meta, i) {
+            if (meta.editor === 25 && meta.source === source)
+                names.push(meta.name);
+        });
+        return names;
     };
 
     this.pgCXEshowCallback = function () {
@@ -589,10 +611,14 @@
         var SelType = $DD.val();
         var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
         var EbSid = this.PGobj.PropsObj.EbSid + "_" + $DD.text() + (lastItemCount + 1);
-        if (this.PGobj.CurProp === "Controls")////////////// need CE test and correction
+        if (this.PGobj.CurProp === "Controls") {////////////// need CE test and correction
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-        else
-            this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(new EbObjects[SelType](EbSid));
+        }
+        else {
+            var obj = new EbObjects[SelType](EbSid);
+            obj.Name = $DD.text() + (lastItemCount + 1);
+            this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
+        }
         this.setColTiles();
         $("#" + EbSid).click();
     };

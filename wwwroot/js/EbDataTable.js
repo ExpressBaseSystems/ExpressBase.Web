@@ -1,4 +1,26 @@
-﻿function gettypefromNumber(num) {
+﻿$.fn.setCursorPosition = function (pos) {
+    this.each(function (index, elem) {
+        if (elem.setSelectionRange) {
+            elem.setSelectionRange(pos, pos);
+        } else if (elem.createTextRange) {
+            var range = elem.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', pos);
+            range.moveStart('character', pos);
+            range.select();
+        }
+    });
+    return this;
+};
+
+function splitval(val) {
+    return val.split(/\|\s*/);
+}
+function extractLast(term) {
+    return splitval(term).pop();
+}
+
+function gettypefromNumber(num) {
     if (num == 16)
         return "String";
     else if (num == 6)
@@ -208,10 +230,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window ");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
         $(sideDivId).append(text);
+        $(sideDivId + " #filterBox").append(`<button id="btnGo_${this.tableId}" class="btn commonControl pull-right"><i class="fa fa-play" aria-hidden="true"></i></button>`)
+        $("#btnGo_" + this.tableId).click(this.getColumnsSuccess.bind(this));
         console.log(text);
         $(sideDivId).find("input").on("keyup", function (e) {
             if (e.which === 13)
-                $("#btnGo0").click();
+                $("#btnGo" + this.tabNum).click();
         })
         if (text !== "") {
             if (this.login === 'dc' && this.tabNum === 0)
@@ -227,7 +251,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.FD = false;
             $(sideDivId).css("display", "none");
             $("#eb_common_loader").EbLoader("hide");
-            $("#btnGo" + this.tabNum).trigger("click");
+            $("#btnGo_" + this.tableId).trigger("click");
         }
         else {
             this.FD = true;
@@ -237,7 +261,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         $(sideDivId + ' #' + param.Name).val(param.Value);
                     });
                 }
-                $("#btnGo" + this.tabNum).trigger("click");
+                $("#btnGo_" + this.tableId).trigger("click");
             }
             else {
                 $(sideDivId).css("display", "inline");
@@ -520,7 +544,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.paging = true;
             o.lengthChange = true;
             if (!this.ebSettings.IsPaging) {
-                o.dom = "<'col-md-12 noPadding display-none'B>rt";
+                o.dom = "<'col-md-12 noPadding dispaly-none'B>rt";
                 o.paging = false;
                 o.lengthChange = false;
             }
@@ -599,7 +623,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         v = $(FdCont).children().find("[name=" + id + "]:checked").val();
                     else {
                         v = $(FdCont + ' #' + id).val();
-                        if (dtype === '16' && !(Number.isNaN(v))) {
+                        if (dtype === '16' && !(isNaN(v))) {
                             v = parseInt(v);
                             dtype = 8;
                         }
@@ -805,6 +829,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$("#" + this.tableId + "_wrapper .dataTables_scrollHeadInner table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollBody table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollFootInner table").css("width", "100%");
+        $('[data-toggle="tooltip"]').tooltip({
+            placement: 'bottom'
+        });
+        $('[data-toggle="tooltip"]').on('show.bs.tooltip', function () {
+            if (typeof $(this).attr("data-coltyp") !== typeof undefined && $(this).attr("data-coltyp") !== false) {
+                var text = "aaaa";
+                $(this).attr("data-original-title", text);
+            }
+        })
 
         this.Api.columns.adjust();
         $("#eb_common_loader").EbLoader("hide");
@@ -938,7 +971,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.ebSettings.rowGrouping.$values.length > 0)
             this.doRowgrouping();
         this.summarize2();
-        this.addFilterEventListeners();
+        //this.addFilterEventListeners();
         //$("#" + this.tableId + "_wrapper .dataTables_scrollHeadInner table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollBody table").css("width", "100%");
         //$("#" + this.tableId + "_wrapper .dataTables_scrollFootInner table").css("width", "100%");
@@ -1186,7 +1219,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
         //this.printAllbtn.off("click").on("click", this.printAll.bind(this));
         this.printSelectedbtn.off("click").on("click", this.printSelected.bind(this));
-        this.excelbtn.off("click").on("click", this.ExportToExcel.bind(this));
+        $("#btnExcel" + this.tableId).off("click").on("click", this.ExportToExcel.bind(this));
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
@@ -1232,23 +1265,50 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dvcontainerObj.modifyNavigation();
                 $("#btnTogglePPGrid" + this.tableId).hide();
             }
-            this.addFilterEventListeners();
 
-            $("#" + this.tableId + "_fileBtns").hide();
+            $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
+            this.addFilterEventListeners();
 
         }
     };
 
     this.setFilterboxValue = function (i, obj) {
-        //if (this.dtsettings.filterParams !== null && this.dtsettings.filterParams !== undefined) {
-        //var colum = $(obj).children('span').text();
-        //if (colum === this.dtsettings.filterParams.column) {
-        //    $(obj).children('div').children('.eb_finput').val(this.dtsettings.filterParams.key);
-        //}
-        //}
-        //else
         $(obj).children('div').children('.eb_finput').off("keypress").on("keypress", this.call_filter);
-
+        $(obj).children('div').children('.eb_finput').on("keydown", function (event) {
+            if (event.keyCode === $.ui.keyCode.TAB &&
+                $(this).autocomplete("instance").menu.active) {
+                event.preventDefault();
+            }
+        });
+        var name = $(obj).children('span').text();
+        var idx = this.Api.columns(name + ':name').indexes()[0];
+        var data = this.Api.columns(idx).data()[0];
+        if ($(obj).children('div').children('.eb_finput').attr("data-coltyp") === "string") {
+            $(obj).children('div').children('.eb_finput').autocomplete({
+                //source: $.unique(this.Api.columns(idx).data()[0]),
+                source: function (request, response) {
+                    // delegate back to autocomplete, but extract the last term
+                    response($.ui.autocomplete.filter(
+                        $.unique(data), extractLast(request.term)));
+                }.bind(this),
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function (event, ui) {
+                    var terms = splitval(this.value);
+                    // remove the current input
+                    terms.pop();
+                    // add the selected item
+                    terms.push(ui.item.value);
+                    // add placeholder to get the comma-and-space at the end
+                    terms.push("");
+                    this.value = terms.join(" | ");
+                    //$(this).setCursorPosition(this.value.length-1);
+                    return false;
+                }
+            });
+        }
     };
 
     this.orderingEvent = function (e) {
@@ -1347,7 +1407,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             "<li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='number' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='number' data-toggle='tooltip' title='' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -1368,7 +1428,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='date' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='date' data-toggle='tooltip' title='' style='width:100%!important' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -1388,7 +1448,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='text' style='width:100%!important'  class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' data-toggle='tooltip' title='' style='width:100%!important'  class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             " </div> ";
         return drptext;
     };
@@ -1397,7 +1457,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var filter = "";
         var id = tableId + "_" + colum + "_hdr_txt1";
         var cls = tableId + "_hchk";
-        filter = "<center><input type='checkbox' id='" + id + "' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool" + this.tableId + "' style='vertical-align: middle;'></center>";
+        filter = "<center><input type='checkbox' id='" + id + "' data-toggle='tooltip' title='' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool" + this.tableId + "' style='vertical-align: middle;'></center>";
         return filter;
     };
 

@@ -124,7 +124,8 @@
 
     this.ComboBox = function (ctrl) {
 
-        
+        Vue.component('v-select', VueSelect.VueSelect);
+        Vue.config.devtools = true;
 
         $(`#${ctrl.name}_loading-image`).hide();
         //var EbCombo = new EbSelect(ctrl.name, ctrl.DataSourceId, ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000], ctrl);
@@ -147,7 +148,8 @@
         this.filterVal = null;
         this.searchTxt = null;
         this.slickFiltered = false;
-        $Ctrl.find(".card-head-cardno").text("1 of " + $Ctrl.find('.cards-cont').children().length);
+        var noOfCard = $Ctrl.find('.cards-cont').children().length;
+        $Ctrl.find(".card-head-cardno").text((noOfCard === 0 ? "0": "1") + " of " + noOfCard);
         $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
             if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
                 this.sumFieldsName.push(obj.name);
@@ -184,27 +186,19 @@
         }.bind(this));
 
 
-        $Ctrl.find(".card-head-filterdiv select").off('change').on('change', function () {
-            if(this.slickFiltered)
-                $Ctrl.find('.cards-cont').slick('slickUnfilter');
-            this.filterVal = null;
-            if ($($(event.target)[0]).find(":selected")["0"].index !== 0) {
-                this.filterVal = $(event.target).val();
-                var $cards = this.getJqryObjOfCards($Ctrl, this.searchTxt, this.filterVal);
-                $Ctrl.find('.cards-cont').slick('slickFilter', $cards);
-                this.slickFiltered = true;
+        $Ctrl.find(".card-head-filterdiv select").off('change').on('change', function () {                
+            this.filterVal = $(event.target).val();
+            if ($($(event.target)[0]).find(":selected")["0"].index === 0) {
+                this.filterVal = null;
             }
-            $Ctrl.find(".card-head-cardno").text("1 of " + $Ctrl.find('.cards-cont').children().length);   
+            this.filterCards($Ctrl);
         }.bind(this, $Ctrl));
 
-        $Ctrl.find(".card-head-searchdiv input").off('keyup').on('keyup', function () {
-            if(this.slickFiltered)
-                $Ctrl.find('.cards-cont').slick('slickUnfilter');
+        $Ctrl.find(".card-head-searchdiv input").off('keyup').on('keyup', function () {              
             this.searchTxt = $(event.target).val().trim();
-            var $cards = this.getJqryObjOfCards($Ctrl, this.searchTxt, this.filterVal);
-            $Ctrl.find('.cards-cont').slick('slickFilter', $cards);
-            this.slickFiltered = true;
-            $Ctrl.find(".card-head-cardno").text("1 of " + $Ctrl.find('.cards-cont').children().length);
+            if (this.searchTxt === "")
+                this.searchTxt = null;
+            this.filterCards($Ctrl);
         }.bind(this, $Ctrl));
 
         this.slickObjOfCards = $Ctrl.find('.cards-cont').not('.slick-initialized').slick({
@@ -223,9 +217,21 @@
         });
 
         $Ctrl.find('.cards-cont').on('afterChange', function (event, slick, currentSlide, nextSlide) {
-            $Ctrl.find(".card-head-cardno").text((currentSlide + 1) + " of " + slick.$slides.length);
+            $Ctrl.find(".card-head-cardno").text((slick.$slides.length === 0 ? "0" : (currentSlide + 1)) + " of " + slick.$slides.length);
         }.bind($Ctrl));
     };
+
+    this.filterCards = function ($Ctrl) {
+        if (this.slickFiltered) {
+            $Ctrl.find('.cards-cont').slick('slickUnfilter');
+            $Ctrl.find('.cards-cont').slick('slickGoTo', 0);
+        }
+        var $cards = this.getJqryObjOfCards($Ctrl, this.searchTxt, this.filterVal);
+        $Ctrl.find('.cards-cont').slick('slickFilter', $cards);
+        this.slickFiltered = true;
+        var cardLength = $Ctrl.find('.cards-cont')["0"].slick.$slides.length;
+        $Ctrl.find(".card-head-cardno").text((cardLength === 0 ? "0": "1") + " of " + cardLength);
+    }
 
     //it will return card array(jqry object) of all condition satisfying cards
     this.getJqryObjOfCards = function ($Ctrl, searchTxt, filterVal) {
@@ -236,21 +242,24 @@
         }
         if (searchTxt !== null) {
             $.each($Ctrl.find('.card-cont'), function (k, cObj) {
-                if ($($(cObj).find('.card-title-cont')[0]).text().trim().toLowerCase().search(searchTxt.toLowerCase()) !== -1)
+                if ($(cObj).attr('search-value').trim().toLowerCase().search(searchTxt.toLowerCase()) !== -1)
                     stemp.push('[card-id=' + $(cObj).attr('card-id') + ']');
             }.bind(this));
         }
         var selQuery = '.card-cont';
-        if (filterVal !== null && stemp.length !== 0) {
+        if (filterVal !== null && searchTxt !== null) {
+            if (stemp.length === 0) {
+                stemp[0] = -1;
+            }
             selQuery = '.card-cont' + stemp[0] + ftemp;
             for (var i = 1; i < stemp.length; i++) {
                 selQuery += ',' + stemp[i] + ftemp;
             }
         }
-        else if (stemp.length === 0) {
+        else if (searchTxt === null && filterVal !== null) {
             selQuery = '.card-cont' + ftemp;
         }
-        else if (filterVal === null){
+        else if (filterVal === null && searchTxt !== null){
             selQuery = '.card-cont' + stemp[0] ;
             for (var i = 1; i < stemp.length; i++) {
                 selQuery += ',' + stemp[i];

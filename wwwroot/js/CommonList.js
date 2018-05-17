@@ -107,7 +107,15 @@
                         </div>`;
 
         if (this.metadata.indexOf("_user") !== -1) {
-            headHtml += `<button class='btn' title='Create User' onclick="window.open('../Security/ManageUser', '_blank');"><i class="fa fa-plus-circle"></i> New User </button>`;
+            headHtml += `<button class='btn' title='List/Unlist Hidden Users' onclick = "
+                                var plength = window.location.href.split('&').length;
+                                if(plength === 1){
+                                    window.open('../Security/CommonList?type=Users&show=all', '_self');
+                                }
+                                else{
+                                    window.open('../Security/CommonList?type=Users', '_self');
+                                }
+                        "><i class="fa fa-eye-slash" aria-hidden="true"></i></button>  <button class='btn' title='Create User' onclick="window.open('../Security/ManageUser', '_blank');"><i class="fa fa-plus-circle"></i> New User </button>`;
         }
         else if (this.metadata.indexOf("_userGroup") !== -1) {
             headHtml += `<button class='btn' title='Create UserGroup' onclick="window.open('../Security/ManageUserGroups', '_blank');"><i class="fa fa-plus-circle"></i> New UserGroup </button>`;
@@ -115,7 +123,7 @@
         else if (this.metadata.indexOf("_roles") !== -1) {
             headHtml += `<button class='btn' title='Create Role' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i> New Role </button>`;
         }
-
+        
         this.menuBarObj.BuildMenu(headHtml);
 
         $('#txtSrchCmnList').on('keyup', function (e) {

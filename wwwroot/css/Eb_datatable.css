@@ -90,8 +90,10 @@ td.resizer {
 }
 
 .dataTables_scrollHead {
-    padding-bottom: 250px;
-    margin-bottom: -250px;
+    /*padding-bottom: 250px;
+    margin-bottom: -250px;*/
+    padding-bottom: 250px !important;
+    margin-bottom: -240px !important;
 }
 
 .dataTables_scrollFoot {
@@ -242,7 +244,13 @@ table.dataTable tbody td.dt-body-right {
 }
 
 .dataTables_scroll {
-    height: calc(100vh - 176px);
+    //height: calc(100vh - 176px);
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    position: absolute !important;
+    padding-top: 40px !important;
 }
 
 /*/////////*/
@@ -250,8 +258,12 @@ table.dataTable tbody td.dt-body-right {
     height: 100%;
 }
 
+.table.dataTable {
+    margin-bottom: 0px !important;
+}
+
 .dataTables_scrollBody {
-    height: calc(100% - 47px) !important;
+    /*height: calc(100% - 50px) !important;*/
 }
 
 /*///////////*/

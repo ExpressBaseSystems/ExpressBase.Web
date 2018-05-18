@@ -151,60 +151,51 @@
         }
     };
 
-    this.keyboardevents = function (event, control, obj) {
-        this.obj = obj;
-        this.control = control;
-        if (this.control.css("left") !== 0 || this.control.css("top") !== 0 ){
-            if (event.which === 46) {
-                delete this.Rpt.objCollection[this.control.attr("id")];
-                this.control.remove();
+    this.keyInteractions = function (event) {
+        var eb_cntrol = this.Rpt.objCollection[event.target.id];
+        var js_cntrol = event;
+        if ([37, 38, 39, 40].indexOf(event.which) >= 0)
+            this.moveCtrl(js_cntrol, eb_cntrol);
+        else
+            this.keyCtrolFn(js_cntrol, eb_cntrol);
+    };
+
+    this.keyCtrolFn = function (js_cntrol, eb_cntrol) {
+        var jq_cntrol = $(js_cntrol.target);
+
+        if (js_cntrol.which === 46) {
+            delete this.Rpt.objCollection[js_cntrol.id];
+            jq_cntrol.remove();
+        }
+        else if (event.ctrlKey)
+            this.markEbCntrol(js_cntrol, eb_cntrol);
+    }
+
+    this.moveCtrl = function (js_cntrol, eb_cntrol) {
+        var jq_cntrol = $(js_cntrol.target);
+        if (jq_cntrol.css("left") !== 0 || jq_cntrol.css("top") !== 0 ){
+            if (js_cntrol.which === 37) {
+                jq_cntrol.finish().animate({left: "-=1"});
             }
-            else if (event.which === 37) {
-                this.control.finish().animate({
-                    left: "-=1"
-                });
+            else if (js_cntrol.which === 38) {
+                jq_cntrol.finish().animate({top: "-=1"});
             }
-            else if (event.which === 38) {
-                this.control.finish().animate({
-                    top: "-=1"
-                });
+            else if (js_cntrol.which === 39) {
+                jq_cntrol.finish().animate({left: "+=1"});
             }
-            else if (event.which === 39) {
-                this.control.finish().animate({
-                    left: "+=1"
-                });
+            else if (js_cntrol.which === 40) {
+                jq_cntrol.finish().animate({top: "+=1"});
             }
-            else if (event.which === 40) {
-                this.control.finish().animate({
-                    top: "+=1"
-                });
-            }
-            this.obj.Left = this.control.position().left;
-            this.obj.Top = this.control.position().top;
+            eb_cntrol.Left = jq_cntrol.position().left;
+            eb_cntrol.Top = jq_cntrol.position().top;
         }
     };
 
-    this.keydownDocument = function (e) {
-        this.key = e.which;
-        this.ctrl = e.ctrlKey
-        $('.dropped').on("click", this.mark.bind(this));
-        switch (e.which) {
-            case 17:    //ctrl key
-                
-                break;           
-        }
-    };
-
-    this.mark = function (event) {
-        event.stopPropagation();
-        if (this.ctrl) {
-            $(event.target).toggleClass("marked"); 
-            this.ctrl = false;
-        } 
+    this.markEbCntrol = function (js_cntrol, eb_cntrol) {
+        $(js_cntrol.target).toggleClass("marked"); 
     };
 
     this.alignGroup = function (eType, selector, action, originalEvent) {
-        
         var top = $(selector.selector).css("top");
         var left = $(selector.selector).css("left");  
         var parent = $(selector.selector).parent();
@@ -349,5 +340,5 @@
     };
     
     this.minMaxToolbar();
-    //$(document).bind("keydown keypress keyup", this.keydownDocument.bind(this));
+    $('body').off("keydown").on("keydown", ".dropped", this.keyInteractions.bind(this));
 }

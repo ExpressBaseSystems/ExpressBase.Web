@@ -1,36 +1,5 @@
 ﻿var RbCommon = function (RbMainObj) {
     this.RbObj = RbMainObj;
-    this.EbidCounter = {
-        EbDataFieldTextCounter: 0,
-        EbDataFieldDateTimeCounter: 0,
-        EbDataFieldBooleanCounter: 0,
-        EbDataFieldNumericCounter: 0,
-        EbDataFieldNumericSummaryCounter: 0,
-        EbDataFieldTextSummaryCounter: 0,
-        EbDataFieldBooleanSummaryCounter: 0,
-        EbDataFieldDateTimeSummaryCounter: 0,
-        EbTableCounter: 0,
-        EbImgCounter: 0,
-        EbDateTimeCounter: 0,
-        EbPageXYCounter: 0,
-        EbPageNoCounter: 0,
-        EbTextCounter: 0,
-        EbBarcodeCounter: 0,
-        EbQRcodeCounter: 0,
-        EbWaterMarkCounter: 0,
-        EbCircleCounter: 0,
-        EbRectCounter: 0,
-        EbArrRCounter: 0,
-        EbArrLCounter: 0,
-        EbArrUCounter: 0,
-        EbArrDCounter: 0,
-        EbByArrHCounter: 0,
-        EbByArrVCounter: 0,
-        EbHlCounter: 0,
-        EbVlCounter: 0,
-        EbSerialNumberCounter: 0,
-        EbCalcFieldCounter: 0
-    };
 
     this.subSecCounter = {
         Countrpthead: 1,
@@ -104,6 +73,13 @@
         3:"justify"
     }
 
+    this.setMarginOnedit = function (margin) {
+        $(".track_line_vert1").css("left", this.RbObj.repExtern.convertPointToPixel(margin.Left));
+        this.RbObj.margin.Left = $(".track_line_vert1").position().left;
+        $(".track_line_vert2").css("left", parseFloat(this.RbObj.width) - this.RbObj.repExtern.convertPointToPixel(margin.Right));
+        this.RbObj.margin.Right = $(".track_line_vert2").position().left;
+    };
+
     this.onTrackerStop = function (e, ui) {
         var $t = $(ui.helper);
         if ($t.hasClass("track_line_vert1")) {
@@ -117,14 +93,48 @@
     };
 
     this.windowscroll = function () {
-        //$(".tracker_drag").css({ "top": $(window).scrollTop()});
-        $(".tracker_drag").css({ "height": ($(".page").height() - $(window).scrollTop()) + 20, "top": $(window).scrollTop() });
+        var $layer = null;
+        if ($(".page-reportLayer").is(":visible"))
+            $layer = ".page-reportLayer";
+        else
+            $layer = ".page";
+        $(".tracker_drag").css({ "height": ($($layer).height() - $(window).scrollTop()) + 20, "top": $(window).scrollTop() });
     };
 
+    this.ValidateCalcExpression = function (obj) {
+        $.ajax({
+            url: "../RB/ValidateCalcExpression",
+            type: "POST",
+            cache: false,
+            data: {
+                refid: this.RbObj.EbObject.DataSourceRefId,
+                expression: atob(obj.ValueExpression)
+            },
+            success: function (result) {
+                console.log(result);
+            }
+        });
+    }
+
     this.start = function () {
-        this.RbObj.margin.Right = $(".track_line_vert2").position().left;
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
         $(window).on("scroll", this.windowscroll.bind(this));
+        $("#reportLayer").on("click", function (e) {
+            $(e.target).closest("div").toggleClass("layeractive");
+            $("#sectionLayer").removeClass("layeractive");
+            $(".multiSplit,.headersections,#page,.rulerleft").hide();
+            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").show();
+            $(".tracker_drag").css("height", "100%");
+            containment = ".page-reportLayer";
+        }.bind(this));
+        $("#sectionLayer").on("click", function (e) {
+            $(e.target).closest("div").toggleClass("layeractive");
+            $("#reportLayer").removeClass("layeractive");
+            $(".multiSplit,.headersections,#page,.rulerleft").show();
+            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").hide();
+            $(".tracker_drag").css("height", "100%");
+            containment = ".page";
+        }.bind(this));
     };
     
     this.start();

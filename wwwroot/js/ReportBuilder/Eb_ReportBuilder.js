@@ -1,12 +1,4 @@
-﻿
-var summaryFunc = {
-    0: "Average",
-    1: "Count",
-    2: "Max",
-    3: "Min",
-    4: "Sum"
-}
-var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
+﻿var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
     var containment = ".page";
     this.Tenantid = 
     this.EbObject = dsobj;
@@ -128,6 +120,26 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
             else
                 $tick.addClass(this.rulerTypesObj[this.rulertype].major);
             $rulerleft.append($tick);
+        }
+
+        var $rulerleft_lyr = $('.rulerleft_Lyr_rpt').css({ "height": this.height });
+        for (i = 0, step = 0; i < $rulerleft_lyr.innerHeight() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
+            $tick = $('<div>');
+            if (step === 0) {
+                if (this.rulertype === "px")
+                    $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(i * 5);
+                else
+                    $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(k++);
+            }
+            else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
+                $tick.addClass(this.rulerTypesObj[this.rulertype].minor);
+                if (step === 9) {
+                    step = -1;
+                }
+            }
+            else
+                $tick.addClass(this.rulerTypesObj[this.rulertype].major);
+            $rulerleft_lyr.append($tick);
         }
     };
 
@@ -413,19 +425,16 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     this.elementOnFocus = function (event) {
         event.stopPropagation();
         var curControl = $(event.target);
-        var id = curControl.attr("id");
-        var curObject = this.objCollection[id];
+        var curObject = this.objCollection[event.target.id];
         var type = curControl.attr('eb-type');
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
-        if (!curControl.hasClass("pageHeaders")) {
-            this.editElement(curControl);
+        if (!curControl.hasClass("pageHeaders"))
             this.Resizable(curControl);
-        }
         this.RM.Menu(curControl);
     };//obj send to pg on focus
 
     this.Resizable = function (object) {
-        $("#" + object.attr("id")).css({ "text-overflow": "unset", "overflow": "visible" });
+       $("#" + object.attr("id")).css({ "text-overflow": "unset", "overflow": "visible" });
         if (object.hasClass("Ebshapes")) {
             if (object.attr("eb-type") === "ArrR" || object.attr("eb-type") === "ArrL") {
                 this.resizing(object, "e,w");
@@ -449,20 +458,13 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
     };
 
     this.resizing = function (object, handles) {
-        object.resizable({
-            containment: "parent", handles: handles, stop: this.onReSizeFn.bind(this)
-        });
+        object.resizable({containment: "parent", handles: handles, stop: this.onReSizeFn.bind(this)});
     };
 
     this.destroyResizable = function (event) {
         $(event.target).css({ "text-overflow": "ellipsis", "overflow": "hidden" });
         $(event.target).resizable("destroy");
     }
-
-    this.editElement = function (control) {
-        this.control = control;
-        this.control.off("keydown").on('keydown', this.keyBoardShortcuts.bind(this));
-    };//control edit options
 
     this.keyBoardShortcuts = function (e) {
         e.preventDefault(); event.stopPropagation();
@@ -517,6 +519,9 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.EbObject.PaperSize = this.type;
         $.each($('.page-reportLayer').children(), this.findReportLayObjects.bind(this));
         $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
+
+        this.EbObject.Margin.Left = this.repExtern.convertTopoints(this.margin.Left);
+        this.EbObject.Margin.Right = this.repExtern.convertTopoints(parseFloat(this.width) - this.margin.Right);
         commonO.Current_obj = this.EbObject;
     };//save
 
@@ -646,16 +651,21 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
 
     this.renderOnedit = function () {
         for (var objPropIndex in this.EditObj) {
-            if (typeof this.EditObj[objPropIndex] === "object" && objPropIndex !=="Margin") {
+            if (typeof this.EditObj[objPropIndex] === "object" && objPropIndex !== "Margin") {
                 if (objPropIndex === "ReportObjects")
-                    this.appendHTMLonEdit(this.EditObj[objPropIndex].$values,"ReportObjects");
+                    this.appendHTMLonEdit(this.EditObj[objPropIndex].$values, "ReportObjects");
                 else
                     this.getContainerId(this.EditObj[objPropIndex].$values);
             }
+            else if (objPropIndex === "Margin")
+                $.extend(this.EbObject.Margin, this.EditObj.Margin);
+
         }
         if (this.EditObj.DataSourceRefId) {
             this.getDataSourceColoums(this.EditObj.DataSourceRefId);
         }
+        if (this.EbObject.Margin)
+            this.RbCommon.setMarginOnedit(this.EbObject.Margin);
     };
 
     this.getContainerId = function ($secColl) {
@@ -669,15 +679,16 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         for (var i = 0; i < $controlColl.length; i++) {
             var editControl = $controlColl[i];
             var eb_type = editControl.$type.split(",")[0].split(".").pop().substring(2);
-            var Objid = editControl.EbSid;
-            var id = this.idCounter[eb_type + "Counter"]++;
+            var Objid = eb_type + this.idCounter[eb_type + "Counter"]++;
             var $control = new EbObjects["Eb" + eb_type](Objid);
             if (container)
                 this.containerId = $("#page-reportLayer");
             this.containerId.append($control.$Control.outerHTML());
             this.repExtern.replaceProp($control, editControl);
+            $control.EbSid = Objid; $control.Name = Objid;
             this.objCollection[Objid] = $control;
             this.RefreshControl($control);
+            this.pg.addToDD(this.objCollection[Objid]);
         }
     };
     
@@ -698,12 +709,12 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         else if (pname === "IsLandscape") {
             this.setpageMode(obj);
         }
-        else if (pname === "Image") {
+        else if (pname === "Image" || pname === "WaterMark") {
             this.addImageFn(obj);
         }
-        else if (pname === "WaterMark") {
-            this.addImageFn(obj);
-        }
+        else if (pname === "ValueExpression") 
+            this.RbCommon.ValidateCalcExpression(obj);
+
         else if (pname === "WaterMarkText") {
             obj.Source = "";
             this.RefreshControl(obj);
@@ -736,7 +747,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.designHeight = "450px";
         this.EbObject.PaperSize = this.type;
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
-        $('#PageContainer,.ruler,.rulerleft').empty();
+        $('#PageContainer,.ruler,.rulerleft,.rulerleft_Lyr_rpt').empty();
         this.ruler();
         this.createPage();
         this.DragDrop_Items();
@@ -751,7 +762,7 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         this.designHeight = this.repExtern.convertPointToPixel(this.EditObj.DesignPageHeight) + "px";
         this.repExtern.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
-        $('#PageContainer,.ruler,.rulerleft').empty();
+        $('#PageContainer,.ruler,.rulerleft,.rulerleft_Lyr_rpt').empty();
         this.ruler();
         this.createPage();
         this.DragDrop_Items();
@@ -762,22 +773,10 @@ var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssur
         if (this.EbObject === null || this.EbObject === "undefined")
             this.newReport();
         else
-            this.editReport();       
+            this.editReport();  
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
-        $("#reportLayer").on("click", function (e) {
-            $(e.target).closest("div").toggleClass("layeractive");
-            $("#sectionLayer").removeClass("layeractive");
-            $(".multiSplit,.headersections,#page").hide();
-            $(".headersections-report-layer,#page-reportLayer").show();
-            containment = ".page-reportLayer";
-        }.bind(this));
-        $("#sectionLayer").on("click", function (e) {
-            $(e.target).closest("div").toggleClass("layeractive");
-            $("#reportLayer").removeClass("layeractive");
-            $(".multiSplit,.headersections,#page").show();
-            $(".headersections-report-layer,#page-reportLayer").hide();
-            containment = ".page";
-        }.bind(this));      
+        this.margin.Left = this.EbObject.Margin.Left || $(".track_line_vert1").position().left;
+        this.margin.Right = this.EbObject.Margin.Right || $(".track_line_vert2").position().left;
     };//report execution start func
     this.init();
 };

@@ -211,6 +211,7 @@
     margin-left: 16px;
     width: 100%;
     text-align: center;
+    max-width: 360px;
 }
 
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {

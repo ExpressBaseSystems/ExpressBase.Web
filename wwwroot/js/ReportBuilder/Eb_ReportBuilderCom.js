@@ -101,6 +101,21 @@
         $(".tracker_drag").css({ "height": ($($layer).height() - $(window).scrollTop()) + 20, "top": $(window).scrollTop() });
     };
 
+    this.ValidateCalcExpression = function (obj) {
+        $.ajax({
+            url: "../RB/ValidateCalcExpression",
+            type: "POST",
+            cache: false,
+            data: {
+                refid: this.RbObj.EbObject.DataSourceRefId,
+                expression: atob(obj.ValueExpression)
+            },
+            success: function (result) {
+                console.log(result);
+            }
+        });
+    }
+
     this.start = function () {
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
         $(window).on("scroll", this.windowscroll.bind(this));

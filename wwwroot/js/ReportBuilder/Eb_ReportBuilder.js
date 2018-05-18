@@ -709,12 +709,12 @@
         else if (pname === "IsLandscape") {
             this.setpageMode(obj);
         }
-        else if (pname === "Image") {
+        else if (pname === "Image" || pname === "WaterMark") {
             this.addImageFn(obj);
         }
-        else if (pname === "WaterMark") {
-            this.addImageFn(obj);
-        }
+        else if (pname === "ValueExpression") 
+            this.RbCommon.ValidateCalcExpression(obj);
+
         else if (pname === "WaterMarkText") {
             obj.Source = "";
             this.RefreshControl(obj);

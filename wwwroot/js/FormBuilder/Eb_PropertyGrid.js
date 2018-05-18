@@ -49,8 +49,12 @@
             if (!IsCElimitEditor)
                 this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
             else
-                this.getValueFuncs[name] = function () { var idx = parseInt($('#' + elemId).val()), value = (idx !== 0) ? this.PropsObj[meta.source].$values[idx - 1] : null; return value; }.bind(this);
-            this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
+                this.getValueFuncs[name] = function () {
+                    var idx = parseInt($('#' + elemId).val()),
+                        value = (idx !== 0) ? this.PropsObj[meta.source].$values[idx - 1] : null;
+                    return value;
+                }.bind(this);
+            this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) }); $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
 
         }
         else if (type === 2) {    // If number 
@@ -77,16 +81,16 @@
         //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
         //}
         else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25) {//  If collection editor
-            if (meta.Limit === 0 && type !==25) {
+            if (meta.Limit === 0 && type !== 25) {
                 valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
                     + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             }
             else {
                 var _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
-                _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.Name || a.ColumnName))];
+                _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.name || a.ColumnName || a.Name))];
                 //_meta.enumoptions = ["--none--","one"];
-                value = value ? _meta.enumoptions.indexOf(value.name || value.ColumnName) : 0;
+                value = value ? _meta.enumoptions.indexOf(value.name || value.ColumnName || value.Name) : 0;
                 return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf, true);
             }
         }
@@ -284,19 +288,18 @@
             $("#" + this.wraperId + " [name=" + prop + "Tr]").off("change", "input, select").on("change", "input, select", func);
             func();
         }
-        console.log("callOnchangeExecFns() called");
     };
 
     //makes a property editor readOnly
     this.MakeReadOnly = function (prop) {
         $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "not-allowed").css("background-color", "#e8e8e8").find("button").css("cursor", "not-allowed").prop('disabled', true);
+        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "not-allowed").css("opacity", "0.4").find("button").css("cursor", "not-allowed").prop('disabled', true);
     };
 
     //makes a property editor readWritable
     this.MakeReadWrite = function (prop) {
         $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false);
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "inherit").css("background-color", "inherit").find("button").css("cursor", "inherit").prop('disabled', false);
+        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "inherit").css("opacity", "1").find("button").css("cursor", "inherit").prop('disabled', false);
     };
 
     //makes a property row hidden
@@ -339,7 +342,6 @@
         var $innerHTML = $(this.innerHTML).hide();
         this.$PGcontainer.html($innerHTML);
         $innerHTML.fadeIn(300);
-        $("#" + id + ' .selectpicker').on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) });
     };
 
     //Creates Table rows and group them by property Group name 
@@ -529,7 +531,6 @@
         var $e = $(e.target);
         //$e.removeClass("Eb-invalid");
         $.each(this.AllObjects, function (i, obj) {
-            console.log(this.CurProp);
             if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] !== undefined && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
 
                 this.Ebalert.alert({

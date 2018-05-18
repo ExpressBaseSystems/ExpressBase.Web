@@ -39,20 +39,36 @@
         else if (this.editor === 21)
             PropsObj[_CurProp] = this.MLEObj.get();
 
-        this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         this.OnCXE_OK(PropsObj[_CurProp]);
-        if (this.editor === 7)
-            this.reDrawRelatedPGrows();
+        this.reDrawRelatedPGrows();
+        this.PGobj.OnInputchangedFn.bind(this.PGobj)();
+    };
+
+    this.CXVE_close = function (e) {
+        this.reDrawRelatedPGrows();
     };
 
     this.reDrawRelatedPGrows = function () {
+        var _PropsObj = this.PGobj.PropsObj;
         var curprop = this.PGobj.CurProp;
-        var relatedPropNames = this.getRltdNames(curprop);////
+        var relatedPropNames = this.getRltdNames(curprop);
         relatedPropNames.forEach(function (name, i) {
             var _meta = getObjByval(this.PGobj.Metas, "name", name);
             var trHtml = this.PGobj.getPropertyRowHtml(name, this.PGobj.PropsObj[name], _meta, _meta.options, false, true);
-            $("#" + this.PGobj.wraperId + " [name=" + name + "Tr]").replaceWith(trHtml);
+            var $tr = $(trHtml);
+            $("#" + this.PGobj.wraperId + " [name=" + name + "Tr]").replaceWith($tr);
+            if (_PropsObj[name]) {
+                _enumoptions = ["--none--", ..._PropsObj[curprop].$values.map(a => (a.name || a.ColumnName || a.Name))];
+                var idx = _enumoptions.indexOf((_PropsObj[name].name || _PropsObj[name].ColumnName || _PropsObj[name].Name));
+                if (idx < 0) {
+                    idx = 0;
+                    $tr.animate({ "opacity": "0" });
+                    $tr.animate({ "opacity": "1" });
+                }
+            }
+            $("#" + this.PGobj.wraperId + name).val(idx);
             this.PGobj.postCreateInitFuncs[name]();
+            $tr.find('.selectpicker').on('changed.bs.select', this.PGobj.OnInputchangedFn.bind(this.PGobj));
         }.bind(this));
     };
 
@@ -116,6 +132,7 @@
 
         $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $("#" + this.PGobj.wraperId + ' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
+        $("#" + this.PGobj.wraperId + ' .modal-header').off("click", ".close").on("click", ".close", this.CXVE_close.bind(this));
 
 
         if (this.PGobj.IsReadonly)
@@ -610,13 +627,14 @@
         var $DD = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected");
         var SelType = $DD.val();
         var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
-        var EbSid = this.PGobj.PropsObj.EbSid + "_" + $DD.text() + (lastItemCount + 1);
+        var ShortName = $DD.text() + (lastItemCount + 1);
+        var EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
         if (this.PGobj.CurProp === "Controls") {////////////// need CE test and correction
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         }
         else {
             var obj = new EbObjects[SelType](EbSid);
-            obj.Name = $DD.text() + (lastItemCount + 1);
+            obj.Name = ShortName;
             this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
         }
         this.setColTiles();

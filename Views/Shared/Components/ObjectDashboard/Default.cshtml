@@ -45,11 +45,11 @@
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
                     </button>
                     <div class="dropdown obj_dash_proimage_drp">
-                        <img src="~/images/proimg.jpg"  data-src=@DpUrl id="header_dp" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image" />
+                        <img src="~/images/proimg.jpg" data-src=@DpUrl id="header_dp" data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image" />
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <ul class="drp_ul">
                                 <li class="drp_item border_b" style="height:50px;">
-                                    <img src="~/images/proimg.jpg"  data-src=@DpUrl class="proimage_inner Eb_Image" /><div class="user_info">
+                                    <img src="~/images/proimg.jpg" data-src=@DpUrl class="proimage_inner Eb_Image" /><div class="user_info">
                                         <h4>@ViewBag.UserDisplayName</h4>
                                         <p>@ViewBag.email</p>
                                     </div>
@@ -68,13 +68,46 @@
 </div>
 <div class="row">
     <div class="dashbord" style="display:none;">
-        <div class="col-md-7 box2">
+        <div class="card1" style="margin-top: 20px;">
+            <div class="head">
+                <i class="fa fa-tags" aria-hidden="true"></i> Applications
+            </div>
+            <div class="card_body">
+                <input type="text" id="apps" class="typeahead form-control" data-role="tagsinput" />
+            </div>
+            @*<div class="firstcommit">
+                <h6 class="smallfont">Owner/Assignee</h6>
+                <div style="display:block">
+                    <div class="userimg">
+                        <img src="../static/dp/dp_@(ViewBag.Owner_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle"/>
+                    </div>
+                    <div class="profileInfo">
+                        <h6 class="xtrasmall">@ViewBag.Owner_Name</h6>
+                        <h6 class="xtrasmall">@ViewBag.Owner_Ts</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1 box4">
+                <h6 class="smallfont">Application</h6>
+                <select class="selectpicker btn" id="apps" name="Apps">
+                    <option id="" value="0">Select Application</option>
+                    @{
+                        foreach (KeyValuePair<string, object> entry in ViewBag.Apps)
+                        {
+                            <option id="" value="@entry.Key">@entry.Value</option>
+                        }
+                    }
+                </select>
+            </div>*@
+        </div>
+
+        <div class="box2">
             @{
                 if (ViewBag.Refid.Length > 0)
                 {
 
-                    <div class="col-md-3 card1">
-                        <div class="head text-center">
+                    <div class="card1">
+                        <div class="head">
                             Working Copy(s)
                         </div>
                         <div class="count text-center workcopies">
@@ -100,116 +133,87 @@
 
                         </div>
                     </div>
-                    <div class="col-md-3 card1">
-                        <div class="head text-center">
+                    <div class="card1">
+                        <div class="head">
                             Last Commit
                         </div>
-                        @{
-                            if (ViewBag.LastCommitedVersionRefid != "")
-                            {
-                                <div class="card1-mid">
-                                    <div class="count text-center">
-                                        <a href="#" class="wrkcpylink tag label label-primary" data-id="@ViewBag.LastCommitedVersionRefid" data-verNum="@ViewBag.LastCommitedVersionNumber">@ViewBag.LastCommitedVersionNumber</a>
-                                        @ViewBag.LastCommitedVersion_Status
+                        <div class="card_body">
+                            @{
+                                if (ViewBag.LastCommitedVersionRefid != "")
+                                {
+                                    <div class="card1-mid">
+                                        <div class="count text-right">
+                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@ViewBag.LastCommitedVersionRefid" data-verNum="@ViewBag.LastCommitedVersionNumber">@ViewBag.LastCommitedVersionNumber</a>
+                                            @ViewBag.LastCommitedVersion_Status
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card1-botm" style="display:block">
-                                    <div class="userimg">
-                                        @*<img src="../static/dp/dp_@(ViewBag.LastCommitedby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                    <div class="card1-botm" style="display:block">
+                                        <div class="userimg">
+                                            @*<img src="../static/dp/dp_@(ViewBag.LastCommitedby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                        </div>
+                                        <div class="profileInfo">
+                                            <h6 class="xtrasmall">@ViewBag.LastCommitedby_Name</h6>
+                                            <h6 class="xtrasmall"> @ViewBag.LastCommitedVersionCommit_ts</h6>
+                                        </div>
                                     </div>
-                                    <div class="profileInfo">
-                                        <h6 class="xtrasmall">@ViewBag.LastCommitedby_Name</h6>
-                                        <h6 class="xtrasmall"> @ViewBag.LastCommitedVersionCommit_ts</h6>
-                                    </div>
-                                </div>
+                                }
+                                else
+                                {
+                                    <p class="count text-center">No Committed Version</p>
+                                }
                             }
-                            else
-                            {
-                                <p class="count text-center">No Committed Version</p>
-                            }
-                        }
+                        </div>
                     </div>
-                    <div class="col-md-3 card1">
-                        <div class="head text-center">
+                    <div class="card1">
+                        <div class="head">
                             Live Version
                         </div>
-                        @{
-                            if (ViewBag.LiveVersionRefid != "")
-                            {
-                                <div class="card1-mid">
-                                    <div class="count text-center">
-                                        <a href="#" class="wrkcpylink tag label label-primary" data-id="@ViewBag.LiveVersionRefid" data-verNum="@ViewBag.LiveVersionNumber">@ViewBag.LiveVersionNumber</a>
-                                        @ViewBag.LiveVersion_Status
+                        <div class="card_body">
+                            @{
+                                if (ViewBag.LiveVersionRefid != "")
+                                {
+                                    <div class="card1-mid">
+                                        <div class="count text-right">
+                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@ViewBag.LiveVersionRefid" data-verNum="@ViewBag.LiveVersionNumber">@ViewBag.LiveVersionNumber</a>
+                                            @ViewBag.LiveVersion_Status
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card1-botm" style="display:block">
-                                    <div class="userimg">
-                                        @*<img src="../static/dp/dp_@(ViewBag.LiveVersionCommitby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                    <div class="card1-botm" style="display:block">
+                                        <div class="userimg">
+                                            @*<img src="../static/dp/dp_@(ViewBag.LiveVersionCommitby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                        </div>
+                                        <div class="profileInfo">
+                                            <h6 class="xtrasmall">@ViewBag.LiveVersionCommitby_Name</h6>
+                                            <h6 class="xtrasmall">@ViewBag.LiveVersionCommit_ts</h6>
+                                        </div>
                                     </div>
-                                    <div class="profileInfo">
-                                        <h6 class="xtrasmall">@ViewBag.LiveVersionCommitby_Name</h6>
-                                        <h6 class="xtrasmall">@ViewBag.LiveVersionCommit_ts</h6>
-                                    </div>
-                                </div>
+                                }
+                                else
+                                {
+                                    <p class="count text-center">No Live Version</p>
+                                }
                             }
-                            else
-                            {
-                                <p class="count text-center">No Live Version</p>
-                            }
-                        }
+                        </div>
                     </div>
-                    <div class="col-md-3 card1">
-                        <div class="head text-center">
+                    <div class="card1">
+                        <div class="head">
                             <i class="fa fa-bug" aria-hidden="true"></i> Issues
                         </div>
-                        <div class="card1-mid">
-                            <div class="count text-center" style="font-size:32px">
+                        <div class="card1-mid card_body">
+                            <div class="count text-center" style="font-size:25px">
                                 10
                             </div>
                         </div>
                     </div>
-                            }
+                }
             }
         </div>
 
-        <div class="col-md-2  card1 box5 ">
-            <div class="head text-center">
-                <i class="fa fa-tags" aria-hidden="true"></i> Application
-            </div>
-            <div class="app-container">
-                <input type="text" id="apps" class="typeahead form-control" data-role="tagsinput" />
-            </div>
-            @*<div class="firstcommit">
-                    <h6 class="smallfont">Owner/Assignee</h6>
-                    <div style="display:block">
-                        <div class="userimg">
-                            <img src="../static/dp/dp_@(ViewBag.Owner_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle"/>
-                        </div>
-                        <div class="profileInfo">
-                            <h6 class="xtrasmall">@ViewBag.Owner_Name</h6>
-                            <h6 class="xtrasmall">@ViewBag.Owner_Ts</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-1 box4">
-                    <h6 class="smallfont">Application</h6>
-                    <select class="selectpicker btn" id="apps" name="Apps">
-                        <option id="" value="0">Select Application</option>
-                        @{
-                            foreach (KeyValuePair<string, object> entry in ViewBag.Apps)
-                            {
-                                <option id="" value="@entry.Key">@entry.Value</option>
-                            }
-                        }
-                    </select>
-                </div>*@
-        </div>
-
-        <div class="col-md-2 card1 box5">
-            <div class="head text-center">
+        <div class="card1">
+            <div class="head">
                 <i class="fa fa-tags" aria-hidden="true"></i> Tags
             </div>
-            <div class="tag-container">
+            <div class="card_body tag-container">
                 <input type="text" class="typeahead form-control" id="tags" data-role="tagsinput" />
             </div>
         </div>
@@ -235,14 +239,6 @@
 
 
 
-
-
-
-
-
-
-
-
 <path style="fill:#FFFFFF;" d="M117.586,71.673h276.828v311.43l-57.218,57.221h-219.61V71.673z" />
 
 
@@ -251,23 +247,7 @@
 
 
 
-
-
-
-
-
-
-
-
 <path style="fill:#FFCA4F;" d="M337.193,383.106h57.218l-57.218,57.221V383.106z" />
-
-
-
-
-
-
-
-
 
 
 
@@ -288,23 +268,7 @@
 
 
 
-
-
-
-
-
-
-
-
 <path style="fill:#FFCA4F;" d="M242.616,290.481l-40.247,21.682l18.587,18.589l21.663-40.271H242.616z" />
-
-
-
-
-
-
-
-
 
 
 
@@ -320,14 +284,6 @@
 
 
 
-
-
-
-
-
-
-
-
 <path style="fill:#15BDB1;" d="M207.801,317.602c0.391-3.714-1.199-5.718-5.435-5.437L56.998,457.534l5.435,5.435L207.801,317.602z" />
 
 
@@ -336,23 +292,7 @@
 
 
 
-
-
-
-
-
-
-
-
 <path style="fill:#ECF0F1;" d="M75.584,476.12l-18.587-18.587l-4.59,4.59l18.587,18.587L75.584,476.12z" />
-
-
-
-
-
-
-
-
 
 
 
@@ -369,14 +309,6 @@
 
 
 
-
-
-
-
-
-
-
-
 <path style="fill:#666666;" d="M245.234,288.626l-0.774-0.774l-16.937,10.754l6.93,6.933L245.234,288.626z" />
 
 
@@ -385,16 +317,7 @@
 
 
 
-
-
-
-
-
-
-
-
-<path style="fill:#15BDB1;" d="M215.518,325.316c3.714-0.391,5.718,1.199,5.435,5.437L75.584,476.123l-5.435-5.437L215.518,325.316z
-	" />
+<path style="fill:#15BDB1;" d="M215.518,325.316c3.714-0.391,5.718,1.199,5.435,5.437L75.584,476.123l-5.435-5.437L215.518,325.316z" />
 
 
 
@@ -404,7 +327,6 @@
 
 </svg>
             </div>
-
         </div>
         <div class="col-md-9 textaerea-sec">
             <textarea class="txt-area" id="obj_changelog" placeholder="ChangeLog"></textarea>
@@ -507,35 +429,11 @@
         }
         @*$('select[name=Apps]').val(@ViewBag.AppId);
         $('.selectpicker').selectpicker('refresh');*@
-
-        //$(window).scroll(function () {
-        //    if ($('.dashbord').css("display") === "block") {
-        //        $('.dashbord').hide();
-        //        $('.codedit').css("margin-top", "0px");
-        //        $('#minmize').css("transform", "none");
-        //    }
-        //    else if ($('.dashbord').css("display") === "none") {
-        //        $('.codedit').css("margin-top", " 85px");
-        //        $('#minmize').css("transform", "rotate(180deg)");
-        //    }
-        //});
     });
 
         $('#minmize').click(function () {
-            $('.dashbord').animate({ height: 'toggle' }, minMaxDash.bind(this));
+            $('.dashbord').animate({ width: 'toggle' });
         });
-        minMaxDash = function() {
-            if ($('.dashbord').css("display") === "none") {
-                $('.codedit').css("margin-top", "34px");
-                $('#minmize').css("transform", "rotate(180deg)");
-                $(".tab-cont-common").css("height", "calc(100vh - 34px)");
-            }
-            else if ($('.dashbord').css("display") === "block") {
-                $('.codedit').css("margin-top", "178px");
-                $('#minmize').css("transform", "none");
-                $(".tab-cont-common").css("height","calc(100vh - 178px)");
-            }
-    }
 
         function LoadMyProfile() {
             event.preventDefault();
@@ -554,86 +452,4 @@
             _form.submit();
             document.body.removeChild(_form);
         }
-
 </script>
-<style>
-    .tt-query {
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    }
-
-    .tt-hint {
-        color: #999
-    }
-
-    .tt-menu { /* used to be tt-dropdown-menu in older versions */
-        width: 422px;
-        margin-top: 4px;
-        padding: 4px 0;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        -webkit-border-radius: 4px;
-        -moz-border-radius: 4px;
-        border-radius: 4px;
-        -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
-        -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
-        box-shadow: 0 5px 10px rgba(0,0,0,.2);
-    }
-
-    .tt-suggestion {
-        padding: 3px 20px;
-        line-height: 24px;
-    }
-
-        .tt-suggestion.tt-cursor, .tt-suggestion:hover {
-            color: #fff;
-            background-color: #0097cf;
-        }
-
-        .tt-suggestion p {
-            margin: 0;
-        }
-
-    .app-container > .bootstrap-tagsinput {
-        height: 97px;
-        overflow-y: auto;
-        background-color: #fafafa;
-        border: none;
-        box-shadow: none;
-        width: 100%;
-    }
-
-    .tag-container > .bootstrap-tagsinput {
-        height: 97px;
-        overflow-y: auto;
-        background-color: #fafafa;
-        border: none;
-        box-shadow: none;
-        width: 100%;
-    }
-
-
-    .bootstrap-tagsinput .label-info {
-        background-color: #676a8e;
-    }
-
-    .bootstrap-tagsinput .twitter-typeahead {
-        position: inherit !important;
-    }
-
-    .app-container .tt-dropdown-menu {
-        box-shadow: 5px 5px 5px 5px;
-        background: white;
-    }
-
-    .tag-container .tt-dropdown-menu {
-        box-shadow: 5px 5px 5px 5px;
-        background: white;
-    }
-
-    .tag-container .tt-hint {
-        opacity: 0;
-    }
-</style>

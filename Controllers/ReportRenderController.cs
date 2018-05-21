@@ -26,7 +26,7 @@ namespace ExpressBase.Web.Controllers
             EbObjectParticularVersionResponse resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             EbReport Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
             Report.AfterRedisGet(this.Redis, this.ServiceClient);
-            ViewBag.Fd = Report; 
+            ViewBag.Fd = Report;
             {
                 ViewBag.Fd = Report;
             }
@@ -35,17 +35,17 @@ namespace ExpressBase.Web.Controllers
         }
 
         public bool Render(string refid, List<Param> Params)
-        {           
+        {
             var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
             pclient.BearerToken = this.ServiceClient.BearerToken;
             pclient.Timeout = TimeSpan.FromMinutes(3);
-            ReportRenderResponse resultlist1 = null;
+            ReportRenderResponse Res = null;
             try
             {
                 var x = string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc);
                 User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
-                resultlist1 = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname = user.FullName, Params = Params });
-                resultlist1.StreamWrapper.Memorystream.Position = 0;
+                Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname = user.FullName, Params = Params });
+                Res.StreamWrapper.Memorystream.Position = 0;
             }
             catch (Exception e)
             {
@@ -53,18 +53,15 @@ namespace ExpressBase.Web.Controllers
 
             }
 
-            Pdf = new FileStreamResult(resultlist1.StreamWrapper.Memorystream, "application/pdf");
+            Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf")
+           // { FileDownloadName = Res.ReportName }
+           ;
             return true;
         }
 
-        //public IActionResult RenderReport()
-        //{
-        //    return Pdf;
-        //}
-
         public IActionResult RenderReport2(string refid, string Params)
         {
-            Console.WriteLine("Params: "+ Params.ToJson());
+            Console.WriteLine("Params: " + Params.ToJson());
 
             List<Param> param = JsonConvert.DeserializeObject<List<Param>>(Params);
             Render(refid, param);
@@ -78,5 +75,5 @@ namespace ExpressBase.Web.Controllers
             return Pdf;
         }
     }
-    
+
 }

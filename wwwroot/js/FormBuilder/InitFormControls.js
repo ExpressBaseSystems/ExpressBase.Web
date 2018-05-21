@@ -150,6 +150,8 @@
         this.slickFiltered = false;
         var noOfCard = $Ctrl.find('.cards-cont').children().length;
         $Ctrl.find(".card-head-cardno").text((noOfCard === 0 ? "0": "1") + " of " + noOfCard);
+        
+        //getting the sum fields to display total
         $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
             if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
                 this.sumFieldsName.push(obj.name);
@@ -219,6 +221,20 @@
         $Ctrl.find('.cards-cont').on('afterChange', function (event, slick, currentSlide, nextSlide) {
             $Ctrl.find(".card-head-cardno").text((slick.$slides.length === 0 ? "0" : (currentSlide + 1)) + " of " + slick.$slides.length);
         }.bind($Ctrl));
+
+        $.each($Ctrl.find('.card-location-cont'), function (k, lobj) {
+            var latitude = parseFloat($(lobj).attr('data-lat'));
+            var longitude = parseFloat($(lobj).attr('data-lng'));
+            var uluru = { lat: latitude, lng: longitude };
+            var map = new google.maps.Map($(lobj).children()[0], {
+                zoom: 15,
+                center: uluru
+            });
+            var marker = new google.maps.Marker({
+                position: uluru,
+                map: map
+            });
+        });
     };
 
     this.filterCards = function ($Ctrl) {

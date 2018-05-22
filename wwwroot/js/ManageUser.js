@@ -1,8 +1,9 @@
 ﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
     this.whichMode = mode;
     //CreateEdit = 1, View = 2, MyProfileView = 3
-    this.menuBarObj = new MenuBarCommon();
-    this.menuBarObj.BuildMenu(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
+    
+    this.menuBarObj = $("#layout_div").data("EbHeader");
+    this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.userinfo = userinfo;
     this.customRoles = cusroles;
     this.culture = culture;
@@ -588,8 +589,8 @@
 
 //---------------------------------------------------------------USERGROUP-----------------------------------------------------------------------------
 var UserGroupJs = function (infoDict, usersList) {
-    this.menuBarObj = new MenuBarCommon();
-    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
+    this.menuBarObj = $("#layout_div").data("EbHeader");
+    this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.infoDict = infoDict;
     this.usersList = usersList;
     this.txtUserGroupName = $("#txtUserGroupName");

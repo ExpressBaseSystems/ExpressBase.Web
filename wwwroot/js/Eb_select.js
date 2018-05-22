@@ -1,4 +1,42 @@
-﻿var selectedEntity = function (vmValue, dmValues) {
+﻿var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
+    this.$type = 'ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects';
+    this.EbSid = id;
+    this.ObjType = 'TableVisualization';
+    this.rowGrouping = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.Objects.DVRelated.DVBaseColumn, ExpressBase.Objects]], System.Private.CoreLib", "$values": [] }; this.LeftFixedColumn = 0; this.RightFixedColumn = 0; this.PageLength = 0; this.DataSourceRefId = ''; this.Description = ''; this.Columns = { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [] }; this.DSColumns = { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [] }; this.data = { "$type": "System.Object, System.Private.CoreLib" }; this.Pippedfrom = ''; this.IsPaged = ''; this.IsPaging = false; this.Name = id;
+
+
+    this.$Control = $("            <div id='cont_@name@' Ctype='TableVisualization' class='Eb-ctrlContainer'>                <table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>            </div>".replace(/@id/g, this.EbSid));
+    this.BareControlHtml = `<table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>`.replace(/@id/g, this.EbSid);
+    this.DesignHtml = "            <div id='cont_@name@' Ctype='TableVisualization' class='Eb-ctrlContainer'>                <table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>            </div>";
+    var MyName = this.constructor.name;
+    this.RenderMe = function () {
+        var NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
+            }
+        });
+        if (!this.IsContainer)
+            $('#' + id).html($(NewHtml).html());
+    };
+    if (jsonObj) {
+        if (jsonObj.IsContainer)
+            jsonObj.Controls = new EbControlCollection({});
+        jsonObj.RenderMe = this.RenderMe;
+        jsonObj.Html = this.Html;
+        jsonObj.Init = this.Init;
+        $.extend(this, jsonObj);
+        //if(this.Init)
+        //    jsonObj.Init(id);
+    }
+    else {
+        if (this.Init)
+            this.Init(id);
+    }
+};
+
+var selectedEntity = function (vmValue, dmValues) {
     this.vmValue = vmValue;
     this.dmValues = dmValues;
 };
@@ -91,40 +129,40 @@ var EbSelect = function (ctrl) {
         this.IsDatatableInit = true;
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
-        //this.datatable = new EbDataTable(null, null, null, this.EbObject, null, 0, "https://expressbaseservicestack.azurewebsites.net");
-        $.ajax({
-            type: "POST",
-            url: "../DS/GetColumns",
-            data: { DataSourceRefId: this.dsid },
-            success: function (Columns) {
-                this.DTColumns = JSON.parse(Columns).$values;
-                //$.LoadingOverlay('hide');
-            }.bind(this)
-        });
-        this.datatable = $(this.DTSelector).DataTable({//change ebsid to name
-            processing: true,
-            serverSide: true,
-            dom: 'rt',
-            columns: this.DTColumns,
-            ajax: {
-                url: "../dv/getData",
-                type: 'POST',
-                data: function (dq) {
-                    delete dq.columns; delete dq.order; delete dq.search;
-                    dq.RefId = this.dsid;
-                    dq.Params = { Name: "id", Value: "ac", Type: "11" };
-                }.bind(this),
-                dataSrc: function (dd) {
-                    return dd.data;
-                },
-            },
-            initComplete: function () {
-                this.hideTypingAnim();
-                this.AskWhatU();
-                $tableCont.show(100);
-            }.bind(this)
+        this.datatable = new EbBasicDataTable(this.dsid, "ComboBox0tbl");
+        //$.ajax({
+        //    type: "POST",
+        //    url: "../DS/GetColumns",
+        //    data: { DataSourceRefId: this.dsid },
+        //    success: function (Columns) {
+        //        this.DTColumns = JSON.parse(Columns).$values;
+        //        //$.LoadingOverlay('hide');
+        //    }.bind(this)
+        //});
+        //this.datatable = $(this.DTSelector).DataTable({//change ebsid to name
+        //    processing: true,
+        //    serverSide: true,
+        //    dom: 'rt',
+        //    columns: this.DTColumns,
+        //    ajax: {
+        //        url: "../dv/getData",
+        //        type: 'POST',
+        //        data: function (dq) {
+        //            delete dq.columns; delete dq.order; delete dq.search;
+        //            dq.RefId = this.dsid;
+        //            dq.Params = { Name: "id", Value: "ac", Type: "11" };
+        //        }.bind(this),
+        //        dataSrc: function (dd) {
+        //            return dd.data;
+        //        },
+        //    },
+        //    initComplete: function () {
+        //        this.hideTypingAnim();
+        //        this.AskWhatU();
+        //        $tableCont.show(100);
+        //    }.bind(this)
 
-        });
+        //});
         //settings: {
         //    hideCheckbox: (this.multiSelect === false) ? true : false,
         //    scrollY: "200px",//this.dropdownHeight,

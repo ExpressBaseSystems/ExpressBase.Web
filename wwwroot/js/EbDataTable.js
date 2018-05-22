@@ -184,7 +184,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
                 var id = $(ev.target).attr("id");
                 focusedId = id;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+                //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
                 //if ($('#' + id).is(':last-child'))
                 //if(this.login === "uc")
                 //$(".splitdiv_parent").scrollTo($("#" + focusedId));
@@ -204,7 +204,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.ajaxSucc = function (text) {
-        //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         $("#objname").text(this.EbObject.Name);
         if (this.MainData !== null) {
             this.isPipped = true;
@@ -432,8 +432,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.addSerialAndCheckboxColumns = function () {
-        this.CheckforColumnID();
-        var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
+        this.CheckforColumnID();//"sWidth":"10px", 
+        var serialObj = (JSON.parse('{"searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
         this.extraCol.push(serialObj);
         this.addcheckbox();
     }
@@ -452,9 +452,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var chkObj = new Object();
         chkObj.data = null;
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-        chkObj.sWidth = "10px";
+        //chkObj.sWidth = "10px";
         chkObj.orderable = false;
-        chkObj.bVisible = false;
+        chkObj.bVisible = true;
         chkObj.name = "checkbox";
         chkObj.Type = 3;
         chkObj.render = this.renderCheckBoxCol.bind(this);
@@ -475,7 +475,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
-            o.fixedColumns = { leftColumns: this.ebSettings.LeftFixedColumn, rightColumns: this.ebSettings.RightFixedColumn };
+            o.fixedColumns = { leftColumns: this.fixedColumnCount(), rightColumns: this.ebSettings.RightFixedColumn };
         //o.lengthMenu = this.ebSettings.lengthMenu;
         o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
         o.pagingType = "full";
@@ -496,8 +496,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.paging = false;
         //o.rowReorder = true;
         //o.order = [[8, "asc"]];
-        //o.bAutoWidth = false;
-        //o.autowidth = false;
+        o.bAutoWidth = false;
+        o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
         //o.deferRender = true;
@@ -660,6 +660,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return fltr_collection;
     };
 
+    this.rowObj2filter = function (fltr_collection, from, i, data) {
+        if (i + 2 < this.Api.settings().init().aoColumns.length) {
+            if (from === "link") {
+                var type = this.Api.settings().init().aoColumns[i + 2].Type;
+                fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i + 2].name, data));
+            }
+            else {
+                if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
+                    var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
+                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
+                }
+            }
+        }
+    };
+
     this.filterDisplay = function () {
         if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").children().hasClass("filter_Display")) {
             $(".filter_Display").empty();
@@ -700,21 +715,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     }
 
-    this.rowObj2filter = function (fltr_collection, from, i, data) {
-        if (i + 2 < this.Api.settings().init().aoColumns.length) {
-            if (from === "link") {
-                var type = this.Api.settings().init().aoColumns[i + 2].Type;
-                fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i + 2].name, data));
-            }
-            else {
-                if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
-                    var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
-                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
-                }
-            }
-        }
-    };
-
     this.getfilter = function (fltr_collection, i, data) {
         fltr_collection.push(new fltr_obj(data.Type, data.name, this.rowData[i]));
     };
@@ -743,6 +743,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else
             filterChanged = true;
+    }
+
+    this.fixedColumnCount = function () {
+        var count = this.ebSettings.LeftFixedColumn;
+        var visCount = 0;
+        if (count > 1) {
+            $.each(this.Api.settings().init().aoColumns, function (i, col) {
+                if (!col.bVisible) {
+                    if (this.ebSettings.LeftFixedColumn > visCount)
+                        count++;
+                    else
+                        return count;
+                }
+                else
+                    visCount++;
+            }.bind(this));
+        }
+        return count;
     }
 
     this.ColumnsComparer = function (a, b) {
@@ -862,6 +880,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //});
         this.filterDisplay();
         this.Api.columns.adjust();
+
         $("#eb_common_loader").EbLoader("hide");
 
         setTimeout(function () {
@@ -1048,6 +1067,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.doSerial = function () {
         this.Api.column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
+        this.Api.columns.adjust();
     };
 
     this.createFooter = function (pos) {
@@ -1199,14 +1219,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 for (var j = 0; j < this.eb_filter_controls_4sb.length; j++) {
                     if (j < this.ebSettings.LeftFixedColumn) {
                         $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
-                        //$(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).css("display", "none");
+                        $(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).children().not("span").remove();
                     }
                     else {
                         if (j < this.eb_filter_controls_4sb.length - this.ebSettings.RightFixedColumn)
                             $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
                         else {
                             $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
-                            //$(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).css("display", "none");
+                            $(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).children().not("span").remove();
                         }
                     }
                 }
@@ -1342,8 +1362,77 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     this.value = terms.join(" | ");
                     //$(this).setCursorPosition(this.value.length-1);
                     return false;
+                },
+                search: function (event, ui) {
                 }
             });
+        }
+        else {
+            if ($(obj).children('div').length === 0) {
+                var $lctrl = $("#" + this.tableId + "_wrapper .DTFC_LeftHeadWrapper table tr[class=addedbyeb] th:eq(" + i + ")").find(".eb_finput");
+                var $rctrl = $("#" + this.tableId + "_wrapper .DTFC_RightHeadWrapper table tr[class=addedbyeb] th:eq(" + i + ")").find(".eb_finput");
+                if ($lctrl.length > 0) {
+                    if ($lctrl.attr("data-coltyp") === "string") {
+                        $lctrl.autocomplete({
+                            //source: $.unique(this.Api.columns(idx).data()[0]),
+                            source: function (request, response) {
+                                // delegate back to autocomplete, but extract the last term
+                                response($.ui.autocomplete.filter(
+                                    $.unique(data), extractLast(request.term)));
+                            }.bind(this),
+                            focus: function () {
+                                // prevent value inserted on focus
+                                return false;
+                            },
+                            select: function (event, ui) {
+                                var terms = splitval(this.value);
+                                // remove the current input
+                                terms.pop();
+                                // add the selected item
+                                terms.push(ui.item.value);
+                                // add placeholder to get the comma-and-space at the end
+                                terms.push("");
+                                this.value = terms.join(" | ");
+                                //$(this).setCursorPosition(this.value.length-1);
+                                return false;
+                            },
+                            search: function (event, ui) {
+                            }
+                        });
+                    }
+                }
+                if ($rctrl.length > 0) {
+                    if ($rctrl.attr("data-coltyp") === "string") {
+                        $rctrl.autocomplete({
+                            //source: $.unique(this.Api.columns(idx).data()[0]),
+                            source: function (request, response) {
+                                // delegate back to autocomplete, but extract the last term
+                                response($.ui.autocomplete.filter(
+                                    $.unique(data), extractLast(request.term)));
+                            }.bind(this),
+                            focus: function () {
+                                // prevent value inserted on focus
+                                return false;
+                            },
+                            select: function (event, ui) {
+                                var terms = splitval(this.value);
+                                // remove the current input
+                                terms.pop();
+                                // add the selected item
+                                terms.push(ui.item.value);
+                                // add placeholder to get the comma-and-space at the end
+                                terms.push("");
+                                this.value = terms.join(" | ");
+                                //$(this).setCursorPosition(this.value.length-1);
+                                return false;
+                            },
+                            search: function (event, ui) {
+                            }
+                        });
+                    }
+                }
+            }
+
         }
     };
 

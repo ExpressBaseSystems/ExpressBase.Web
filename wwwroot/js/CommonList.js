@@ -124,7 +124,7 @@
             headHtml += `<button class='btn' title='Create Role' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i> New Role </button>`;
         }
         
-        this.menuBarObj.BuildMenu(headHtml);
+        this.menuBarObj.insertButton(headHtml);
 
         $('#txtSrchCmnList').on('keyup', function (e) {
             if ($(e.target).val() === "") {

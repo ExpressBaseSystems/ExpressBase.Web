@@ -30,7 +30,7 @@
     }
 
     .dataTables_scroll {
-        height: inherit;
+        height: calc(100vh - 55px);
     }
 
     .dataTableColumnStyle {
@@ -170,7 +170,7 @@
 
 <script>
         $(document).ready(function () {
-            var mnuBarObj = new MenuBarCommon();
+            var mnuBarObj = $("#layout_div").data("EbHeader");
             if ("@ViewBag.ListType" === "Users") {
                 mnuBarObj.setName("Users");
                 //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info

@@ -194,6 +194,13 @@ namespace ExpressBase.Web.Controllers
                 return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId });
         }
 
+        public IActionResult dvView(string dvobj, string dvRefId)
+        {
+            var dvObject = EbSerializers.Json_Deserialize(dvobj);
+            dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
+            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, forWrap = "wrap" });
+        }
+
         public List<EbObjectWrapper> getAllRelatedDV(string refid)
         {
             List<EbObjectWrapper> DvList = new List<EbObjectWrapper>();

@@ -96,19 +96,24 @@ namespace ExpressBase.Web.BaseControllers
                 var rToken = new JwtSecurityToken(sRToken);
                 var bToken = new JwtSecurityToken(sBToken);
 
+                string rSub = rToken.Payload[TokenConstants.SUB].ToString();
+                string bSub = bToken.Payload[TokenConstants.SUB].ToString();
+
                 DateTime startDate = new DateTime(1970, 1, 1);
                 DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
 
-                if (exp_time > DateTime.Now && rToken.Payload[TokenConstants.SUB].ToString() == bToken.Payload[TokenConstants.SUB].ToString()) // Expiry of Refresh Token and matching Bearer & Refresh
+                if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
                 {
-                    string[] subParts = rToken.Payload[TokenConstants.SUB].ToString().Split('-');
+                    string[] subParts = rSub.Split('-');
 
-                    if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                    if (rSub.EndsWith(TokenConstants.TC))
+                        isvalid = true;
+                    else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
                     {
-                        if (subParts[0] == subdomain.Replace(RoutingConstants.DASHDEV, string.Empty) && subParts[2] == TokenConstants.DC)
+                        if (subParts[0] == subdomain.Replace(RoutingConstants.DASHDEV, string.Empty) && rSub.EndsWith(TokenConstants.DC))
                             isvalid = true;
                     }
-                    else if (subParts[2] == TokenConstants.UC || subParts[2] == TokenConstants.BC)
+                    else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
                     {
                         isvalid = true;
                     }

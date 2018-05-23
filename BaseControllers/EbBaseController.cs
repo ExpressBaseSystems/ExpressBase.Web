@@ -88,20 +88,40 @@ namespace ExpressBase.Web.BaseControllers
             base.OnActionExecuting(context);
         }
 
-        public bool IsTokenNotExpired(string rtoken)
+        public bool IsTokensValid(string sRToken, string sBToken, string subdomain)
         {
             bool isvalid = false;
-            var jwtToken = new JwtSecurityToken(rtoken);
-
-            DateTime startDate = new DateTime(1970, 1, 1);
-            DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(jwtToken.Payload[TokenConstants.EXP]));
-
-            if (exp_time > DateTime.Now)
+            if (VerifySignature(sRToken) && VerifySignature(sBToken))
             {
-                isvalid = true;
+                var rToken = new JwtSecurityToken(sRToken);
+                var bToken = new JwtSecurityToken(sBToken);
+
+                string rSub = rToken.Payload[TokenConstants.SUB].ToString();
+                string bSub = bToken.Payload[TokenConstants.SUB].ToString();
+
+                DateTime startDate = new DateTime(1970, 1, 1);
+                DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
+
+                if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
+                {
+                    string[] subParts = rSub.Split('-');
+
+                    if (rSub.EndsWith(TokenConstants.TC))
+                        isvalid = true;
+                    else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                    {
+                        if (subParts[0] == subdomain.Replace(RoutingConstants.DASHDEV, string.Empty) && rSub.EndsWith(TokenConstants.DC))
+                            isvalid = true;
+                    }
+                    else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
+                    {
+                        isvalid = true;
+                    }
+                }
             }
             return isvalid;
         }
+
 
         public bool VerifySignature(string token)
         {
@@ -147,5 +167,6 @@ namespace ExpressBase.Web.BaseControllers
                                   .Replace("-", "+");
             return Convert.FromBase64String(base64);
         }
+
     }
 }

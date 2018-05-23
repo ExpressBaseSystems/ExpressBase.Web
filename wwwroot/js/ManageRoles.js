@@ -1,6 +1,6 @@
 ﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList) {
-    this.menuBarObj = new MenuBarCommon();
-    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
+    this.menuBarObj = $("#layout_div").data("EbHeader");
+    this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.appCollection = appCollection.$values;
     this.roleId = roleId;
     this.roleInfo = roleInfo;

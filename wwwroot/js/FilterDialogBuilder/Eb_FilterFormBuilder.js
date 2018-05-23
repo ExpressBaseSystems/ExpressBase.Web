@@ -326,6 +326,7 @@
             $(".eb-chatBox-dev").append(ctrl.$Control);
             this.initCtrl(ctrl);
         }.bind(this));
+        $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
     };
 
     //this.initCtrl = function (el) {

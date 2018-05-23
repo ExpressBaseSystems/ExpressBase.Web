@@ -1,4 +1,5 @@
-﻿var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
+﻿
+var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
     this.$type = 'ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects';
     this.EbSid = id;
     this.ObjType = 'TableVisualization';
@@ -129,7 +130,13 @@ var EbSelect = function (ctrl) {
         this.IsDatatableInit = true;
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
-        this.datatable = new EbBasicDataTable(this.dsid, "ComboBox0tbl");
+        var o = new Object();
+        o.dsid = this.dsid;
+        o.tableId = "ComboBox0tbl";
+        //o.isSerialColumn = true;
+        //o.isCheckboxColumn = true;
+        //o.isFilterRow = true;
+        this.datatable = new EbBasicDataTable(o);
         //$.ajax({
         //    type: "POST",
         //    url: "../DS/GetColumns",

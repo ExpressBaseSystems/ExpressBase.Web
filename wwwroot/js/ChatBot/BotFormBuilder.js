@@ -44,6 +44,7 @@
         setTimeout(function () {
             Proc(editModeObj, this.rootContainerObj);
             this.renderCtrls();
+
         }.bind(this), 1000);
     };
 
@@ -64,6 +65,7 @@
             $(".eb-chatBox-dev").append(ctrl.$Control);
             this.initCtrl(ctrl);
         }.bind(this));
+        $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
     };
 
     {

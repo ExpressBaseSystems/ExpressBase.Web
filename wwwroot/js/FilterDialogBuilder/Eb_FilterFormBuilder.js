@@ -29,9 +29,9 @@
     this.CurRowCount = 2;
     this.CurColCount = 2;
     this.movingObj = {};
-    
+
     this.controlOnFocus = function (e) {
-        if (e.target.id ==="form-buider-form") {
+        if (e.target.id === "form-buider-form") {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
             return;
@@ -63,8 +63,8 @@
         $el.attr("eb-type", type);
         $el.attr("eb-type", type).attr("id", id);
     };
-    
-    if (this.EbObject){
+
+    if (this.EbObject) {
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
@@ -72,7 +72,7 @@
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
     }
-    
+
     this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
     this.curControl = null;
     this.drake = null;
@@ -245,7 +245,18 @@
         this.rootContainerObj.Controls.InsertAt(idx, this.clipboard.ctrl);
     }.bind(this);
 
-    
+    this.DelCtrl = function (id) {
+        var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
+        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
+        var ctrl = this.rootContainerObj.Controls.PopByName(id);
+        ControlTile.parent().focus();
+        ControlTile.remove();
+        this.PGobj.removeFromDD(id);
+        this.saveObj();
+        return ctrl;
+    };
+
+
     //this.controlCloseOnClick = function (e) {
     //    var ControlTile = $(e.target).parent().parent();
     //    var id = ControlTile.attr("id");
@@ -376,7 +387,6 @@
 
         }.bind(this);
     };
-
 
     this.CtxMenu = [{
         name: 'copy',

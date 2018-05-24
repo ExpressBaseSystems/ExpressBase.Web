@@ -14,7 +14,7 @@
 <style>
 </style>
 @{
-    if (ViewBag.data.EbDataSource.FilterDialogRefId != null && ViewBag.data.EbDataSource.FilterDialogRefId != "")
+    if (ViewBag.data.EbDataSource.FilterDialogRefId != null && ViewBag.data.EbDataSource.FilterDialogRefId != "" && ViewBag.forWrap != "wrap")
     {
         //foreach (EbControl control in ViewBag.data.EbDataSource.FilterDialog.Controls)
         //{
@@ -34,15 +34,19 @@
         </script>
     }*@
 <script>
+    var dvGlobal = new Object();
     @Html.Raw(ViewBag.HtmlHead);
-    if ('@ViewBag.wc' === 'uc' || prevfocusedId !== undefined) {
+    if ('@ViewBag.wc' === 'uc' || typeof prevfocusedId !== 'undefined' ) {
         $.extend(dvcontainerObj.currentObj, @Html.Raw(dvobj));
     }
-    else {
+    else if ('@ViewBag.forWrap' !== 'wrap') {
         commonO = $("#layout_div").data("commonObj");
         console.log(commonO);
 
         commonO.Current_obj =  @Html.Raw(dvobj);
+    }
+    else {
+        dvGlobal.Current_obj =  @Html.Raw(dvobj);
     }
 
 </script>

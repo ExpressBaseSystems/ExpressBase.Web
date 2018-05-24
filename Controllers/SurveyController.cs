@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -10,7 +11,7 @@ using ServiceStack.Redis;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class SurveyController : EbBaseIntController
+    public class SurveyController : EbBaseIntCommonController
     {
         public SurveyController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
         // GET: /<controller>/

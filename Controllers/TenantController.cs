@@ -23,12 +23,13 @@ using ExpressBase.Common.Extensions;
 using Newtonsoft.Json;
 using ExpressBase.Common.Connections;
 using ExpressBase.Common.Constants;
+using ExpressBase.Web.BaseControllers;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class TenantController : EbBaseIntController
+    public class TenantController : EbBaseIntCommonController
     {
         public const string Msg = "Msg";
 

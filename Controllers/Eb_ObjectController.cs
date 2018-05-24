@@ -18,12 +18,13 @@ using ExpressBase.Objects.ReportRelated;
 using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
 using ExpressBase.Common.JsonConverters;
+using ExpressBase.Web.BaseControllers;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class Eb_ObjectController : EbBaseIntController
+    public class Eb_ObjectController : EbBaseIntCommonController
     {
         private Context2Js _c2js;
 

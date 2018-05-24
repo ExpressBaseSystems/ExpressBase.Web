@@ -3,6 +3,7 @@ using ExpressBase.Common.Constants;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
+using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ using System.Linq;
 
 namespace ExpressBase.Web2.Controllers
 {
-    public class TenantUserController : EbBaseIntController
+    public class TenantUserController : EbBaseIntCommonController
     {
 
         public TenantUserController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }

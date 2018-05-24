@@ -5,6 +5,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web2;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ using System.Reflection;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class DVController : EbBaseIntController
+    public class DVController : EbBaseIntCommonController
     {
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 

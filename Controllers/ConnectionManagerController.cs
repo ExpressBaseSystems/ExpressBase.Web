@@ -2,6 +2,7 @@
 using ExpressBase.Common.Connections;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
@@ -11,7 +12,7 @@ using System;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ConnectionManagerController : EbBaseIntController
+    public class ConnectionManagerController : EbBaseIntCommonController
     {
         public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _mqc, _sfc)
         {

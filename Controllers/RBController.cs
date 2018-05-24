@@ -12,12 +12,13 @@ using ExpressBase.Objects;
 using ExpressBase.Objects.ReportRelated;
 using System.Reflection;
 using System.Data;
+using ExpressBase.Web.BaseControllers;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class RBController : EbBaseIntController
+    public class RBController : EbBaseIntCommonController
     {
         public RBController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

@@ -7,12 +7,13 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
+using ExpressBase.Web.BaseControllers;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class BotiController : EbBaseIntController
+    public class BotiController : EbBasetIntBotController
     {
         public BotiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

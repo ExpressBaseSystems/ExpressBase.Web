@@ -141,7 +141,7 @@ namespace ExpressBase.Web.Controllers
 
                 string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
 
-                User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", cid, email, wc));
+                User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, cid, email, wc));
                 var Ids = String.Join(",", user.EbObjectIds);
                 //GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
                 GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds =  Ids , AppId = appid });

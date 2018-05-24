@@ -41,7 +41,7 @@ var EbBasicDataTable = function (Option) {
         //console.log($.cookie());
         $.ajax({
             type: "POST",
-            url: "../DV/dvView1",
+            url: "../boti/dvView1",
             data: { dvobj: JSON.stringify(this.EbObject) },
             success: this.ajaxSucc.bind(this)
         });
@@ -198,7 +198,7 @@ var EbBasicDataTable = function (Option) {
         o.select = true;
         o.keys = true,
         o.ajax = {
-            url: "../dv/getData",
+            url: "../boti/getData",
             type: 'POST',
             data: this.ajaxData.bind(this),
             dataSrc: this.receiveAjaxData.bind(this),

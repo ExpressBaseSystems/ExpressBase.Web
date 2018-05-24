@@ -132,7 +132,8 @@ namespace ExpressBase.Web.Controllers
                 ReadWritePassword = req["readWritePassword"],
                 ReadOnlyUserName = req["readOnlyUserName"],
                 ReadOnlyPassword = req["readOnlyPassword"],
-                Timeout = Convert.ToInt32(req["timeout"])
+                Timeout = Convert.ToInt32(req["timeout"]),
+                IsDefault = false
             };
 
             EbObjectsDbConnection objdbcon = new EbObjectsDbConnection()
@@ -147,7 +148,8 @@ namespace ExpressBase.Web.Controllers
                 ReadWritePassword = req["readWritePassword"],
                 ReadOnlyUserName = req["readOnlyUserName"],
                 ReadOnlyPassword = req["readOnlyPassword"],
-                Timeout = Convert.ToInt32(req["timeout"])
+                Timeout = Convert.ToInt32(req["timeout"]),
+                IsDefault = false
             };
 
             this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });

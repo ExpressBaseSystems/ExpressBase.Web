@@ -1,0 +1,342 @@
+﻿body {
+    --shadow:0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+}
+
+
+.pd-0 {
+    padding: 0;
+}
+
+.builder-window {
+    height: 100vh;
+    padding-top: 32px;
+}
+
+.builder-window-row {
+    height: inherit;
+}
+
+.Builder-toolbox {
+    height: 100%;
+    background: #fafafa;
+    box-shadow: var(--shadow);
+    position: fixed;
+    padding-top: 32px;
+}
+
+.Builder-work-pane {
+    height: 100%;
+}
+
+g {
+   stroke-opacity: 0.5;
+    stroke-width: 5px;
+    stroke: green;
+}
+
+/*sorting..........................................................*/
+.sortfunction {
+    height: auto;
+    border: 5px solid BLUE;
+    float: right;
+    /*width: auto;*/
+}
+.sortorder {
+    border: 5px solid #DDD;
+    height: inherit;
+}
+
+.sortbox {
+    border: 2px solid black;
+    width: auto;
+}
+.adad {
+    margin-right: 1px;
+    position: absolute;
+    right: 0;
+}
+.btn1 {
+    padding: initial;
+    margin-right: 30px;
+    margin-top: 1px;
+    position: absolute;
+    right: 0;
+    background-color: transparent;
+    border: none;
+}
+
+/*.btn1 {
+    padding-left:20px;
+    margin-right: 1px;
+    margin-top: 1px;
+    
+    top: 0;
+    right: 0;
+    background-color: transparent;
+    border: none;
+}*/
+/*builder tab custom css*/
+.nav-tabs {
+    border-bottom: 2px solid #DDD;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+        border-width: 0;
+}
+
+.nav-tabs > li > a {
+        border: none;
+        color: #666;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+            border: none;
+            color: #4285F4 !important;
+            background: transparent;
+
+}
+
+ .nav-tabs > li > a::after {
+            content: "";
+            background: #4285F4;
+            height: 2px;
+            position: absolute;
+            width: 100%;
+            left: 0px;
+            bottom: -1px;
+            transition: all 250ms ease 0s;
+            transform: scale(0);
+}
+
+.nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
+        transform: scale(1);
+}
+
+.tab-nav > li > a::after {
+    background: #21527d none repeat scroll 0% 0%;
+    color: #fff;
+}
+
+.tab-pane {
+    padding: 15px 0;
+}
+
+.tab-content {
+    padding: 20px
+}
+
+.card {
+    background: #FFF none repeat scroll 0% 0%;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+}
+
+.Table {
+    display: inline-block;
+    /*position: absolute;*/
+    margin: auto;
+    border: 1px solid #369;
+    /*padding: 5px;*/
+}
+
+#tbhd {
+    text-align: center;
+    border-bottom: 1px solid black;
+   
+}
+.headtb {
+    background-color: #369;
+    color: white;
+}
+.tablebody {
+    padding: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: static;
+    outline: none;
+    border: 0 !important;
+    width: 150px;
+    height: 120px;
+}
+.col > .fa fa-sort {
+    background-size: 10px 10px;
+    background-repeat: no-repeat;
+    background-position: right;
+}
+/*close button*/
+.btn0 {
+    padding: initial;
+    margin-right: 1px;
+    margin-top: 1px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: transparent;
+    border: none;
+}
+/*}*/
+
+/*tree..........................*/
+div.treeview {
+    min-width: 100px;
+    min-height: 100px;
+    max-height: 256px;
+    overflow: auto;
+    padding: 4px;
+    margin-bottom: 20px;
+    color: #369;
+    border: solid 1px;
+    border-radius: 4px;
+}
+
+    div.treeview ul:first-child:before {
+        display: none;
+    }
+
+.treeview, .treeview ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: #369;
+}
+
+.treeview ul {
+        margin-left: 1em;
+        position: relative
+}
+
+.treeview ul ul {
+            margin-left: .5em
+}
+
+.treeview ul:before {
+            content: "";
+            display: block;
+            width: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 1px solid;
+            /*creates: a more theme-ready standard for the bootstrap themes;*/
+            bottom: 15px;
+
+}
+
+.treeview li {
+    margin: 0;
+    padding: 2px 1em;
+    line-height: 2em;
+    position: relative;
+    font-size: 16px;
+}
+
+.treeview ul li:before {
+        content: "";
+        display: block;
+        width: 10px;
+        height: 0;
+        border-top: 1px solid;
+        margin-top: -1px;
+        position: absolute;
+        top: 1em;
+        left: 0
+}
+
+.tree-indicator {
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.treeview li a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.treeview li button, .treeview li button:active, .treeview li button:focus {
+    text-decoration: none;
+    color: inherit;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+}
+
+
+[role="presentation"] {
+padding-left:25px;
+}
+.CodeMirror-code{
+    margin-left:-100px;
+} 
+.CodeMirror-sizer {
+    margin-left: 28px;
+    min-width: 23px;
+    margin-bottom: -17px;
+    border-right-width: 13px;
+    min-height: 28px;
+    padding-right: 30px;
+    padding-left: 70px;
+    padding-bottom: 0px;
+}
+
+.CodeMirror-cursors {
+    visibility: hidden;
+    position: relative;
+    z-index: 3;
+    left: -20px;
+}
+
+.context-menu-icon-leftjoin:hover {
+    color: #fff;
+    cursor: pointer;
+    background-color: blue;
+}
+
+.context-menu-icon-rightjoin:hover {
+    color: #fff;
+    cursor: pointer;
+    background-color: green;
+}
+
+.context-menu-icon-fulljoin:hover {
+    color: #fff;
+    cursor: pointer;
+    background-color: red;
+}
+
+.context-menu-icon-delete:hover {
+    color: #fff;
+    cursor: pointer;
+    background-color: slategray;
+}
+
+
+
+/*top bar*/
+.topbar {
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+}
+
+.h_toolbar {
+    padding: 2px;
+    background-color: #369;
+}
+
+    .h_toolbar .btn {
+        background-color: transparent;
+        color: white;
+        outline: none;
+    }
+
+.tabs {
+    padding: 20px 7em;
+}
+
+#QBheadtext {
+    color: white;
+}
+

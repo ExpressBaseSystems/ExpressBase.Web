@@ -35,7 +35,7 @@ var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
         if (this.Init)
             this.Init(id);
     }
-};
+};
 
 var selectedEntity = function (vmValue, dmValues) {
     this.vmValue = vmValue;
@@ -132,7 +132,7 @@ var EbSelect = function (ctrl) {
         //this.EbObject.DataSourceRefId = this.dsid;
         var o = new Object();
         o.dsid = this.dsid;
-        o.tableId = "ComboBox0tbl";
+        o.tableId = this.name + "tbl";
         //o.isSerialColumn = true;
         //o.isCheckboxColumn = true;
         //o.isFilterRow = true;
@@ -248,7 +248,7 @@ var EbSelect = function (ctrl) {
                 DDstate: false
             },
             watch: {
-                valueMembers: this.V_watchVMembers.bind(this),
+                valueMembers: this.V_watchVMembers.bind(this)
             },
             methods: {
                 toggleDD: this.V_toggleDD.bind(this),
@@ -380,7 +380,7 @@ var EbSelect = function (ctrl) {
 
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
-        var container1 = $('#' + this.name);
+        var container1 = $('#' + this.name + 'Container');
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {

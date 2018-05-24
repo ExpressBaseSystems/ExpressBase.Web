@@ -132,15 +132,15 @@ var EbSelect = function (ctrl) {
         //this.EbObject.DataSourceRefId = this.dsid;
         var o = new Object();
         o.dsid = this.dsid;
-        o.tableId = "ComboBox0tbl";
+        o.tableId = this.name + "tbl";
         o.showSerialColumn = false;
         o.showCheckboxColumn = true;
         o.showFilterRow = false;
-        o.scrollHeight = "200px";
+        o.scrollHeight = this.scrollHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         o.fnKeyUpCallback = this.xxx.bind(this);
         o.fninitComplete = this.initDTpost.bind(this),
-        this.datatable = new EbBasicDataTable(o);
+            this.datatable = new EbBasicDataTable(o);
         //$.ajax({
         //    type: "POST",
         //    url: "../DS/GetColumns",
@@ -187,7 +187,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.xxx = function (e, dt, type, indexes) {
-       // console.log("keysssss");
+        // console.log("keysssss");
     }
 
     this.initDTpost = function (data) {
@@ -372,7 +372,7 @@ var EbSelect = function (ctrl) {
         $.each(this.datatable.Api.settings().init().columns, function (j, value) { if (value.columnName === 'id') { indx = value.columnIndex; return false; } });
         var datas = $(this.DTSelector).DataTable().row($row).data();
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
-            if (!(this.Vobj.valueMembers.length === this.maxLimit)) {
+            if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(this.currentEvent.target).prop('checked', true);

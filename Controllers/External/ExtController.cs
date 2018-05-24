@@ -490,7 +490,7 @@ namespace ExpressBase.Web.Controllers
             {
                 if (subDomain.EndsWith(RoutingConstants.DASHBOT) || subDomain.EndsWith(RoutingConstants.DASHMOB) || subDomain.EndsWith(RoutingConstants.DASHDEV))
                 {
-                    cid = subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.COLON));
+                    cid = subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.DASH));
 
                     if (subDomain.EndsWith(RoutingConstants.DASHBOT))
                         whichconsole = EbAuthContext.BotUserContext;

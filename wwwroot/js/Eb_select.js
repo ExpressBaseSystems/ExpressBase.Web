@@ -35,7 +35,7 @@ var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
         if (this.Init)
             this.Init(id);
     }
-};
+};
 
 var selectedEntity = function (vmValue, dmValues) {
     this.vmValue = vmValue;
@@ -132,14 +132,15 @@ var EbSelect = function (ctrl) {
         //this.EbObject.DataSourceRefId = this.dsid;
         var o = new Object();
         o.dsid = this.dsid;
-        o.tableId = "ComboBox0tbl";
+        o.tableId = this.name + "tbl";
         o.showSerialColumn = false;
         o.showCheckboxColumn = true;
         o.showFilterRow = false;
-        o.scrollHeight = "200px";
-        o.fnDblclickCallbackFunc = this.dblClickOnOptDDEventHand.bind(this);
-        o.initComplete = this.initDTpost.bind(this),
-        this.datatable = new EbBasicDataTable(o);
+        o.scrollHeight = this.scrollHeight + "px";
+        o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
+        o.fnKeyUpCallback = this.xxx.bind(this);
+        o.fninitComplete = this.initDTpost.bind(this),
+            this.datatable = new EbBasicDataTable(o);
         //$.ajax({
         //    type: "POST",
         //    url: "../DS/GetColumns",
@@ -184,6 +185,10 @@ var EbSelect = function (ctrl) {
         //fnClickCallbackFunc:
         //});
     };
+
+    this.xxx = function (e, dt, type, indexes) {
+        // console.log("keysssss");
+    }
 
     this.initDTpost = function (data) {
         alert("initComplete");
@@ -253,7 +258,7 @@ var EbSelect = function (ctrl) {
                 DDstate: false
             },
             watch: {
-                valueMembers: this.V_watchVMembers.bind(this),
+                valueMembers: this.V_watchVMembers.bind(this)
             },
             methods: {
                 toggleDD: this.V_toggleDD.bind(this),
@@ -367,7 +372,7 @@ var EbSelect = function (ctrl) {
         $.each(this.datatable.Api.settings().init().columns, function (j, value) { if (value.columnName === 'id') { indx = value.columnIndex; return false; } });
         var datas = $(this.DTSelector).DataTable().row($row).data();
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
-            if (!(this.Vobj.valueMembers.length === this.maxLimit)) {
+            if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(this.currentEvent.target).prop('checked', true);
@@ -385,7 +390,7 @@ var EbSelect = function (ctrl) {
 
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
-        var container1 = $('#' + this.name);
+        var container1 = $('#' + this.name + 'Container');
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {

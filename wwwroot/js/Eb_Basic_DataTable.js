@@ -148,7 +148,7 @@ var EbBasicDataTable = function (Option) {
 
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//"sWidth":"10px", 
-        var serialObj = (JSON.parse('{"searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
+        var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
         if(this.showSerialColumn)
             this.extraCol.push(serialObj);
         this.addcheckbox();
@@ -168,7 +168,7 @@ var EbBasicDataTable = function (Option) {
         var chkObj = new Object();
         chkObj.data = null;
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-        //chkObj.sWidth = "10px";
+        chkObj.sWidth = "10px";
         chkObj.orderable = false;
         chkObj.bVisible = (this.showCheckboxColumn) ? true : false;
         chkObj.name = "checkbox";
@@ -183,8 +183,8 @@ var EbBasicDataTable = function (Option) {
         var o = new Object();
         o.scrollY = this.scrollHeight;
         o.scrollX = "100%";
-        //o.bAutoWidth = false;
-        //o.autowidth = false;
+        o.bAutoWidth = false;
+        o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
         o.language = {
@@ -462,7 +462,7 @@ var EbBasicDataTable = function (Option) {
                 this.createFilterRowHeader();
             this.addFilterEventListeners();
             this.Api.columns.adjust();
-            Option.initComplete();
+            Option.fninitComplete();
         }.bind(this), 10);
     }
 
@@ -594,7 +594,7 @@ var EbBasicDataTable = function (Option) {
     this.selectCallbackFunc = function (e, dt, type, indexes) {
         //alert("selectCallbackFunc");
         //if (this.dtsettings.fnKeyUpCallback)
-        //    this.dtsettings.fnKeyUpCallback(e, datatable, cell, originalEvent);
+        Option.fnKeyUpCallback(e, dt, type, indexes);
     };
 
     this.clickCallbackFunc = function (e) {
@@ -608,7 +608,7 @@ var EbBasicDataTable = function (Option) {
         //alert("fnDblclickCallbackFunc");
         //this.Api.rows(e.target).select();
         //if (this.dtsettings.fnDblclickCallbackFunc)
-            Option.fnDblclickCallbackFunc(e);
+        Option.fnDblclickCallback(e);
     };
 
     this.doRowgrouping = function () {

@@ -306,15 +306,25 @@
     vertical-align: bottom;
 }
 
+.DDdiv table {
+    font-size: 13px !important;
+    margin-bottom: 0;
+}
+
+.DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th,
+.DDdiv .table > tfoot > tr > th, .DDdiv .table > thead > tr > td,
+.DDdiv .table > tbody > tr > td, .DDdiv .table > tfoot > tr > td {
+    padding: 3px;
+}
+
 .DDdiv {
+    width: 100%;
     position: absolute;
     top: 100%;
     left: 0;
     z-index: 1000;
     float: left;
     min-width: 160px;
-    padding: 5px 0;
-    margin: 2px 0 0;
     font-size: 14px;
     text-align: left;
     list-style: none;

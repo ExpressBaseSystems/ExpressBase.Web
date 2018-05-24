@@ -137,8 +137,9 @@ var EbSelect = function (ctrl) {
         o.showCheckboxColumn = true;
         o.showFilterRow = false;
         o.scrollHeight = "200px";
-        o.fnDblclickCallbackFunc = this.dblClickOnOptDDEventHand.bind(this);
-        o.initComplete = this.initDTpost.bind(this),
+        o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
+        o.fnKeyUpCallback = this.xxx.bind(this);
+        o.fninitComplete = this.initDTpost.bind(this),
         this.datatable = new EbBasicDataTable(o);
         //$.ajax({
         //    type: "POST",
@@ -184,6 +185,10 @@ var EbSelect = function (ctrl) {
         //fnClickCallbackFunc:
         //});
     };
+
+    this.xxx = function (e, dt, type, indexes) {
+       // console.log("keysssss");
+    }
 
     this.initDTpost = function (data) {
         alert("initComplete");

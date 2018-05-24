@@ -133,9 +133,12 @@ var EbSelect = function (ctrl) {
         var o = new Object();
         o.dsid = this.dsid;
         o.tableId = "ComboBox0tbl";
-        //o.isSerialColumn = true;
-        //o.isCheckboxColumn = true;
-        //o.isFilterRow = true;
+        o.showSerialColumn = false;
+        o.showCheckboxColumn = true;
+        o.showFilterRow = false;
+        o.scrollHeight = "200px";
+        o.fnDblclickCallbackFunc = this.dblClickOnOptDDEventHand.bind(this);
+        o.initComplete = this.initDTpost.bind(this),
         this.datatable = new EbBasicDataTable(o);
         //$.ajax({
         //    type: "POST",
@@ -183,6 +186,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.initDTpost = function (data) {
+        alert("initComplete");
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
         $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
         //$('#' + this.name + '_loading-image').hide();
@@ -197,6 +201,7 @@ var EbSelect = function (ctrl) {
 
     //double click on option in DD
     this.dblClickOnOptDDEventHand = function (e) {
+        alert("dblClickOnOptDDEventHand");
         this.currentEvent = e;
         var idx = this.datatable.Api.columns(this.vmName + ':name').indexes()[0] - 2;
         var vmValue = this.datatable.Api.row($(e.target).parent()).data()[idx];

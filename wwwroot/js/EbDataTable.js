@@ -432,8 +432,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.addSerialAndCheckboxColumns = function () {
-        this.CheckforColumnID();//"sWidth":"10px", 
-        var serialObj = (JSON.parse('{"searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
+        this.CheckforColumnID();//, 
+        var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
         this.extraCol.push(serialObj);
         this.addcheckbox();
     }
@@ -452,7 +452,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var chkObj = new Object();
         chkObj.data = null;
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
-        //chkObj.sWidth = "10px";
+        chkObj.sWidth = "10px";
         chkObj.orderable = false;
         chkObj.bVisible = true;
         chkObj.name = "checkbox";
@@ -514,9 +514,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.order = [];
         //o.deferRender = true;
         //o.filter = true;
-        //o.select = true;
+        o.select = true;
         //o.retrieve = true;
-        //o.keys = true;
+        o.keys = true;
         //this.filterValues = this.getFilterValues();
         filterChanged = false;
         if (!this.isTagged)
@@ -858,11 +858,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.initCompleteFunc = function (settings, json) {
         this.GenerateButtons();
-        if (this.eb_agginfo.length > 0) {
-            this.createFooter(0);
-            this.createFooter(1);
-            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
-        }
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
         //this.contextMenu();
@@ -885,6 +880,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         setTimeout(function () {
             this.createFilterRowHeader();
+            if (this.eb_agginfo.length > 0) {
+                this.createFooter(0);
+                this.createFooter(1);
+                $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
+            }
             this.addFilterEventListeners();
             this.Api.columns.adjust();
         }.bind(this), 10);
@@ -1070,7 +1070,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
     };
 
-    this.createFooter = function (pos) {
+    this.createFooter = function (ps) {
         var tx = this.ebSettings;
         var tid = this.tableId;
         var aggFlag = false;
@@ -1078,11 +1078,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
         var scrollfoot = $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner table');
 
-        if (lfoot !== null || rfoot !== null)
-            var eb_footer_controls_lfoot = this.GetAggregateControls(pos, 50);
-        if (scrollfoot !== null)
-            var eb_footer_controls_scrollfoot = this.GetAggregateControls(pos, 1);
-        if (pos == 0) {
+        if (lfoot.length !== 0 || rfoot.length !== 0)
+            var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);
+        if (scrollfoot.length !== 0)
+            var eb_footer_controls_scrollfoot = this.GetAggregateControls(ps, 1);
+        if (ps == 0) {
             $.each(this.Api.settings().init().aoColumns, function (i, col) {
                 if (col.Aggregate) {
                     $('#' + tid + '_btntotalpage').css("display", "inline");
@@ -1092,38 +1092,41 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             });
 
             if (!aggFlag)
-                $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
+                $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
         }
-        if (pos === 1)
-            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
+        if (ps === 1)
+            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
         var j = 0;
-        $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ') th').each(function (idx) {
-            if (lfoot !== null) {
+        $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ') th').each(function (idx, scrollfootth) {
+            var lfootth = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table tfoot tr:eq(' + ps + ') th:eq('+j+')');
+            var rfootth = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table tfoot tr:eq(' + ps + ') th:eq(' + j +')');
+
+            if (lfoot.length !== 0) {
                 if (j < tx.LeftFixedColumn)
-                    $(this).html(eb_footer_controls_lfoot[idx]);
+                    $(lfootth).html(eb_footer_controls_lfoot[idx]);
             }
 
-            if (rfoot !== null) {
+            if (rfoot.length !== 0) {
                 if (j === eb_footer_controls_lfoot.length - tx.RightFixedColumn) {
                     if (j < eb_footer_controls_lfoot.length)
-                        $(this).html(eb_footer_controls_lfoot[idx]);
+                        $(rfootth).html(eb_footer_controls_lfoot[idx]);
                 }
             }
 
-            if (scrollfoot !== null) {
-                if (tx.LeftFixedColumns + tx.RightFixedColumn > 0) {
+            if (scrollfoot.length !== 0) {
+                if (tx.LeftFixedColumn + tx.RightFixedColumn > 0) {
                     if (j < eb_footer_controls_scrollfoot.length - tx.RightFixedColumn)
-                        $(this).html(eb_footer_controls_scrollfoot[idx]);
+                        $(scrollfootth).html(eb_footer_controls_scrollfoot[idx]);
                 }
 
                 else {
                     if (j < eb_footer_controls_scrollfoot.length)
-                        $(this).html(eb_footer_controls_scrollfoot[idx]);
+                        $(scrollfootth).html(eb_footer_controls_scrollfoot[idx]);
                 }
             }
 
             j++;
-        });
+        }.bind(this));
 
         this.summarize2();
     };
@@ -1241,6 +1244,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         //$('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
         $(".addedbyeb [type=checkbox]").prop('indeterminate', true);
+        $(".DTFC_Blocker").remove();
     };
 
     this.addFilterEventListeners = function () {
@@ -1524,7 +1528,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         drptext = "<div class='input-group input-group-sm' style='width:100%!important'>" +
             "<div class='input-group-btn' style='height:100%!important'>" +
             " <button type='button' style='width:100% !important;height:100%!important;' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-            " <ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
+            " <ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
@@ -1545,7 +1549,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var filter = "<div class='input-group input-group-sm' style='width:100%!important'>" +
             "<div class='input-group-btn' style='height:100%!important'>" +
             " <button type='button' style='width:100% !important;height:100% !important;' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-            "<ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
+            "<ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
             " <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
@@ -1565,7 +1569,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var coltype = " data-coltyp='string'";
         var drptext = "";
         drptext = "<div class='input-group input-group-sm' style='width:100%!important'>" +
-            "<div class='input-group-btn' style='z-index:" + zidx.toString() + "'>" +
+            "<div class='input-group-btn'>" +// style='z-index:" + zidx.toString() + "'
             " <button type='button' style='width:100% !important' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
             " <ul class='dropdown-menu'>" +
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">x*</a></li>" +

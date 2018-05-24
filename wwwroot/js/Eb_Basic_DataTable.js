@@ -3,9 +3,10 @@
 var EbBasicDataTable = function (Option) {
     this.dsid = Option.dsid;
     this.tableId = Option.tableId;
-    this.isSerialColumn = Option.isSerialColumn || true;
-    this.isCheckboxColumn = Option.isCheckboxColumn || true;
-    this.isFilterRow = Option.isFilterRow || true;
+    this.showSerialColumn = (typeof Option.showSerialColumn !== "undefined" && Option.showSerialColumn !== "" && Option.showSerialColumn !== null) ? Option.showSerialColumn : true;
+    this.showCheckboxColumn = (typeof Option.showCheckboxColumn !== "undefined" && Option.showCheckboxColumn !== "" && Option.showCheckboxColumn !== null) ? Option.showCheckboxColumn : true;
+    this.showFilterRow = (typeof Option.showFilterRow !== "undefined" && Option.showFilterRow !== "" && Option.showFilterRow !== null) ? Option.showFilterRow : true;
+    this.scrollHeight = Option.scrollHeight || "inherit";
     this.isSecondTime = false;
     this.Api = null;
     this.order_info = new Object();
@@ -131,7 +132,7 @@ var EbBasicDataTable = function (Option) {
             return sum / data.length;
         });
 
-        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        this.table_jQO.off('draw.dt').on('draw.dt',  this.doSerial.bind(this));
 
         this.table_jQO.on('length.dt', function (e, settings, len) {
             console.log('New page length: ' + len);
@@ -141,12 +142,14 @@ var EbBasicDataTable = function (Option) {
             alert("ajax erpttt......");
         };
 
+        $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
+
     };
 
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//"sWidth":"10px", 
         var serialObj = (JSON.parse('{"searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
-        if(this.isSerialColumn)
+        if(this.showSerialColumn)
             this.extraCol.push(serialObj);
         this.addcheckbox();
     }
@@ -167,7 +170,7 @@ var EbBasicDataTable = function (Option) {
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
         //chkObj.sWidth = "10px";
         chkObj.orderable = false;
-        chkObj.bVisible = (this.isCheckboxColumn) ? true : false;
+        chkObj.bVisible = (this.showCheckboxColumn) ? true : false;
         chkObj.name = "checkbox";
         chkObj.Type = 3;
         chkObj.render = this.renderCheckBoxCol.bind(this);
@@ -178,7 +181,7 @@ var EbBasicDataTable = function (Option) {
 
     this.createTblObject = function () {
         var o = new Object();
-        o.scrollY = "inherit";
+        o.scrollY = this.scrollHeight;
         o.scrollX = "100%";
         //o.bAutoWidth = false;
         //o.autowidth = false;
@@ -189,10 +192,11 @@ var EbBasicDataTable = function (Option) {
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
-        filterChanged = false;
         o.dom = "<'col-md-12 noPadding display_none'>rt";
         o.paging = false;
         o.lengthChange = false;
+        o.select = true;
+        o.keys = true,
         o.ajax = {
             url: "../dv/getData",
             type: 'POST',
@@ -202,7 +206,6 @@ var EbBasicDataTable = function (Option) {
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
-        o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
         return o;
     };
 
@@ -455,10 +458,11 @@ var EbBasicDataTable = function (Option) {
         //$("#eb_common_loader").EbLoader("hide");
 
         setTimeout(function () {
-            if(this.isFilterRow)
+            if(this.showFilterRow)
                 this.createFilterRowHeader();
             this.addFilterEventListeners();
             this.Api.columns.adjust();
+            Option.initComplete();
         }.bind(this), 10);
     }
 
@@ -603,8 +607,8 @@ var EbBasicDataTable = function (Option) {
     this.dblclickCallbackFunc = function (e) {
         //alert("fnDblclickCallbackFunc");
         //this.Api.rows(e.target).select();
-        if (this.dtsettings.fnDblclickCallbackFunc)
-            this.dtsettings.fnDblclickCallbackFunc(e);
+        //if (this.dtsettings.fnDblclickCallbackFunc)
+            Option.fnDblclickCallbackFunc(e);
     };
 
     this.doRowgrouping = function () {
@@ -627,7 +631,8 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.doSerial = function () {
-        this.Api.column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
+        if (this.showSerialColumn) 
+            this.Api.column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
         this.Api.columns.adjust();
     };
 

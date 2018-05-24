@@ -34,7 +34,7 @@ namespace ExpressBase.Web.Components
             ViewBag.Refid = refid;
             ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
             ViewBag.ssurl = ssurl;
-            ViewBag.TableSchema = GetTableSchemaRequest();
+            //ViewBag.TableSchema = GetTableSchemaRequest();
             return View("codeEditor");
         }
         public List<string> Getsqlfns(int obj_type)

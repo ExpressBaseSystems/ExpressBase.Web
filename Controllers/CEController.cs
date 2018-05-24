@@ -341,7 +341,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult GetFilterBody(string dvobj)
         {
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
-            dsObject.AfterRedisGet(this.Redis);
+            dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
             if (dsObject.FilterDialog != null)
             {
                 foreach (EbControl control in dsObject.FilterDialog.Controls)

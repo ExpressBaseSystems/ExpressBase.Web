@@ -59,7 +59,7 @@ namespace ExpressBase.Web.Controllers
         }        
     }
 
-    public class StaticFileController : EbBaseIntController
+    public class StaticFileController : EbBaseIntCommonController
     {
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
        

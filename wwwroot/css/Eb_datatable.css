@@ -108,27 +108,35 @@ td.resizer {
 }
 
 .DTFC_LeftHeadWrapper {
-    z-index: 150;
+    z-index: 2;
+    padding-bottom: 250px !important;
+    margin-bottom: -250px !important;
 }
 
 .DTFC_LeftBodyWrapper {
-    z-index: 100;
+    /*z-index: 100;*/
 }
 
 .DTFC_LeftFootWrapper {
-    z-index: 150;
+    //z-index: 150;
+    padding-bottom: 250px !important;
+    margin-bottom: -250px !important;
 }
 
 .DTFC_RightHeadWrapper {
-    z-index: 150;
+    z-index: 2;
+    padding-bottom: 250px !important;
+    margin-bottom: -250px !important;
 }
 
 .DTFC_RightBodyWrapper {
-    z-index: 100;
+    /*z-index: 100;*/
 }
 
 .DTFC_RightFootWrapper {
-    z-index: 150;
+    /*z-index: 150;*/
+    padding-bottom: 250px !important;
+    margin-bottom: -250px !important;
 }
 
 .linepadding {
@@ -214,7 +222,7 @@ div.dataTables_wrapper div.dataTables_info {
 div.dataTables_wrapper div.dataTables_processing {
 }
 
-.dataTables_scrollHeadInner {
+.dataTables_scrollHeadInner, .dataTables_scrollFootInner {
     width: 100% !important;
 }
 /*.dataTables_scrollHeadInner table {

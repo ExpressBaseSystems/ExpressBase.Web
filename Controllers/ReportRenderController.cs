@@ -5,6 +5,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
@@ -15,7 +16,7 @@ using System.Runtime.Serialization;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ReportRenderController : EbBaseIntController
+    public class ReportRenderController : EbBaseIntCommonController
     {
         private IActionResult Pdf { get; set; }
 

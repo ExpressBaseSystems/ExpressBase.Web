@@ -576,11 +576,15 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.callGetControl(this.nxtCtrlIdx);
         }
         else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
-            //this.curVal = $btn.closest(".card-cont").find(".card-label").text();
-
-            this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-            this.formValues[id] = this.curVal;
-            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
+            if (this.curCtrl.isReadOnly) {
+                $btn.css('display', 'none');
+                $('#' + this.curCtrl.name).attr('id', '');
+            }
+            else {
+                this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+                this.formValues[id] = this.curVal;
+                this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
+            }            
             this.callGetControl(this.nxtCtrlIdx);
         }
         else {
@@ -608,7 +612,15 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             }
         }
         else {  //if last control
-            this.showSubmit();
+            if (!this.curForm.isReadOnly)
+                this.showSubmit();
+            else {
+                //var $btn = $(event.target).closest(".btn");
+                //this.sendMsg($btn.text());
+                $('.msg-wraper-user [name=ctrledit]').remove();
+                //$btn.closest(".msg-cont").remove();
+                this.AskWhatU();
+            }                
         }
         this.enableCtrledit();
     };
@@ -1041,7 +1053,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.initConnectionCheck = function () {
         Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://www.expressbase.com/images/EB_Logo.png?' + Date.now() }, active: 'image' } };
-        setInterval(this.connectionPing, 2000000);///////////////////////////////////////////////////////////////
+        setInterval(this.connectionPing, 5000);///////////////////////////////////////////////////////////////
     };
 
     this.connectionPing = function () {

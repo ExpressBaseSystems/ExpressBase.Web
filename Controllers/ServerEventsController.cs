@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Auth;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ServerEventsController : EbBaseIntController
+    public class ServerEventsController : EbBaseIntCommonController
     {
         public ServerEventsController(IServiceClient _client) : base(_client) { }
 

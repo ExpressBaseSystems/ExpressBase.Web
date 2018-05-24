@@ -5,6 +5,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -24,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
-	public class SecurityController : EbBaseIntController
+	public class SecurityController : EbBaseIntCommonController
 	{
 		public SecurityController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 		// GET: /<controller>/

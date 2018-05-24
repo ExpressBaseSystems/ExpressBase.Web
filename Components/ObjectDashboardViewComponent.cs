@@ -9,6 +9,7 @@ using ServiceStack;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using Newtonsoft.Json;
+using ExpressBase.Common.Constants;
 
 namespace ExpressBase.Web.Components
 {
@@ -61,7 +62,7 @@ namespace ExpressBase.Web.Components
             }
             else{
                 ViewBag.Owner_Id = ViewBag.Uid;
-                User u = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+                User u = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
                 ViewBag.Owner_Name =u.FullName;
                 ViewBag.Owner_Ts = DateTime.UtcNow;
             }

@@ -3,6 +3,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -33,6 +34,7 @@ namespace ExpressBase.Web.Components
             ViewBag.Refid = refid;
             ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
             ViewBag.ssurl = ssurl;
+            ViewBag.TableSchema = GetTableSchemaRequest();
             return View("codeEditor");
         }
         public List<string> Getsqlfns(int obj_type)
@@ -45,6 +47,14 @@ namespace ExpressBase.Web.Components
                 objects_list.Add(element.Name);
             }
             return objects_list;
+        }
+
+        public string GetTableSchemaRequest()
+        {
+            var res = this.ServiceClient.Get<GetTbaleSchemaResponse>(new GetTableSchemaRequest());
+            string schema = JsonConvert.SerializeObject(res.Data);
+
+            return schema;
         }
 
     }

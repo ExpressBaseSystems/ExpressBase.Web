@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OfficeOpenXml;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ExcelUploadController : EbBaseIntController
+    public class ExcelUploadController : EbBaseIntCommonController
     {
         public ExcelUploadController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

@@ -1,9 +1,11 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Constants;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
@@ -14,7 +16,7 @@ using System.Runtime.Serialization;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ReportRenderController : EbBaseIntController
+    public class ReportRenderController : EbBaseIntCommonController
     {
         private IActionResult Pdf { get; set; }
 
@@ -42,8 +44,8 @@ namespace ExpressBase.Web.Controllers
             ReportRenderResponse Res = null;
             try
             {
-                var x = string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc);
-                User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", ViewBag.cid, ViewBag.email, ViewBag.wc));
+                var x = string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc);
+                User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
                 Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname = user.FullName, Params = Params });
                 Res.StreamWrapper.Memorystream.Position = 0;
             }

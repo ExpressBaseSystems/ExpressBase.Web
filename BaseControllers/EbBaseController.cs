@@ -104,7 +104,7 @@ namespace ExpressBase.Web.BaseControllers
 
                 if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
                 {
-                    string[] subParts = rSub.Split('-');
+                    string[] subParts = rSub.Split(CharConstants.COLON);
 
                     if (rSub.EndsWith(TokenConstants.TC))
                         isvalid = true;

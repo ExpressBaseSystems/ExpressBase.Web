@@ -12,12 +12,14 @@ using ExpressBase.Objects;
 using ExpressBase.Objects.ReportRelated;
 using System.Reflection;
 using System.Data;
+using ExpressBase.Web.BaseControllers;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class RBController : EbBaseIntController
+    public class RBController : EbBaseIntCommonController
     {
         public RBController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
@@ -54,10 +56,10 @@ namespace ExpressBase.Web.Controllers
             return (a as EbDataColumn).ColumnName.CompareTo((b as EbDataColumn).ColumnName);
         }
 
-        public ValidateCalcExpressionResponse ValidateCalcExpression(string refid, string expression)
+        public string ValidateCalcExpression(string refid, string expression)
         {
             ValidateCalcExpressionResponse res = this.ServiceClient.Get<ValidateCalcExpressionResponse>(new ValidateCalcExpressionRequest { DataSourceRefId = refid, ValueExpression = expression });
-            return res;
+            return JsonConvert.SerializeObject(res);
         }
 
     }

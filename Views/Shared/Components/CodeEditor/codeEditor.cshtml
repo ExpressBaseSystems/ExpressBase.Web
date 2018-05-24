@@ -3,6 +3,17 @@
     var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
     string readonlyval = (dsObj != null) ? dsObj.VersionNumber.Substring(dsObj.VersionNumber.Length - 1) : "w";
     }
+<link href="~/css/SqlBuilder/Home.css" rel="stylesheet" />
+<link href="~/css/SqlBuilder/QBuilder.css" rel="stylesheet" />
+<link href="~/css/SqlBuilder/whereClause.css" rel="stylesheet" />
+
+<script src="~/js/SqlBuilder/connectingLine.js" type="text/javascript"></script>
+<script src="~/js/SqlBuilder/connectSVG.js" type="text/javascript"></script>
+<script src="~/js/SqlBuilder/Home.js" type="text/javascript"></script>
+<script src="~/js/SqlBuilder/jquerySVGmin.js" type="text/javascript"></script>
+<script src="~/js/SqlBuilder/QBuilder.js" type="text/javascript"></script>
+<script src="~/js/SqlBuilder/Sort.js" type="text/javascript"></script>
+<script src="~/js/SqlBuilder/whereClause.js" type="text/javascript"></script>
 
 <div class="ds-page" id="ds-page@(ViewBag.tabnum)">
     <div class='col-md-10 code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
@@ -13,6 +24,8 @@
     </div>
 </div>
 <script>    
+    var builder = new QueryBuilder("@ViewBag.TableSchema");//edited  by amal
+
     if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
     }

@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common.ServiceClients;
+using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
@@ -10,7 +11,7 @@ using ServiceStack.Redis;
 namespace ExpressBase.Web2.Controllers
 {
 
-    public class SampleController : EbBaseIntController
+    public class SampleController : EbBaseIntCommonController
     {
         public SampleController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc) : base(_ssclient, _redis, _mqc) { }
 

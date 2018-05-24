@@ -8,10 +8,11 @@ using RestSharp;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Newtonsoft.Json;
 using ExpressBase.Common;
+using ExpressBase.Web.BaseControllers;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class SlackController : EbBaseIntController
+    public class SlackController : EbBaseIntCommonController
     {
         public SlackController(IServiceClient _ssclient) : base(_ssclient) { }
 

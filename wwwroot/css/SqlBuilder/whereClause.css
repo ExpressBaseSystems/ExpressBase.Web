@@ -1,0 +1,168 @@
+﻿
+/*whereClause...............................................*/
+
+/*.dragables {
+    font-size: small;
+}*/
+
+
+
+.rule-actions {
+    padding-top: 4px;
+    padding-right: 10px;
+}
+
+.grp {
+    padding-top: 4px;
+    padding-left: 10px;
+}
+
+.condition-tab {
+    padding: 35px;
+}
+
+.conditiong-gp-container {
+    width: 100%;
+    border: 1px solid #2682dd;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.conditiong-gp-container-header {
+    width: 100%;
+    min-height: 50px;
+}
+
+.conditiong-gp-container-body {
+    width: 100%;
+    padding: 10px 20px 20px 60px;
+    min-height: 50px;
+}
+
+.groupBox {
+    width: 100%;
+    border: 1px solid #2682dd;
+    border-radius: 10px;
+    min-height: 50px;
+    margin-bottom: 10px;
+}
+
+.droped {
+    width: 100%;
+    border: 1px solid #2682dd;
+    border-radius: 10px;
+    min-height: 50px;
+    margin-bottom: 10px;
+    margin-left: 1px;
+    padding: 10px;
+    color: #369;
+}
+
+.where-btns {
+    padding-top: 5px;
+    padding-right: 5px;
+    float: right;
+}
+
+.where-toggle {
+    padding-top: 5px;
+    padding-left: 10px;
+    position: absolute;
+}
+
+.d-inline {
+    display: inline-block;
+}
+
+/************************/
+div.treeviewDragula {
+    min-width: 100px;
+    min-height: 100px;
+    max-height: 256px;
+    overflow: auto;
+    padding: 4px;
+    margin-bottom: 20px;
+    color: #369;
+    border: solid 1px;
+    border-radius: 4px;
+}
+
+    div.treeviewDragula ul:first-child:before {
+        display: none;
+    }
+
+.treeviewDragula, .treeviewDragula ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: #369;
+}
+
+    .treeviewDragula ul {
+        margin-left: 1em;
+        position: relative
+    }
+
+        .treeviewDragula ul ul {
+            margin-left: .5em
+        }
+
+        .treeviewDragula ul:before {
+            content: "";
+            display: block;
+            width: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 1px solid;
+            /*creates: a more theme-ready standard for the bootstrap themes;*/
+            bottom: 15px;
+        }
+
+    .treeviewDragula li {
+        margin: 0;
+        padding: 2px 1em;
+        line-height: 2em;
+        position: relative;
+        font-size: 16px;
+    }
+
+    .treeviewDragula ul li:before {
+        content: "";
+        display: block;
+        width: 10px;
+        height: 0;
+        border-top: 1px solid;
+        margin-top: -1px;
+        position: absolute;
+        top: 1em;
+        left: 0
+    }
+
+.tree-indicator {
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.treeviewDragula li a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.treeview li button, .treeviewDragula li button:active, .treeviewDragula li button:focus {
+    text-decoration: none;
+    color: inherit;
+    border: none;
+    background: transparent;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    outline: 0;
+}
+.clr {
+    color: #369;
+}
+/*.where-btn2 {
+    background-color: #369;
+}*/
+

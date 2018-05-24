@@ -7,6 +7,7 @@ using ExpressBase.Common;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -15,7 +16,7 @@ using ServiceStack.Redis;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class DSController : EbBaseIntController
+    public class DSController : EbBaseIntCommonController
     {
         public DSController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 

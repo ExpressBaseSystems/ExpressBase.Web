@@ -1,4 +1,5 @@
-﻿using ExpressBase.Common.Objects;
+﻿using ExpressBase.Common.Constants;
+using ExpressBase.Common.Objects;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
@@ -32,7 +33,7 @@ namespace ExpressBase.Web.Components
             //resultlist = this.Redis.Get<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
             //if (resultlist == null)
             {
-                User user = this.Redis.Get<User>(string.Format("{0}-{1}-{2}", solnid, email, console));
+                User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, solnid, email, console));
                 var Ids = String.Join(",", user.EbObjectIds);
 
                 resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids =  Ids, SysRole = user.Roles });

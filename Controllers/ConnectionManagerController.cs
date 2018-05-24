@@ -2,6 +2,7 @@
 using ExpressBase.Common.Connections;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
@@ -11,7 +12,7 @@ using System;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ConnectionManagerController : EbBaseIntController
+    public class ConnectionManagerController : EbBaseIntCommonController
     {
         public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _mqc, _sfc)
         {
@@ -131,7 +132,8 @@ namespace ExpressBase.Web.Controllers
                 ReadWritePassword = req["readWritePassword"],
                 ReadOnlyUserName = req["readOnlyUserName"],
                 ReadOnlyPassword = req["readOnlyPassword"],
-                Timeout = Convert.ToInt32(req["timeout"])
+                Timeout = Convert.ToInt32(req["timeout"]),
+                IsDefault = false
             };
 
             EbObjectsDbConnection objdbcon = new EbObjectsDbConnection()
@@ -146,7 +148,8 @@ namespace ExpressBase.Web.Controllers
                 ReadWritePassword = req["readWritePassword"],
                 ReadOnlyUserName = req["readOnlyUserName"],
                 ReadOnlyPassword = req["readOnlyPassword"],
-                Timeout = Convert.ToInt32(req["timeout"])
+                Timeout = Convert.ToInt32(req["timeout"]),
+                IsDefault = false
             };
 
             this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });

@@ -20,20 +20,21 @@
         treed: function (o) {
             var openedClass = 'fa-minus';
             var closedClass = 'fa-plus';
+            var ic = o || 'fa-plus';
 
             if (typeof o !== 'undefined') {
                 if (typeof o.openedClass !== 'undefined') {
-                    openedClass = o.openedClass;
+                    //openedClass = o.openedClass;
                 }
                 if (typeof o.closedClass !== 'undefined') {
-                    closedClass = o.closedClass;
+                    //closedClass = o.closedClass;
                 }
             }
             var tree = $(this);
             tree.addClass("tree");
             tree.find('li').has("ul").each(function () {
                 var branch = $(this);
-                branch.prepend("<i class='indicator fa " + closedClass + "'></i>");
+                branch.prepend("<i class='indicator fa " + ic + "'></i>");
                 branch.addClass('branch');
                 branch.on('click', function (e) {
                     if (this === e.target) {
@@ -115,29 +116,30 @@
                         <div class="draggable tool-box-div" eb-type="Text"><i class="fa fa-text-width" aria-hidden="true"></i> Text </div>
                         <div class="draggable tool-box-div" eb-type="Barcode"><i class="fa fa-barcode" aria-hidden="true"></i> Barcode </div>
                         <div class="draggable tool-box-div" eb-type="QRcode"><i class="fa fa-qrcode" aria-hidden="true"></i> QR Code </div>
-                        <div class="draggable draggable-to-page tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Image </div>                       
+                        <div class="draggable draggable-to-page tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Image </div>
                         <div class="draggable-to-page tool-box-div" eb-type="WaterMark"><i class="fa fa-map-marker" aria-hidden="true"></i> Water Mark </div>
                         <div class="draggable tool-box-div" eb-type="SerialNumber"><i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Serial Number </div>
                     </div>
                     <div class="tab-pane" id="data" role="tabpanel">
                         <ul id="data-table-list" class="tool-box-items"></ul>
-                        <ul id="running-summary" class="tool-box-items">
-                            <li>
-                                <a>Summary</a>
-                                <ul id="running-summary-childul">
-                                   
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul id="calculated-fields" class="tool-box-items">
-                            <li>
-                                <a>Calculated Fields</a>
-                                <ul>
-                                    <li class="styl"><div id="" eb-type="CalcField" class="draggable textval">calc field</div></li>
-                                    <li class="styl"><div id="" class="draggable textval">Coloumn</div></li>
-                                </ul>
-                            </li>
-                        </ul>
+                        <div style="position:relative;">
+                            <ul id="running-summary" class="tool-box-items">
+                                <li>
+                                    <a>Summary</a>
+                                    <ul id="running-summary-childul"></ul>
+                                </li>
+                            </ul>
+                            <a class="btn_calcfield_new add_summarry"><i class="fa fa-plus"></i></a>
+                        </div>
+                        <div style="position:relative;">
+                            <ul id="calcFields" class="tool-box-items">
+                                <li>
+                                    <a> Calculated Fields </a>
+                                    <ul id="calcfields-childul"></ul>
+                                </li>
+                            </ul>
+                            <a class="btn_calcfield_new add_calcfield"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,35 +169,34 @@
                 <div id="propGrid"></div>
             </div>
             <div class="layers-container">
-            <div class="layer-head">Layers</div>
+                <div class="layer-head">Layers</div>
                 <div class="layer-body">
                     <div class="section-layer layer-focus form-control" tabindex="1" id="reportLayer">
-                        <i class="fa fa-file-o" aria-hidden="true"></i>Report Layer 
+                        <i class="fa fa-file-o" aria-hidden="true"></i>Report Layer
                     </div>
-                    <div class="report-layer layeractive form-control"  tabindex="1" id="sectionLayer">
-                        <i class="fa fa-puzzle-piece" aria-hidden="true"></i>Sections Layer 
+                    <div class="report-layer layeractive form-control" tabindex="1" id="sectionLayer">
+                        <i class="fa fa-puzzle-piece" aria-hidden="true"></i>Sections Layer
                     </div>
-                </div>              
+                </div>
             </div>
         </div>
     </div>
     <div class="modal fade" id="summarry-editor-modal-container" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
             <div class="summarry-editor-container">
+                <div class="close_md" data-dismiss="modal"><i class="fa fa-close"></i></div>
                 <h4>Add summary</h4>
                 <div class="form-group">
-                    <label>Function</label>
-                    <select id="summary-func" name="func" class="form-control">                                         
-                    </select>
+                    <label>Field Names</label>
+                    <select id="summary-fieldname" name="func" class="form-control"></select>
                 </div>
                 <div class="form-group">
-                    <label>Field Name</label>
-                    <input type="text" id="summary-fieldname" class="form-control" value="" readonly/>
+                    <label>Function</label>
+                    <select id="summary-func" name="func" class="form-control"></select>
                 </div>
                 <div class="form-group">
                     <label>Section</label>
-                    <select id="summary-sections" name="" class="form-control">                                             
-                    </select>
+                    <select id="summary-sections" name="" class="form-control"></select>
                 </div>
                 <div class="form-group">
                     <button class="btn pull-right" id="submit-summary">Ok</button>
@@ -203,20 +204,39 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="eb_calcF_summarry" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="summarry-editor-container">
+                <div class="close_md" data-dismiss="modal"><i class="fa fa-close"></i></div>
+                <h4>Add Calculated Field</h4>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="calcF_name" name="name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Value Expression</label>
+                    <textarea id="calcF_valueExpr" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn pull-right" id="calcF_submit">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
+    $('#running-summary').treed("fa-calculator");
+    $('#calcFields').treed("fa-calculator");
+    $('#special-fields').treed();
+    $('#other-fields').treed();
+
     if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
     }
     var  RBobj = new RptBuilder('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;
-
+    
     $(document).ready(function () {
-        $('#running-summary').treed();
-        $('#calculated-fields').treed();
-        $('#special-fields').treed();
-        $('#other-fields').treed();
-
         DrawColTree = function (result) {
             var type = "";
             $('#data-table-list').empty();

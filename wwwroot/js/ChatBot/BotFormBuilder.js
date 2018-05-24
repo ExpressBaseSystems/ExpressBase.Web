@@ -44,6 +44,7 @@
         setTimeout(function () {
             Proc(editModeObj, this.rootContainerObj);
             this.renderCtrls();
+
         }.bind(this), 1000);
     };
 
@@ -64,6 +65,7 @@
             $(".eb-chatBox-dev").append(ctrl.$Control);
             this.initCtrl(ctrl);
         }.bind(this));
+        $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
     };
 
     {
@@ -492,12 +494,12 @@
         var wrapHtml = obj.$WrapedCtrl4Bot.outerHTML();
         var $cards = $("#" + obj.EbSid);
         $cards.html($(wrapHtml).html());
-        $cards.find('.ctrl-wraper').html(obj.DesignHtml);
+        $cards.find('.ctrl-wraper').html(obj.DesignHtml4Bot);
         var $carddiv = $cards.find('.card-cont');
         var cardbtn = $cards.find('.card-cont').html();
         $carddiv.empty();
         $.each(obj.CardFields.$values, function (k, fobj) {
-            $carddiv.append(fobj.DesignHtml);
+            $carddiv.append($(fobj.$WrapedCtrl4Bot["0"]).find('.ctrl-wraper').html());
         });
         if (obj.CardFields.$values.length === 0)
             $carddiv.append("<div style='height: 57px;'></div>");

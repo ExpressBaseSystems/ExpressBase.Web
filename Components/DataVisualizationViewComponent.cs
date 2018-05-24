@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId)
+        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, string forWrap)
         {
             var dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -59,6 +59,7 @@ namespace ExpressBase.Web.Components
             }
             //ViewBag.Meta = Meta.Replace("\\r\\n", string.Empty);
             ViewBag.dvRefId = dvRefId;
+            ViewBag.forWrap = forWrap;
             return View();
         }
         

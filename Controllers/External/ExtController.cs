@@ -92,16 +92,23 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult UsrSignIn()
         {
-            if (!String.IsNullOrEmpty(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
-                if (IsTokenNotExpired(base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN]))
+            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(CharConstants.DOT);
+
+            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+
+            if (!String.IsNullOrEmpty(sBToken )|| !String.IsNullOrEmpty(sRToken))
+            {
+
+                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
                 {
-                    var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-                    string[] hostParts = host.Split(CharConstants.DOT);
                     if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
                         return RedirectToAction("DevDashboard", "Dev");
                     else
                         return RedirectToAction("UserDashboard", "TenantUser");
                 }
+            }
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.ErrorMsg = TempData["ErrorMessage"];
 
@@ -483,7 +490,7 @@ namespace ExpressBase.Web.Controllers
             {
                 if (subDomain.EndsWith(RoutingConstants.DASHBOT) || subDomain.EndsWith(RoutingConstants.DASHMOB) || subDomain.EndsWith(RoutingConstants.DASHDEV))
                 {
-                    cid = subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.DASH));
+                    cid = subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.COLON));
 
                     if (subDomain.EndsWith(RoutingConstants.DASHBOT))
                         whichconsole = EbAuthContext.BotUserContext;

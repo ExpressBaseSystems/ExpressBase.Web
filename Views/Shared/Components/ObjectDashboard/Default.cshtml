@@ -72,7 +72,7 @@
             <div class="head">
                 <i class="fa fa-tags" aria-hidden="true"></i> Applications
             </div>
-            <div class="card_body">
+            <div class="card_body app-container">
                 <input type="text" id="apps" class="typeahead form-control" data-role="tagsinput" />
             </div>
             @*<div class="firstcommit">
@@ -357,7 +357,7 @@
     });
     Applications.initialize();
 
-    $('.app-container input').tagsinput({
+    $('#apps').tagsinput({
         typeaheadjs: [{
             minLength: 1,
             highlight: true,
@@ -371,10 +371,10 @@
         freeInput: true
     });
 
-    $('.app-container input').on('beforeItemAdd', function(event) {
+    $('#apps').on('beforeItemAdd', function(event) {
         if ($.inArray(event.item, array_values)===-1)
         {
-            alert("invalid appliocation");
+            alert("invalid application");
             event.cancel = true ;
         }
         else
@@ -395,7 +395,7 @@
     });
     Tags.initialize();
 
-    $('.tag-container input').tagsinput({
+    $('#tags').tagsinput({
         typeaheadjs: [{
             minLength: 1,
             highlight: true,

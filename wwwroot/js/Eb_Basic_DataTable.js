@@ -111,6 +111,10 @@ var EbBasicDataTable = function (Option) {
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
+        this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
+
+        this.Api.off('key-blur').on('key-blur', Option.arrowBlurCallback);
+
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
                 if (typeof a === 'string') {

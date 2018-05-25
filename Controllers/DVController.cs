@@ -248,20 +248,20 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("GoogleRelated");
         }
 
-		//copied to boti - febin
-        //public DataSourceDataResponse getData(TableDataRequest request)
-        //{
-        //    DataSourceDataResponse resultlist1 = null;
-        //    try
-        //    {
-        //        resultlist1 = this.ServiceClient.Get(request);
-        //    }
-        //    catch (Exception e)
-        //    {
+        //copied to boti - febin
+        public DataSourceDataResponse getData(TableDataRequest request)
+        {
+            DataSourceDataResponse resultlist1 = null;
+            try
+            {
+                resultlist1 = this.ServiceClient.Get(request);
+            }
+            catch (Exception e)
+            {
 
-        //    }
-        //    return resultlist1;
-        //}
+            }
+            return resultlist1;
+        }
 
         public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(int type)
         {

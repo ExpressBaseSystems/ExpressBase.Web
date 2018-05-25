@@ -4,7 +4,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.ObjectType = type;
     this.Versions;
     this.Refid = refid;
-    this.Rel_object;
+	this.relatedObjects;
     this.rel_arr = [];
     this.Filter_Params;
     this.Parameter_Count;
@@ -74,7 +74,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             if (obj[pname] !== null) {
                 this.FD = true;
                 this.GetFD();
-                this.GenerateButtons();
+				this.GenerateButtons();				
             }
         }
         if (pname === "Name") {
@@ -82,7 +82,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
     }.bind(this);
 
-    this.GetFD = function () {
+	this.GetFD = function () {
+		this.relatedObjects = this.EbObject.FilterDialogRefId;
         $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this));
     };
 
@@ -340,7 +341,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.GetUsedSqlFns = function (needRun, issave) {
 
         this.rel_arr = [];
-        this.Rel_object = null;
+		this.relatedObjects = null;
         $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this, issave, needRun));
     };
 
@@ -354,7 +355,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             filter_dialog_refid = null;
         }
         //this.rel_arr.push(filter_dialog_refid);
-        //this.Rel_object = this.rel_arr.toString();
+        //this.relatedObjects = this.rel_arr.toString();
         //this.EbObject.Sql = btoa(this.EbObject.Sql);
         //var tagvalues = $('#tags').val();
         //if (issave === true) {
@@ -372,7 +373,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //        "id": this.ver_Refid,
         //        "changeLog": this.changeLog,
         //        "json": JSON.stringify(this.Current_obj),
-        //        "rel_obj": this.Rel_object,
+        //        "rel_obj": this.relatedObjects,
         //        "tags": tagvalues
         //    }, this.CallDrawTable.bind(this, needRun));
         //}

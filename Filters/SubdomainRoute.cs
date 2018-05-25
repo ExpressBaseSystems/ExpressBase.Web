@@ -58,13 +58,13 @@ namespace ExpressBase.Web.Filters
             
             else if (path.Value.Equals(CharConstants.BACKSLASH.ToString())) // '/'
             {
-                if (host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+                if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
                     this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_3));
 
-                else if (host.EndsWith(RoutingConstants.EBTESTINFO))
+                else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.STAGING)
                     this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_3));
 
-                else if (host.EndsWith(RoutingConstants.LOCALHOST))
+                else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
                     this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_2));
 
                 else

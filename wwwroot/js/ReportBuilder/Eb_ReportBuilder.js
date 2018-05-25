@@ -1,13 +1,21 @@
-﻿var RptBuilder = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
+﻿var RptBuilder = function (option) {
+    var ver_num = option.Version || null;
+    var type = option.ObjType || null;
+    var dsobj = option.DsObj || null;
+    var cur_status = option.Status || null;
+    var tabNum = option.TabNum || null;
+    var ssurl = option.ServiceUrl || null;
+
+    this.wc = option.Wc;
     var containment = ".page";
-    this.Tenantid = 
+    this.Tenantid = option.Cid;
     this.EbObject = dsobj;
     this.isNew = $.isEmptyObject(this.EbObject) ? true : false;
     this.objCollection = {};
     this.splitarray = [];
     this.btn_indx = null;
     this.sectionArray = [];
-    this.RefId = refid;
+    this.RefId = option.RefId || null;;
     this.height = null;
     this.width = null;
     this.designHeight = null;
@@ -20,7 +28,7 @@
 
     this.repExtern = new ReportExtended(this);
     this.RbCommon = new RbCommon(this);
-    this.pg = new Eb_PropertyGrid("propGrid");
+    this.pg = new Eb_PropertyGrid("propGrid", this.wc, this.Tenantid);
     this.RM = new ReportMenu(this);
 
     this.idCounter = CtrlCounters; //from c# //this.RbCommon.EbidCounter;
@@ -481,7 +489,7 @@
 
     this.addImageFn = function (obj) {
         if (obj.Image)
-            obj.Source = 'url('+ obj.Image + ') center no-repeat';
+            obj.Source = 'url(' + window.location.protocol + "//" + window.location.host + "/static/" + obj.Image + ".JPG" + ') center no-repeat';
         this.RefreshControl(obj);
     };
     this.onDrag_stop = function (event, ui) {

@@ -233,9 +233,20 @@
     if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
     }
-    var  RBobj = new RptBuilder('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
+     var RBobj = new RptBuilder({
+        RefId: '@ViewBag.Refid',
+        Version: '@ViewBag.VersionNumber',
+        ObjType: @ViewBag.ObjType,
+        DsObj: @Html.Raw(ViewBag.dsObj),
+        Status: '@ViewBag.Status',
+        TabNum: @ViewBag.tabnum,
+        ServiceUrl: '@ViewBag.ServiceUrl',
+        Wc: '@ViewBag.wc',
+        Cid:'@ViewBag.cid'
+    });
+
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;
-    
+   
     $(document).ready(function () {
         DrawColTree = function (result) {
             var type = "";

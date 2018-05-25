@@ -63,7 +63,7 @@
     chatIcon.className = "boticon"
     chatIcon.id = "boticon" + AppId;
     chatIcon.src = (d.botdpURL || d.botdpURLColl[d.appIdCount]);
-
+       
 
     var closeDiv = d.createElement("div");
     closeDiv.className = "chatclose"
@@ -72,6 +72,12 @@
 
     chatHead.appendChild(closeDiv);
 
+    var maximizeDiv = d.createElement("div");
+    maximizeDiv.className = "chatmaximize"
+    maximizeDiv.id = "maximizediv" + AppId;
+    maximizeDiv.innerHTML = '&#128470;';
+    chatHead.appendChild(maximizeDiv);
+
     iframe.onload = function (e) {
         iframe.style.visibility = 'visible';
     };
@@ -79,6 +85,17 @@
     closeDiv.onclick = function () {
         document.getElementById("eb_iframecont" + AppId).style.display = "none";
         document.getElementById("chatbtn" + AppId).style.display = "block";
+    }
+
+    maximizeDiv.onclick = function () {
+        if (document.getElementById("eb_iframecont" + AppId).style.width === "") {
+            document.getElementById("eb_iframecont" + AppId).style.width = "50%";
+            maximizeDiv.innerHTML = '&#128471;';
+        }
+        else {
+            document.getElementById("eb_iframecont" + AppId).style.width = "";
+            maximizeDiv.innerHTML = '&#128470;';
+        }
     }
 
     chatbtn.onclick = function () {

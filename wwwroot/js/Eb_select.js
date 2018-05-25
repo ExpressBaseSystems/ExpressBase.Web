@@ -133,15 +133,20 @@ var EbSelect = function (ctrl) {
         var o = new Object();
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
-        o.showSerialColumn = false;
+        o.showSerialColumn = true;
         o.showCheckboxColumn = true;
         o.showFilterRow = false;
         o.scrollHeight = this.scrollHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         o.fnKeyUpCallback = this.xxx.bind(this);
+        o.arrowFocusCallback = this.arrowSelectionStylingFcs;
+        o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
         o.hiddenFieldName = this.vmName;
+        o.showFilterRow = true;
         this.datatable = new EbBasicDataTable(o);
+        //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
+        //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
         //$.ajax({
         //    type: "POST",
         //    url: "../DS/GetColumns",
@@ -188,7 +193,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.xxx = function (e, dt, type, indexes) {
-        // console.log("keysssss");
+        console.log("keysssss");
     }
 
     this.initDTpost = function (data) {
@@ -207,7 +212,7 @@ var EbSelect = function (ctrl) {
     //double click on option in DD
     this.dblClickOnOptDDEventHand = function (e) {
         this.currentEvent = e;
-        var idx = this.datatable.Api.columns(this.vmName + ':name').indexes()[0] -1;
+        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
         var vmValue = this.datatable.Api.row($(e.target).parent()).data()[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             if (this.maxLimit === 1) {
@@ -224,7 +229,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.setDmValues = function (i, dmName) {
-        var idx = this.datatable.Api.columns(dmName + ':name').indexes()[0] - 1;
+        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", dmName));
         if (this.maxLimit === 1)
             this.localDMS[i].shift();
         this.localDMS[i].push(this.datatable.Api.row($(this.currentEvent.target).parent()).data()[idx]);
@@ -324,14 +329,14 @@ var EbSelect = function (ctrl) {
 
     this.V_updateCk = function () {// API..............
         console.log("colAdjust---------- ");
-        //$(this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i) {
-        //    var row = $(this).closest('tr');
-        //    var datas = $(this.DTselector).DataTable().row(row).data();
-        //    if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
-        //        $(this).prop('checked', true);
-        //    else
-        //        $(this).prop('checked', false);
-        //});
+        $("#" + this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
+            var row = $(chkbx).closest('tr');
+            var datas = $(this.DTSelector).DataTable().row(row).data();
+            if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
+                $(chkbx).prop('checked', true);
+            else
+                $(chkbx).prop('checked', false);
+        }.bind(this));
         // raise error msg
         setTimeout(this.RaiseErrIf.bind(this), 30);
     };

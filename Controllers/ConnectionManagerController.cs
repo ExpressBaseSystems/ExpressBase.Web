@@ -27,17 +27,18 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult RefreshConnections(int i)
         {
+            RefreshSolutionConnectionsAsyncResponse res = new RefreshSolutionConnectionsAsyncResponse();
             var req = this.HttpContext.Request.Form;
             try
             {
-                this.MqClient.Post<bool>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
+                res = this.MqClient.Post<RefreshSolutionConnectionsAsyncResponse>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
                 {
                     SolutionId = String.IsNullOrEmpty(req["solutionId"]) ? ViewBag.cid : req["solutionId"]
                 });
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception:" + e.Message.ToString());
+                Console.WriteLine("Exception:" + e.Message.ToString()+"\nResponse: "+ res.ResponseStatus.Message);
             }
             return View();
         }
@@ -152,8 +153,8 @@ namespace ExpressBase.Web.Controllers
                 IsDefault = false
             };
 
-            this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });
-            this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = false, SolutionId = req["SolutionId"] });
+            this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });
+            this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = false, SolutionId = req["SolutionId"] });
 
             //if (solutionConnections.EBSolutionConnections.DataDbConnection != null)
             //{
@@ -206,10 +207,10 @@ namespace ExpressBase.Web.Controllers
             {
                 if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
                     dbcon.Password = solutionConnections.EBSolutionConnections.ObjectsDbConnection.Password;
-                this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = dbcon, IsNew = false });
+                this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = dbcon, IsNew = false });
             }
             else
-                this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = dbcon, IsNew = true });
+                this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = dbcon, IsNew = true });
             return Redirect("/ConnectionManager");
         }
 
@@ -247,9 +248,9 @@ namespace ExpressBase.Web.Controllers
             };
 
             if (String.IsNullOrEmpty(smscon.Password) && smscon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName)
-                this.ServiceClient.Post<bool>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false });
+                this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false });
             else
-                this.ServiceClient.Post<bool>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true });
+                this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true });
             return JsonConvert.SerializeObject(smscon);
         }
 
@@ -280,7 +281,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public bool DataDbTest()
-        {           
+        {
             var req = this.HttpContext.Request.Form;
             EbDataDbConnection dbcon = new EbDataDbConnection()
             {
@@ -310,7 +311,7 @@ namespace ExpressBase.Web.Controllers
                 FilesDB_url = req["ConnectionString"].ToString(),
                 NickName = req["NickName"].ToString()
             };
-            TestFileDbconnectionResponse resp= this.ServiceClient.Post<TestFileDbconnectionResponse>(new TestFileDbconnectionRequest { FilesDBConnection = dbcon });
+            TestFileDbconnectionResponse resp = this.ServiceClient.Post<TestFileDbconnectionResponse>(new TestFileDbconnectionRequest { FilesDBConnection = dbcon });
             return resp.ConnectionStatus;
         }
         //[HttpGet]

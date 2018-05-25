@@ -349,12 +349,32 @@
 .v-select .selected-tag {
     text-overflow: ellipsis;
     overflow: hidden;
-    width: calc(100% - 15px);
+    /*width: calc(100% - 15px);*/
 }
 
     .v-select .selected-tag .close {
         color: red;
-        position: absolute;
+        /*position: absolute;
         top: 8px;
-        left: calc(100% - 32px);
+        left: calc(100% - 32px);*/
+    }
+
+    .v-select .selected-tag:nth-child(5n - 4) {
+        border-color: rgba(181, 70, 70, 0.9803921568627451) !important;
+    }
+
+    .v-select .selected-tag:nth-child(5n - 3) {
+        border-color: rgba(70, 119, 181, 0.9803921568627451) !important;
+    }
+
+    .v-select .selected-tag:nth-child(5n - 2) {
+        border-color: rgba(154, 70, 181, 0.9803921568627451) !important;
+    }
+
+    .v-select .selected-tag:nth-child(5n -1) {
+        border-color: rgba(76, 181, 70, 0.9803921568627451) !important;
+    }
+
+    .v-select .selected-tag:nth-child(5n) {
+        border-color: rgba(70, 170, 181, 0.9803921568627451) !important;
     }

@@ -48,9 +48,9 @@
 
 @section EbHead {
     <script>
-    this.menuBarObj = new MenuBarCommon();
-    $("#obj_icons").append(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>`);
-    $("#obj_icons").append(`<button class="btn run" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div"><i class="fa fa-filter" aria-hidden="true"></i></button>`);
+        this.menuBarObj = $("#layout_div").data("EbHeader");
+        this.menuBarObj.insertButton(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
+    <button class="btn run" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div"><i class="fa fa-filter" aria-hidden="true"></i></button>`);
     //$(document).ready(function () {
         if ('@fd' === 'True') {
             $("#sub_windows_sidediv_dv").show();

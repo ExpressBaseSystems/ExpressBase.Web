@@ -1,8 +1,9 @@
 ﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
     this.whichMode = mode;
     //CreateEdit = 1, View = 2, MyProfileView = 3
-    this.menuBarObj = new MenuBarCommon();
-    this.menuBarObj.BuildMenu(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
+    
+    this.menuBarObj = $("#layout_div").data("EbHeader");
+    this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.userinfo = userinfo;
     this.customRoles = cusroles;
     this.culture = culture;
@@ -66,7 +67,7 @@
         this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/) }.bind(this))
         this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
-        this.btnChangePassword.on("click", function () { this.ChangePwdModal.modal('show'); }.bind(this));
+        this.btnChangePassword.on("click", this.initChangePwdModal.bind(this));
         this.btnUpdatePwd.on('click', this.updatePassword.bind(this));
         
         this.pwdOld.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdOld));
@@ -83,7 +84,27 @@
         this.initTiles();
         if (this.whichMode === 2)
             this.setReadOnly();
+        this.DpImageUpload();
     }
+
+
+    this.DpImageUpload = function () {
+        var logoCrp = new cropfy({
+            Container: 'Add_User_Dp',
+            Toggle: '#profimage',
+            isUpload: true,  //upload to cloud
+            enableSE: true, //enable server event
+            Browse: true,  //browse image
+            Result: 'base64',
+            Type: 'dp',
+            //Tid: _tid, //if type is logo
+            Preview: "#imgprofimage"
+        });
+        logoCrp.getFile = function (file) {
+
+        }.bind(this);
+    };
+
 
     this.onKeyUpPwdInModal = function (pwdThis) {
         if (this.validateInfo(pwdThis, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/)) {
@@ -473,6 +494,17 @@
         }
     }
 
+    this.initChangePwdModal = function () {
+        this.pwdOld.val('');
+        this.pwdNew.val('');
+        this.pwdNewConfirm.val('');
+        this.pwdOld.css("border-color", "rgb(204, 204, 204)");
+        this.pwdNew.css("border-color", "rgb(204, 204, 204)");
+        this.pwdNewConfirm.css("border-color", "rgb(204, 204, 204)");
+        this.lblPwdChngMsg.text("");
+        this.ChangePwdModal.modal('show');
+    }
+
     this.updatePassword = function () {
         if (this.pwdOld.val().length < 8 || this.pwdNew.val().length < 8 || this.pwdNewConfirm.val().length < 8 || this.pwdNew.val() !== this.pwdNewConfirm.val())
             return;
@@ -482,7 +514,7 @@
             url: "../Security/ChangeUserPassword",
             data: { OldPwd: this.pwdOld.val(), NewPwd: this.pwdNew.val() },
             success: function (status) {
-                if (status > 0) {
+                if (status) {
                     alert("Password Updated Successfully");
                     this.pwdOld.val("");
                     this.pwdNew.val("");
@@ -555,9 +587,10 @@
     this.init();
 }
 
+//---------------------------------------------------------------USERGROUP-----------------------------------------------------------------------------
 var UserGroupJs = function (infoDict, usersList) {
-    this.menuBarObj = new MenuBarCommon();
-    this.menuBarObj.BuildMenu(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
+    this.menuBarObj = $("#layout_div").data("EbHeader");
+    this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.infoDict = infoDict;
     this.usersList = usersList;
     this.txtUserGroupName = $("#txtUserGroupName");

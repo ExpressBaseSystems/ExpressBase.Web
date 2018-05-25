@@ -27,12 +27,13 @@ using ExpressBase.Common.JsonConverters;
 using System.Reflection;
 using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
+using ExpressBase.Web.BaseControllers;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class DevController : EbBaseIntController
+    public class DevController : EbBaseIntCommonController
     {
         public const string Msg = "Msg";
 

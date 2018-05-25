@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -12,7 +13,7 @@ using ServiceStack.Redis;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class TestRobyController : EbBaseIntController
+    public class TestRobyController : EbBaseIntCommonController
     {
         public TestRobyController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
         // GET: /<controller>/

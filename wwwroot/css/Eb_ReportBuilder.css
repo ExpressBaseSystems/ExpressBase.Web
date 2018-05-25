@@ -494,8 +494,8 @@
 }
 
 .eb-rpt-container .side-toolbar {
-    height: 518px;
-    padding-left: 0;    
+    height: calc(100vh - 88px);
+    padding-left: 0;
     position: fixed;
 }
 .PageContainer {
@@ -782,6 +782,7 @@
     overflow: hidden;
     font-family: open sans;
     font-weight: 300;
+    position: relative;
 }
 .loginmodal {
     text-align: center;
@@ -826,4 +827,18 @@
 }
 .tracker_drag {
     cursor:col-resize;
+}
+.btn_calcfield_new {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 5px;
+    right: 0;
+}
+
+.close_md{
+    position:absolute;
+    top:10px;
+    right:10px;
 }

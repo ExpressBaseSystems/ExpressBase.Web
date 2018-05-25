@@ -11,10 +11,11 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
+using ExpressBase.Web.BaseControllers;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class DocsController : EbBaseIntController
+    public class DocsController : EbBaseIntCommonController
     {
         public DocsController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 

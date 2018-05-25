@@ -7,12 +7,17 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
+using ExpressBase.Web.BaseControllers;
+using ExpressBase.Common;
+using ExpressBase.Objects;
+using ExpressBase.Common.Objects;
+using ExpressBase.Objects.Objects.DVRelated;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
-    public class BotiController : EbBaseIntController
+    public class BotiController : EbBasetIntBotController
     {
         public BotiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
@@ -139,9 +144,100 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public void InserBotDetails(string TableName, List<BotInsert>  Fields)
+		public dynamic GetCurForm(string refid)
+		{
+			var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+
+			var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+			if (Obj is EbBotForm)
+			{
+				//EbBotForm obj = Obj as EbBotForm;
+				foreach (EbControl control in Obj.Controls)
+				{
+					if (control is EbSimpleSelect)
+					{
+						(control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+					}
+					else if (control is EbDynamicCardSet)
+					{
+						EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
+						EbDynamicCards.InitFromDataBase(this.ServiceClient);
+						EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
+					}
+					//else if (control is EbImage)
+					//{
+					//    (control as EbCards).InitFromDataBase(this.ServiceClient);
+					//}
+				}
+			}
+			if (Obj is EbTableVisualization)
+			{
+				EbTableVisualization Tobj = (Obj as EbTableVisualization);
+				string BotCols = "[";
+				string BotData = "[";
+				int i = 0;
+
+				foreach (DVBaseColumn col in Tobj.Columns)
+				{
+					BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
+				}
+				BotCols = BotCols.TrimEnd(',') + "]";
+
+				DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
+				var data = dresp.Data;
+				foreach (EbDataRow row in data)
+				{
+					i = 0;
+					BotData += "{";
+					foreach (var item in row)
+					{
+						BotData += "\"" + i++ + "\":\"" + item + "\",";
+						//BotData += "\"" + item + "\",";
+					}
+					BotData = BotData.TrimEnd(',') + "},";
+				}
+				BotData = BotData.TrimEnd(',') + "]";
+
+				Tobj.BotCols = BotCols;
+				Tobj.BotData = BotData;
+				return EbSerializers.Json_Serialize(Tobj);
+			}
+			if (Obj is EbChartVisualization)
+			{
+				return EbSerializers.Json_Serialize(Obj);
+			}
+			//else if (Obj is EbChartVisualization)
+			//{
+
+			//}
+			return Obj;
+		}
+
+		public void InserBotDetails(string TableName, List<BotInsert>  Fields)
         {
            var x =  ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
         }
-    }
+
+		[HttpPost]
+		public IActionResult dvView1(string dvobj)
+		{
+			var dvObject = EbSerializers.Json_Deserialize(dvobj);
+			dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
+			return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = "", forWrap = "wrap" });
+		}
+
+		public DataSourceDataResponse getData(TableDataRequest request)
+		{
+			DataSourceDataResponse resultlist1 = null;
+			try
+			{
+				resultlist1 = this.ServiceClient.Get(request);
+			}
+			catch (Exception e)
+			{
+
+			}
+			return resultlist1;
+		}
+	}
 }

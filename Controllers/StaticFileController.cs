@@ -59,7 +59,7 @@ namespace ExpressBase.Web.Controllers
         }        
     }
 
-    public class StaticFileController : EbBaseIntController
+    public class StaticFileController : EbBaseIntCommonController
     {
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
        
@@ -180,7 +180,7 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
 
-                        this.FileClient.Post<bool>(uploadFileRequest);
+                        this.FileClient.Post<string>(uploadFileRequest);
                     }
                 }
             }
@@ -226,11 +226,11 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
-                        this.FileClient.Post<bool>(uploadImageRequest);
+                        this.FileClient.Post<string>(uploadImageRequest);
                         resp = new JsonResult(new UploadFileMqResponse
                         {
                             Uploaded = "OK",
-                            initialPreview = "<img src='" + Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>"
+                            initialPreview = "<img src='" + Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>" // 414 (URI Too Long)
                         });
                     }
                 }

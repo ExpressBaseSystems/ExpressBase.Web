@@ -184,7 +184,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
                 var id = $(ev.target).attr("id");
                 focusedId = id;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+                //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
                 //if ($('#' + id).is(':last-child'))
                 //if(this.login === "uc")
                 //$(".splitdiv_parent").scrollTo($("#" + focusedId));
@@ -204,7 +204,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.ajaxSucc = function (text) {
-        //this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         $("#objname").text(this.EbObject.Name);
         if (this.MainData !== null) {
             this.isPipped = true;
@@ -432,7 +432,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.addSerialAndCheckboxColumns = function () {
-        this.CheckforColumnID();
+        this.CheckforColumnID();//, 
         var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
         this.extraCol.push(serialObj);
         this.addcheckbox();
@@ -454,7 +454,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
         chkObj.sWidth = "10px";
         chkObj.orderable = false;
-        chkObj.bVisible = false;
+        chkObj.bVisible = true;
         chkObj.name = "checkbox";
         chkObj.Type = 3;
         chkObj.render = this.renderCheckBoxCol.bind(this);
@@ -475,7 +475,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
-            o.fixedColumns = { leftColumns: this.ebSettings.LeftFixedColumn, rightColumns: this.ebSettings.RightFixedColumn };
+            o.fixedColumns = { leftColumns: this.fixedColumnCount(), rightColumns: this.ebSettings.RightFixedColumn };
         //o.lengthMenu = this.ebSettings.lengthMenu;
         o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
         o.pagingType = "full";
@@ -496,8 +496,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.paging = false;
         //o.rowReorder = true;
         //o.order = [[8, "asc"]];
-        //o.bAutoWidth = false;
-        //o.autowidth = false;
+        o.bAutoWidth = false;
+        o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
         //o.deferRender = true;
@@ -514,9 +514,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.order = [];
         //o.deferRender = true;
         //o.filter = true;
-        //o.select = true;
+        o.select = true;
         //o.retrieve = true;
-        //o.keys = true;
+        o.keys = true;
         //this.filterValues = this.getFilterValues();
         filterChanged = false;
         if (!this.isTagged)
@@ -660,6 +660,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return fltr_collection;
     };
 
+    this.rowObj2filter = function (fltr_collection, from, i, data) {
+        if (i + 2 < this.Api.settings().init().aoColumns.length) {
+            if (from === "link") {
+                var type = this.Api.settings().init().aoColumns[i + 2].Type;
+                fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i + 2].name, data));
+            }
+            else {
+                if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
+                    var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
+                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
+                }
+            }
+        }
+    };
+
     this.filterDisplay = function () {
         if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").children().hasClass("filter_Display")) {
             $(".filter_Display").empty();
@@ -700,21 +715,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     }
 
-    this.rowObj2filter = function (fltr_collection, from, i, data) {
-        if (i + 2 < this.Api.settings().init().aoColumns.length) {
-            if (from === "link") {
-                var type = this.Api.settings().init().aoColumns[i + 2].Type;
-                fltr_collection.push(new fltr_obj(type, this.Api.settings().init().aoColumns[i + 2].name, data));
-            }
-            else {
-                if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
-                    var type = dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].Type;
-                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].Api.settings().init().aoColumns[i + 2].name, data));
-                }
-            }
-        }
-    };
-
     this.getfilter = function (fltr_collection, i, data) {
         fltr_collection.push(new fltr_obj(data.Type, data.name, this.rowData[i]));
     };
@@ -743,6 +743,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else
             filterChanged = true;
+    }
+
+    this.fixedColumnCount = function () {
+        var count = this.ebSettings.LeftFixedColumn;
+        var visCount = 0;
+        if (count > 1) {
+            $.each(this.Api.settings().init().aoColumns, function (i, col) {
+                if (!col.bVisible) {
+                    if (this.ebSettings.LeftFixedColumn > visCount)
+                        count++;
+                    else
+                        return count;
+                }
+                else
+                    visCount++;
+            }.bind(this));
+        }
+        return count;
     }
 
     this.ColumnsComparer = function (a, b) {
@@ -840,11 +858,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.initCompleteFunc = function (settings, json) {
         this.GenerateButtons();
-        if (this.eb_agginfo.length > 0) {
-            this.createFooter(0);
-            this.createFooter(1);
-            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
-        }
         this.Api.fixedColumns().relayout();
         this.Api.rows().recalcHeight();
         //this.contextMenu();
@@ -862,10 +875,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //});
         this.filterDisplay();
         this.Api.columns.adjust();
+
         $("#eb_common_loader").EbLoader("hide");
 
         setTimeout(function () {
             this.createFilterRowHeader();
+            if (this.eb_agginfo.length > 0) {
+                this.createFooter(0);
+                this.createFooter(1);
+                $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
+            }
             this.addFilterEventListeners();
             this.Api.columns.adjust();
         }.bind(this), 10);
@@ -1048,9 +1067,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.doSerial = function () {
         this.Api.column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
+        this.Api.columns.adjust();
     };
 
-    this.createFooter = function (pos) {
+    this.createFooter = function (ps) {
         var tx = this.ebSettings;
         var tid = this.tableId;
         var aggFlag = false;
@@ -1058,11 +1078,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
         var scrollfoot = $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner table');
 
-        if (lfoot !== null || rfoot !== null)
-            var eb_footer_controls_lfoot = this.GetAggregateControls(pos, 50);
-        if (scrollfoot !== null)
-            var eb_footer_controls_scrollfoot = this.GetAggregateControls(pos, 1);
-        if (pos == 0) {
+        if (lfoot.length !== 0 || rfoot.length !== 0)
+            var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);
+        if (scrollfoot.length !== 0)
+            var eb_footer_controls_scrollfoot = this.GetAggregateControls(ps, 1);
+        if (ps == 0) {
             $.each(this.Api.settings().init().aoColumns, function (i, col) {
                 if (col.Aggregate) {
                     $('#' + tid + '_btntotalpage').css("display", "inline");
@@ -1072,38 +1092,41 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             });
 
             if (!aggFlag)
-                $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
+                $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
         }
-        if (pos === 1)
-            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
+        if (ps === 1)
+            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
         var j = 0;
-        $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ') th').each(function (idx) {
-            if (lfoot !== null) {
+        $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ') th').each(function (idx, scrollfootth) {
+            var lfootth = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table tfoot tr:eq(' + ps + ') th:eq('+j+')');
+            var rfootth = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table tfoot tr:eq(' + ps + ') th:eq(' + j +')');
+
+            if (lfoot.length !== 0) {
                 if (j < tx.LeftFixedColumn)
-                    $(this).html(eb_footer_controls_lfoot[idx]);
+                    $(lfootth).html(eb_footer_controls_lfoot[idx]);
             }
 
-            if (rfoot !== null) {
+            if (rfoot.length !== 0) {
                 if (j === eb_footer_controls_lfoot.length - tx.RightFixedColumn) {
                     if (j < eb_footer_controls_lfoot.length)
-                        $(this).html(eb_footer_controls_lfoot[idx]);
+                        $(rfootth).html(eb_footer_controls_lfoot[idx]);
                 }
             }
 
-            if (scrollfoot !== null) {
-                if (tx.LeftFixedColumns + tx.RightFixedColumn > 0) {
+            if (scrollfoot.length !== 0) {
+                if (tx.LeftFixedColumn + tx.RightFixedColumn > 0) {
                     if (j < eb_footer_controls_scrollfoot.length - tx.RightFixedColumn)
-                        $(this).html(eb_footer_controls_scrollfoot[idx]);
+                        $(scrollfootth).html(eb_footer_controls_scrollfoot[idx]);
                 }
 
                 else {
                     if (j < eb_footer_controls_scrollfoot.length)
-                        $(this).html(eb_footer_controls_scrollfoot[idx]);
+                        $(scrollfootth).html(eb_footer_controls_scrollfoot[idx]);
                 }
             }
 
             j++;
-        });
+        }.bind(this));
 
         this.summarize2();
     };
@@ -1199,14 +1222,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 for (var j = 0; j < this.eb_filter_controls_4sb.length; j++) {
                     if (j < this.ebSettings.LeftFixedColumn) {
                         $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
-                        //$(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).css("display", "none");
+                        $(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).children().not("span").remove();
                     }
                     else {
                         if (j < this.eb_filter_controls_4sb.length - this.ebSettings.RightFixedColumn)
                             $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
                         else {
                             $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
-                            //$(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).css("display", "none");
+                            $(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).children().not("span").remove();
                         }
                     }
                 }
@@ -1221,6 +1244,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         //$('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
         $(".addedbyeb [type=checkbox]").prop('indeterminate', true);
+        $(".DTFC_Blocker").remove();
     };
 
     this.addFilterEventListeners = function () {
@@ -1342,8 +1366,77 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     this.value = terms.join(" | ");
                     //$(this).setCursorPosition(this.value.length-1);
                     return false;
+                },
+                search: function (event, ui) {
                 }
             });
+        }
+        else {
+            if ($(obj).children('div').length === 0) {
+                var $lctrl = $("#" + this.tableId + "_wrapper .DTFC_LeftHeadWrapper table tr[class=addedbyeb] th:eq(" + i + ")").find(".eb_finput");
+                var $rctrl = $("#" + this.tableId + "_wrapper .DTFC_RightHeadWrapper table tr[class=addedbyeb] th:eq(" + i + ")").find(".eb_finput");
+                if ($lctrl.length > 0) {
+                    if ($lctrl.attr("data-coltyp") === "string") {
+                        $lctrl.autocomplete({
+                            //source: $.unique(this.Api.columns(idx).data()[0]),
+                            source: function (request, response) {
+                                // delegate back to autocomplete, but extract the last term
+                                response($.ui.autocomplete.filter(
+                                    $.unique(data), extractLast(request.term)));
+                            }.bind(this),
+                            focus: function () {
+                                // prevent value inserted on focus
+                                return false;
+                            },
+                            select: function (event, ui) {
+                                var terms = splitval(this.value);
+                                // remove the current input
+                                terms.pop();
+                                // add the selected item
+                                terms.push(ui.item.value);
+                                // add placeholder to get the comma-and-space at the end
+                                terms.push("");
+                                this.value = terms.join(" | ");
+                                //$(this).setCursorPosition(this.value.length-1);
+                                return false;
+                            },
+                            search: function (event, ui) {
+                            }
+                        });
+                    }
+                }
+                if ($rctrl.length > 0) {
+                    if ($rctrl.attr("data-coltyp") === "string") {
+                        $rctrl.autocomplete({
+                            //source: $.unique(this.Api.columns(idx).data()[0]),
+                            source: function (request, response) {
+                                // delegate back to autocomplete, but extract the last term
+                                response($.ui.autocomplete.filter(
+                                    $.unique(data), extractLast(request.term)));
+                            }.bind(this),
+                            focus: function () {
+                                // prevent value inserted on focus
+                                return false;
+                            },
+                            select: function (event, ui) {
+                                var terms = splitval(this.value);
+                                // remove the current input
+                                terms.pop();
+                                // add the selected item
+                                terms.push(ui.item.value);
+                                // add placeholder to get the comma-and-space at the end
+                                terms.push("");
+                                this.value = terms.join(" | ");
+                                //$(this).setCursorPosition(this.value.length-1);
+                                return false;
+                            },
+                            search: function (event, ui) {
+                            }
+                        });
+                    }
+                }
+            }
+
         }
     };
 
@@ -1435,7 +1528,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         drptext = "<div class='input-group input-group-sm' style='width:100%!important'>" +
             "<div class='input-group-btn' style='height:100%!important'>" +
             " <button type='button' style='width:100% !important;height:100%!important;' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-            " <ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
+            " <ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
@@ -1456,7 +1549,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var filter = "<div class='input-group input-group-sm' style='width:100%!important'>" +
             "<div class='input-group-btn' style='height:100%!important'>" +
             " <button type='button' style='width:100% !important;height:100% !important;' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> = </button>" +
-            "<ul class='dropdown-menu'  style='z-index:" + zidx.toString() + "'>" +
+            "<ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
             " <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
@@ -1476,7 +1569,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var coltype = " data-coltyp='string'";
         var drptext = "";
         drptext = "<div class='input-group input-group-sm' style='width:100%!important'>" +
-            "<div class='input-group-btn' style='z-index:" + zidx.toString() + "'>" +
+            "<div class='input-group-btn'>" +// style='z-index:" + zidx.toString() + "'
             " <button type='button' style='width:100% !important' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
             " <ul class='dropdown-menu'>" +
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">x*</a></li>" +

@@ -712,9 +712,9 @@
         else if (pname === "Image" || pname === "WaterMark") {
             this.addImageFn(obj);
         }
-        else if (pname === "ValueExpression") 
+        else if (pname === "ValueExpression") {
             this.RbCommon.ValidateCalcExpression(obj);
-
+        }
         else if (pname === "WaterMarkText") {
             obj.Source = "";
             this.RefreshControl(obj);

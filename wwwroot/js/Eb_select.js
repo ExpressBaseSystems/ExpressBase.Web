@@ -1,4 +1,43 @@
-﻿var selectedEntity = function (vmValue, dmValues) {
+﻿
+var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
+    this.$type = 'ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects';
+    this.EbSid = id;
+    this.ObjType = 'TableVisualization';
+    this.rowGrouping = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.Objects.DVRelated.DVBaseColumn, ExpressBase.Objects]], System.Private.CoreLib", "$values": [] }; this.LeftFixedColumn = 0; this.RightFixedColumn = 0; this.PageLength = 0; this.DataSourceRefId = ''; this.Description = ''; this.Columns = { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [] }; this.DSColumns = { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [] }; this.data = { "$type": "System.Object, System.Private.CoreLib" }; this.Pippedfrom = ''; this.IsPaged = ''; this.IsPaging = false; this.Name = id;
+
+
+    this.$Control = $("            <div id='cont_@name@' Ctype='TableVisualization' class='Eb-ctrlContainer'>                <table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>            </div>".replace(/@id/g, this.EbSid));
+    this.BareControlHtml = `<table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>`.replace(/@id/g, this.EbSid);
+    this.DesignHtml = "            <div id='cont_@name@' Ctype='TableVisualization' class='Eb-ctrlContainer'>                <table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>            </div>";
+    var MyName = this.constructor.name;
+    this.RenderMe = function () {
+        var NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
+            }
+        });
+        if (!this.IsContainer)
+            $('#' + id).html($(NewHtml).html());
+    };
+    if (jsonObj) {
+        if (jsonObj.IsContainer)
+            jsonObj.Controls = new EbControlCollection({});
+        jsonObj.RenderMe = this.RenderMe;
+        jsonObj.Html = this.Html;
+        jsonObj.Init = this.Init;
+        $.extend(this, jsonObj);
+        //if(this.Init)
+        //    jsonObj.Init(id);
+    }
+    else {
+        if (this.Init)
+            this.Init(id);
+    }
+};
+
+var selectedEntity = function (vmValue, dmValues) {
     this.vmValue = vmValue;
     this.dmValues = dmValues;
 };
@@ -14,7 +53,7 @@ var EbSelect = function (ctrl) {
     if (!(Object.keys(ctrl.valueMember).includes("name")))//////////////////
         this.idField = "columnName";////////////////////////
     this.vmName = ctrl.valueMember[this.idField]; //ctrl.vmName;
-    this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; });;//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
+    this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
     this.maxLimit = ctrl.maxLimit;//ctrl.maxLimit;
     this.minLimit = ctrl.minLimit;//ctrl.minLimit;
     this.multiSelect = (ctrl.maxLimit > 1);
@@ -91,40 +130,50 @@ var EbSelect = function (ctrl) {
         this.IsDatatableInit = true;
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
-        //this.datatable = new EbDataTable(null, null, null, this.EbObject, null, 0, "https://expressbaseservicestack.azurewebsites.net");
-        $.ajax({
-            type: "POST",
-            url: "../DS/GetColumns",
-            data: { DataSourceRefId: this.dsid },
-            success: function (Columns) {
-                this.DTColumns = JSON.parse(Columns).$values;
-                //$.LoadingOverlay('hide');
-            }.bind(this)
-        });
-        this.datatable = $(this.DTSelector).DataTable({//change ebsid to name
-            processing: true,
-            serverSide: true,
-            dom: 'rt',
-            columns: this.DTColumns,
-            ajax: {
-                url: "../dv/getData",
-                type: 'POST',
-                data: function (dq) {
-                    delete dq.columns; delete dq.order; delete dq.search;
-                    dq.RefId = this.dsid;
-                    dq.Params = { Name: "id", Value: "ac", Type: "11" };
-                }.bind(this),
-                dataSrc: function (dd) {
-                    return dd.data;
-                },
-            },
-            initComplete: function () {
-                this.hideTypingAnim();
-                this.AskWhatU();
-                $tableCont.show(100);
-            }.bind(this)
+        var o = new Object();
+        o.dsid = this.dsid;
+        o.tableId = this.name + "tbl";
+        o.showSerialColumn = false;
+        o.showCheckboxColumn = true;
+        o.showFilterRow = false;
+        o.scrollHeight = this.scrollHeight + "px";
+        o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
+        o.fnKeyUpCallback = this.xxx.bind(this);
+        o.fninitComplete = this.initDTpost.bind(this),
+            this.datatable = new EbBasicDataTable(o);
+        //$.ajax({
+        //    type: "POST",
+        //    url: "../DS/GetColumns",
+        //    data: { DataSourceRefId: this.dsid },
+        //    success: function (Columns) {
+        //        this.DTColumns = JSON.parse(Columns).$values;
+        //        //$.LoadingOverlay('hide');
+        //    }.bind(this)
+        //});
+        //this.datatable = $(this.DTSelector).DataTable({//change ebsid to name
+        //    processing: true,
+        //    serverSide: true,
+        //    dom: 'rt',
+        //    columns: this.DTColumns,
+        //    ajax: {
+        //        url: "../dv/getData",
+        //        type: 'POST',
+        //        data: function (dq) {
+        //            delete dq.columns; delete dq.order; delete dq.search;
+        //            dq.RefId = this.dsid;
+        //            dq.Params = { Name: "id", Value: "ac", Type: "11" };
+        //        }.bind(this),
+        //        dataSrc: function (dd) {
+        //            return dd.data;
+        //        },
+        //    },
+        //    initComplete: function () {
+        //        this.hideTypingAnim();
+        //        this.AskWhatU();
+        //        $tableCont.show(100);
+        //    }.bind(this)
 
-        });
+        //});
         //settings: {
         //    hideCheckbox: (this.multiSelect === false) ? true : false,
         //    scrollY: "200px",//this.dropdownHeight,
@@ -137,7 +186,12 @@ var EbSelect = function (ctrl) {
         //});
     };
 
+    this.xxx = function (e, dt, type, indexes) {
+        // console.log("keysssss");
+    }
+
     this.initDTpost = function (data) {
+        alert("initComplete");
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
         $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
         //$('#' + this.name + '_loading-image').hide();
@@ -152,6 +206,7 @@ var EbSelect = function (ctrl) {
 
     //double click on option in DD
     this.dblClickOnOptDDEventHand = function (e) {
+        alert("dblClickOnOptDDEventHand");
         this.currentEvent = e;
         var idx = this.datatable.Api.columns(this.vmName + ':name').indexes()[0] - 2;
         var vmValue = this.datatable.Api.row($(e.target).parent()).data()[idx];
@@ -202,9 +257,9 @@ var EbSelect = function (ctrl) {
                 valueMembers: [],
                 DDstate: false
             },
-            //watch: {
-            //    valueMembers: this.V_watchVMembers.bind(this),
-            //},
+            watch: {
+                valueMembers: this.V_watchVMembers.bind(this)
+            },
             methods: {
                 toggleDD: this.V_toggleDD.bind(this),
                 showDD: this.V_showDD.bind(this),
@@ -317,7 +372,7 @@ var EbSelect = function (ctrl) {
         $.each(this.datatable.Api.settings().init().columns, function (j, value) { if (value.columnName === 'id') { indx = value.columnIndex; return false; } });
         var datas = $(this.DTSelector).DataTable().row($row).data();
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
-            if (!(this.Vobj.valueMembers.length === this.maxLimit)) {
+            if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(this.currentEvent.target).prop('checked', true);
@@ -335,7 +390,7 @@ var EbSelect = function (ctrl) {
 
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
-        var container1 = $('#' + this.name);
+        var container1 = $('#' + this.name + 'Container');
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {

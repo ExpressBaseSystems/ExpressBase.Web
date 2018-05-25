@@ -64,16 +64,8 @@
 </div>
 
 <script>
-    var MenuBarCommon = function () {
-        this.BuildMenu = function ($html) {
-            $(".comon_header_dy .toolicons").prepend(`${$html}`);
-        };
-        this.setName = function (name) {
-            $(".EbHeadTitle #objname").text(`${name}`);
-        };
-    };
 
-    //var MenuBarCommon = new EbHeader();
+    var MenuBarCommon = new EbHeader();
 
     function LoadMyProfile() {
         event.preventDefault();

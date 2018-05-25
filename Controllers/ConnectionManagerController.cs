@@ -223,7 +223,8 @@ namespace ExpressBase.Web.Controllers
             {
                 FilesDbVendor = Enum.Parse<FilesDbVendors>(req["DatabaseVendor"].ToString()),
                 FilesDB_url = req["ConnectionString"].ToString(),
-                NickName = req["NickName"].ToString()
+                NickName = req["NickName"].ToString(),
+                IsDefault = false
             };
 
             if (solutionConnections.EBSolutionConnections.FilesDbConnection != null)
@@ -244,7 +245,8 @@ namespace ExpressBase.Web.Controllers
                 NickName = req["NickName"],
                 UserName = req["UserName"],
                 From = req["From"],
-                Password = req["Password"]
+                Password = req["Password"],
+                IsDefault = false
             };
 
             if (String.IsNullOrEmpty(smscon.Password) && smscon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName)
@@ -266,7 +268,8 @@ namespace ExpressBase.Web.Controllers
                 Smtp = req["SMTP"],
                 Port = Convert.ToInt32(req["Port"]),
                 EmailAddress = req["Email"],
-                Password = req["Password"]
+                Password = req["Password"],
+                IsDefault = false
             };
 
             if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)

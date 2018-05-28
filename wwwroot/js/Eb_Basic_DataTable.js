@@ -592,8 +592,6 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
-        //alert("selectCallbackFunc");
-        //if (this.dtsettings.fnKeyUpCallback)
         Option.fnKeyUpCallback(e, dt, type, indexes);
     };
 
@@ -605,9 +603,6 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.dblclickCallbackFunc = function (e) {
-        //alert("fnDblclickCallbackFunc");
-        //this.Api.rows(e.target).select();
-        //if (this.dtsettings.fnDblclickCallbackFunc)
         Option.fnDblclickCallback(e);
     };
 

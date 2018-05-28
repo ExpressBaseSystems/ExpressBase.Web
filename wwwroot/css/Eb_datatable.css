@@ -74,8 +74,11 @@
     display: inline-block;
 }
 
-#@tableId th.resizing {
-    cursor: e-resize;
+.ui-autocomplete {
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 200px;
 }
 
 td.resizer {
@@ -90,15 +93,18 @@ td.resizer {
 }
 
 .dataTables_scrollHead {
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+    padding-bottom: 150px !important;
+    margin-bottom: -150px !important;
+    width: 98.65% !important;
 }
 
 .dataTables_scrollFoot {
     /*padding-bottom: 1px;
     margin-bottom: -1px;*/
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+    padding-top: 100px !important;
+    margin-top: -100px !important;
+    width: 98.65% !important;
+    border-right: 1px solid #ccc !important;
 }
 
 .dataTables_processing {
@@ -109,8 +115,8 @@ td.resizer {
 
 .DTFC_LeftHeadWrapper {
     z-index: 2;
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+    padding-bottom: 150px !important;
+    margin-bottom: -150px !important;
 }
 
 .DTFC_LeftBodyWrapper {
@@ -119,14 +125,14 @@ td.resizer {
 
 .DTFC_LeftFootWrapper {
     //z-index: 150;
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+    padding-bottom: 100px !important;
+    margin-bottom: -100px !important;
 }
 
 .DTFC_RightHeadWrapper {
     z-index: 2;
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+    padding-bottom: 150px !important;
+    margin-bottom: -150px !important;
 }
 
 .DTFC_RightBodyWrapper {
@@ -135,8 +141,8 @@ td.resizer {
 
 .DTFC_RightFootWrapper {
     /*z-index: 150;*/
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+    padding-bottom: 100px !important;
+    margin-bottom: -100px !important;
 }
 
 .linepadding {

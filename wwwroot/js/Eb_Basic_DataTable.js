@@ -7,6 +7,7 @@ var EbBasicDataTable = function (Option) {
     this.showCheckboxColumn = (typeof Option.showCheckboxColumn !== "undefined" && Option.showCheckboxColumn !== "" && Option.showCheckboxColumn !== null) ? Option.showCheckboxColumn : true;
     this.showFilterRow = (typeof Option.showFilterRow !== "undefined" && Option.showFilterRow !== "" && Option.showFilterRow !== null) ? Option.showFilterRow : true;
     this.scrollHeight = Option.scrollHeight || "inherit";
+    this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.isSecondTime = false;
     this.Api = null;
     this.order_info = new Object();
@@ -24,7 +25,7 @@ var EbBasicDataTable = function (Option) {
     this.filterFlag = false;
     this.filterValues = [];
     this.FlagPresentId = false;
-    
+
     this.extraCol = [];
     this.modifyDVFlag = false;
     this.initCompleteflag = false;
@@ -41,7 +42,7 @@ var EbBasicDataTable = function (Option) {
         //console.log($.cookie());
         $.ajax({
             type: "POST",
-            url: "../DV/dvView1",
+            url: "../boti/dvView1",
             data: { dvobj: JSON.stringify(this.EbObject) },
             success: this.ajaxSucc.bind(this)
         });
@@ -110,6 +111,10 @@ var EbBasicDataTable = function (Option) {
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
+        this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
+
+        this.Api.off('key-blur').on('key-blur', Option.arrowBlurCallback);
+
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
                 if (typeof a === 'string') {
@@ -132,7 +137,7 @@ var EbBasicDataTable = function (Option) {
             return sum / data.length;
         });
 
-        this.table_jQO.off('draw.dt').on('draw.dt',  this.doSerial.bind(this));
+        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
         this.table_jQO.on('length.dt', function (e, settings, len) {
             console.log('New page length: ' + len);
@@ -149,14 +154,14 @@ var EbBasicDataTable = function (Option) {
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//"sWidth":"10px", 
         var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
-        if(this.showSerialColumn)
+        if (this.showSerialColumn)
             this.extraCol.push(serialObj);
         this.addcheckbox();
     }
 
     this.CheckforColumnID = function () {
         $.each(this.ebSettings.Columns.$values, function (i, col) {
-            if (col.name === "id") {
+            if (col.name === this.hiddenFieldName) {
                 this.FlagPresentId = true;
                 col.bVisible = false;
                 return false;
@@ -197,12 +202,12 @@ var EbBasicDataTable = function (Option) {
         o.lengthChange = false;
         o.select = true;
         o.keys = true,
-        o.ajax = {
-            url: "../dv/getData",
-            type: 'POST',
-            data: this.ajaxData.bind(this),
-            dataSrc: this.receiveAjaxData.bind(this),
-        };
+            o.ajax = {
+                url: "../boti/getData",
+                type: 'POST',
+                data: this.ajaxData.bind(this),
+                dataSrc: this.receiveAjaxData.bind(this),
+            };
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
@@ -458,7 +463,7 @@ var EbBasicDataTable = function (Option) {
         //$("#eb_common_loader").EbLoader("hide");
 
         setTimeout(function () {
-            if(this.showFilterRow)
+            if (this.showFilterRow)
                 this.createFilterRowHeader();
             this.addFilterEventListeners();
             this.Api.columns.adjust();
@@ -626,7 +631,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.doSerial = function () {
-        if (this.showSerialColumn) 
+        if (this.showSerialColumn)
             this.Api.column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
         this.Api.columns.adjust();
     };
@@ -1027,19 +1032,19 @@ var EbBasicDataTable = function (Option) {
             }
             else {
                 if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric"))) {
-                    
-                        _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+
+                    _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                 }
                 else if (col.Type == parseInt(gettypefromString("String"))) {
                     //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
-                   
-                        _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+
+                    _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                     //else
                     //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
                 }
                 else if (col.Type == parseInt(gettypefromString("DateTime"))) {
-                    
-                        _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
+
+                    _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                 }
                 else if (col.Type == parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
                     _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
@@ -1249,7 +1254,8 @@ var EbBasicDataTable = function (Option) {
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         if (this.FlagPresentId) {
-            var idpos = $.grep(this.ebSettings.Columns.$values, function (e) { return e.name === "id"; })[0].data;
+            var idpos = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name === this.hiddenFieldName; }.bind(this))[0].data;
+            //var idpos = getObjByval(this.ebSettings.Columns.$values, "name", this.hiddenFieldName).data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
             return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
         }

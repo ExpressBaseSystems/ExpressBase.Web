@@ -99,6 +99,8 @@ namespace ExpressBase.Web.BaseControllers
             }
 
             base.OnActionExecuting(context);
+
+			Response.Headers.Add(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken);
         }
 
     }

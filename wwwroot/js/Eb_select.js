@@ -35,7 +35,7 @@ var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
         if (this.Init)
             this.Init(id);
     }
-};
+};
 
 var selectedEntity = function (vmValue, dmValues) {
     this.vmValue = vmValue;
@@ -54,7 +54,7 @@ var EbSelect = function (ctrl) {
         this.idField = "columnName";////////////////////////
     this.vmName = ctrl.valueMember[this.idField]; //ctrl.vmName;
     this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
-    this.maxLimit = ctrl.maxLimit;//ctrl.maxLimit;
+    this.maxLimit = (ctrl.maxLimit === 0) ? 9999999999999999999999 : this.maxLimit;
     this.minLimit = ctrl.minLimit;//ctrl.minLimit;
     this.multiSelect = (ctrl.maxLimit > 1);
     this.required = ctrl.required;//ctrl.required;
@@ -132,15 +132,21 @@ var EbSelect = function (ctrl) {
         //this.EbObject.DataSourceRefId = this.dsid;
         var o = new Object();
         o.dsid = this.dsid;
-        o.tableId = "ComboBox0tbl";
-        o.showSerialColumn = false;
+        o.tableId = this.name + "tbl";
+        o.showSerialColumn = true;
         o.showCheckboxColumn = true;
         o.showFilterRow = false;
-        o.scrollHeight = "200px";
+        o.scrollHeight = this.scrollHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         o.fnKeyUpCallback = this.xxx.bind(this);
-        o.fninitComplete = this.initDTpost.bind(this),
+        o.arrowFocusCallback = this.arrowSelectionStylingFcs;
+        o.arrowBlurCallback = this.arrowSelectionStylingBlr;
+        o.fninitComplete = this.initDTpost.bind(this);
+        o.hiddenFieldName = this.vmName;
+        o.showFilterRow = true;
         this.datatable = new EbBasicDataTable(o);
+        //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
+        //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
         //$.ajax({
         //    type: "POST",
         //    url: "../DS/GetColumns",
@@ -187,11 +193,10 @@ var EbSelect = function (ctrl) {
     };
 
     this.xxx = function (e, dt, type, indexes) {
-       // console.log("keysssss");
+        console.log("keysssss");
     }
 
     this.initDTpost = function (data) {
-        alert("initComplete");
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
         $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
         //$('#' + this.name + '_loading-image').hide();
@@ -206,9 +211,8 @@ var EbSelect = function (ctrl) {
 
     //double click on option in DD
     this.dblClickOnOptDDEventHand = function (e) {
-        alert("dblClickOnOptDDEventHand");
         this.currentEvent = e;
-        var idx = this.datatable.Api.columns(this.vmName + ':name').indexes()[0] - 2;
+        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
         var vmValue = this.datatable.Api.row($(e.target).parent()).data()[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             if (this.maxLimit === 1) {
@@ -225,7 +229,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.setDmValues = function (i, dmName) {
-        var idx = this.datatable.Api.columns(dmName + ':name').indexes()[0] - 2;
+        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", dmName));
         if (this.maxLimit === 1)
             this.localDMS[i].shift();
         this.localDMS[i].push(this.datatable.Api.row($(this.currentEvent.target).parent()).data()[idx]);
@@ -258,7 +262,7 @@ var EbSelect = function (ctrl) {
                 DDstate: false
             },
             watch: {
-                valueMembers: this.V_watchVMembers.bind(this),
+                valueMembers: this.V_watchVMembers.bind(this)
             },
             methods: {
                 toggleDD: this.V_toggleDD.bind(this),
@@ -281,30 +285,30 @@ var EbSelect = function (ctrl) {
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
         $("#" + this.name).val(this.Vobj.valueMembers);
-        ////single select
-        //if (this.maxLimit === 1 && VMs.length > 1) {
-        //    this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////
-        //    $.each(this.dmNames, this.trimDmValues.bind(this));
-        //}
-        ////max limit
-        //else if (VMs.length > this.maxLimit) {
-        //    this.Vobj.valueMembers = this.Vobj.valueMembers.splice(0, this.maxLimit);
-        //    $.each(this.dmNames, this.trimDmValues.bind(this));
-        //}
+        //single select
+        if (this.maxLimit === 1 && VMs.length > 1) {
+            this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////
+            $.each(this.dmNames, this.trimDmValues.bind(this));
+        }
+        //max limit
+        else if (VMs.length > this.maxLimit) {
+            this.Vobj.valueMembers = this.Vobj.valueMembers.splice(0, this.maxLimit);
+            $.each(this.dmNames, this.trimDmValues.bind(this));
+        }
         console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[0]);
         console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[1]);
         console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[2]);
     };
 
-    //this.trimDmValues = function (i) {
-    //    if (this.maxLimit === 1) {   //single select
-    //        this.Vobj.displayMembers[i].shift(); //= this.Vobj.displayMembers[i].splice(1, 1);
-    //    }
-    //    else {                        //max limit
-    //        this.Vobj.displayMembers[i].pop(); //= this.Vobj.displayMembers[i].splice(0, this.maxLimit);
-    //    }
-    //};
+    this.trimDmValues = function (i) {
+        if (this.maxLimit === 1) {   //single select
+            this.Vobj.displayMembers[i].shift(); //= this.Vobj.displayMembers[i].splice(1, 1);
+        }
+        else {                        //max limit
+            this.Vobj.displayMembers[i].pop(); //= this.Vobj.displayMembers[i].splice(0, this.maxLimit);
+        }
+    };
 
     this.V_toggleDD = function (e) {
         if (!this.IsDatatableInit)
@@ -325,14 +329,14 @@ var EbSelect = function (ctrl) {
 
     this.V_updateCk = function () {// API..............
         console.log("colAdjust---------- ");
-        //$(this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i) {
-        //    var row = $(this).closest('tr');
-        //    var datas = $(this.DTselector).DataTable().row(row).data();
-        //    if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
-        //        $(this).prop('checked', true);
-        //    else
-        //        $(this).prop('checked', false);
-        //});
+        $("#" + this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
+            var row = $(chkbx).closest('tr');
+            var datas = $(this.DTSelector).DataTable().row(row).data();
+            if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
+                $(chkbx).prop('checked', true);
+            else
+                $(chkbx).prop('checked', false);
+        }.bind(this));
         // raise error msg
         setTimeout(this.RaiseErrIf.bind(this), 30);
     };
@@ -368,11 +372,17 @@ var EbSelect = function (ctrl) {
     };
 
     this.checkBxClickEventHand = function (e) {
-        var indx; this.currentEvent = e; var $row = $(e.target).closest('tr');
-        $.each(this.datatable.Api.settings().init().columns, function (j, value) { if (value.columnName === 'id') { indx = value.columnIndex; return false; } });
+        var indx;
+        this.currentEvent = e;
+        var $row = $(e.target).closest('tr');
+        $.each(this.datatable.Api.settings().init().columns, function (j, obj) {
+            if ((obj.columnName || obj.name || obj.Name) === 'id') {
+                indx = obj.columnIndex; return false;
+            }
+        });
         var datas = $(this.DTSelector).DataTable().row($row).data();
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
-            if (!(this.Vobj.valueMembers.length === this.maxLimit)) {
+            if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(this.currentEvent.target).prop('checked', true);
@@ -390,7 +400,7 @@ var EbSelect = function (ctrl) {
 
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
-        var container1 = $('#' + this.name);
+        var container1 = $('#' + this.name + 'Container');
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {

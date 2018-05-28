@@ -106,6 +106,29 @@
         $(".tracker_drag").css({ "height": ($($layer).height() - $(window).scrollTop()) + 20, "top": $(window).scrollTop() });
     };
 
+    this.getsummaryfns = function (eb_type) {//neeed to change
+        var fn = null;
+        if (eb_type == "EbDataFieldText" || eb_type == "Text")
+            fn = "SummaryFunctionsText";
+        else if (eb_type == "EbDataFieldDateTime" || eb_type == "DateTime")
+            fn = "SummaryFunctionsDateTime";
+        else if (eb_type == "EbDataFieldBoolean" || eb_type == "Boolean")
+            fn = "SummaryFunctionsBoolean";
+        else if (eb_type == "EbDataFieldNumeric" || eb_type == "Numeric")
+            fn = "SummaryFunctionsNumeric";
+        return EbEnums[fn];
+    }
+
+    this.getSectionToAddSum = function () {
+        var objlist = [];
+        $("#detail0").parent().nextAll().not(".gutter,#detail").each(function (i, obj) {
+            $(obj).children().not(".gutter").each(function (j, sections) {
+                objlist.push($(sections));
+            })
+        })
+        return objlist;
+    };
+
     this.ValidateCalcExpression = function (obj) {
         $.ajax({
             url: "../RB/ValidateCalcExpression",
@@ -146,59 +169,55 @@
         var obj = new EbObjects["EbCalcField"](Objid);
         $("#detail0").append(obj.$Control.outerHTML());
         obj.ValueExpression = btoa(vexp);
-        obj.Name = name;
-        obj.Title = Objid;
+        obj.Name = name || Objid;
+        obj.Title = name || Objid;
         this.RbObj.objCollection[Objid] = obj;
         this.RbObj.RefreshControl(obj);
         $("#eb_calcF_summarry").modal("toggle");
-        this.ValidateCalcExpression(obj);//returns the type of expression
+        if (obj.ValueExpression)
+            this.ValidateCalcExpression(obj);//returns the type of expression
+        $("#calcFields ul[id='calcfields-childul']").append(`<li class='styl'><div tabindex='1' $(this).focus(); class='textval' EbSid="${obj.EbSid}">
+            ${obj.Name}</div></li>`);
     };
 
     this.addSummarry = function () {
         $summModal.modal("toggle");
-        var sections = this.RbObj.RM.getSectionToAddSum();
-
-         $funcselect.empty();
-         $sectionselect.empty();
-         fields.empty();
-
+        var sections = this.getSectionToAddSum();
+        $sectionselect.empty(); fields.empty();
         for (var ite in this.RbObj.objCollection) {
             var t = this.RbObj.objCollection[ite].$type.split(",")[0].split(".").pop();
             if (_hasSummary.indexOf(t) >= 0) {
                 fields.append(`<option eb-type="${t}"
-                value="${this.RbObj.objCollection[ite].EbSid}">${this.RbObj.objCollection[ite].Title}</option>`);
+                value="${this.RbObj.objCollection[ite].Name}" EbSid="${this.RbObj.objCollection[ite].EbSid}">${this.RbObj.objCollection[ite].Title}</option>`);
             }
         }
         for (var i = 0; i < sections.length; i++) {
             $sectionselect.append(`<option 
                 value="#${sections[i].attr("id")}">${sections[i].attr("eb-type") + sections[i].attr("id").slice(-1)}</option>`);
         }
-        fields.on("change", function (e) {
-            var obj = this.RbObj.objCollection[e.target.value];
+        fields.off("change").on("change", function (e) {
+            $funcselect.empty();
+            var obj = this.RbObj.objCollection[$(e.target).find('option:selected').attr("EbSid")];
             var t = obj.$type.split(",")[0].split(".").pop() === "EbCalcField" ? obj.CalcFieldType : obj.$type.split(",")[0].split(".").pop();
-            var summaryFunc = this.RbObj.RM.getsummaryfns(t);//object
+            var summaryFunc = this.getsummaryfns(t);//object
             for (var func in summaryFunc) {
                 $funcselect.append(`<option 
                value="${func}">${func}</option>`);
             }
         }.bind(this));
         $("#submit-summary").off("click").on("click", this.appendSummaryField.bind(this));
+        fields.trigger("change");
     };
 
     this.appendSummaryField = function (e) {
         $summModal.modal("toggle");
-        var cft = $("#" + fields.val()).attr("cftype") || "";
-        var type = $("#" + fields.val()).attr("eb-type") + cft;
-
+        var cft = $("#" + fields.find('option:selected').attr("EbSid")).attr("cftype") || "";
+        var type = $("#" + fields.find('option:selected').attr("EbSid")).attr("eb-type") + cft;
         var Objid = type + "Summary" + this.RbObj.idCounter[type + "SummaryCounter"]++;
         var obj = new EbObjects["Eb" + type + "Summary"](Objid);
         $($sectionselect.val()).append(obj.$Control.outerHTML());
-
-        if (type.indexOf("DataField") >= 0)
-            obj.DataField = fields.val();
-        else
-            obj.CalcFieldName = fields.val();
-
+        obj.SummaryOf = fields.val();
+        obj.Name = fields.val();
         obj.Title = $funcselect.val() + "(" + fields.find('option:selected').text() + ")";
         obj.Function = $funcselect.val();
         this.RbObj.objCollection[Objid] = obj;

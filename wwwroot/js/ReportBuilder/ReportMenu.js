@@ -147,66 +147,6 @@
         });
     };
 
-    this.getsummaryfns = function (eb_type) {//neeed to change
-        var fn = null;
-        if (eb_type == "DataFieldText" || eb_type == "Text")
-                fn = "SummaryFunctionsText";
-        else if (eb_type == "DataFieldDateTime" || eb_type == "DateTime")
-                fn = "SummaryFunctionsDateTime";
-        else if (eb_type == "DataFieldBoolean" || eb_type == "Boolean")
-                fn = "SummaryFunctionsBoolean";
-        else if (eb_type == "DataFieldNumeric" || eb_type == "Numeric")
-                fn = "SummaryFunctionsNumeric";
-        return EbEnums[fn];
-    }
-
-    this.addSummeryField = function (eType, selector, action, originalEvent) {
-        $("#summarry-editor-modal-container").modal("toggle");
-        this.selector = selector;
-        this.$funcselect = $("#summarry-editor-modal-container #summary-func").empty();
-        this.$sectionselect = $("#summarry-editor-modal-container #summary-sections").empty();
-        var sections = this.getSectionToAddSum();
-        var summaryFunc = $(this.selector.selector).hasClass("CalcField") ? this.getsummaryfns($(selector.selector).attr("cfType")):this.getsummaryfns($(selector.selector).attr("eb-type"));//object
-        if ($(selector.selector).hasClass("EbCol") || $(selector.selector).hasClass("CalcField")) {
-            $("#summarry-editor-modal-container #summary-fieldname").val($(selector.selector).text().trim());
-            for (var func in summaryFunc) {
-                this.$funcselect.append(`<option 
-                value="${func}">${func}</option>`);
-            }
-            for (var i = 0; i < sections.length; i++) {
-                this.$sectionselect.append(`<option 
-                value="#${sections[i].attr("id")}">${sections[i].attr("eb-type") + sections[i].attr("id").slice(-1)}</option>`);
-            }
-        }
-        //$("#submit-summary").off("click").on("click", this.appendSummaryField.bind(this));
-    };
-
-    this.appendSummaryField = function (e) { 
-        var Objid = null;
-        var type = $(this.selector.selector).attr("eb-type");
-        Objid = type + "Summary" + this.Rep.idCounter[type + "SummaryCounter"]++;
-        var obj = new EbObjects["Eb" + type + "Summary"](Objid);
-        $(this.$sectionselect.val()).append(obj.$Control.outerHTML());
-        obj.DataField = $(this.selector.selector).text().trim();
-        obj.Title = this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")";
-        obj.Function = this.$funcselect.val();
-        obj.Left = this.objCollection[$(this.selector.selector).attr("id")].Left;
-        this.objCollection[Objid] = obj;
-        this.Rep.RefreshControl(obj);
-        $("#running-summary ul[id='running-summary-childul']").append("<li class='styl'><div tabindex='1' $(this).focus(); class='textval'> "
-            + this.$funcselect.val() + "(" + $(this.selector.selector).text().trim() + ")" + "</div></li>");
-    };
-
-    this.getSectionToAddSum = function () {
-        var objlist = [];
-        $("#detail0").parent().nextAll().not(".gutter,#detail").each(function (i, obj) {
-            $(obj).children().not(".gutter").each(function (j, sections) {
-                objlist.push($(sections));
-            })
-        })
-        return objlist;
-    };
-
     this.options = {
         "copy": { name: "Copy", icon: "copy", callback: this.contextMenucopy.bind(this) },
         "cut": { name: "Cut", icon: "cut", callback: this.contextMenucut.bind(this) },
@@ -227,7 +167,7 @@
 
     this.dyOpt = {
         "DF": {
-            "summary": { name: "Summary", icon: "fa-cog", callback: this.addSummeryField.bind(this) }
+            "summary": { name: "Summary", icon: "fa-cog", callback: this.Rep.RbCommon.addSummarry.bind(this.Rep.RbCommon) }
         },
         "TA": {
             "fold1": {

@@ -197,14 +197,13 @@ namespace ExpressBase.Web.Controllers
         }
 
        
-        [HttpPost]
-        public IActionResult dvView1(string dvobj)
-        {
-            Console.WriteLine("_____________________________________________________________________________________________________");
-            var dvObject = EbSerializers.Json_Deserialize(dvobj);
-            dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = "", forWrap = "wrap" });
-        }
+        //[HttpPost]//copied to boti - febin
+        //public IActionResult dvView1(string dvobj)
+        //{
+        //    var dvObject = EbSerializers.Json_Deserialize(dvobj);
+        //    dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
+        //    return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = "", forWrap = "wrap" });
+        //}
 
         public List<EbObjectWrapper> getAllRelatedDV(string refid)
         {
@@ -249,6 +248,7 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("GoogleRelated");
         }
 
+        //copied to boti - febin
         public DataSourceDataResponse getData(TableDataRequest request)
         {
             DataSourceDataResponse resultlist1 = null;

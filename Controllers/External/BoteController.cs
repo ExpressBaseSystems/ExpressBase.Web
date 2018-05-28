@@ -178,75 +178,76 @@ namespace ExpressBase.Web.Controllers
 			public string Zip { get; set; }
 		}
 
-		public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
-        {
-            this.ServiceClient.BearerToken = bearerToken;
-            this.ServiceClient.RefreshToken = refreshToken;
-            var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+		//copied to boti - febin
+		//public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
+  //      {
+  //          this.ServiceClient.BearerToken = bearerToken;
+  //          this.ServiceClient.RefreshToken = refreshToken;
+  //          var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
 
-            var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-            if (Obj is EbBotForm)
-            {
-                //EbBotForm obj = Obj as EbBotForm;
-                foreach (EbControl control in Obj.Controls)
-                {
-                    if (control is EbSimpleSelect)
-                    {
-                        (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-                    }
-                    else if (control is EbDynamicCardSet)
-                    {
-						EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
-						EbDynamicCards.InitFromDataBase(this.ServiceClient);
-						EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
-                    }
-                    //else if (control is EbImage)
-                    //{
-                    //    (control as EbCards).InitFromDataBase(this.ServiceClient);
-                    //}
-                }
-            }
-            if (Obj is EbTableVisualization)
-            {
-                EbTableVisualization Tobj = (Obj as EbTableVisualization);
-                string BotCols = "[";
-                string BotData = "[";
-                int i = 0;
+  //          var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+  //          if (Obj is EbBotForm)
+  //          {
+  //              //EbBotForm obj = Obj as EbBotForm;
+  //              foreach (EbControl control in Obj.Controls)
+  //              {
+  //                  if (control is EbSimpleSelect)
+  //                  {
+  //                      (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+  //                  }
+  //                  else if (control is EbDynamicCardSet)
+  //                  {
+		//				EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
+		//				EbDynamicCards.InitFromDataBase(this.ServiceClient);
+		//				EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
+  //                  }
+  //                  //else if (control is EbImage)
+  //                  //{
+  //                  //    (control as EbCards).InitFromDataBase(this.ServiceClient);
+  //                  //}
+  //              }
+  //          }
+  //          if (Obj is EbTableVisualization)
+  //          {
+  //              EbTableVisualization Tobj = (Obj as EbTableVisualization);
+  //              string BotCols = "[";
+  //              string BotData = "[";
+  //              int i = 0;
 
-                foreach (DVBaseColumn col in Tobj.Columns)
-                {
-                    BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
-                }
-                BotCols = BotCols.TrimEnd(',') + "]";
+  //              foreach (DVBaseColumn col in Tobj.Columns)
+  //              {
+  //                  BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
+  //              }
+  //              BotCols = BotCols.TrimEnd(',') + "]";
 
-                DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
-                var data = dresp.Data;
-                foreach (EbDataRow row in data)
-                {
-                    i = 0;
-                    BotData += "{";
-                    foreach (var item in row)
-                    {
-                        BotData += "\"" + i++ + "\":\"" + item + "\",";
-                        //BotData += "\"" + item + "\",";
-                    }
-                    BotData = BotData.TrimEnd(',') + "},";
-                }
-                BotData = BotData.TrimEnd(',') + "]";
+  //              DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
+  //              var data = dresp.Data;
+  //              foreach (EbDataRow row in data)
+  //              {
+  //                  i = 0;
+  //                  BotData += "{";
+  //                  foreach (var item in row)
+  //                  {
+  //                      BotData += "\"" + i++ + "\":\"" + item + "\",";
+  //                      //BotData += "\"" + item + "\",";
+  //                  }
+  //                  BotData = BotData.TrimEnd(',') + "},";
+  //              }
+  //              BotData = BotData.TrimEnd(',') + "]";
 
-                Tobj.BotCols = BotCols;
-                Tobj.BotData = BotData;
-                return EbSerializers.Json_Serialize(Tobj);
-            }
-            if (Obj is EbChartVisualization)
-            {
-                return EbSerializers.Json_Serialize(Obj);
-            }
-            //else if (Obj is EbChartVisualization)
-            //{
+  //              Tobj.BotCols = BotCols;
+  //              Tobj.BotData = BotData;
+  //              return EbSerializers.Json_Serialize(Tobj);
+  //          }
+  //          if (Obj is EbChartVisualization)
+  //          {
+  //              return EbSerializers.Json_Serialize(Obj);
+  //          }
+  //          //else if (Obj is EbChartVisualization)
+  //          //{
 
-            //}
-            return Obj;
-        }
+  //          //}
+  //          return Obj;
+  //      }
     }
 }

@@ -309,6 +309,12 @@
 .DDdiv table {
     font-size: 13px !important;
     margin-bottom: 0;
+    outline:none;
+}
+
+.DDdiv .selected-row {
+    color: #fff !important;
+    background-color: #08C !important;
 }
 
 .DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th,

@@ -49,7 +49,7 @@
     };
 
     this.initCtrl = function (ctrl) {
-        var $el = ctrl.$Control;
+        var $el = ctrl.$Control.clone();
         var type = ctrl.ObjType;
         $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
         $el.on("focus", this.controlOnFocus.bind(this));
@@ -58,11 +58,11 @@
             this.controlCounters[type + "Counter"] = parseInt(ctrl.EbSid.match(/\d+$/)[0]);
             ++(this.controlCounters[type + "Counter"]);
         }
+        $(".eb-chatBox-dev").append($el);
     };
 
     this.renderCtrls = function () {
         $.each(this.rootContainerObj.Controls.$values, function (i, ctrl) {
-            $(".eb-chatBox-dev").append(ctrl.$Control);
             this.initCtrl(ctrl);
         }.bind(this));
         $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });

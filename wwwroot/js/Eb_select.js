@@ -54,7 +54,7 @@ var EbSelect = function (ctrl) {
         this.idField = "columnName";////////////////////////
     this.vmName = ctrl.valueMember[this.idField]; //ctrl.vmName;
     this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
-    this.maxLimit = (ctrl.maxLimit === 0) ? 9999999999999999999999 : this.maxLimit;
+    this.maxLimit = (ctrl.maxLimit === 0) ? 9999999999999999999999 : ctrl.maxLimit;
     this.minLimit = ctrl.minLimit;//ctrl.minLimit;
     this.multiSelect = (ctrl.maxLimit > 1);
     this.required = ctrl.required;//ctrl.required;
@@ -199,6 +199,10 @@ var EbSelect = function (ctrl) {
     this.initDTpost = function (data) {
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
         $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
+        $(this.DTSelector + ' tbody').on('focus', "td", function () {
+            console.log("td focus")
+        });
+        this.datatable.Api.rows('.odd:eq(0)').select();
         //$('#' + this.name + '_loading-image').hide();
     };
 
@@ -350,20 +354,19 @@ var EbSelect = function (ctrl) {
         }
     };
 
-    this.arrowSelectionStylingBlr = function (e, datatable, cell) {
-        var row = datatable.row(cell.index().row);
-        $(row.nodes()).css('color', '#333');
-        $(row.nodes()).css('font-weight', 'normal');
-        $(row.nodes()).removeClass('selected');
-    };
-
     this.arrowSelectionStylingFcs = function (e, datatable, cell, originalEvent) {
         var row = datatable.row(cell.index().row);
-        //this.cellTr = row.nodes();
-        $(row.nodes()).css('color', '#000');
-        $(row.nodes()).css('font-weight', 'bold');
-        $(row.nodes()).find('.focus').removeClass('focus');
-        $(row.nodes()).addClass('selected');
+        var $tr = $(row.nodes());
+        $tr.find('.focus').removeClass('focus');
+        $tr.addClass('selected-row');
+        $tr.find('td').css("border-color", "transparent");
+    };
+
+    this.arrowSelectionStylingBlr = function (e, datatable, cell) {
+        var row = datatable.row(cell.index().row);
+        var $tr = $(row.nodes());
+        $tr.find('td').css("border-color", "#ddd");
+        $tr.removeClass('selected-row');
     };
 
     this.tagCloseBtnHand = function (e) {
@@ -372,14 +375,8 @@ var EbSelect = function (ctrl) {
     };
 
     this.checkBxClickEventHand = function (e) {
-        var indx;
         this.currentEvent = e;
         var $row = $(e.target).closest('tr');
-        $.each(this.datatable.Api.settings().init().columns, function (j, obj) {
-            if ((obj.columnName || obj.name || obj.Name) === 'id') {
-                indx = obj.columnIndex; return false;
-            }
-        });
         var datas = $(this.DTSelector).DataTable().row($row).data();
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
             if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {

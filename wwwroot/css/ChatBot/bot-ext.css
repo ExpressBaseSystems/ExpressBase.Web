@@ -1,37 +1,42 @@
 ﻿.eb_iframecont {
-    display: none;
-    flex-direction: column;
-    position: fixed;
-    /*right: 24px;
+	display: none;
+	flex-direction: column;
+	position: fixed;
+	/*right: 24px;
     bottom: 8px;*/
-    right: 0;
-    bottom: 0;
-    width: 28%;
-	transition: 1s;
-    /*height: 90%;*/
-    height: 100%;
-    overflow: hidden;
-    /*border-radius: 7px;*/
-    border-radius: 2px;
-    background-color: white;
-    min-width: 300px;
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
-    z-index: 16777270;
+	right: 0;
+	bottom: 0;
+	width: 28%;
+	transition: 0.4s;
+	/*height: 90%;*/
+	height: 100%;
+	overflow: hidden;
+	/*border-radius: 7px;*/
+	border-radius: 2px;
+	background-color: white;
+	min-width: 300px;
+	box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
+	z-index: 16777270;
+}
+
+.usecase-bots-cont .eb_iframecont {
+	position: absolute !important;
+	/*right: 5%;*/
 }
 
 .loderdiv {
-    display: flex;
-    background-color: blueviolet;
-    background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
-    background-size: 30%;
-    flex: 1 1 auto;
+	display: flex;
+	background-color: blueviolet;
+	background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
+	background-size: 30%;
+	flex: 1 1 auto;
 }
 
 .ebbot_iframe {
-    visibility: hidden;
-    width: 100%;
-    flex: 1 1 auto;
-    /*border-radius: 0px 0px 3.5px 3.5px;*/
+	visibility: hidden;
+	width: 100%;
+	flex: 1 1 auto;
+	/*border-radius: 0px 0px 3.5px 3.5px;*/
 }
 /*amal*/
 /*.ebbot_iframe {
@@ -41,58 +46,58 @@
    border-radius:10px;
 }*/
 .chatbtn {
-    position: fixed;
-    right: 24px;
-    bottom: 15px;
-    font-size: 24px;
-    background-color: var( --ebbotThemeColor );
-    color: #fff;
-    padding: 12px;
-    Float: right;
-    z-index: 16777271;
-    border-radius: 30px;
-    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.39);
+	position: fixed;
+	right: 24px;
+	bottom: 15px;
+	font-size: 24px;
+	background-color: var( --ebbotThemeColor );
+	color: #fff;
+	padding: 12px;
+	Float: right;
+	z-index: 16777271;
+	border-radius: 30px;
+	box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.39);
 }
 
 #refreshdiv {
-    font-weight:bold;
+	font-weight: bold;
 }
 
 @media screen and (max-width: 768px) {
-    .eb_iframecont {
-        width: 100%;
-        left: 0;
-        bottom: 0;
-        height: 100%;
-    }
+	.eb_iframecont {
+		width: 100%;
+		left: 0;
+		bottom: 0;
+		height: 100%;
+	}
 
-    .eb_iframecont {
-        border-radius: 0px;
-    }
+	.eb_iframecont {
+		border-radius: 0px;
+	}
 }
 
 .eb-chatbtn {
-    bottom: calc( 65% - 55px) !important;
-    right: 0 !important;
-    box-shadow: unset !important;
-    background-color: #428bca !important;
+	bottom: calc( 65% - 55px) !important;
+	right: 0 !important;
+	box-shadow: unset !important;
+	background-color: #428bca !important;
 }
 
 /*-----*/
 
 .eb-chat-head .bot-icon {
-    height: 44px;
-    width: 44px;
-    float: left;
-    border-radius: 4px;
-    text-align: center;
+	height: 44px;
+	width: 44px;
+	float: left;
+	border-radius: 4px;
+	text-align: center;
 }
 
 .eb-chat-head {
-    background-color: var( --ebbotThemeColor );
-    /*border-radius: 3px 3px 0px 0px;*/
-    color: white;
-    padding: 5px 15px;
+	background-color: var( --ebbotThemeColor );
+	/*border-radius: 3px 3px 0px 0px;*/
+	color: white;
+	padding: 5px 15px;
 }
 
 /*amal*/
@@ -104,28 +109,28 @@
     padding: 5px 15px;
 }*/
 .poweredby {
-    font-size: 10px;
-    font-family: arial;
+	font-size: 10px;
+	font-family: arial;
 }
 
 .bot-head {
-    font-family: arial;
-    font-size: 20px;
-    display: inline-block;
-    margin-top: 10px;
+	font-family: arial;
+	font-size: 20px;
+	display: inline-block;
+	margin-top: 10px;
 }
 
 .inline-block {
-    display: inline-block;
+	display: inline-block;
 }
 
 .chatclose {
-    display: inline-block;
-    float: right;
-    font-size: 1.2em;
-    padding: 0px 5px;
-    margin: 10px 0px;
-    cursor: pointer;
+	display: inline-block;
+	float: right;
+	font-size: 1.2em;
+	padding: 0px 5px;
+	margin: 10px 0px;
+	cursor: pointer;
 }
 
 .chatmaximize {
@@ -138,58 +143,58 @@
 }
 
 .cssload-container {
-    width: 100%;
-    height: 49px;
-    text-align: center;
+	width: 100%;
+	height: 49px;
+	text-align: center;
 }
 
 .cssload-double-torus {
-    width: 49px;
-    height: 49px;
-    margin: 0 auto;
-    border: 4px double;
-    border-radius: 50%;
-    border-color: transparent rgba(28,54,227,0.9) rgba(62,28,199,0.9);
-    animation: cssload-spin 690ms infinite linear;
-    -o-animation: cssload-spin 690ms infinite linear;
-    -ms-animation: cssload-spin 690ms infinite linear;
-    -webkit-animation: cssload-spin 690ms infinite linear;
-    -moz-animation: cssload-spin 690ms infinite linear;
+	width: 49px;
+	height: 49px;
+	margin: 0 auto;
+	border: 4px double;
+	border-radius: 50%;
+	border-color: transparent rgba(28,54,227,0.9) rgba(62,28,199,0.9);
+	animation: cssload-spin 690ms infinite linear;
+	-o-animation: cssload-spin 690ms infinite linear;
+	-ms-animation: cssload-spin 690ms infinite linear;
+	-webkit-animation: cssload-spin 690ms infinite linear;
+	-moz-animation: cssload-spin 690ms infinite linear;
 }
 
 
 
 @keyframes cssload-spin {
-    100% {
-        transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+	100% {
+		transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
 }
 
 @-o-keyframes cssload-spin {
-    100% {
-        -o-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+	100% {
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
 }
 
 @-ms-keyframes cssload-spin {
-    100% {
-        -ms-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+	100% {
+		-ms-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
 }
 
 @-webkit-keyframes cssload-spin {
-    100% {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+	100% {
+		-webkit-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
 }
 
 @-moz-keyframes cssload-spin {
-    100% {
-        -moz-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
+	100% {
+		-moz-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
 }

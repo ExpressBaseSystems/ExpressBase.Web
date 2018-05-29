@@ -287,6 +287,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SwitchContext()
         {
+            Console.WriteLine("Inside Context Switch");
             var req = this.HttpContext.Request.Form;
             string btoken = req["Btoken"].ToString();
             string rtoken = req["Rtoken"].ToString();

@@ -204,7 +204,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.ajaxSucc = function (text) {
-        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         $("#objname").text(this.EbObject.Name);
         if (this.MainData !== null) {
             this.isPipped = true;
@@ -247,6 +246,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.EbObject = dvcontainerObj.currentObj;
             }
         }
+        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         if ($(sideDivId + " #filterBox").children().length == 0) {
             this.FD = false;
             $(sideDivId).css("display", "none");
@@ -391,7 +391,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.table_jQO.on('error.dt', function (settings, techNote, message) {
             console.log('An error has been reported by DataTables: ', message);
-        });        
+        });
 
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
@@ -454,7 +454,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
         chkObj.sWidth = "10px";
         chkObj.orderable = false;
-        chkObj.bVisible = true;
+        chkObj.bVisible = false;
         chkObj.name = "checkbox";
         chkObj.Type = 3;
         chkObj.render = this.renderCheckBoxCol.bind(this);
@@ -468,7 +468,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.scrollY = this.ebSettings.scrollY+"px";
         o.scrollY = "inherit";
         //o.deferLoading = 100;
-        o.scrollX = "100%";
+        o.scrollX = true;
+        o.scrollCollapse = true;
         if (this.ebSettings.PageLength !== 0) {
             o.lengthMenu = this.generateLengthMenu();
             //o.deferLoading = this.ebSettings.PageLength * 5;
@@ -496,8 +497,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.paging = false;
         //o.rowReorder = true;
         //o.order = [[8, "asc"]];
-        o.bAutoWidth = false;
-        o.autowidth = false;
+        //o.bAutoWidth = false;
+        //o.autowidth = false;
         o.serverSide = true;
         o.processing = true;
         //o.deferRender = true;
@@ -884,6 +885,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.createFooter(0);
                 this.createFooter(1);
                 $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
+                $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
+                $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
+
+                $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
+                $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
             }
             this.addFilterEventListeners();
             this.Api.columns.adjust();
@@ -982,12 +988,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
     }
+
     this.xx = function () {
         var Obj = {};
         Obj.refid = this.linkDV;
         Obj.Params = this.filterValues;
         return Obj;
     };
+
     this.copyLabelData = function (key, opt, event) {
 
     }
@@ -1078,8 +1086,23 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
         var scrollfoot = $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner table');
 
-        if (lfoot.length !== 0 || rfoot.length !== 0)
+        if (lfoot.length !== 0 || rfoot.length !== 0) {
             var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);
+            if (lfoot.length !== 0) {
+                for (var j = 0; j < this.ebSettings.LeftFixedColumn; j++) {
+                    $(lfoot).children().find("tr").eq(ps).children("th").eq(j).html(eb_footer_controls_lfoot[j]);
+                    if (j === 0)
+                        $(lfoot).children().find("tr").eq(ps).children("th").eq(j).html("");
+                }
+            }
+
+            if (rfoot.length !== 0) {
+                var start = eb_footer_controls_lfoot.length - this.ebSettings.RightFixedColumn;
+                for (var j = 0; (j+start) < eb_footer_controls_lfoot.length; j++)
+                    $(rfoot).children().find("tr").eq(ps).children("th").eq(j).html(eb_footer_controls_lfoot[j + start]);
+            }
+        }
+
         if (scrollfoot.length !== 0)
             var eb_footer_controls_scrollfoot = this.GetAggregateControls(ps, 1);
         if (ps == 0) {
@@ -1091,31 +1114,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             });
 
-            if (!aggFlag)
+            if (!aggFlag) {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
+                $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(' + ps + ')').hide();
+                $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
+            }
         }
-        if (ps === 1)
+        if (ps === 1) {
             $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
+            $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(' + ps + ')').hide();
+            $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
+        }
         var j = 0;
+
         $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ') th').each(function (idx, scrollfootth) {
-            var lfootth = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table tfoot tr:eq(' + ps + ') th:eq('+j+')');
-            var rfootth = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table tfoot tr:eq(' + ps + ') th:eq(' + j +')');
-
-            if (lfoot.length !== 0) {
-                if (j < tx.LeftFixedColumn)
-                    $(lfootth).html(eb_footer_controls_lfoot[idx]);
-            }
-
-            if (rfoot.length !== 0) {
-                if (j === eb_footer_controls_lfoot.length - tx.RightFixedColumn) {
-                    if (j < eb_footer_controls_lfoot.length)
-                        $(rfootth).html(eb_footer_controls_lfoot[idx]);
-                }
-            }
 
             if (scrollfoot.length !== 0) {
                 if (tx.LeftFixedColumn + tx.RightFixedColumn > 0) {
-                    if (j < eb_footer_controls_scrollfoot.length - tx.RightFixedColumn)
+                    if (j > tx.LeftFixedColumn && j < eb_footer_controls_scrollfoot.length - tx.RightFixedColumn)
                         $(scrollfootth).html(eb_footer_controls_scrollfoot[idx]);
                 }
 
@@ -1637,7 +1653,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
                 $(e.target).parents('.input-group').append("<input type='" + ctype + "' class='between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
-                $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp"); 
+                $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keypress", this.call_filter);
             }
             //flag = true;
@@ -1645,7 +1661,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else if (selText.trim() !== 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 2) {
                 $(e.target).parents('.input-group').find("input").eq(1).remove();
-                $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp"); 
+                $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
                 //$("#" + this.tableId + "_" + colum + "_hdr_txt1").style("width", "100%", "important"); 
             }
             //flag = false;
@@ -1654,7 +1670,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         e.preventDefault();
     };
 
-    this.call_filter = function(e) {
+    this.call_filter = function (e) {
         if (e.keyCode === 13) {
             var flag = true;
             if ($(e.target).siblings(".eb_finput").length === 1) {
@@ -1785,10 +1801,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.showOrHideAggrControl = function (e) {
-        //if (this.ebSettings.scrollY !== 0)
         $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)').toggle();
-        //else
-        //    $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
+        $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(0)").toggle();
+        $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper tfoot tr:eq(0)").toggle();
         this.Api.columns.adjust();
     };
 
@@ -1958,15 +1973,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
             }
         }
-        //if (col.fontfamily !== 0) {
-        //    var style = document.createElement('style');
-        //    style.type = 'text/css';
-        //    var fontName = col.fontfamily.replace(/_/g, " ");
-        //    style.innerHTML = '.font_' + col.fontfamily + '{font-family: ' + fontName + ';}';
-        //    document.getElementsByTagName('body')[0].appendChild(style);
-        //    this.ebSettings.Columns.$values[i].className = "font_" + col.fontfamily + " tdheight";
-        //    this.ebSettings.Columns.$values[i].sClass = "font_" + col.fontfamily + " tdheight";
-        //}
+        if (col.Font !== null) {
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            var array = [this.tableId, col.name, col.Font.Font, col.Font.Size, col.Font.color.replace("#","")];
+            if ($("." + array.join("_")).length === 0) {
+                style.innerHTML = "." + array.join("_") + "{font-family: " + col.Font.Font + "!important; font-size: " + col.Font.Size + "px!important; color: " + col.Font.color + "!important; }";
+                document.getElementsByTagName('body')[0].appendChild(style);
+            }
+            this.ebSettings.Columns.$values[i].className = array.join("_")+ " tdheight";
+            this.ebSettings.Columns.$values[i].sClass = array.join("_") + " tdheight";
+        }
     };
 
     this.renderProgressCol = function (deci, data, type, row, meta) {

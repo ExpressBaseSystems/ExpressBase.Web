@@ -217,13 +217,62 @@
         var obj = new EbObjects["Eb" + type + "Summary"](Objid);
         $($sectionselect.val()).append(obj.$Control.outerHTML());
         obj.SummaryOf = fields.val();
-        obj.Name = fields.val();
+        obj.Name = Objid;
         obj.Title = $funcselect.val() + "(" + fields.find('option:selected').text() + ")";
         obj.Function = $funcselect.val();
         this.RbObj.objCollection[Objid] = obj;
         this.RbObj.RefreshControl(obj);
         $("#running-summary ul[id='running-summary-childul']").append(`<li class='styl'><div tabindex='1' $(this).focus(); class='textval'>
             ${$funcselect.val()} (${fields.find('option:selected').text().trim()})</div></li>`);
+    };
+
+    this.modifyTable = function (obj,pname) {
+        if (pname === "ColoumNo") {
+            $(`#${obj.EbSid}`).children("table").find("tr").each(function (i, tr) {
+                for (let t = 0; t < obj.ColoumNo; t++) {
+                    $(tr).append("<td></td>");
+                }
+            }.bind(this));
+        }
+        else {
+
+        }
+    };
+
+    this.loopTable = function () {
+
+    };
+
+    this.drawDsParmsTree = function (paramsList) {
+        $('#ds_parameter_list').empty();
+        $('#ds_parameter_list').append("<li><a>Data Source Parameters</a><ul id='ds_parameters'></ul></li>");
+        paramsList.forEach(function (param) {
+            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><div eb-type='Parameter' class='fd_params draggable textval'>${param.name}</div></li>`);        
+        });
+        $('#ds_parameter_list').treed();
+        this.RbObj.DragDrop_Items();
+    };
+
+    this.drawDsColTree = function (colList) {
+        var type = "";
+        $('#data-table-list').empty();
+        $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");
+        $.each(colList, function (i, columnCollection) {
+            $("#data-table-list ul[id='dataSource']").append(" <li><a>Table" + i + "</a><ul id='t" + i + "'></ul></li>");
+            $.each(columnCollection, function (j, obj) {
+                if (obj.type === 16)
+                    type = "DataFieldText";
+                else if (obj.type === 7 || obj.type === 8 || obj.type === 10 || obj.type === 11 || obj.type === 12 || obj.type === 21)
+                    type = "DataFieldNumeric";
+                else if (obj.type === 3)
+                    type = "DataFieldBoolean";
+                else if (obj.type === 5 || obj.type === 6 || obj.type === 17 || obj.type === 26)
+                    type = "DataFieldDateTime";
+                $("#data-table-list ul[id='t" + i + "']").append("<li class='styl'><div eb-type='" + type + "' DbType='" + obj.type + "' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
+            });
+        });
+        $('#data-table-list').treed();
+        $('.nav-tabs a[href="#data"]').tab('show');
     };
 
     this.start = function () {

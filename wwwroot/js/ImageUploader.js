@@ -143,7 +143,8 @@
     this.init = function () {
         $("#" + _container).empty();
         this.CreateMOdalW();
-        this.getUplodedImgOnload();
+        //this.getUplodedImgOnload();
+        this.loadFileInput();
         $('body').off("click", "#" + _ToggleId).on("click", "#" + _ToggleId, this.toggleModal.bind(this));
         $('#' + _container + '_close_btn').on("click", this.stopListening.bind(this));
     };

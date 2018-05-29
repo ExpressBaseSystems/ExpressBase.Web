@@ -1,0 +1,139 @@
+﻿@{
+    var BotDtls = Html.Raw(ViewBag.BotDetails);
+}
+
+<head>
+    <link async rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
+    <link async rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
+    <link rel="icon" href="~/images/favicon.ico">
+
+    <link async href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+    <link async href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" />
+    @*
+        <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />*@
+
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        //window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
+        //window.EXPRESSbase_APP_IDS = [13, 93];
+
+        $(document).ready(function () {
+            var BotList = @BotDtls ;
+            window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
+            window.EXPRESSbase_APP_IDS = [];
+            botNames = [];
+            botDpUrl = [];
+            $.each(BotList.$values, function (k, bobj) {
+                window.EXPRESSbase_APP_IDS.push(bobj['id']);
+                botNames.push(bobj['name']);
+                botDpUrl.push("http://localhost:41500/images/svg/restaurant.svg");
+            });
+
+            d = document;
+            d.appIdColl = window.EXPRESSbase_APP_IDS;
+            d.ebbotThemeColorColl = ["#9400D3", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
+            d.ebbotNameColl = botNames;
+            d.botdpURLColl = botDpUrl;
+
+            d.appIdCount = 0;
+            d.createBotFns = [];
+            for (var i = 0; i < d.appIdColl.length; i++) {
+                d = document;
+                d.createBotFns.push(function () {
+                    s = d.createElement("script");
+                    //s.src = "/js/ChatBot/ebbot-ext.js";
+                    s.src = "https://eb-test.info/js/ChatBot/ebbot-ext.js";
+                    s.async = 1;
+                    d.getElementsByTagName("head")[0].appendChild(s);
+                });
+            }
+            $.each(d.createBotFns, function (i, fun) {
+                $(".botBtnsCont").append(`<div class="btnOutCont">
+                                            <div class="btnInnerCont" onclick="clickOnDiv(${i}, ${d.appIdColl[i]});">
+                                                <h4>${botNames[i]}</h4>
+                                            </div>
+                                          </div>`);
+            });
+        });
+
+
+        function clickOnDiv(i, appid) {
+            //console.error(7);
+            var d = document;
+            if (d.latestAppid === appid)
+                return;
+            d.appIdCount = i;
+            if ($(`[appid=${appid}]`).length === 0) {
+                d.createBotFns[i]();
+            }
+
+            var html = d.getElementsByTagName('html')[0];
+            html.style.setProperty("--ebbotThemeColor", d.ebbotThemeColorColl[i]);
+            $(`.usecase-bots-cont [appid=${appid}] .eb-chat-head`).css("background-color", d.ebbotThemeColorColl[i]);
+            $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 400);
+            $(".eb_iframecont").hide();
+            $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).animate({ opacity: '1'}, 400); });
+            d.latestAppid = appid;
+        }
+    </script>
+    <style>
+        .usecase-bots-cont {
+            /*width: 100%;*/
+            float: right;
+            /*height: 100%;*/
+            /*border: solid 1px red;*/
+        }
+
+        .eb_iframecont {
+            position: relative !important;
+            float: right;
+            width: 50%!important;
+        }
+
+        .botBtnsCont {
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .btnOutCont {
+            width: 100%;
+            float: left;
+            padding: 10px;
+        }
+
+        .btnInnerCont {
+            float: left;
+            background: white;
+            box-shadow: var(--eb-shadow);
+            width: 100%;
+            padding: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 1s;
+        }
+
+            .btnInnerCont:hover {
+                background: #eee;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="row" style="margin: 0px;">
+        <div class="col-md-4 botBtnsCont">
+            @*<div class="btnOutCont">
+                    <div class="btnInnerCont">
+                        <h4>djfhdikdhhd</h4>
+                    </div>
+                </div>*@
+        </div>
+        <div class="bot_container" style="padding:0px;">
+            <div class="usecase-bots-cont"></div>
+        </div>
+    </div>
+
+
+</body>

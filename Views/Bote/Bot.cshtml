@@ -39,8 +39,8 @@
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version="true"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-locationpicker/0.1.12/locationpicker.jquery.min.js"></script>
 @*<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&callback=initMap&libraries=places"></script>*@
-@*<script type="text/javascript" src='http://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&sensor=false&libraries=places'></script>*@
-<script type="text/javascript" src='http://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
+@*<script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&sensor=false&libraries=places'></script>*@
+<script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
 <style>
     body {
         margin: 0;
@@ -62,7 +62,7 @@
         html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
     });
 
-    $.get("http://ipinfo.io", function (response) {
+    $.get("https://ipinfo.io", function (response) {
         chatBotObj.userDtls.ip = response.ip;
         chatBotObj.userDtls.browser = getBrowserName();
     }, "jsonp");
@@ -89,7 +89,7 @@
 
     window.fbAsyncInit = function () {
         FB.init({
-            appId: '141908109794829',//,'1525758114176201',//
+            appId: '1525758114176201',//'141908109794829',//,
             cookie: true,  // enable cookies to allow the server to access
             // the session
             xfbml: true,  // parse social plugins on this page

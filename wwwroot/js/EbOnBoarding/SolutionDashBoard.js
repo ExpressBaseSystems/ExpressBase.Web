@@ -131,15 +131,18 @@
 
     this.appendFilesDb = function (object) {
         var FilesDB_url = "";
-        if (object.IsDefault) { FilesDB_url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; }
+        if (object === null || object.IsDefault) { 
+            FilesDB_url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; }
         else { FilesDB_url = object.FilesDB_url; }
-        $(".filesDbConnectionEdit tbody").append(`<tr class="connection-row">
+        if (object) {
+            $(".filesDbConnectionEdit tbody").append(`<tr class="connection-row">
                                                <td field="">Files</td>
-                                        <td field="DatabaseVendor">${object.FilesDbVendor}</td>
-                                        <td field="FilesDB_url" style="max-width: 337px;text-overflow:ellipsis;overflow: hidden;">${FilesDB_url}</td>
-                                        <td field="NickName">${object.NickName}</td>
+                                        <td field="DatabaseVendor">${object.FilesDbVendor || "empty"}</td>
+                                        <td field="FilesDB_url" style="max-width: 337px;text-overflow:ellipsis;overflow: hidden;">${FilesDB_url || "empty"}</td>
+                                        <td field="NickName">${object.NickName || "empty"}</td>
                                         <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="filesDbConnectEdit"><i class="fa fa-pencil"></i></button></td>
                                             </tr>`);
+        }
     };
     this.appendEmailConnection = function (object) {
         if ($.isEmptyObject(object))

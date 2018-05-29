@@ -113,6 +113,8 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     box-sizing: content-box;
+    display: flex;
+    align-items: center;
 }
     .dropped:hover {
         cursor: pointer;
@@ -841,4 +843,32 @@
     position:absolute;
     top:10px;
     right:10px;
+}
+.eb_table_container table {
+    margin: 0 !important;
+    height: 100%;
+    width: 100%;
+    min-height: 27px !important;
+    background: white;
+    border: inherit;
+}
+.eb_table_container table tbody,td,tr{
+    border: inherit !important;
+}
+.eb_table_container{
+    width:100%;
+    float:left;
+}
+.drop-hover {
+    border: 2px solid #2391d2 !important;
+}
+.T_layout {
+    position:relative;
+}
+.eb_draggbale_table_handle {
+    font-size: 10px;
+    position: absolute;
+    bottom: -1px;
+    right: 0;
+    z-index: 5;
 }

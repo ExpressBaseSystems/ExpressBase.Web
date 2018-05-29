@@ -111,6 +111,10 @@ var EbBasicDataTable = function (Option) {
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
+        this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
+
+        this.Api.off('key-blur').on('key-blur', Option.arrowBlurCallback);
+
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
                 if (typeof a === 'string') {
@@ -593,8 +597,6 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
-        //alert("selectCallbackFunc");
-        //if (this.dtsettings.fnKeyUpCallback)
         Option.fnKeyUpCallback(e, dt, type, indexes);
     };
 
@@ -606,9 +608,6 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.dblclickCallbackFunc = function (e) {
-        //alert("fnDblclickCallbackFunc");
-        //this.Api.rows(e.target).select();
-        //if (this.dtsettings.fnDblclickCallbackFunc)
         Option.fnDblclickCallback(e);
     };
 

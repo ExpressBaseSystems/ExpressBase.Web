@@ -54,14 +54,24 @@
         }.bind(this), 1000);
     };
 
-    this.initCtrl = function (el) {
-        var $el = el.$Control;
-        var type = $el.attr("ctype").trim();
-        var id = type + (this.controlCounters[type + "Counter"])++;
+    this.initCtrl = function (ctrl) {
+        var $el = ctrl.$Control.clone();
+        var type = ctrl.ObjType;
         $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
         $el.on("focus", this.controlOnFocus.bind(this));
-        $el.attr("eb-type", type);
-        $el.attr("eb-type", type).attr("id", id);
+        $el.attr("eb-type", type).attr("id", ctrl.EbSid);
+        if (this.controlCounters[type + "Counter"] <= parseInt(ctrl.EbSid.match(/\d+$/)[0])) {
+            this.controlCounters[type + "Counter"] = parseInt(ctrl.EbSid.match(/\d+$/)[0]);
+            ++(this.controlCounters[type + "Counter"]);
+        }
+        $(".eb-chatBox-dev").append($el);
+    };
+
+    this.renderCtrls = function () {
+        $.each(this.rootContainerObj.Controls.$values, function (i, ctrl) {
+            this.initCtrl(ctrl);
+        }.bind(this));
+        $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
     };
 
     if (this.EbObject) {
@@ -319,14 +329,6 @@
 
     this.onChangeGridRowNo = function () {
 
-    };
-
-    this.renderCtrls = function () {
-        $.each(this.rootContainerObj.Controls.$values, function (i, ctrl) {
-            $(".eb-chatBox-dev").append(ctrl.$Control);
-            this.initCtrl(ctrl);
-        }.bind(this));
-        $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
     };
 
     //this.initCtrl = function (el) {

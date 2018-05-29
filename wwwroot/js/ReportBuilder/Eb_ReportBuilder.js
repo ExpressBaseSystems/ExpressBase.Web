@@ -52,17 +52,21 @@
         $("#" + obj.EbSid).replaceWith(NewHtml);
         if ('Font' in obj)
             this.repExtern.setFontProp(obj);
-
         if (!('SectionHeight' in obj)) {
-            $("#" + obj.EbSid).draggable({
+                $("#" + obj.EbSid).draggable({
                 cursor: "crosshair", containment: containment, appendTo: "body",
                 start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.ondragControl.bind(this)
             });
             $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));
         }
         if ('SectionHeight' in obj) {
-            $("#" + obj.EbSid).droppable({ accept: ".draggable,.dropped,.coloums", drop: this.onDropFn.bind(this) });
+            $("#" + obj.EbSid).droppable({
+                accept: ".draggable,.dropped,.coloums",
+                hoverClass: "drop-hover",
+                drop: this.onDropFn.bind(this)
+            });
         }
+        this.makeTLayoutDroppable(obj);
         $("#" + obj.EbSid).attr("tabindex", "1");
         $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
@@ -78,9 +82,11 @@
                 data: { refID: refid },
                 success: function (result) {
                     $("#get-col-loader").hide();
-                    DrawColTree(result);
-                    $('.nav-tabs a[href="#data"]').tab('show');
-                }
+                    if (result.columns)
+                        this.RbCommon.drawDsColTree(result.columns);
+                    if (result.paramsList)
+                        this.RbCommon.drawDsParmsTree(result.paramsList);
+                }.bind(this)
             });
         }
     };//ajax for ds coloums
@@ -381,43 +387,68 @@
             Title = "T" + this.col.parent().parent().siblings("a").text().slice(-1) + "." + this.col.text().trim();                
         else
             Title = this.col.text().trim();
-        if (!this.col.hasClass('dropped')) {
-            var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++;
-            var obj = new EbObjects["Eb" + this.Objtype](Objid);
-            this.dropLoc.append(obj.$Control.outerHTML());
-            this.objCollection[Objid] = obj;
-            if (this.col.hasClass('coloums')) {
-                obj.Top = (this.posTop - this.dropLoc.offset().top) - PosOBjOFdrag['top'];
-                obj.DbType = this.col.attr("DbType");
-                obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
-                obj.ColumnName = this.col.text().trim();
-            }
-            else 
-                obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
-            obj.Title = Title; 
-            obj.Left = this.leftwithMargin();
-            this.RefreshControl(obj);
-        }
-        else if (this.col.hasClass('dropped')) {
-            var l1 = this.leftwithMargin();
-            this.dropLoc.append(this.col.css({ left: l1, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop }));
-            var obj1 = this.objCollection[this.col.attr('id')];
-            obj1.Top = this.col.position().top;
-            obj1.Left = this.col.position().left;          
-        }
+
+        if (!this.col.hasClass('dropped'))
+            this.DropFirst(Title);
+        else if (this.col.hasClass('dropped'))
+            this.DropFurther(Title);  
     };//on drop func of dropable
+
+    this.DropFirst = function (Title) {
+        var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++;
+        var obj = new EbObjects["Eb" + this.Objtype](Objid);
+        this.dropLoc.append(obj.$Control.outerHTML());
+        this.objCollection[Objid] = obj;
+        if (this.col.hasClass('coloums')) {
+            obj.Top = this.dropLoc.hasClass("T_layout") ? 0 : (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];;
+            obj.DbType = this.col.attr("DbType");
+            obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
+            obj.ColumnName = this.col.text().trim();
+        }
+        else if (this.dropLoc.hasClass('T_layout')) {
+            obj.Width = this.dropLoc.innerWidth();
+            obj.Height = this.dropLoc.innerHeight();
+            obj.Top = 0;
+        }
+        else
+            obj.Top =(this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
+        obj.Title = Title;
+        obj.Left = this.leftwithMargin();
+        this.RefreshControl(obj);
+    };
+
+    this.DropFurther = function () {
+        var l1 = this.leftwithMargin();
+        this.dropLoc.append(this.col.css({ left: l1, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop }));
+        var obj1 = this.objCollection[this.col.attr('id')];
+        obj1.Top = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().top;
+        obj1.Left = this.dropLoc.hasClass("T_layout") ? 0 :this.col.position().left;
+    };
+
+    this.makeTLayoutDroppable = function (obj) {
+        if ('ColoumNo' in obj && 'RowNo' in obj) {
+            $(`#${obj.EbSid}`).children('table').find('td').addClass("T_layout").droppable({
+                accept: ".draggable,.dropped,.coloums",
+                greedy: true,
+                hoverClass: "drop-hover",
+                drop: this.onDropFn.bind(this)
+            });
+        }
+    };
 
     this.leftwithMargin = function () {
         var l = null;
         var r = $.isEmptyObject(this.objCollection[this.col.attr('id')]) ? new EbObjects["Eb" + this.col.attr('eb-type')]("sam").Width : parseFloat(this.objCollection[this.col.attr('id')].Width);
         if (!this.col.hasClass('dropped'))
-            l = this.col.hasClass('coloums') ? (this.posLeft - this.dropLoc.offset().left) - PosOBjOFdrag['left'] : (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];   
+            l =  (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];   
         else
             l = (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft;
         if (l < $(".track_line_vert1").position().left)
             l = this.margin.Left;
         else if (l + r > $(".track_line_vert2").position().left)
             l = this.margin.Right - r;
+        if (this.dropLoc.hasClass("T_layout"))
+            l = 0;
         return l;
     };
 
@@ -731,6 +762,8 @@
             obj.TextAlign = this.TextAlign[obj.TextAlign];
             this.RefreshControl(obj);
         }
+        else if (pname === "ColoumNo" || pname === "RowNo")
+            this.RbCommon.modifyTable(obj,pname);
         else if (pname === "Function") {
             this.changeSummaryFunc(obj);
             this.RefreshControl(obj);

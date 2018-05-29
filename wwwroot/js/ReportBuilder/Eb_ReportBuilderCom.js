@@ -247,7 +247,7 @@
         $('#ds_parameter_list').empty();
         $('#ds_parameter_list').append("<li><a>Data Source Parameters</a><ul id='ds_parameters'></ul></li>");
         paramsList.forEach(function (param) {
-            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><div eb-type='Text' class='fd_params draggable textval'>${param.name}</div></li>`);        
+            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><div eb-type='Parameter' class='fd_params draggable textval'>${param.name}</div></li>`);        
         });
         $('#ds_parameter_list').treed();
         this.RbObj.DragDrop_Items();

@@ -21,7 +21,14 @@
         //window.EXPRESSbase_APP_IDS = [13, 93];
 
         $(document).ready(function () {
+            d = document;
+            d.ebmod = '@ViewBag.Env';
             var BotList = @BotDtls ;
+            var jssrc = "";
+            if (d.ebmod === 'Production')
+                jssrc = "https://expressbase.com";
+            else if (d.ebmod === 'Staging')
+                jssrc = "https://eb-test.info";
             window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
             window.EXPRESSbase_APP_IDS = [];
             botNames = [];
@@ -32,7 +39,6 @@
                 botDpUrl.push("http://localhost:41500/images/svg/restaurant.svg");
             });
 
-            d = document;
             d.appIdColl = window.EXPRESSbase_APP_IDS;
             d.ebbotThemeColorColl = ["#9400D3", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
             d.ebbotNameColl = botNames;
@@ -44,8 +50,7 @@
                 d = document;
                 d.createBotFns.push(function () {
                     s = d.createElement("script");
-                    //s.src = "/js/ChatBot/ebbot-ext.js";
-                    s.src = "https://eb-test.info/js/ChatBot/ebbot-ext.js";
+                    s.src = jssrc + "/js/ChatBot/ebbot-ext.js";
                     s.async = 1;
                     d.getElementsByTagName("head")[0].appendChild(s);
                 });
@@ -90,7 +95,7 @@
         .eb_iframecont {
             position: relative !important;
             float: right;
-            width: 50%!important;
+            width: 50% !important;
         }
 
         .botBtnsCont {

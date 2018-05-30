@@ -54,7 +54,7 @@ var EbSelect = function (ctrl) {
         this.idField = "columnName";////////////////////////
     this.vmName = ctrl.valueMember[this.idField]; //ctrl.vmName;
     this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
-    this.maxLimit = (ctrl.maxLimit === 0) ? 9999999999999999999999 : this.maxLimit;
+    this.maxLimit = (ctrl.maxLimit === 0) ? 9999999999999999999999 : ctrl.maxLimit;
     this.minLimit = ctrl.minLimit;//ctrl.minLimit;
     this.multiSelect = (ctrl.maxLimit > 1);
     this.required = ctrl.required;//ctrl.required;
@@ -199,7 +199,9 @@ var EbSelect = function (ctrl) {
     this.initDTpost = function (data) {
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
         $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
-        $(this.DTSelector + ' tbody').on('focus', "td", function () { alert() });
+        $(this.DTSelector + ' tbody').on('focus', "td", function () {
+            console.log("td focus")
+        });
         this.datatable.Api.rows('.odd:eq(0)').select();
         //$('#' + this.name + '_loading-image').hide();
     };

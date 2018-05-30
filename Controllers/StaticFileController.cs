@@ -11,6 +11,7 @@ using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -62,6 +63,10 @@ namespace ExpressBase.Web.Controllers
     public class StaticFileController : EbBaseIntCommonController
     {
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
+
+        private const string UnderScore = "_";
+
+        private const string RejexPattern = " *[\\~#%&*{}/:<>?|\"-]+ *";
 
         [HttpGet("static/dp/{filename}")]
         public IActionResult GetDP(string filename)
@@ -198,9 +203,16 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> UploadImageAsync(int i, string tags)
         {
+            Regex regEx = new Regex(RejexPattern);
             UploadAsyncResponse res = new UploadAsyncResponse();
             JsonResult resp = null;
-            var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);
+            var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);//workaround need to change
+            Dictionary <string, List<string>> tagDict = new Dictionary<string, List<string>>();//workaround need to change
+
+            foreach (KeyValuePair<string, List<string>> entry in dict)//workaround need to change
+            {
+                tagDict.Add(regEx.Replace(entry.Key.ToLower(), UnderScore), entry.Value);
+            }
             try
             {
                 var req = this.HttpContext.Request.Form;
@@ -211,6 +223,8 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split(CharConstants.DOT)[1].ToLower()))
                     {
+                        string fname = regEx.Replace(formFile.FileName, UnderScore);
+
                         byte[] myFileContent;
                         using (var memoryStream = new MemoryStream())
                         {
@@ -224,10 +238,10 @@ namespace ExpressBase.Web.Controllers
                         if (!dict.IsEmpty())
                         {
                             uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
-                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", dict[formFile.FileName]);
+                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tagDict[fname]);
                         }
-                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
-                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
+                        uploadImageRequest.ImageInfo.FileName = fname;
+                        uploadImageRequest.ImageInfo.FileType = fname.Split(CharConstants.DOT)[1];
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                         res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);

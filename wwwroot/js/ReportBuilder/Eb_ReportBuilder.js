@@ -395,7 +395,7 @@
     };//on drop func of dropable
 
     this.DropFirst = function (Title) {
-        var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++;
+        var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++; 
         var obj = new EbObjects["Eb" + this.Objtype](Objid);
         this.dropLoc.append(obj.$Control.outerHTML());
         this.objCollection[Objid] = obj;

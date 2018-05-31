@@ -89,7 +89,7 @@
 
     window.fbAsyncInit = function () {
         FB.init({
-            appId: '141908109794829',//,'1525758114176201',//
+            appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : '1525758114176201'),//'141908109794829',//,'1525758114176201',//
             cookie: true,  // enable cookies to allow the server to access
             // the session
             xfbml: true,  // parse social plugins on this page

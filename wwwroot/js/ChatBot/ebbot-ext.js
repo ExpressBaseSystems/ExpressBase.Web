@@ -1,4 +1,12 @@
 ﻿(function () {
+    this.eb_get_path = function (ebmod) {
+        if (ebmod === 'Production')
+            return "https://expressbase.com/";
+        else if (ebmod === 'Staging')
+            return "https://eb-test.info/";
+        else
+            return "../";
+    }
     var d = document;
     var AppId;
     if (d.appIdColl) {
@@ -14,8 +22,7 @@
     var ss = d.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";
-    //ss.href = "../css/ChatBot/bot-ext.css";
-    ss.href = "https://eb-test.info/css/ChatBot/bot-ext.css";
+    ss.href = this.eb_get_path(d.ebmod) + "css/ChatBot/bot-ext.css";
     d.getElementsByTagName("head")[0].appendChild(ss);
 
     var chatHead = d.createElement("div");
@@ -105,9 +112,7 @@
         var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
         if (!ebbot_iframe.getAttribute("src")) {
-            //            ebbot_iframe.setAttribute("src", "https://expressbase.com/bote/bot?tid=" + `${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
-                        ebbot_iframe.setAttribute("src", "https://eb-test.info/bote/bot?tid=" + `${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
-            //ebbot_iframe.setAttribute("src", `//${window.EXPRESSbase_SOLUTION_ID}.localhost:41500/bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
+            ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
         }
         if (iframecont.style.display !== "flex") {
             this.style.display = "none";

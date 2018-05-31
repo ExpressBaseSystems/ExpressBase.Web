@@ -291,9 +291,11 @@
     };
 
     //makes a property editor readOnly
-    this.MakeReadOnly = function (prop) {
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "not-allowed").css("opacity", "0.4").find("button").css("cursor", "not-allowed").prop('disabled', true);
+    this.MakeReadOnly = function () {
+        $.each(arguments, function (i, prop) {
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "not-allowed").css("opacity", "0.4").find("button").css("cursor", "not-allowed").prop('disabled', true);
+        }.bind(this));
     };
 
     //makes a property editor readWritable

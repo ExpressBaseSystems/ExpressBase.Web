@@ -88,6 +88,13 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         $(e.target).closest('.msg-cont').remove();
     }.bind(this);
 
+    this.ajaxSetup4Future = function () {
+        $.ajaxSetup({
+            beforeSend: function (xhr) { xhr.setRequestHeader('bToken', this.bearerToken); xhr.setRequestHeader('rToken', this.refreshToken); }.bind(this),
+            complete: function (resp) { this.bearerToken = resp.getResponseHeader("btoken"); }.bind(this)
+        });
+    }
+
     this.authenticateAnon = function (email, phno) {
         this.showTypingAnim();
 
@@ -111,13 +118,14 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 this.refreshToken = result[0].refreshToken;
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
-
+                this.ajaxSetup4Future();
                 /////////////////////////////////////////////////
                 //setTimeout(function () {
                 //    //$(".btn-box .btn:last").click();
                 //    $(".btn-box").find("[idx=4]").click();
                 //}.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
+        
     }.bind(this);
 
     this.postmenuClick = function (e, reply) {
@@ -163,38 +171,71 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.getForm(this.curRefid);///////////////////
     }.bind(this);
 
+
+
     this.getForm = function (RefId) {
         this.showTypingAnim();
         if (!this.formsList[RefId]) {
-            $.post("../Bote/GetCurForm", {
-                "refreshToken": this.refreshToken,
-                "bearerToken": this.bearerToken,
-                "refid": RefId
-            }, function (data) {
-                this.hideTypingAnim();
+            $.ajax({
+                type: "POST",
+                url: "../Boti/GetCurForm",
+                data: { refid: RefId },
 
-                if (typeof data === "string") {
-                    data = JSON.parse(data);
-                    data.objType = data.ObjType;
-                }
+                success: function (data) {
+                    this.hideTypingAnim();
+
+                    if (typeof data === "string") {
+                        data = JSON.parse(data);
+                        data.objType = data.ObjType;
+                    }
 
 
-                this.formsList[RefId] = data;
-                if (data.objType === "BotForm") {
-                    this.curForm = data;
-                    this.setFormControls();
-                }
-                else if (data.objType === "TableVisualization") {
-                    data.BotCols = JSON.parse(data.BotCols);
-                    data.BotData = JSON.parse(data.BotData);
-                    this.curTblViz = data;
-                    this.showTblViz();
-                }
-                else if (data.objType === "ChartVisualization") {
-                    this.curChartViz = data;
-                    this.showChartViz();
-                }
-            }.bind(this));
+                    this.formsList[RefId] = data;
+                    if (data.objType === "BotForm") {
+                        this.curForm = data;
+                        this.setFormControls();
+                    }
+                    else if (data.objType === "TableVisualization") {
+                        data.BotCols = JSON.parse(data.BotCols);
+                        data.BotData = JSON.parse(data.BotData);
+                        this.curTblViz = data;
+                        this.showTblViz();
+                    }
+                    else if (data.objType === "ChartVisualization") {
+                        this.curChartViz = data;
+                        this.showChartViz();
+                    }
+                }.bind(this),
+
+            });
+            //$.post("../Boti/GetCurForm", {
+            //    "refid": RefId
+            //}, function (data) {
+            //    this.hideTypingAnim();
+
+            //    if (typeof data === "string") {
+            //        data = JSON.parse(data);
+            //        data.objType = data.ObjType;
+            //    }
+
+
+            //    this.formsList[RefId] = data;
+            //    if (data.objType === "BotForm") {
+            //        this.curForm = data;
+            //        this.setFormControls();
+            //    }
+            //    else if (data.objType === "TableVisualization") {
+            //        data.BotCols = JSON.parse(data.BotCols);
+            //        data.BotData = JSON.parse(data.BotData);
+            //        this.curTblViz = data;
+            //        this.showTblViz();
+            //    }
+            //    else if (data.objType === "ChartVisualization") {
+            //        this.curChartViz = data;
+            //        this.showChartViz();
+            //    }
+            //    }.bind(this));
+            
         }
         else {
             this.hideTypingAnim();
@@ -210,7 +251,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
             this.setFormControls();
         }
-    }
+    };
 
     this.showTblViz = function (e) {
         var $tableCont = $('<div class="table-cont">' + this.curTblViz.BareControlHtml + '</div>');
@@ -488,7 +529,14 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.ctrlSend(e);
     }.bind(this);
 
-    this.getCardsetvalue = function (cardCtrl) {
+    this.getComboValue = function (ctrl) {
+        var res = {};
+        res.valueMembers = ctrl.ValueMembers;
+        res.DisplayMembers = ctrl.DisplayMembers;
+        return res;
+    };
+
+    this.getCardsetValue = function (cardCtrl) {
         var resObj = {};
         var isPersistAnyField = false;
         this.curDispValue = '';
@@ -541,11 +589,15 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             inpVal = $checkedCB.val();
             this.curDispValue = $checkedCB.next().text();
         }
+        else if (this.curCtrl.objType === "ComboBox") {
+            inpVal = this.getComboValue(this.curCtrl);
+            this.curDispValue = this.curCtrl.DisplayMembers[Object.keys(this.curCtrl.DisplayMembers)[0]].toString().replace(/,/g, ", ");
+        }
         else if (this.curCtrl.objType === "InputGeoLocation") {
             inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();
         }
         else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
-            inpVal = this.getCardsetvalue(this.curCtrl);
+            inpVal = this.getCardsetValue(this.curCtrl);
         }
         else
             inpVal = $input.val();
@@ -569,7 +621,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.formValues[id] = this.curVal;// last value set from outer fn
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
-        else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup") {
+        else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.objType === "ComboBox") {
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
@@ -584,7 +636,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
                 this.formValues[id] = this.curVal;
                 this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
-            }            
+            }
             this.callGetControl(this.nxtCtrlIdx);
         }
         else {
@@ -620,7 +672,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 $('.msg-wraper-user [name=ctrledit]').remove();
                 //$btn.closest(".msg-cont").remove();
                 this.AskWhatU();
-            }                
+            }
         }
         this.enableCtrledit();
     };
@@ -1018,6 +1070,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 this.refreshToken = result[0].refreshToken;
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
+                this.ajaxSetup4Future();
                 /////////////////////////////////////////////////Form click
                 setTimeout(function () {
                     //$(".btn-box .btn:last").click();

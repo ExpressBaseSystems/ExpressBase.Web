@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Data;
 using ExpressBase.Web.BaseControllers;
 using Newtonsoft.Json;
+using ExpressBase.Common.Data;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,6 +28,7 @@ namespace ExpressBase.Web.Controllers
         public DataSourceColumnsResponse GetColumns(String refID)
         {
             EbDataSource ds = null;
+            List<Param> FilterControls = new List<Param>();
             DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
             cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", refID));
             if (cresp == null || cresp.Columns.Count == 0)
@@ -40,9 +42,24 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (ds.FilterDialogRefId != string.Empty)
                     ds.AfterRedisGet(this.Redis, this.ServiceClient);
-                cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = refID, Params = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null });
+                FilterControls = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null;
+                cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = refID, Params = FilterControls });
                 Redis.Set<DataSourceColumnsResponse>(string.Format("{0}_columns", refID), cresp);
             }
+            if (FilterControls.Count==0)
+            {
+                ds = this.Redis.Get<EbDataSource>(refID);
+                if (ds == null)
+                {
+                    EbObjectParticularVersionResponse dsresult = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refID });
+                    ds = EbSerializers.Json_Deserialize<EbDataSource>(dsresult.Data[0].Json);
+                    Redis.Set<EbDataSource>(refID, ds);
+                }
+                if (ds.FilterDialogRefId != string.Empty)
+                    ds.AfterRedisGet(this.Redis, this.ServiceClient);
+                FilterControls = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null;
+            }
+            cresp.ParamsList = FilterControls;
             foreach (var columnCollection in cresp.Columns)
             {
                 columnCollection.Sort(CompareEbDataColumn);

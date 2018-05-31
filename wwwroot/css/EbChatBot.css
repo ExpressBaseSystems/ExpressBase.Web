@@ -480,29 +480,31 @@
 }
 
 .eb-chatBox .card-cont {
-	border-radius: 0em;
-	border: 1px solid #eee;
-	box-shadow: 0px 0px 20px #ccc;
-	/*margin: auto;*/
-	width: 100%;
-	height: inherit;
+    border-radius: 0em;
+    border: 1px solid #eee;
+    box-shadow: 0px 0px 20px #ccc;
+    /*margin: auto;*/
+    width: 100%;
+    height: inherit;
 }
 
 .eb-chatBox .cards-cont {
-    padding: 0px 15px;    
+    padding: 0px 15px;
     border-radius: 0em;
 }
+
 .eb-chatBox .card-summary-cont {
     box-shadow: 0px 0px 10px #ccc;
     border-radius: 0;
     margin-top: 20px;
 }
+
 .eb-chatBox .card-header-cont {
-	border: 1px solid #eee;
-	margin: 0% 5%;
-	background-color: #555;
-	height: 32px;
-	color: white;
+    border: 1px solid #eee;
+    margin: 0px 16px;
+    background-color: #555;
+    height: 32px;
+    color: white;
 }
 
 /*.eb-chatBox .card-header-cont {
@@ -512,58 +514,66 @@
 	margin-top: 65px;
 }*/
 .eb-chatBox .card-head-searchdiv {
-	float: right;
-	display: inline-block;
-	border: 1px solid #aaa;
-	height: 27px;
-	border-radius: 12px;
-	color: #222;
+    float: right;
+    display: inline-block;
+    border: 1px solid #aaa;
+    height: 27px;
+    border-radius: 12px;
+    color: #222;
 }
+
 .eb-chatBox .card-head-filterdiv {
-	float: right;
-	display: inline-block;
-	border: 1px solid #aaa;
-	height: 30px;
-	border-radius: 12px;
-	background-color: white;
-	color: #222;
+    float: right;
+    display: inline-block;
+    border: 1px solid #aaa;
+    height: 30px;
+    border-radius: 12px;
+    background-color: white;
+    color: #222;
 }
+
 .eb-chatBox .card-head-search-box {
-	width: 75px;
-	-webkit-transition: width 0.4s ease-in-out;
-	transition: width 0.4s ease-in-out;
+    width: 75px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
 }
-.eb-chatBox .card-head-search-box:focus {
-	width: 120px;
-}
+
+    .eb-chatBox .card-head-search-box:focus {
+        width: 120px;
+    }
+
 .eb-chatBox .card-head-search-icon {
-	position: relative;
-	top: -20px;
-	float: right;
+    position: relative;
+    top: -20px;
+    float: right;
 }
+
 .eb-chatBox .card-head-filter-box {
-	width: 72px;
-	border-radius: 12px;
-	height: 28px;
-	border: 1px solid #aaa;
-	padding-right: 22px;
-	-webkit-transition: width 0.4s ease-in-out;
-	transition: width 0.4s ease-in-out;
-	display: inline-block;
-	border: none;
-	padding: 0px;
+    width: 72px;
+    border-radius: 12px;
+    height: 28px;
+    border: 1px solid #aaa;
+    padding-right: 22px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+    display: inline-block;
+    border: none;
+    padding: 0px;
 }
-	.eb-chatBox .card-head-filter-box:focus {
-		width: 117px;
-	}
+
+    .eb-chatBox .card-head-filter-box:focus {
+        width: 117px;
+    }
+
 .eb-chatBox .card-head-filter-icon {
-	position: relative;
-	display: inline-block;
-	margin-right: 8px;
+    position: relative;
+    display: inline-block;
+    margin-right: 8px;
 }
+
 .eb-chatBox .card-head-cardno {
-	display: inline-block;
-	padding: 5px;
+    display: inline-block;
+    padding: 5px;
 }
 
 

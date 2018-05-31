@@ -84,8 +84,9 @@
     };//tadd tag btn
 
     this.imageOnSelect = function (e) {
-        $("#" + _container + 'obj-id').text('value', $(e.target).children().find("img").attr("src"));
-        this.FileId = $(e.target).children().find("img").attr("src");
+        var id = $(e.target).children().find("img").attr("src").split("/").pop().replace(".jpg", "");
+        $("#" + _container + 'obj-id').text(id);
+        this.FileId = id;
     }
 
     this.uploadtag = function (previewId, index) {
@@ -97,17 +98,21 @@
     };//tag btn onclick
 
     this.getUplodedImgOnload = function () {
-        var _this = this;
-        $.post("../StaticFile/FindFilesByTags", {
-            "tags": this.currtag
-        }, function (result) {
-            for (var objid = 0; objid < result.length; objid++) {
-                var url = "https://" + __Tid + ".localhost:41500/static/" + result[objid].objectId + "." + result[objid].fileType;
-                var config = { caption: result[objid].fileName, size: result[objid].length };
-                __initialPrev.push(url);
-                __initialPrevConfig.push(config);
-            }
-            _this.loadFileInput();
+        $.ajax({
+            url: "../StaticFile/FindFilesByTags",
+            data: {
+                "tags": "devresource"
+            },
+            type: "POST",
+            success: function (result) {
+                for (var objid = 0; objid < result.length; objid++) {
+                    var url = window.location.protocol + "//" + window.location.host + "/static/" + result[objid].objectId + "." + result[objid].fileType;
+                    var config = { caption: result[objid].fileName, size: result[objid].length };
+                    _initialPrev.push(url);
+                    _initialPrevConfig.push(config);
+                }
+                this.loadFileInput();
+            }.bind(this)
         });
     };
 
@@ -116,17 +121,18 @@
         return this.FileId;
     };
 
-    this.getUrl = function (id) {
-        var protocol = window.location.protocol;
-        var host = window.location.host.indexOf("-dev") > -1 ? window.location.host.replace("-dev", "") : window.location.host;
-        return protocol + "//" + host + "/static/" + id + ".JPG";
-    };
+    //this.getUrl = function (id) {
+    //    var protocol = window.location.protocol;
+    //    var host = window.location.host.indexOf("-dev") > -1 ? window.location.host.replace("-dev", "") : window.location.host;
+    //    return protocol + "//" + host + "/static/" + id + ".JPG";
+    //};
 
     this.startSE = function () {
         this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.info", Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (m, e) {
             $("#" + _container + "sub-upload").show();
-            this.FileId = this.getUrl(m.objectId);    
+            //this.FileId = this.getUrl(m.objectId);
+            this.FileId = m.objectId;
             $('#' + _container + 'obj-id').text(this.FileId);
             $(".file-preview-initial").attr("tabindex", "1");
             $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
@@ -135,9 +141,9 @@
     };
 
     this.init = function () {
-        //this.getUplodedImgOnload();
         $("#" + _container).empty();
         this.CreateMOdalW();
+        //this.getUplodedImgOnload();
         this.loadFileInput();
         $('body').off("click", "#" + _ToggleId).on("click", "#" + _ToggleId, this.toggleModal.bind(this));
         $('#' + _container + '_close_btn').on("click", this.stopListening.bind(this));

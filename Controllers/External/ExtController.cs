@@ -287,6 +287,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SwitchContext()
         {
+            Console.WriteLine("Inside Context Switch");
             var req = this.HttpContext.Request.Form;
             string btoken = req["Btoken"].ToString();
             string rtoken = req["Rtoken"].ToString();
@@ -318,13 +319,13 @@ namespace ExpressBase.Web.Controllers
 
             bool bOK2AttemptLogin = true;
 
-            if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
                 this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
+            else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.STAGING)
                 this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
+            else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
                 this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
 
             else
@@ -377,13 +378,13 @@ namespace ExpressBase.Web.Controllers
 
             bool bOK2AttemptLogin = true;
 
-            if (host.Host.EndsWith(RoutingConstants.EXPRESSBASEDOTCOM))
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
                 this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (host.Host.EndsWith(RoutingConstants.EBTESTINFO))
+            else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.STAGING)
                 this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (host.Host.EndsWith(RoutingConstants.LOCALHOST))
+            else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
                 this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
 
             else

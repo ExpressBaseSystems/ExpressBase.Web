@@ -74,8 +74,11 @@
     display: inline-block;
 }
 
-#@tableId th.resizing {
-    cursor: e-resize;
+.ui-autocomplete {
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 200px;
 }
 
 td.resizer {
@@ -90,15 +93,18 @@ td.resizer {
 }
 
 .dataTables_scrollHead {
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+    padding-bottom: 150px !important;
+    margin-bottom: -150px !important;
+    width: 98.65% !important;
 }
 
 .dataTables_scrollFoot {
     /*padding-bottom: 1px;
     margin-bottom: -1px;*/
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+    padding-top: 100px !important;
+    margin-top: -100px !important;
+    width: 98.65% !important;
+    border-right: 1px solid #ccc !important;
 }
 
 .dataTables_processing {
@@ -107,36 +113,24 @@ td.resizer {
     /*padding-top: 0px!important;*/
 }
 
-.DTFC_LeftHeadWrapper {
+.DTFC_LeftWrapper, .DTFC_RightWrapper {
     z-index: 2;
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+}
+
+.DTFC_LeftHeadWrapper, .DTFC_RightHeadWrapper {
+    padding-bottom: 150px !important;
+    margin-bottom: -150px !important;
 }
 
 .DTFC_LeftBodyWrapper {
-    /*z-index: 100;*/
 }
 
-.DTFC_LeftFootWrapper {
-    //z-index: 150;
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
-}
-
-.DTFC_RightHeadWrapper {
-    z-index: 2;
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
+.DTFC_LeftFootWrapper, .DTFC_RightFootWrapper {
+    padding-bottom: 100px !important;
+    margin-bottom: -100px !important;
 }
 
 .DTFC_RightBodyWrapper {
-    /*z-index: 100;*/
-}
-
-.DTFC_RightFootWrapper {
-    /*z-index: 150;*/
-    padding-bottom: 250px !important;
-    margin-bottom: -250px !important;
 }
 
 .linepadding {
@@ -250,6 +244,7 @@ table.dataTable tbody td.dt-body-right {
 
 .dataTables_scroll {
     height: calc(100vh - 176px);
+    z-index:1;
     /*height: 100% !important;
     display: flex !important;
     flex-direction: column !important;

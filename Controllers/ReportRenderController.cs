@@ -38,9 +38,7 @@ namespace ExpressBase.Web.Controllers
 
         public bool Render(string refid, List<Param> Params)
         {
-            var pclient = new ProtoBufServiceClient(this.ServiceClient.BaseUri);
-            pclient.BearerToken = this.ServiceClient.BearerToken;
-            pclient.Timeout = TimeSpan.FromMinutes(3);
+            var pclient = new ProtoBufServiceClient(this.ServiceClient);
             ReportRenderResponse Res = null;
             try
             {

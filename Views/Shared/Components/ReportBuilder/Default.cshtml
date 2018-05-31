@@ -4,6 +4,7 @@
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.css">
 <link rel="stylesheet" type="text/css" href="~/css/Eb_ReportBuilder.css" />@*amal*@
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>
 <script type="text/javascript" src="~/js/ReportBuilder/split.js"></script>
 <script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilder.js"></script>
@@ -119,9 +120,11 @@
                         <div class="draggable draggable-to-page tool-box-div" eb-type="Img"><i class="fa fa-picture-o" aria-hidden="true"></i> Image </div>
                         <div class="draggable-to-page tool-box-div" eb-type="WaterMark"><i class="fa fa-map-marker" aria-hidden="true"></i> Water Mark </div>
                         <div class="draggable tool-box-div" eb-type="SerialNumber"><i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Serial Number </div>
+                        <div class="draggable tool-box-div eb_Table" eb-type="Table"><i class="fa fa-table" aria-hidden="true"></i> Table Layout </div>
                     </div>
                     <div class="tab-pane" id="data" role="tabpanel">
                         <ul id="data-table-list" class="tool-box-items"></ul>
+                        <ul id="ds_parameter_list" class="tool-box-items"></ul>
                         <div style="position:relative;">
                             <ul id="running-summary" class="tool-box-items">
                                 <li>
@@ -204,6 +207,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="eb_calcF_summarry" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
             <div class="summarry-editor-container">
@@ -215,7 +219,7 @@
                 </div>
                 <div class="form-group">
                     <label>Value Expression</label>
-                    <textarea id="calcF_valueExpr" class="form-control"></textarea>
+                    <textarea id="calcF_valueExpr" class="form-control" required></textarea>
                 </div>
                 <div class="form-group">
                     <button class="btn pull-right" id="calcF_submit">Ok</button>
@@ -223,6 +227,27 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="add_table_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="add_table_container">
+                <div class="close_md" data-dismiss="modal"><i class="fa fa-close"></i></div>
+                <h4>Add Column and Row</h4>
+                <div class="form-group">
+                    <label>Rows</label>
+                    <input type="number" id="table_rows" name="name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Coloumns</label>
+                    <input type="number" id="table_cols" class="form-control" required/>
+                </div>
+                <div class="form-group">
+                    <button class="btn pull-right" id="add_table_submit">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 <script>
     $('#running-summary').treed("fa-calculator");
@@ -233,53 +258,17 @@
     if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
     }
-    var  RBobj = new RptBuilder('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl');
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;
-    
-    $(document).ready(function () {
-        DrawColTree = function (result) {
-            var type = "";
-            $('#data-table-list').empty();
-            $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");
-            $.each(result.columns, function (i, columnCollection) {
-                $("#data-table-list ul[id='dataSource']").append(" <li><a>Table" + i + "</a><ul id='t" + i + "'></ul></li>");
-                $.each(columnCollection, function (j, obj) {
-                    if (obj.type === 16)
-                        type = "DataFieldText";
-                    else if (obj.type === 7 || obj.type === 8 || obj.type === 10 || obj.type === 11 || obj.type === 12 || obj.type === 21)
-                        type = "DataFieldNumeric";
-                    else if (obj.type === 3)
-                        type = "DataFieldBoolean";
-                    else if (obj.type === 5 || obj.type === 6 || obj.type === 17 || obj.type === 26)
-                        type = "DataFieldDateTime";
-
-                    $("#data-table-list ul[id='t" + i + "']").append("<li class='styl'><div eb-type='" + type + "' DbType='" + obj.type +"' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
-                });
-            });
-            $('#data-table-list').treed();
-
-            $('.coloums').draggable({
-                cancel: "a.ui-icon",
-                revert: "invalid",
-                helper: "clone",
-                cursor: "move",
-                appendTo: "body",
-                stack: ".draggable",
-                drag: function (event, ui) {
-                    $(ui.helper).css({ "background": "white", "border": "1px dotted black","width":"200px" });
-                    $(ui.helper).children(".shape-text").remove();
-                    $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
-                },
-                start:getMousePositonOnDraggable.bind(this)
-            });
-        }
-
-        getMousePositonOnDraggable = function (event,ui) {
-            PosOBjOFdrag['left'] = event.pageX - $(event.target).offset().left;
-            PosOBjOFdrag['top'] = event.pageY - $(event.target).offset().top;
-        }
-            $("#Rptbgimg").change(function () {
-                setBackgroud(this);
-        });
+     var RBobj = new RptBuilder({
+        RefId: '@ViewBag.Refid',
+        Version: '@ViewBag.VersionNumber',
+        ObjType: @ViewBag.ObjType,
+        DsObj: @Html.Raw(ViewBag.dsObj),
+        Status: '@ViewBag.Status',
+        TabNum: @ViewBag.tabnum,
+        ServiceUrl: '@ViewBag.ServiceUrl',
+        Wc: '@ViewBag.wc',
+        Cid:'@ViewBag.cid'
     });
+
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;
 </script>

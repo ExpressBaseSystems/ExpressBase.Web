@@ -11,6 +11,7 @@ using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -56,13 +57,17 @@ namespace ExpressBase.Web.Controllers
             }
 
             return resp;
-        }        
+        }
     }
 
     public class StaticFileController : EbBaseIntCommonController
     {
         public StaticFileController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
-       
+
+        private const string UnderScore = "_";
+
+        private const string RejexPattern = " *[\\~#%&*{}/:<>?|\"-]+ *";
+
         [HttpGet("static/dp/{filename}")]
         public IActionResult GetDP(string filename)
         {
@@ -141,13 +146,16 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> UploadFileAsync(int i, string tags)
         {
+            UploadAsyncResponse res = new UploadAsyncResponse();
             JsonResult resp = null;
-            string url = string.Empty;
 
-            tags = String.IsNullOrEmpty(tags) ? "FileUpload" : tags;
 
             try
             {
+                string url = string.Empty;
+
+                tags = String.IsNullOrEmpty(tags) ? "FileUpload" : tags;
+
                 var req = this.HttpContext.Request.Form;
                 UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
@@ -180,14 +188,14 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
 
-                        this.FileClient.Post<string>(uploadFileRequest);
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
                     }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception:" + e.ToString());
-                resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" });
+                resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" + "\nResponse: " + res.ResponseStatus.Message });
             }
             return resp;
         }
@@ -195,8 +203,16 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> UploadImageAsync(int i, string tags)
         {
+            Regex regEx = new Regex(RejexPattern);
+            UploadAsyncResponse res = new UploadAsyncResponse();
             JsonResult resp = null;
-            var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);
+            var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);//workaround need to change
+            Dictionary <string, List<string>> tagDict = new Dictionary<string, List<string>>();//workaround need to change
+
+            foreach (KeyValuePair<string, List<string>> entry in dict)//workaround need to change
+            {
+                tagDict.Add(regEx.Replace(entry.Key.ToLower(), UnderScore), entry.Value);
+            }
             try
             {
                 var req = this.HttpContext.Request.Form;
@@ -207,6 +223,8 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split(CharConstants.DOT)[1].ToLower()))
                     {
+                        string fname = regEx.Replace(formFile.FileName, UnderScore);
+
                         byte[] myFileContent;
                         using (var memoryStream = new MemoryStream())
                         {
@@ -220,13 +238,13 @@ namespace ExpressBase.Web.Controllers
                         if (!dict.IsEmpty())
                         {
                             uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
-                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", dict[formFile.FileName]);
+                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tagDict[fname]);
                         }
-                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
-                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
+                        uploadImageRequest.ImageInfo.FileName = fname;
+                        uploadImageRequest.ImageInfo.FileType = fname.Split(CharConstants.DOT)[1];
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
-                        this.FileClient.Post<string>(uploadImageRequest);
+                        res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
                         resp = new JsonResult(new UploadFileMqResponse
                         {
                             Uploaded = "OK",
@@ -237,7 +255,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception:" + e.ToString());
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
                 resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" });
             }
 
@@ -247,6 +265,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<string> UploadDPAsync(string base64)
         {
+            UploadAsyncResponse res = new UploadAsyncResponse();
             string Id = string.Empty;
             string url = string.Empty;
             byte[] myFileContent;
@@ -261,11 +280,11 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
-                Id = this.FileClient.Post<string>(uploadImageRequest);
+                res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception:" + e.ToString());
+                Console.WriteLine("Exception:" + e.ToString() + "\n Response:" + res.ResponseStatus.Message);
                 return "upload failed";
             }
 
@@ -273,8 +292,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> UploadLogoAsync(string base64,string tid)
+        public async Task<bool> UploadLogoAsync(string base64, string tid)
         {
+            UploadAsyncResponse res = new UploadAsyncResponse();
             List<string> Tags = new List<string>() { "Logo" };
             byte[] myFileContent;
             try
@@ -290,11 +310,11 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                 uploadImageRequest.ImageInfo.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
 
-                this.FileClient.Post<string>(uploadImageRequest);
+                res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception:" + e.ToString());
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
             return true;
         }

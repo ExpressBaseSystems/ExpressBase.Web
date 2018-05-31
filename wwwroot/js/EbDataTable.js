@@ -158,6 +158,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     //this.filterChanged = false;
     this.isRun = false;
     this.cellData = cellData;
+    this.columnSearch = [];
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -471,16 +472,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.ebSettings.PageLength !== 0) {
             o.lengthMenu = this.generateLengthMenu();
         }
-        //if (this.dtsettings.directLoad === undefined || this.dtsettings.directLoad === false) {
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
             o.fixedColumns = { leftColumns: this.fixedColumnCount(), rightColumns: this.ebSettings.RightFixedColumn };
-        //o.lengthMenu = this.ebSettings.lengthMenu;
-        o.dom = "<'col-md-2 noPadding'l><'col-md-3 noPadding form-control Btninfo'i><'col-md-1 noPadding'B><'col-md-6 noPadding Btnpaginate'p>rt";
         o.pagingType = "full";
-        if (!this.ebSettings.IsPaging) {
-
-            o.dom = "<'col-md-12 noPadding'B>rt";
-        }
         o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         //}
         //else if (this.dtsettings.directLoad) {
@@ -551,7 +545,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#Pipped").text("");
                 this.isPipped = false;
             }
-            //o.dom = "<'col-md-12 noPadding'B>rt";
             try {
                 o.ajax = {
                     //url: this.ssurl + '/ds/data/' + this.dsid,
@@ -574,7 +567,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
         o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
-        //alert(JSON.stringify(o));
         return o;
     };
 
@@ -586,21 +578,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.ajaxData = function (dq) {
+        this.matchColumnSearchAndVisible();
         delete dq.columns; delete dq.order; delete dq.search;
         dq.RefId = this.EbObject.DataSourceRefId;
-        this.columnSearch = this.repopulate_filter_arr();
         dq.TFilters = this.columnSearch;
-        if (this.filterValues === null || this.filterValues === undefined || this.filterValues.length === 0 || filterChanged || this.login === "dc" || this.login === "uc")
-            this.filterValues = this.getFilterValues("filter");
+        //if (this.filterValues === null || this.filterValues === undefined || this.filterValues.length === 0 || filterChanged || this.login === "dc" || this.login === "uc")
+        this.filterValues = this.getFilterValues("filter");
         dq.Params = this.filterValues;
-        //dq.rowData = this.rowData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (this.columnSearch.length > 0) {
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-
+        if (dq.length === -1)
+            dq.length = this.RowCount;
         return dq;
     };
 
@@ -674,8 +666,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.filterDisplay = function () {
-        if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").children().hasClass("filter_Display")) {
-            $(".filter_Display").empty();
+            $("#filter_Display").empty();
             var $controls = $("#sub_windows_sidediv_" + this.tableId + " #filterBox").children().not("[type=hidden],.commonControl");
             var filter = "";
             if ($controls.length > 0) {
@@ -709,8 +700,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
 
             filter = filter.substring(0, filter.lastIndexOf("AND"));
-            $(".filter_Display").text(filter);
-        }
+            $("#filter_Display").text(filter);
+    }
+
+    this.matchColumnSearchAndVisible = function () {
+
     }
 
     this.getfilter = function (fltr_collection, i, data) {
@@ -723,7 +717,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             dvcontainerObj.currentObj.data = dd;
             this.MainData = dd;
         }
-
+        this.RowCount = dd.recordsFiltered;
         return dd.data;
         $("#eb_common_loader").EbLoader("hide");
     };
@@ -889,7 +883,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             this.addFilterEventListeners();
             this.Api.columns.adjust();
-            this.xxx();
+            this.arrangeFooterWidth();
+            this.placeFilterInText();
         }.bind(this), 10);
     }
 
@@ -986,7 +981,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     }
 
-    this.xxx = function () {
+    this.arrangeFooterWidth = function () {
         var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');
         var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
         var scrollfoot = $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner table');
@@ -1008,6 +1003,48 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("#" + this.tableId + " thead tr:eq(1) .eb_finput").parent().remove();
     };
+
+    this.placeFilterInText = function () {
+        if (this.columnSearch.length > 0) {
+            if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+                $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+            this.Api.columns().every(function (i) {
+                var colum = this.Api.settings().init().aoColumns[i].name;
+                var colObj = $.grep(this.columnSearch, function (obj) { return obj.Column === colum; });
+
+                if (colum !== 'checkbox' && colum !== 'serial' && colObj.length > 0) {
+                    var oper;
+                    var val1, val2;
+                    var textid = '#' + this.tableId + '_' + colum + '_hdr_txt1';
+                    var type = $(textid).attr('data-coltyp');
+                    if (type === 'boolean') {
+                        if (colObj.Value === "true")
+                            $(textid).attr("checked", true);
+                        else if (colObj.Value === "false")
+                            $(textid).attr("checked", false);
+                        else
+                            $(textid).attr("indeterminate", true);
+                    }
+                    else {
+                        if (this.Api.columns(i).visible()[0]) {
+                            if (colObj[0].Operator !== '' && colObj[0].Value !== '') {
+                                if (colObj.length === 2) {
+                                    $('#' + this.tableId + '_' + colum + '_hdr_sel').text("B");
+                                    $(textid).val(colObj[0].Value);
+                                    $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
+                                    $(textid).siblings('input').val(colObj[1].Value);
+                                }
+                                else {
+                                    $(textid).val(colObj[0].Value);
+                                    $('#' + this.tableId + '_' + colum + '_hdr_sel').text(colObj[0].Operator);
+                                }
+                            }
+                        }
+                    }
+                }
+            }.bind(this));
+        }
+    }
 
     this.copyLabelData = function (key, opt, event) {
 
@@ -1199,7 +1236,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     "  <li><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}>x&#772;</a></li>" +
                     " </ul>" +
                     " </div>" +
-                    " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right;' style='z-index:" + zidx.toString() + "'>" +
+                    " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='text-align: right; padding:1px 0px;' style='z-index:" + zidx.toString() + "'>" +
                     " </div>";
             }
             else
@@ -1303,7 +1340,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(".eb_fsel" + this.tableId).off("click").on("click", this.setLiValue.bind(this));
         $(".eb_ftsel" + this.tableId).off("click").on("click", this.fselect_func.bind(this));
         $.each($(this.Api.columns().header()).parent().siblings().children().toArray(), this.setFilterboxValue.bind(this));
-        $("." + this.tableId + "_htext").off("keypress").on("keypress", this.call_filter);
+        $("." + this.tableId + "_htext").off("keyup").on("keyup", this.call_filter);
         $(".eb_fbool" + this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
         $(".eb_fbool" + this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
         $(".eb_selall" + this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
@@ -1672,6 +1709,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         });
         if (flag || this.filterFlag) {
+            this.columnSearch = [];
             this.Api.ajax.reload();
             this.filterFlag = false;
             $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-times").addClass("fa-filter");
@@ -1691,7 +1729,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if ($(e.target).parents('.input-group').find("input").length == 1) {
                 $(e.target).parents('.input-group').append("<input type='" + ctype + "' class='between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp");
-                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keypress", this.call_filter);
+                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keyup", this.call_filter);
             }
             //flag = true;
         }
@@ -1734,11 +1772,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
 
             if (flag) {
+                this.columnSearch = this.repopulate_filter_arr();
                 $('#' + this.tableId).DataTable().ajax.reload();
                 if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
                     $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
             }
         }
+        else {
+            this.columnSearch = this.repopulate_filter_arr();
+        }
+
     }.bind(this);
 
     this.toggleInFilter = function (e) {

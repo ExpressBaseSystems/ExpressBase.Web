@@ -529,7 +529,14 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.ctrlSend(e);
     }.bind(this);
 
-    this.getCardsetvalue = function (cardCtrl) {
+    this.getComboValue = function (ctrl) {
+        var res = {};
+        res.valueMembers = ctrl.ValueMembers;
+        res.DisplayMembers = ctrl.DisplayMembers;
+        return res;
+    };
+
+    this.getCardsetValue = function (cardCtrl) {
         var resObj = {};
         var isPersistAnyField = false;
         this.curDispValue = '';
@@ -582,11 +589,15 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             inpVal = $checkedCB.val();
             this.curDispValue = $checkedCB.next().text();
         }
+        else if (this.curCtrl.objType === "ComboBox") {
+            inpVal = this.getComboValue(this.curCtrl);
+            this.curDispValue = this.curCtrl.DisplayMembers[Object.keys(this.curCtrl.DisplayMembers)[0]].toString().replace(/,/g, ", ");
+        }
         else if (this.curCtrl.objType === "InputGeoLocation") {
             inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();
         }
         else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
-            inpVal = this.getCardsetvalue(this.curCtrl);
+            inpVal = this.getCardsetValue(this.curCtrl);
         }
         else
             inpVal = $input.val();
@@ -610,7 +621,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.formValues[id] = this.curVal;// last value set from outer fn
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
-        else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup") {
+        else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.objType === "ComboBox") {
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];

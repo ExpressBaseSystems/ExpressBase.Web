@@ -58,37 +58,8 @@
 
     var dvobj = EbSerializers.Json_Serialize(ViewBag.dvObject);
 }
-@*<div class="row">
-        <div class="toolbar objectDashB-toolbar">
-            <div class="col-md-4">
-                <div class="col-md-12">
-                    <button id='prev' class="btn" style="display:none;color:black; background-color:transparent;"><i class="fa fa-caret-left fa-lg" aria-hidden="true"></i></button>
-                    <label id="objname" style="color:white"></label>
-                    <button id='next' class="btn" style="display:none; color:black; background-color:transparent;"><i class="fa fa-caret-right fa-lg" aria-hidden="true"></i></button>
-                </div>
-            </div>
-            <div class="col-md-8 pd-0">
-                <div class='toolicons form-inline pull-right'>
-                    <div id="obj_icons" style="display:inline">
-                        <button id='btnGo0' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
-                    </div>
-                    <div id="Common_obj_icons" style="display:inline">
-                        <button id='Save_btn' style="display:none" class='btn'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-                        <button id='Related_btn' style="display:none" class='btn'><i class="fa fa-bars" aria-hidden="true"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>*@
-@*<section class="minimaps" id="MinimapDiv" style="display:none;"></section>*@
+
 <div id='divDots' class='dotsDiv' style="display:none;"><div class='dotstable'></div></div>
-@*<div id='dotsDetail' style="display:none;">
-        <div class="dotheader">Name</div>
-        <div class="dotsnapshot"><canvas id="copyCanvas" style="width:200px;"></canvas></div>
-        <div class="dotfilterValues">filter</div>
-        <div class="dottype">type</div>
-        <button id='Go' class='btn'><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
-    </div>*@
 <div id="Relateddiv" class='relatedCont' style="display:none;">
     <div id="relatedCurrentDiv">
         <div class="relatedHeader">Current</div>
@@ -111,6 +82,7 @@
         <div class="relatedBody"></div>
     </div>
 </div>
+<div id="filter_Display" style="background-color: white;height: 30px;margin-top: 77px;position: absolute;" class="col-md-12"></div>
 <div id="parent"><div class="row splitdiv_parent" id="parent-div0"></div></div>
 
 @section EbHead {

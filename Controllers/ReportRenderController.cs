@@ -38,10 +38,11 @@ namespace ExpressBase.Web.Controllers
 
         public bool Render(string refid, List<Param> Params)
         {
-            var pclient = new ProtoBufServiceClient(this.ServiceClient);
+           
             ReportRenderResponse Res = null;
             try
             {
+                var pclient = new ProtoBufServiceClient(this.ServiceClient);
                 var x = string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc);
                 User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
                 Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname = user.FullName, Params = Params });
@@ -60,9 +61,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         public IActionResult RenderReport2(string refid, string Params)
-        {
-            Console.WriteLine("Params: " + Params.ToJson());
-
+        { 
             List<Param> param = JsonConvert.DeserializeObject<List<Param>>(Params);
             Render(refid, param);
 

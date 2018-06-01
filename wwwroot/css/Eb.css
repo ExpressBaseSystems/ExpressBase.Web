@@ -364,7 +364,10 @@
     text-overflow: ellipsis;
     overflow: hidden;
     color: white !important;
-    margin: 2px 1px 2px 3px!important;
+    border: none !important;
+    border-radius: 0.35em !important;
+    padding: .1em .45em 0.45em 0.45em !important;
+    margin: 2px 1px 2px 3px !important;
 }
 
     .v-select .selected-tag .close {

@@ -203,6 +203,7 @@ var DvContainerObj = function (settings) {
         $("#obj_icons .btn").prop("disabled", true);
         if (this.dvRefid !== null) {
             if (this.dvRefid.split("-")[2] === "3") { 
+                $("#filter_Display").hide();
                 if ($(`#reportIframe_${copycelldata}`).length === 0) {
                     var obj = new Object();
                     obj.$type = "EbReport";
@@ -509,6 +510,7 @@ var DvContainerObj = function (settings) {
                 $("#Common_obj_icons").empty();
                 $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                 this.eventBind();
+                $("#filter_Display").hide();
             }
         }
         else {
@@ -537,6 +539,7 @@ var DvContainerObj = function (settings) {
                 $("#Common_obj_icons").empty();
                 $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                 this.eventBind();
+                $("#filter_Display").hide();
             }
         }
         if (this.dvcol[focusedId].cellData !== null && this.dvcol[focusedId].cellData !== "")

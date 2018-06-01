@@ -122,8 +122,10 @@ var EbTags = function (settings) {
 
         if (this.id.children().length === 0)
             this.id.hide();
-        else
+        else {
             this.id.children().find(".close").off("click").on("click", this.removeTag.bind(this));
+            this.id.show();
+        }
     };
 
     this.removeTag = function (e) {

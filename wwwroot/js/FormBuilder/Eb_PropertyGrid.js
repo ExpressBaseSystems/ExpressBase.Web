@@ -291,15 +291,23 @@
     };
 
     //makes a property editor readOnly
-    this.MakeReadOnly = function (prop) {
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "not-allowed").css("opacity", "0.4").find("button").css("cursor", "not-allowed").prop('disabled', true);
+    this.MakeReadOnly = function (props) {
+        if (!Array.isArray(props))
+            props = [props];
+        $.each(props, function (i, prop) {
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", true);
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "not-allowed").css("opacity", "0.4").find("button").css("cursor", "not-allowed").prop('disabled', true);
+        }.bind(this));
     };
 
     //makes a property editor readWritable
     this.MakeReadWrite = function (prop) {
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false);
-        $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "inherit").css("opacity", "1").find("button").css("cursor", "inherit").prop('disabled', false);
+        if (!Array.isArray(props))
+            props = [props];
+        $.each(props, function (i, prop) {
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").find("input").prop("readonly", false);
+            $("#" + this.wraperId + " [name=" + prop + "Tr]").css("cursor", "inherit").css("opacity", "1").find("button").css("cursor", "inherit").prop('disabled', false);
+        }.bind(this));
     };
 
     //makes a property row hidden

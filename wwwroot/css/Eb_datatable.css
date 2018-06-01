@@ -338,3 +338,21 @@ table.dataTable tbody td.dt-body-right {
     font-weight: normal;
     border: none;
 }
+.tagstyle {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 8px;
+    background-color: #c8d4ef;
+    margin: 3px 1px;
+    border-radius: 15px;
+}
+.priorfilter {
+    background-color: #8079e8 !important;
+}
+
+.tagstyle .close {
+    font-size: 18px;
+    margin-top: -1px;
+    color: #000;
+    padding-left: 3px;
+}

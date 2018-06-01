@@ -100,9 +100,11 @@
     this.validateRoleName = function (e) {
         clearTimeout(this.timer1);
         this.isInfoValid = false;
-        var val = $(e.target).val();
+        var val = $(e.target).val().trim();
         $(e.target).css("border-color", "rgb(204, 204, 204)");
         $("#spanRoleName").children().remove();
+        if (val === '')
+            return;
         $("#spanRoleName").append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" padding: 9px;"></i>`);
         $("#spanRoleName").attr("title", "Validating...");
         this.timer1 = setTimeout(function () { this.validateRoleNameAjaxCall(val, e) }.bind(this), 3000);

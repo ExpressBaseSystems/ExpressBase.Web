@@ -805,3 +805,18 @@
     .pdf-extbtn .fa {
         color: white;
     }
+
+.text-danger {
+    display: none;
+    color: #ffffff;
+    background-color: #bd1818;
+    line-height: 1;
+    top: 36px;
+    padding: 10px;
+    position: absolute;
+    border-radius: 3px;
+    left: 50%;
+    opacity: 0;
+    transform: translate(-50%,0px);
+    z-index: 1;
+}

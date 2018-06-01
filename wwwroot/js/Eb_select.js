@@ -71,10 +71,17 @@ var EbSelect = function (ctrl) {
     this.datatable = null;
     this.clmAdjst = 0;
 
+
+    ctrl.DisplayMembers = [];
+    ctrl.ValueMembers = [];
+    this.valueMembers = ctrl.ValueMembers;
+    this.localDMS = ctrl.DisplayMembers;
+
     this.currentEvent = null;
     this.IsDatatableInit = false;
-    this.localDMS = [];
-    for (i = 0; i < this.NoOfFields; i++) { this.localDMS.push([]) }
+
+    $.each(this.dmNames, function (i, name) { this.localDMS[name] = [] }.bind(this));
+
     this.VMindex = null;
     this.DMindexes = [];
     this.cellTr = null;
@@ -122,7 +129,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.popDmValues = function (i) {
-        this.Vobj.displayMembers[i].pop(); //= this.Vobj.displayMembers[i].splice(0, this.maxLimit);
+        this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
     };
 
     // init datatable
@@ -232,11 +239,11 @@ var EbSelect = function (ctrl) {
         }
     };
 
-    this.setDmValues = function (i, dmName) {
-        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", dmName));
+    this.setDmValues = function (i, name) {
+        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", name));
         if (this.maxLimit === 1)
-            this.localDMS[i].shift();
-        this.localDMS[i].push(this.datatable.Api.row($(this.currentEvent.target).parent()).data()[idx]);
+            this.localDMS[name].shift();
+        this.localDMS[name].push(this.datatable.Api.row($(this.currentEvent.target).parent()).data()[idx]);
         console.log("DISPLAY MEMBER 0 a=" + this.Vobj.displayMembers[0]);
     };
 
@@ -262,7 +269,7 @@ var EbSelect = function (ctrl) {
             data: {
                 options: [],
                 displayMembers: this.localDMS,
-                valueMembers: [],
+                valueMembers: this.valueMembers,
                 DDstate: false
             },
             watch: {
@@ -300,17 +307,17 @@ var EbSelect = function (ctrl) {
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
         console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
-        console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[0]);
-        console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[1]);
-        console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[2]);
+        console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
+        console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[this.dmNames[1]]);
+        console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
     };
 
     this.trimDmValues = function (i) {
         if (this.maxLimit === 1) {   //single select
-            this.Vobj.displayMembers[i].shift(); //= this.Vobj.displayMembers[i].splice(1, 1);
+            this.Vobj.displayMembers[this.dmNames[i]].shift(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(1, 1);
         }
         else {                        //max limit
-            this.Vobj.displayMembers[i].pop(); //= this.Vobj.displayMembers[i].splice(0, this.maxLimit);
+            this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
         }
     };
 
@@ -346,11 +353,11 @@ var EbSelect = function (ctrl) {
     };
 
     this.RaiseErrIf = function () {
-        if (this.Vobj.valueMembers.length !== this.Vobj.displayMembers[0].length) {
+        if (this.Vobj.valueMembers.length !== this.Vobj.displayMembers[this.dmNames[0]].length) {
             alert('valueMember and displayMembers length miss match found !!!!');
             console.error('valueMember and displayMembers length miss match found !!!!');
             console.log('valueMembers=' + this.Vobj.valueMember);
-            console.log('displayMembers1=' + this.Vobj.displayMembers1);
+            console.log('displayMember[0] = ' + this.Vobj.displayMember[this.dmNames[0]]);
         }
     };
 
@@ -371,7 +378,9 @@ var EbSelect = function (ctrl) {
 
     this.tagCloseBtnHand = function (e) {
         $(this.DTSelector + ' [type=checkbox][value=' + this.Vobj.valueMembers.splice(delid(), 1) + ']').prop("checked", false);
-        $.each(this.dmNames, function (i) { this.Vobj.displayMembers[i].splice(delid(), 1); }.bind(this));
+        $.each(this.dmNames, function (i, name) {
+            this.Vobj.displayMembers[name].splice(delid(), 1);
+        }.bind(this));
     };
 
     this.checkBxClickEventHand = function (e) {
@@ -390,9 +399,19 @@ var EbSelect = function (ctrl) {
         else {
             var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
             this.Vobj.valueMembers.splice(vmIdx2del, 1);
-            $.each(this.dmNames, function (i) { this.Vobj.displayMembers[i].splice(vmIdx2del, 1); }.bind(this));
+            $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
             $(this.currentEvent.target).prop('checked', false);
         }
+    };
+
+    this.makeInvalid = function (msg) {
+        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").find("[name=ctrlsend]").prop('disabled', true);
+        $('#' + this.name + "errormsg").text(msg).show().animate({ opacity: "1" }, 300);
+    };
+
+    this.makeValid = function () {
+        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "inherit").find("[name=ctrlsend]").prop('disabled', false);
+        $('#' + this.name + "errormsg").hide().animate({ opacity: "0" }, 300);
     };
 
     this.hideDDclickOutside = function (e) {
@@ -401,15 +420,15 @@ var EbSelect = function (ctrl) {
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                document.getElementById(this.dmNames[0]).setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
-
+                this.makeInvalid('This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
                     document.getElementById(this.dmNames[0]).setCustomValidity('This field  is required');
                 }
-                else
-                    document.getElementById(this.dmNames[0]).setCustomValidity('');
+                else {
+                    this.makeValid();
+                }
 
             }
         }

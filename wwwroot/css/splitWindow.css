@@ -15,20 +15,37 @@
 }
 
 .sub-windows {
-    float: none;
-    display: inline-block;
     height: calc(100vh - 60px);
-    height: 100%;
-    width: 100%;
-    padding: 80px 60px 30px 60px;
+}
+
+.parent {
+    height: calc( 100vh - 124px );
+    /*border: solid 1px red;*/
+}
+
+.dv-body-dev .sub-windows {
+    height: calc(100vh - 115px) !important;
+}
+
+.dv-body-dev .dataTables_scroll {
+    height: calc(100vh - 181px) !important;
+}
+
+.dv-body-dev .filter-display {
+    background-color: white;
+}
+
+.filter-display {
+    position: relative;
+    padding: 0 5px;
 }
 
 .sub-windows:focus {
-    outline:none;
+    outline: none;
 }
 
 .sub-window-first {
-margin-right: 15px !important;
+    margin-right: 15px !important;
 }
 
 .sub-window-last {
@@ -49,7 +66,7 @@ margin-right: 15px !important;
 .fd {
     background-color: white;
     height: inherit;
-    //border-right: 1px solid;
+    /*border-right: 1px solid;*/
 }
 
 .no-padd {
@@ -57,6 +74,9 @@ margin-right: 15px !important;
 }
 
 .padd-2 {
+}
+.dv-body-dev .dv {
+    height: calc( 100vh - 115px ) !important;
 }
 
 .dv .toolbar-com {
@@ -157,19 +177,20 @@ margin-right: 15px !important;
     z-index: 99;
     width: auto !important;
     height: auto !important;
-    font-size: 60px;
-    top: 50vh;
+    font-size: 30px;
     padding: 0 20px !important;
-    /*background-color: #00000000 !important;*/
-    top: calc(50vh - 40px) !important;
+    background-color: rgba(0, 0, 0, 0);
+    top: 0px !important;
     position: absolute;
     color: #336699;
+    font-weight: bold;
     cursor: pointer;
-    text-shadow: 0 0 2px rgba(255, 255, 255, 0.4), 2px 2px 15px rgba(0, 0, 0, 0.612);
+    /* text-shadow: 0 0 2px rgba(255, 255, 255, 0.4), 2px 2px 15px rgba(0, 0, 0, 0.43); */
 }
+
 .slick-disabled {
     cursor: auto;
-    display:none!important;
+    display: none !important;
 }
 
 .split-inner {
@@ -185,6 +206,8 @@ margin-right: 15px !important;
 
 .slick-slider {
     user-select: text !important;
+    height: 100%;
+    position: inherit !important;
 }
 
 .slick-initialized .slick-slide {
@@ -192,42 +215,47 @@ margin-right: 15px !important;
     outline: none;
 }
 
-.slick-initialized .slick-slide:focus {
-    outline: none;
-}
+    .slick-initialized .slick-slide:focus {
+        outline: none;
+    }
 
 .pgHead {
     border-radius: 0px;
 }
 
+.dv-body {
+    position: relative;
+    margin-top: 38px;
+    margin-left: -15px;
+    width: calc(100% + 30px);
+}
+
 .dotsDiv {
-    height: 40px;
-    position: absolute;
-    /*background: white;*/
-    width: auto;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 40px;
-    z-index: 1;
+    display: none;
+    position: relative;
+    margin-top: 38px;
+    margin-left: -15px;
+    width: calc( 100% + 32px );
 }
 
 .dotstable .dottool {
     display: inline;
 }
 
+.navi-bar {
+    background-color: #ffffff;
+    border: solid 1px #ddd;
+}
+
 .dotstable {
     display: table;
     margin: 0 auto;
-    margin-top: 10px;
+    padding: 5px;
 }
 
 .dot {
     border-radius: 50%;
-    background-color: #ccc;
-    padding: 6px;
+    padding: 4px;
 }
 /*.dot a i:hover {
         color: #444 !important;
@@ -248,6 +276,7 @@ margin-right: 15px !important;
 }
 
 .filterCont {
+    left: 0;
     width: 300px;
     position: absolute;
     height: 100%;

@@ -235,8 +235,8 @@ namespace ExpressBase.Web.Controllers
 			}
 			catch (Exception e)
 			{
-
-			}
+                Console.WriteLine("Exception: " + e.ToString());
+            }
 			return resultlist1;
 		}
 	}

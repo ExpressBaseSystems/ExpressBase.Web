@@ -405,12 +405,12 @@ var EbSelect = function (ctrl) {
     };
 
     this.makeInvalid = function (msg) {
-        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").find("[name=ctrlsend]").prop('disabled', true);
+        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").prop('disabled', true);
         $('#' + this.name + "errormsg").text(msg).show().animate({ opacity: "1" }, 300);
     };
 
     this.makeValid = function () {
-        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "inherit").find("[name=ctrlsend]").prop('disabled', false);
+        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "inherit").siblings("[name=ctrlsend]").prop('disabled', false);
         $('#' + this.name + "errormsg").hide().animate({ opacity: "0" }, 300);
     };
 

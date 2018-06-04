@@ -87,14 +87,10 @@
 
     this.onTrackerStop = function (e, ui) {
         var $t = $(ui.helper);
-        if ($t.hasClass("track_line_vert1")) {
+        if ($t.hasClass("track_line_vert1")) 
             this.RbObj.margin.Left = $t.position().left;
-            this.RbObj.EbObject.Margin.Left = this.RbObj.repExtern.convertTopoints($t.position().left);
-        }
-        else {
+        else
             this.RbObj.margin.Right = $t.position().left;
-            this.RbObj.EbObject.Margin.Right = this.RbObj.repExtern.convertTopoints(parseFloat(this.RbObj.width) - $t.position().left);
-        }
     };
 
     this.windowscroll = function () {
@@ -260,6 +256,8 @@
                 this.RbObj.objCollection[obj.EbSid].Height = $(`#${obj.EbSid}`).height();
             }
         }.bind(this));
+        this.RbObj.objCollection[id].Height = $("#" + id).height();
+        this.RbObj.objCollection[id].Width = $("#" + id).width();
     };
 
     this.makeReadOnlyonPg = function (curObject) {
@@ -279,6 +277,8 @@
             var td_obj = new EbObjects["EbTableLayoutCell"]("TableLayoutCell" + this.RbObj.idCounter["TableLayoutCellCounter"]++);
             td_obj.RowIndex = $(js_objtd).parent("tr").index();
             td_obj.CellIndex = $(js_objtd).index();
+            td_obj.Height = $(js_objtd).closest("tr").height();
+            td_obj.Width = $(js_objtd).closest("tr").width();
             this.getTdCtrls($(js_objtd), td_obj);
         }.bind(this));
     };
@@ -307,6 +307,7 @@
         this.tobj = tobj;
         editControl.CellCollection.$values.forEach(function (ctrls) {
             this.RbObj.containerId = $(`#${tobj.EbSid}`).find("tr").eq(ctrls.RowIndex).find("td").eq(ctrls.CellIndex);
+            this.RbObj.containerId.css("height", ctrls.Height);
             ctrls.ControlCollection.$values.forEach(this.drawControls.bind(this));
         }.bind(this));
         this.resizeTdOnLayoutResize(this.tobj.EbSid, "set");

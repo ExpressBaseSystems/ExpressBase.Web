@@ -870,8 +870,8 @@
         else
             this.editReport();
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
-        this.margin.Left = this.EbObject.Margin.Left || $(".track_line_vert1").position().left;
-        this.margin.Right = this.EbObject.Margin.Right || $(".track_line_vert2").position().left;
+        this.margin.Left = $(".track_line_vert1").position().left;
+        this.margin.Right = $(".track_line_vert2").position().left;
     };//report execution start func
     this.init();
 };

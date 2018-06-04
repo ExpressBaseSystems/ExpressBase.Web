@@ -309,7 +309,7 @@
 .DDdiv table {
     font-size: 13px !important;
     margin-bottom: 0;
-    outline:none;
+    outline: none;
 }
 
 .DDdiv .selected-row {
@@ -352,35 +352,52 @@
     z-index: 10000000000;
 }
 
+.ctrl-wraper .input-group {
+    /*height: 100%;*/
+}
+
+.v-select.searchable .dropdown-toggle {
+    border: none;
+}
+
 .v-select .selected-tag {
     text-overflow: ellipsis;
     overflow: hidden;
-    /*width: calc(100% - 15px);*/
+    color: white !important;
+    border: none !important;
+    border-radius: 0.35em !important;
+    padding: .1em .45em 0.45em 0.45em !important;
+    margin: 2px 1px 2px 3px !important;
 }
 
     .v-select .selected-tag .close {
-        color: red;
-        /*position: absolute;
-        top: 8px;
-        left: calc(100% - 32px);*/
+        color: #fff;
+        text-shadow: 0px 1px 0px #000;
+        opacity: 1;
     }
 
+        .v-select .selected-tag .close:hover {
+            color: #f00 !important;
+            text-shadow: 0px 1px 0px #fff;
+            opacity: 1 !important;
+        }
+
     .v-select .selected-tag:nth-child(5n - 4) {
-        border-color: rgba(181, 70, 70, 0.9803921568627451) !important;
+        background-color: rgb(41, 146, 47) !important;
     }
 
     .v-select .selected-tag:nth-child(5n - 3) {
-        border-color: rgba(70, 119, 181, 0.9803921568627451) !important;
+        background-color: rgba(70, 119, 181, 0.9803921568627451) !important;
     }
 
     .v-select .selected-tag:nth-child(5n - 2) {
-        border-color: rgba(154, 70, 181, 0.9803921568627451) !important;
+        background-color: rgba(154, 70, 181, 0.9803921568627451) !important;
     }
 
     .v-select .selected-tag:nth-child(5n -1) {
-        border-color: rgba(76, 181, 70, 0.9803921568627451) !important;
+        background-color: rgba(76, 181, 70, 0.9803921568627451) !important;
     }
 
     .v-select .selected-tag:nth-child(5n) {
-        border-color: rgba(70, 170, 181, 0.9803921568627451) !important;
+        background-color: rgba(70, 170, 181, 0.9803921568627451) !important;
     }

@@ -87,14 +87,10 @@
 
     this.onTrackerStop = function (e, ui) {
         var $t = $(ui.helper);
-        if ($t.hasClass("track_line_vert1")) {
+        if ($t.hasClass("track_line_vert1")) 
             this.RbObj.margin.Left = $t.position().left;
-            this.RbObj.EbObject.Margin.Left = this.RbObj.repExtern.convertTopoints($t.position().left);
-        }
-        else {
+        else
             this.RbObj.margin.Right = $t.position().left;
-            this.RbObj.EbObject.Margin.Right = this.RbObj.repExtern.convertTopoints(parseFloat(this.RbObj.width) - $t.position().left);
-        }
     };
 
     this.windowscroll = function () {
@@ -226,28 +222,109 @@
             ${$funcselect.val()} (${fields.find('option:selected').text().trim()})</div></li>`);
     };
 
-    this.modifyTable = function (obj,pname) {
-        if (pname === "ColoumNo") {
-            $(`#${obj.EbSid}`).children("table").find("tr").each(function (i, tr) {
-                for (let t = 0; t < obj.ColoumNo; t++) {
-                    $(tr).append("<td></td>");
-                }
+    this.modifyTable = function (obj, pname) {
+        if (pname === "ColoumCount") {
+            $(`#${obj.EbSid} table tbody tr`).each(function (i, tr) {
+                this.appendTd($(tr), obj.ColoumCount);
             }.bind(this));
         }
         else {
+            let _tdCount = $(`#${obj.EbSid} table tbody tr`).eq(0).children("td").length;
+            for (let c = 0; c < obj.RowCount; c++) {
+                $(`#${obj.EbSid} table tbody`).append(`<tr id="${obj.EbSid}_tr_${c}">`);
+                this.appendTd($(`#${obj.EbSid}_tr_${c}`), _tdCount);
+            }
+            $(`#${obj.EbSid}`).css("height", "auto");
+            obj.Height = $(`#${obj.EbSid}`).height();
+        }
+        this.RbObj.makeTLayoutDroppable(obj);
+        this.resizeTdOnLayoutResize(obj.EbSid, "set");
+    };
 
+    this.appendTd = function ($ctrl, count) {
+        for (let t = 0; t < count; t++) {
+            $ctrl.append("<td eb-type='TableLayout'>");
         }
     };
 
-    this.loopTable = function () {
+    this.resizeTdOnLayoutResize = function (id, opertaion) {
+        this.RbObj.TableCollection[id].forEach(function (obj) {
+            if (opertaion === "start" || opertaion === "set")
+                $(`#${obj.EbSid}`).css({ width: "100%", height: "100%" });
+            else if (opertaion === "stop" || opertaion === "set") {
+                this.RbObj.objCollection[obj.EbSid].Width = $(`#${obj.EbSid}`).width();
+                this.RbObj.objCollection[obj.EbSid].Height = $(`#${obj.EbSid}`).height();
+            }
+        }.bind(this));
+        this.RbObj.objCollection[id].Height = $("#" + id).height();
+        this.RbObj.objCollection[id].Width = $("#" + id).width();
+    };
 
+    this.makeReadOnlyonPg = function (curObject) {
+        this.RbObj.pg.MakeReadOnly(curObject.Width);
+        this.RbObj.pg.MakeReadOnly(curObject.Height);
+        this.RbObj.pg.MakeReadOnly(curObject.Left);
+        this.RbObj.pg.MakeReadOnly(curObject.Top);
+    };
+
+    this.buildTableHierarcy = function ($elements, index, eb_typeCntl) {
+        this._table = this.RbObj.objCollection[$elements.attr("id")];
+        this._table.CellCollection.$values.length = 0;
+        this.eb_typeCntl = eb_typeCntl;
+        this.sectionIndex = index;
+
+        $elements.find("td").each(function (i, js_objtd) {
+            var td_obj = new EbObjects["EbTableLayoutCell"]("TableLayoutCell" + this.RbObj.idCounter["TableLayoutCellCounter"]++);
+            td_obj.RowIndex = $(js_objtd).parent("tr").index();
+            td_obj.CellIndex = $(js_objtd).index();
+            td_obj.Height = $(js_objtd).closest("tr").height();
+            td_obj.Width = $(js_objtd).closest("tr").width();
+            this.getTdCtrls($(js_objtd), td_obj);
+        }.bind(this));
+    };
+
+    this.getTdCtrls = function ($td, eb_obj) {
+        $td.find(".dropped").each(function (k, ebctrl) {
+            if ($(ebctrl).length >= 1) {
+                this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + this._table.Left;
+                this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + this._table.Top;
+                eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
+                this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
+            }
+        }.bind(this));
+        this._table.CellCollection.$values.push(eb_obj);
+    };
+
+    this.drawTableOnEdit = function (editControl) {
+        var tobj = this.RbObj.drawEbControls(editControl);
+        this.RbObj.TableCollection[tobj.EbSid] = new Array();
+        this.modifyTable(tobj, "RowCount");
+        this.modifyTable(tobj, "ColoumCount");
+        this.renderTableControls(tobj, editControl);
+    };
+
+    this.renderTableControls = function (tobj, editControl) {
+        this.tobj = tobj;
+        editControl.CellCollection.$values.forEach(function (ctrls) {
+            this.RbObj.containerId = $(`#${tobj.EbSid}`).find("tr").eq(ctrls.RowIndex).find("td").eq(ctrls.CellIndex);
+            this.RbObj.containerId.css("height", ctrls.Height);
+            ctrls.ControlCollection.$values.forEach(this.drawControls.bind(this));
+        }.bind(this));
+        this.resizeTdOnLayoutResize(this.tobj.EbSid, "set");
+    };
+
+    this.drawControls = function (ctrls) {
+        ctrls.LeftPt = 0;
+        ctrls.TopPt = 0;
+        var newc = this.RbObj.drawEbControls(ctrls);
+        this.RbObj.TableCollection[this.tobj.EbSid].push(newc);
     };
 
     this.drawDsParmsTree = function (paramsList) {
         $('#ds_parameter_list').empty();
         $('#ds_parameter_list').append("<li><a>Data Source Parameters</a><ul id='ds_parameters'></ul></li>");
         paramsList.forEach(function (param) {
-            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><div eb-type='Parameter' class='fd_params draggable textval'>${param.name}</div></li>`);        
+            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><div eb-type='Parameter' class='fd_params draggable textval'>${param.name}</div></li>`);
         });
         $('#ds_parameter_list').treed();
         this.RbObj.DragDrop_Items();

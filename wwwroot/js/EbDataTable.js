@@ -73,23 +73,64 @@ var filter_obj = function (colu, oper, valu) {
     this.Value = valu;
 };
 
-var coldef = function (d, t, v, w, n, ty, cls) {
-    this.data = d;
-    this.title = t;
-    this.visible = v;
-    this.width = w;
-    this.name = n;
-    this.type = ty;
-    this.className = cls;
+var displayFilter = function (col, oper, val, Loper) {
+    this.name = col;
+    this.operator = oper;
+    this.value = val;
+    this.logicOp = Loper;
 };
 
-var coldef4Setting = function (d, t, cls, rnd, wid) {
-    this.data = d;
-    this.title = t;
-    this.className = cls;
-    this.render = rnd;
-    this.width = wid;
-};
+var EbTags = function (settings) {
+    this.displayFilterDialogArr = (typeof settings.displayFilterDialogArr !== "undefined") ? settings.displayFilterDialogArr: [] ;
+    this.displayColumnSearchArr = (typeof settings.displayColumnSearchArr !== "undefined") ? settings.displayColumnSearchArr : [];
+    this.id = $(settings.id);
+
+    this.show = function () {
+        this.id.empty();
+        var filter = "";
+        $.each(this.displayFilterDialogArr, function (i, ctrl) {
+            filter = ctrl.name + " " + ctrl.operator + " " + ctrl.value;
+            this.id.append(`<div class="tagstyle priorfilter">${filter}</div>`);
+            if (ctrl.logicOp !== "")
+                this.id.append(`<div class="tagstyle priorfilter">${ctrl.logicOp}</div>`);
+        }.bind(this));
+
+        if (this.displayColumnSearchArr.length > 0)
+            this.id.append(`<div class="tagstyle op">AND</div>`);
+
+        $.each(this.displayColumnSearchArr, function (i, search) {
+            filter = search.name + " " + returnOperator(search.operator);
+            filter += " " + search.value;
+            this.id.append(`<div class="tagstyle" data-col="${search.name}" data-val="${search.value}">${filter} <button type="button" class="close" style="cursor: pointer;">×</button></div>`);
+            if (search.logicOp !== "")
+                this.id.append(`<div class="tagstyle op">${search.logicOp}</div>`);
+        }.bind(this));
+
+        if (this.id.children().length === 0)
+            this.id.hide();
+        else {
+            this.id.children().find(".close").off("click").on("click", this.removeTag.bind(this));
+            this.id.show();
+        }
+    };
+
+    this.removeTag = function (e) {
+        var tempcol = $(e.target).parent().attr("data-col");
+        var tempval = $(e.target).parent().attr("data-val");
+        var temp = $.grep(this.displayColumnSearchArr, function (obj) {
+            if (typeof obj.value === "number")
+                return obj.name === tempcol && obj.value === parseInt(tempval)
+            else
+                return obj.name === tempcol && obj.value === tempval
+        });
+        $(e.target).parent().prev().remove();
+        $(e.target).parent().remove();
+        settings.remove(e, temp[0]);
+    };
+    
+    this.show();
+}
+
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url, cellData) {
@@ -666,42 +707,82 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.filterDisplay = function () {
-            $("#filter_Display").empty();
-            var $controls = $("#sub_windows_sidediv_" + this.tableId + " #filterBox").children().not("[type=hidden],.commonControl");
-            var filter = "";
-            if ($controls.length > 0) {
-                $.each($controls, function (i, ctrl) {
-                    var ctype = $(ctrl).attr("ctype");
-                    filter += $($(ctrl).children()[0]).text();
-                    if (ctype !== "Date")
-                        filter += " " + $($(ctrl).children()[1]).val();
-                    else
-                        filter += " " + $(ctrl).find("input").val();
-                    filter += " AND ";
-                });
-            }
+        //$("#filter_Display").empty();
+        var $controls = $("#sub_windows_sidediv_" + this.tableId + " #filterBox").children().not("[type=hidden],.commonControl");
+        var filter = "";
+        var filterdialog = [], columnFilter = [];
+        if ($controls.length > 0) {
+            $.each($controls, function (i, ctrl) {
+                var o = new displayFilter();
+                var ctype = $(ctrl).attr("ctype");
+                o.name = $($(ctrl).children()[0]).text();
+                o.operator = "=";
+                if (ctype !== "Date")
+                    o.value =  $($(ctrl).children()[1]).val();
+                else
+                    o.value = $(ctrl).find("input").val();
+                if (typeof $controls[i + 1] !== "undefined")
+                    o.logicOp = "AND";
+                else
+                    o.logicOp = "";
+                filterdialog.push(o);
+            });
+        }
 
-            if (this.columnSearch.length > 0) {
-                $.each(this.columnSearch, function (i, search) {
-                    filter += search.Column + " " + search.Operator;
-                    if (search.Value.includes("|")) {
-                        filter += "(";
-                        $.each(search.Value.split("|"), function (i, val) {
-                            if (val.trim() !== "")
-                                filter += " " + val + " OR";
-                        });
-                        filter = filter.substring(0, filter.lastIndexOf("OR"));
-                        filter += ")";
-                    }
+        if (this.columnSearch.length > 0) {
+            $.each(this.columnSearch, function (i, search) {
+                var o = new displayFilter();
+                o.name = search.Column;
+                o.operator = search.Operator;
+                if (search.Value.toString().includes("|")) {
+                    $.each(search.Value.split("|"), function (j, val) {
+                        if (val.trim() !== "") {
+                            var o = new displayFilter();
+                            o.name = search.Column;
+                            o.operator = search.Operator;
+                            o.value = val;
+                            if (typeof search.Value.split("|")[j + 1] !== "undefined")
+                                o.logicOp = "OR";
+                            else if (typeof this.columnSearch[i + 1] !== "undefined")
+                                o.logicOp = "AND";
+                            else
+                                o.logicOp = "";
+                            columnFilter.push(o);
+                        }
+                    }.bind(this));
+                }
+                else {
+                    o.value = search.Value;
+                    if (typeof this.columnSearch[i + 1] !== "undefined")
+                        o.logicOp = "AND";
                     else
-                        filter += " " + search.Value;
-                    filter += "AND "
-                });
-            }
+                        o.logicOp = "";
+                    columnFilter.push(o);
+                }
+            }.bind(this));
+        }
+        this.Tags = new EbTags({ "displayFilterDialogArr": filterdialog, "displayColumnSearchArr": columnFilter, "id": "#filter_Display", "remove": this.closeTag});
+        //this.Tags = new EbTags({ "displayFilterDialogArr": $controls, "displayColumnSearchArr": this.columnSearch, "id": "#filter_Display", "remove": this.closeTag });
+    };
 
-            filter = filter.substring(0, filter.lastIndexOf("AND"));
-            $("#filter_Display").text(filter);
-    }
+    this.closeTag = function (e, obj) {
+        var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === obj.name; });
+        var index = this.columnSearch.findIndex(x => x.Column == obj.name);
+        if (searchObj.length === 1) {
+            if (searchObj[0].Value.includes("|")) {
+                if (this.columnSearch[index].Value.includes(obj.value + "|"))
+                    var val = this.columnSearch[index].Value.replace(obj.value+"|", "");
+                else
+                    var val = this.columnSearch[index].Value.replace("|" + obj.value, "");
+                this.columnSearch[index].Value = val;
+            }
+            else
+                this.columnSearch.splice(index, 1);
+        }
+        else
+            this.columnSearch.splice(index, 2);
+        this.Api.ajax.reload();
+    }.bind(this);
 
     this.matchColumnSearchAndVisible = function () {
 
@@ -778,17 +859,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var ftr_part = "";
         $.each(this.extraCol, function (i, col) {
             if (col.bVisible)
-                ftr_part += "<th style=\"padding: 0px; margin: 0px\"></th>";
+                ftr_part += "<th style=\"padding: 0px; margin: 0px; height:32px;\"></th>";
             else
                 ftr_part += "<th style=\"display:none;\"></th>";
         });
         $.each(this.ebSettings.Columns.$values, function (i, col) {
             if (col.bVisible)
-                ftr_part += "<th style=\"padding: 0px; margin: 0px\"></th>";
+                ftr_part += "<th style=\"padding: 0px; margin: 0px; height:32px;\"></th>";
             else
                 ftr_part += "<th style=\"display:none;\"></th>";
         });
-        return "<tfoot>" + ftr_part + "<tr>" + ftr_part + "</tr></tfoot>";
+        return "<tfoot>" + ftr_part + "</tfoot>";
     };
 
     this.repopulate_filter_arr = function () {
@@ -871,16 +952,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         setTimeout(function () {
             this.createFilterRowHeader();
-            if (this.eb_agginfo.length > 0) {
+            //if (this.eb_agginfo.length > 0) {
                 this.createFooter(0);
-                this.createFooter(1);
+                //this.createFooter(1);
                 $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
                 $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
                 $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
 
                 $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
                 $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
-            }
+            //}
             this.addFilterEventListeners();
             this.Api.columns.adjust();
             this.arrangeFooterWidth();
@@ -996,7 +1077,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.RightFixedColumn > 0) {
                 var start = scrollfoot.find("tr").eq(0).children().length - this.ebSettings.RightFixedColumn;
                 for (var j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
-                    $(rfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j+start).css("width"));
+                    $(rfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j + start).css("width"));
                 }
             }
         }
@@ -1008,42 +1089,53 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.columnSearch.length > 0) {
             if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
                 $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
-            this.Api.columns().every(function (i) {
-                var colum = this.Api.settings().init().aoColumns[i].name;
-                var colObj = $.grep(this.columnSearch, function (obj) { return obj.Column === colum; });
+        }
+        else {
+            if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-times"))
+                $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-times").addClass("fa-filter");
+        }
 
-                if (colum !== 'checkbox' && colum !== 'serial' && colObj.length > 0) {
-                    var oper;
-                    var val1, val2;
-                    var textid = '#' + this.tableId + '_' + colum + '_hdr_txt1';
-                    var type = $(textid).attr('data-coltyp');
-                    if (type === 'boolean') {
-                        if (colObj.Value === "true")
-                            $(textid).attr("checked", true);
-                        else if (colObj.Value === "false")
-                            $(textid).attr("checked", false);
-                        else
-                            $(textid).attr("indeterminate", true);
-                    }
-                    else {
-                        if (this.Api.columns(i).visible()[0]) {
-                            if (colObj[0].Operator !== '' && colObj[0].Value !== '') {
-                                if (colObj.length === 2) {
-                                    $('#' + this.tableId + '_' + colum + '_hdr_sel').text("B");
-                                    $(textid).val(colObj[0].Value);
-                                    $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
-                                    $(textid).siblings('input').val(colObj[1].Value);
-                                }
-                                else {
-                                    $(textid).val(colObj[0].Value);
-                                    $('#' + this.tableId + '_' + colum + '_hdr_sel').text(colObj[0].Operator);
-                                }
+        this.Api.columns().every(function (i) {
+            var colum = this.Api.settings().init().aoColumns[i].name;
+            var colObj = $.grep(this.columnSearch, function (obj) { return obj.Column === colum; });
+
+            var textid = '#' + this.tableId + '_' + colum + '_hdr_txt1';
+            if (colum !== 'checkbox' && colum !== 'serial' && colObj.length > 0) {
+                var oper;
+                var val1, val2;
+                var type = $(textid).attr('data-coltyp');
+                if (type === 'boolean') {
+                    if (colObj.Value === "true")
+                        $(textid).attr("checked", true);
+                    else if (colObj.Value === "false")
+                        $(textid).attr("checked", false);
+                    else
+                        $(textid).attr("indeterminate", true);
+                }
+                else {
+                    if (this.Api.columns(i).visible()[0]) {
+                        if (colObj[0].Operator !== '' && colObj[0].Value !== '') {
+                            if (colObj.length === 2) {
+                                $('#' + this.tableId + '_' + colum + '_hdr_sel').text("B");
+                                $(textid).val(colObj[0].Value);
+                                $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
+                                $(textid).siblings('input').val(colObj[1].Value);
+                            }
+                            else {
+                                $(textid).val(colObj[0].Value);
+                                $('#' + this.tableId + '_' + colum + '_hdr_sel').text(colObj[0].Operator);
                             }
                         }
                     }
                 }
-            }.bind(this));
-        }
+            }
+            else {
+                $(textid).val("");
+                if ($(textid).next().length === 1)
+                    $(textid).next().val("");
+            }
+        }.bind(this));
+        //}
     }
 
     this.copyLabelData = function (key, opt, event) {
@@ -1082,6 +1174,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
         this.filterDisplay();
+        this.placeFilterInText();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -1176,12 +1269,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var start = eb_footer_controls_lfoot.length - this.ebSettings.RightFixedColumn;
                 for (var j = 0; (j + start) < eb_footer_controls_lfoot.length; j++) {
                     $(rfoot).children().find("tr").eq(ps).children("th").eq(j).html(eb_footer_controls_lfoot[j + start]);
-                    $(rfoot).children().find("tr").eq(ps).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j+start).css("width"));
+                    $(rfoot).children().find("tr").eq(ps).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j + start).css("width"));
                 }
             }
         }
 
-        
+
         if (ps == 0) {
             $.each(this.Api.settings().init().aoColumns, function (i, col) {
                 if (col.Aggregate) {
@@ -1191,11 +1284,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             });
 
-            if (!aggFlag) {
-                $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
-                $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(' + ps + ')').hide();
-                $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
-            }
+            //if (!aggFlag) {
+            //    $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
+            //    $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(' + ps + ')').hide();
+            //    $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
+            //}
         }
         if (ps === 1) {
             $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
@@ -1203,7 +1296,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
         }
         var j = 0;
-        
+
         this.summarize2();
     };
 
@@ -1219,8 +1312,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.GetAggregateControls_inner = function (ResArray, footer_id, zidx, i, col) {
         var _ls;
         if (col.bVisible) {
+            var temp = $.grep(this.eb_agginfo, function (agg) {  return agg.colname === col.name});
             //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
-            if (col.Aggregate) {
+            if (temp.length > 0) {
                 var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = this.tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
@@ -1252,18 +1346,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var scrollY = this.ebSettings.scrollY;
         var opScroll;
         var ftrtxtScroll;
-        $.each(this.Api.settings().init().aoColumns, function (index, agginfo) {
-            if (agginfo.Aggregate) {
-                opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.name + '_ftr_sel0').text().trim();
-                ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.name + '_ftr_txt0';
+        $.each(this.eb_agginfo, function (index, agginfo) {
+            if (agginfo.colname) {
+                opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.name + '_ftr_sel0').text().trim();
-                ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.name + '_ftr_txt0';
+                opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.name + '_ftr_sel0').text().trim();
-                ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.name + '_ftr_txt0';
+                opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                var col = api.column(agginfo.name + ':name');
+                var col = api.column(agginfo.colname + ':name');
                 var summary_val = 0;
 
                 if (opScroll === '∑' || opLF === '∑' || opRF === '∑')
@@ -1272,11 +1366,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     summary_val = col.data().average();
                 }
                 if (opScroll !== "")
-                    $(ftrtxtScroll).val(summary_val.toFixed(agginfo.DecimalPlaces));
+                    $(ftrtxtScroll).val(summary_val.toFixed(agginfo.deci_val));
                 if (opLF !== "")
-                    $(ftrtxtLF).val(summary_val.toFixed(agginfo.DecimalPlaces));
+                    $(ftrtxtLF).val(summary_val.toFixed(agginfo.deci_val));
                 if (opRF !== "")
-                    $(ftrtxtRF).val(summary_val.toFixed(agginfo.DecimalPlaces));
+                    $(ftrtxtRF).val(summary_val.toFixed(agginfo.deci_val));
             }
         });
     };
@@ -2059,12 +2153,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (col.Font !== null) {
             var style = document.createElement('style');
             style.type = 'text/css';
-            var array = [this.tableId, col.name, col.Font.Font, col.Font.Size, col.Font.color.replace("#","")];
+            var array = [this.tableId, col.name, col.Font.Font, col.Font.Size, col.Font.color.replace("#", "")];
             if ($("." + array.join("_")).length === 0) {
                 style.innerHTML = "." + array.join("_") + "{font-family: " + col.Font.Font + "!important; font-size: " + col.Font.Size + "px!important; color: " + col.Font.color + "!important; }";
                 document.getElementsByTagName('body')[0].appendChild(style);
             }
-            this.ebSettings.Columns.$values[i].className = array.join("_")+ " tdheight";
+            this.ebSettings.Columns.$values[i].className = array.join("_") + " tdheight";
             this.ebSettings.Columns.$values[i].sClass = array.join("_") + " tdheight";
         }
     };
@@ -2217,6 +2311,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.start();
 };
+
+function returnOperator (op) {
+    if (op === "x*")
+        return "startwith";
+    else if (op === "*x")
+        return "endswith";
+    else if (op === "*x*")
+        return "contains";
+    else if (op === "=")
+        return "=";
+    else
+        return op;
+}
 
 
 function csv(gdata) {

@@ -404,21 +404,31 @@ var EbSelect = function (ctrl) {
         }
     };
 
+    this.makeInvalid = function (msg) {
+        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").prop('disabled', true);
+        $('#' + this.name + "errormsg").text(msg).show().animate({ opacity: "1" }, 300);
+    };
+
+    this.makeValid = function () {
+        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "inherit").siblings("[name=ctrlsend]").prop('disabled', false);
+        $('#' + this.name + "errormsg").hide().animate({ opacity: "0" }, 300);
+    };
+
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
         var container1 = $('#' + this.name + 'Container');
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                document.getElementById(this.dmNames[0]).setCustomValidity('This field  require minimum ' + this.minLimit + ' values');
-
+                this.makeInvalid('This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
                     document.getElementById(this.dmNames[0]).setCustomValidity('This field  is required');
                 }
-                else
-                    document.getElementById(this.dmNames[0]).setCustomValidity('');
+                else {
+                    this.makeValid();
+                }
 
             }
         }

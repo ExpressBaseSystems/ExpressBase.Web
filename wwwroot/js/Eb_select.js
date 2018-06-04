@@ -151,6 +151,7 @@ var EbSelect = function (ctrl) {
         o.fninitComplete = this.initDTpost.bind(this);
         o.hiddenFieldName = this.vmName;
         o.showFilterRow = true;
+        o.fnEnterKeyCallback = this.yyy.bind(this);
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
@@ -201,6 +202,10 @@ var EbSelect = function (ctrl) {
 
     this.xxx = function (e, dt, type, indexes) {
         console.log("keysssss");
+    }
+
+    this.yyy = function (e) {
+        alert("keysssss");
     }
 
     this.initDTpost = function (data) {

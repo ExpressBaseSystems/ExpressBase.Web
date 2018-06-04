@@ -616,7 +616,7 @@ var EbBasicDataTable = function (Option) {
 
     this.keyEnterCallback = function (e, datatable, key, cell, originalEvent) {
         if(key === 13)
-            Option.fnEnterKeyCallback(e);
+            Option.fnEnterKeyCallback(e, datatable, key, cell, originalEvent);
     };
 
     this.doRowgrouping = function () {

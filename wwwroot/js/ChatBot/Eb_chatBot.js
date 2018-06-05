@@ -31,6 +31,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.formValuesWithType = {}
     this.formFunctions = {};
     this.formFunctions.visibleIfs = {};
+    this.formFunctions.valueExpressions = {};
     this.nxtCtrlIdx = 0;
     this.IsDpndgCtrEdt = false;
     this.FB = null;
@@ -518,6 +519,8 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             $.each(this.curForm.controls, function (i, control) {
                 if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
                     this.formFunctions.visibleIfs[control.name] = new Function("form", atob(control.visibleIf));
+                if (control.hidden && control.valueExpression.trim())//if valueExpression is Not empty
+                    this.formFunctions.valueExpressions[control.name] = new Function("form", atob(control.valueExpression));
                 this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
             }.bind(this));
             this.getControl(0);
@@ -651,13 +654,30 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.curVal = null;
     }.bind(this);
 
+    this.valueExpHandler = function () {
+        var nxtCtrl = this.curForm.controls[this.nxtCtrlIdx];
+        var valExpFunc = this.formFunctions.valueExpressions[nxtCtrl.name];
+        if (valExpFunc !== undefined) {
+            this.formValues[nxtCtrl.name] = valExpFunc();
+            this.formValuesWithType[nxtCtrl.name] = [this.formValues[nxtCtrl.name], nxtCtrl.ebDbType];
+        }
+        else if (nxtCtrl.autoIncrement) {
+            this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];
+        }
+    }
+
     this.callGetControl = function () {
         if (this.nxtCtrlIdx !== this.formControls.length) { // if not last control
             if (!this.IsEdtMode || this.IsDpndgCtrEdt) {   // (if not edit mode or IsDpndgCtr edit mode) if not skip calling getControl()
-                if (!this.formFunctions.visibleIfs[this.curForm.controls[this.nxtCtrlIdx].name] || this.formFunctions.visibleIfs[this.curForm.controls[this.nxtCtrlIdx].name](this.formValues)) {//checks isVisible or no isVisible defined
+                var visibleIfFn = this.formFunctions.visibleIfs[this.curForm.controls[this.nxtCtrlIdx].name];
+                if ((!visibleIfFn || visibleIfFn(this.formValues)) && !this.curForm.controls[this.nxtCtrlIdx].hidden) {//checks isVisible or no isVisible defined
+                    
                     this.getControl(this.nxtCtrlIdx);
                 }
                 else {
+                    if (this.curForm.controls[this.nxtCtrlIdx].hidden) {
+                        this.valueExpHandler();
+                    }
                     this.nxtCtrlIdx++;
                     this.callGetControl();
                 }
@@ -817,7 +837,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.editDpndCtrl = function () {
         //this.$DPEBtn.confirmation('destroy');
         this.IsDpndgCtrEdt = true;
-        this.nxtCtrlIdx = this.curForm.controls.indexOf(getObjByval(this.curForm.controls, "name", this.getNxtDpndgCtrlName(this.curCtrl.name)));
+        this.nxtCtrlIdx = this.curForm.controls.indexOf(getObjByval(this.curForm.controls, "name", this.getNxtDpndgCtrlName(this.curCtrl.name, this.formFunctions.visibleIfs)));
         this.curCtrl = this.curForm.controls[this.__idx];
         delKeyAndAfter(this.formValues, this.__NxtRDpndgCtrlName);
         delKeyAndAfter(this.formValuesWithType, this.__NxtRDpndgCtrlName);
@@ -825,9 +845,9 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.ctrlEHelper(this.__idx, this.__$btn);
     }.bind(this);
 
-    this.getNxtDpndgCtrlName = function (name) {
+    this.getNxtDpndgCtrlName = function (name, formFuncs) {
         var res = null;
-        $.each(this.formFunctions.visibleIfs, function (key, Fn) {
+        $.each(formFuncs, function (key, Fn) {
             Sfn = Fn.toString().replace(/ /g, '');
             if (RegExp("(form." + name + "\\b)|(form\\[" + name + "\\]\\b)").test(Sfn)) {
                 res = key;
@@ -970,7 +990,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.showConfirm = function () {
         this.ClearFormVariables();
-        var msg = `Your ${this.curForm.name} application submitted successfully`;
+        var msg = `Your ${this.curForm.name} form submitted successfully`;
         this.msgFromBot(msg);
         this.DataCollection();
         this.AskWhatU();
@@ -978,6 +998,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.ClearFormVariables = function () {
         this.formFunctions.visibleIfs = {};
+        this.formFunctions.valueExpressions = {};
         this.nxtCtrlIdx = 0;
         $(`[form=${this.curForm.name}]`).remove();
     };
@@ -1001,7 +1022,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.getFormValuesWithTypeColl = function () {
         var FVWTcoll = [];
         $.each(this.formValuesWithType, function (key, val) {
-            FVWTcoll.push({ Name: key, Value: val[0], Type: val[1] });
+            FVWTcoll.push({ Name: key, Value: val[0], Type: val[1], AutoIncrement: val[2] });
         });
         return FVWTcoll;
     };

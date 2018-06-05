@@ -424,8 +424,13 @@
     };
 
     this.DropFurther = function () {
-        var l1 = this.leftwithMargin();
-        this.dropLoc.append(this.col.css({ left: l1, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop }));
+		var l1 = this.leftwithMargin();
+		var top = (this.posTop - this.dropLoc.offset().top) - this.reDragTop;
+		if (this.dropLoc.hasClass('T_layout')) {
+			top = 0;
+			this.col.css({ width: this.dropLoc.innerWidth(), height: this.dropLoc.innerHeight() });
+		}
+		this.dropLoc.append(this.col.css({ left: l1, top: top  }));
         var obj1 = this.objCollection[this.col.attr('id')];
         obj1.Top = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().top;
         obj1.Left = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().left;
@@ -812,10 +817,10 @@
             obj.Source = "";
             this.RefreshControl(obj);
         }
-        else if (pname === "TextAlign") {
-            obj.TextAlign = this.TextAlign[obj.TextAlign];
-            this.RefreshControl(obj);
-        }
+        //else if (pname === "TextAlign") {
+        //    obj.TextAlign = this.TextAlign[obj.TextAlign];
+        //    this.RefreshControl(obj);
+        //}
         else if (pname === "ColoumCount" || pname === "RowCount")
             this.RbCommon.modifyTable(obj, pname);
         else if (pname === "Function") {

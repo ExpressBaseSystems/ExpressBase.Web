@@ -500,6 +500,11 @@
     };
 
     this.set9ColTiles = function (containerId, values) {
+        if (this.Dprop && this.allCols.length === 0) {
+            $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource</h4>");
+            return;
+        }
+
         var idField = "name";//////////////////////
         if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
             idField = "ColumnName";////////////////////////

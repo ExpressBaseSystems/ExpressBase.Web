@@ -20,7 +20,7 @@
                         <a sid="${this.EbSolutionColl[item].IsolutionId}" wc="dc" target="_blank" class="btn tdash_btn c-orange single__sso">
                             <i class="fa fa-wrench" aria-hidden="true"></i>
                         </a>
-                        <a href="SolutionDashBoard?Sid=${this.EbSolutionColl[item].IsolutionId}" target="_blank" class="btn c-normal tdash_btn">
+                        <a href="MySolutions/${this.EbSolutionColl[item].IsolutionId}" target="_blank" class="btn c-normal tdash_btn">
                            <i class="fa fa-cog" aria-hidden="true"></i>
                         </a>
                     </div>
@@ -39,9 +39,9 @@
         form.style.display = "none";
         form.setAttribute("method", "post");
         if (console === "dc")
-            form.setAttribute("action", "http://" + sid + "-dev." + window.location.host + "/Ext/SwitchContext");
+            form.setAttribute("action", "http://" + sid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
         else if (console === "uc")
-            form.setAttribute("action", "http://" + sid + "." + window.location.host + "/Ext/SwitchContext");
+            form.setAttribute("action", "http://" + sid + "." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
         form.setAttribute("target", "_blank");
         var token = document.createElement("input");
         token.setAttribute("name", "Btoken");

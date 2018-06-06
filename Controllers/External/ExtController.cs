@@ -103,7 +103,7 @@ namespace ExpressBase.Web.Controllers
 
                 if (IsTokensValid(sRToken, sBToken, hostParts[0]))
                 {
-                    if (hostParts[0] == RoutingConstants.TENANT)
+                    if (hostParts[0] == RoutingConstants.MYACCOUNT)
                         return Redirect(RoutingConstants.MYSOLUTIONS);
                     else if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
                         return Redirect(RoutingConstants.MYAPPLICATIONS);
@@ -496,7 +496,7 @@ namespace ExpressBase.Web.Controllers
         private void DecideConsole(string subDomain, out string whichconsole)
         {
             string cid = null;
-            if(subDomain == RoutingConstants.TENANT)
+            if(subDomain == RoutingConstants.MYACCOUNT)
             {
                 cid = CoreConstants.EXPRESSBASE;
                 whichconsole = EbAuthContext.TenantContext;

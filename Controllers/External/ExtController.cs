@@ -218,7 +218,7 @@ namespace ExpressBase.Web.Controllers
                     var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
-                        return RedirectToAction("EbOnBoarding"); // convert get to post
+                        return RedirectToAction("EbOnBoarding",new { Email = reqEmail }); // convert get to post
                 }
                 else
                     return RedirectToAction(RoutingConstants.INDEX, new RouteValueDictionary(new { controller = RoutingConstants.EXTCONTROLLER, action = RoutingConstants.INDEX })); // convert get to post;
@@ -233,9 +233,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult EbOnBoarding()
+        public IActionResult EbOnBoarding(string Email)
         {
-            ViewBag.useremail = TempData.Peek("reqEmail");
+            ViewBag.useremail = Email;
             var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
             ViewBag.iSid = ebids.Sid;
             return View();

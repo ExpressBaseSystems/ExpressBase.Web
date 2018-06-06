@@ -148,7 +148,7 @@ var EbSelect = function (ctrl) {
         o.fninitComplete = this.initDTpost.bind(this);
         //o.hiddenFieldName = this.vmName;
         o.showFilterRow = true;
-        o.fnEnterKeyCallback = this.DDEnterKeyPress.bind(this);
+        o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.columns//////////////////////////////////////////////////////
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
@@ -202,10 +202,25 @@ var EbSelect = function (ctrl) {
         console.log("keysssss");
     }
 
+    this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
+        console.log(5);
+        if (key === 13)
+            this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
+        else if (key === 32)
+            this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
+    }
+
+    this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
+        var row = datatable.row(cell.index().row);
+        var $tr = $(row.nodes());
+        $tr.dblclick();
+    }
+
     this.DDEnterKeyPress = function (e, datatable, key, cell, originalEvent) {
         var row = datatable.row(cell.index().row);
         var $tr = $(row.nodes());
         $tr.dblclick();
+        this.Vobj.hideDD();
     }
 
     this.initDTpost = function (data) {
@@ -241,6 +256,17 @@ var EbSelect = function (ctrl) {
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $($(e.target).closest("tr")).find('[type=checkbox]').prop('checked', true);
             }
+        }
+        else {
+
+            var $row = $(e.target).closest('tr');
+            var datas = $(this.DTSelector).DataTable().row($row).data();
+
+            var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
+            this.Vobj.valueMembers.splice(vmIdx2del, 1);
+            $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
+
+            $(e.target).closest("tr").find("." + this.name + "tbl_select").prop('checked', false);
         }
     };
 

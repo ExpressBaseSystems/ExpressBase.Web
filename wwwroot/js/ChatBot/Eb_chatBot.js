@@ -532,29 +532,6 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.ctrlSend(e);
     }.bind(this);
 
-    this.getComboValue = function (ctrl) {
-        var res = {};
-        res.value = ctrl.ValueMembers;
-        this.curCtrl.selectedRows = [];
-        var keys = Object.keys(ctrl.DisplayMembers)
-        this.curCtrl.value = res.value;
-        var obj = {};
-        var l = 0;
-        for (var i = 0; i < ctrl.DisplayMembers[keys[0]].length; i++) {
-            var obj = {};
-            var k = 0;
-            for (var key in ctrl.DisplayMembers) {
-                obj[key] = ctrl.DisplayMembers[key][l];
-                if (keys.length === ++k)
-                    break;
-            }
-            l++;
-            this.curCtrl.selectedRows.push(obj);
-        }
-        console.log(this.curCtrl.selectedRows);
-        return res;
-    };
-
     this.getCardsetValue = function (cardCtrl) {
         var resObj = {};
         var isPersistAnyField = false;
@@ -609,7 +586,8 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.curDispValue = $checkedCB.next().text();
         }
         else if (this.curCtrl.objType === "ComboBox") {
-            inpVal = this.getComboValue(this.curCtrl);
+            inpVal = this.curCtrl.ValueMembers;
+            console.log("inp");
             console.log(inpVal);
             this.curDispValue = this.curCtrl.DisplayMembers[Object.keys(this.curCtrl.DisplayMembers)[0]].toString().replace(/,/g, ", ");
         }
@@ -679,8 +657,9 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.formValuesWithType[nxtCtrl.name] = [this.formValues[nxtCtrl.name], nxtCtrl.ebDbType];
         }
         else if (nxtCtrl.autoIncrement) {
-            this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];g
+            this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];
         }
+        this.curCtrl.selectedRows();
     }
 
     this.callGetControl = function () {

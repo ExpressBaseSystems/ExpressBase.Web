@@ -659,7 +659,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         else if (nxtCtrl.autoIncrement) {
             this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];
         }
-        this.curForm.control[0].selectedRows();//  hardcoding
+        this.curForm.controls[0].selectedRows();//  hardcoding
     }
 
     this.callGetControl = function () {

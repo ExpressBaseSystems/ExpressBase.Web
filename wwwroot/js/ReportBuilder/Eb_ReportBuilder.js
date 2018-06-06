@@ -74,7 +74,6 @@
 
     this.getDataSourceColoums = function (refid) {
         if (refid !== "") {
-            $('#data-table-list').empty();
             $("#get-col-loader").show();
             $.ajax({
                 url: "../RB/GetColumns",
@@ -249,8 +248,8 @@
 
     this.headerBox1_Split = function () {
         for (i = 0; i < 5; i++) {
-            $(".headersections").append("<div class='head_Box1' id='" + this.sectionArray[i].slice(1) + "Hbox' data-index='" + i + "' style='width :100%'>"
-                + "<p>" + this.msBoxSubNotation[this.sectionArray[i].slice(1)] + "</p></div>");
+            $(".headersections").append(`<div class='head_Box1' id='${this.sectionArray[i].slice(1)}Hbox' data-index='${i}' style='width:100%'>
+        <div class='hbox_notation_div'>${this.msBoxSubNotation[this.sectionArray[i].slice(1)]}</div><div class='new_sec_btn'></div></div>`);
         }
         this.headerScaling();
         this.splitButton();
@@ -288,13 +287,13 @@
     };
 
     this.addButton = function (i, obj) {
-        $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
+        $(obj).children(".new_sec_btn").append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
         $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
     };//split button
 
     this.splitDiv = function (e) {
         this.splitarray = [];
-        this.btn_indx = $(e.target).parent().parent().attr("data-index");
+        this.btn_indx = $(e.target).closest(".head_Box1").attr("data-index");
         $.each($('.page').children().not(".gutter"), this.splitDiv_inner.bind(this));
     };
 

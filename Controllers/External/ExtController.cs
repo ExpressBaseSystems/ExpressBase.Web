@@ -103,8 +103,10 @@ namespace ExpressBase.Web.Controllers
 
                 if (IsTokensValid(sRToken, sBToken, hostParts[0]))
                 {
-                    if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
-                        return RedirectToAction("DevDashboard", "Dev");
+                    if (hostParts[0] == RoutingConstants.MYACCOUNT)
+                        return Redirect(RoutingConstants.MYSOLUTIONS);
+                    else if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                        return Redirect(RoutingConstants.MYAPPLICATIONS);
                     else
                         return RedirectToAction("UserDashboard", "TenantUser");
                 }
@@ -319,17 +321,20 @@ namespace ExpressBase.Web.Controllers
 
             bool bOK2AttemptLogin = true;
 
-            if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
-                this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+            this.DecideConsole(hostParts[0], out whichconsole);
 
-            else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.STAGING)
-                this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
-                this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
+            //if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
+            //    this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else
-                bOK2AttemptLogin = false;
+            //else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.STAGING)
+            //    this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+
+            //else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
+            //    this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
+
+            //else
+            //    bOK2AttemptLogin = false;
 
             if (bOK2AttemptLogin)
             {
@@ -371,28 +376,32 @@ namespace ExpressBase.Web.Controllers
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
 
-            string _controller = null;
-            string _action = null;
+            string _redirectUrl = null;
 
             //CHECK WHETHER SOLUTION ID IS VALID
 
             bool bOK2AttemptLogin = true;
 
-            if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
-                this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+            this.DecideConsole(hostParts[0], out whichconsole);
 
-            else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.STAGING)
-                this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+            //Not needed (Consult Febin)
 
-            else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
-                this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
+            //if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
+            //    this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
 
-            else
-            {
-                bOK2AttemptLogin = false;
-                _controller = RoutingConstants.EXTCONTROLLER;
-                _action = "Error";
-            }
+            //else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.STAGING)
+            //    this.DecideConsole(hostParts[0], (hostParts.Length == 3), out whichconsole);
+
+            //else if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
+
+            //    this.DecideConsole(hostParts[0], (hostParts.Length == 2), out whichconsole);
+
+            //else
+            //{
+            //    bOK2AttemptLogin = false;
+            //    _controller = RoutingConstants.EXTCONTROLLER;
+            //    _action = "Error";
+            //}
 
             if (bOK2AttemptLogin)
             {
@@ -476,18 +485,23 @@ namespace ExpressBase.Web.Controllers
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
 
-                        this.RouteToDashboard(authResponse.User.HasSystemRole(), whichconsole, out _controller, out _action);
+                        this.RouteToDashboard(authResponse.User.HasSystemRole(), whichconsole, out _redirectUrl);
                     }
                 }
             }
 
-            return RedirectToAction(_action, _controller);
+            return Redirect(_redirectUrl);
         }
 
-        private void DecideConsole(string subDomain, bool isNotTenantUser, out string whichconsole)
+        private void DecideConsole(string subDomain, out string whichconsole)
         {
             string cid = null;
-            if (isNotTenantUser && !subDomain.Equals(CoreConstants.EXPRESSBASE))
+            if(subDomain == RoutingConstants.MYACCOUNT)
+            {
+                cid = CoreConstants.EXPRESSBASE;
+                whichconsole = EbAuthContext.TenantContext;
+            }
+            else
             {
                 if (subDomain.EndsWith(RoutingConstants.DASHBOT) || subDomain.EndsWith(RoutingConstants.DASHMOB) || subDomain.EndsWith(RoutingConstants.DASHDEV))
                 {
@@ -500,44 +514,32 @@ namespace ExpressBase.Web.Controllers
                     else //if (subDomain.EndsWith("-dev"))
                         whichconsole = EbAuthContext.DeveloperContext;
                 }
-                else
+                else //User Console
                 {
                     cid = subDomain;
                     whichconsole = EbAuthContext.WebUserContext;
                 }
             }
-            else // TENANT CONSOLE
-            {
-                cid = CoreConstants.EXPRESSBASE;
-                whichconsole = EbAuthContext.TenantContext;
-            }
 
             ViewBag.cid = cid;
         }
 
-        private void RouteToDashboard(bool hasSystemRole, string whichconsole, out string _controller, out string _action)
+        private void RouteToDashboard(bool hasSystemRole, string whichconsole, out string _redirectUrl)
         {
+            _redirectUrl = RoutingConstants.EXTERROR;
             if (ViewBag.cid == CoreConstants.EXPRESSBASE)
             {
-                _controller = "Tenant";
-                _action = "TenantDashboard";
+                _redirectUrl = RoutingConstants.MYSOLUTIONS;
             }
             else
             {
                 if (hasSystemRole && whichconsole == RoutingConstants.DC)
                 {
-                    _controller = "Dev";
-                    _action = "DevDashboard";
+                    _redirectUrl = RoutingConstants.MYAPPLICATIONS;
                 }
                 else if (whichconsole == RoutingConstants.UC)
                 {
-                    _controller = "TenantUser";
-                    _action = "UserDashboard";
-                }
-                else
-                {
-                    _controller = RoutingConstants.EXTCONTROLLER;
-                    _action = "Error";
+                    _redirectUrl = "/TenantUser/UserDashboard";
                 }
             }
         }
@@ -581,13 +583,13 @@ namespace ExpressBase.Web.Controllers
                     //}
                 }
                 else
-                    return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
+                    return Redirect(RoutingConstants.EXTERROR);
             }
             catch (WebServiceException wse)
             {
                 Console.WriteLine("Exception:" + wse.ToString());
                 ViewBag.errormsg = wse.Message;
-                return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
+                return Redirect(RoutingConstants.EXTERROR);
             }
 
 

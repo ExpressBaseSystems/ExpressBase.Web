@@ -45,7 +45,7 @@ namespace ExpressBase.Web.Controllers
             //return RedirectToAction("DevSignIn");
             return View();
         }
-
+        [HttpGet("MyApplications")]
         public IActionResult DevDashboard()
         {
             GetAllApplicationResponse apps = this.ServiceClient.Get(new GetAllApplicationRequest());

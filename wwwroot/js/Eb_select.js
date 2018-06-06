@@ -138,6 +138,7 @@ var EbSelect = function (ctrl) {
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
         var o = new Object();
+        o.containerId = this.name + "Container";
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
         o.showSerialColumn = true;
@@ -149,9 +150,10 @@ var EbSelect = function (ctrl) {
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
-        o.hiddenFieldName = this.vmName;
+        //o.hiddenFieldName = this.vmName;
         o.showFilterRow = true;
         o.fnEnterKeyCallback = this.DDEnterKeyPress.bind(this);
+        o.columns = {}//////////////////////////////////////////////////////
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);

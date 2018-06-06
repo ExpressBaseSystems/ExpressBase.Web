@@ -1,6 +1,7 @@
 ﻿
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbBasicDataTable = function (Option) {
+    this.contId = Option.containerId;
     this.dsid = Option.dsid;
     this.tableId = Option.tableId;
     this.showSerialColumn = (typeof Option.showSerialColumn !== "undefined" && Option.showSerialColumn !== "" && Option.showSerialColumn !== null) ? Option.showSerialColumn : true;
@@ -8,6 +9,7 @@ var EbBasicDataTable = function (Option) {
     this.showFilterRow = (typeof Option.showFilterRow !== "undefined" && Option.showFilterRow !== "" && Option.showFilterRow !== null) ? Option.showFilterRow : true;
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.hiddenFieldName = Option.hiddenFieldName || "id";
+    this.columns = Option.columns || null;
     this.isSecondTime = false;
     this.Api = null;
     this.order_info = new Object();
@@ -40,16 +42,22 @@ var EbBasicDataTable = function (Option) {
         this.EbObject.DataSourceRefId = this.dsid;
         //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } }, maskLoader: false });
         //console.log($.cookie());
-        $.ajax({
-            type: "POST",
-            url: "../boti/dvView1",
-            data: { dvobj: JSON.stringify(this.EbObject) },
-            success: this.ajaxSucc.bind(this)
-        });
+        if (this.columns === null) {
+            $.ajax({
+                type: "POST",
+                url: "../boti/dvView1",
+                data: { dvobj: JSON.stringify(this.EbObject) },
+                success: this.ajaxSucc.bind(this)
+            });
+        }
+        else {
+            this.EbObject.Columns.$values = this.columns;
+            this.getColumnsSuccess();
+        }
     };
 
     this.ajaxSucc = function (text) {
-        $("#ComboBox0Container").append(text);
+        $("#" + this.contId).append(text);////////////////
         this.EbObject = dvGlobal.Current_obj;
         this.getColumnsSuccess();
     }.bind(this);

@@ -120,7 +120,7 @@ var EbBasicDataTable = function (Option) {
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
-        this.Api.off('key').on('key', this.keyEnterCallback.bind(this));
+        this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
         this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
 
@@ -159,7 +159,7 @@ var EbBasicDataTable = function (Option) {
         };
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
-        //$('#' + this.tableId + ' tbody').off('keyup').on('keyup', 'tr', this.keyEnterCallback.bind(this));
+        //$('#' + this.tableId + ' tbody').off('keyup').on('keyup', 'tr', this.DTKeyPressCallback.bind(this));
 
     };
 
@@ -623,9 +623,8 @@ var EbBasicDataTable = function (Option) {
         Option.fnDblclickCallback(e);
     };
 
-    this.keyEnterCallback = function (e, datatable, key, cell, originalEvent) {
-        if (key === 13)
-            Option.fnEnterKeyCallback(e, datatable, key, cell, originalEvent);
+    this.DTKeyPressCallback = function (e, datatable, key, cell, originalEvent) {
+            Option.keyPressCallbackFn(e, datatable, key, cell, originalEvent);
     };
 
     this.doRowgrouping = function () {

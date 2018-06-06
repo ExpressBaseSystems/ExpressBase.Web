@@ -333,7 +333,7 @@ li:hover {
 .codedit .tab-section-common .nav > li > a {
     background: #bf2c2c;
     width: 150px;
-    padding: 2px 15px;
+    padding: 6px 15px;
     text-align: center;
     border: 1px solid #ccc;
     border-bottom: none;

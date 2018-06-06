@@ -37,16 +37,12 @@ var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
     }
 };
 
-var selectedEntity = function (vmValue, dmValues) {
-    this.vmValue = vmValue;
-    this.dmValues = dmValues;
-};
-
 var z = 100;
 
 //var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
 var EbSelect = function (ctrl) {
     //parameters   
+    this.ComboObj = ctrl;
     this.name = ctrl.name;
     this.dsid = ctrl.dataSourceId;
     this.idField = "name";
@@ -270,6 +266,26 @@ var EbSelect = function (ctrl) {
         this.Vobj.toggleDD();
     };
 
+    this.getSelectedRow = function () {
+        console.log(100);
+        var res = [];
+        $.each(this.valueMembers, function (idx, item) {
+            var obj = {};
+            var $tr = $("." + this.name + "tbl_select").filter("[value=" + item + "]").closest("tr");
+            var rowData = $(this.DTSelector).DataTable().row($tr).data();
+            var colNames = this.ComboObj.columns.map((obj, i) => { return obj.name; });
+            $.grep(this.ComboObj.columns, function (obj, i) {
+                return obj.name;
+            });
+            $.each(rowData, function (i, cellData) {
+                obj[colNames[i]] = cellData;
+            });
+            res.push(obj);
+        }.bind(this));
+        console.log(res);
+        return res;
+    }.bind(this);
+
     this.Renderselect = function () {
         this.Vobj = new Vue({
             el: '#' + this.name + 'Container',
@@ -349,8 +365,8 @@ var EbSelect = function (ctrl) {
     this.V_updateCk = function () {// API..............
         console.log("colAdjust---------- ");
         $("#" + this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
-            var row = $(chkbx).closest('tr');
-            var datas = $(this.DTSelector).DataTable().row(row).data();
+            var $row = $(chkbx).closest('tr');
+            var datas = $(this.DTSelector).DataTable().row($row).data();
             if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
                 $(chkbx).prop('checked', true);
             else

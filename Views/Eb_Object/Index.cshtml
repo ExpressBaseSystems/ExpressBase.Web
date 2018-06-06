@@ -7,7 +7,7 @@
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
 <style>
-    .codedit .tab-section-common {
+    /*.codedit .tab-section-common {
         position: fixed;
         width: 100%;
         z-index: 3;
@@ -31,6 +31,50 @@
 
     .codedit .tab-cont-common {
         margin-top: 48px;
+    }*/
+
+    .tab-section-common .nav-tabs {
+        border-bottom: 2px solid #DDD;
+    }
+
+        .tab-section-common .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+            border-width: 0;
+        }
+
+    .tab-section-common .nav-tabs > li > a {
+        border: none;
+        color: #666;
+    }
+
+            .tab-section-common .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
+                border: none;
+                color: #4285F4 !important;
+                background: transparent;
+            }
+
+    .tab-section-common .nav-tabs > li > a::after {
+        content: "";
+        background: #4285F4;
+        height: 4px;
+        position: absolute;
+        width: 100%;
+        left: 0px;
+        bottom: -1px;
+        transition: all 250ms ease 0s;
+        transform: scale(0);
+    }
+
+        .tab-section-common .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
+            transform: scale(1);
+        }
+
+    .tab-section-common .tab-nav > li > a::after {
+        background: #21527d none repeat scroll 0% 0%;
+        color: #fff;
+    }
+    .tab-section-common {
+        background: white;
+        margin-bottom: 5px;
     }
 </style>
 <script>
@@ -51,7 +95,7 @@
     @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _apps = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles })
 </div>
 
-<div class="row codedit" id="codedit" style="margin-top:40px;">
+<div class="row codedit" id="codedit" style="margin-top:38px;">
     <div class="tab-section-common" id="tab-section-common">
         <ul class="nav nav-tabs" id="versionNav">
             @{

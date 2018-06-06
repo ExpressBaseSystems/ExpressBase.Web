@@ -586,7 +586,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.curDispValue = $checkedCB.next().text();
         }
         else if (this.curCtrl.objType === "ComboBox") {
-            inpVal = this.curCtrl.ValueMembers;
+            inpVal = this.curCtrl.tempValue;
             console.log("inp");
             console.log(inpVal);
             this.curDispValue = this.curCtrl.DisplayMembers[Object.keys(this.curCtrl.DisplayMembers)[0]].toString().replace(/,/g, ", ");
@@ -659,7 +659,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         else if (nxtCtrl.autoIncrement) {
             this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];
         }
-        this.curForm.controls[0].selectedRows();////////////////////////////////////hardcoded
+        this.curForm.control[0].selectedRows();//  hardcoding
     }
 
     this.callGetControl = function () {

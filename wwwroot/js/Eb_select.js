@@ -206,8 +206,13 @@ var EbSelect = function (ctrl) {
         console.log(5);
         if (key === 13)
             this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
-        else if (key === 32)
-            this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
+        else if (key === 32) {
+            //if (originalEvent.target.type !== "checkbox")
+                $(originalEvent).on('keydown', function (e) {
+                    e.preventDefault()
+                });
+                this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
+        }
     }
 
     this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
@@ -258,14 +263,7 @@ var EbSelect = function (ctrl) {
             }
         }
         else {
-
-            var $row = $(e.target).closest('tr');
-            var datas = $(this.DTSelector).DataTable().row($row).data();
-
-            var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
-            this.Vobj.valueMembers.splice(vmIdx2del, 1);
-            $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
-
+            this.delDMs($(e.target));
             $(e.target).closest("tr").find("." + this.name + "tbl_select").prop('checked', false);
         }
     };
@@ -346,6 +344,7 @@ var EbSelect = function (ctrl) {
 
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
+        this.ComboObj.tempValue = [...this.Vobj.valueMembers]
         $("#" + this.name).val(this.Vobj.valueMembers);
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
@@ -449,11 +448,17 @@ var EbSelect = function (ctrl) {
                 $(this.currentEvent.target).prop('checked', false);
         }
         else {
-            var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
-            this.Vobj.valueMembers.splice(vmIdx2del, 1);
-            $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
+            this.delDMs($(e.target));
             $(this.currentEvent.target).prop('checked', false);
         }
+    };
+
+    this.delDMs = function ($e) {
+        var $row = $e.closest('tr');
+        var datas = $(this.DTSelector).DataTable().row($row).data();
+        var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
+        this.Vobj.valueMembers.splice(vmIdx2del, 1);
+        $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
     };
 
     this.makeInvalid = function (msg) {

@@ -149,7 +149,7 @@ var EbSelect = function (ctrl) {
         //o.hiddenFieldName = this.vmName;
         o.showFilterRow = true;
         o.fnEnterKeyCallback = this.DDEnterKeyPress.bind(this);
-        o.columns = {}//////////////////////////////////////////////////////
+        o.columns = this.ComboObj.columns//////////////////////////////////////////////////////
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);

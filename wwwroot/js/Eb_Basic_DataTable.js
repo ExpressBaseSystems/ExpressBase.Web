@@ -35,7 +35,8 @@ var EbBasicDataTable = function (Option) {
     this.isRun = false;
 
     this.init = function () {
-        //this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
+        this.EbObject = new EbTableVisualization("Container_" + Date.now());
+        this.call2FD();
     }
 
     this.call2FD = function () {
@@ -62,14 +63,14 @@ var EbBasicDataTable = function (Option) {
         this.getColumnsSuccess();
     }.bind(this);
 
-    if (this.EbObject === null) {
-        this.EbObject = new EbTableVisualization("Container_" + Date.now());
-        this.call2FD();
-    }
-    else {
-        this.init();
-        this.call2FD();
-    };
+    //if (this.EbObject === null) {
+    //    this.EbObject = new EbTableVisualization("Container_" + Date.now());
+    //    this.call2FD();
+    //}
+    //else {
+    //    this.init();
+    //    this.call2FD();
+    //};
 
     this.getColumnsSuccess = function () {
         //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
@@ -377,7 +378,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double"))) && col.name !== "serial")
+        if (col.bVisible && (col.type == parseInt(gettypefromString("Int32")) || col.type == parseInt(gettypefromString("Decimal")) || col.type == parseInt(gettypefromString("Int64")) || col.type == parseInt(gettypefromString("Double"))) && col.name !== "serial")
             _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces));
     };
 
@@ -1047,22 +1048,22 @@ var EbBasicDataTable = function (Option) {
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:black'></i></a>");
             }
             else {
-                if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+                if (col.type == parseInt(gettypefromString("Int32")) || col.type == parseInt(gettypefromString("Decimal")) || col.type == parseInt(gettypefromString("Int64")) || col.type == parseInt(gettypefromString("Double")) || col.type == parseInt(gettypefromString("Numeric"))) {
 
                     _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                 }
-                else if (col.Type == parseInt(gettypefromString("String"))) {
+                else if (col.type == parseInt(gettypefromString("String"))) {
                     //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
 
                     _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                     //else
                     //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
                 }
-                else if (col.Type == parseInt(gettypefromString("DateTime"))) {
+                else if (col.type == parseInt(gettypefromString("DateTime"))) {
 
                     _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                 }
-                else if (col.Type == parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
+                else if (col.type == parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
                     _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
                 else
                     _ls += (span);
@@ -1367,7 +1368,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
-        if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64"))) {
+        if (col.type == parseInt(gettypefromString("Int32")) || col.type == parseInt(gettypefromString("Decimal")) || col.type == parseInt(gettypefromString("Int64"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.ProgressBar) {
                 this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
                 this.ebSettings.Columns.$values[i].mRender = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
@@ -1393,7 +1394,7 @@ var EbBasicDataTable = function (Option) {
             }
             this.ebSettings.Columns.$values[i].sClass = this.ebSettings.Columns.$values[i].className;
         }
-        if (col.Type == parseInt(gettypefromString("Boolean"))) {
+        if (col.type == parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
@@ -1413,7 +1414,7 @@ var EbBasicDataTable = function (Option) {
                 }
             }
         }
-        if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
+        if (col.type == parseInt(gettypefromString("String")) || col.type == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
                 //this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
@@ -1591,5 +1592,7 @@ var EbBasicDataTable = function (Option) {
     this.renderDataAsLabel = function (data) {
         return `<label class='labeldata'>${data}</label>`;
     };
+
+    this.init();
 };
 

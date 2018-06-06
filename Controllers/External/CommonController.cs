@@ -50,12 +50,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet("SignIn")]
-        public IActionResult SignIn()
-        {          
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            ViewBag.ErrorMsg = TempData["ErrorMessage"];
-            return View();
-        }
+        //[HttpGet("SignIn")]
+        //public IActionResult SignIn()
+        //{          
+        //    ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+        //    ViewBag.ErrorMsg = TempData["ErrorMessage"];
+        //    return View();
+        //}
     }
 }

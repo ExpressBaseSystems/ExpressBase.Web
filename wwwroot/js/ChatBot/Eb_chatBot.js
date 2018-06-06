@@ -534,8 +534,24 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.getComboValue = function (ctrl) {
         var res = {};
-        res.valueMembers = ctrl.ValueMembers;
-        res.DisplayMembers = ctrl.DisplayMembers;
+        res.value = ctrl.ValueMembers;
+        this.curCtrl.selectedRows = [];
+        var keys = Object.keys(ctrl.DisplayMembers)
+        this.curCtrl.value = res.value;
+        var obj = {};
+        var l = 0;
+        for (var i = 0; i < ctrl.DisplayMembers[keys[0]].length; i++) {
+            var obj = {};
+            var k = 0;
+            for (var key in ctrl.DisplayMembers) {
+                obj[key] = ctrl.DisplayMembers[key][l];
+                if (keys.length === ++k)
+                    break;
+            }
+            l++;
+            this.curCtrl.selectedRows.push(obj);
+        }
+        console.log(this.curCtrl.selectedRows);
         return res;
     };
 
@@ -594,6 +610,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         }
         else if (this.curCtrl.objType === "ComboBox") {
             inpVal = this.getComboValue(this.curCtrl);
+            console.log(inpVal);
             this.curDispValue = this.curCtrl.DisplayMembers[Object.keys(this.curCtrl.DisplayMembers)[0]].toString().replace(/,/g, ", ");
         }
         else if (this.curCtrl.objType === "InputGeoLocation") {
@@ -662,7 +679,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.formValuesWithType[nxtCtrl.name] = [this.formValues[nxtCtrl.name], nxtCtrl.ebDbType];
         }
         else if (nxtCtrl.autoIncrement) {
-            this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];
+            this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];g
         }
     }
 

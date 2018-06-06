@@ -336,6 +336,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.V_showDD = function () {
+        alert("Roby focus on the first row");
         if (!this.IsDatatableInit)
             this.InitDT();
         this.Vobj.DDstate = true;

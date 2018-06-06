@@ -615,7 +615,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.keyEnterCallback = function (e, datatable, key, cell, originalEvent) {
-        if(key === 13)
+        if (key === 13)
             Option.fnEnterKeyCallback(e, datatable, key, cell, originalEvent);
     };
 

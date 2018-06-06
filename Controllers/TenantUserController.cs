@@ -494,7 +494,11 @@ namespace ExpressBase.Web2.Controllers
   //          }
   //          return html;
   //      }
+  public IActionResult CreateConfig()
+        {
 
+            return View();
+        }
     }
 }
 

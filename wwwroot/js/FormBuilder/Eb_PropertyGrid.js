@@ -290,6 +290,15 @@
         }
     };
 
+    this.setSimpleProperty = function (prop, val) {
+        if (Object.keys(this.PropsObj).includes(prop)) {
+            this.PropsObj[prop] = val;
+            $("#" + this.wraperId + prop).val(val);
+        }
+        else
+            console.error("PG error : Property not found")
+    }
+
     //makes a property editor readOnly
     this.MakeReadOnly = function (props) {
         if (!Array.isArray(props))
@@ -301,7 +310,7 @@
     };
 
     //makes a property editor readWritable
-    this.MakeReadWrite = function (prop) {
+    this.MakeReadWrite = function (props) {
         if (!Array.isArray(props))
             props = [props];
         $.each(props, function (i, prop) {

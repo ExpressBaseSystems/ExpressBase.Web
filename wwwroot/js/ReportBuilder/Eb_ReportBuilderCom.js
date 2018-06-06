@@ -349,7 +349,8 @@
             });
         });
         $('#data-table-list').treed();
-        $('.nav-tabs a[href="#data"]').tab('show');
+		$('.nav-tabs a[href="#data"]').tab('show');
+		this.RbObj.DragDrop_Items();
     };
 
     this.start = function () {

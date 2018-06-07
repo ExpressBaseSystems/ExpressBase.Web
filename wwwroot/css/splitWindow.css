@@ -15,11 +15,13 @@
 }
 
 .sub-windows {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 100px) !important;
+    /*width: inherit !important;*/
+    /*padding: 0px 15px;*/
 }
 
 .parent {
-    height: calc( 100vh - 124px );
+    height: 100%;
     /*border: solid 1px red;*/
 }
 
@@ -37,7 +39,7 @@
 
 .filter-display {
     position: relative;
-    padding: 0 5px;
+    padding: 1px 5px;
 }
 
 .sub-windows:focus {
@@ -140,7 +142,7 @@
     /*margin-top: 25px;*/
     /*padding-top: 24px;*/
     /*height: 98vh;*/
-    height: 100vh;
+    /*height: 100vh;*/
     /*padding-top:15px;*/
     /*overflow-y: hidden;*/
     overflow-x: hidden !important;
@@ -167,6 +169,9 @@
 
 .slick-track {
     height: inherit !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    /*width: 100% !important;*/
 }
 
 .slick-list {
@@ -177,10 +182,10 @@
     z-index: 99;
     width: auto !important;
     height: auto !important;
-    font-size: 30px;
+    font-size: 27px;
     padding: 0 20px !important;
     background-color: rgba(0, 0, 0, 0);
-    top: 0px !important;
+    top: 33px !important;
     position: absolute;
     color: #336699;
     font-weight: bold;
@@ -194,13 +199,12 @@
 }
 
 .split-inner {
-    width: 100%;
+    /*width: 100%;*/
     height: 100%;
     border: none;
     border-radius: 2px;
-    box-shadow: 4px 4px 14px 0px rgba(189,189,189,1);
     /* padding: 1px 10px 10px 10px; */
-    background: white;
+    background-color: transparent;
     position: relative;
 }
 
@@ -222,40 +226,87 @@
 .pgHead {
     border-radius: 0px;
 }
+.pagination-wrapper select {
+    padding: 0 !important;
+    border-radius: 2px !important;
+    height: inherit !important;
+}
 
 .dv-body {
     position: relative;
-    margin-top: 38px;
+    width: calc( 100% + 30px );
     margin-left: -15px;
-    width: calc(100% + 30px);
+    height: 100vh;
+    padding-top: 38px;
+}
+.dv-body2 {
+    height: calc( 100% - 46px );
+    padding: 0 1px;
+}
+.dv-body1 {
+    display:none;
+}
+
+.filter-cont {
+    top: 0;
+    left: 0;
+    width: 300px;
+    position: absolute;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 2px;
+    box-shadow: 4px 2px 6px 0px rgba(0, 0, 0, 0.23), 14px 14px 16px 8px rgba(0, 0, 0, 0.01), 22px 24px 26px 16px rgba(0, 0, 0, 0.01);
+    background-color: white;
+    padding-top: 38px;
+}
+
+.pp-cont {
+    top: 0;
+    width: 350px;
+    position: absolute;
+    right: 0px;
+    max-height: 100%;
+    height: 100%;
+    box-shadow: -4px 2px 6px 0px rgba(0, 0, 0, 0.23), -14px 14px 16px 8px rgba(0, 0, 0, 0.01), -22px 24px 26px 16px rgba(0, 0, 0, 0.01);
+    padding-top: 38px;
 }
 
 .dotsDiv {
     display: none;
-    position: relative;
+    /*position: relative;
     margin-top: 38px;
     margin-left: -15px;
-    width: calc( 100% + 32px );
+    width: calc( 100% + 32px );*/
 }
 
 .dotstable .dottool {
     display: inline;
 }
 
+    .dotstable .dottool .fa {
+        color: rgba(0, 0, 0, 0.79);
+    }
+
+.dotstable .dottool {
+    display: inline;
+    font-size: 13px;
+}
+
 .navi-bar {
-    background-color: #ffffff;
-    border: solid 1px #ddd;
+    /*background-color: #ffffff;
+    border: solid 1px #ddd;*/
 }
 
 .dotstable {
     display: table;
     margin: 0 auto;
-    padding: 5px;
+    padding-bottom: 1px;
+    margin-top: -1px;
 }
 
 .dot {
-    border-radius: 50%;
-    padding: 4px;
+    /*border-radius: 50%;
+    padding: 4px;*/
 }
 /*.dot a i:hover {
         color: #444 !important;
@@ -268,7 +319,7 @@
     max-height: 100%;
     height: 100%;
     z-index: 3;
-    box-shadow: -4px 2px 6px 0px rgba(0, 0, 0, 0.23), -14px 14px 16px 8px rgba(0, 0, 0, 0.01), -22px 24px 26px 16px rgba(0, 0, 0, 0.01);
+    /*box-shadow: -4px 2px 6px 0px rgba(0, 0, 0, 0.23), -14px 14px 16px 8px rgba(0, 0, 0, 0.01), -22px 24px 26px 16px rgba(0, 0, 0, 0.01);*/
 }
 
 #filterBox {
@@ -283,7 +334,7 @@
     overflow: hidden;
     z-index: 4;
     border-radius: 2px;
-    box-shadow: 4px 2px 6px 0px rgba(0, 0, 0, 0.23), 14px 14px 16px 8px rgba(0, 0, 0, 0.01), 22px 24px 26px 16px rgba(0, 0, 0, 0.01);
+    /*box-shadow: 4px 2px 6px 0px rgba(0, 0, 0, 0.23), 14px 14px 16px 8px rgba(0, 0, 0, 0.01), 22px 24px 26px 16px rgba(0, 0, 0, 0.01);*/
 }
 
 .relatedCont {

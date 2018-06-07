@@ -306,15 +306,17 @@
     vertical-align: bottom;
 }
 
-.DDdiv table {
+.DDdiv table.dataTable {
     font-size: 13px !important;
     margin-bottom: 0;
     outline: none;
+    border: none;
 }
 
-.DDdiv .selected-row {
+.DDdiv .selected-row, .DDdiv table.dataTable tbody > tr.selected {
     color: #fff !important;
-    background-color: #08C !important;
+    /*background-color: #08C !important;*/
+    background-color: #496675 !important;
 }
 
 .DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th,

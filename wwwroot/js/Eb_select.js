@@ -139,7 +139,7 @@ var EbSelect = function (ctrl) {
         o.tableId = this.name + "tbl";
         o.showSerialColumn = true;
         o.showCheckboxColumn = this.ComboObj.multiSelect;
-        o.showFilterRow = false;
+        o.showFilterRow = true;
         o.scrollHeight = this.scrollHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         o.fnKeyUpCallback = this.xxx.bind(this);
@@ -148,7 +148,7 @@ var EbSelect = function (ctrl) {
         o.fninitComplete = this.initDTpost.bind(this);
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
-        o.columns = this.ComboObj.columns//////////////////////////////////////////////////////
+        o.columns = this.ComboObj.columns;//////////////////////////////////////////////////////
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
@@ -206,10 +206,7 @@ var EbSelect = function (ctrl) {
         if (key === 13)
             this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
         else if (key === 32) {
-            //if (originalEvent.target.type !== "checkbox")
-                $(originalEvent).on('keydown', function (e) {
-                    e.preventDefault()
-                });
+            if (originalEvent.target.type !== "checkbox")
                 this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
         }
     }
@@ -412,6 +409,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.arrowSelectionStylingFcs = function (e, datatable, cell, originalEvent) {
+        $(":focus").blur();
         var row = datatable.row(cell.index().row);
         var $tr = $(row.nodes());
         $tr.find('.focus').removeClass('focus');

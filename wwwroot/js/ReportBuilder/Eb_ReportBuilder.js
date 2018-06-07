@@ -82,10 +82,14 @@
                 data: { refID: refid },
                 success: function (result) {
                     $("#get-col-loader").hide();
-                    if (result.columns)
+                    if (result.columns) {
+                        $("#data-table-list ul[id='dataSource']").empty();
                         this.RbCommon.drawDsColTree(result.columns);
-                    if (result.paramsList)
+                    }
+                    if (result.paramsList) {
+                        $("#ds_parameter_list ul[id='ds_parameters']").empty();
                         this.RbCommon.drawDsParmsTree(result.paramsList);
+                    }
                 }.bind(this)
             });
         }

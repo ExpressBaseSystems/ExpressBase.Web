@@ -197,8 +197,8 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                         this.setFormControls();
                     }
                     else if (data.objType === "TableVisualization") {
-                        data.BotCols = JSON.parse(data.BotCols);
-                        data.BotData = JSON.parse(data.BotData);
+                        //data.BotCols = JSON.parse(data.BotCols);
+                        //data.BotData = JSON.parse(data.BotData);
                         this.curTblViz = data;
                         this.showTblViz();
                     }
@@ -255,20 +255,20 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     };
 
     this.showTblViz = function (e) {
-        var $tableCont = $('<div class="table-cont">' + this.curTblViz.BareControlHtml + '</div>');
-        this.$chatBox.append($tableCont.hide());
+        var $tableCont = $('<div class="table-cont">' + this.curTblViz.bareControlHtml + '</div>');
+        this.$chatBox.append($tableCont);
         this.showTypingAnim();
-        $(`#${this.curTblViz.EbSid}`).DataTable({//change ebsid to name
-            processing: true,
-            serverSide: false,
-            dom: 'rt',
-            columns: this.curTblViz.BotCols,
-            data: this.curTblViz.BotData,
-            initComplete: function () {
-                this.hideTypingAnim();
-                this.AskWhatU();
-                $tableCont.show(100);
-            }.bind(this)
+        //$(`#${this.curTblViz.EbSid}`).DataTable({//change ebsid to name
+        //    processing: true,
+        //    serverSide: false,
+        //    dom: 'rt',
+        //    columns: this.curTblViz.BotCols,
+        //    data: this.curTblViz.BotData,
+        //    initComplete: function () {
+        //        this.hideTypingAnim();
+        //        this.AskWhatU();
+        //        $tableCont.show(100);
+        //    }.bind(this)
             //dom: "rt",
             //ajax: {
             //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
@@ -287,7 +287,29 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             //    }.bind(this),
             //    crossDomain: true
             //}
-        });
+        //});
+
+        var o = new Object();
+        o.containerId = this.curTblViz.name + "Container";
+        o.dsid = this.curTblViz.dataSourceRefId;
+        o.tableId = this.curTblViz.name + "tbl";
+        o.showSerialColumn = true;
+        o.showCheckboxColumn = false;
+        o.showFilterRow = false;
+        //o.scrollHeight = this.scrollHeight + "px";
+        //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
+        //o.fnKeyUpCallback = this.xxx.bind(this);
+        //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
+        //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
+        //o.fninitComplete = this.initDTpost.bind(this);
+        //o.hiddenFieldName = this.vmName;
+        //o.showFilterRow = true;
+        //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
+        o.columns = this.curTblViz.columns//////////////////////////////////////////////////////
+        this.datatable = new EbBasicDataTable(o);
+
+        this.hideTypingAnim();
+        this.AskWhatU();
     }.bind(this);
 
     this.showChartViz = function (e) {

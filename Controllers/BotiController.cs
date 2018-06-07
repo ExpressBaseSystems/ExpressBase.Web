@@ -173,34 +173,34 @@ namespace ExpressBase.Web.Controllers
 			if (Obj is EbTableVisualization)
 			{
 				EbTableVisualization Tobj = (Obj as EbTableVisualization);
-				string BotCols = "[";
-				string BotData = "[";
-				int i = 0;
+				//string BotCols = "[";
+				//string BotData = "[";
+				//int i = 0;
 
-				foreach (DVBaseColumn col in Tobj.Columns)
-				{
-					BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
-				}
-				BotCols = BotCols.TrimEnd(',') + "]";
+				//foreach (DVBaseColumn col in Tobj.Columns)
+				//{
+				//	BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
+				//}
+				//BotCols = BotCols.TrimEnd(',') + "]";
 
-				DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
-				var data = dresp.Data;
-				foreach (EbDataRow row in data)
-				{
-					i = 0;
-					BotData += "{";
-					foreach (var item in row)
-					{
-						BotData += "\"" + i++ + "\":\"" + item + "\",";
-						//BotData += "\"" + item + "\",";
-					}
-					BotData = BotData.TrimEnd(',') + "},";
-				}
-				BotData = BotData.TrimEnd(',') + "]";
+				//DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
+				//var data = dresp.Data;
+				//foreach (EbDataRow row in data)
+				//{
+				//	i = 0;
+				//	BotData += "{";
+				//	foreach (var item in row)
+				//	{
+				//		BotData += "\"" + i++ + "\":\"" + item + "\",";
+				//		//BotData += "\"" + item + "\",";
+				//	}
+				//	BotData = BotData.TrimEnd(',') + "},";
+				//}
+				//BotData = BotData.TrimEnd(',') + "]";
 
-				Tobj.BotCols = BotCols;
-				Tobj.BotData = BotData;
-				return EbSerializers.Json_Serialize(Tobj);
+				//Tobj.BotCols = BotCols;
+				//Tobj.BotData = BotData;
+				//return EbSerializers.Json_Serialize(Tobj);
 			}
 			if (Obj is EbChartVisualization)
 			{

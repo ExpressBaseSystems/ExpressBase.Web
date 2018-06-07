@@ -95,7 +95,7 @@ td.resizer {
 .dataTables_scrollHead {
     padding-bottom: 150px !important;
     margin-bottom: -150px !important;
-    width: calc( 100% - 17px ) !important;
+    /*width: calc( 100% - 17px ) !important;*/
 }
 
 .dataTables_scrollFoot {
@@ -104,7 +104,7 @@ td.resizer {
     padding-top: 100px !important;
     margin-top: -100px !important;
     width: 98.65% !important;
-    border-right: 1px solid #ccc !important;
+    /*border-right: 1px solid #ccc !important;*/
 }
 
 .dataTables_processing {
@@ -114,7 +114,7 @@ td.resizer {
 }
 
 .DTFC_LeftWrapper, .DTFC_RightWrapper {
-    z-index: 2;
+    z-index: 3;
 }
 
 .DTFC_LeftHeadWrapper, .DTFC_RightHeadWrapper {
@@ -142,8 +142,7 @@ td.resizer {
 }
 
 .dt-buttons {
-    visibility: hidden;
-    height: 9px;
+    display: none;
 }
 
 th {
@@ -172,10 +171,11 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
 }
 
 .eb_finput {
-    //width: auto !important;
     width: 100% !important;
     padding: 1px !important;
     font-size: 11px !important;
+    height: 22px !important;
+    border-radius: 0px !important;
 }
 
 .columnDrag {
@@ -198,36 +198,67 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
     margin-top: 2px;
 }
 
+.pagination > li > a, .pagination > li > span {
+    padding: 1px 10px;
+}
+
 div.dataTables_wrapper div.dataTables_length label {
-    margin-top: 2px;
+    margin-bottom: 0 !important;
 }
 
 div.dataTables_wrapper div.dataTables_length select {
-    height: 34px !important;
-    padding-top: 7px !important;
+    height: 21px !important;
+    padding: 2px !important;
+}
+
+div.dataTables_wrapper .dataTables_length {
+    display: inline-block;
 }
 
 div.dataTables_wrapper div.dataTables_info {
-    padding-top: 1px;
-    padding-left: 3px;
-    padding-right: 3px;
+    display: inline-block;
+    padding-top: 0;
+    margin-left: 20px;
 }
+
+.pagination-wrapper {
+    font-size: 12px;
+    padding: 0 2px;
+    padding-top: 1px;
+}
+
+div.dataTables_wrapper div.dataTables_paginate {
+    display: inline-block;
+    float: right;
+}
+
+    div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+        margin: 0 !important;
+    }
 
 div.dataTables_wrapper div.dataTables_processing {
 }
 
 .dataTables_scrollHeadInner, .dataTables_scrollFootInner {
-    width: 100% !important;
+    /*width: 100% !important;*/
 }
-/*.dataTables_scrollHeadInner table {
-    width: 100% !important;
+
+.dataTables_scrollFootInner .form-control, .DTFC_LeftFootWrapper .form-control, .DTFC_RightFootWrapper .form-control {
+    height: inherit !important;
+    padding: 2px;
+    border: none !important;
+    direction: rtl;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
-.dataTables_scrollBody table {
-    width: 100% !important;
+
+.dataTables_scrollHeadInner table {
+    background-color: white;
 }
-.dataTables_scrollFootInner table {
-    width: 100% !important;
-}*/
+
+.dataTables_scrollFootInner th, .DTFC_LeftFootWrapper th, .DTFC_RightFootWrapper th {
+    padding: 0 8px !important;
+}
 
 .objlist {
     width: 150px;
@@ -243,7 +274,8 @@ table.dataTable tbody td.dt-body-right {
 }
 
 .dataTables_scroll {
-    height: calc(100vh - 176px);
+    height: calc(100vh - 100px) !important;
+    height: calc(100% - 14px);
     z-index: 1;
     /*height: 100% !important;
     display: flex !important;
@@ -264,13 +296,17 @@ table.dataTable tbody td.dt-body-right {
 
 .dataTables_scrollBody {
     height: calc(100% - 100px) !important;
+    /*overflow-y: scroll !important;*/
 }
 
-/*///////////*/
+    .dataTables_scrollBody tabl tr td:hover{
+        background-color:aqua !important;
+    }
+    /*///////////*/
 .dataTable tbody tr td {
     height: 15px; /* or whatever height you need to make them all consistent */
     white-space: nowrap;
-    padding: 4px !important;
+    padding: 3px 4px !important
 }
 
 
@@ -293,35 +329,46 @@ table.dataTable tbody td.dt-body-right {
 .addedbyeb .input-group .form-control:first-child, .addedbyeb .input-group-addon:first-child, .addedbyeb .input-group-btn:first-child > .btn,
 .addedbyeb .input-group-btn:first-child > .btn-group > .btn, .addedbyeb .input-group-btn:first-child > .dropdown-toggle,
 .addedbyeb .input-group-btn:last-child > .addedbyeb .btn:not(:last-child):not(.dropdown-toggle), .addedbyeb .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-top-left-radius: 0;
     border-radius: 0;
     background: #f9f9f9;
     border: none;
-    border-top: solid 1px #f9f9f9;
     border-bottom: solid 1px #f9f9f9;
-    border-right: solid 1px #0000000d;
+    box-shadow: 1px 0px 0px rgba(0, 0, 0, 0.05);
+    z-index: 3;
 }
 
+.addedbyeb th {
+    padding: 0 !important;
+    margin: 0 !important;
+    border-top: 0 !important;
+    border-radius: 0 !important;
+}
+
+.addedbyeb a {
+    padding: 0 10px !important;
+}
 
 [eb-type=EbTableVisualization] .noPadding {
     // display: none;
 }
+.addedbyeb .input-group {
+    width: 100% !important;
+}
 
 [eb-type=EbTableVisualization] .dataTable:first-child {
     margin-top: 0 !important;
-}
-
-.dotstable .dottool {
-    display: inline;
-    box-shadow: 0px 0px 4px 1px #00000024, 0 0 1px 1px #00000003;
     background-color: white;
 }
 
-    .dotstable .dottool .fa {
-        color: rgba(0, 0, 0, 0.79);
-    }
+.div.dataTables_wrapper .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
+    height: 22px;
+    padding: 2px 3px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 0px;
+    border-right: solid 1px #ddd;
+    border: none;
+}
 
 .between-inp2 {
     width: calc(100% - 29px) !important;
@@ -333,15 +380,16 @@ table.dataTable tbody td.dt-body-right {
 
 .between-inp {
     width: 100% !important;
-    height: 15px !important;
-    padding: 0 !important;
+    height: 11px !important;
+    padding: 0px 2px !important;
     font-weight: normal;
     border: none;
+    font-size: 11px !important;
 }
 
 .priorfilter, .tagstyle {
     color: white;
-    margin: 2px 2px;
+    margin: 0px 2px;
     border-radius: 15px;
     display: inline-block;
     font-size: 11px;

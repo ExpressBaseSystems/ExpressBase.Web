@@ -20,9 +20,9 @@
     PosOBjOFdrag = {};
     $.fn.extend({
         treed: function (o) {
-            var openedClass = 'fa-minus';
-            var closedClass = 'fa-plus';
-            var ic = o || 'fa-plus';
+            var openedClass = 'fa-minus-square-o';
+            var closedClass = 'fa-plus-square-o';
+            var ic = o || 'fa-plus-square-o';
 
             if (typeof o !== 'undefined') {
                 if (typeof o.openedClass !== 'undefined') {
@@ -38,7 +38,7 @@
                 var branch = $(this);
                 branch.prepend("<i class='indicator fa " + ic + "'></i>");
                 branch.addClass('branch');
-                branch.on('click', function (e) {
+                branch.off("click").on('click', function (e) {
                     if (this === e.target) {
                         var icon = $(this).children('i:first');
                         icon.toggleClass(openedClass + " " + closedClass);
@@ -48,28 +48,42 @@
                 branch.children().children().toggle();
             });
             tree.find('.branch .indicator').each(function () {
-                $(this).on('click', function () {
+                $(this).off("click").on('click', function (e) {
                     $(this).closest('li').click();
                 });
             });
             tree.find('.branch>a').each(function () {
-                $(this).on('click', function (e) {
+                $(this).off("click").on('click', function (e) {
                     $(this).closest('li').click();
                     e.preventDefault();
                 });
             });
             tree.find('.branch>button').each(function () {
-                $(this).on('click', function (e) {
+                $(this).off("off").on('click', function (e) {
                     $(this).closest('li').click();
                     e.preventDefault();
                 });
             });
         }
     });
+    $.fn.extend({
+        killTree: function (o) {
+            var tree = $(this);
+            tree.removeClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this);
+                branch.children().children().show();
+                branch.children("i").remove();
+                branch.removeClass('branch');
+                branch.off("click");
+            });
+        }
+    });
+
 
 </script>
 <div class="container-fluid">
-    <div class="max-pg" id="max-pg"><i class="fa fa-wrench" aria-hidden="true"></i></div>
+    <div class="max-pg" id="max-pg"><i class="fa fa-wrench" aria-hidden="true"></i> Properties</div>
     <div class="row pgB eb-rpt-container" id="eb-rpt-container">
         <div class="side-toolbar" id="side-toolbar">
             <div class="toolbox eb-toolBoxReport">
@@ -98,10 +112,10 @@
                             <li>
                                 <a>Special Fields</a>
                                 <ul>
-                                    <li class="styl"><div eb-type='DateTime' class='draggable textval'>CurrentDateTime</div></li>
-                                    <li class="styl"><div eb-type='PageNo' class='draggable textval'>Page No</div></li>
-                                    <li class="styl"><div eb-type='PageXY' class='draggable textval'>Page X/Y</div></li>
-                                    <li class="styl"><div eb-type='UserName' class='draggable textval'>Username</div></li>
+                                    <li class="styl"><span eb-type='DateTime' class='draggable textval'><i class="fa fa-calendar icon_draggable"></i> CurrentDateTime</span></li>
+                                    <li class="styl"><span eb-type='PageNo' class='draggable textval'><i class="fa fa-sort-numeric-asc"></i> Page No</span></li>
+                                    <li class="styl"><span eb-type='PageXY' class='draggable textval'><i class="fa fa-sort-numeric-asc"></i> Page X/Y</span></li>
+                                    <li class="styl"><span eb-type='UserName' class='draggable textval'><i class="fa fa-user-o"></i> Username</span></li>
                                 </ul>
                             </li>
                         </ul>
@@ -112,7 +126,7 @@
                                     <ul id="running-summary-childul"></ul>
                                 </li>
                             </ul>
-                            <a class="btn_calcfield_new add_summarry"><i class="fa fa-plus"></i></a>
+                            <a class="btn_calcfield_new add_summarry"><i class="fa fa-plus-circle"></i></a>
                         </div>
                         <div style="position:relative;">
                             <ul id="calcFields" class="tool-box-items">
@@ -121,7 +135,7 @@
                                     <ul id="calcfields-childul"></ul>
                                 </li>
                             </ul>
-                            <a class="btn_calcfield_new add_calcfield"><i class="fa fa-plus"></i></a>
+                            <a class="btn_calcfield_new add_calcfield"><i class="fa fa-plus-circle"></i></a>
                         </div>
                     </div>
                 </div>
@@ -156,6 +170,7 @@
                         <div eb-type="Vl" class="tool-box-div draggable"><i> | </i> Vert line</div>
                     </div>
                 </div>
+                <div class="toolbox_footer"></div>
             </div>
         </div>
         <div class="page-outer-cont" id="page-outer-cont">
@@ -186,13 +201,13 @@
         <div id="propGrid"></div>
     </div>
     <div class="layers-container">
-        <div class="layer-head">Layers</div>
+        <div class="layer-head"><i class="fa fa-caret-down"></i> Layers</div>
         <div class="layer-body">
-            <div class="section-layer layer-focus form-control" tabindex="1" id="reportLayer">
-                <i class="fa fa-file-o" aria-hidden="true"></i>Report Layer
+            <div class="report-layer Rb_layer" Layer="Page" id="reportLayer">
+                Page
             </div>
-            <div class="report-layer layeractive form-control" tabindex="1" id="sectionLayer">
-                <i class="fa fa-puzzle-piece" aria-hidden="true"></i>Sections Layer
+            <div class="section-layer layeractive Rb_layer" Layer="Section" id="sectionLayer">
+                Sections
             </div>
         </div>
     </div>

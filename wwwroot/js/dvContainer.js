@@ -33,6 +33,8 @@ var DvContainerObj = function (settings) {
     this.clickDot = false;
     this.cellData = null;
     this.isExistReport = false;
+    this.curTVobj = settings.dsobj;
+    this.PGobj = new Eb_PropertyGrid("pp_inner");
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -70,7 +72,7 @@ var DvContainerObj = function (settings) {
                 refid = this.dvRefid,
                 ver_num = this.ver_num,
                 type = this.type,
-                dsobj = this.currentObj,
+                dsobj = this.curTVobj,
                 cur_status = this.cur_status,
                 tabNum = this.tabnum,
                 ss_url = this.ssurl,
@@ -81,6 +83,7 @@ var DvContainerObj = function (settings) {
                 filterValues = this.filterValues,
                 url = this.url,
                 cellData = this.cellData,
+                PGobj = this.PGobj
             );
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
@@ -248,6 +251,7 @@ var DvContainerObj = function (settings) {
                         counter++;
                         dvObj = JSON.parse(dvObj);
                         dvcontainerObj.currentObj = dvObj.DsObj;
+                        this.curTVobj = dvObj.DsObj;
                         this.TaggedDvlist = dvObj.DvTaggedList.$values;
                         if (dvObj.DvList.$values.length > 0) {
                             this.RelatedDvlist = dvObj.DvList.$values;
@@ -469,9 +473,9 @@ var DvContainerObj = function (settings) {
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
         $("#Relateddiv").hide();
-        $("#ppgrid_" + this.tableId).hide();
-        $("#sub_windows_sidediv_" + this.tableId).hide();
-        $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
+        //$("#ppgrid_" + this.tableId).hide();
+        //$("#sub_windows_sidediv_" + this.tableId).hide();
+        //$("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
         //prevfocusedId = focusedId;
         //this.nextSlide = nextSlide;
         //focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
@@ -483,14 +487,15 @@ var DvContainerObj = function (settings) {
             this.dvRefid = this.dvcol[focusedId].Refid;
             dvcontainerObj.previousObj = dvcontainerObj.currentObj;
             dvcontainerObj.currentObj = dvobj;
+            this.curTVobj = dvobj;
             if (dvcontainerObj.currentObj.Pippedfrom !== "")
                 $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
             else
                 $("#Pipped").text("");
             if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
                 if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                    this.PGobj.setObject(this.curTVobj, AllMetas["EbTableVisualization"]);
                     this.dvcol[focusedId].GenerateButtons();
-                    $("[toggle=TooglePPGrid]").hide();
                     $("#Common_obj_icons").hide();
                     $("#obj_icons").show();
                     if (__count !== "0") {
@@ -515,17 +520,24 @@ var DvContainerObj = function (settings) {
         }
         else {
             var dvobj = this.dvcol[focusedId].EbObject;
+
+            this.dvRefid = this.dvcol[focusedId].Refid;
+            dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+            dvcontainerObj.currentObj = dvobj;
+            this.curTVobj = dvobj;
+
             var __count = focusedId.split("_")[5];
             if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
                 if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                    this.PGobj.setObject(this.curTVobj, AllMetas["EbTableVisualization"]);
                     this.dvcol[focusedId].GenerateButtons();
-                    $("[toggle=TooglePPGrid]").hide();
                     $("#Common_obj_icons").hide();
                     $("#obj_icons").show();
                     if (__count !== "0") {
                         $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                         this.eventBind();
                     }
+                    
                 }
             }
             else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
@@ -548,6 +560,33 @@ var DvContainerObj = function (settings) {
             $("#objname").text(this.dvcol[focusedId].EbObject.Name);
         this.focusDot();
     };
+    this.pgChanged = function (obj, Pname, CurDTobj) {
+        CurDTobj.isSecondTime = true;
+        //CurDTobj.EbObject = obj;
+        if (CurDTobj.login == "dc")
+            commonO.Current_obj = obj;
+        else
+            dvcontainerObj.currentObj = obj;
+        if (Pname == "DataSourceRefId") {
+            if (obj[Pname] !== null) {
+                CurDTobj.PcFlag = "True";
+                CurDTobj.EbObject.Columns.$values = [];
+                CurDTobj.EbObject.DSColumns.$values = [];
+                CurDTobj.call2FD();
+            }
+        }
+        else if (Pname == "Name") {
+            $("#objname").text(obj.Name);
+            console.log(obj);
+        }
+        else if (Pname == "Columns") {
+            console.log(obj);
+        }
+    };
+
+    this.PGobj.PropertyChanged = function (obj, Pname) {
+        this.pgChanged(obj, Pname, this.dvcol[focusedId]);
+    }.bind(this);
 
     this.modifydivDots = function () {
         $(".dotstable").empty();
@@ -621,10 +660,10 @@ var DvContainerObj = function (settings) {
     this.focusDot = function () {
         $(".dot").each(function (i, obj) {
             if ($(obj).attr("data-mapid") === focusedId) {
-                $(this).css("box-shadow", "rgb(19, 118, 218) 0px 0px 6px 1px");
+                $(this).find("i").css("color", "#1a00f3").css("text-decoration", "underline");
             }
             else {
-                $(this).css("box-shadow", "0px 0px 4px 1px #00000024, 0 0 1px 1px #00000003"); 
+                $(this).find("i").css("color", "#333").css("text-decoration", "inherit");
             }
         });
 

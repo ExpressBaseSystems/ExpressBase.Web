@@ -22,7 +22,6 @@
 .prof_dp {
     width: 40px;
 }
-
 .dashbord .box2, .box4 {
     height: auto;
     padding: 0;
@@ -140,7 +139,6 @@
     margin-top: 5px;
 }
 
-
 .obj_list_shortCut {
     float: left;
     background-color: transparent;
@@ -157,7 +155,6 @@
     font-size: 18px;
     margin-right: 5px;
 }
-
     .toolicons .btn:hover {
         background-color: #e4e4e4;
         border-radius: 0;
@@ -176,9 +173,10 @@
     float: right;
 }
     .obj_dash_proimage_drp .dropdown-menu {
-        right: 5px;
+        right: 4px;
         left: unset;
         padding: 0;
+        top: -5px;
     }
 .drp_ul {
     list-style: none;
@@ -331,15 +329,27 @@ li:hover {
 }
 
 .codedit .tab-section-common .nav > li > a {
-    background: #bf2c2c;
+    background-color: transparent;
     width: 150px;
-    padding: 6px 15px;
+    padding: 4px 15px;
     text-align: center;
-    border: 1px solid #ccc;
+    border: none;
     border-bottom: none;
+    border-radius: 0;
 }
+    .codedit .tab-section-common .nav > li > a::after {
+        content: "";
+        width: 0;
+        height: 0;
+        border-top: 27px solid white;
+        border-left: 19px solid transparent;
+        position: absolute;
+        top: 0;
+        right: 0px;
+    }
 .codedit .tab-section-common .nav > .active a {
-    background: white;
+    background: #316396;
+    color: white;
 }
 /*changelog*/
 .changLog-container {
@@ -383,7 +393,6 @@ li:hover {
 .chlog-top {
     width: 100%;
     background: black;
-    /* height: 30px; */
     padding: 5px;
 }
 

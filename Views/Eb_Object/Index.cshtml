@@ -7,74 +7,18 @@
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
 <style>
-    /*.codedit .tab-section-common {
-        position: fixed;
-        width: 100%;
-        z-index: 3;
-        padding-top: 10px;
-        background: white;
-        border-bottom: 13px solid #f2f2f2;
-    }
-
-        .codedit .tab-section-common .nav > li > a {
-            background: white;
-            width: 150px;
-            padding: 2px 15px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-bottom: none;
-        }
-
-        .codedit .tab-section-common .nav > .active a {
-            background: #f2f2f2;
-        }
-
-    .codedit .tab-cont-common {
-        margin-top: 48px;
-    }*/
-
     .tab-section-common .nav-tabs {
-        border-bottom: 2px solid #DDD;
-    }
-
-        .tab-section-common .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
-            border-width: 0;
-        }
-
-    .tab-section-common .nav-tabs > li > a {
-        border: none;
-        color: #666;
-    }
-
-            .tab-section-common .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
-                border: none;
-                color: #4285F4 !important;
-                background: transparent;
-            }
-
-    .tab-section-common .nav-tabs > li > a::after {
-        content: "";
-        background: #4285F4;
-        height: 4px;
-        position: absolute;
-        width: 100%;
-        left: 0px;
-        bottom: -1px;
-        transition: all 250ms ease 0s;
-        transform: scale(0);
-    }
-
-        .tab-section-common .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
-            transform: scale(1);
-        }
-
-    .tab-section-common .tab-nav > li > a::after {
-        background: #21527d none repeat scroll 0% 0%;
-        color: #fff;
+        border-bottom: 2px solid #316396;
     }
     .tab-section-common {
         background: white;
-        margin-bottom: 5px;
+        position: fixed;
+        width: 100%;
+        z-index: 1;
+        border-bottom: 5px solid #f2f2f2;
+    }
+    .tab-cont-common {
+        margin-top: 34px;
     }
 </style>
 <script>

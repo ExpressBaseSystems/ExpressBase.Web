@@ -35,7 +35,7 @@ var EbBasicDataTable = function (Option) {
     this.isRun = false;
 
     this.init = function () {
-        this.EbObject = new EbTableVisualization("Container_" + Date.now());
+        this.EbObject = new EbTableVisualization(this.tableId);
         this.call2FD();
     }
 
@@ -479,7 +479,8 @@ var EbBasicDataTable = function (Option) {
                 this.createFilterRowHeader();
             this.addFilterEventListeners();
             this.Api.columns.adjust();
-            Option.fninitComplete();
+            if (Option.fninitComplete)
+                Option.fninitComplete();
         }.bind(this), 10);
     }
 

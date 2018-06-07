@@ -74,7 +74,6 @@
 
     this.getDataSourceColoums = function (refid) {
         if (refid !== "") {
-            $('#data-table-list').empty();
             $("#get-col-loader").show();
             $.ajax({
                 url: "../RB/GetColumns",
@@ -83,10 +82,14 @@
                 data: { refID: refid },
                 success: function (result) {
                     $("#get-col-loader").hide();
-                    if (result.columns)
+                    if (result.columns) {
+                        $("#data-table-list ul[id='dataSource']").empty();
                         this.RbCommon.drawDsColTree(result.columns);
-                    if (result.paramsList)
+                    }
+                    if (result.paramsList) {
+                        $("#ds_parameter_list ul[id='ds_parameters']").empty();
                         this.RbCommon.drawDsParmsTree(result.paramsList);
+                    }
                 }.bind(this)
             });
         }
@@ -249,8 +252,8 @@
 
     this.headerBox1_Split = function () {
         for (i = 0; i < 5; i++) {
-            $(".headersections").append("<div class='head_Box1' id='" + this.sectionArray[i].slice(1) + "Hbox' data-index='" + i + "' style='width :100%'>"
-                + "<p>" + this.msBoxSubNotation[this.sectionArray[i].slice(1)] + "</p></div>");
+            $(".headersections").append(`<div class='head_Box1' id='${this.sectionArray[i].slice(1)}Hbox' data-index='${i}' style='width:100%'>
+        <div class='hbox_notation_div'>${this.msBoxSubNotation[this.sectionArray[i].slice(1)]}</div><div class='new_sec_btn'></div></div>`);
         }
         this.headerScaling();
         this.splitButton();
@@ -288,13 +291,13 @@
     };
 
     this.addButton = function (i, obj) {
-        $(obj).append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
+        $(obj).children(".new_sec_btn").append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
         $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
     };//split button
 
     this.splitDiv = function (e) {
         this.splitarray = [];
-        this.btn_indx = $(e.target).parent().parent().attr("data-index");
+        this.btn_indx = $(e.target).closest(".head_Box1").attr("data-index");
         $.each($('.page').children().not(".gutter"), this.splitDiv_inner.bind(this));
     };
 
@@ -424,8 +427,13 @@
     };
 
     this.DropFurther = function () {
-        var l1 = this.leftwithMargin();
-        this.dropLoc.append(this.col.css({ left: l1, top: (this.posTop - this.dropLoc.offset().top) - this.reDragTop }));
+		var l1 = this.leftwithMargin();
+		var top = (this.posTop - this.dropLoc.offset().top) - this.reDragTop;
+		if (this.dropLoc.hasClass('T_layout')) {
+			top = 0;
+			this.col.css({ width: this.dropLoc.innerWidth(), height: this.dropLoc.innerHeight() });
+		}
+		this.dropLoc.append(this.col.css({ left: l1, top: top  }));
         var obj1 = this.objCollection[this.col.attr('id')];
         obj1.Top = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().top;
         obj1.Left = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().left;
@@ -812,10 +820,10 @@
             obj.Source = "";
             this.RefreshControl(obj);
         }
-        else if (pname === "TextAlign") {
-            obj.TextAlign = this.TextAlign[obj.TextAlign];
-            this.RefreshControl(obj);
-        }
+        //else if (pname === "TextAlign") {
+        //    obj.TextAlign = this.TextAlign[obj.TextAlign];
+        //    this.RefreshControl(obj);
+        //}
         else if (pname === "ColoumCount" || pname === "RowCount")
             this.RbCommon.modifyTable(obj, pname);
         else if (pname === "Function") {
@@ -870,8 +878,8 @@
         else
             this.editReport();
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
-        this.margin.Left = this.EbObject.Margin.Left || $(".track_line_vert1").position().left;
-        this.margin.Right = this.EbObject.Margin.Right || $(".track_line_vert2").position().left;
+        this.margin.Left = $(".track_line_vert1").position().left;
+        this.margin.Right = $(".track_line_vert2").position().left;
     };//report execution start func
     this.init();
 };

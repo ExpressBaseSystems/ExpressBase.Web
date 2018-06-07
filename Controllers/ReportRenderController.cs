@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("--------------REPORT exception TS ---  " + DateTime.Now + "\n " + e.Message + "\n" + e.StackTrace);
+                Console.WriteLine("--------------REPORT exception TS ---  " + e.Message + "\n" + e.StackTrace);
 
             }
 

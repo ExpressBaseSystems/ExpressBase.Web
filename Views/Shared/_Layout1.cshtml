@@ -1,4 +1,10 @@
-﻿
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
 <!DOCTYPE html>
 
 <html>
@@ -14,15 +20,15 @@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     @*<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">*@
     <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
-    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-checkbox.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version="true"/>@*amal*@
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-checkbox.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />@*amal*@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />@*amal*@
     @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" />*@
     <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
     <link rel="icon" href="~/images/favicon.ico">
     @* JQUERY CSS *@
     <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">@*jith*@
-    <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version="true"/>
+    <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.22.5/skin-awesome/ui.fancytree.min.css" />@*Dona*@
     @* OTHER CSS *@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -30,9 +36,9 @@
     @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.css">*@@*jith*@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />@*jith*@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.css" />@*amal*@
-    <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css" asp-append-version="true"/>@*amal*@
-    <link rel="stylesheet" type="text/css" href="~/css/imagehover.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css" asp-append-version=@bApnd />@*amal*@
+    <link rel="stylesheet" type="text/css" href="~/css/imagehover.min.css" asp-append-version=@bApnd />
     @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/cr-1.3.3/fc-3.2.2/fh-3.1.2/kt-2.2.1/r-2.1.1/rg-1.0.0/rr-1.2.0/sc-1.4.2/se-1.2.2/datatables.min.css" />*@
     @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-colvis-1.3.1/b-flash-1.3.1/b-html5-1.3.1/b-print-1.3.1/cr-1.3.3/fc-3.2.2/fh-3.1.2/kt-2.2.1/r-2.1.1/rg-1.0.0/rr-1.2.0/sc-1.4.2/se-1.2.2/datatables.min.css" />*@
     @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/af-2.1.3/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/cr-1.3.2/fc-3.2.2/fh-3.1.2/kt-2.2.0/r-2.1.1/rr-1.2.0/sc-1.4.2/se-1.2.0/datatables.min.css"/>*@
@@ -40,36 +46,36 @@
     @*<link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css" />*@
 
     @* EB CSS *@
-    <link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/EbWizard.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/eb_objlist.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/GridStackStyle.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/ChartStyle.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true"/>@*amal*@
-    <link rel="stylesheet" type="text/css" href="~/css/EbChatBot.css" asp-append-version="true"/>@*jith*@
-    <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version="true"/>
-    <link rel="stylesheet" type="text/css" href="~/css/Survey/EbSurvey.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version="true"/>
+    <link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/EbWizard.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/eb_objlist.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/GridStackStyle.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/ChartStyle.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version=@bApnd />@*amal*@
+    <link rel="stylesheet" type="text/css" href="~/css/EbChatBot.css" asp-append-version=@bApnd />@*jith*@
+    <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/Survey/EbSurvey.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version=@bApnd />
 
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>@*jith*@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.fancytree/2.22.4/jquery.fancytree-all.min.js"></script>@*Dona*@
-    <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/jquery.fontselect.min.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/jquery.cookie.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/jquery.fontselect.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/jquery.cookie.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 
 
     @* BOOTSTRAP JS *@
-    <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/Eb_FontEditor.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Eb_FontEditor.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>@*Dona*@
     <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
@@ -77,7 +83,7 @@
     @* OTHER JS *@
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
-    <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>@*amal*@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>@*amal*@
 
@@ -86,21 +92,21 @@
     @*<script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/af-2.1.3/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/cr-1.3.2/fc-3.2.2/fh-3.1.2/kt-2.2.0/r-2.1.1/rr-1.2.0/sc-1.4.2/se-1.2.0/datatables.min.js"></script>*@
     @*<script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/b-1.2.4/b-colvis-1.2.4/b-html5-1.2.4/b-print-1.2.4/se-1.2.0/datatables.min.js"></script>*@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.0.0/dygraph.min.js"></script>
-    <script type="text/javascript" src="~/js/vue-select.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.js"></script>@*jith*@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
-    <script type="text/javascript" src="~/js/jwt-decode.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/jwt-decode.min.js" asp-append-version=@bApnd></script>
 
-    <script type="text/javascript" src="~/js/ss-utils.js" asp-append-version="true"></script>
-    <script src="~/js/EbServerEvents/eventsource.min.js" type="text/javascript" asp-append-version="true"></script>
-    <script src="~/js/EbServerEvents/ServerEvents.js" type="text/javascript" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/ss-utils.js" asp-append-version=@bApnd></script>
+    <script src="~/js/EbServerEvents/eventsource.min.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/EbServerEvents/ServerEvents.js" type="text/javascript" asp-append-version=@bApnd></script>
 
-    <script type="text/javascript" src="~/js/ElementQueries.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version="true"></script>@*jith*@
-    <script type="text/javascript" src="~/js/ResizeSensor.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/ElementQueries.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/ResizeSensor.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
     @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>*@
     <script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
@@ -117,46 +123,47 @@
     @*<script src="https://unpkg.com/nprogress@0.2.0/nprogress.js" type="text/javascript"></script>*@
 
     @* EB JS *@
-    <script src="~/js/EbLoader.js" type="text/javascript" asp-append-version="true"></script>@*amal*@
-    <script src="~/js/EbMsgBox.js" type="text/javascript" asp-append-version="true"></script>@*amal*@
+    <script src="~/js/EbLoader.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
 
-    <script type="text/javascript" src="~/js/eb_common.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/EbDataTable.js" asp-append-version="true"></script>@*roby*@
-    <script type="text/javascript" src="~/js/Eb_jqPropertyGrid.js" asp-append-version="true"></script>@*jith*@
-    <script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version="true"></script>@*jith*@
-    <script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js" asp-append-version="true"></script>@*jith*@
-    <script type="text/javascript" src="~/js/eb_common.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/wizardFuns.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/eb_validations.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/thirdpartysignup.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/Infra.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/eb_objlist_tbl.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/DVSettings.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/DataSource.js" asp-append-version="true"></script>@*Dona*@
-    <script type="text/javascript" src="~/js/Eb_chart.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/dygraphPlotters.js" asp-append-version="true"></script>
-    <script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version="true"></script>
-    <script type="text/javascript" src='~/js/FormBuilder/Eb_formBuilder.js' asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/jqPropertyGrid.js" asp-append-version="true"></script>
-    <script src="~/js/FormBuilder/EbControlCollection.js" asp-append-version="true"></script>@*jith*@
-    <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version="true"></script>@*jith*@
-    <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version="true"></script>@*jith*@
-    <script type="text/javascript" src="~/js/dvContainer.js" asp-append-version="true"></script>@*roby*@
-    <script type="text/javascript" src="~/js/Eb_ObjectCommon.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version="true"></script>@*amal*@
-    <script type="text/javascript" src="~/js/EmailBuilder.js" asp-append-version="true"></script>@*bini*@
-    <script type="text/javascript" src="~/js/MultiLanguage.js" asp-append-version="true"></script>@*febin*@
-    <script type="text/javascript" src="~/js/Menu.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version="true"></script>@*febin*@
-    <script type="text/javascript" src="~/js/ManageRoles.js" asp-append-version="true"></script>@*febin*@
-    <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version="true"></script>@*febin*@
-    <script type="text/javascript" src="~/js/CommonList.js" asp-append-version="true"></script>@*febin*@
-    <script type="text/javascript" src="~/js/Survey/EbSurvey.js" asp-append-version="true"></script>@*febin*@
+    <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbDataTable.js" asp-append-version=@bApnd></script>@*roby*@
+    <script type="text/javascript" src="~/js/Eb_jqPropertyGrid.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/ChatBot/Eb_chatBot.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/wizardFuns.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/eb_validations.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/thirdpartysignup.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Infra.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/eb_objlist_tbl.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/DVSettings.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/DataSource.js" asp-append-version=@bApnd></script>@*Dona*@
+    <script type="text/javascript" src="~/js/Eb_chart.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/dygraphPlotters.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
+    <script type="text/javascript" src='~/js/FormBuilder/Eb_formBuilder.js' asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/jqPropertyGrid.js" asp-append-version=@bApnd></script>
+    <script src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/dvContainer.js" asp-append-version=@bApnd></script>@*roby*@
+    <script type="text/javascript" src="~/js/Eb_ObjectCommon.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version=@bApnd></script>@*amal*@
+    <script type="text/javascript" src="~/js/EmailBuilder.js" asp-append-version=@bApnd></script>@*bini*@
+    <script type="text/javascript" src="~/js/MultiLanguage.js" asp-append-version=@bApnd></script>@*febin*@
+    <script type="text/javascript" src="~/js/Menu.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>@*febin*@
+    <script type="text/javascript" src="~/js/ManageRoles.js" asp-append-version=@bApnd></script>@*febin*@
+    <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>@*febin*@
+    <script type="text/javascript" src="~/js/CommonList.js" asp-append-version=@bApnd></script>@*febin*@
+    <script type="text/javascript" src="~/js/Survey/EbSurvey.js" asp-append-version=@bApnd></script>@*febin*@
+    <script type="text/javascript" src="~/js/locationconfig.js" asp-append-version=@bApnd></script>@*dona*@
 
     @*code editor*@
-    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" asp-append-version=@bApnd>
     <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
     <script src="~/lib/codemirror/lib/codemirror.js"></script>
     <script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
@@ -173,12 +180,12 @@
     <script src="~/lib/codemirror/addon/hint/anyword-hint.js"></script>
     <script src="~/lib/codemirror/mode/clike/clike.js"></script>
     <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
-    <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version="true"></script>
+    <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
 </head>
-<body>   
+<body>
     <div id="tenatDtls" class="container-fluid">
         @{
-            string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";            
+            string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
 
             if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
             {
@@ -188,7 +195,7 @@
                             <div class="modal-header">
                                 <div class="row mr-0">
                                     <div class="col-md-3 col-lg-3 col-sm-3 pd-5 q_men_IMGsection text-center">
-                                        <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image"/>
+                                        <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
                                     </div>
                                     <div class="col-md-9 col-lg-9 col-sm-9 header_topmenu" id="topmenu">
                                         <div class="breadcrumb_wrapper"></div>

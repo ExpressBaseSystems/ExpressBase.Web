@@ -41,7 +41,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("MySolutions")]
         public IActionResult TenantDashboard()
         {
             ViewBag.AppType = TempData["apptype"];
@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("MySolutions/{Sid}")]
         public IActionResult SolutionDashBoard(string Sid)
         {
             GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });       

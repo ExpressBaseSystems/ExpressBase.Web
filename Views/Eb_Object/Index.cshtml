@@ -7,30 +7,18 @@
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
 <style>
-    .codedit .tab-section-common {
+    .tab-section-common .nav-tabs {
+        border-bottom: 2px solid #316396;
+    }
+    .tab-section-common {
+        background: white;
         position: fixed;
         width: 100%;
-        z-index: 3;
-        padding-top: 10px;
-        background: white;
-        border-bottom: 13px solid #f2f2f2;
+        z-index: 1;
+        border-bottom: 5px solid #f2f2f2;
     }
-
-        .codedit .tab-section-common .nav > li > a {
-            background: white;
-            width: 150px;
-            padding: 2px 15px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-bottom: none;
-        }
-
-        .codedit .tab-section-common .nav > .active a {
-            background: #f2f2f2;
-        }
-
-    .codedit .tab-cont-common {
-        margin-top: 48px;
+    .tab-cont-common {
+        margin-top: 34px;
     }
 </style>
 <script>
@@ -51,7 +39,7 @@
     @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _apps = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles })
 </div>
 
-<div class="row codedit" id="codedit" style="margin-top:40px;">
+<div class="row codedit" id="codedit" style="margin-top:38px;">
     <div class="tab-section-common" id="tab-section-common">
         <ul class="nav nav-tabs" id="versionNav">
             @{

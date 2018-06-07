@@ -4,24 +4,34 @@
     display:none;
 }
 /*side menuBar*/
+.side-toolbar {
+    position: fixed;
+    height: calc(100% - 70px);
+    width: 250px;
+}
+.eb-toolBoxReport{
+    height:100%;
+}
 .tool-box-items {
     margin-left: 0px !important;
-    margin-top: 2px !important;
+    margin-top: 4px !important;
 }
-.pd-left-60px{
-    padding-left:60px;
-}
+/*treee*/
 .tree, .tree ul {
+    margin: 0;
     padding: 0;
-    list-style: none;
+    list-style: none
 }
-.tree ul {
+
+    .tree ul {
         margin-left: 1em;
-        position: relative;
+        position: relative
     }
-      .tree ul ul {
-            margin-left: .5em;
+
+        .tree ul ul {
+            margin-left: .5em
         }
+
         .tree ul:before {
             content: "";
             display: block;
@@ -30,78 +40,71 @@
             top: 0;
             bottom: 0;
             left: 0;
-            border-left: 1px solid;
+            border-left: 1px solid #353644;
         }
+
     .tree li {
         margin: 0;
-        padding: 0 4%;
+        padding: 0 1em;
         line-height: 2em;
-        font-weight: 300;
+        color: #353638;
+        font-weight: 400;
         position: relative;
-        cursor: pointer;
     }
 
     .tree ul li:before {
         content: "";
         display: block;
-        width: 21px;
+        width: 10px;
         height: 0;
         border-top: 1px solid;
         margin-top: -1px;
         position: absolute;
         top: 1em;
-        left: 0;
+        left: 0
     }
+
     .tree ul li:last-child:before {
         background: #fff;
         height: auto;
         top: 1em;
-        bottom: 0;
+        bottom: 0
     }
+
+.indicator {
+    margin-right: 5px;
+}
 
 .tree li a {
     text-decoration: none;
+    color: #353644;
     font-size: 13px;
-    color: #444;
-    cursor: pointer;
 }
-    .tree li a:active {
-        background-color: #efefef;
-    }
 
-    .tree li a:focus {
-        background-color: #efefef;
-    }
 .tree li button, .tree li button:active, .tree li button:focus {
     text-decoration: none;
+    color: #369;
     border: none;
     background: transparent;
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
     outline: 0;
 }
-.toolbox .draggable {   
-    cursor: pointer;
-    font-size: 13px;
-}
-.toolbox .Eb-shaps {
-    font-size: 13px;
-    cursor: pointer;
+/*tree end*/
+.toolbox .draggable {
+    cursor: move;
 }
 .toolbox ul {
     margin: 0;  
 }
-.Eb-shaps-title {
-    padding: 4px 7px;
-}
 .toolbox .branch ul{
-    margin-left:7px;
+    margin-left:4px;
 }
-.toolbox i{
-    width:25px;
+.toolbox i {
+    margin-right: 5px;
 }
 .toolbox .textval {
-    margin-left: 15px;
+  font-size:13px; 
 }
 
 .draggable {
@@ -118,80 +121,49 @@
 }
     .dropped:hover {
         cursor: pointer;
-        border: 2px dashed darkblue !important;
+        border: 1px solid #2cb1ca !important;
     }
     .dropped:focus {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         outline: none;
-        border: 2px dashed darkblue !important;
+        border: 1px solid #2cb1ca !important;
     }
-
-.toolbox::-webkit-scrollbar-track {
-    background-color: #F5F5F5;
-}
-
-.toolbox::-webkit-scrollbar {
-    width: 10px;
-    background-color: #605b5b;
-}
-
-.toolbox::-webkit-scrollbar-thumb {
-    background-color: #6f6f6f;
-    border-radius: 6px;
-}
-.eb-toolBoxReport-toggle-sec {
-    height: 30px;
-    padding: 5px;
-    background: #336699;
-    color: white;
-    font-size: 15px;
-    border-top-right-radius: 4px;
-}
-    .eb-toolBoxReport-toggle-sec i {
-        width: auto !important;
-    }
-.max-sidebar {
-    position: fixed;
-    background: #336699;
-    color: white;
-    padding: 7px;
-    font-size: 15px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    display:none;
-    z-index:100;
-}
 .max-pg {
     position: fixed;
-    background: #336699;
-    color: white;
+    background: #316396;
+    color: #ffffff;
     padding: 7px;
-    font-size: 15px;
+    font-size: 13px;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
     display: none;
     z-index: 100;
-    right:0;
+    right: 12px;
+    writing-mode: vertical-rl;
+    text-orientation: sideways-right;
+    top: 37px;
+    cursor:pointer;
 }
-/*.draggable:hover {
-    background-color: #a2dce4;
-    border-radius: 4px;
-}*/
-/*end side menuBar*/
-.tab-section {
+/*prop grid*/
+.PGgrid {
     position: fixed;
-    z-index: 5;
-    background-color: #f2f2f2;
-    width: 100%;
-    padding-top: 10px;
+    top: 0;
+    right: 0;
+    z-index: 4;
+    padding-top: 37px;
+    border: 1px solid #ccc;
+    box-shadow: var(--eb-shadow);
+    height: 100%;
+    background-color: white;
+    width:300px;
 }
-    .tab-section .nav-tabs {
-    border:none;
+    .PGgrid .pgHead {
+        border-radius:0;
     }
     .headersections {
-        width: 50px;
+        width: 35px;
         float: left;
         border: 1px solid #cccccc;
         background-color: #fafafa;
@@ -199,39 +171,15 @@
         border-right: 0;
     }
 .headersections-report-layer{
-    width: 80px;
+    width: 60px;
     float: left;
     border: 1px solid #cccccc;
     background-color: #fafafa;
     color: #000000;
     border-right: 0;
 }
-.reportmenu {   
-    position: fixed;
-    z-index: 5;      
-}
-.Eb-shaps-title {
-    font-size: 13px;
-}
-.Eb-shaps li{
-    border-radius:0;
-}
-.shapes-tank .btn {
-    background-color: transparent;
-    border: none !important;
-    width: 40px;
-}
-.shapes-tank .btn:hover {
-    background-color: #f5f5f5;
-}
-.shapes-tank{
-  border:1px solid #ccc; 
-}
-.shapes-tank li:hover {
-    background-color: #f5f5f5;
-}
 .multiSplit {
-    width: 30px;
+    width: 25px;
     float: left;
     border: 1px solid #cccccc;
     background-color: #fafafa;
@@ -427,7 +375,7 @@
     }
 .page {
     display: block;
-    margin-left: 79px;
+    margin-left: 59px;
     border: 1px solid #d8d8d8;
     background-color: white;
 }
@@ -444,6 +392,8 @@
     padding-bottom: 50px;
     position: relative;
     z-index: 0;
+    float: left;
+    margin-left: 280px;
 }
 .pageCanvas {
     position: relative;   
@@ -451,17 +401,30 @@
     overflow-x: auto;
 }
 .pGreportBuilder {
-    height: 68vh;
+    height: calc(100% - 114px);
+}
+#propGrid {
+    height:100%;
 }
 
 .head_Box1 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position:relative;
+}
+    .head_Box1 .hbox_notation_div {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+.head_Box1 .new_sec_btn {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
 }
 
 .eb-rpt-container .toolbox {
-    height: inherit;
+    height: 100%;
     padding: 0 !important;
     width: 100%;
     background-color: white;
@@ -469,7 +432,7 @@
     overflow-y: auto;
     border-top-right-radius: 4px;
 }
-.eb-rpt-container {   
+.eb-rpt-container {
     background-color: #f2f2f2;
 }
 
@@ -491,31 +454,14 @@
     width: 100%;
 }
 
-.reportmenu .btn-group > .btn:first-child {
-    margin-left: 5px !important;
-}
-
-.eb-rpt-container .side-toolbar {
-    height: calc(100vh - 88px);
-    padding-left: 0;
-    position: fixed;
-}
 .PageContainer {
     padding-top: 20px;
     overflow-x: auto;
     overflow-y: hidden;
 }
 
-.eb-rpt-container .PGgrid {
-    height: 100%;
-    padding: 0;
-    z-index: 4;
-    background-color: #f2f2f2;
-    position: fixed;
-}
-
 .eb-rpt-container .title {
-    width: 98px;
+    width: 78px;
     height: 20px;    
     z-index: 4;
     display: inline-block;
@@ -523,21 +469,51 @@
 }
 
 .layers-container {
-    background: white;
-    margin: 10px 10px 10px 0px;
+    float: left;
+    width: 100%;
 }
 .layer-head {
-    width:100%;
-    background:#cccccc;
+    width: 100%;
+    background: #cccccc;
+    padding: 2px 5px;
+    border-bottom: 1px solid #ddd;
+    background: #eee;
+    font-size: 13px;
 }
 .layer-body {
-    padding: 10px;
+    float: left;
+    width: 100%;
+    position: relative;
+}
+.layeractive {
+    background: #336699 !important;
+    color: white;
+    outline: none;
+    z-index: 2 !important;
+
 }
 .section-layer, .report-layer {
     cursor: pointer;
-    padding: 5px;
-    margin-bottom: 5px;
-} 
+    width: 54px;
+    float: left;
+    font-size: 1.1rem;
+    font-weight: 400;
+    height: 54px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 1;
+    margin-left: calc(50% - 54px);
+    margin-top: 5px;
+}
+.report-layer {
+    left: 27px;
+    top: 27px;
+    z-index: 1;
+    background: white;
+}
 .measurement {
     height: 28px;
     border-left: 0;
@@ -599,8 +575,9 @@
 .multiSplitHboxSub {
     display: flex;
     position:relative;
+    justify-content:center;
     align-items: center;
-    font-size: 11px;
+    font-size: 10px;
 }
     .multiSplitHboxSub .lock-icon {
         align-self: flex-end;
@@ -613,7 +590,15 @@
     pointer-events: none;
 }
 .tool-box-div {
-    padding: 5px 4%;
+    padding: 10px 10px;
+    width: calc(50% - 6px);
+    float: left;
+    display: flex;
+    margin: 2px;
+    box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
+    background-color: WHITE;
+    align-items: center;
+    font-size: 0.8em;
 }
 .dropped .ui-resizable-handle {
     background: #89c5dc;
@@ -659,10 +644,7 @@
     transition: all 200ms ease-in;
     transform: scale(1.3);
 }
-.page .shape-horrizontal:hover {
-    transition: all 200ms ease-in;
-    transform: scale(1.3);
-}
+
 .page .pageReSizeHandle {
     width: 100%;
     z-index: 90;
@@ -671,7 +653,7 @@
     margin-right: auto;
     margin-left: auto;
     height: 10px;
-    background: #6e6e98;
+    background: #316396;
 }
 
 .page .guid-v {
@@ -712,55 +694,6 @@
     box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);*/
     border: 1px solid black;
 }
-/*report toolbox tab*/
-.eb-toolBoxReport .nav-tabs {
-    border-bottom: 2px solid #DDD;
-}
-
-    .eb-toolBoxReport .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
-        border-width: 0;
-    }
-
-    .eb-toolBoxReport .nav-tabs > li > a {
-        border: none;
-        color: #666;
-    }
-
-    .eb-toolBoxReport .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
-        border: none;
-        color: #4285F4 !important;
-        background: transparent;
-    }
-
-    .eb-toolBoxReport .nav-tabs > li > a::after {
-        content: "";
-        background: #4285F4;
-        height: 2px;
-        position: absolute;
-        width: 100%;
-        left: 0px;
-        bottom: -1px;
-        transition: all 250ms ease 0s;
-        transform: scale(0);
-    }
-
-    .eb-toolBoxReport .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
-        transform: scale(1);
-    }
-
-.eb-toolBoxReport .tab-nav > li > a::after {
-    background: #21527d none repeat scroll 0% 0%;
-    color: #fff;
-}
-
-.eb-toolBoxReport .tab-pane {
-    padding: 15px 0;
-}
-.eb-toolBoxReport .nav > li > a {
-    padding: 3px 15px;
-    font-size: 12px;
-}
-/*report toolbox tab*/
 .page .wm-container .ui-resizable-handle {   
     opacity: 1;
 }
@@ -799,14 +732,9 @@
     color: white !important;
 }
 .page-reportLayer {    
-    margin-left: 79px;
+    margin-left: 60px;
     border: 1px solid #d8d8d8;
     background-color: white;
-}
-.layeractive {
-    background: #336699;
-    color: white;
-    outline: none;
 }
 .track_line_vert1 {
     position: absolute;
@@ -814,7 +742,7 @@
     width: 1px;
     border-left: 2px dotted #55f;
     z-index: 10;
-    margin-left: 78px;
+    margin-left: 59px;
 }
 .track_line_vert2 {
     position: absolute;
@@ -883,4 +811,24 @@
     background: none; 
     height: 100%;
     width: 2px;
+}
+
+/*toolbox new*/
+.tool_items {
+    width: 100%;
+    float: left;
+    padding-bottom: 5px;
+}
+.tool_item_head {
+    padding: 2px 5px;
+    border-bottom: 1px solid #ddd;
+    background: #eee;
+    font-size: 13px;
+    cursor: pointer;
+}
+.tool_item_body{
+    float:left;
+    width:100%;
+}
+.drop_items {
 }

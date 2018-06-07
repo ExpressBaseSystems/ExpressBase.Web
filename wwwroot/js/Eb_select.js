@@ -37,16 +37,12 @@ var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
     }
 };
 
-var selectedEntity = function (vmValue, dmValues) {
-    this.vmValue = vmValue;
-    this.dmValues = dmValues;
-};
-
 var z = 100;
 
 //var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
 var EbSelect = function (ctrl) {
     //parameters   
+    this.ComboObj = ctrl;
     this.name = ctrl.name;
     this.dsid = ctrl.dataSourceId;
     this.idField = "name";
@@ -138,10 +134,11 @@ var EbSelect = function (ctrl) {
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
         var o = new Object();
+        o.containerId = this.name + "Container";
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
         o.showSerialColumn = true;
-        o.showCheckboxColumn = true;
+        o.showCheckboxColumn = this.ComboObj.multiSelect;
         o.showFilterRow = false;
         o.scrollHeight = this.scrollHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
@@ -149,8 +146,9 @@ var EbSelect = function (ctrl) {
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
-        o.hiddenFieldName = this.vmName;
-        o.showFilterRow = true;
+        //o.hiddenFieldName = this.vmName;
+        o.keyPressCallbackFn = this.DDKeyPress.bind(this);
+        o.columns = this.ComboObj.columns//////////////////////////////////////////////////////
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
@@ -203,6 +201,32 @@ var EbSelect = function (ctrl) {
         console.log("keysssss");
     }
 
+    this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
+        console.log(5);
+        if (key === 13)
+            this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
+        else if (key === 32) {
+            //if (originalEvent.target.type !== "checkbox")
+                $(originalEvent).on('keydown', function (e) {
+                    e.preventDefault()
+                });
+                this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
+        }
+    }
+
+    this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
+        var row = datatable.row(cell.index().row);
+        var $tr = $(row.nodes());
+        $tr.dblclick();
+    }
+
+    this.DDEnterKeyPress = function (e, datatable, key, cell, originalEvent) {
+        var row = datatable.row(cell.index().row);
+        var $tr = $(row.nodes());
+        $tr.dblclick();
+        this.Vobj.hideDD();
+    }
+
     this.initDTpost = function (data) {
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
         $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
@@ -224,7 +248,7 @@ var EbSelect = function (ctrl) {
     this.dblClickOnOptDDEventHand = function (e) {
         this.currentEvent = e;
         var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
-        var vmValue = this.datatable.Api.row($(e.target).parent()).data()[idx];
+        var vmValue = this.datatable.Api.row($(e.target).closest("tr")).data()[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             if (this.maxLimit === 1) {
                 this.Vobj.valueMembers = [vmValue];
@@ -234,8 +258,12 @@ var EbSelect = function (ctrl) {
             else if (this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(vmValue);
                 $.each(this.dmNames, this.setDmValues.bind(this));
-                $($(e.target).parent()).find('[type=checkbox]').prop('checked', true);
+                $($(e.target).closest("tr")).find('[type=checkbox]').prop('checked', true);
             }
+        }
+        else {
+            this.delDMs($(e.target));
+            $(e.target).closest("tr").find("." + this.name + "tbl_select").prop('checked', false);
         }
     };
 
@@ -243,7 +271,7 @@ var EbSelect = function (ctrl) {
         var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", name));
         if (this.maxLimit === 1)
             this.localDMS[name].shift();
-        this.localDMS[name].push(this.datatable.Api.row($(this.currentEvent.target).parent()).data()[idx]);
+        this.localDMS[name].push(this.datatable.Api.row($(this.currentEvent.target).closest("tr")).data()[idx]);
         console.log("DISPLAY MEMBER 0 a=" + this.Vobj.displayMembers[0]);
     };
 
@@ -262,6 +290,26 @@ var EbSelect = function (ctrl) {
     this.toggleIndicatorBtn = function (e) {
         this.Vobj.toggleDD();
     };
+
+    this.getSelectedRow = function () {
+        console.log(100);
+        var res = [];
+        $.each(this.valueMembers, function (idx, item) {
+            var obj = {};
+            var $tr = $("." + this.name + "tbl_select").filter("[value=" + item + "]").closest("tr");
+            var rowData = $(this.DTSelector).DataTable().row($tr).data();
+            var colNames = this.ComboObj.columns.map((obj, i) => { return obj.name; });
+            $.grep(this.ComboObj.columns, function (obj, i) {
+                return obj.name;
+            });
+            $.each(rowData, function (i, cellData) {
+                obj[colNames[i]] = cellData;
+            });
+            res.push(obj);
+        }.bind(this));
+        console.log(res);
+        return res;
+    }.bind(this);
 
     this.Renderselect = function () {
         this.Vobj = new Vue({
@@ -295,6 +343,7 @@ var EbSelect = function (ctrl) {
 
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
+        this.ComboObj.tempValue = [...this.Vobj.valueMembers]
         $("#" + this.name).val(this.Vobj.valueMembers);
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
@@ -329,6 +378,7 @@ var EbSelect = function (ctrl) {
     };
 
     this.V_showDD = function () {
+        alert("Roby focus on the first row");
         if (!this.IsDatatableInit)
             this.InitDT();
         this.Vobj.DDstate = true;
@@ -341,8 +391,8 @@ var EbSelect = function (ctrl) {
     this.V_updateCk = function () {// API..............
         console.log("colAdjust---------- ");
         $("#" + this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
-            var row = $(chkbx).closest('tr');
-            var datas = $(this.DTSelector).DataTable().row(row).data();
+            var $row = $(chkbx).closest('tr');
+            var datas = $(this.DTSelector).DataTable().row($row).data();
             if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
                 $(chkbx).prop('checked', true);
             else
@@ -397,11 +447,17 @@ var EbSelect = function (ctrl) {
                 $(this.currentEvent.target).prop('checked', false);
         }
         else {
-            var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
-            this.Vobj.valueMembers.splice(vmIdx2del, 1);
-            $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
+            this.delDMs($(e.target));
             $(this.currentEvent.target).prop('checked', false);
         }
+    };
+
+    this.delDMs = function ($e) {
+        var $row = $e.closest('tr');
+        var datas = $(this.DTSelector).DataTable().row($row).data();
+        var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
+        this.Vobj.valueMembers.splice(vmIdx2del, 1);
+        $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
     };
 
     this.makeInvalid = function (msg) {

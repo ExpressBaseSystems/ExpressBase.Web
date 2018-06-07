@@ -5,6 +5,12 @@
     var $sectionselect = $("#summarry-editor-modal-container #summary-sections").empty();
     var fields = $("#summarry-editor-modal-container #summary-fieldname").empty();
     var $summModal = $("#summarry-editor-modal-container");
+    var _icons = {
+        "Numeric": "fa-sort-numeric-asc",
+        "String": "fa-font",
+        "DateTime": "fa-calendar",
+        "Bool": ""
+    };
 
     this.subSecCounter = {
         Countrpthead: 1,
@@ -87,14 +93,10 @@
 
     this.onTrackerStop = function (e, ui) {
         var $t = $(ui.helper);
-        if ($t.hasClass("track_line_vert1")) {
+        if ($t.hasClass("track_line_vert1"))
             this.RbObj.margin.Left = $t.position().left;
-            this.RbObj.EbObject.Margin.Left = this.RbObj.repExtern.convertTopoints($t.position().left);
-        }
-        else {
+        else
             this.RbObj.margin.Right = $t.position().left;
-            this.RbObj.EbObject.Margin.Right = this.RbObj.repExtern.convertTopoints(parseFloat(this.RbObj.width) - $t.position().left);
-        }
     };
 
     this.windowscroll = function () {
@@ -260,6 +262,8 @@
                 this.RbObj.objCollection[obj.EbSid].Height = $(`#${obj.EbSid}`).height();
             }
         }.bind(this));
+        this.RbObj.objCollection[id].Height = $("#" + id).height();
+        this.RbObj.objCollection[id].Width = $("#" + id).width();
     };
 
     this.makeReadOnlyonPg = function (curObject) {
@@ -279,6 +283,8 @@
             var td_obj = new EbObjects["EbTableLayoutCell"]("TableLayoutCell" + this.RbObj.idCounter["TableLayoutCellCounter"]++);
             td_obj.RowIndex = $(js_objtd).parent("tr").index();
             td_obj.CellIndex = $(js_objtd).index();
+            td_obj.Height = $(js_objtd).closest("tr").height();
+            td_obj.Width = $(js_objtd).closest("tr").width();
             this.getTdCtrls($(js_objtd), td_obj);
         }.bind(this));
     };
@@ -307,6 +313,7 @@
         this.tobj = tobj;
         editControl.CellCollection.$values.forEach(function (ctrls) {
             this.RbObj.containerId = $(`#${tobj.EbSid}`).find("tr").eq(ctrls.RowIndex).find("td").eq(ctrls.CellIndex);
+            this.RbObj.containerId.css("height", ctrls.Height);
             ctrls.ControlCollection.$values.forEach(this.drawControls.bind(this));
         }.bind(this));
         this.resizeTdOnLayoutResize(this.tobj.EbSid, "set");
@@ -320,56 +327,76 @@
     };
 
     this.drawDsParmsTree = function (paramsList) {
-        $('#ds_parameter_list').empty();
-        $('#ds_parameter_list').append("<li><a>Data Source Parameters</a><ul id='ds_parameters'></ul></li>");
+        var icon = "";
         paramsList.forEach(function (param) {
-            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><div eb-type='Parameter' class='fd_params draggable textval'>${param.name}</div></li>`);
+            if (param.type === "16")
+                icon = _icons["String"];
+            else if (param.type === "7" || param.type === "8" || param.type === "10" || param.type === "11" || param.type === "12" || param.type === "21") 
+                icon = _icons["Numeric"];
+            else if (param.type === "3")
+                icon = _icons["Bool"];
+            else if (param.type === "5" || param.type === "6" || param.type === "17" || param.type === "26") 
+                icon = _icons["DateTime"];
+            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><span eb-type='Parameter' class='fd_params draggable textval'><i class='fa ${icon}'></i> ${param.name}</span></li>`);
         });
+        $('#ds_parameter_list').killTree();
         $('#ds_parameter_list').treed();
         this.RbObj.DragDrop_Items();
     };
 
     this.drawDsColTree = function (colList) {
-        var type = "";
-        $('#data-table-list').empty();
-        $('#data-table-list').append("<li><a>Data Source</a><ul id='dataSource'></ul></li>");
+        var type,icon = "";
         $.each(colList, function (i, columnCollection) {
-            $("#data-table-list ul[id='dataSource']").append(" <li><a>Table" + i + "</a><ul id='t" + i + "'></ul></li>");
+            $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {
-                if (obj.type === 16)
-                    type = "DataFieldText";
-                else if (obj.type === 7 || obj.type === 8 || obj.type === 10 || obj.type === 11 || obj.type === 12 || obj.type === 21)
-                    type = "DataFieldNumeric";
-                else if (obj.type === 3)
-                    type = "DataFieldBoolean";
-                else if (obj.type === 5 || obj.type === 6 || obj.type === 17 || obj.type === 26)
-                    type = "DataFieldDateTime";
-                $("#data-table-list ul[id='t" + i + "']").append("<li class='styl'><div eb-type='" + type + "' DbType='" + obj.type + "' tabindex='1' $(this).focus(); class='coloums draggable textval'> " + obj.columnName + "</div></li>");
+                if (obj.type === 16) {
+                    type = "DataFieldText"; icon = _icons["String"];
+                }
+                else if (obj.type === 7 || obj.type === 8 || obj.type === 10 || obj.type === 11 || obj.type === 12 || obj.type === 21) {
+                    type = "DataFieldNumeric"; icon = _icons["Numeric"];
+                }
+                else if (obj.type === 3) {
+                    type = "DataFieldBoolean"; icon = _icons["Bool"];
+                }
+                else if (obj.type === 5 || obj.type === 6 || obj.type === 17 || obj.type === 26) {
+                    type = "DataFieldDateTime"; icon = _icons["DateTime"];
+                }
+                $("#data-table-list ul[id='t" + i + "']").append(`<li class='styl'><span eb-type='${type}' DbType='${obj.type}' class='coloums draggable textval'><i class='fa ${icon}'></i> ${obj.columnName}</span></li>`);
             });
         });
+        $('#data-table-list').killTree();
         $('#data-table-list').treed();
-        $('.nav-tabs a[href="#data"]').tab('show');
+        this.RbObj.DragDrop_Items();
+    };
+
+    this.switchlayer = function (e) {
+        var target = $(e.target).closest(".Rb_layer");
+        if (!target.hasClass("layeractive")) {
+            target.addClass("layeractive");
+            target.siblings().removeClass("layeractive");
+        }
+        else {
+            target.siblings().removeClass("layeractive");
+        }
+
+        if (target.attr("Layer") === "Section") {
+            $(".multiSplit,.headersections,#page,.rulerleft").show();
+            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").hide();
+            $(".tracker_drag").css("height", "100%");
+            containment = ".page";
+        }
+        else {
+            $(".multiSplit,.headersections,#page,.rulerleft").hide();
+            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").show();
+            $(".tracker_drag").css("height", "100%");
+            containment = ".page-reportLayer";
+        }
     };
 
     this.start = function () {
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
         $(window).on("scroll", this.windowscroll.bind(this));
-        $("#reportLayer").on("click", function (e) {
-            $(e.target).closest("div").toggleClass("layeractive");
-            $("#sectionLayer").removeClass("layeractive");
-            $(".multiSplit,.headersections,#page,.rulerleft").hide();
-            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").show();
-            $(".tracker_drag").css("height", "100%");
-            containment = ".page-reportLayer";
-        }.bind(this));
-        $("#sectionLayer").on("click", function (e) {
-            $(e.target).closest("div").toggleClass("layeractive");
-            $("#reportLayer").removeClass("layeractive");
-            $(".multiSplit,.headersections,#page,.rulerleft").show();
-            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").hide();
-            $(".tracker_drag").css("height", "100%");
-            containment = ".page";
-        }.bind(this));
+        $(".Rb_layer").off("click").on("click", this.switchlayer.bind(this));
         $(".add_calcfield").on("click", this.newCalcFieldSum.bind(this));
         $(".add_summarry").on("click", this.addSummarry.bind(this));
     };

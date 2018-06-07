@@ -118,8 +118,8 @@ namespace ExpressBase.Web.Controllers
 				}
 				catch (Exception ee)
 				{
-
-				}
+                    Console.WriteLine("Exception: " + ee.ToString());
+                }
 
 				XmlDocument doc = new XmlDocument();
 				doc.LoadXml((response as IRestResponse).Content);

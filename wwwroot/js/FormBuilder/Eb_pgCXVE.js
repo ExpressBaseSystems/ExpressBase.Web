@@ -129,8 +129,8 @@
             this.initMLE(e);
 
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
-
-        $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+        if (this.editor !== 8)
+            $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         $("#" + this.PGobj.wraperId + ' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
         $("#" + this.PGobj.wraperId + ' .modal-header').off("click", ".close").on("click", ".close", this.CXVE_close.bind(this));
 
@@ -231,7 +231,8 @@
         this.Dprop = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Dprop;
         this.allCols = this.PGobj.PropsObj[sourceProp].$values;
         if (this.editor === 8) {
-            this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+            this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+            this.changeCopyToRef();
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
         }
         else if (this.editor === 10) {
@@ -239,15 +240,15 @@
             $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         }
         else if (this.editor === 24)
-            this.rowGrouping = this.getRowGroupingByProp(this.allCols);
+            this.selectedCols = this.getSelectedColsByProp(this.allCols);
         else
-            this.rowGrouping = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+            this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
         this.setSelColtiles();
         this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
     };
 
-    this.getRowGroupingByProp = function (allCols) {
+    this.getSelectedColsByProp = function (allCols) {
         var res = [];
         $.each(allCols, function (i, obj) {
             if (obj[this.Dprop] === true)// hard code
@@ -264,7 +265,7 @@
             if (this.editor === 7)
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
             else if (this.editor === 9 || this.editor === 8)
-                this.movingObj = this.rowGrouping.splice(this.rowGrouping.indexOf(getObjByval(this.rowGrouping, "name", el.id)), 1)[0];
+                this.movingObj = this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1)[0];
             else if (this.editor === 24)
                 this.movingObj = getObjByval(this.allCols, "name", el.id);
         }
@@ -290,9 +291,9 @@
                     this.CElist.push(this.movingObj);
             } else if (this.editor === 9 || this.editor === 8) {
                 if (sibling.length > 0)
-                    this.rowGrouping.splice(idx, 0, this.movingObj);
+                    this.selectedCols.splice(idx, 0, this.movingObj);
                 else
-                    this.rowGrouping.push(this.movingObj);
+                    this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24) {
                 this.movingObj[this.Dprop] = true;//////// hard code
                 this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
@@ -514,7 +515,7 @@
             if (!(control.Name || control.name))
                 var label = control.EbSid;
             var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
-            if (!getObjByval(this.rowGrouping, idField, control[idField])) {
+            if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
                 if (containerId === this.CEctrlsContId)
@@ -527,10 +528,10 @@
     this.setSelColtiles = function () {
         var idField = "name";//////////////////////
         var selObjs = [];
-        if (this.rowGrouping.length !== 0) {
+        if (this.selectedCols.length !== 0) {
             if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
                 idField = "ColumnName";////////////////////////
-            $.each(this.rowGrouping, function (i, ctrl) {
+            $.each(this.selectedCols, function (i, ctrl) {
                 selObjs.push(getObjByval(this.allCols, idField, ctrl[idField]));
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
@@ -586,11 +587,11 @@
             }
         }
         else if (this.editor === 9 || this.editor === 8) {
-            this.rowGrouping.splice(this.rowGrouping.indexOf(getObjByval(this.rowGrouping, "name", $tile.attr("id"))), 1)[0]
+            this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1)[0]
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
         else if (this.editor === 24) {
-            getObjByval(this.rowGrouping, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+            getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
     }.bind(this);
@@ -644,6 +645,16 @@
         }
         this.setColTiles();
         $("#" + EbSid).click();
+    };
+
+    this.changeCopyToRef = function () {
+        $.each(this.allCols, function (i, colObj) {
+            var RObj;
+            if (RObj = getObjByval(this.selectedCols, "name", colObj.name)) {
+                var idx = this.selectedCols.indexOf(RObj);
+                this.selectedCols[idx] = colObj;
+            };
+        }.bind(this));
     };
 
     this.Init = function () {

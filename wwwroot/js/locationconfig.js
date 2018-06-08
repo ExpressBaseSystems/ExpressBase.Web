@@ -1,6 +1,6 @@
-﻿var locationmeta = function (counter, data) {
-	this.counter = parseInt(counter);
-	this.keycounter = parseInt(counter);
+﻿var locationmeta = function (data) {
+	this.counter = 0;
+	this.keycounter = 0;
 	this.data = data;
 	this.Init = function () {
 		$('#createconfig').on('click', (this.CreateConf.bind(this)));
@@ -34,8 +34,8 @@
 		$('#textspace').append(`
 				<div class="form-group keypair">
 					<label class="control-label col-sm-2 index" >Key ${++this.keycounter}:</label>
-					<div class="col-sm-7">
-						<input type="text" class="form-control keyname" placeholder="Enter key name" name="keyname" value=${item.Name}>
+					<div class="col-sm-5">
+						<input type="text" class="form-control keyname" placeholder="Enter key name" name="keyname" value="${item.Name}">
 					</div>
 					<div class="col-sm-2">
 						<label class="control-label ">Is Required: <input type="checkbox" class="isreq" id="check${++this.counter}"></label>
@@ -45,7 +45,7 @@
 				</div>
             `);
 		$(`#delete${this.counter}`).on('click', (this.DeleteKey.bind(this)));
-		$(`#check${this.counter}`).attr('checked', item.Isrequired);
+		$(`#check${this.counter}`).prop("checked", item.Isrequired === "true");
 
 	}.bind(this);
 
@@ -63,3 +63,23 @@
 
 	this.Init();
 }
+
+var location = function (data) {
+
+	this.data = data;
+	this.init = function () {
+		this.Addmeta();
+	};
+
+	this.Addmeta = function(){
+		$('#locspace').append(`
+					<div class="form-group">
+                        <label class="control-label col-sm-2">Short Name :</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control keyname" placeholder="" name="shortname" value="">
+                        </div>
+                    </div>
+					`);
+	};
+	this.Init();
+};

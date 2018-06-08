@@ -19,6 +19,9 @@
             id: "dshbrd_alert",
             possition: "top-right"
         });
+    this.saveOrCommitSuccess = function (refif) { };//edit by amal
+    this.PreviewObject = function () { };//edits by amal
+    
 
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
@@ -30,7 +33,18 @@
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         //$(window).bind('keydown', this.checkKeyDown.bind(this));
         $(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
+        $(".codedit .cetab").off("click").on("click", this.setTabName.bind(this));
+
+        this.target = $("#versionNav li.active a").attr("href");//edits by amal
     }
+
+    this.setTabName = function (e) {
+        var jq = $(e.target).closest("a");
+        if (jq.attr("id") === "preview_tab_btn")
+            this.PreviewObject();
+        else
+            this.target = jq.attr("href");
+    };
 
     this.checkKeyDown = function (event) {
         if (event.ctrlKey || event.metaKey) {
@@ -56,7 +70,8 @@
     };
 
     this.UpdateTab = function (data) {
-        var target = $("#versionNav li.active a").attr("href");
+        //var target = $("#versionNav li.active a").attr("href");
+        var target = this.target;//edits by amal
         this.ver_Refid = data;
         var getNav = $("#versionNav li.active a").attr("href");
         $(getNav).attr("data-id", this.ver_Refid);
@@ -87,8 +102,10 @@
         this.ObjCollection[target].EbObject = this.Current_obj;
         this.ObjCollection[target].Refid = this.ver_Refid;
 
-        $("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
-        $("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
+        $(`#versionNav [href='${target}']`).attr("data-verNum", this.Current_obj.VersionNumber);//edits by amal
+        $(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
+        //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
+        //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
 
         if (this.flagRun) {
             this.ObjCollection[target].SaveSuccess();
@@ -96,6 +113,8 @@
         else
             this.ShowMessage();
         $.LoadingOverlay("hide");
+
+        this.saveOrCommitSuccess(data);//edit by amal
     };
 
     this.UpdateDashboard = function () {

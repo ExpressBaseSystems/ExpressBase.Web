@@ -494,17 +494,32 @@ namespace ExpressBase.Web2.Controllers
         //          }
         //          return html;
         //      }
+
         [HttpGet]
         public IActionResult CreateConfig()
         {
             var ds = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { });
-            ViewBag.data =JsonConvert.SerializeObject(ds.Data);
+            ViewBag.data = JsonConvert.SerializeObject(ds.Data);
             return View();
         }
         [HttpPost]
         public IActionResult CreateConfig(List<LocationConfig> keys)
         {
             var ds = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { ConfString = keys });
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult CreateLocation()
+        {
+            var ds = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { });
+            ViewBag.data = JsonConvert.SerializeObject(ds.Data);
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateLocation(int i)
+        {
             return View();
         }
     }

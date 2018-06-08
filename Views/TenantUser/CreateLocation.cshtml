@@ -1,0 +1,44 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<div class="container locpage">
+    <div class="panel panel-default">
+        <h3 class="col-sm-offset-4">Create Location</h3>
+        <div class="panel-body">
+            <div class="locfinner">
+                <div class="form-horizontal col-sm-12 " id="locspace">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Long Name :</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control keyname" placeholder="" name="longname" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Short Name :</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control keyname" placeholder="" name="shortname" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <input class="btn btn-primary pull-right" type="button" value="Create" id="createloc" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var Location = new location(@Html.Raw(ViewBag.data));
+</script>
+
+<style>
+    .locpage {
+        padding-top: 150px;
+    }
+
+    .locfinner {
+        padding-bottom: 20px;
+        margin-top: 50px;
+    }
+</style>

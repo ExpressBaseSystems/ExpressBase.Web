@@ -22,7 +22,7 @@ namespace ExpressBase.Web.Controllers
 
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
-        public IActionResult Index(string refid)
+        public IActionResult Index(string refid,bool renderLimit)
         {
             ViewBag.Refid = refid;
             EbObjectParticularVersionResponse resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
@@ -32,6 +32,8 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Fd = Report;
             }
+            if (renderLimit)
+                ViewBag.RenderLimit = true;
 
             return View();
         }

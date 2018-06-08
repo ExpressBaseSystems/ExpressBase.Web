@@ -608,7 +608,8 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.curDispValue = $checkedCB.next().text();
         }
         else if (this.curCtrl.objType === "ComboBox") {
-            inpVal = this.curCtrl.tempValue;
+            //inpVal = this.curCtrl.tempValue;
+            inpVal = this.curCtrl.selectedRow;
             console.log("inp");
             console.log(inpVal);
             this.curDispValue = this.curCtrl.DisplayMembers[Object.keys(this.curCtrl.DisplayMembers)[0]].toString().replace(/,/g, ", ");
@@ -644,7 +645,10 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.objType === "ComboBox") {
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
-            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
+            if (this.curCtrl.objType === "ComboBox")//////////////////////////-------////////////
+                this.formValuesWithType[id] = [this.curCtrl.tempValue, this.curCtrl.ebDbType];
+            else
+                this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.nxtCtrlIdx);
         }
         else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
@@ -675,13 +679,13 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         var nxtCtrl = this.curForm.controls[this.nxtCtrlIdx];
         var valExpFunc = this.formFunctions.valueExpressions[nxtCtrl.name];
         if (valExpFunc !== undefined) {
-            this.formValues[nxtCtrl.name] = valExpFunc();
+            this.formValues[nxtCtrl.name] = valExpFunc(this.formValues);
             this.formValuesWithType[nxtCtrl.name] = [this.formValues[nxtCtrl.name], nxtCtrl.ebDbType];
         }
         else if (nxtCtrl.autoIncrement) {
             this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];
         }
-        this.curForm.controls[0].selectedRows();//  hardcoding
+        console.log(this.curForm.controls[0].selectedRow);//  hardcoding
     }
 
     this.callGetControl = function () {

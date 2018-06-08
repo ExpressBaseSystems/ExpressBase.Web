@@ -1,30 +1,27 @@
 ﻿
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
-    int counter = 0;
 }
-<div class="container confpage">
-    <h4 class="center">Configure Location Meta</h4>
-    <button value="Add" id="addkey" class="btn btn-primary pull-right">
-        Add <i class="fa fa-plus"></i>
-    </button>
-    <div class="confinner">
-        <div class="form-horizontal col-sm-12 " id="textspace">
-            @*<div class="form-group keypair">
-                <label class="control-label col-sm-2">Key @counter:</label>
-                <div class="col-sm-7">
-                    <input type="text" class="form-control keyname" placeholder="Enter key name" name="keyname">
+<div class="container confpage">    
+    <div class="panel panel-default">
+        <h3 class="col-sm-offset-4">Configure Location Meta</h3>
+        <div class="panel-body">
+            <button value="Add" id="addkey" class="btn btn-primary pull-right">
+                Add key  <i class="fa fa-plus"></i>
+            </button>
+            <div class="confinner">
+                <div class="form-horizontal col-sm-12 " id="textspace">
                 </div>
-                <div class="col-sm-2">
-                    <label class="control-label ">Is Required: <input type="checkbox" class="isreq" name="isreq"></label>
-                </div>
-            </div>*@
+            </div>
+            <div>
+                <input class="btn btn-primary pull-right" type="button" value="Configure" id="createconfig" />
+            </div>
         </div>
     </div>
-    <input class="pull-right" type="button" value="Create" id="createconfig" />
+
 </div>
 <script>
-    var conf = new locationmeta(@counter,@Html.Raw(ViewBag.data));
+    var conf = new locationmeta(@Html.Raw(ViewBag.data));
 </script>
 <style>
     .confpage {

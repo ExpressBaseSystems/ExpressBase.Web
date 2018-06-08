@@ -121,14 +121,12 @@
 }
     .dropped:hover {
         cursor: pointer;
-        border: 1px solid #2cb1ca !important;
     }
     .dropped:focus {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         outline: none;
-        border: 1px solid #2cb1ca !important;
     }
 .max-pg {
     position: fixed;
@@ -591,7 +589,7 @@
 }
 .tool-box-div {
     padding: 10px 10px;
-    width: calc(50% - 6px);
+    width: 120px;
     float: left;
     display: flex;
     margin: 2px;

@@ -1,7 +1,6 @@
 ﻿
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
-    int counter = 0;
 }
 <div class="container confpage">    
     <div class="panel panel-default">
@@ -22,7 +21,7 @@
 
 </div>
 <script>
-    var conf = new locationmeta(@counter,@Html.Raw(ViewBag.data));
+    var conf = new locationmeta(@Html.Raw(ViewBag.data));
 </script>
 <style>
     .confpage {

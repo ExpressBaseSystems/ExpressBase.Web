@@ -173,6 +173,7 @@ namespace ExpressBase.Web.Controllers
 			if (Obj is EbTableVisualization)
 			{
 				EbTableVisualization Tobj = (Obj as EbTableVisualization);
+				Tobj.AfterRedisGet(this.Redis,this.ServiceClient);
 				//string BotCols = "[";
 				//string BotData = "[";
 				//int i = 0;

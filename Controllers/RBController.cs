@@ -78,6 +78,5 @@ namespace ExpressBase.Web.Controllers
             ValidateCalcExpressionResponse res = this.ServiceClient.Get<ValidateCalcExpressionResponse>(new ValidateCalcExpressionRequest { DataSourceRefId = refid, ValueExpression = expression });
             return JsonConvert.SerializeObject(res);
         }
-
     }
 }

@@ -1,6 +1,6 @@
-﻿var locationmeta = function (counter, data) {
-	this.counter = parseInt(counter);
-	this.keycounter = parseInt(counter);
+﻿var locationmeta = function (data) {
+	this.counter = 0;
+	this.keycounter = 0;
 	this.data = data;
 	this.Init = function () {
 		$('#createconfig').on('click', (this.CreateConf.bind(this)));
@@ -63,3 +63,23 @@
 
 	this.Init();
 }
+
+var location = function (data) {
+
+	this.data = data;
+	this.init = function () {
+		this.Addmeta();
+	};
+
+	this.Addmeta = function(){
+		$('#locspace').append(`
+					<div class="form-group">
+                        <label class="control-label col-sm-2">Short Name :</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control keyname" placeholder="" name="shortname" value="">
+                        </div>
+                    </div>
+					`);
+	};
+	this.Init();
+};

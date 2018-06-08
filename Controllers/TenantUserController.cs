@@ -512,6 +512,8 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult CreateLocation()
         {
+            var ds = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { });
+            ViewBag.data = JsonConvert.SerializeObject(ds.Data);
             return View();
         }
 

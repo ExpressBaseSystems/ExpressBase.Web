@@ -173,7 +173,7 @@ var EbBasicDataTable = function (Option) {
 
     this.CheckforColumnID = function () {
         $.each(this.ebSettings.Columns.$values, function (i, col) {
-            if (col.name === this.hiddenFieldName) {
+            if (col.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase()) {
                 this.FlagPresentId = true;
                 col.bVisible = false;
                 return false;
@@ -1271,7 +1271,7 @@ var EbBasicDataTable = function (Option) {
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         if (this.FlagPresentId) {
-            var idpos = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name === this.hiddenFieldName; }.bind(this))[0].data;
+            var idpos = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             //var idpos = getObjByval(this.ebSettings.Columns.$values, "name", this.hiddenFieldName).data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
             return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
@@ -1588,6 +1588,12 @@ var EbBasicDataTable = function (Option) {
         else
             return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' />`;
     };
+    this.getRowDataByUid = function (Uid) {
+        var $tr = $("." + this.tableId + "_select").filter("[value='" + Uid + "']").closest("tr");
+        var rowData = this.Api.row($tr).data();
+        return rowData;
+    };
+
 
     this.renderDataAsLabel = function (data) {
         return `<label class='labeldata'>${data}</label>`;

@@ -319,6 +319,10 @@
     background-color: #496675 !important;
 }
 
+.DDdiv .dataTables_scrollFoot{
+    display:none !important;
+}
+
 .DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th,
 .DDdiv .table > tfoot > tr > th, .DDdiv .table > thead > tr > td,
 .DDdiv .table > tbody > tr > td, .DDdiv .table > tfoot > tr > td {

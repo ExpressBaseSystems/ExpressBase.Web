@@ -34,8 +34,8 @@
 		$('#textspace').append(`
 				<div class="form-group keypair">
 					<label class="control-label col-sm-2 index" >Key ${++this.keycounter}:</label>
-					<div class="col-sm-7">
-						<input type="text" class="form-control keyname" placeholder="Enter key name" name="keyname" value=${item.Name}>
+					<div class="col-sm-5">
+						<input type="text" class="form-control keyname" placeholder="Enter key name" name="keyname" value="${item.Name}">
 					</div>
 					<div class="col-sm-2">
 						<label class="control-label ">Is Required: <input type="checkbox" class="isreq" id="check${++this.counter}"></label>
@@ -45,7 +45,7 @@
 				</div>
             `);
 		$(`#delete${this.counter}`).on('click', (this.DeleteKey.bind(this)));
-		$(`#check${this.counter}`).attr('checked', item.Isrequired);
+		$(`#check${this.counter}`).prop("checked", item.Isrequired === "true");
 
 	}.bind(this);
 

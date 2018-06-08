@@ -354,6 +354,9 @@ table.dataTable tbody td.dt-body-right {
 .addedbyeb .input-group {
     width: 100% !important;
 }
+.addedbyeb .form-control[disabled] {
+    background-color: #ffffff !important;
+}
 
 [eb-type=EbTableVisualization] .dataTable:first-child {
     margin-top: 0 !important;

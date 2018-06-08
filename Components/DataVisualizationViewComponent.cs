@@ -53,7 +53,7 @@ namespace ExpressBase.Web.Components
                     ViewBag.data = getDVObject(dvobj);
                 else
                 {
-                    dvobj.AfterRedisGet(this.Redis);
+                    dvobj.AfterRedisGet(this.Redis,this.ServiceClient);
                     ViewBag.data = dvobj;
                 }
             }
@@ -70,7 +70,7 @@ namespace ExpressBase.Web.Components
             if (columnresp == null || columnresp.Columns.Count == 0)
                 columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new TableColumnsRequest { RefId = dvobj.DataSourceRefId, TenantAccountId = ViewBag.cid });
 
-            dvobj.AfterRedisGet(this.Redis);
+            dvobj.AfterRedisGet(this.Redis,this.ServiceClient);
 
             var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
             int _pos = __columns.Count+100;

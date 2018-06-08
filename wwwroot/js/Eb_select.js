@@ -298,12 +298,14 @@ var EbSelect = function (ctrl) {
     this.getSelectedRow = function () {
         console.log(100);
         var res = [];
+        var temp = [];
         $.each(this.valueMembers, function (idx, item) {
             var obj = {};
-            var $tr = $("." + this.name + "tbl_select").filter("[value=" + item + "]").closest("tr");
-            var rowData = $(this.DTSelector).DataTable().row($tr).data();
-            var colNames = this.ComboObj.columns.map((obj, i) => { return obj.name; });
-            $.grep(this.ComboObj.columns, function (obj, i) {
+            var rowData = this.datatable.getRowDataByUid(item);
+            $.extend(temp, this.ComboObj.columns);
+            temp.sort(this.ColumnsComparer);
+            var colNames = temp.map((obj, i) => { return obj.name; });
+            $.grep(temp, function (obj, i) {
                 return obj.name;
             });
             $.each(rowData, function (i, cellData) {
@@ -312,8 +314,15 @@ var EbSelect = function (ctrl) {
             res.push(obj);
         }.bind(this));
         console.log(res);
+        this.ComboObj.selectedRow = res;
         return res;
     }.bind(this);
+
+    this.ColumnsComparer = function (a, b) {
+        if (a.data < b.data) return -1;
+        if (a.data > b.data) return 1;
+        if (a.data === b.data) return 0;
+    };
 
     this.Renderselect = function () {
         this.Vobj = new Vue({
@@ -359,6 +368,7 @@ var EbSelect = function (ctrl) {
             this.Vobj.valueMembers = this.Vobj.valueMembers.splice(0, this.maxLimit);
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
+        this.getSelectedRow();
         console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
         console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[this.dmNames[1]]);

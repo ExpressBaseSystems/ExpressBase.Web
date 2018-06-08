@@ -651,6 +651,8 @@
         $.each(this.allCols, function (i, colObj) {
             var RObj;
             if (RObj = getObjByval(this.selectedCols, "name", colObj.name)) {
+                if (RObj === colObj)/// if already reference exit
+                    return false;
                 var idx = this.selectedCols.indexOf(RObj);
                 this.selectedCols[idx] = colObj;
             };

@@ -589,7 +589,7 @@
 }
 .tool-box-div {
     padding: 10px 10px;
-    width: 120px;
+    width: inherit;
     float: left;
     display: flex;
     margin: 2px;
@@ -597,6 +597,12 @@
     background-color: WHITE;
     align-items: center;
     font-size: 0.8em;
+    flex-grow: 1;
+}
+.drg_wrapper {
+    float: left;
+    width: 50%;
+    display: flex;
 }
 .dropped .ui-resizable-handle {
     background: #89c5dc;
@@ -792,6 +798,12 @@
 .T_layout {
     position:relative;
 }
+    .T_layout .dropped:focus {
+        border: 1px solid #316396 !important;
+    }
+    .T_layout .dropped:hover {
+        border: 1px solid #316396 !important;
+    }
 .eb_draggbale_table_handle {
     font-size: 10px;
     position: absolute;
@@ -827,6 +839,4 @@
 .tool_item_body{
     float:left;
     width:100%;
-}
-.drop_items {
 }

@@ -533,14 +533,20 @@
     border-radius: 0;    
 }
 /*shapes*/
+.Ebshapes {
+    overflow: unset !important;
+    box-sizing: unset !important; 
+    align-items: unset !important; 
+}
 .arrow-left {
     width: 0;
     height: 0;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
     border-right: 5px solid black;
-    float: left;
     margin-top: -5px;
+    position: absolute;
+    left: -2px;
 }
 .arrow-up {
     width: 0;
@@ -549,6 +555,8 @@
     border-right: 5px solid transparent;
     border-bottom: 5px solid black;
     margin-left: -5px;
+    position: absolute;
+    top: -2px;
 }
 .arrow-right {
     width: 0;
@@ -556,19 +564,21 @@
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
     border-left: 5px solid black;
-    float: right;
     margin-top: -5px;
+    position: absolute;
+    right: -2px;
 }
-    
-    .arrow-down {
-        width: 0;
-        height: 0;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid black;
-        margin-left: -5px;
-        align-self: flex-end;
-    }
+
+.arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid black;
+    margin-left: -5px;
+    position: absolute;
+    bottom: -2px;
+}
 
 .multiSplitHboxSub {
     display: flex;
@@ -641,12 +651,11 @@
 .page .shape-vertical {
     display: flex;
 }
-.page [eb-type=ByArrV] .arrow-down {
-    margin-left: -10px;
+.page .shape-vertical{
+    width:0 !important;
 }
-.page .shape-vertical:hover {
-    transition: all 200ms ease-in;
-    transform: scale(1.3);
+.page .shape-horrizontal {
+    height: 0 !important;
 }
 
 .page .pageReSizeHandle {
@@ -660,45 +669,38 @@
     background: #316396;
 }
 
-.page .guid-v {
+.page .guid-v, .page-reportLayer .guid-v {
     z-index: 3;
     border-left: 1px dashed #55f;
     height: 100%;
     position: absolute;
     display: none
 }
-.page .guid-h {
+.page .guid-h, .page-reportLayer .guid-h {
     z-index: 3;
     border-top: 1px dashed #55f;
     width: 100%;
     position: absolute;
     display: none
 }
-.page .guid-vr {
+.page .guid-vr, .page-reportLayer .guid-vr {
     z-index: 3;
     border-left: 1px dashed #55f;
     height: 100%;
     position: absolute;
     display: none
 }
-.page .guid-hb {
+.page .guid-hb, .page-reportLayer .guid-hb {
     z-index: 3;
     border-top: 1px dashed #55f;
     width: 100%;
     position: absolute;
     display: none
 }
-/*.context-menu-item {    
-    color: #ffffff;    
-    background-color: transparent; 
-}*/
-.minimap {
-    /*-webkit-box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);
-    -moz-box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);
-    box-shadow: -1px -3px 52px 27px rgba(173,171,173,1);*/
-    border: 1px solid black;
+.draggable-to-page{
+    cursor:move;
 }
-.page .wm-container .ui-resizable-handle {   
+.page .wm-container .ui-resizable-handle {
     opacity: 1;
 }
 .page .locked:hover:before {

@@ -7,7 +7,7 @@
     var ssurl = option.ServiceUrl || null;
 
     this.wc = option.Wc;
-    var containment = ".page";
+    this.containment = ".page";
     this.Tenantid = option.Cid;
     this.EbObject = dsobj;
     this.isNew = $.isEmptyObject(this.EbObject) ? true : false;
@@ -55,7 +55,7 @@
             this.repExtern.setFontProp(obj);
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
-                cursor: "crosshair", containment: containment, appendTo: "body",
+                cursor: "crosshair", containment: this.containment, appendTo: "body",
                 start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.ondragControl.bind(this)
             });
             $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));
@@ -422,6 +422,7 @@
         }
         obj.Title = Title;
         obj.ParentName = this.dropLoc.attr("eb-type");
+        this.pg.addToDD(obj);
         this.RefreshControl(obj);
     };
 
@@ -577,16 +578,16 @@
     this.ondragControl = function (event, ui) {
         $(ui.helper).css("z-index", 10);
         $('#guid-v , #guid-h, #guid-vr, #guid-hb').show();
-        $('#guid-v').css({ 'left': (event.pageX - $(containment).offset().left) - (this.reDragLeft + 3) });
-        $('#guid-h').css({ 'top': (event.pageY - $(containment).offset().top) - (this.reDragTop + 3) });
-        $('#guid-vr').css({ 'left': ((event.pageX - $(containment).offset().left) - (this.reDragLeft + 3)) + ($(event.target).width() + 5) });
-        $('#guid-hb').css({ 'top': ((event.pageY - $(containment).offset().top) - (this.reDragTop + 3)) + ($(event.target).height() + 5) });
+        $('#guid-v').css({ 'left': (event.pageX - $(this.containment).offset().left) - (this.reDragLeft + 3) });
+        $('#guid-h').css({ 'top': (event.pageY - $(this.containment).offset().top) - (this.reDragTop + 3) });
+        $('#guid-vr').css({ 'left': ((event.pageX - $(this.containment).offset().left) - (this.reDragLeft + 3)) + ($(event.target).width() + 5) });
+        $('#guid-hb').css({ 'top': ((event.pageY - $(this.containment).offset().top) - (this.reDragTop + 3)) + ($(event.target).height() + 5) });
     };
 
     this.onDrag_Start = function (event, ui) {
         this.reDragLeft = event.pageX - $(event.target).offset().left;
         this.reDragTop = event.pageY - $(event.target).offset().top;
-        $(containment).prepend(`<div class='guid-v' id='guid-v'></div>
+        $(this.containment).prepend(`<div class='guid-v' id='guid-v'></div>
                                 <div class='guid-h' id='guid-h'></div>
                                 <div class='guid-vr' id='guid-vr'></div>
                                 <div class='guid-hb' id='guid-hb'></div>`);

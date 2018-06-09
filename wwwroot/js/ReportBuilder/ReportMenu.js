@@ -55,6 +55,7 @@
     this.contextMenudelete = function (eType, selector, action, originalEvent) {
         if (!$(selector.selector).hasClass("pageHeaders")) {
             delete this.Rep.objCollection[$(selector.selector).attr("id")];
+            this.Rep.pg.removeFromDD($(selector.selector).attr("id"));
             $(selector.selector).remove();
         }
         else

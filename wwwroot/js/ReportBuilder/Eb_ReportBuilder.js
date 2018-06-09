@@ -7,7 +7,7 @@
     var ssurl = option.ServiceUrl || null;
 
     this.wc = option.Wc;
-    var containment = ".page";
+    this.containment = ".page";
     this.Tenantid = option.Cid;
     this.EbObject = dsobj;
     this.isNew = $.isEmptyObject(this.EbObject) ? true : false;
@@ -55,7 +55,7 @@
             this.repExtern.setFontProp(obj);
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
-                cursor: "crosshair", containment: containment, appendTo: "body",
+                cursor: "crosshair", containment: this.containment, appendTo: "body",
                 start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.ondragControl.bind(this)
             });
             $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));
@@ -406,23 +406,23 @@
         if (this.Objtype === "TableLayout")
             this.TableCollection[Objid] = new Array();
 
+        obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
+        obj.Left = this.leftwithMargin();
+
         if (this.col.hasClass('coloums')) {
-            obj.Top = this.dropLoc.hasClass("T_layout") ? 0 : (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];;
             obj.DbType = this.col.attr("DbType");
             obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
             obj.ColumnName = this.col.text().trim();
         }
-        else if (this.dropLoc.hasClass('T_layout')) {
+        if (this.dropLoc.hasClass('T_layout')) {
             obj.Width = this.dropLoc.innerWidth();
             obj.Height = this.dropLoc.innerHeight();
             obj.Top = 0;
             this.TableCollection[this.dropLoc.closest(".eb_table_container").attr("id")].push(obj);
         }
-        else
-            obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
         obj.Title = Title;
-        obj.Left = this.leftwithMargin();
         obj.ParentName = this.dropLoc.attr("eb-type");
+        this.pg.addToDD(obj);
         this.RefreshControl(obj);
     };
 
@@ -578,16 +578,16 @@
     this.ondragControl = function (event, ui) {
         $(ui.helper).css("z-index", 10);
         $('#guid-v , #guid-h, #guid-vr, #guid-hb').show();
-        $('#guid-v').css({ 'left': (event.pageX - $(containment).offset().left) - (this.reDragLeft + 3) });
-        $('#guid-h').css({ 'top': (event.pageY - $(containment).offset().top) - (this.reDragTop + 3) });
-        $('#guid-vr').css({ 'left': ((event.pageX - $(containment).offset().left) - (this.reDragLeft + 3)) + ($(event.target).width() + 5) });
-        $('#guid-hb').css({ 'top': ((event.pageY - $(containment).offset().top) - (this.reDragTop + 3)) + ($(event.target).height() + 5) });
+        $('#guid-v').css({ 'left': (event.pageX - $(this.containment).offset().left) - (this.reDragLeft + 3) });
+        $('#guid-h').css({ 'top': (event.pageY - $(this.containment).offset().top) - (this.reDragTop + 3) });
+        $('#guid-vr').css({ 'left': ((event.pageX - $(this.containment).offset().left) - (this.reDragLeft + 3)) + ($(event.target).width() + 5) });
+        $('#guid-hb').css({ 'top': ((event.pageY - $(this.containment).offset().top) - (this.reDragTop + 3)) + ($(event.target).height() + 5) });
     };
 
     this.onDrag_Start = function (event, ui) {
         this.reDragLeft = event.pageX - $(event.target).offset().left;
         this.reDragTop = event.pageY - $(event.target).offset().top;
-        $(containment).prepend(`<div class='guid-v' id='guid-v'></div>
+        $(this.containment).prepend(`<div class='guid-v' id='guid-v'></div>
                                 <div class='guid-h' id='guid-h'></div>
                                 <div class='guid-vr' id='guid-vr'></div>
                                 <div class='guid-hb' id='guid-hb'></div>`);

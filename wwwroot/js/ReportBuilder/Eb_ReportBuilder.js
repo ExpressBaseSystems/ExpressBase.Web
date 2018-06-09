@@ -406,22 +406,21 @@
         if (this.Objtype === "TableLayout")
             this.TableCollection[Objid] = new Array();
 
+        obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
+        obj.Left = this.leftwithMargin();
+
         if (this.col.hasClass('coloums')) {
-            obj.Top = this.dropLoc.hasClass("T_layout") ? 0 : (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];;
             obj.DbType = this.col.attr("DbType");
             obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
             obj.ColumnName = this.col.text().trim();
         }
-        else if (this.dropLoc.hasClass('T_layout')) {
+        if (this.dropLoc.hasClass('T_layout')) {
             obj.Width = this.dropLoc.innerWidth();
             obj.Height = this.dropLoc.innerHeight();
             obj.Top = 0;
             this.TableCollection[this.dropLoc.closest(".eb_table_container").attr("id")].push(obj);
         }
-        else
-            obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
         obj.Title = Title;
-        obj.Left = this.leftwithMargin();
         obj.ParentName = this.dropLoc.attr("eb-type");
         this.RefreshControl(obj);
     };

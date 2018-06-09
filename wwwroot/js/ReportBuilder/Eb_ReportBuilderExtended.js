@@ -188,7 +188,7 @@
     };
 
     this.setBackgroud = function (url) {
-        $(".page").css("background", "url(http://eb_roby_dev.localhost:5000/static/" + url + ".jpg) no-repeat");
+        $(".page").css("background", "url('" + window.location.protocol + "//" + window.location.host + "/static/" + url + ".JPG" + "') center no-repeat");
     };
 
     this.mapCollectionToSection = function (sec) {

@@ -86,6 +86,10 @@ var EbBasicDataTable = function (Option) {
             //$("#content_" + this.tableId).append("<div style='width:auto;height:inherit;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered pageResize'></table></div>");
             this.Init();
         }
+        var temp = [];
+        $.extend(temp, this.EbObject.Columns.$values);
+        temp.sort(this.ColumnsComparer);
+        this.sortedColumns = temp;
     };
 
     this.Init = function () {
@@ -363,14 +367,13 @@ var EbBasicDataTable = function (Option) {
         return count;
     }
 
-    this.ColumnsComparer = function (a, b) {
-        //var a1 = parseInt(a.pos);
-        //var b1 = parseInt(b.pos);
-        if (a.Pos < b.Pos) return -1;
-        if (a.Pos > b.Pos) return 1;
-        if (a.Pos === b.Pos) return 0;
-    };
 
+    this.ColumnsComparer = function (a, b) {
+        if (a.data < b.data) return -1;
+        if (a.data > b.data) return 1;
+        if (a.data === b.data) return 0;
+    };
+    
     this.getAgginfo = function () {
         var _ls = [];
         $.each(this.ebSettings.Columns.$values, this.getAgginfo_inner.bind(this, _ls));

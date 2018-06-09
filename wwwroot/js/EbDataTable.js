@@ -126,7 +126,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window ");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
         $(sideDivId).append(text);
-        //$(sideDivId + " #filterBox").append(`<button id="btnGo_${this.tableId}" class="btn commonControl pull-right"><i class="fa fa-play" aria-hidden="true"></i></button>`)
+        //$(sideDivId + " #filterBox").append(`<button id="btnGo" class="btn commonControl pull-right"><i class="fa fa-play" aria-hidden="true"></i></button>`)
         $("#btnGo").click(this.getColumnsSuccess.bind(this));
         console.log(text);
         $(sideDivId).find("input").on("keyup", function (e) {
@@ -255,7 +255,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append("<div style='width:auto;height:inherit;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table display pageResize table-striped table-bordered'></table></div>");
+            $("#content_" + this.tableId).append("<div style='width:auto;height:inherit;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table display table-striped table-bordered'></table></div>");
             this.Init();
         }
     };
@@ -344,9 +344,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
-        this.table_jQO.on('length.dt', function (e, settings, len) {
-            console.log('New page length: ' + len);
-        });
+        //this.table_jQO.on('length.dt', function (e, settings, len) {
+        //    console.log('New page length: ' + len);
+        //});
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
             alert("ajax erpttt......");
@@ -596,9 +596,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$("#filter_Display").empty();
         //var $controls = $("#sub_windows_sidediv_" + this.tableId + " #filterBox").children().not("[type=hidden],.commonControl");
         if (this.login === "dc")
-            var $controls = $(".filterCont #filterBox").children().not("[type=hidden],.commonControl");
+            var $controls = $(".filterCont #filterBox").children().not("[type=hidden],button");
         else
-            var $controls = $(".filter-cont #filterBox").children().not("[type=hidden],.commonControl");
+            var $controls = $(".filter-cont #filterBox").children().not("[type=hidden],button");
         var filter = "";
         var filterdialog = [], columnFilter = [];
         if ($controls.length > 0) {
@@ -851,9 +851,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
             //}
             this.addFilterEventListeners();
-            this.arrangeFooterWidth();
+            //this.arrangeFooterWidth();
+            //this.arrangefixedHedaerWidth();
             this.placeFilterInText();
             //this.check4Scroll();
+            if (focusedId !== undefined)
+                $("#" + focusedId).css("width", window.outerWidth);
             this.Api.columns.adjust();
         }.bind(this), 10);
     }
@@ -974,6 +977,29 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#" + this.tableId + " thead tr:eq(1) .eb_finput").parent().remove();
     };
 
+    this.arrangefixedHedaerWidth = function () {
+        var lhead = $('#' + this.tableId + '_wrapper .DTFC_LeftHeadWrapper table');
+        var rhead = $('#' + this.tableId + '_wrapper .DTFC_RightHeadWrapper table');
+        var lbody = $('#' + this.tableId + '_wrapper .DTFC_LeftBodyLiner table');
+
+        if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn.length > 0) {
+            if (this.ebSettings.LeftFixedColumn > 0) {
+                for (var j = 0; j < this.ebSettings.LeftFixedColumn; j++) {
+                    $(lhead).children().find("tr").eq(0).children("th").eq(j).css("width", lbody.find("tbody").children("tr").eq(0).children("td").eq(j).css("width"));
+                }
+            }
+
+            if (this.ebSettings.RightFixedColumn > 0) {
+                var start = lbody.find("tr").eq(0).children().length - this.ebSettings.RightFixedColumn;
+                for (var j = 0; (j + start) < lbody.find("tr").eq(0).children().length; j++) {
+                    $(rhead).children().find("tr").eq(0).children("th").eq(j).css("width", lbody.find("tbody").children("tr").eq(0).children("td").eq(j + start).css("width"));
+                }
+            }
+        }
+
+        $("#" + this.tableId + " thead tr:eq(1) .eb_finput").parent().remove();
+    };
+
     this.placeFilterInText = function () {
         if (this.columnSearch.length > 0) {
             if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
@@ -1027,18 +1053,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //}
     }
 
-    this.check4Scroll = function () {
-        var scrollBody = $('#' + this.tableId + '_wrapper .dataTables_scrollBody');
-        if (scrollBody[0].scrollHeight > scrollBody.height()) {
-            scrollBody.children().css("width", "110%");
-            scrollBody.siblings(".dataTables_scrollFoot").style("width", "98.65%", "important");
-        }
-        else {
-            scrollBody.children().css("width", "100%");
-            scrollBody.siblings(".dataTables_scrollFoot").style("width", "100%", "important");
-        }
+    //this.check4Scroll = function () {
+    //    var scrollBody = $('#' + this.tableId + '_wrapper .dataTables_scrollBody');
+    //    if (scrollBody[0].scrollHeight > scrollBody.height()) {
+    //        scrollBody.children().css("width", "110%");
+    //        scrollBody.siblings(".dataTables_scrollFoot").style("width", "98.65%", "important");
+    //    }
+    //    else {
+    //        scrollBody.children().css("width", "100%");
+    //        scrollBody.siblings(".dataTables_scrollFoot").style("width", "100%", "important");
+    //    }
 
-    };
+    //};
 
     this.copyLabelData = function (key, opt, event) {
 
@@ -1076,6 +1102,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.firstTime) {
             this.addFilterEventListeners();
             this.placeFilterInText();
+            //this.arrangefixedHedaerWidth();
         }
         this.Api.columns.adjust();
     };
@@ -1360,6 +1387,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
         this.filterDisplay();
 
+        if (focusedId !== undefined)
+            $("#" + focusedId).css("width", window.outerWidth);
         this.Api.columns.adjust();
     };
 

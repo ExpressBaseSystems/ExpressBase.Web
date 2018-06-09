@@ -393,6 +393,64 @@
         }
     };
 
+    commonO.PreviewObject = function () {
+        commonO.Save();
+    };
+
+    commonO.saveOrCommitSuccess = function (refid) {
+        this.refid = refid || null;
+        if (this.RbObj.EbObject.DataSourceRefId) {
+            $.ajax({
+                url: "../ReportRender/Index",
+                type: "POST",
+                cache: false,
+                data: {
+                    refid: this.refid,
+                    renderLimit:true
+                },
+                success: function (result) {
+                    $("#preview_wrapper").html(result);
+                    $("#run").on("click", this.render.bind(this));
+                }.bind(this)
+            });
+        }
+    }.bind(this); 
+
+     this.render = function() {
+        //$("#sub_windows_sidediv_dv").css("display", "none");
+        //$("#content_dv").removeClass("col-md-9").addClass("col-md-12");
+        //$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
+        var ParamsArray = [];
+        var filter_control_list = $("#all_control_names").val();
+        if (filter_control_list !== undefined) {
+            var myarray = filter_control_list.split(',');
+            for (var i = 0; i < myarray.length; i++) {
+                console.log($("#" + myarray[i]).val());
+                var type = $('#' + myarray[i]).attr('data-ebtype');
+                var name = $('#' + myarray[i]).attr('name');
+                if (type === "3")
+                    value = $("[name=" + myarray[i] + "]:checked").val()
+                else
+                    value = $('#' + myarray[i]).val();
+                if (type === '6')
+                    value = value.substring(0, 10);
+                ParamsArray.push(new fltr_obj(type, name, value));
+            }
+        }
+
+        //if (!validateFD()) {
+        //    //$.LoadingOverlay("hide");
+        //    $("#eb_common_loader").EbLoader("hide");
+        //    $("#filter").trigger("click");
+        //    return;
+        //}
+         $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}&Params=${JSON.stringify(ParamsArray)}`);
+        // $("#RptModal").modal('hide');
+        //$.LoadingOverlay("hide");
+         $("#eb_common_loader").EbLoader("hide");
+    }
+
     this.start = function () {
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
         $(window).on("scroll", this.windowscroll.bind(this));

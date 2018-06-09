@@ -336,6 +336,8 @@ li:hover {
     border: none;
     border-bottom: none;
     border-radius: 0;
+    background-color: #eee;
+    border-top-left-radius: 2px;
 }
     .codedit .tab-section-common .nav > li > a::after {
         content: "";

@@ -36,7 +36,7 @@
         var elemId = this.wraperId + name;
         var subRow_html = '', subtypeOfAttr = '', req_html = '', arrow = '', isExpandedAttr = '';
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
-            valueHTML = '<input type="checkbox" id="' + elemId + '" value="' + (value || false) + '"' + (value ? ' checked' : '') + ' />';
+            valueHTML = '<input type="checkbox" class ="pg-inp-checkbox" id="' + elemId + '" value="' + (value || false) + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
         }
@@ -58,23 +58,23 @@
 
         }
         else if (type === 2) {    // If number 
-            valueHTML = '<input type="number" id="' + elemId + '" value="' + (value || 0) + '" style="width:100%" />';
+            valueHTML = '<input type="number" class="pg-inp" id="' + elemId + '" value="' + (value || 0) + '" style="width:100%" />';
             if (this.getValueFuncs)
                 this.getValueFuncs[name] = function () { return ($('#' + elemId).val() === "") ? "" : parseInt($('#' + elemId).val()); };
         }
         else if (type === 3) {    // If color use color picker 
-            valueHTML = '<input type="color" id="' + elemId + '" value="' + (value || "#ffffff") + '" style="width:100%; height: 21px;" />';
+            valueHTML = '<input class="pg-inp-color" type="color" id="' + elemId + '" value="' + (value || "#ffffff") + '"/>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
             valueHTML = '<span style="vertical-align: sub;" for="' + elemId + '" editor="' + type + '">' + (value || "") + '</span>';
         }
         else if (type === 5) {    //  If string editor textbox
-            valueHTML = '<input type="text" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
+            valueHTML = '<input type="text" class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 6) {    //  If date&time date
-            valueHTML = '<input type="date" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
+            valueHTML = '<input type="date" class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         //else if (type === 25) {

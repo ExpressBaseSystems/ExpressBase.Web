@@ -101,6 +101,7 @@ var DvContainerObj = function (settings) {
                 rowData = this.rowData,
                 filterValues = this.filterValues,
                 cellData = this.cellData,
+                PGobj = this.PGobj
             );
         }
         console.log("xxxxx", this.dvcol[focusedId]);
@@ -561,26 +562,31 @@ var DvContainerObj = function (settings) {
         this.focusDot();
     };
     this.pgChanged = function (obj, Pname, CurDTobj) {
-        CurDTobj.isSecondTime = true;
-        //CurDTobj.EbObject = obj;
-        if (CurDTobj.login == "dc")
-            commonO.Current_obj = obj;
-        else
-            dvcontainerObj.currentObj = obj;
-        if (Pname == "DataSourceRefId") {
-            if (obj[Pname] !== null) {
-                CurDTobj.PcFlag = "True";
-                CurDTobj.EbObject.Columns.$values = [];
-                CurDTobj.EbObject.DSColumns.$values = [];
-                CurDTobj.call2FD();
+        if (obj.$type.indexOf("EbTableVisualization") !== -1) {
+            CurDTobj.isSecondTime = true;
+            //CurDTobj.EbObject = obj;
+            if (CurDTobj.login == "dc")
+                commonO.Current_obj = obj;
+            else
+                dvcontainerObj.currentObj = obj;
+            if (Pname == "DataSourceRefId") {
+                if (obj[Pname] !== null) {
+                    CurDTobj.PcFlag = "True";
+                    CurDTobj.EbObject.Columns.$values = [];
+                    CurDTobj.EbObject.DSColumns.$values = [];
+                    CurDTobj.call2FD();
+                }
+            }
+            else if (Pname == "Name") {
+                $("#objname").text(obj.Name);
+                console.log(obj);
+            }
+            else if (Pname == "Columns") {
+                console.log(obj);
             }
         }
-        else if (Pname == "Name") {
-            $("#objname").text(obj.Name);
-            console.log(obj);
-        }
-        else if (Pname == "Columns") {
-            console.log(obj);
+        else if (obj.$type.indexOf("EbChartVisualization") !== -1) {
+            CurDTobj.tmpPropertyChanged(obj, Pname);
         }
     };
 

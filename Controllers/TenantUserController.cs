@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
@@ -498,28 +499,30 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult CreateConfig()
         {
-            var ds = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { });
-            ViewBag.data = JsonConvert.SerializeObject(ds.Data);
+            var resp = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { });
+            ViewBag.data = JsonConvert.SerializeObject(resp.Data);
             return View();
         }
         [HttpPost]
-        public IActionResult CreateConfig(List<LocationConfig> keys)
+        public IActionResult CreateConfig(List<Eb_LocationConfig> keys)
         {
-            var ds = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { ConfString = keys });
+            var resp = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { ConfString = keys });
             return View();
         }
 
         [HttpGet]
-        public IActionResult CreateLocation()
+        public IActionResult CreateLocation(int id)
         {
-            var ds = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { });
-            ViewBag.data = JsonConvert.SerializeObject(ds.Data);
+            var resp = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { LocId = id });
+            ViewBag.data = JsonConvert.SerializeObject(resp.Data);
+            ViewBag.meta = (id > 0) ? JsonConvert.SerializeObject(resp.Meta) : "";
             return View();
         }
 
         [HttpPost]
-        public IActionResult CreateLocation(int i)
+        public IActionResult CreateLocation(string locid, string lname, string sname, string img, string meta)
         {
+            var resp = ServiceClient.Post<SaveLocationMetaResponse>(new SaveLocationMetaRequest { Locid = Convert.ToInt32(locid), Longname = lname, Shortname = sname, Img = img, ConfMeta = meta });
             return View();
         }
     }

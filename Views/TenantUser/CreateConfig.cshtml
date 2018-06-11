@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-<div class="container confpage">    
+<div class="container confpage">
     <div class="panel panel-default">
         <h3 class="col-sm-offset-4">Configure Location Meta</h3>
         <div class="panel-body">
@@ -21,7 +21,7 @@
 
 </div>
 <script>
-    var conf = new locationmeta(@Html.Raw(ViewBag.data));
+    var conf = new Eb_locationConfig(@Html.Raw(ViewBag.data));
 </script>
 <style>
     .confpage {

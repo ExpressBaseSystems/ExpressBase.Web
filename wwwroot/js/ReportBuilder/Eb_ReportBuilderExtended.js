@@ -130,7 +130,7 @@
 
         if (js_cntrol.which === 46) {
             delete this.Rpt.objCollection[js_cntrol.id];
-            jq_cntrol.remove();
+            jq_cntrol.remove(); this.Rpt.pg.removeFromDD(eb_cntrol.EbSid);
         }
         else if (event.ctrlKey)
             this.markEbCntrol(js_cntrol, eb_cntrol);
@@ -188,7 +188,7 @@
     };
 
     this.setBackgroud = function (url) {
-        $(".page").css("background", "url(http://eb_roby_dev.localhost:5000/static/" + url + ".jpg) no-repeat");
+        $(".page").css("background", "url('" + window.location.protocol + "//" + window.location.host + "/static/" + url + ".JPG" + "') center no-repeat");
     };
 
     this.mapCollectionToSection = function (sec) {

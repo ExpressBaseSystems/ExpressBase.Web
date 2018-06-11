@@ -22,7 +22,7 @@ namespace ExpressBase.Web.Controllers
 
         public ReportRenderController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
-        public IActionResult Index(string refid,bool renderLimit)
+        public IActionResult Index(string refid, bool renderLimit = false)
         {
             ViewBag.Refid = refid;
             EbObjectParticularVersionResponse resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
@@ -32,15 +32,15 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Fd = Report;
             }
-            if (renderLimit)
-                ViewBag.RenderLimit = true;
+
+            ViewBag.RenderLimit = renderLimit;
 
             return View();
         }
 
         public bool Render(string refid, List<Param> Params)
         {
-           
+
             ReportRenderResponse Res = null;
             try
             {
@@ -63,7 +63,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         public IActionResult RenderReport2(string refid, string Params)
-        { 
+        {
             List<Param> param = JsonConvert.DeserializeObject<List<Param>>(Params);
             Render(refid, param);
 

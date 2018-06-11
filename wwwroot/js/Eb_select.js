@@ -93,6 +93,7 @@ var EbSelect = function (ctrl) {
         $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
         $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
         $('#' + this.name + 'Wraper [type=search]').keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
+        $('#' + this.name + 'Wraper [type=search]').dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
 
         //set id for searchBox
         $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
@@ -272,10 +273,10 @@ var EbSelect = function (ctrl) {
     };
 
     this.setDmValues = function (i, name) {
-        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", name));
+        var cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
         if (this.maxLimit === 1)
             this.localDMS[name].shift();
-        this.localDMS[name].push(this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[idx]);
+        this.localDMS[name].push(cellData);
         console.log("DISPLAY MEMBER 0 a=" + this.Vobj.displayMembers[0]);
     };
 
@@ -298,12 +299,10 @@ var EbSelect = function (ctrl) {
     this.getSelectedRow = function () {
         console.log(100);
         var res = [];
-        var temp = [];
         $.each(this.valueMembers, function (idx, item) {
             var obj = {};
             var rowData = this.datatable.getRowDataByUid(item);
-            $.extend(temp, this.ComboObj.columns);
-            temp.sort(this.ColumnsComparer);
+            var temp = this.datatable.sortedColumns;
             var colNames = temp.map((obj, i) => { return obj.name; });
             $.grep(temp, function (obj, i) {
                 return obj.name;
@@ -317,12 +316,6 @@ var EbSelect = function (ctrl) {
         this.ComboObj.selectedRow = res;
         return res;
     }.bind(this);
-
-    this.ColumnsComparer = function (a, b) {
-        if (a.data < b.data) return -1;
-        if (a.data > b.data) return 1;
-        if (a.data === b.data) return 0;
-    };
 
     this.Renderselect = function () {
         this.Vobj = new Vue({

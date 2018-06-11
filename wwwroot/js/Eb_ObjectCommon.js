@@ -29,23 +29,14 @@
         $('#compare').off('click').on('click', this.Compare.bind(this));
         $('#save').off("click").on("click", this.Save.bind(this));
         $('#commit').off("click").on("click", this.Commit.bind(this, false));
-        $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
+        $('a[data-toggle="tab"].cetab').off("click").on('click', this.TabChangeSuccess.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         //$(window).bind('keydown', this.checkKeyDown.bind(this));
         $(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
-        $(".codedit .cetab").off("click").on("click", this.setTabName.bind(this));
 
         this.target = $("#versionNav li.active a").attr("href");//edits by amal
     }
-
-    this.setTabName = function (e) {
-        var jq = $(e.target).closest("a");
-        if (jq.attr("id") === "preview_tab_btn")
-            this.PreviewObject();
-        else
-            this.target = jq.attr("href");
-    };
-
+    
     this.checkKeyDown = function (event) {
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {
@@ -302,6 +293,12 @@
     };
 
     this.TabChangeSuccess = function (e) {
+        var jq = $(e.target).closest("a");
+        if (jq.attr("id") === "preview_tab_btn")
+            this.PreviewObject();
+        else
+            this.target = jq.attr("href");
+
         if ($(e.target).attr("data-vernum") !== undefined) {
             this.tabchangeFlag = true;
             var target = $(e.target).attr("href");

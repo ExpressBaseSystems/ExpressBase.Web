@@ -45,7 +45,7 @@
     padding: 0px 0px 0px 7px;
 }
 
-.bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+.codedit .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
     width: 183px;
 }
 
@@ -308,9 +308,9 @@ li:hover {
     padding: 0px 0px 0px 7px;
 }
 
-.bootstrap-select .btn {
+/*.bootstrap-select .btn {
     font-size: 12px;
-}
+}*/
 
 .open li {
     font-size: 12px;
@@ -503,11 +503,11 @@ li:hover {
     width: 100%;
 }
 
-.bootstrap-tagsinput .label-info {
+.dashbord .bootstrap-tagsinput .label-info {
     background-color: #676a8e;
 }
 
-.bootstrap-tagsinput .twitter-typeahead {
+.dashbord .bootstrap-tagsinput .twitter-typeahead {
     position: inherit !important;
 }
 

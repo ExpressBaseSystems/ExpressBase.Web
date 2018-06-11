@@ -67,7 +67,7 @@
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
-            valueHTML = '<span style="vertical-align: sub;" for="' + elemId + '" editor="' + type + '">' + (value || "") + '</span>';
+            valueHTML = '<span class="cxv-inp" for="' + elemId + '" editor="' + type + '">' + (value || "") + '</span>';
         }
         else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
@@ -82,7 +82,7 @@
         //}
         else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25) {//  If collection editor
             if (meta.Limit === 0 && type !== 25) {
-                valueHTML = '<span style="vertical-align: sub;">(Collection)</span>'
+                valueHTML = '<span class="cxv-inp">(Collection)</span>'
                     + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             }
             else {
@@ -95,36 +95,36 @@
             }
         }
         else if (type === 11) {    // If JS editor
-            valueHTML = '<span style="vertical-align: sub;">(JavaScript)</span>'
+            valueHTML = '<span class="cxv-inp">(JavaScript)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 12) {    // SQL editor
-            valueHTML = '<span style="vertical-align: sub;">(SQL)</span>'
+            valueHTML = '<span class="cxv-inp">(SQL)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 13) {  //  If Object Selector editor
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+            valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 16) {  //  If string editor
-            valueHTML = '<span style="vertical-align: sub;">(String)</span>'
+            valueHTML = '<span class="cxv-inp" style="vertical-align: sub;">(String)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 14) {  //  If FontSlctrs
             var _val = (value === "") ? "" : JSON.stringify(value).replace(/"/g, "'");
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (_val || "") + '" title="' + _val.replace(/{|}|'/g, "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+            valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (_val || "") + '" title="' + _val.replace(/{|}|'/g, "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 18) {    // If CS editor
-            valueHTML = '<span style="vertical-align: sub;">(C# Script)</span>'
+            valueHTML = '<span class="cxv-inp" style="vertical-align: sub;">(C# Script)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 21) {    // If MultiLanguageKeySelector Editor
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" style=" width: calc(100% - 26px); direction: rtl;" />'
+            valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '"  for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 17) {  //  If imageUploader
-            valueHTML = '<input type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
+            valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             this.ImgSlctrs[name] = new imageUploader({
                 Container: "mb_" + this.wraperId,

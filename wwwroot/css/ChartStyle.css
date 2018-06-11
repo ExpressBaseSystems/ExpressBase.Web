@@ -1,13 +1,11 @@
-﻿
-
-
-.tag-cont {
+﻿.tag-cont {
     height: inherit;
+    background-color:white;
 }
 
 .tag-wraper {
     border: solid 1px #eee;
-    height:48%;
+    /*height:48%;*/
     width:100%;
 }
 .tag-scroll {
@@ -27,4 +25,7 @@
 height: 100%; 
 z-index: 4; 
 box-shadow: 2px 9px 14px 0px rgba(189,189,189,1);
+}
+.tool-box-items span {
+    margin-right: 5px;
 }

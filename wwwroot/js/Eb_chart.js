@@ -48,7 +48,8 @@ var informaion = function (nam, val) {
     this.name = nam;
     this.value = val;
 }
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData) {
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData, PGobj) {
+    this.propGrid = PGobj;
     this.columnInfo = null;
     this.data = null;
     this.ssurl = ssurl;
@@ -81,21 +82,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     //this.filterChanged = false;
     this.bot = false;
     this.cellData = cellData;
-
+    var _icons = {
+        "bar": "fa fa-bar-chart",
+        "line": "fa fa-line-chart",
+        "pie": "fa fa-pie-chart",
+        "area":"fa fa-area-chart"
+    };
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
-    this.start = function () {
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
-        if (this.login == "uc") {
-            $("#ppgrid_" + this.tableId).hide();
-            $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
-        }
-        else {
-            //$("#sub_windows_sidediv_" + this.tableId).css("z-index", "-1");
-            $("#sub_window_" + this.tableId).css("padding-top", "15px");
-            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-        }
-    }
 
     split.windowOnFocus = function (ev) {
         $("#Relateddiv").hide();
@@ -103,10 +97,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
                 var id = $(ev.target).attr("id");
                 focusedId = id;
-                if(this.type === "googlemap")
-                    this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-                else
-                    this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 //if ($('#' + id).is(':last-child'))
                     //$(".splitdiv_parent").scrollTo($("#" + focusedId));
             }
@@ -126,6 +116,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.ajaxSucc = function (text) {
+        var flag = false;
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
+        if (this.login == "uc") {
+            $("#ppcont").hide();
+        }
         $("#objname").text(this.EbObject.Name);
         if (this.MainData !== null) {
             $("#Pipped").show();
@@ -150,16 +145,19 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $(sideDivId).empty();
         $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
         $(sideDivId).append(text);
-        if (this.login === 'dc')
+        $("#btnGo").click(this.init.bind(this));
+        if (typeof commonO !== "undefined")
             this.EbObject = commonO.Current_obj;
         else
             this.EbObject = dvcontainerObj.currentObj;
+
+        $(".filter-cont").html($(sideDivId).html());
         if ($(sideDivId+" #filterBox").children().length ==  0) {
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
             //$("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
-            $("#btnGo" + this.tabNum).trigger("click");
+            $("#btnGo").trigger("click");
         }
         else {
             this.FD = true;
@@ -167,43 +165,62 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 if (this.filterValues.length > 0) {
                     $.each(this.filterValues, function (i, param) {
                         $(sideDivId + ' #' + param.name).val(param.value);
+                        $(".filter-cont" + ' #' + param.Name).val(param.Value);
                     });
                 }
+                if (this.login === "dc")
+                    $("#btnGo").trigger("click");
+                flag = true;
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
                 $(sideDivId).css("display", "inline");
                 $.LoadingOverlay("hide");
-                //$("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-10").addClass("col-md-8");
             }
         }
         $(subDivId).focus();
+
+        if (this.type === "googlemap")
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+        else
+            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        if (this.login === "uc") {
+            $(sideDivId).hide();
+            $(".filter-cont #btnGo").click(this.init.bind(this));
+            if (flag)
+                $(".filter-cont #btnGo").trigger("click");
+        }
     }.bind(this);
 
-    if (this.EbObject === null) {
-        this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
-        split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
-        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
-        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-        this.start();
-    }
-    else {
-        if (this.MainData !== null)
-            split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization", prevfocusedId);
-        else
+    this.start = function () {
+        if (this.EbObject === null) {
+            this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
-        this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
-        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
+            if (this.login === "dc") {
+                this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
+                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+            }
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-        else
-            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-        this.start();
-        this.call2FD();
+            $(".filterCont").hide();
+        }
+        else {
+            if (this.MainData !== null)
+                split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization", prevfocusedId);
+            else
+                split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
+            if (this.login === "dc") {
+                this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
+                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+            }
+            if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
+                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+            else
+                this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+            this.call2FD();
+        }
     }
 
-
-
-    this.propGrid.PropertyChanged = function (obj, Pname) {
+    this.tmpPropertyChanged = function (obj, Pname) {
         this.EbObject = obj;
         if (this.login == "dc")
             commonO.Current_obj = obj;
@@ -220,16 +237,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             }
             this.rearrangeObjects();
-            //$("#diamension" + this.tableId).empty();
-            //$("#measure" + this.tableId).empty();
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             $("#map").remove();
-
-            //this.EbObject.Xaxis.$values = [];
-            //this.EbObject.Yaxis.$values = [];
             this.columnInfo = this.EbObject;
-            
+
             this.updateDragula("Changed");
 
         }
@@ -243,13 +255,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         else if (Pname == "Name") {
             $("#objname").text(obj.Name);
-            console.log(obj);
-        }
-        else if (Pname == "Columns") {
-            console.log(obj);
         }
     }.bind(this);
-
+   
     this.init = function () {
         this.columnInfo = this.EbObject;
         if (this.EbObject.Type !== "")
@@ -263,18 +271,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.login === "uc") {
                 this.collapseGraph();
             }
-
-            $("#ppgrid_" + this.tableId).css("display", "none");
-            $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
-            if (this.FD) {
-                $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-                //$("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-12");
-            }
-            else {
-                //$("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-            }
-
-            //this.filterValues = this.getFilterValues();
+            $(".pp-cont").hide();
+            $(".filter-cont").hide();
+            $(".ppcont").hide();
+            $(".filterCont").hide();
             filterChanged = false;
             if (!this.isTagged)
                 f = this.compareFilterValues();
@@ -311,29 +311,39 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append(
-                "<div id='graphcontainer_tab" + this.tableId + "' style='height:inherit;' class='chartCont'>" +
-                "<div class='col-md-2 no-padd' id='columnsDisplay" + this.tableId + "' style='height:inherit;'>" +
-                "<div class='tag-cont'>" +
-                "  <div class='tag-wraper'><div class='pgHead'>Dimensions</div><div class='tag-scroll'><div id='diamension" + this.tableId + "'></div></div></div>" +
-                "  <div class='tag-wraper'><div class='pgHead'>Measures</div><div class='tag-scroll'><div id='measure" + this.tableId + "'></div></div></div>" +
-                "</div>" +
-                "</div> " +
-                "<div class='col-md-10' id='canvasParentDiv" + this.tableId + "' style='height:inherit;'>" +
-                "<div id='xy" + this.tableId + "' style='vertical-align: top;'> " +
-                "<div class='input-group' > " +
-                "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
-                "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
-                "</div> " +
-                "<div class='input-group' style='padding-top: 1px;'> " +
-                "<span class='input-group-addon' id='basic-addon3'> Y - Axis</span> " +
-                "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
-                "</div> " +
-                "</div> " +
-                "<input type='color' id='fontSel' style='display:none;'>" +
-                "<div id='canvasDiv" + this.tableId +"' style='height:100%;padding-bottom:10px;'><canvas id='myChart" + this.tableId + "'></canvas></div> " +
-                "</div> " +
-                "</div>");
+                `<div id='graphcontainer_tab${this.tableId}' style='height:inherit;' class='chartCont'>
+                <div class='col-md-2 no-padd' id='columnsDisplay${this.tableId}' style='height:inherit;'>
+                <div class='tag-cont'>
+                  <div class='tag-wraper'><div class='pgHead'>Data</div><div class='tag-scroll'><div id='ColumnCont${this.tableId}'></div></div></div>
+                    <ul id="data-table-list" class="tool-box-items">
+                        <li>
+                            <a>Diamensions</a>
+                            <ul id="diamension${this.tableId}"></ul>
+                        </li>
+                        <li>
+                            <a>Measures</a>
+                            <ul id="measure${this.tableId}"></ul>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+                <div class='col-md-10' id='canvasParentDiv${this.tableId}' style='height:inherit;'>
+                <div id='xy${this.tableId}' style='vertical-align: top;'> 
+                <div class='input-group' >
+                <span class='input-group-addon' id='basic-addon3'> X - Axis</span> 
+                <div class='form-control' style='padding: 4px;height:33px' id='X_col_name${this.tableId}' ></div> 
+                </div>
+                <div class='input-group' style='padding-top: 1px;'>
+                <span class='input-group-addon' id='basic-addon3'> Y - Axis</span>
+                <div class='form-control' style='padding: 4px;height:33px' id='Y_col_name${this.tableId}'></div> 
+                </div>
+                </div> 
+                <input type='color' id='fontSel' style='display:none;'>
+                <div id='canvasDiv${this.tableId}' style='height:100%;padding-bottom:10px;'><canvas id='myChart${this.tableId}'></canvas></div> 
+                </div> 
+                </div>`);
             //this.GenerateButtons();
+        //  "  <div class='tag-wraper'><div class='pgHead'>Measures</div><div class='tag-scroll'><div id='measure" + this.tableId + "'></div></div></div>" +
         //}
         //else {
 
@@ -423,11 +433,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 
             </ul>
             </div>
-            <button id='reset_zoom${ this.tableId}' class='btn'>Reset zoom</button>
+           
             <button id='btnColumnCollapse${ this.tableId}' class='btn' style='display: inline-block;'>
-            <i class='fa fa-cog' aria-hidden='true'></i>
+            <i class="fa fa-cogs" aria-hidden="true"></i>
             </button>`);
         }
+        // <button id='reset_zoom${ this.tableId}' class='btn'>Reset zoom</button>
         //<div class="divHLType">
         //    <div class="chartHeader">Other</div>
         //    <div id="Other" class="chartBody">
@@ -440,15 +451,19 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.FD) {
             $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
         }
-        $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'> <i class='material-icons' aria-hidden='true'></i></button>")
+        $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class= 'fa fa-cog' aria - hidden='true'></i ></button>")
 
-        if (this.EbObject !== null && this.EbObject.Type !== null)
-            $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.EbObject.Type.trim() + "&nbsp;<span class = 'caret'></span>");
+        if (this.EbObject !== null && this.EbObject.Type !== "") {
+            if (this.EbObject.Type !== "line")
+                $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${ _icons[this.EbObject.Type]}'></i>&nbsp;<span class = 'caret'></span>`);
+        }
+        else {
+            $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["bar"]}'></i>&nbsp;<span class = 'caret'></span>`);
+        }
         if (this.login == "uc") {
             //if (!this.isContextual)
                 dvcontainerObj.appendRelatedDv(this.tableId);
                 dvcontainerObj.modifyNavigation();
-                $("#btnTogglePPGrid" + this.tableId).hide();
         }
         this.bindEvents();
 
@@ -507,13 +522,19 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             $.each(colsAll_XY, function (i, obj) {
                 if (obj.data != undefined) {
-                    if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime")
-                        $("#diamension" + tid).append("<div class='colTile columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "</div>");
+                    if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime") {
+                        if(gettypefromNumber(obj.Type) === "String")
+                            $("#diamension" + tid).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-font'></i></span>${obj.name}</li>`);
+                        else
+                            $("#diamension" + tid).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-calendar'></i></span>${obj.name}</li>`);
+                    }
                     else if (gettypefromNumber(obj.Type) === "Numeric")
-                        $("#measure" + tid).append("<div class='colTile columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "</div>");
+                        $("#measure" + tid).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-sort-numeric-asc'></i></span>${obj.name}</li>`);
                 }
             });
-
+            $('#data-table-list').killTree();
+            $('#data-table-list').treed();
+            $('#data-table-list .branch a').trigger("click");
             this.updateDragula();
         }
     };
@@ -831,11 +852,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.RemoveCanvasandCheckButton = function () {
         if (this.type == null) {
             this.type = "bar";
-            $("#graphDropdown_tab" + this.tableId + " button:first-child").html("Bar" + "&nbsp;<span class = 'caret'></span>")
+            //$("#graphDropdown_tab" + this.tableId + " button:first-child").html("<i class='"+_icons["bar"]+"'></i>" + "&nbsp;<span class = 'caret'></span>")
         }
         else {
             this.type = this.type.toLowerCase();
-            $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.type + "&nbsp;<span class = 'caret'></span>")
+            //$("#graphDropdown_tab" + this.tableId + " button:first-child").html("<i class='" + _icons["bar"] + "'></i>" + "&nbsp;<span class = 'caret'></span>")
         }
         
         if (this.type == "area" || this.type == "line") {
@@ -844,6 +865,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 if (this.piedataFlag)
                     this.drawGeneralGraph();
                 this.type = "line";
+                if (this.gdata.datasets[0].fill === true)
+                    $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${ _icons["area"]}'></i>&nbsp;<span class = 'caret'></span>`);
+                else
+                    $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["line"]}'></i>&nbsp;<span class = 'caret'></span>`);
             }
             else
                 this.drawGeneralGraph();
@@ -852,10 +877,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.piedataFlag) {
                 this.drawGeneralGraph();
             }
+            $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["bar"]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
         else if (this.type == "pie") {
             if (!this.piedataFlag)
                 this.drawGeneralGraph();
+            $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["pie"]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
         else if (this.type == "horizontalbar") {
             if (this.piedataFlag) {
@@ -896,8 +923,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
    
     this.GdataDSiterFn = function (j, obj) {
-        var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim();
-        if (ty == "area") {
+        //var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim();
+        if (this.type == "area") {
             this.gdata.datasets[j].fill = true;
         }
         else {
@@ -924,7 +951,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.setGraphType = function (e) {
         var current = this;
         this.type = $(e.target).parent().parent().next().text().toLowerCase();
-        $("#graphDropdown_tab" + this.tableId + " button:first-child").html(this.type.trim() + "&nbsp;<span class = 'caret'></span>");
+        $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class'${_icons[this.type]}'></i>&nbsp;<span class = 'caret'></span>`);
         if (this.type.trim() !== "googlemap") {
             if (this.columnInfo.$type.indexOf("EbGoogleMap") !== -1) {
                 $("#canvasDiv" + this.tableId).children("#map").remove();
@@ -948,7 +975,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 return false;
         }
         else {
-
             var refid = this.EbObject.DataSourceRefId;
             var columns = JSON.parse(JSON.stringify(this.EbObject.Columns)); 
             $("#canvasDiv" + this.tableId).children("iframe").remove();
@@ -975,6 +1001,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.colDrop = function (el, target, source, sibling) {
         if ($(target).attr("id") === "X_col_name" + this.tableId || $(target).attr("id") === "Y_col_name" + this.tableId) {
+            $(el).addClass("colTile");
+            $(el).children("span").remove();
             var temp;
             $(el).css("display", "inline-block");
             var name = $(el).text();
@@ -994,7 +1022,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     this.columnInfo.LegendColor.$values.push(new ChartColor(name, getRandomColor()));
             }
 
-            if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
+            if ($("#X_col_name" + this.tableId + " li").length == 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
                 this.drawGeneralGraph();
             }
             else {
@@ -1031,53 +1059,29 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
   
     this.toggleFilterdialog = function () {
-        if ($("#sub_windows_sidediv_" + this.tableId).css("display") === "none") {
-            $("#sub_windows_sidediv_" + this.tableId).css("display", "inline");
-            //if ($("#content_" + this.tableId).hasClass("col-md-12"))
-            //    $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
-            //else
-            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
-        }
-        else {
-            $("#sub_windows_sidediv_" + this.tableId).css("display", "none");
-            //if ($("#content_" + this.tableId).hasClass("col-md-10"))
-            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-            //else
-            //    $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
-        }
+        $(".filter-cont").toggle();
+        $(".filterCont").toggle();
     };
 
     this.togglePPGrid = function () {
-        if ($("#ppgrid_" + this.tableId).css("display") === "none") {
-            $("#ppgrid_" + this.tableId).css("display", "inline");
-            $("#ppgrid_" + this.tableId).parent().css("z-index", "3");
-            $("#Relateddiv").hide();
-            //if ($("#content_" + this.tableId).hasClass("col-md-12"))
-            //    $("#content_" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
-            //else
-            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-8")
-        }
-        else {
-            $("#ppgrid_" + this.tableId).css("display", "none");
-            $("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
-            $("#Relateddiv").hide();
-            //if ($("#content_" + this.tableId).hasClass("col-md-10"))
-            //    $("#content_" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
-            //else
-            //    $("#content_" + this.tableId).removeClass("col-md-8").addClass("col-md-10");
-        }
+        $("#Relateddiv").hide();
+        $(".pp-cont").toggle();
+        $(".ppcont").toggle();
     };
 
     this.RemoveAndAddToColumns = function (e) {
         var str = $(e.target).parent().text();
         var index = parseInt($(e.target).parent().attr("data-id"));
         if ($(e.target).parent().parent().attr("id") === "X_col_name" + this.tableId) {
-            $("#diamension" + this.tableId).append("<div class='colTile columnDrag' id='li" + str.substr(0, str.length - 1) + "' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substr(0, str.length - 1) + "</div>");
+            if (gettypefromNumber($(e.target).parent().attr("data-type")) === "String")
+                $("#diamension" + this.tableId).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-font'></i></span>${str.substr(0, str.length - 1)}</li>`);
+            else if (gettypefromNumber($(e.target).parent().attr("data-type")) === "DateTime")
+                $("#diamension" + this.tableId).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-calendar'></i></span>${str.substr(0, str.length - 1)}</li>`);
             //index = this.Xindx.indexOf($(e.target).parent().attr("data-id"));
             //this.Xindx.pop(index);
         }
         else if ($(e.target).parent().parent().attr("id") === "Y_col_name" + this.tableId) {
-            $("#measure" + this.tableId).append("<div class='colTile columnDrag' id='li" + str.substr(0, str.length - 1) + "' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substr(0, str.length - 1) + "</div>");
+            $("#measure" + this.tableId).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-sort-numeric-asc'></i></span>${str.substr(0, str.length - 1)}</li>`);
             //index = this.Yindx.indexOf($(e.target).parent().attr("data-id"));
             //this.Yindx.pop(index);
         }
@@ -1092,7 +1096,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //this.Xindx = $.grep(this.Xindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
         //this.Yindx = $.grep(this.Yindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
 
-        if ($("#X_col_name" + this.tableId + " div").length == 1 && $("#Y_col_name" + this.tableId + " div").length >= 1) {
+        if ($("#X_col_name" + this.tableId + " li").length == 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
             this.drawGeneralGraph();
         }
         else {
@@ -1249,6 +1253,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.EbObject.Yaxis = this.prevObj.Yaxis;
         this.EbObject.Pippedfrom = this.prevObj.Pippedfrom;
     }
+
+    this.start();
 };
 
 function initMap() {

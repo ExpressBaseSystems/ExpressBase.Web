@@ -299,7 +299,7 @@ var EbSelect = function (ctrl) {
     this.getSelectedRow = function () {
         console.log(100);
         var res = [];
-        $.each(this.valueMembers, function (idx, item) {
+        $.each(this.ComboObj.tempValue, function (idx, item) {
             var obj = {};
             var rowData = this.datatable.getRowDataByUid(item);
             var temp = this.datatable.sortedColumns;

@@ -506,7 +506,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.Query = function (msg, OptArr, For, ids) {
         this.msgFromBot(msg);
-        var Options = this.getButtons(OptArr, For, ids);
+        var Options = this.getButtons(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids);
         this.msgFromBot($('<div class="btn-box" >' + Options + '</div>'));
     };
 
@@ -540,7 +540,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
                 this.formFunctions.visibleIfs[control.name] = new Function("form", atob(control.visibleIf));
             if (control.valueExpression.trim())//if valueExpression is Not empty
-                this.formFunctions.valueExpressions[control.name] = new Function("form", atob(control.valueExpression));
+                this.formFunctions.valueExpressions[control.name] = new Function("form", "user", atob(control.valueExpression));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
         }.bind(this));
 
@@ -682,7 +682,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         //var nxtCtrl = this.curForm.controls[this.nxtCtrlIdx];
         var valExpFunc = this.formFunctions.valueExpressions[nxtCtrl.name];
         if (valExpFunc !== undefined) {
-            this.formValues[nxtCtrl.name] = valExpFunc(this.formValues);
+            this.formValues[nxtCtrl.name] = valExpFunc(this.formValues, this.userDtls);
             this.formValuesWithType[nxtCtrl.name] = [this.formValues[nxtCtrl.name], nxtCtrl.ebDbType];
         }
         else if (nxtCtrl.autoIncrement) {
@@ -982,7 +982,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.formSubmit_fm = function (e) {
         var $btn = $(e.target).closest(".btn");
-        var html = "<div class='sum-box'>";
+        var html = "<div class='sum-box'><table style='font-size: inherit;'>";
         $.each(this.curForm.controls, function (i, control) {    
             if (!control.hidden) {
                 this.curCtrl = control;
@@ -994,11 +994,11 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                     this.formValuesWithType[name] = [control.tempValue, control.ebDbType];
                 else
                     this.formValuesWithType[name] = [curval, control.ebDbType];
-                html += `<label>${control.label}</label>: ${this.formValuesWithType[name][0]}<br/>`;
+                html += `<tr><td style='padding: 5px;'>${control.label}</td> <td style='padding-left: 10px;'>${this.formValuesWithType[name][0]}</td></tr>`;
             }            
             this.valueExpHandler(control);            
         }.bind(this));
-        this.sendCtrl($(html + "</div>"));
+        this.sendCtrl($(html + "</table></div>"));
         this.sendMsg($btn.text());
         this.showConfirm();
     }.bind(this);

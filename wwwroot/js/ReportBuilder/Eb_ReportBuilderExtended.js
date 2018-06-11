@@ -130,7 +130,7 @@
 
         if (js_cntrol.which === 46) {
             delete this.Rpt.objCollection[js_cntrol.id];
-            jq_cntrol.remove();
+            jq_cntrol.remove(); this.Rpt.pg.removeFromDD(eb_cntrol.EbSid);
         }
         else if (event.ctrlKey)
             this.markEbCntrol(js_cntrol, eb_cntrol);

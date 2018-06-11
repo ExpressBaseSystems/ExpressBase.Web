@@ -383,13 +383,13 @@
             $(".multiSplit,.headersections,#page,.rulerleft").show();
             $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").hide();
             $(".tracker_drag").css("height", "100%");
-            containment = ".page";
+            this.RbObj.containment = ".page";
         }
         else {
             $(".multiSplit,.headersections,#page,.rulerleft").hide();
             $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").show();
             $(".tracker_drag").css("height", "100%");
-            containment = ".page-reportLayer";
+            this.RbObj.containment = ".page-reportLayer";
         }
     };
 

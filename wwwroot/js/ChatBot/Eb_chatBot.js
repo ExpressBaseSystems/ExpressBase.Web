@@ -528,23 +528,26 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.RenderForm = function () {
         var Html = `<div class='form-wraper'>`;
         $.each(this.curForm.controls, function (i, control) {
-            Html += `<label>${control.label}</label><div class='ctrl-wraper'>${control.bareControlHtml}</div><br/><br/>`;
+            if (!control.hidden)
+                Html += `<label>${control.label}</label><div class='ctrl-wraper'>${control.bareControlHtml}</div><br/><br/>`;
         });
         this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn">Submit</button><button class="btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
 
-    this.setFormControls = function () {
+    this.setFormControls = function () {     
+        this.formControls = [];
+        $.each(this.curForm.controls, function (i, control) {
+            if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
+                this.formFunctions.visibleIfs[control.name] = new Function("form", atob(control.visibleIf));
+            if (control.valueExpression.trim())//if valueExpression is Not empty
+                this.formFunctions.valueExpressions[control.name] = new Function("form", atob(control.valueExpression));
+            this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
+        }.bind(this));
+
         if (this.curForm.renderAsForm)
             this.RenderForm();
         else {
-            this.formControls = [];
-            $.each(this.curForm.controls, function (i, control) {
-                if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
-                    this.formFunctions.visibleIfs[control.name] = new Function("form", atob(control.visibleIf));
-                if (control.hidden && control.valueExpression.trim())//if valueExpression is Not empty
-                    this.formFunctions.valueExpressions[control.name] = new Function("form", atob(control.valueExpression));
-                this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
-            }.bind(this));
+            
             this.getControl(0);
         }
     }.bind(this);
@@ -675,8 +678,8 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.curVal = null;
     }.bind(this);
 
-    this.valueExpHandler = function () {
-        var nxtCtrl = this.curForm.controls[this.nxtCtrlIdx];
+    this.valueExpHandler = function (nxtCtrl) {
+        //var nxtCtrl = this.curForm.controls[this.nxtCtrlIdx];
         var valExpFunc = this.formFunctions.valueExpressions[nxtCtrl.name];
         if (valExpFunc !== undefined) {
             this.formValues[nxtCtrl.name] = valExpFunc(this.formValues);
@@ -685,21 +688,20 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         else if (nxtCtrl.autoIncrement) {
             this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];
         }
-        console.log(this.curForm.controls[0].selectedRow);//  hardcoding
+        //console.log(this.curForm.controls[0].selectedRow);//  hardcoding
     }
 
     this.callGetControl = function () {
         if (this.nxtCtrlIdx !== this.formControls.length) { // if not last control
             if (!this.IsEdtMode || this.IsDpndgCtrEdt) {   // (if not edit mode or IsDpndgCtr edit mode) if not skip calling getControl()
                 var visibleIfFn = this.formFunctions.visibleIfs[this.curForm.controls[this.nxtCtrlIdx].name];
-                if ((!visibleIfFn || visibleIfFn(this.formValues)) && !this.curForm.controls[this.nxtCtrlIdx].hidden) {//checks isVisible or no isVisible defined
-                    
+                //if (this.curForm.controls[this.nxtCtrlIdx].hidden) {//////////////////////
+                this.valueExpHandler(this.curForm.controls[this.nxtCtrlIdx]);
+                //}
+                if ((!visibleIfFn || visibleIfFn(this.formValues)) && !this.curForm.controls[this.nxtCtrlIdx].hidden) {//checks isVisible or no isVisible defined                    
                     this.getControl(this.nxtCtrlIdx);
                 }
-                else {
-                    if (this.curForm.controls[this.nxtCtrlIdx].hidden) {
-                        this.valueExpHandler();
-                    }
+                else {                    
                     this.nxtCtrlIdx++;
                     this.callGetControl();
                 }
@@ -981,12 +983,20 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.formSubmit_fm = function (e) {
         var $btn = $(e.target).closest(".btn");
         var html = "<div class='sum-box'>";
-        $.each(this.curForm.controls, function (i, control) {
-            this.curCtrl = control;
-            var curval = this.getValue($('#' + control.name));
-            var name = control.name;
-            this.formValuesWithType[name] = [curval, control.ebDbType];
-            html += `<label>${control.label}</label>: ${curval}<br/>`;
+        $.each(this.curForm.controls, function (i, control) {    
+            if (!control.hidden) {
+                this.curCtrl = control;
+                var curval = this.getValue($('#' + control.name));
+                var name = control.name;
+                
+                this.formValues[name] = curval;
+                if (control.objType === "ComboBox") 
+                    this.formValuesWithType[name] = [control.tempValue, control.ebDbType];
+                else
+                    this.formValuesWithType[name] = [curval, control.ebDbType];
+                html += `<label>${control.label}</label>: ${this.formValuesWithType[name][0]}<br/>`;
+            }            
+            this.valueExpHandler(control);            
         }.bind(this));
         this.sendCtrl($(html + "</div>"));
         this.sendMsg($btn.text());
@@ -1051,6 +1061,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.ajaxsuccess = function () {
         alert("DataCollection success");
+        //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 
     this.AskWhatU = function () {

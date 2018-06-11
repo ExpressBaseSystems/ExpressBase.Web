@@ -249,7 +249,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                     value = $('#' + myarray[i]).val();
                 if (type === '6')
                     value = value.substring(0, 10);
-                if (type === '16' && !(Number.isNaN(value)))
+                if (type === '16' && !(isNaN(value)))
                 {
                     value = parseInt(value);
                     type = 8;

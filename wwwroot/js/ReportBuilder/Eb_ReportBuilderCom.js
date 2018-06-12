@@ -410,7 +410,12 @@
                 },
                 success: function (result) {
                     $("#preview_wrapper").html(result);
-                    $("#run").on("click", this.render.bind(this));
+                    $("#btnGo").on("click", this.render.bind(this));
+                    if ($("#btnGo").length <= 0) {
+                        $("#sub_windows_sidediv_dv").hide();
+                        $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
+                        $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}`);
+                    }
                 }.bind(this)
             });
         }

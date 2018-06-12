@@ -126,7 +126,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 //    $(".btn-box").find("[idx=4]").click();
                 //}.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
-        
+
     }.bind(this);
 
     this.postmenuClick = function (e, reply) {
@@ -236,7 +236,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             //        this.showChartViz();
             //    }
             //    }.bind(this));
-            
+
         }
         else {
             this.hideTypingAnim();
@@ -269,24 +269,24 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         //        this.AskWhatU();
         //        $tableCont.show(100);
         //    }.bind(this)
-            //dom: "rt",
-            //ajax: {
-            //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
-            //    type: 'POST',
-            //    timeout: 180000,
-            //    data: function (dq) {
-            //        delete dq.columns; delete dq.order; delete dq.search;
-            //        dq.RefId = this.curTblViz.DataSourceRefId;
-            //        return dq;
-            //    }.bind(this),
-            //    dataSrc: function (dd) {
-            //        return dd.data;
-            //    },
-            //    beforeSend: function (xhr) {
-            //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            //    }.bind(this),
-            //    crossDomain: true
-            //}
+        //dom: "rt",
+        //ajax: {
+        //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
+        //    type: 'POST',
+        //    timeout: 180000,
+        //    data: function (dq) {
+        //        delete dq.columns; delete dq.order; delete dq.search;
+        //        dq.RefId = this.curTblViz.DataSourceRefId;
+        //        return dq;
+        //    }.bind(this),
+        //    dataSrc: function (dd) {
+        //        return dd.data;
+        //    },
+        //    beforeSend: function (xhr) {
+        //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+        //    }.bind(this),
+        //    crossDomain: true
+        //}
         //});
 
         var o = new Object();
@@ -513,7 +513,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.getButtons = function (OptArr, For, ids) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
-            Html += `<button for="${For}" class="btn" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}">${opt} </button>`;
+            Html += `<button for="${For}" class="btn formname-btn" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}">${opt} </button>`;
         });
         return Html;
     };
@@ -534,12 +534,12 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn">Submit</button><button class="btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
 
-    this.setFormControls = function () {     
+    this.setFormControls = function () {
         this.formControls = [];
         $.each(this.curForm.controls, function (i, control) {
             if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
                 this.formFunctions.visibleIfs[control.name] = new Function("form", atob(control.visibleIf));
-            if (control.valueExpression.trim())//if valueExpression is Not empty
+            if (control.valueExpression && control.valueExpression.trim())//if valueExpression is Not empty
                 this.formFunctions.valueExpressions[control.name] = new Function("form", "user", atob(control.valueExpression));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
         }.bind(this));
@@ -547,7 +547,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         if (this.curForm.renderAsForm)
             this.RenderForm();
         else {
-            
+
             this.getControl(0);
         }
     }.bind(this);
@@ -629,7 +629,32 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         return inpVal;
     }
 
+    this.makeInvalid = function (msg = "This field is required") {
+        var contSel = `[for=${this.curCtrl.name}]`;
+        $(`${contSel} .chat-ctrl-cont`).after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
+        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
+        $(`${contSel}  .text-danger`).text(msg).show().animate({ opacity: "1" }, 300);
+    };
+
+    this.makeValid = function () {
+        var contSel = `[for=${this.curCtrl.name}]`;
+        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+        $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
+    };
+
+    this.checkRequired = function () {
+        if (this.curCtrl.required && !this.curVal) {
+            this.makeInvalid();
+            return false;
+        }
+        else {
+            this.makeValid();
+            return true;
+        }
+    };
+
     this.ctrlSend = function (e) {
+        this.curVal = null;
         var $btn = $(e.target).closest("button");
         var $msgDiv = $btn.closest('.msg-cont');
         this.sendBtnIdx = parseInt($btn.attr('idx'));
@@ -641,11 +666,13 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         this.curVal = this.getValue($input);
         if (this.curCtrl.objType === "ImageUploader") {
+            if (!this.checkRequired()) { return; }
             this.replyAsImage($msgDiv, $input[0], next_idx);
             this.formValues[id] = this.curVal;// last value set from outer fn
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
         else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.objType === "ComboBox") {
+            if (!this.checkRequired()) { return; }
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             if (this.curCtrl.objType === "ComboBox")//////////////////////////-------////////////
@@ -655,6 +682,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.callGetControl(this.nxtCtrlIdx);
         }
         else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
+            if (!this.checkRequired()) { return; }
             if (this.curCtrl.isReadOnly) {
                 $btn.css('display', 'none');
                 $('#' + this.curCtrl.name).attr('id', '');
@@ -668,6 +696,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         }
         else {
             this.curVal = this.curVal || $('#' + id).val();
+            if (!this.checkRequired()) { return; }
             this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
@@ -701,7 +730,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 if ((!visibleIfFn || visibleIfFn(this.formValues)) && !this.curForm.controls[this.nxtCtrlIdx].hidden) {//checks isVisible or no isVisible defined                    
                     this.getControl(this.nxtCtrlIdx);
                 }
-                else {                    
+                else {
                     this.nxtCtrlIdx++;
                     this.callGetControl();
                 }
@@ -983,20 +1012,20 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.formSubmit_fm = function (e) {
         var $btn = $(e.target).closest(".btn");
         var html = "<div class='sum-box'><table style='font-size: inherit;'>";
-        $.each(this.curForm.controls, function (i, control) {    
+        $.each(this.curForm.controls, function (i, control) {
             if (!control.hidden) {
                 this.curCtrl = control;
                 var curval = this.getValue($('#' + control.name));
                 var name = control.name;
-                
+
                 this.formValues[name] = curval;
-                if (control.objType === "ComboBox") 
+                if (control.objType === "ComboBox")
                     this.formValuesWithType[name] = [control.tempValue, control.ebDbType];
                 else
                     this.formValuesWithType[name] = [curval, control.ebDbType];
                 html += `<tr><td style='padding: 5px;'>${control.label}</td> <td style='padding-left: 10px;'>${this.formValuesWithType[name][0]}</td></tr>`;
-            }            
-            this.valueExpHandler(control);            
+            }
+            this.valueExpHandler(control);
         }.bind(this));
         this.sendCtrl($(html + "</table></div>"));
         this.sendMsg($btn.text());
@@ -1059,8 +1088,11 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         return FVWTcoll;
     };
 
-    this.ajaxsuccess = function () {
-        alert("DataCollection success");
+    this.ajaxsuccess = function (rowAffected) {
+        if (rowAffected > 0)
+            alert("DataCollection success");
+        else
+            alert("Something went wrong");
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 
@@ -1128,7 +1160,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 /////////////////////////////////////////////////Form click
                 setTimeout(function () {
                     //$(".btn-box .btn:last").click();
-                    //$(".btn-box").find("[idx=22]").click();
+                    //$(".btn-box").find("[idx=3]").click();
                 }.bind(this), this.typeDelay * 2 + 100);
             }.bind(this));
     }.bind(this);

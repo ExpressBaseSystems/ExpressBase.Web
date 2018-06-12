@@ -152,12 +152,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.EbObject = dvcontainerObj.currentObj;
 
         $(".filter-cont").html($(sideDivId).html());
-        if ($(sideDivId+" #filterBox").children().length ==  0) {
+        if ($(sideDivId + " #filterBox").children().not("button").length ==  0) {
             this.FD = false;
             $(sideDivId).css("display", "none");
             $.LoadingOverlay("hide");
-            //$("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).removeClass("col-md-8").addClass("col-md-10");
-            $("#btnGo").trigger("click");
         }
         else {
             this.FD = true;
@@ -184,11 +182,17 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         else
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+
         if (this.login === "uc") {
             $(sideDivId).hide();
             $(".filter-cont #btnGo").click(this.init.bind(this));
-            if (flag)
-                $(".filter-cont #btnGo").trigger("click");
+            if (!this.FD)
+                $("#btnGo" + this.tabNum).trigger("click");
+        }
+        else {
+            $(".filterCont #btnGo").click(this.init.bind(this));
+            if (!this.FD)
+                $("#btnGo" + this.tabNum).trigger("click");
         }
     }.bind(this);
 
@@ -235,6 +239,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             else {
                 this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+                this.type = "bar";
             }
             this.rearrangeObjects();
             $("#canvasDiv" + this.tableId).children("iframe").remove();
@@ -248,6 +253,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
+                this.EbObject.Columns.$values = [];
+                this.EbObject.DSColumns.$values = [];
                 this.EbObject.Xaxis.$values = [];
                 this.EbObject.Yaxis.$values = [];
                 this.call2FD();
@@ -739,7 +746,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             if ($("#map" + this.tableId).children().length === 0)
-                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId+"' style='height:400px;width:100%;'></div>");
+                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId+"' style='height:inherit;width:100%;'></div>");
             Xlabel = this.XLabel;
             Ylabel = this.YLabel;
             showRoute = this.EbObject.ShowRoute;

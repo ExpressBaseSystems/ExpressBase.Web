@@ -10,6 +10,7 @@ var EbBasicDataTable = function (Option) {
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.columns = Option.columns || null;
+    this.hiddenIndex = null;
     this.isSecondTime = false;
     this.Api = null;
     this.order_info = new Object();
@@ -198,6 +199,7 @@ var EbBasicDataTable = function (Option) {
         chkObj.pos = "-1";
 
         this.extraCol.push(chkObj);
+        this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
     }
 
     this.createTblObject = function () {
@@ -457,6 +459,7 @@ var EbBasicDataTable = function (Option) {
 
     this.rowCallBackFunc = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
         this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
+        $(nRow).attr("data-uid", aData[this.hiddenIndex]);
     };
 
     this.initCompleteFunc = function (settings, json) {
@@ -1274,10 +1277,10 @@ var EbBasicDataTable = function (Option) {
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         if (this.FlagPresentId) {
-            var idpos = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
+            this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             //var idpos = getObjByval(this.ebSettings.Columns.$values, "name", this.hiddenFieldName).data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
-            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[this.hiddenIndex].toString() + "'/>";
         }
         else
             return "<input type='checkbox' class='" + this.tableId + "_select'/>";
@@ -1592,7 +1595,7 @@ var EbBasicDataTable = function (Option) {
             return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' />`;
     };
     this.getRowDataByUid = function (Uid) {
-        var $tr = $("." + this.tableId + "_select").filter("[value='" + Uid + "']").closest("tr");
+        var $tr = $("#"+this.tableId+" tr[data-uid='" + Uid + "']");
         var rowData = this.Api.row($tr).data();
         return rowData;
     };

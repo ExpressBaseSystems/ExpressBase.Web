@@ -1,5 +1,6 @@
 ﻿@{
     var BotDtls = Html.Raw(ViewBag.BotDetails);
+    string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
 }
 
 <head>
@@ -36,7 +37,7 @@
             $.each(BotList.$values, function (k, bobj) {
                 window.EXPRESSbase_APP_IDS.push(bobj['id']);
                 botNames.push(bobj['name']);
-                botDpUrl.push("http://localhost:41500/images/svg/restaurant.svg");
+                botDpUrl.push("http://localhost:41500/images/assistant.png");
             });
 
             d.appIdColl = window.EXPRESSbase_APP_IDS;
@@ -99,7 +100,7 @@
         }
 
         .botBtnsCont {
-            height: 100vh;
+            height: 80vh;
             overflow-y: auto;
         }
 
@@ -127,8 +128,18 @@
 </head>
 <body>
 
-    <div class="row" style="margin: 0px;">
-        <div class="col-md-4 botBtnsCont">
+    <section class="ext-pageheader" id="pgheaderExt">
+        <nav class="navbar navbar-default navbar-fixed-top" style="top: 0px;">
+            <div class="">
+                <div class="navbar-header">
+                    <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
+                </div>
+            </div>
+        </nav>
+    </section>
+    
+    <div class="row" style="margin: 0px; padding-top: 100px;">
+        <div class="col-md-6 botBtnsCont">
             @*<div class="btnOutCont">
                     <div class="btnInnerCont">
                         <h4>djfhdikdhhd</h4>

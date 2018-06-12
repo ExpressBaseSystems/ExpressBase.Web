@@ -629,6 +629,30 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         return inpVal;
     }
 
+    this.makeInvalid = function (msg = "This field is required") {
+        var contSel = `[for=${this.curCtrl.name}]`;
+        $(`${contSel} .chat-ctrl-cont`).after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
+        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
+        $(`${contSel}  .text-danger`).text(msg).show().animate({ opacity: "1" }, 300);
+    };
+
+    this.makeValid = function () {
+        var contSel = `[for=${this.curCtrl.name}]`;
+        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+        $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
+    };
+
+    this.checkRequired = function () {
+        if (this.curCtrl.required && !this.curVal) {
+            this.makeInvalid();
+            return false;
+        }
+        else {
+            this.makeValid();
+            return true;
+        }
+    };
+
     this.ctrlSend = function (e) {
         this.curVal = null;
         var $btn = $(e.target).closest("button");
@@ -642,11 +666,13 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         this.curVal = this.getValue($input);
         if (this.curCtrl.objType === "ImageUploader") {
+            if (!this.checkRequired()) { return; }
             this.replyAsImage($msgDiv, $input[0], next_idx);
             this.formValues[id] = this.curVal;// last value set from outer fn
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
         else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.objType === "ComboBox") {
+            if (!this.checkRequired()) { return; }
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             if (this.curCtrl.objType === "ComboBox")//////////////////////////-------////////////
@@ -656,6 +682,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.callGetControl(this.nxtCtrlIdx);
         }
         else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
+            if (!this.checkRequired()) { return; }
             if (this.curCtrl.isReadOnly) {
                 $btn.css('display', 'none');
                 $('#' + this.curCtrl.name).attr('id', '');
@@ -669,13 +696,11 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         }
         else {
             this.curVal = this.curVal || $('#' + id).val();
+            if (!this.checkRequired()) { return; }
             this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.nxtCtrlIdx);
-        }
-        if (this.curCtrl.required && !this.curVal) {
-            return;
         }
         this.IsEdtMode = false;
         this.IsDpndgCtrEdt = false;
@@ -1064,7 +1089,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     };
 
     this.ajaxsuccess = function (rowAffected) {
-        if(rowAffected > 0)
+        if (rowAffected > 0)
             alert("DataCollection success");
         else
             alert("Something went wrong");

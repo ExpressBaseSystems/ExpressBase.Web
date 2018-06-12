@@ -82,6 +82,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     //this.filterChanged = false;
     this.bot = false;
     this.cellData = cellData;
+    this.filterHtml = "";
     var _icons = {
         "bar": "fa fa-bar-chart",
         "line": "fa fa-line-chart",
@@ -139,22 +140,22 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tabNum).click(this.init.bind(this));
-        var sideDivId = "#sub_windows_sidediv_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
         var subDivId = "#sub_window_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter;
         $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).empty();
-        $(sideDivId).empty();
-        $(sideDivId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
-        $(sideDivId).append(text);
+        this.filterHtml = text;
+        $(".filterCont").empty();
+        $(".filterCont").append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
+        $(".filterCont").append(text);
         $("#btnGo").click(this.init.bind(this));
         if (typeof commonO !== "undefined")
             this.EbObject = commonO.Current_obj;
         else
             this.EbObject = dvcontainerObj.currentObj;
 
-        $(".filter-cont").html($(sideDivId).html());
-        if ($(sideDivId + " #filterBox").children().not("button").length ==  0) {
+        if ($(".filterCont #filterBox").children().not("button").length ==  0) {
             this.FD = false;
-            $(sideDivId).css("display", "none");
+            $(".filterCont").hide();
+            $("#btnGo" + this.tabNum).trigger("click");
             $.LoadingOverlay("hide");
         }
         else {
@@ -162,17 +163,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.isPipped || this.isContextual) {
                 if (this.filterValues.length > 0) {
                     $.each(this.filterValues, function (i, param) {
-                        $(sideDivId + ' #' + param.name).val(param.value);
-                        $(".filter-cont" + ' #' + param.Name).val(param.Value);
+                        $(".filterCont" + ' #' + param.name).val(param.value);
                     });
                 }
-                if (this.login === "dc")
-                    $("#btnGo").trigger("click");
-                flag = true;
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
-                $(sideDivId).css("display", "inline");
+                $(".filterCont").show();
                 $.LoadingOverlay("hide");
             }
         }
@@ -182,18 +179,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         else
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-
-        if (this.login === "uc") {
-            $(sideDivId).hide();
-            $(".filter-cont #btnGo").click(this.init.bind(this));
-            if (!this.FD)
-                $("#btnGo" + this.tabNum).trigger("click");
-        }
-        else {
-            $(".filterCont #btnGo").click(this.init.bind(this));
-            if (!this.FD)
-                $("#btnGo" + this.tabNum).trigger("click");
-        }
     }.bind(this);
 
     this.start = function () {
@@ -201,7 +186,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
             if (this.login === "dc") {
-                this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
+                this.propGrid = new Eb_PropertyGrid("pp_inner");
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
@@ -213,7 +198,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             else
                 split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
             if (this.login === "dc") {
-                this.propGrid = new Eb_PropertyGrid("ppgrid_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter);
+                this.propGrid = new Eb_PropertyGrid("pp_inner");
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
@@ -278,8 +263,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.login === "uc") {
                 this.collapseGraph();
             }
-            $(".pp-cont").hide();
-            $(".filter-cont").hide();
             $(".ppcont").hide();
             $(".filterCont").hide();
             filterChanged = false;
@@ -469,8 +452,16 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         if (this.login == "uc") {
             //if (!this.isContextual)
-                dvcontainerObj.appendRelatedDv(this.tableId);
-                dvcontainerObj.modifyNavigation();
+            dvcontainerObj.appendRelatedDv(this.tableId);
+            dvcontainerObj.modifyNavigation();
+            $(".filterCont").html("<div class='pgHead'> Param window ");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
+            $(".filterCont").append(dvcontainerObj.dvcol[focusedId].filterHtml);
+            $(".filterCont #btnGo").click(this.init.bind(this));
+            if (this.filterValues.length > 0) {
+                $.each(this.filterValues, function (i, param) {
+                    $(".filterCont" + ' #' + param.Name).val(param.Value);
+                });
+            }
         }
         this.bindEvents();
 
@@ -607,7 +598,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.getFilterValues = function () {
         var fltr_collection = [];
-        var FdCont = "#sub_windows_sidediv_" + this.tableId;
+        var FdCont = ".filterCont";
         var paramstxt = $(FdCont+" #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         if (paramstxt != undefined) {
             var params = paramstxt.split(',');
@@ -1067,13 +1058,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
   
     this.toggleFilterdialog = function () {
-        $(".filter-cont").toggle();
         $(".filterCont").toggle();
     };
 
     this.togglePPGrid = function () {
         $("#Relateddiv").hide();
-        $(".pp-cont").toggle();
         $(".ppcont").toggle();
     };
 

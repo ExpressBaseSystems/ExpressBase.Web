@@ -179,7 +179,7 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
 }
 
 .columnDrag {
-    margin: 3px 1px;
+    margin: 0px 1px;
     padding: 2px 5px;
     width: auto;
     height: 25px;

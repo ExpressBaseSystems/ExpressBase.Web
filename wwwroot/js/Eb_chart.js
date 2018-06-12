@@ -244,7 +244,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.rearrangeObjects();
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
-            $("#map").remove();
+            $("#map" + this.tableId).remove();
             this.columnInfo = this.EbObject;
 
             this.updateDragula("Changed");
@@ -736,6 +736,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
     
     this.drawGeneralGraph = function () {
+        $(".ppcont").hide();
         if (!this.bot) {
             $.LoadingOverlay("show");
             this.getBarData();
@@ -1141,8 +1142,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (legendItem.text === obj.name)
                 this.columnInfo.LegendColor.$values[i].color = $("#fontSel").val();
         }.bind(this));
-        if (this.type !== "pie") 
+        if (this.type !== "pie") {
+            if (this.gdata.datasets[0].fill === true)
+                this.type = "area";
             $.each(this.gdata.datasets, this.reloadChart_inner.bind(this, legendItem));
+        }
         else
             $.each(this.gdata.datasets, this.reloadChart4pie.bind(this, legendItem));
 

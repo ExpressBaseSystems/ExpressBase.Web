@@ -127,8 +127,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(sideDivId).append("<div class='pgHead'> Param window ");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
         $(sideDivId).append(text);
         //$(sideDivId + " #filterBox").append(`<button id="btnGo" class="btn commonControl pull-right"><i class="fa fa-play" aria-hidden="true"></i></button>`)
+        //$("#btnGo").attr("id", "btnGo" + this.tableId);
         $("#btnGo").click(this.getColumnsSuccess.bind(this));
-        console.log(text);
         $(sideDivId).find("input").on("keyup", function (e) {
             if (e.which === 13)
                 $("#btnGo" + this.tabNum).click();
@@ -2081,6 +2081,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.ebSettings.Columns.$values[i].render = this.renderFBImage.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.renderFBImage.bind(this);
             }
+            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
+                this.ebSettings.Columns.$values[i].render = this.renderIconCol.bind(this);
+                this.ebSettings.Columns.$values[i].mRender = this.renderIconCol.bind(this);
+            }
             else {
                 this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) { return data; };
                 this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
@@ -2112,7 +2116,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderIconCol = function (data) {
-        return (data === true) ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
+        return (data === true || data === "Yes") ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
     };
 
     this.renderEbVoidCol = function (data) {
@@ -2234,9 +2238,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.renderFBImage = function (data) {
         if (typeof (data) === "string")
-            return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' />`;
+            return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' style="height: 20px;width: 25px;"/>`;
         else
-            return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' />`;
+            return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' style="height: 20px;width: 25px;"/>`;
     };
 
     this.renderDataAsLabel = function (data) {

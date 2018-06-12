@@ -307,7 +307,7 @@
 }
 
 .DDdiv table.dataTable {
-    font-size: 13px !important;
+    font-size: 12px !important;
     margin-bottom: 0;
     outline: none;
     border: none;
@@ -326,7 +326,7 @@
 .DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th,
 .DDdiv .table > tfoot > tr > th, .DDdiv .table > thead > tr > td,
 .DDdiv .table > tbody > tr > td, .DDdiv .table > tfoot > tr > td {
-    padding: 3px;
+    padding: 4px;
 }
 .search-wraper {
     display: flex;
@@ -342,7 +342,7 @@
 .DDdiv {
     width: 100%;
     position: absolute;
-    top: 72px;
+    top: 1;
     left: 0;
     z-index: 1000;
     float: left;
@@ -360,7 +360,15 @@
     box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
-.ebCombo-loader {
+.DDdiv [type=checkbox]{
+    height:inherit !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+    .DDdiv tr{
+    transition-duration: 0.1s;
+}
+    .ebCombo-loader {
     /*display:none;*/
     position: absolute;
     top: 24px;

@@ -46,6 +46,11 @@
     position: relative;
     width: calc(100% - 26px);
     display: inline-block;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 /*.msg-wraper-user, .msg-wraper-bot {
     font-family: Open Sans,sans-serif;
@@ -235,13 +240,21 @@
     font-size: 12px;
     border: solid 1px #e0e0e0;
 }*/
-.btn-box .btn {
+
+.formname-btn {
+    border-radius: 4px;
+    color: var(--botThemeColor);
     margin: 1px 1px;
     width: 90%;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
     display: inline-block;
     font-weight: bold;
     margin-right: 15px;
+    background-color: white;
+    outline: none;
+    border: solid 1px;
+    padding: 5px;
+    font-size: 14px;
 }
 
 .msg-cont .btn:focus {
@@ -258,7 +271,7 @@
     outline: none;
     padding: 4px;
 }*/
-.eb-chat-inp-cont .msg-send, .btn-box .btn, [name=ctrlsend] {
+.eb-chat-inp-cont .msg-send, [name=ctrlsend] {
     border-radius: 15px;
     color: white;
     background: var(--botThemeColor);
@@ -806,12 +819,14 @@
         color: white;
     }
 
+.req-cont {
+    position: relative;
+}
 .text-danger {
     display: none;
     color: #ffffff;
     background-color: #bd1818;
     line-height: 1;
-    top: 36px;
     padding: 10px;
     position: absolute;
     border-radius: 3px;

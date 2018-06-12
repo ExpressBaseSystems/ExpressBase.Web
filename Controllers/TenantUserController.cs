@@ -504,7 +504,7 @@ namespace ExpressBase.Web2.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult CreateConfig(List<Eb_LocationConfig> keys)
+        public IActionResult CreateConfig(List<EbLocationConfig> keys)
         {
             var resp = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { ConfString = keys });
             return View();
@@ -522,6 +522,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public IActionResult CreateLocation(string locid, string lname, string sname, string img, string meta)
         {
+            img = "../image";
             var resp = ServiceClient.Post<SaveLocationMetaResponse>(new SaveLocationMetaRequest { Locid = Convert.ToInt32(locid), Longname = lname, Shortname = sname, Img = img, ConfMeta = meta });
             return View();
         }

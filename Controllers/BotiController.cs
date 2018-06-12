@@ -214,9 +214,10 @@ namespace ExpressBase.Web.Controllers
 			return Obj;
 		}
 
-		public void InserBotDetails(string TableName, List<BotInsert>  Fields)
+		public int InserBotDetails(string TableName, List<BotInsert>  Fields)
         {
-           var x =  ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
+			var x =  ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
+			return x.RowAffected;
         }
 
 		[HttpPost]

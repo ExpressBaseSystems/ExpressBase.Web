@@ -539,7 +539,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         $.each(this.curForm.controls, function (i, control) {
             if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
                 this.formFunctions.visibleIfs[control.name] = new Function("form", atob(control.visibleIf));
-            if (control.valueExpression.trim())//if valueExpression is Not empty
+            if (control.valueExpression && control.valueExpression.trim())//if valueExpression is Not empty
                 this.formFunctions.valueExpressions[control.name] = new Function("form", "user", atob(control.valueExpression));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
         }.bind(this));
@@ -1059,8 +1059,11 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         return FVWTcoll;
     };
 
-    this.ajaxsuccess = function () {
-        alert("DataCollection success");
+    this.ajaxsuccess = function (rowAffected) {
+        if(rowAffected > 0)
+            alert("DataCollection success");
+        else
+            alert("Something went wrong");
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 

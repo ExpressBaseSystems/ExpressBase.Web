@@ -280,13 +280,12 @@
     display: none;
     vertical-align: bottom;
     height: 50px;
-    border-radius: 0px 0px 4px 4px;
-    border: solid 1px white;
+    border-bottom: solid 1px whitesmoke;
     color: #333;
     overflow-y: auto;
     font-size: 10px;
     padding: 3px;
-    background-color: #c4d1de;
+    background-color: rgba(204, 204, 204, 0.8);
 }
 
 .property-grid-cont .bs-searchbox .form-control {
@@ -316,6 +315,11 @@
     font-size: 11.6px;
     border: none;
     word-break: break-word;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 
 .pgGroupCell {
@@ -526,9 +530,10 @@
     font-weight: bold;
     font-family: sans-serif;
     letter-spacing: 0.05em;
+    color: rgba(51, 51, 94, 0.88);
     border: none !important;
     border-radius: 0px !important;
-    border-bottom: var(--pgTdBorder) !important;
+    border-bottom: var(--pgTdBorder) !important
 }
 
 .pgCXEditor-Cont div.controls-dd-cont > div > button > span.filter-option.pull-left {
@@ -539,7 +544,7 @@
     outline: none !important;
     box-shadow: none !important;
     border: none !important;
-    /*border-bottom: var(--sild1pxDDD) !important;*/
+    border-bottom: var(--sild1pxDDD) !important;
 }
 
 .pgCXEditor-Cont .controls-dd-cont .open, .pgCXEditor-Cont .controls-dd-cont .caret {
@@ -609,6 +614,7 @@
 
 .pgRow {
     background-color: rgba(0, 0, 0, 0.041);
+    animation-duration:0.3s;
 }
 
     .pgRow:hover {

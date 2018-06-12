@@ -106,16 +106,31 @@ function ArrayToObject(arr) {
     return rv;
 }
 
-// object.unwatch
-if (!Object.prototype.unwatch) {
-    Object.defineProperty(Object.prototype, "unwatch", {
-        enumerable: false
-        , configurable: true
-        , writable: false
-        , value: function (prop) {
-            var val = this[prop];
-            delete this[prop]; // remove accessors
-            this[prop] = val;
-        }
-    });
-}
+//// object.unwatch
+//if (!Object.prototype.unwatch) {
+//    Object.defineProperty(Object.prototype, "unwatch", {
+//        enumerable: false
+//        , configurable: true
+//        , writable: false
+//        , value: function (prop) {
+//            var val = this[prop];
+//            delete this[prop]; // remove accessors
+//            this[prop] = val;
+//        }
+//    });
+//}
+
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+};

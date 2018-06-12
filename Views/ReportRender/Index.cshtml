@@ -53,8 +53,8 @@
     </div>
 </div>
 
-    @section EbHead {
-        <script>
+@section EbHead {
+    <script>
         this.menuBarObj = $("#layout_div").data("EbHeader");
         this.menuBarObj.insertButton(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
     <button class="btn run" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div"><i class="fa fa-filter" aria-hidden="true"></i></button>`);
@@ -84,6 +84,9 @@
             render();
         });
 
+            $("#btnGo").on("click", function () {
+                render();
+            });
         $(`#reportIframe`).on('load', function () {
             $("#eb_common_loader").EbLoader("hide");
         });
@@ -139,8 +142,8 @@
        // $("#RptModal").modal('hide');
         //$.LoadingOverlay("hide");
         }
-        </script>
-    }
+    </script>
+}
 @if (!ViewBag.RenderLimit)
 {
     <style>
@@ -155,6 +158,7 @@ else
         .sub-windows {
             padding: 0 !important;
         }
+
         .sub-windows {
             height: calc(100vh - 73px) !important;
         }

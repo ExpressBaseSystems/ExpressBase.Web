@@ -632,7 +632,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                             o.name = search.Column;
                             o.operator = search.Operator;
                             o.value = val;
-                            if (typeof search.Value.split("|")[j + 1] !== "undefined")
+                            if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "" )
                                 o.logicOp = "OR";
                             else if (typeof this.columnSearch[i + 1] !== "undefined")
                                 o.logicOp = "AND";
@@ -665,7 +665,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     var val = this.columnSearch[index].Value.replace(obj.value + "|", "");
                 else
                     var val = this.columnSearch[index].Value.replace("|" + obj.value, "");
-                this.columnSearch[index].Value = val;
+                if(val.trim() != "")
+                    this.columnSearch[index].Value = val;
+                else
+                    this.columnSearch.splice(index, 1);
             }
             else
                 this.columnSearch.splice(index, 1);

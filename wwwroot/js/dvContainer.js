@@ -624,7 +624,7 @@ var DvContainerObj = function (settings) {
                     $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 else {
-                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-file-pdf-o fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+                    $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-file-pdf-o" aria-hidden="true" style='color:black;'></i></a></div>`);
                 }
                 //}
                 //else {

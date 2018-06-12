@@ -355,7 +355,7 @@
         padding: 4px;
     }
 
-        .ctrl-wraper input[type=radio], .ctrl-wraper input[type=checkbox] {
+        .ctrl-wraper input[type=radio], .ctrl-wraper .bot-checkbox {
             height: inherit;
             margin: 5px;
         }

@@ -45,9 +45,9 @@
     padding: 0px 0px 0px 7px;
 }
 
-/*.codedit .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-    width: 183px;
-}*/
+.codedit .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    /*width: 183px;*/
+}
 
 .dashbord .card1 {
     margin-top: 10px;

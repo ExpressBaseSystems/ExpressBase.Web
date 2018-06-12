@@ -42,6 +42,9 @@
     this.TableCollection = {};
 
     this.RefreshControl = function (obj) {
+        if (obj.ParentName === "TableLayout") {
+            obj.Left = 0; obj.Top = 0;
+        }
         var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
         $.each(metas, function (i, meta) {
@@ -820,10 +823,9 @@
             obj.Source = "";
             this.RefreshControl(obj);
         }
-        //else if (pname === "TextAlign") {
-        //    obj.TextAlign = this.TextAlign[obj.TextAlign];
-        //    this.RefreshControl(obj);
-        //}
+        else if (pname === "Font") {
+            this.repExtern.setFontProp(obj);
+        }
         else if (pname === "ColoumCount" || pname === "RowCount")
             this.RbCommon.modifyTable(obj, pname);
         else if (pname === "Function") {

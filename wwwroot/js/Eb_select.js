@@ -1,5 +1,4 @@
-﻿
-var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
+﻿    var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
     this.$type = 'ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects';
     this.EbSid = id;
     this.ObjType = 'TableVisualization';
@@ -207,6 +206,7 @@ var EbSelect = function (ctrl) {
         if (key === 13)
             this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
         else if (key === 32) {
+            originalEvent.preventDefault();
             if (originalEvent.target.type !== "checkbox")
                 this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
         }
@@ -299,7 +299,7 @@ var EbSelect = function (ctrl) {
     this.getSelectedRow = function () {
         console.log(100);
         var res = [];
-        $.each(this.valueMembers, function (idx, item) {
+        $.each(this.ComboObj.tempValue, function (idx, item) {
             var obj = {};
             var rowData = this.datatable.getRowDataByUid(item);
             var temp = this.datatable.sortedColumns;
@@ -362,6 +362,15 @@ var EbSelect = function (ctrl) {
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
         this.getSelectedRow();
+        setTimeout(function () {
+            var maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () {
+                console.log($(this).height());
+                return $(this).height();
+            }).get());
+            $(".search-block .input-group").css("height", maxHeight + "px");
+        }, 10);
+        
+        
         console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
         console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[this.dmNames[1]]);
@@ -398,9 +407,12 @@ var EbSelect = function (ctrl) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
-            var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
-            this.datatable.Api.cell($cell).focus();
-            this.ApplyRowFocusStyle($cell.closest("tr"));
+            setTimeout(function () {
+                this.RemoveRowFocusStyle();
+                var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
+                this.datatable.Api.cell($cell).focus();
+                this.ApplyRowFocusStyle($cell.closest("tr"));
+            }.bind(this),10);
         }
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
         //setTimeout(this.colAdjust, 520);

@@ -45,24 +45,39 @@
     z-index: 1;
 }
 
-    .pg-wraper .pg-inp {
+    .pg-wraper .pg-inp, .pgTdval .dropdown-toggle, .pgTdval .cxv-inp {
         border: solid 1px #ddd;
-        width: 86% !important;
+        width: calc(100% - 24px) !important;
         float: left;
         background-color: white;
-    }
-
-    .pg-wraper .pg-inp-color {
-        width: 17px;
         height: 21px;
-        float: left;
+        -webkit-tap-highlight-color: rgba(255,255,255,0);
+        padding: 3px;
+        font-size: 11.5px;
+        -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+        transition: box-shadow .1s ease,border-color .1s ease;
+        box-shadow: none;
     }
 
-    .pg-wraper .pg-inp-checkbox {
-        float: left;
-        width: auto !important;
-        margin-left: 2px;
-    }
+.cxv-inp {
+    vertical-align: sub;
+    background-color: rgba(255, 255, 255, 0.13) !important;
+    border: solid 1px rgba(221, 221, 221, 0.45098039215686275) !important;
+    padding: 0 !important;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.pg-wraper .pg-inp-color {
+    width: 17px;
+    height: 21px;
+    float: left;
+}
+
+.pg-wraper .pg-inp-checkbox {
+    float: left;
+    width: auto !important;
+    margin-left: 2px;
+}
 
 
 .pg-table {
@@ -94,26 +109,33 @@
 }
 
 .pg-table [is-expanded] td {
-    padding: 0 0 0 0.4em;
+    padding-left: 0;
+    padding-top: 0;
+    padding-bottom: 0.1em;
+}
+
+.pg-table [subtype-of] .pgTdName {
+    padding-left: 2.9em;
 }
 
 .pg-table [subtype-of] td {
-    padding-left: 1.6em;
+    padding-top: 0.30em;
+    padding-bottom: 0.30em;
 }
 
 
 .pgHead {
-    background-color: rgba(0, 0, 0, 0.2);
-    /* background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90)); */
-    color: #333;
+    /*background-color: rgba(0, 0, 0, 0.28);*/
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));
+    color: #fff;
     padding: 2%;
     font-weight: bold;
-    font-family: monospace;
+    font-family: arial;
     width: 100%;
     font-size: 1.05em;
     letter-spacing: 0.06em;
     font-weight: bold;
-    border-radius: 2px 2px 0px 0px;
+    border-radius: 1px 1px 0px 0px;
 }
 /*.controls-dd-cont {
     border-bottom: var(--sild1pxDDD);
@@ -289,13 +311,9 @@
     text-align: center;
 }
 
-.pgTdName {
-    padding: 0 0 0.4em 0.8em;
-}
-
 .pg-wraper .pg-table td {
-    font-size: 0.83em;
-    height: 21px !important;
+    /*font-size: 0.83em;*/
+    font-size: 11.6px;
     border: none;
     word-break: break-word;
 }
@@ -304,6 +322,7 @@
     vertical-align: inherit !important;
     padding-top: 0.61em !important;
     padding-bottom: 0.61em !important;
+    padding-left: 0.4em !important;
 }
 
 .pgGroupRow {
@@ -335,10 +354,7 @@
 .pgTdval .dropdown-toggle {
     padding: 0px 12px;
     border-radius: 1px;
-    height: 100%;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
-    background-color: transparent;
-    border: none;
     font-size: 13px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
@@ -538,12 +554,11 @@
 .pgTdName .fa-caret-right {
     font-size: 14px;
     height: 100%;
-    margin-left: -3px;
-    padding: 0.25em 0.15em 0 0.15em;
+    padding: 0.6em 0.54em 0.5513em 0.65em;
 }
 
     .pgTdName .fa-caret-right:hover {
-        background-color: rgba(0, 0, 0, 0.32);
+        background-color: rgba(0, 0, 0, 0.12);
     }
 
 .colTile .close {
@@ -579,12 +594,17 @@
     background-color: white;
 }
 
-.pgRow td {
-    padding-top: 0.45em;
-    padding-bottom: 0.45em;
+.pgRow .pgTdName {
+    padding-top: 0.68em;
+    padding-bottom: 0.68em;
+    padding-left: 1.9em;
     color: rgba(0, 0, 0, 0.65);
     font-family: sans-serif;
     letter-spacing: 0.05em;
+}
+
+.pgTdName {
+    padding: 0 0 0.4em 0.8em;
 }
 
 .pgRow {
@@ -596,7 +616,7 @@
     }
 
 .pg-wraper .table-hover > tbody > tr:hover > td, .pg-wraper .table-hover > tbody > tr:hover > th {
-    background-color: #ddf;
+    background-color: #dfdfdf;
 }
 
 .pg-wraper ::-webkit-scrollbar-track {

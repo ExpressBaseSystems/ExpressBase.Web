@@ -28,6 +28,7 @@ var EbBasicDataTable = function (Option) {
     this.filterFlag = false;
     this.filterValues = [];
     this.FlagPresentId = false;
+    this.columnSearch = Option.columnSearch;
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -37,12 +38,18 @@ var EbBasicDataTable = function (Option) {
 
     this.init = function () {
         this.EbObject = new EbTableVisualization(this.tableId);
+        this.$dtLoaderCont = $("<div id='dtloadercont' class='dt-loader-cont'></div>");
+        this.$dtLoaderCont.insertBefore($("#" + this.contId));
         this.call2FD();
     }
 
+    this.showLoader = function () {
+        this.$dtLoaderCont.EbLoader("show", { maskItem: { Id: `#${this.contId}` }, maskLoader: false });
+    };
+
     this.call2FD = function () {
         this.EbObject.DataSourceRefId = this.dsid;
-        //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } }, maskLoader: false });
+        this.showLoader();
         //console.log($.cookie());
         if (this.columns === null) {
             $.ajax({
@@ -74,7 +81,7 @@ var EbBasicDataTable = function (Option) {
     //};
 
     this.getColumnsSuccess = function () {
-        //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+        this.showLoader();
         $(".icon-cont").hide();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
@@ -107,11 +114,11 @@ var EbBasicDataTable = function (Option) {
         this.table_jQO.on('processing.dt', function (e, settings, processing) {
             if (processing == true) {
                 $("#obj_icons .btn").prop("disabled", true);
-                //$("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+                this.showLoader();
             }
             else {
                 $("#obj_icons .btn").prop("disabled", false);
-                //$("#eb_common_loader").EbLoader("hide");
+                this.$dtLoaderCont.EbLoader("hide");
             }
         }.bind(this));
 
@@ -333,7 +340,7 @@ var EbBasicDataTable = function (Option) {
         }
 
         return dd.data;
-        //$("#eb_common_loader").EbLoader("hide");
+        this.$dtLoaderCont.EbLoader("hide");
     };
 
     this.compareFilterValues = function () {
@@ -454,6 +461,10 @@ var EbBasicDataTable = function (Option) {
                 }
             });
         }
+
+        if (filter_obj_arr.length === 0)
+            return this.columnSearch;
+
         return filter_obj_arr;
     };
 
@@ -478,7 +489,7 @@ var EbBasicDataTable = function (Option) {
         this.filterDisplay();
         this.Api.columns.adjust();
 
-        //$("#eb_common_loader").EbLoader("hide");
+        this.$dtLoaderCont.EbLoader("hide");
 
         setTimeout(function () {
             if (this.showFilterRow)
@@ -1049,7 +1060,7 @@ var EbBasicDataTable = function (Option) {
             var header_text1 = this.tableId + "_" + col.name + "_hdr_txt1";
             var header_text2 = this.tableId + "_" + col.name + "_hdr_txt2";
 
-            _ls += "<th style='vertical-align:top; padding: 0px; margin: 0px; height: 28px!important;'>";
+            _ls += "<th>";
             if (col.name === "serial") {
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:black'></i></a>");
             }

@@ -222,6 +222,7 @@
         obj.Name = Objid;
         obj.Title = $funcselect.val() + "(" + fields.find('option:selected').text() + ")";
         obj.Function = $funcselect.val();
+        obj.Left = this.RbObj.objCollection[fields.find('option:selected').attr("EbSid")].Left;
         this.RbObj.objCollection[Objid] = obj;
         this.RbObj.RefreshControl(obj);
         $("#running-summary ul[id='running-summary-childul']").append(`<li class='styl'><div tabindex='1' $(this).focus(); class='textval'>
@@ -267,10 +268,7 @@
     };
 
     this.makeReadOnlyonPg = function (curObject) {
-        this.RbObj.pg.MakeReadOnly(curObject.Width);
-        this.RbObj.pg.MakeReadOnly(curObject.Height);
-        this.RbObj.pg.MakeReadOnly(curObject.Left);
-        this.RbObj.pg.MakeReadOnly(curObject.Top);
+        this.RbObj.pg.MakeReadOnly(["Width","Height","Left","Top"]);
     };
 
     this.buildTableHierarcy = function ($elements, index, eb_typeCntl) {
@@ -292,8 +290,8 @@
     this.getTdCtrls = function ($td, eb_obj) {
         $td.find(".dropped").each(function (k, ebctrl) {
             if ($(ebctrl).length >= 1) {
-                this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + this._table.Left;
-                this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + this._table.Top;
+                this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
+                this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
                 eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
                 this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
             }

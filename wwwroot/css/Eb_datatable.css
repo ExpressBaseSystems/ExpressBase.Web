@@ -273,7 +273,7 @@ table.dataTable tbody td.dt-body-right {
     text-align: right;
 }
 
-.dataTables_scroll {
+.sub-windows .dataTables_scroll {
     height: calc(100vh - 100px) !important;
     height: calc(100% - 14px);
     z-index: 1;

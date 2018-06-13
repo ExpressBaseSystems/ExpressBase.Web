@@ -54,21 +54,24 @@
             if (prev === undefined) {
                 $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
                     <div class='split-inner'>
-                    <div class='col-md-12' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
+                    <div id="filterDisplay_dv${id}" class="filter-display"></div>
+                    <div class='wrapper-cont' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
                     </div>
            </div>`);
             }
             else
                 $("#" + prev).after(`<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
                     <div class='split-inner'>
-                    <div class='col-md-12' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
+                    <div id="filterDisplay_dv${id}" class="filter-display"></div>
+                    <div class='wrapper-cont' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
                     </div>
            </div>`);
         }
         else {
             $('#'+this.parent_div).append( `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' eb-type="${type}">
                     <div class='split-inner'>
-                    <div class='col-md-12' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
+                    <div id="filterDisplay_dv${id}" class="filter-display"></div>
+                    <div class='wrapper-cont' id='content_dv${id}' style='height:inherit;padding: 0;padding-right: 1px;'></div>
                     </div>
            </div>`);
         }

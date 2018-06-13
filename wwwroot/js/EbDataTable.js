@@ -91,7 +91,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.call2FD = function () {
         this.relatedObjects = this.EbObject.DataSourceRefId;
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } }, maskLoader: false });
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "unset","margin-right":"unset" } }, maskLoader: false });
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
@@ -193,7 +193,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
             if (this.login === "dc") {
-                this.propGrid = new Eb_PropertyGrid("pp_inner");
+                this.propGrid = new Eb_PropertyGrid("pp_inner","dc");
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -206,7 +206,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else
                 split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
             if (this.login === "dc") {
-                this.propGrid = new Eb_PropertyGrid("pp_inner");
+                this.propGrid = new Eb_PropertyGrid("pp_inner","dc");
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -219,7 +219,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (!this.validateFD())
             return;
         $(".dv-body1").show();
-        $(".dv-body-dev #filter_Display").show();
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#dv-body", Style: { "top": "39px", "margin-left": "-15px" } } });
         this.extraCol = [];
         console.log(this.EbObject.Name);
@@ -236,7 +235,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append("<div style='width:auto;height:inherit;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table display table-striped table-bordered'></table></div>");
+            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-striped table-bordered'></table></div>");
             this.Init();
         }
     };
@@ -622,7 +621,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }.bind(this));
         }
-        this.Tags = new EbTags({ "displayFilterDialogArr": filterdialog, "displayColumnSearchArr": columnFilter, "id": "#filter_Display", "remove": this.closeTag });
+        this.Tags = new EbTags({ "displayFilterDialogArr": filterdialog, "displayColumnSearchArr": columnFilter, "id": "#filterDisplay_"+this.tableId+"", "remove": this.closeTag });
         //this.Tags = new EbTags({ "displayFilterDialogArr": $controls, "displayColumnSearchArr": this.columnSearch, "id": "#filter_Display", "remove": this.closeTag });
     };
 
@@ -829,8 +828,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.arrangefixedHedaerWidth();
             this.placeFilterInText();
             //this.check4Scroll();
-            if (focusedId !== undefined)
-                $("#" + focusedId).css("width", window.outerWidth);
+            //if (focusedId !== undefined)
+            //    $("#" + focusedId).css("width", window.outerWidth);
             this.Api.columns.adjust();
         }.bind(this), 10);
     }
@@ -1027,18 +1026,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //}
     }
 
-    //this.check4Scroll = function () {
-    //    var scrollBody = $('#' + this.tableId + '_wrapper .dataTables_scrollBody');
-    //    if (scrollBody[0].scrollHeight > scrollBody.height()) {
-    //        scrollBody.children().css("width", "110%");
-    //        scrollBody.siblings(".dataTables_scrollFoot").style("width", "98.65%", "important");
-    //    }
-    //    else {
-    //        scrollBody.children().css("width", "100%");
-    //        scrollBody.siblings(".dataTables_scrollFoot").style("width", "100%", "important");
-    //    }
+    this.check4Scroll = function () {
+        var scrollBody = $('#' + this.tableId + '_wrapper .dataTables_scrollBody');
+        if (scrollBody[0].scrollHeight > scrollBody.height()) {
+            scrollBody.children().css("width", "110%");
+            scrollBody.siblings(".dataTables_scrollFoot").style("width", "98.65%", "important");
+        }
+        else {
+            scrollBody.children().css("width", "100%");
+            scrollBody.siblings(".dataTables_scrollFoot").style("width", "100%", "important");
+        }
 
-    //};
+    };
 
     this.copyLabelData = function (key, opt, event) {
 
@@ -1361,8 +1360,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
         this.filterDisplay();
 
-        if (focusedId !== undefined)
-            $("#" + focusedId).css("width", window.outerWidth);
+        //if (focusedId !== undefined)
+        //    $("#" + focusedId).css("width", window.outerWidth);
         this.Api.columns.adjust();
     };
 
@@ -2356,7 +2355,7 @@ var EbTags = function (settings) {
         $.each(this.displayColumnSearchArr, function (i, search) {
             filter = search.name + " " + returnOperator(search.operator);
             filter += " " + search.value;
-            this.id.append(`<div class="tagstyle" data-col="${search.name}" data-val="${search.value}">${filter} <button type="button" class="close" style="cursor: pointer;">×</button></div>`);
+            this.id.append(`<div class="tagstyle" data-col="${search.name}" data-val="${search.value}">${filter} <i class="fa fa-close"></i></div>`);
             if (search.logicOp !== "")
                 this.id.append(`<div class="tagstyle op">${search.logicOp}</div>`);
         }.bind(this));
@@ -2364,7 +2363,7 @@ var EbTags = function (settings) {
         if (this.id.children().length === 0)
             this.id.hide();
         else {
-            this.id.children().find(".close").off("click").on("click", this.removeTag.bind(this));
+            this.id.children().find(".fa-close").off("click").on("click", this.removeTag.bind(this));
             this.id.show();
         }
     };

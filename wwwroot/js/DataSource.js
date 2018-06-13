@@ -84,7 +84,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
 	this.GetFD = function () {
 		this.relatedObjects = this.EbObject.FilterDialogRefId;
-		if (this.relatedObjects !== "")
+		if (this.relatedObjects !== "" && this.relatedObjects)
 			$.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this));
 	};
 

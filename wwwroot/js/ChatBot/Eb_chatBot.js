@@ -531,7 +531,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             if (!control.hidden)
                 Html += `<label>${control.label}</label><div class='ctrl-wraper'>${control.bareControlHtml}</div><br/><br/>`;
         });
-        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn">Submit</button><button class="btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
+        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn formname-btn">Submit</button><button class="btn formname-btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
 
     this.setFormControls = function () {
@@ -753,7 +753,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.showSubmit = function () {
         if ($("[name=formsubmit]").length === 0) {
             this.msgFromBot('Are you sure? Can I submit?');
-            this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn">Sure</button><button name="formcancel" class="btn">Cancel</button></div>'));
+            this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn formname-btn">Sure</button><button name="formcancel" class="btn formname-btn">Cancel</button></div>'));
         }
     };
 

@@ -82,6 +82,7 @@ var EbSelect = function (ctrl) {
     this.cellTr = null;
     this.Msearch_colName = '';
     this.cols = [];
+    this.filterArray = [];
     // functions
 
     //init() for event binding....
@@ -104,56 +105,33 @@ var EbSelect = function (ctrl) {
         $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
     };
 
+    //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
         var $e = $(e.target);
-        //if (isPrintable(e.which)) {
-            var mapedField = $e.closest(".searchable").attr("maped-column");
-            var searchVal = $e.val();
-            var searchBy = "*x*";
+        var searchVal = $e.val();
+
+        if (searchVal.trim() === "")
+            return;
+
+        var mapedField = $e.closest(".searchable").attr("maped-column");
+        var mapedFieldType = $e.closest(".searchable").attr("column-type");
+        var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
+        if (!this.IsDatatableInit) {
+            var searchBy = " = ";
+            if (mapedFieldType === "String")
+                searchBy = "*x*";
 
             var filterObj = new filter_obj(mapedField, searchBy, searchVal);
-
-            var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
+            var filterObj = new filter_obj(mapedField, searchBy, searchVal);
+            this.filterArray.push(filterObj);
+            this.InitDT();
+            this.V_showDD();
+        }
+        else {
             $filterInp.val($e.val());
-
             this.datatable.Api.ajax.reload();
-
-            //var search = $(e.target).val().toString();
-            //if (search.trim() !== '' && this.DtFlag) {
-            //    if (!search.startsWith('*') && !search.endsWith('*')) {
-            //        if (this.defaultSearchFor === 'BeginingWithKeyword')
-            //            search = search + '%';
-            //        else if (this.defaultSearchFor === 'EndingWithKeyword')
-            //            search = '%' + search;
-            //        else if (this.defaultSearchFor === 'ExactMatch')
-            //            search = search;
-            //        else if (this.defaultSearchFor === 'Contains')
-            //            search = '%' + search + '%';
-            //}
-            //else
-            //if (search.startsWith('*') && !search.endsWith('*'))
-            //    search = '%' + search.slice(1);
-            //else if (!search.startsWith('*') && search.endsWith('*'))
-            //    search = search.slice(0, -1) + '%';
-            //else if (search.startsWith('*') && search.endsWith('*'))
-            //    search = '%' + search.slice(1, -1) + '%';
-            //to update filter values   
-            //searchTextCollection = [];
-            //search_colnameCollection = [];
-            //$('#' + this.name + 'container table:eq(0) thead tr:eq(1) th input').each(function (idx) {
-            //    if ($(this).val().toString().trim() !== '') {
-            //        if ($.inArray($(this).siblings().text(), search_colnameCollection) == -1) {
-            //            searchTextCollection.push($(this).val());
-            //            search_colnameCollection.push($(this).siblings().text());
-            //        }
-            //    }
-            //});
-            ////
-            //this.Msearch_colName = DMembers[e.target.id.replace(this.name + 'srch', '')];// -1
-            //$('#' + this.name + 'tbl').DataTable().search(search).draw(); console.log('this.Msearch_colName');
-            //$('#' + this.name + '_loading-image').show();
-            //}
-        //}
+            this.Vobj.DDstate = true;
+        }
     };
 
     this.srchBoxIdSetter = function (i) {
@@ -172,8 +150,11 @@ var EbSelect = function (ctrl) {
         }
         if (e.which === 40)
             this.Vobj.showDD();
-        if (e.which === 32)
+        if (e.which === 32) {
+            if (this.Vobj.DDstate)
+                return;
             this.Vobj.showDD();
+        }
         if (e.which === 27)
             this.Vobj.hideDD();
     };
@@ -188,7 +169,7 @@ var EbSelect = function (ctrl) {
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
         var o = new Object();
-        o.containerId = this.name + "Container";
+        o.containerId = this.name + "DDdiv";
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
         o.showSerialColumn = true;

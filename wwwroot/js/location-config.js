@@ -95,7 +95,7 @@ var Eb_locationMeta = function (data, meta,locid) {
 			var n = item.Name;
 			m[item.Name] = $(`#l_key${i}`).val();
 		});
-		$.post("../TenantUser/CreateLocation", { locid: this.l_id,lname: $('#lname').val(), sname: $('#sname').val(), img: "", meta: JSON.stringify(m) });
+		$.post("../TenantUser/CreateLocation", { locid: this.l_id,lname: $('#lname').val(), sname: $('#sname').val(), img: " ", meta: JSON.stringify(m) });
 	}.bind(this);
 
 	this.init();

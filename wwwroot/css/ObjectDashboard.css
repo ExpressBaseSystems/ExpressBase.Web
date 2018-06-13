@@ -46,7 +46,7 @@
 }
 
 .codedit .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-    width: 183px;
+    /*width: 183px;*/
 }
 
 .dashbord .card1 {

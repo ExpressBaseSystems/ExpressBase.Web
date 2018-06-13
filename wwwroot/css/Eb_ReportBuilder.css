@@ -757,7 +757,7 @@
     border-left: 2px dotted #55f;
     z-index: 8;
     right: 0;
-    margin-left: 78px;
+    margin-left: 59px;
 }
 .page .context-menu-list {   
     z-index: 20;
@@ -798,7 +798,8 @@
     border: 2px solid #2391d2 !important;
 }
 .T_layout {
-    position:relative;
+    position: relative;
+    /*padding: 0 !important;*/
 }
     .T_layout .dropped:focus {
         border: 1px solid #316396 !important;

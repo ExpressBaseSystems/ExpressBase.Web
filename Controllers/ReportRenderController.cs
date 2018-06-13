@@ -34,7 +34,6 @@ namespace ExpressBase.Web.Controllers
             }
 
             ViewBag.RenderLimit = renderLimit;
-
             return View();
         }
 
@@ -64,7 +63,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult RenderReport2(string refid, string Params)
         {
-            List<Param> param = JsonConvert.DeserializeObject<List<Param>>(Params);
+            List<Param> param = (Params==null)?null:JsonConvert.DeserializeObject<List<Param>>(Params);
             Render(refid, param);
 
             return Pdf;
@@ -72,6 +71,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult RenderforBot(string refid)
         {
+
             Render(refid, null);
             return Pdf;
         }

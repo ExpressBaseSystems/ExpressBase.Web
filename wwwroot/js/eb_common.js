@@ -58,6 +58,12 @@ function fltr_obj(type, name, value) {
     this.Value = value;
 };
 
+var filter_obj = function (colu, oper, valu) {
+    this.Column = colu;
+    this.Operator = oper;
+    this.Value = valu;
+};
+
 
 //function getFilterValues() {
 //    var fltr_collection = [];

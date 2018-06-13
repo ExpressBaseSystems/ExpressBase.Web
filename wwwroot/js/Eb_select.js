@@ -1,4 +1,4 @@
-﻿    var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
+﻿var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
     this.$type = 'ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects';
     this.EbSid = id;
     this.ObjType = 'TableVisualization';
@@ -93,6 +93,7 @@ var EbSelect = function (ctrl) {
         $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
         $('#' + this.name + 'Wraper [type=search]').keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
         $('#' + this.name + 'Wraper [type=search]').dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
+        $('#' + this.name + 'Wraper [type=search]').keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
 
         //set id for searchBox
         $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
@@ -103,13 +104,66 @@ var EbSelect = function (ctrl) {
         $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
     };
 
+    this.delayedSearchFN = function (e) {
+        var $e = $(e.target);
+        //if (isPrintable(e.which)) {
+            var mapedField = $e.closest(".searchable").attr("maped-column");
+            var searchVal = $e.val();
+            var searchBy = "*x*";
+
+            var filterObj = new filter_obj(mapedField, searchBy, searchVal);
+
+            var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
+            $filterInp.val($e.val());
+
+            this.datatable.Api.ajax.reload();
+
+            //var search = $(e.target).val().toString();
+            //if (search.trim() !== '' && this.DtFlag) {
+            //    if (!search.startsWith('*') && !search.endsWith('*')) {
+            //        if (this.defaultSearchFor === 'BeginingWithKeyword')
+            //            search = search + '%';
+            //        else if (this.defaultSearchFor === 'EndingWithKeyword')
+            //            search = '%' + search;
+            //        else if (this.defaultSearchFor === 'ExactMatch')
+            //            search = search;
+            //        else if (this.defaultSearchFor === 'Contains')
+            //            search = '%' + search + '%';
+            //}
+            //else
+            //if (search.startsWith('*') && !search.endsWith('*'))
+            //    search = '%' + search.slice(1);
+            //else if (!search.startsWith('*') && search.endsWith('*'))
+            //    search = search.slice(0, -1) + '%';
+            //else if (search.startsWith('*') && search.endsWith('*'))
+            //    search = '%' + search.slice(1, -1) + '%';
+            //to update filter values   
+            //searchTextCollection = [];
+            //search_colnameCollection = [];
+            //$('#' + this.name + 'container table:eq(0) thead tr:eq(1) th input').each(function (idx) {
+            //    if ($(this).val().toString().trim() !== '') {
+            //        if ($.inArray($(this).siblings().text(), search_colnameCollection) == -1) {
+            //            searchTextCollection.push($(this).val());
+            //            search_colnameCollection.push($(this).siblings().text());
+            //        }
+            //    }
+            //});
+            ////
+            //this.Msearch_colName = DMembers[e.target.id.replace(this.name + 'srch', '')];// -1
+            //$('#' + this.name + 'tbl').DataTable().search(search).draw(); console.log('this.Msearch_colName');
+            //$('#' + this.name + '_loading-image').show();
+            //}
+        //}
+    };
+
     this.srchBoxIdSetter = function (i) {
         $('#' + this.name + 'Wraper  [type=search]:eq(' + i + ')').attr('id', this.dmNames[i]);
     };
 
     //enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
     this.SearchBoxEveHandler = function (e) {
-        var search = $(e.target).val().toString();
+        var $e = $(e.target);
+        var search = $e.val().toString();
         if (e.which === 13)
             this.Vobj.showDD();
         if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {
@@ -146,6 +200,7 @@ var EbSelect = function (ctrl) {
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
+        o.columnSearch = this.filterArray;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.columns;//////////////////////////////////////////////////////
@@ -369,8 +424,8 @@ var EbSelect = function (ctrl) {
             }).get());
             $(".search-block .input-group").css("height", maxHeight + "px");
         }, 10);
-        
-        
+
+
         console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
         console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[this.dmNames[1]]);
@@ -412,7 +467,7 @@ var EbSelect = function (ctrl) {
                 var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
                 this.datatable.Api.cell($cell).focus();
                 this.ApplyRowFocusStyle($cell.closest("tr"));
-            }.bind(this),10);
+            }.bind(this), 10);
         }
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
         //setTimeout(this.colAdjust, 520);

@@ -208,10 +208,10 @@
     width: 98%;
 }*/
 .btn-box {
-    margin-left: 16px;
-    width: 100%;
-    text-align: center;
-    max-width: 360px;
+	width: 100%;
+	text-align: center;
+	max-width: 80%;
+	margin-left: calc(15% - 7px);
 }
 
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {

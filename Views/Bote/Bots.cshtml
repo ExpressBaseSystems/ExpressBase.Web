@@ -100,7 +100,17 @@
         }
 
         .botBtnsCont {
-            height: 80vh;
+            /*height: 80vh;
+            overflow-y: auto;*/        
+            width: 75%;
+        }
+
+        .botBtnsParent {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 69vh;
+            /*padding-top: 100px;*/
             overflow-y: auto;
         }
 
@@ -137,19 +147,22 @@
             </div>
         </nav>
     </section>
-    
-    <div class="row" style="margin: 0px; padding-top: 100px;">
-        <div class="col-md-6 botBtnsCont">
-            @*<div class="btnOutCont">
+    <section class="slider eb-banner" style="padding-top: 0px;">
+        <div class="row" style="margin: 0px; padding-top: 65px;">
+            <h2 style="color: white; padding-left: 20%;font-family: Montserrat; font-weight: 300;">Live Bots</h2>
+            <div class="col-md-6 botBtnsParent">
+                <div class="botBtnsCont">
+                    @*<div class="btnOutCont">
                     <div class="btnInnerCont">
                         <h4>djfhdikdhhd</h4>
                     </div>
                 </div>*@
+                </div>
+            </div>
+            <div class="bot_container" style="padding:0px;">
+                <div class="usecase-bots-cont"></div>
+            </div>
         </div>
-        <div class="bot_container" style="padding:0px;">
-            <div class="usecase-bots-cont"></div>
-        </div>
-    </div>
-
+    </section>
 
 </body>

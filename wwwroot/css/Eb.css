@@ -313,14 +313,14 @@
     border: none;
 }
 
-.DDdiv .selected-row, .DDdiv table.dataTable tbody > tr.selected {
-    color: #fff !important;
-    /*background-color: #08C !important;*/
-    background-color: #496675 !important;
-}
+    .DDdiv .selected-row, .DDdiv table.dataTable tbody > tr.selected {
+        color: #fff !important;
+        /*background-color: #08C !important;*/
+        background-color: #496675 !important;
+    }
 
-.DDdiv .dataTables_scrollFoot{
-    display:none !important;
+.DDdiv .dataTables_scrollFoot {
+    display: none !important;
 }
 
 .DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th,
@@ -328,6 +328,7 @@
 .DDdiv .table > tbody > tr > td, .DDdiv .table > tfoot > tr > td {
     padding: 4px;
 }
+
 .search-wraper {
     display: flex;
     flex-direction: row;
@@ -360,15 +361,25 @@
     box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
-.DDdiv [type=checkbox]{
-    height:inherit !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-    .DDdiv tr{
-    transition-duration: 0.1s;
-}
-    .ebCombo-loader {
+    .DDdiv .dataTable {
+        margin: 0 !important;
+    }
+
+    .DDdiv .dataTables_processing {
+        display:none !important;
+    }
+
+    .DDdiv [type=checkbox] {
+        height: inherit !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .DDdiv tr {
+        transition-duration: 0.1s;
+    }
+
+.ebCombo-loader {
     /*display:none;*/
     position: absolute;
     top: 24px;

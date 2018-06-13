@@ -7,6 +7,14 @@
         else
             return "../";
     }
+    this.eb_get_fullpath = function (ebmod) {
+        if (ebmod === 'Production')
+            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".expressbase.com/";
+        else if (ebmod === 'Staging')
+            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.info/";
+        else
+            return "http://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41500/";
+    }
     var d = document;
     var AppId;
     if (d.appIdColl) {
@@ -112,7 +120,7 @@
         var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
         if (!ebbot_iframe.getAttribute("src")) {
-            ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
+            ebbot_iframe.setAttribute("src", `${eb_get_fullpath(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}`);
         }
         if (iframecont.style.display !== "flex") {
             this.style.display = "none";

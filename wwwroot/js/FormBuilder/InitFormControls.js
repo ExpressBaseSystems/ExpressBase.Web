@@ -163,8 +163,9 @@
         //resetting cards. required for reopening same cardset
         this.resetSelectedCardDisplay($Ctrl);
 
-        $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {            
-            var $card = $(evt.target).closest('.card-cont');
+        $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {
+            var $e = $(evt.target).closest(".btn");
+            var $card = $e.closest('.card-cont');
             
             if (!this.Bot.curCtrl.multiSelect) {
                 this.SelectedCards = [];
@@ -177,15 +178,15 @@
             });
 
             if (itempresent.length === 0) {
-                $(evt.target).text('Remove');
-                $($(evt.target).parent().siblings('.card-title-cont').children()[0]).show();
+                $e.html('Remove <i class="fa fa-times"  style="color: red; display: inline-block;" aria-hidden="true"></i>');
+                $($e.parent().siblings('.card-title-cont').children()[0]).show();
                 this.processSelectedCard($card, evt);                
             }
             else {
-                $(evt.target).text('Select');
-                $($(evt.target).parent().siblings('.card-title-cont').children()[0]).hide();
+                $e.html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
+                $($e.parent().siblings('.card-title-cont').children()[0]).hide();
                 this.spliceCardArray($card.attr('card-id'));
-                this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find(".table tbody"));
+                this.drawSummaryTable($e.closest('.cards-cont').next().find(".table tbody"));
             } 
         }.bind(this));
 
@@ -354,7 +355,7 @@
         $('.remove-cart-item').off('click').on('click', function (evt) {
             var cardid = $(evt.target).closest('tr').attr('card-id');
             this.spliceCardArray(cardid);
-            $('#' + this.Bot.curCtrl.name).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").text("Select");
+            $('#' + this.Bot.curCtrl.name).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
             $($('#' + this.Bot.curCtrl.name).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
             this.drawSummaryTable($(evt.target).closest('tbody'));
         }.bind(this));
@@ -416,7 +417,7 @@
         //reset cardset for reopening
         this.Bot.curCtrl.selectedCards = [];
         $.each($Ctrl.find(".card-btn-cont .btn"), function (h, elemt) {
-            $(elemt).text('Select');
+            $(elemt).html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
             $($(elemt).parent().siblings('.card-title-cont').children()[0]).hide();
         });
         this.drawSummaryTable($Ctrl.find(".table tbody"));

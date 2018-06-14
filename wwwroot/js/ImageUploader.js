@@ -128,9 +128,9 @@
 
     this.startSE = function () {
         let url = "";
-        if (window.host.indexOf("localhost") >= 0)
+        if (window.location.host.indexOf("localhost") >= 0)
             url = "https://sedev.eb-test.info";
-        else if (window.host.indexOf("eb-test") >= 0)
+        else if (window.location.host.indexOf("eb-test.info") >= 0)
             url = "https://se.eb-test.info";
         else
             url = "https://se.expressbase.com";

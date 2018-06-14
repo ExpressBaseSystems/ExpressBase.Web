@@ -13,7 +13,7 @@
         var modalHTML = '<div class="fup" id="bg_' + _container + '"><div class="imgup-bg">'
             + '<div class="imgup-Cont">'
             + '<div class="modal-header">'
-            + '<button type="button" class="close" id="' + _container+'_close_btn" onclick="$(\'#' + _container + ' .imgup-bg\').hide(500);" >&times;</button>'
+            + '<button type="button" class="close" id="' + _container + '_close_btn" onclick="$(\'#' + _container + ' .imgup-bg\').hide(500);" >&times;</button>'
             + '<h4 class="modal-title" style="display:inline;">Image Selector </h4>'
             + '<p style="display:inline;float:right;margin-right: 20px;" id="' + _container + 'obj-id"></p>'
             + '</div>'
@@ -34,15 +34,14 @@
             + '</div>';
 
         $("#" + _container).append(modalHTML);
-
     }; //modal creation and fileinput initialized
 
     this.toggleModal = function () {
         var $c = $("#bg_" + _container + " .imgup-bg");
         $c.toggle(350, function () {
             if ($c.is(":visible"))
-                this.startSE(); 
-                $("#" + _container + "tagval").tagsinput('refresh');
+                this.startSE();
+            $("#" + _container + "tagval").tagsinput('refresh');
         }.bind(this));
     };
 
@@ -60,8 +59,8 @@
             uploadAsync: true,
             uploadExtraData: this.uploadtag.bind(this)
         }).on('fileloaded', this.fileloaded.bind(this))
-          .on('filepreajax', this.filepreajax.bind(this))
-          .on('fileclear', function (event) {
+            .on('filepreajax', this.filepreajax.bind(this))
+            .on('fileclear', function (event) {
                 $("#" + _container + "tag-section").empty();
                 $('#' + _container + 'obj-id').text(" ");
             });
@@ -70,7 +69,7 @@
         $(".file-preview-initial").attr("tabindex", "1");
         $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
     };
-    
+
     this.filepreajax = function (event, previewId, index) {
         var f = $("#" + _container + "input-id").fileinput('getFileStack')[0];
         if ($("#" + _container + "tagval").tagsinput('items').length > 0)
@@ -90,7 +89,7 @@
     }
 
     this.uploadtag = function (previewId, index) {
-        return { "tags": JSON.stringify(_tag) };  
+        return { "tags": JSON.stringify(_tag) };
     };
 
     this.tagimageOnClick = function () {
@@ -128,7 +127,15 @@
     //};
 
     this.startSE = function () {
-        this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.info", Channels: ["file-upload"] });
+        let url = "";
+        if (window.host.indexOf("localhost") >= 0)
+            url = "https://sedev.eb-test.info";
+        else if (window.host.indexOf("eb-test") >= 0)
+            url = "https://se.eb-test.info";
+        else
+            url = "https://se.expressbase.com";
+
+        this.ss = new EbServerEvents({ ServerEventUrl: url, Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (m, e) {
             $("#" + _container + "sub-upload").show();
             //this.FileId = this.getUrl(m.objectId);
@@ -136,7 +143,7 @@
             $('#' + _container + 'obj-id').text(this.FileId);
             $(".file-preview-initial").attr("tabindex", "1");
             $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));
-            $("#" + _container + "_close").prop('disabled', false).on('click', this.getId.bind(this));            
+            $("#" + _container + "_close").prop('disabled', false).on('click', this.getId.bind(this));
         }.bind(this);
     };
 

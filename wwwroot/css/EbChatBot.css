@@ -246,7 +246,7 @@
     color: var(--botThemeColor);
     margin: 1px 1px;
     width: 90%;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     display: inline-block;
     font-weight: bold;
     margin-right: 15px;
@@ -254,7 +254,7 @@
     outline: none;
     border: solid 1px;
     padding: 5px;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .msg-cont .btn:focus {

@@ -34,7 +34,7 @@ var DvContainerObj = function (settings) {
     this.cellData = null;
     this.isExistReport = false;
     this.curTVobj = settings.dsobj;
-    this.PGobj = new Eb_PropertyGrid("pp_inner");
+    this.PGobj = new Eb_PropertyGrid("pp_inner","uc");
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -207,7 +207,8 @@ var DvContainerObj = function (settings) {
         $("#obj_icons .btn").prop("disabled", true);
         if (this.dvRefid !== null) {
             if (this.dvRefid.split("-")[2] === "3") { 
-                $("#filter_Display").hide();
+                if (!$(".dv-body2").hasClass("dv-pdf"))
+                    $(".dv-body2").addClass("dv-pdf");
                 if ($(`#reportIframe_${copycelldata}`).length === 0) {
                     var obj = new Object();
                     obj.$type = "EbReport";
@@ -219,9 +220,9 @@ var DvContainerObj = function (settings) {
                     var id = `${obj.EbSid}_0_${counter}`;
                     focusedId = "sub_window_dv" + obj.EbSid + "_0_" + counter;
                     if ($('.splitdiv_parent').hasClass("slick-slider"))
-                        $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1'">
+                        $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' style='height: calc(100vh - 60px) !important;'>
                              <div class='split-inner'>
-                             <div class='col-md-12' id='content_dv' style='height:inherit;padding-left: 0px !important;padding-right: 0px !important;'>
+                             <div class='wrapper-cont' id='content_dv' style='width:100%;height:100%;'>
                              <iframe id="reportIframe_${copycelldata}" class="reportIframe" name="reportIframe_${copycelldata}" src='../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}'>                              
                             </iframe>
                              </div>
@@ -242,6 +243,7 @@ var DvContainerObj = function (settings) {
                     $("#eb_common_loader").EbLoader("hide");
                     $("#obj_icons .btn").prop("disabled", false);
                 }
+                //$("#" + focusedId).css("width", window.outerWidth);
             }
             else {
                 $.ajax({
@@ -474,12 +476,8 @@ var DvContainerObj = function (settings) {
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
         $("#Relateddiv").hide();
-        //$("#ppgrid_" + this.tableId).hide();
-        //$("#sub_windows_sidediv_" + this.tableId).hide();
-        //$("#ppgrid_" + this.tableId).parent().css("z-index", "-1");
-        //prevfocusedId = focusedId;
-        //this.nextSlide = nextSlide;
-        //focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
+        $(".ppcont").hide();
+        $(".filterCont").hide();
         if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) {
             focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
             var __count = focusedId.split("_")[5];
@@ -504,11 +502,14 @@ var DvContainerObj = function (settings) {
                         this.eventBind();
                     }
                 }
+                $(".dv-body2").removeClass("dv-pdf");
+                this.dvcol[focusedId].Api.draw();
             }
             else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
                 if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {
                     this.dvcol[focusedId].GenerateButtons();
                 }
+                $(".dv-body2").removeClass("dv-pdf");
             }
             else {
                 $("#obj_icons").hide();
@@ -516,7 +517,8 @@ var DvContainerObj = function (settings) {
                 $("#Common_obj_icons").empty();
                 $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                 this.eventBind();
-                $("#filter_Display").hide();
+                if (!$(".dv-body2").hasClass("dv-pdf"))
+                    $(".dv-body2").addClass("dv-pdf");
             }
         }
         else {
@@ -537,9 +539,9 @@ var DvContainerObj = function (settings) {
                     if (__count !== "0") {
                         $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                         this.eventBind();
-                    }
-                    
+                    }                    
                 }
+                $(".dv-body2").removeClass("dv-pdf");
             }
             else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
                 if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {
@@ -552,7 +554,6 @@ var DvContainerObj = function (settings) {
                 $("#Common_obj_icons").empty();
                 $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                 this.eventBind();
-                $("#filter_Display").hide();
             }
         }
         if (this.dvcol[focusedId].cellData !== null && this.dvcol[focusedId].cellData !== "")

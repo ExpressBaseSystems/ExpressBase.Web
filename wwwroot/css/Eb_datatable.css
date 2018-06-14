@@ -393,10 +393,11 @@ table.dataTable tbody td.dt-body-right {
 .priorfilter, .tagstyle {
     color: white;
     margin: 0px 2px;
-    border-radius: 15px;
+    border-radius: 4px;
     display: inline-block;
-    font-size: 11px;
-    padding: 4px 8px;
+    font-size: 9px;
+    padding: 4px 3px;
+    font-family: sans-serif;
 }
 
 .tagstyle {
@@ -404,7 +405,7 @@ table.dataTable tbody td.dt-body-right {
 }
 
 .priorfilter {
-    background-color: #b1b0b0 !important;
+    background-color: #336699 !important;
 }
 
 .tagstyle .close {
@@ -415,9 +416,23 @@ table.dataTable tbody td.dt-body-right {
     opacity: 1;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.39);
 }
+.tagstyle .fa-close {
+    font-size: 10px;
+}
 
-    .tagstyle .close:hover {
-        opacity: 1 !important;
-        color: #fb2d2d !important;
-        text-shadow: 0 1px 0 white !important;
-    }
+.tagstyle .fa-close:hover {
+    opacity: 1 !important;
+    color: #fb2d2d !important;
+    text-shadow: 0 1px 0 white !important;
+    cursor: pointer;
+}
+
+.dv-pdf {
+    height: calc( 100% - 22px )!important;
+}
+.sub-pdf {
+    height: calc(100vh - 60px) !important;
+}
+.wrapper-cont{
+    /*width: 100%;*/
+}

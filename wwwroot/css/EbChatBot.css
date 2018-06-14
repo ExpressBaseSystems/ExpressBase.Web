@@ -213,10 +213,10 @@
     width: 98%;
 }*/
 .btn-box {
-	width: 100%;
-	text-align: center;
-	max-width: 80%;
-	margin-left: calc(15% - 7px);
+    width: 100%;
+    text-align: center;
+    max-width: 80%;
+    margin-left: calc(15% - 7px);
 }
 
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {
@@ -256,6 +256,10 @@
     padding: 5px;
     font-size: 13px;
 }
+
+    .formname-btn:hover {
+        filter: hue-rotate(180deg);
+    }
 
 .msg-cont .btn:focus {
     outline: none;
@@ -822,6 +826,7 @@
 .req-cont {
     position: relative;
 }
+
 .text-danger {
     display: none;
     color: #ffffff;

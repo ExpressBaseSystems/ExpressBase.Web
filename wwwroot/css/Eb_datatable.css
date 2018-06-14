@@ -322,7 +322,7 @@ table.dataTable tbody td.dt-body-right {
     width: 100%;
 }
 
-.addedbyeb .input-group .form-control:last-child, .input-group-addon:last-child, .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group > .btn, .input-group-btn:last-child > .dropdown-toggle, .input-group-btn:first-child > .btn:not(:first-child), .input-group-btn:first-child > .btn-group:not(:first-child) > .btn {
+.addedbyeb .input-group .form-control:last-child, .addedbyeb .input-group-addon:last-child, .addedbyeb .input-group-btn:last-child > .btn, .addedbyeb .input-group-btn:last-child > .btn-group > .btn, .addedbyeb .input-group-btn:last-child > .dropdown-toggle, .addedbyeb .input-group-btn:first-child > .btn:not(:first-child), .addedbyeb .input-group-btn:first-child > .btn-group:not(:first-child) > .btn {
     border: none;
 }
 

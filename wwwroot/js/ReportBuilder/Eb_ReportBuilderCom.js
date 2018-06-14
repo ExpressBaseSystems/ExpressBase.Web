@@ -391,7 +391,8 @@
         }
     };
 
-    commonO.PreviewObject = function () {
+	commonO.PreviewObject = function () {
+		$("#preview_wrapper").empty();
         commonO.Save();
     };
 
@@ -405,8 +406,12 @@
                 data: {
                     refid: this.refid,
                     renderLimit:true
-                },
-                success: function (result) {
+				},
+				beforeSend: function () {
+					$("#eb_common_loader").EbLoader("show");
+				},
+				success: function (result) {
+				//	$("#eb_common_loader").EbLoader("hide");
                     $("#preview_wrapper").html(result);
                     $("#btnGo").on("click", this.render.bind(this));
                     if ($("#btnGo").length <= 0) {
@@ -423,7 +428,8 @@
         //$("#sub_windows_sidediv_dv").css("display", "none");
         //$("#content_dv").removeClass("col-md-9").addClass("col-md-12");
         //$.LoadingOverlay("show");
-        $("#eb_common_loader").EbLoader("show");
+		 $("#eb_common_loader").EbLoader("show");
+
         var ParamsArray = [];
         var filter_control_list = $("#all_control_names").val();
         if (filter_control_list !== undefined) {

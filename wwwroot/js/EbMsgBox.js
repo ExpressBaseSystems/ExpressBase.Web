@@ -1,7 +1,7 @@
 ﻿function EbMessage(action, options) {
         var operation = action;
         var settings = $.extend({
-            Backgorund: "#31d031",
+            Background: "#31d031",
             Message: "nothing to display",
             FontColor: "#fff",
             AutoHide:true
@@ -17,12 +17,14 @@
     
         function div() {
             if ($('#eb_messageBox_container').length === 0)
-                $('body').append(`<div class="eb_messageBox_container" id="eb_messageBox_container" style="background-color:${settings.Backgorund};color:${settings.FontColor}">
+                $('body').append(`<div class="eb_messageBox_container" id="eb_messageBox_container" style="background-color:${settings.Background};color:${settings.FontColor}">
                                   <span class="msg">${settings.Message}</span>
                                   <i class="fa fa-close pull-right" onclick="$(this).parent().hide();" id="close-msg"></i>
                                 </div>`);
-            else
+            else {
                 $(`#eb_messageBox_container .msg`).text(settings.Message);
+                $(`#eb_messageBox_container`).css({ "background-color": settings.Background, "color": settings.FontColor });
+            }
         }
 
         function showMsg() {

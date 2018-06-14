@@ -213,10 +213,10 @@
     width: 98%;
 }*/
 .btn-box {
-	width: 100%;
-	text-align: center;
-	max-width: 80%;
-	margin-left: calc(15% - 7px);
+    width: 100%;
+    text-align: center;
+    max-width: 80%;
+    margin-left: calc(15% - 7px);
 }
 
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {
@@ -246,7 +246,7 @@
     color: var(--botThemeColor);
     margin: 1px 1px;
     width: 90%;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     display: inline-block;
     font-weight: bold;
     margin-right: 15px;
@@ -254,8 +254,13 @@
     outline: none;
     border: solid 1px;
     padding: 5px;
-    font-size: 14px;
+    font-size: 13px;
 }
+
+    .formname-btn:hover {
+        filter: hue-rotate(180deg);
+        color: var(--botThemeColor);
+    }
 
 .msg-cont .btn:focus {
     outline: none;
@@ -297,12 +302,12 @@
 .choose-btn {
     display: inline-block;
     margin-bottom: 0;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 400;
     line-height: 1.42857143;
     text-align: center;
     color: white;
-    padding: 4px 6px;
+    padding: 3px 6px;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
@@ -743,7 +748,7 @@
 .locinp-cont {
     padding: 5px 15px;
     font-size: 13px;
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 0.55);
 }
 
 .loc-opt-btn {
@@ -822,6 +827,7 @@
 .req-cont {
     position: relative;
 }
+
 .text-danger {
     display: none;
     color: #ffffff;

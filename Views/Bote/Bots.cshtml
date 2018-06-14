@@ -5,12 +5,14 @@
 
 <head>
     <link async rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
-    <link async rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
+    @*<link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css" />*@
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="icon" href="~/images/favicon.ico">
-
     <link async href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
     <link async href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="~/css/style.css" />
+
+
     @*
         <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />*@
 
@@ -25,19 +27,21 @@
             d = document;
             d.ebmod = '@ViewBag.Env';
             var BotList = @BotDtls ;
-            var jssrc = "";
+            var jssrc = "http://files.localhost:41500";
             if (d.ebmod === 'Production')
-                jssrc = "https://expressbase.com";
+                jssrc = "https://files.expressbase.com";
             else if (d.ebmod === 'Staging')
-                jssrc = "https://eb-test.info";
+                jssrc = "https://files.eb-test.info";
             window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
             window.EXPRESSbase_APP_IDS = [];
             botNames = [];
             botDpUrl = [];
+            botIcon = [];
             $.each(BotList.$values, function (k, bobj) {
                 window.EXPRESSbase_APP_IDS.push(bobj['id']);
                 botNames.push(bobj['name']);
-                botDpUrl.push("http://localhost:41500/images/assistant.png");
+                botDpUrl.push(jssrc + "/images/assistant.png");
+                botIcon.push(bobj['icon']);
             });
 
             d.appIdColl = window.EXPRESSbase_APP_IDS;
@@ -59,7 +63,8 @@
             $.each(d.createBotFns, function (i, fun) {
                 $(".botBtnsCont").append(`<div class="btnOutCont">
                                             <div class="btnInnerCont" onclick="clickOnDiv(${i}, ${d.appIdColl[i]});">
-                                                <h4>${botNames[i]}</h4>
+                                                <i class='fa fa-2x ${botIcon[i]}' aria-hidden='true' style='padding: 7px;'></i>
+                                                <h4 style='display: inline-block;'>${botNames[i]}</h4>
                                             </div>
                                           </div>`);
             });
@@ -101,7 +106,7 @@
 
         .botBtnsCont {
             /*height: 80vh;
-            overflow-y: auto;*/        
+            overflow-y: auto;*/
             width: 75%;
         }
 
@@ -158,6 +163,9 @@
                     </div>
                 </div>*@
                 </div>
+            </div>
+            <div class="col-md-6" style="padding: 0px 150px;">
+                <img src="~/images/svg/bot2.svg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" class="p-st-dp" />
             </div>
             <div class="bot_container" style="padding:0px;">
                 <div class="usecase-bots-cont"></div>

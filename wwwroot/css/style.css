@@ -1123,8 +1123,8 @@ footer {
 /*EbMsgBox*/
 .eb_messageBox_container {
     width: 100%;
-    padding: 10px;
-    font-family: Montserrat;
+    padding: 8px 15px;
+    font-family: Montserrat, sans-serif;
     font-size: 15px;
     display: none;
     text-align: center;

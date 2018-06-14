@@ -102,6 +102,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 		$('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
 		$('#paramdiv' + tabNum).append(result);
 		$('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
+		$("#btnGo").off("click").on("click", this.RunDs.bind(this));
 		$.LoadingOverlay("hide");
 	};
 

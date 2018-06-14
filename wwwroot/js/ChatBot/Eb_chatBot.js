@@ -1092,9 +1092,9 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.ajaxsuccess = function (rowAffected) {
         if (rowAffected > 0)
-            alert("DataCollection success");
+            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
         else
-            alert("Something went wrong");
+            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 

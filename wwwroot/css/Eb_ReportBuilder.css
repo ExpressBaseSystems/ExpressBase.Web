@@ -104,7 +104,10 @@
     margin-right: 5px;
 }
 .toolbox .textval {
-  font-size:13px; 
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .draggable {

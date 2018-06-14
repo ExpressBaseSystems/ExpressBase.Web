@@ -1085,6 +1085,8 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         $.each(this.formValuesWithType, function (key, val) {
             FVWTcoll.push({ Name: key, Value: val[0], Type: val[1], AutoIncrement: val[2] });
         });
+        this.formValuesWithType = {};
+        this.formValues = {};
         return FVWTcoll;
     };
 

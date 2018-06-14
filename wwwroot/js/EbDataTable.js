@@ -334,7 +334,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//, 
-        var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
+        var serialObj = (JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
         this.extraCol.push(serialObj);
         this.addcheckbox();
     }
@@ -368,7 +368,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var o = new Object();
         o.scrollY = "inherit";
         o.scrollX = "100%";
-        o.scrollXInner = "110%";
+        //o.scrollXInner = "110%";
         o.scrollCollapse = true;
         if (this.ebSettings.PageLength !== 0) {
             o.lengthMenu = this.generateLengthMenu();
@@ -793,19 +793,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.initCompleteFunc = function (settings, json) {
         this.firstTime = true;
         this.GenerateButtons();
-        //this.contextMenu();
-        //this.contextMenu4Label();
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-        //$('[data-toggle="tooltip"]').on('show.bs.tooltip', function () {
-        //    if (typeof $(this).attr("data-coltyp") !== typeof undefined && $(this).attr("data-coltyp") !== false) {
-        //        var text = "aaaa";
-        //        $(this).attr("data-original-title", text);
-        //    }
-        //});
         this.filterDisplay();
         this.Api.columns.adjust();
 
@@ -813,23 +805,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         setTimeout(function () {
             this.createFilterRowHeader();
-            //if (this.eb_agginfo.length > 0) {
             this.createFooter(0);
-            //this.createFooter(1);
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
 
-            $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
-            $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
+            //$("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
+            //$("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
             //}
             this.addFilterEventListeners();
             //this.arrangeFooterWidth();
             //this.arrangefixedHedaerWidth();
             this.placeFilterInText();
             //this.check4Scroll();
-            //if (focusedId !== undefined)
-            //    $("#" + focusedId).css("width", window.outerWidth);
             this.Api.columns.adjust();
         }.bind(this), 10);
     }
@@ -1075,7 +1063,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.firstTime) {
             this.addFilterEventListeners();
             this.placeFilterInText();
-            //this.arrangefixedHedaerWidth();
+            this.arrangefixedHedaerWidth();
         }
         this.Api.columns.adjust();
     };

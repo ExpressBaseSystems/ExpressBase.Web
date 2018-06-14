@@ -25,11 +25,11 @@
             d = document;
             d.ebmod = '@ViewBag.Env';
             var BotList = @BotDtls ;
-            var jssrc = "";
+            var jssrc = "http://files.localhost:41500";
             if (d.ebmod === 'Production')
-                jssrc = "https://expressbase.com";
+                jssrc = "https://files.expressbase.com";
             else if (d.ebmod === 'Staging')
-                jssrc = "https://eb-test.info";
+                jssrc = "https://files.eb-test.info";
             window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
             window.EXPRESSbase_APP_IDS = [];
             botNames = [];
@@ -37,7 +37,7 @@
             $.each(BotList.$values, function (k, bobj) {
                 window.EXPRESSbase_APP_IDS.push(bobj['id']);
                 botNames.push(bobj['name']);
-                botDpUrl.push("http://localhost:41500/images/assistant.png");
+                botDpUrl.push(jssrc + "/images/assistant.png");
             });
 
             d.appIdColl = window.EXPRESSbase_APP_IDS;

@@ -15,6 +15,7 @@ using System.Data;
 using ExpressBase.Web.BaseControllers;
 using Newtonsoft.Json;
 using ExpressBase.Common.Data;
+using ExpressBase.Common.LocationNSolution;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -47,7 +48,7 @@ namespace ExpressBase.Web.Controllers
                 cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = refID, Params = FilterControls });
                 Redis.Set<DataSourceColumnsResponse>(string.Format("{0}_columns", refID), cresp);
             }
-            if (FilterControls==null)
+            if (FilterControls == null)
             {
                 ds = this.Redis.Get<EbDataSource>(refID);
                 if (ds == null)
@@ -78,6 +79,18 @@ namespace ExpressBase.Web.Controllers
         {
             ValidateCalcExpressionResponse res = this.ServiceClient.Get<ValidateCalcExpressionResponse>(new ValidateCalcExpressionRequest { DataSourceRefId = refid, ValueExpression = expression });
             return JsonConvert.SerializeObject(res);
+        }
+
+        public List<string> GetLocConfigKeys()
+        {
+            var resp = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { LocId = 0 });
+            List<EbLocationConfig> KeysConf = resp.Data;
+            List<string> Keys = new List<string>();
+            foreach (EbLocationConfig c in KeysConf)
+            {
+                Keys.Add(c.Name);
+            }
+            return Keys;
         }
     }
 }

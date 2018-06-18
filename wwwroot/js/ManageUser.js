@@ -272,11 +272,11 @@
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
             FB.init({
-                appId: (this.Environment === 'Development' ? '141908109794829' : '1525758114176201'),//'141908109794829',//,'1525758114176201',//
+                appId: (this.Environment === 'Development' ? '141908109794829' : '2202041803145524'),//'141908109794829',//,'1525758114176201',//
                 cookie: true,  // enable cookies to allow the server to access
                 // the session
                 xfbml: true,  // parse social plugins on this page
-                version: (this.Environment === 'Development' ? 'v2.11' : 'v2.8') // use graph api version 2.8
+                version: (this.Environment === 'Development' ? 'v2.11' : 'v3.0') // use graph api version 2.8
             });
             FB.getLoginStatus(updateStatusCallback.bind(this));
         }.bind(this));
@@ -538,7 +538,11 @@
         if (this.pwdPassword.val().length < 8 && this.whichMode === 1 && this.itemId < 2) {
             EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Backgorund: '#bf1e1e' });
             return;
-        }            
+        }    
+        if (this.txtDateOfBirth === "") {
+            EbMessage("show", { Message: 'Please Enter Date of Birth', AutoHide: true, Backgorund: '#bf1e1e' });
+            return;
+        }
 
         this.btnCreateUser.attr("disabled", "true");
 

@@ -1,7 +1,7 @@
-﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone) {
+﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone, env) {
     this.whichMode = mode;
     //CreateEdit = 1, View = 2, MyProfileView = 3
-    
+    this.Environment = env;
     this.menuBarObj = $("#layout_div").data("EbHeader");
     this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.userinfo = userinfo;
@@ -272,11 +272,11 @@
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
             FB.init({
-                appId: '141908109794829',//,'1525758114176201',//
+                appId: (this.Environment === 'Development' ? '141908109794829' : '1525758114176201'),//'141908109794829',//,'1525758114176201',//
                 cookie: true,  // enable cookies to allow the server to access
                 // the session
                 xfbml: true,  // parse social plugins on this page
-                version: 'v2.11'//'v2.8' // use graph api version 2.8
+                version: (this.Environment === 'Development' ? 'v2.11' : 'v2.8') // use graph api version 2.8
             });
             FB.getLoginStatus(updateStatusCallback.bind(this));
         }.bind(this));

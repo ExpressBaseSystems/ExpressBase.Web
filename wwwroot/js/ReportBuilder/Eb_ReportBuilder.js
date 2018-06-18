@@ -44,6 +44,7 @@
     this.RefreshControl = function (obj) {
         if (obj.ParentName === "TableLayout") {
             obj.Left = 0; obj.Top = 0;
+            this.RbCommon.tableResizableCols(obj);
         }
         var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
@@ -54,6 +55,9 @@
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
+
+        if ('RowCount' in obj)
+            this.RbCommon.tableResizableCols(obj);
         if ('Font' in obj)
             this.repExtern.setFontProp(obj);
         if (!('SectionHeight' in obj)) {

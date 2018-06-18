@@ -1,0 +1,25 @@
+﻿body {
+
+}
+.eb_colResizer {
+
+}
+    .eb_colResizer td {
+        position: relative !important;
+        border-right-color: transparent !important;
+    }
+    .eb_colResizer tbody {
+        position: relative !important;
+    }
+    /*.eb_colResizer td:not(:last-child) {
+        border-right-color:transparent !important;
+    }*/
+
+.eb_resize_e {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    background: #eee;
+    WIDTH: 2PX;
+    cursor: col-resize;
+}

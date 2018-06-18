@@ -131,6 +131,11 @@
         return objlist;
     };
 
+    this.tableResizableCols = function (obj) {
+        let $t = $(`#${obj.EbSid}`).find("table");
+        $t.ColResize();
+    };
+
     this.ValidateCalcExpression = function (obj) {
         $.ajax({
             url: "../RB/ValidateCalcExpression",

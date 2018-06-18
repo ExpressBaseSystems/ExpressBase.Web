@@ -2,7 +2,8 @@
 @{
     Layout = "~/Views/Shared/_Layout1.cshtml";
 }
-
+<meta name="google-signin-client_id" content="1097281192898-q73cm1h8faa3ksjj2o44jchdlm179m87.apps.googleusercontent.com">
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
@@ -268,6 +269,10 @@
                                 <div class="form-group">
                                     @*<span>Send mail. </span><input type="checkbox" id="sendmail" />*@
                                 </div>
+                                <div class="form-group">
+                                    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                                </div>
+
                                 @*<div class="input-group">
                                         <label id="" style="font-family: open sans; font-weight: 300;">API Key</label>
                                         <button class="form-control" title="Generate API Key">Generate JWT Key</button>
@@ -360,7 +365,25 @@
 
 <script>
 
-    var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone);
+    function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    }
+
+    @*<a href="#" onclick="signOut();">Sign out</a>
+<script>
+  function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
+</script>*@
+
+    var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone, '@ViewBag.Env');
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();

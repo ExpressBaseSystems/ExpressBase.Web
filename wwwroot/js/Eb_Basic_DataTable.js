@@ -252,8 +252,10 @@ var EbBasicDataTable = function (Option) {
         if (this.columnSearch.length > 0) {
             this.filterFlag = true;
         }
-        dq.Ispaging = this.EbObject.IsPaging;
-
+        //dq.Ispaging = this.EbObject.IsPaging;
+        dq.Ispaging = true;
+        dq.start = 0;
+        dq.length = 100;
         return dq;
     };
 

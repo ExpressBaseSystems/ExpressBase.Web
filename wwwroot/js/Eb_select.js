@@ -546,14 +546,14 @@ var EbSelect = function (ctrl, botObj) {
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                this.BotObj.makeInvalid('This field  require minimum ' + this.minLimit + ' values');
+                this.BotObj.makeInvalid(this.ComboObj.name, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
-                    document.getElementById(this.dmNames[0]).setCustomValidity('This field  is required');
+                    this.BotObj.makeInvalid(this.ComboObj.name);
                 }
                 else {
-                    this.BotObj.makeValid();
+                    this.BotObj.makeValid(this.ComboObj.name);
                 }
 
             }

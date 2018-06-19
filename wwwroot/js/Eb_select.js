@@ -132,6 +132,7 @@ var EbSelect = function (ctrl, botObj) {
             $filterInp.val($e.val());
             this.datatable.Api.ajax.reload();
             this.Vobj.DDstate = true;
+            this.BotObj.makeValid(this.ComboObj.name);
         }
     };
 
@@ -444,6 +445,7 @@ var EbSelect = function (ctrl, botObj) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
+            this.BotObj.makeValid(this.ComboObj.name);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');

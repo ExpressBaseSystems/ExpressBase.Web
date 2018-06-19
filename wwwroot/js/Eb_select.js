@@ -39,9 +39,10 @@
 var z = 100;
 
 //var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
-var EbSelect = function (ctrl) {
+var EbSelect = function (ctrl, botObj) {
     //parameters   
     this.ComboObj = ctrl;
+    this.BotObj = botObj;
     this.name = ctrl.name;
     this.dsid = ctrl.dataSourceId;
     this.idField = "name";
@@ -110,7 +111,7 @@ var EbSelect = function (ctrl) {
         var $e = $(e.target);
         var searchVal = $e.val();
 
-        if (searchVal.trim() === "")
+        if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
             return;
 
         var mapedField = $e.closest(".searchable").attr("maped-column");
@@ -131,6 +132,7 @@ var EbSelect = function (ctrl) {
             $filterInp.val($e.val());
             this.datatable.Api.ajax.reload();
             this.Vobj.DDstate = true;
+            this.BotObj.makeValid(this.ComboObj.name);
         }
     };
 
@@ -404,7 +406,8 @@ var EbSelect = function (ctrl) {
                 return $(this).height();
             }).get());
             $(".search-block .input-group").css("height", maxHeight + "px");
-        }, 10);
+            $('#' + this.name + 'Wraper [type=search]').val("");
+        }.bind(this), 10);
 
 
         console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
@@ -443,6 +446,7 @@ var EbSelect = function (ctrl) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
+            this.BotObj.makeValid(this.ComboObj.name);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
@@ -539,30 +543,20 @@ var EbSelect = function (ctrl) {
         $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
     };
 
-    this.makeInvalid = function (msg) {
-        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").prop('disabled', true);
-        $('#' + this.name + "errormsg").text(msg).show().animate({ opacity: "1" }, 300);
-    };
-
-    this.makeValid = function () {
-        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "inherit").siblings("[name=ctrlsend]").prop('disabled', false);
-        $('#' + this.name + "errormsg").hide().animate({ opacity: "0" }, 300);
-    };
-
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
         var container1 = $('#' + this.name + 'Container');
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                this.makeInvalid('This field  require minimum ' + this.minLimit + ' values');
+                this.BotObj.makeInvalid(this.ComboObj.name, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
-                    document.getElementById(this.dmNames[0]).setCustomValidity('This field  is required');
+                    this.BotObj.makeInvalid(this.ComboObj.name);
                 }
                 else {
-                    this.makeValid();
+                    this.BotObj.makeValid(this.ComboObj.name);
                 }
 
             }

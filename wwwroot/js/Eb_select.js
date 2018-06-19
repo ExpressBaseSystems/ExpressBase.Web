@@ -406,7 +406,8 @@ var EbSelect = function (ctrl, botObj) {
                 return $(this).height();
             }).get());
             $(".search-block .input-group").css("height", maxHeight + "px");
-        }, 10);
+            $('#' + this.name + 'Wraper [type=search]').val("");
+        }.bind(this), 10);
 
 
         console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);

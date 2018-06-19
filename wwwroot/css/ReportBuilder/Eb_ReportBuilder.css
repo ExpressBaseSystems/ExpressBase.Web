@@ -816,6 +816,7 @@
     bottom: -1px;
     right: 0;
     z-index: 5;
+    cursor: pointer;
 }
 .T_layout .ui-resizable-e {
     right: 0px;

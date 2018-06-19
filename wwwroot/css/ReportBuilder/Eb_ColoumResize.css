@@ -6,20 +6,30 @@
 }
     .eb_colResizer td {
         position: relative !important;
-        border-right-color: transparent !important;
+        padding:0 !important;
     }
     .eb_colResizer tbody {
         position: relative !important;
     }
+    .eb_colResizer td:not(:last-child) {
+        border-right-color: inherit !important;
+    }
     /*.eb_colResizer td:not(:last-child) {
         border-right-color:transparent !important;
     }*/
-
-.eb_resize_e {
+    .eb_resize_e {
+        position: absolute;
+        height: 100%;
+        top: 0;
+        background: #eee;
+        WIDTH: 2PX;
+        cursor: col-resize;
+    }
+.eb_resize_row {
     position: absolute;
-    height: 100%;
-    top: 0;
+    height: 2px;
+    left: 0;
     background: #eee;
-    WIDTH: 2PX;
-    cursor: col-resize;
+    WIDTH: 100%;
+    cursor: row-resize;
 }

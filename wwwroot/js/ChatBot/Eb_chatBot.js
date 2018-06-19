@@ -493,7 +493,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
             /////////////////////////////////////////////////
             setTimeout(function () {
-                $(".btn-box").find("[idx=0]").click();
+                //$(".btn-box").find("[idx=0]").click();
             }.bind(this), this.typeDelay * 2 + 100);
         }
         else {
@@ -529,7 +529,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         var Html = `<div class='form-wraper'>`;
         $.each(this.curForm.controls, function (i, control) {
             if (!control.hidden)
-                Html += `<label>${control.label}</label><div class='ctrl-wraper'>${control.bareControlHtml}</div><br/><br/>`;
+                Html += `<label>${control.label}</label><div for='${control.name}'><div class='ctrl-wraper'>${control.bareControlHtml}</div></div><br/><br/>`;
         });
         this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn formname-btn">Submit</button><button class="btn formname-btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
@@ -629,26 +629,27 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         return inpVal;
     }
 
-    this.makeInvalid = function (msg = "This field is required") {
-        var contSel = `[for=${this.curCtrl.name}]`;
-        $(`${contSel} .chat-ctrl-cont`).after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
-        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
+    this.makeInvalid = function (name, msg = "This field is required") {
+        var contSel = `[for=${name}]`;
+        var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`): $(`${contSel} .chat-ctrl-cont`);
+            $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
+        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 3px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
         $(`${contSel}  .text-danger`).text(msg).show().animate({ opacity: "1" }, 300);
     };
 
-    this.makeValid = function () {
-        var contSel = `[for=${this.curCtrl.name}]`;
+    this.makeValid = function (name) {
+        var contSel = `[for=${name}]`;
         $(`${contSel}  .ctrl-wraper`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
         $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
     };
 
     this.checkRequired = function () {
         if (this.curCtrl.required && !this.curVal) {
-            this.makeInvalid();
+            this.makeInvalid(this.curCtrl.name);
             return false;
         }
         else {
-            this.makeValid();
+            this.makeValid(this.curCtrl.name);
             return true;
         }
     };

@@ -136,6 +136,11 @@
         $t.ColResize();
     };
 
+    this.killResizableCols = function (obj) {
+        let $t = $(`#${obj.EbSid}`).find("table");
+        $t.ColResize({ status:"destroy"});
+    };
+
     this.ValidateCalcExpression = function (obj) {
         $.ajax({
             url: "../RB/ValidateCalcExpression",
@@ -251,6 +256,8 @@
         }
         this.RbObj.makeTLayoutDroppable(obj);
         this.resizeTdOnLayoutResize(obj.EbSid, "set");
+        this.killResizableCols(obj);
+        this.tableResizableCols(obj);
     };
 
     this.appendTd = function ($ctrl, count) {

@@ -539,7 +539,7 @@
             EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Backgorund: '#bf1e1e' });
             return;
         }    
-        if (this.txtDateOfBirth === "") {
+        if (this.txtDateOfBirth.val().length < 8) {
             EbMessage("show", { Message: 'Please Enter Date of Birth', AutoHide: true, Backgorund: '#bf1e1e' });
             return;
         }

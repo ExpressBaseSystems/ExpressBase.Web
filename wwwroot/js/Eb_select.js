@@ -112,13 +112,12 @@ var EbSelect = function (ctrl, botObj) {
         var $e = $(e.target);
         var searchVal = $e.val();
 
-        if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
-            return;
-
         var mapedField = $e.closest(".searchable").attr("maped-column");
         var mapedFieldType = $e.closest(".searchable").attr("column-type");
         var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         if (!this.IsDatatableInit) {
+            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
+                return;
             var searchBy = " = ";
             if (mapedFieldType === "String")
                 searchBy = "*x*";
@@ -131,9 +130,11 @@ var EbSelect = function (ctrl, botObj) {
         }
         else {
             $filterInp.val($e.val());
-            this.datatable.Api.ajax.reload();
             this.Vobj.DDstate = true;
             this.BotObj.makeValid(this.ComboObj.name);
+            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
+                return;
+            this.datatable.Api.ajax.reload();
         }
     };
 

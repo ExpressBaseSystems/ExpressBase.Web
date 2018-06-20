@@ -12,7 +12,6 @@
     <link async href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="~/css/style.css" />
 
-
     @*
         <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />*@
 
@@ -77,7 +76,7 @@
         function clickOnDiv(i, appid) {
             //console.error(7);
             var d = document;
-            if (d.latestAppid === appid)
+            if (d.latestAppid === appid && $($(`[appid=${appid}]`)[0]).css("display") !== 'none')
                 return;
             d.appIdCount = i;
             if ($(`[appid=${appid}]`).length === 0) {
@@ -89,22 +88,17 @@
             $(`.usecase-bots-cont [appid=${appid}] .eb-chat-head`).css("background-color", d.ebbotThemeColorColl[i]);
             $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 400);
             $(".eb_iframecont").hide();
-            $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).animate({ opacity: '1'}, 400); });
+            $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).css("display", "flex");$(this).animate({ opacity: '1' }, 400); });
             d.latestAppid = appid;
         }
     </script>
     <style>
-        .usecase-bots-cont {
-            /*width: 100%;*/
-            float: right;
-            /*height: 100%;*/
-            /*border: solid 1px red;*/
-        }
+        
 
         .eb_iframecont {
             position: relative !important;
             float: right;
-            width: 50% !important;
+            /*width: 50% !important;*/
         }
 
         .botBtnsCont {
@@ -142,10 +136,11 @@
             .btnInnerCont:hover {
                 background: #eee;
             }
+
+          
     </style>
 </head>
 <body>
-
     <section class="ext-pageheader" id="pgheaderExt">
         <nav class="navbar navbar-default navbar-fixed-top" style="top: 0px;">
             <div class="">
@@ -155,24 +150,16 @@
             </div>
         </nav>
     </section>
-    <section class="slider eb-banner" style="padding-top: 0px;">
-        <div class="row" style="margin: 0px; padding-top: 65px;">
-            <h2 style="color: white; padding-left: 20%;font-family: Montserrat; font-weight: 300;">Live Bots</h2>
-            <div class="col-md-6 botBtnsParent">
+    <section class="slider eb-banner">
+        <div class="container-fluid">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 botBtnsParent">
+                <h2 style="color: white; padding-left: 20%;font-family: Montserrat; font-weight: 300;">Live Bots</h2>
                 <div class="botBtnsCont">
-                    @*<div class="btnOutCont">
-                    <div class="btnInnerCont">
-                        <h4>djfhdikdhhd</h4>
-                    </div>
-                </div>*@
+
                 </div>
             </div>
-
-            <div class="bot_container" style="padding:0px;">
-                <div class="usecase-bots-cont"></div>
-            </div>
         </div>
-        <div style="height: 8vh;"></div>
+        <div class="usecase-bots-cont"></div>
     </section>
 
 </body>

@@ -2,7 +2,8 @@
 <html>
 @{
     var BotDtls = Html.Raw(ViewBag.BotDetails);
-    string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
+    //string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
+    string LogoUrl = "/static/logo/logo_" + ViewBag.SolutionId + ".png";
 }
 
 <head>
@@ -47,7 +48,7 @@
             });
 
             d.appIdColl = window.EXPRESSbase_APP_IDS;
-            d.ebbotThemeColorColl = ["#9400D3", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
+            d.ebbotThemeColorColl = ["#fcb714", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
             d.ebbotNameColl = botNames;
             d.botdpURLColl = botDpUrl;
 
@@ -114,9 +115,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 61vh;
+            height: 95vh;
             /*padding-top: 100px;*/
             overflow-y: auto;
+            flex-direction: column;
         }
 
         .btnOutCont {
@@ -139,6 +141,11 @@
             .btnInnerCont:hover {
                 background: #eee;
             }
+
+        .livebothead {
+            text-align: center;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -146,7 +153,7 @@
         <nav class="navbar navbar-default navbar-fixed-top" style="top: 0px;">
             <div class="">
                 <div class="navbar-header">
-                    <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
+                    <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="solution_logo Eb_Image" />
                 </div>
             </div>
         </nav>
@@ -154,7 +161,7 @@
     <section class="slider eb-banner">
         <div class="container-fluid">
             <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 botBtnsParent">
-                <h2 style="color: white; padding-left: 20%;font-family: Montserrat; font-weight: 300;">Live Bots</h2>
+                <div class="col-md-12"><h2 class="livebothead">Live Bots</h2></div>
                 <div class="botBtnsCont">
 
                 </div>
@@ -162,5 +169,9 @@
         </div>
         <div class="usecase-bots-cont"></div>
     </section>
+    <script>
+        $('.Eb_Image').Lazy();
+    </script>
+    
 </body>
 </html>

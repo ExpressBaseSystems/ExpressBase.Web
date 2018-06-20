@@ -522,8 +522,19 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         $.each(this.curForm.controls, function (i, control) {//////////////////////////////////////
             if (this.initControls[control.objType] !== undefined)
                 this.initControls[control.objType](control);
+            $("#" + control.name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
         }.bind(this));
     }.bind(this);
+
+    this.makeReqFm = function (control) {
+        var $ctrl = $("#" + control.name);
+        if ($ctrl.length !== 0 && $ctrl.val().trim() === "")
+            this.makeInvalid(control.name);
+    };
+
+    this.removeReqFm = function (control) {
+        this.makeValid(control.name);
+    };
 
     this.RenderForm = function () {
         var Html = `<div class='form-wraper'>`;
@@ -627,12 +638,14 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             inpVal = $input.val();
         //return inpVal.trim();
         return inpVal;
-    }
+    };
 
     this.makeInvalid = function (name, msg = "This field is required") {
         var contSel = `[for=${name}]`;
-        var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`): $(`${contSel} .chat-ctrl-cont`);
-            $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
+        if ($(`${contSel} .req-cont`).length !== 0)
+            return;
+        var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
+        $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
         $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 3px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
         $(`${contSel}  .text-danger`).text(msg).show().animate({ opacity: "1" }, 300);
     };
@@ -1010,7 +1023,26 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.initControls[this.curCtrl.objType](this.curCtrl);
     };
 
+    this.submitReqCheck = function () {
+        var $firstCtrl = null;
+        $.each(this.curForm.controls, function (i, control) {
+            var $ctrl = $("#" + control.name);
+            if ($ctrl.length !== 0 && !$firstCtrl && $ctrl.val().trim() === "")
+                $firstCtrl = $ctrl;
+            this.makeReqFm(control);
+        }.bind(this));
+
+        if ($firstCtrl) {
+            $firstCtrl.select();
+            return false
+        }
+        else
+            return true;
+    };
+
     this.formSubmit_fm = function (e) {
+        if (!this.submitReqCheck())
+            return;
         var $btn = $(e.target).closest(".btn");
         var html = "<div class='sum-box'><table style='font-size: inherit;'>";
         $.each(this.curForm.controls, function (i, control) {

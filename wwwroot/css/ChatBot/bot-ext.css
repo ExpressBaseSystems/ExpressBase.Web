@@ -90,26 +90,6 @@
 		width: 100% !important;
 	}
 }
-@media only screen and (max-width: 600px) {
-	.eb_iframecont {
-		width: 100% !important;
-	}
-
-	.usecase-bots-cont {
-		width: 100% !important;
-	}
-}
-
-@media(max-width: 768px) {
-	.eb_iframecont {
-		width: 100% !important;
-	}
-
-	.usecase-bots-cont {
-		width: 100% !important;
-	}
-}
-
 .eb-chatbtn {
 	bottom: calc( 65% - 55px) !important;
 	right: 0 !important;

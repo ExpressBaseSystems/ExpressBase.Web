@@ -7,12 +7,13 @@
     .eb_colResizer td {
         position: relative !important;
         padding:0 !important;
+        border-bottom-color:transparent !important;
     }
     .eb_colResizer tbody {
         position: relative !important;
     }
     .eb_colResizer td:not(:last-child) {
-        border-right-color: inherit !important;
+        border-right-color: transparent !important;
     }
     /*.eb_colResizer td:not(:last-child) {
         border-right-color:transparent !important;

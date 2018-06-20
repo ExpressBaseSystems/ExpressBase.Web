@@ -791,7 +791,7 @@
     border: inherit;
 }
 .eb_table_container table tbody,td,tr{
-    border: inherit !important;
+    border:inherit;
 }
 .eb_table_container{
     width:100%;

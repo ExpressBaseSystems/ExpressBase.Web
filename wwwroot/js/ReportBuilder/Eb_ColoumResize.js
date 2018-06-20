@@ -70,10 +70,11 @@
 
         let dragStopV = function (e,ui) {
             try {
-                let tdi = parseInt($(e.target).attr("index"));
+                let tri = parseInt($(e.target).attr("index"));
                 let l = $(e.target).position().top;
-                let ltd = _table.find("tr").eq(tdi).position().top;
-                _table.find("tr").eq(tdi).css({ "height": calcPercentTop(l - ltd) + "%" });
+                let ltd = _table.find("tr").eq(tri).position().top;
+                _table.find("tr").eq(tri).css({ "height": calcPercentTop(l - ltd) + "%" });
+                setNextTr(tri);
             }
             catch{ };
         }
@@ -120,12 +121,36 @@
                 refresh();
         };
 
+        let setNextTr = function (tri) {
+            let index = tri + 1;
+            let resizer = _table.closest(".dropped").find(`.${_resizerV}`).eq(tri);
+            let _nextNode = _table.closest(".dropped").find(`.${_resizerV}`).eq(index)
+
+            if (_nextNode.length > 0) {
+                let l = resizer.position().top;
+                let trh = _table.find("tr").eq(index).innerHeight();
+                if (_dragpos > l)
+                    _table.find("tr").eq(index).css({ "height": calcPercentTop(trh + (_dragpos - l)) + "%" });
+                else
+                    _table.find("tr").eq(index).css({ "height": calcPercentTop(trh - (l - _dragpos)) + "%" });
+            }
+            else
+                refreshTr();
+        };
+
         let refresh = function (t) {
             _table.closest(".dropped").find(".eb_resize_e").each(function (k, ob) {
                 let index = parseInt($(ob).attr("index"));
                 $(ob).css("left", getPos(index) + "%");
             });
         };
+
+        let refreshTr = function () {
+            _table.closest(".dropped").find(`.${_resizerV}`).each(function (k, ob) {
+                let index = parseInt($(ob).attr("index"));
+                $(ob).css("top", getTop(index) + "%");
+            });
+        }
 
         let calcPercent = function (val) {
             let per = val / _table.innerWidth() * 100;

@@ -255,6 +255,7 @@
     border: solid 1px;
     padding: 5px;
     font-size: 13px;
+    transition-duration: 0.1s;
 }
 
     .formname-btn:hover {

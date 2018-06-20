@@ -254,7 +254,7 @@
                 $(`#${obj.EbSid} table tbody`).append(`<tr id="${obj.EbSid}_tr_${c}">`);
                 this.appendTd($(`#${obj.EbSid}_tr_${c}`), _tdCount);
             }
-            $(`#${obj.EbSid}`).css("height", "auto");
+            //$(`#${obj.EbSid}`).css("height", "auto");
             obj.Height = $(`#${obj.EbSid}`).height();
         }
         this.RbObj.makeTLayoutDroppable(obj);

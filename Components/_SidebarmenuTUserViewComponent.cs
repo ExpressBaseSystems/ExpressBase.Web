@@ -30,16 +30,12 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console)
         {
             var resultlist = new SidebarUserResponse();
-            //resultlist = this.Redis.Get<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console));
-            //if (resultlist == null)
-            {
                 User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, solnid, email, console));
                 var Ids = String.Join(",", user.EbObjectIds);
 
                 resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids =  Ids, SysRole = user.Roles });
 
-                this.Redis.Set<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console), resultlist);
-            }
+                this.Redis.Set<SidebarUserResponse>(string.Format("{0}-{1}-{2}_response", solnid, email, console), resultlist);           
 
             StringBuilder sb = new StringBuilder();
             foreach (var obj in resultlist.AppList)
@@ -56,6 +52,7 @@ namespace ExpressBase.Web.Components
             ViewBag.Types = JsonConvert.SerializeObject(_dict);
             ViewBag.Object = resultlist;
             ViewBag.menu = sb.ToString();
+            ViewBag.Role = user.Roles;
             return View();
         }
     }    

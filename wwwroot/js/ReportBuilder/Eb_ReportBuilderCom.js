@@ -246,8 +246,11 @@
             }.bind(this));
         }
         else {
+            var _row = $(`#${obj.EbSid} table tbody tr`).length;
             let _tdCount = $(`#${obj.EbSid} table tbody tr`).eq(0).children("td").length;
-            for (let c = 0; c < obj.RowCount; c++) {
+            //$(`#${obj.EbSid} table`).css("height", $(`#${obj.EbSid} table`).height() + (obj.RowCount * 26));
+            $(`#${obj.EbSid}`).css("height", $(`#${obj.EbSid} table`).height() + (obj.RowCount * 26));
+            for (let c = _row; c <= obj.RowCount; c++) {
                 $(`#${obj.EbSid} table tbody`).append(`<tr id="${obj.EbSid}_tr_${c}">`);
                 this.appendTd($(`#${obj.EbSid}_tr_${c}`), _tdCount);
             }

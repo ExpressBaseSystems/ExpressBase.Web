@@ -22,10 +22,10 @@
                 if (j < _len - 1)
                     $(o).css("width", calcPercent($(o).innerWidth()) + "%");
             });
-            _table.find("tr").each(function (k, ob) {
-                if (k < _rowCount)
-                    $(ob).css("height", calcPercentTop($(ob).innerHeight()) + "%");
-            });
+            //_table.find("tr").each(function (k, ob) {
+            //    if (k < _rowCount)
+            //        $(ob).css("height", calcPercentTop($(ob).innerHeight()) + "%");
+            //});
         };
 
         let appendHandle = function () {
@@ -64,7 +64,6 @@
                 axis: "y",
                 containment: "parent",
                 stop: dragStopV.bind(this),
-                drag: ondragV.bind(this),
                 start: startDragV.bind(this)
             });
         };
@@ -77,10 +76,6 @@
                 _table.find("tr").eq(tdi).css({ "height": calcPercentTop(l - ltd) + "%" });
             }
             catch{ };
-        }
-
-        let ondragV = function (e, ui) {
-
         }
 
         let startDragV = function (e, ui) {

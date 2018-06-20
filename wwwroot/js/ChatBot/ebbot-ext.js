@@ -92,7 +92,8 @@
 
     closeDiv.onclick = function () {
         document.getElementById("eb_iframecont" + AppId).style.display = "none";
-        document.getElementById("chatbtn" + AppId).style.display = "block";
+        if (!d.appIdColl)
+            document.getElementById("chatbtn" + AppId).style.display = "block";
     }
 
     maximizeDiv.onclick = function () {
@@ -138,8 +139,8 @@
     else {
         iframecont.style.minWidth = "inherit";
         d.getElementsByClassName("usecase-bots-cont")[0].appendChild(iframecont);
-        d.getElementById("closediv" + AppId).style.display = "none";
-        d.getElementById("maximizediv" + AppId).style.display = "none";
+        //d.getElementById("closediv" + AppId).style.display = "none";
+        //d.getElementById("maximizediv" + AppId).style.display = "none";
         chatbtn.click();
     }
 

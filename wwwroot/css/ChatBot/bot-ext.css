@@ -75,7 +75,21 @@
 		border-radius: 0px;
 	}
 }
+.usecase-bots-cont {
+	/*width: 100%;*/
+	float: right;
+	/*height: 100%;*/
+	/*border: solid 1px red;*/
+}
+@media (max-width: 450px) and (min-width: 20px) {
+	.eb_iframecont {
+		width: 100% !important;
+	}
 
+	.usecase-bots-cont {
+		width: 100% !important;
+	}
+}
 .eb-chatbtn {
 	bottom: calc( 65% - 55px) !important;
 	right: 0 !important;

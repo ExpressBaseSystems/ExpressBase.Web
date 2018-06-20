@@ -272,7 +272,7 @@
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
             FB.init({
-                appId: (this.Environment === 'Development' ? '141908109794829' : '2202041803145524'),//'141908109794829',//,'1525758114176201',//
+                appId: (this.Environment === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
                 cookie: true,  // enable cookies to allow the server to access
                 // the session
                 xfbml: true,  // parse social plugins on this page

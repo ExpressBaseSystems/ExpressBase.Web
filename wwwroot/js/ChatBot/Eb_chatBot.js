@@ -20,7 +20,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.bearerToken = null;
     this.refreshToken = null;
     this.initControls = new InitControls(this);
-    this.typeDelay = 10;
+    this.typeDelay = 200;
     this.ChartCounter = 0;
     this.formsList = {};
     this.formsDict = {};
@@ -1084,10 +1084,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.showConfirm = function () {
         this.ClearFormVariables();
-        var msg = `Your ${this.curForm.name} form submitted successfully`;
-        this.msgFromBot(msg);
         this.DataCollection();
-        this.AskWhatU();
     }.bind(this);
 
     this.ClearFormVariables = function () {
@@ -1124,10 +1121,16 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     };
 
     this.ajaxsuccess = function (rowAffected) {
-        if (rowAffected > 0)
+        if (rowAffected > 0) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
-        else
+            var msg = `Your ${this.curForm.name} form submitted successfully`;                        
+        }
+        else {
             EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+            var msg = `Your ${this.curForm.name} form submission failed`;
+        }
+        this.msgFromBot(msg);
+        this.AskWhatU();
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 

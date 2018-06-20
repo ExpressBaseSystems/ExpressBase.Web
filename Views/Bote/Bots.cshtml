@@ -1,9 +1,12 @@
-﻿@{
+﻿<!DOCTYPE html>
+<html>
+@{
     var BotDtls = Html.Raw(ViewBag.BotDetails);
     string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
 }
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link async rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
     @*<link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css" />*@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -93,7 +96,7 @@
         }
     </script>
     <style>
-        
+
 
         .eb_iframecont {
             position: relative !important;
@@ -136,8 +139,6 @@
             .btnInnerCont:hover {
                 background: #eee;
             }
-
-          
     </style>
 </head>
 <body>
@@ -161,5 +162,5 @@
         </div>
         <div class="usecase-bots-cont"></div>
     </section>
-
 </body>
+</html>

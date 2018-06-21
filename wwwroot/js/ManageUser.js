@@ -272,11 +272,11 @@
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
             FB.init({
-                appId: (this.Environment === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
+                appId: (this.Environment === 'Development' ? '141908109794829' : (this.Environment === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
                 cookie: true,  // enable cookies to allow the server to access
                 // the session
                 xfbml: true,  // parse social plugins on this page
-                version: (this.Environment === 'Development' ? 'v2.11' : 'v3.0') // use graph api version 2.8
+                version: (this.Environment === 'Development' ? 'v2.11' : (this.Environment === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
             });
             FB.getLoginStatus(updateStatusCallback.bind(this));
         }.bind(this));

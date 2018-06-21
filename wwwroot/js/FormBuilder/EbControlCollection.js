@@ -7,11 +7,17 @@
     };
 
     this.PopByName = function (_name) {
-        var parentId = $("#" + _name).parent().attr("id");
+        var parentId = $("#" + _name + ".Eb-ctrlContainer").parent().attr("id");
         var ele = this.GetByName(_name);
         console.log("parentId" + parentId);
-        if (parentId === "form-buider-form")
-            return this.$values.splice(this.$values.indexOf(ele), 1)[0];
+        if (parentId === "form-buider-form") {
+            var idx = this.$values.indexOf(ele);
+            if (idx === -1) {
+                console.error("element not found in collection");
+                return;
+            }
+            return this.$values.splice(idx, 1)[0];
+        }
 
         var parent = this.GetByName(parentId);
         return parent.Controls.$values.pop(parent.Controls.$values.indexOf(ele));

@@ -333,7 +333,6 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    width: calc(100% + 1px);
 }
 
 .searchable [type="search"] {
@@ -366,7 +365,7 @@
     }
 
     .DDdiv .dataTables_processing {
-        display:none !important;
+        display: none !important;
     }
 
     .DDdiv [type=checkbox] {
@@ -389,6 +388,7 @@
 
 .ctrl-wraper .input-group {
     /*height: 100%;*/
+    width: calc( 100% + 1px ) !important;
 }
 
 .v-select.searchable .dropdown-toggle {
@@ -399,11 +399,13 @@
     position: relative;
     text-overflow: ellipsis;
     overflow: hidden;
+    height: 24px !important;
     color: white !important;
     border: none !important;
-    border-radius: 0.35em !important;
-    padding: .1em .45em 0.45em 0.45em !important;
+    border-radius: 0.31em !important;
+    padding: 0.1em .45em 0.15em 0.45em !important;
     margin: 2px 1px 2px 3px !important;
+    font-size: 13.5px;
     padding-right: 18px !important;
 }
 
@@ -424,11 +426,11 @@
         }
 
     .v-select .selected-tag:nth-child(5n - 4) {
-        background-color: rgb(41, 146, 47) !important;
+        background-color: rgb(75, 193, 81) !important;
     }
 
     .v-select .selected-tag:nth-child(5n - 3) {
-        background-color: rgba(70, 119, 181, 0.9803921568627451) !important;
+        background-color: rgb(91, 142, 206) !important;
     }
 
     .v-select .selected-tag:nth-child(5n - 2) {
@@ -436,9 +438,9 @@
     }
 
     .v-select .selected-tag:nth-child(5n -1) {
-        background-color: rgba(76, 181, 70, 0.9803921568627451) !important;
+        background-color: rgb(224, 111, 116) !important;
     }
 
     .v-select .selected-tag:nth-child(5n) {
-        background-color: rgba(70, 170, 181, 0.9803921568627451) !important;
+        background-color: #ecb144 !important;
     }

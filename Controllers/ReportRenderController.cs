@@ -32,14 +32,12 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Fd = Report;
             }
-
             ViewBag.RenderLimit = renderLimit;
             return View();
         }
 
         public bool Render(string refid, List<Param> Params)
         {
-
             ReportRenderResponse Res = null;
             try
             {
@@ -52,9 +50,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception e)
             {
                 Console.WriteLine("--------------REPORT exception TS ---  " + e.Message + "\n" + e.StackTrace);
-
             }
-
             Pdf = new FileStreamResult(Res.StreamWrapper.Memorystream, "application/pdf")
            // { FileDownloadName = Res.ReportName }
            ;
@@ -65,13 +61,11 @@ namespace ExpressBase.Web.Controllers
         {
             List<Param> param = (Params==null)?null:JsonConvert.DeserializeObject<List<Param>>(Params);
             Render(refid, param);
-
             return Pdf;
         }
 
         public IActionResult RenderforBot(string refid)
         {
-
             Render(refid, null);
             return Pdf;
         }

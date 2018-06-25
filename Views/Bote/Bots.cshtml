@@ -1,9 +1,14 @@
-﻿@{
+﻿<!DOCTYPE html>
+<html>
+@{
     var BotDtls = Html.Raw(ViewBag.BotDetails);
-    string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
+    //string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
+    string LogoUrl = "/static/logo/logo_" + ViewBag.SolutionId + ".png";
 }
 
 <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link async rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
     @*<link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css" />*@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -12,12 +17,12 @@
     <link async href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="~/css/style.css" />
 
-
     @*
         <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />*@
-
+    
     <script type="text/javascript" src="~/js/jquery.min.js"></script>
     <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
 
     <script type="text/javascript">
         //window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
@@ -45,7 +50,7 @@
             });
 
             d.appIdColl = window.EXPRESSbase_APP_IDS;
-            d.ebbotThemeColorColl = ["#9400D3", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
+            d.ebbotThemeColorColl = ["#fcb714", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
             d.ebbotNameColl = botNames;
             d.botdpURLColl = botDpUrl;
 
@@ -68,13 +73,16 @@
                                             </div>
                                           </div>`);
             });
+            if (d.appIdColl.length > 0) {
+                clickOnDiv(0, d.appIdColl[0]);
+            }
         });
 
 
         function clickOnDiv(i, appid) {
             //console.error(7);
             var d = document;
-            if (d.latestAppid === appid)
+            if (d.latestAppid === appid && $($(`[appid=${appid}]`)[0]).css("display") !== 'none')
                 return;
             d.appIdCount = i;
             if ($(`[appid=${appid}]`).length === 0) {
@@ -86,22 +94,18 @@
             $(`.usecase-bots-cont [appid=${appid}] .eb-chat-head`).css("background-color", d.ebbotThemeColorColl[i]);
             $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 400);
             $(".eb_iframecont").hide();
-            $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).animate({ opacity: '1'}, 400); });
+            $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).css("display", "flex"); $(this).animate({ opacity: '1' }, 400); });
+            setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);
             d.latestAppid = appid;
         }
     </script>
     <style>
-        .usecase-bots-cont {
-            /*width: 100%;*/
-            float: right;
-            /*height: 100%;*/
-            /*border: solid 1px red;*/
-        }
+
 
         .eb_iframecont {
             position: relative !important;
             float: right;
-            width: 50% !important;
+            /*width: 50% !important;*/
         }
 
         .botBtnsCont {
@@ -114,9 +118,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 69vh;
+            height: 95vh;
             /*padding-top: 100px;*/
             overflow-y: auto;
+            flex-direction: column;
         }
 
         .btnOutCont {
@@ -139,38 +144,37 @@
             .btnInnerCont:hover {
                 background: #eee;
             }
+
+        .livebothead {
+            text-align: center;
+            color: white;
+        }
     </style>
 </head>
 <body>
-
     <section class="ext-pageheader" id="pgheaderExt">
         <nav class="navbar navbar-default navbar-fixed-top" style="top: 0px;">
             <div class="">
                 <div class="navbar-header">
-                    <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
+                    <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="solution_logo Eb_Image" />
                 </div>
             </div>
         </nav>
     </section>
-    <section class="slider eb-banner" style="padding-top: 0px;">
-        <div class="row" style="margin: 0px; padding-top: 65px;">
-            <h2 style="color: white; padding-left: 20%;font-family: Montserrat; font-weight: 300;">Live Bots</h2>
-            <div class="col-md-6 botBtnsParent">
+    <section class="slider eb-banner">
+        <div class="container-fluid">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 botBtnsParent">
+                <div class="col-md-12"><h2 class="livebothead">Live Bots</h2></div>
                 <div class="botBtnsCont">
-                    @*<div class="btnOutCont">
-                    <div class="btnInnerCont">
-                        <h4>djfhdikdhhd</h4>
-                    </div>
-                </div>*@
+
                 </div>
             </div>
-            <div class="col-md-6" style="padding: 0px 150px;">
-                <img src="~/images/svg/bot2.svg" id="profimage" data-toggle="modal" data-target="#eb-cropie-mod" class="p-st-dp" />
-            </div>
-            <div class="bot_container" style="padding:0px;">
-                <div class="usecase-bots-cont"></div>
-            </div>
         </div>
+        <div class="usecase-bots-cont"></div>
     </section>
-
+    <script>
+        $('.Eb_Image').Lazy();
+    </script>
+    
 </body>
+</html>

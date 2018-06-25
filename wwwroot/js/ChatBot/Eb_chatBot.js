@@ -20,7 +20,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     this.bearerToken = null;
     this.refreshToken = null;
     this.initControls = new InitControls(this);
-    this.typeDelay = 10;
+    this.typeDelay = 200;
     this.ChartCounter = 0;
     this.formsList = {};
     this.formsDict = {};
@@ -493,7 +493,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.Query(`Hello ${this.FBResponse.name}, ${greeting}`, [`Continue as ${this.FBResponse.name} ?`, `Not ${this.FBResponse.name}?`], "continueAsFBUser");
             /////////////////////////////////////////////////
             setTimeout(function () {
-                $(".btn-box").find("[idx=0]").click();
+                //$(".btn-box").find("[idx=0]").click();
             }.bind(this), this.typeDelay * 2 + 100);
         }
         else {
@@ -522,14 +522,25 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         $.each(this.curForm.controls, function (i, control) {//////////////////////////////////////
             if (this.initControls[control.objType] !== undefined)
                 this.initControls[control.objType](control);
+            $("#" + control.name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
         }.bind(this));
     }.bind(this);
+
+    this.makeReqFm = function (control) {
+        var $ctrl = $("#" + control.name);
+        if ($ctrl.length !== 0 && $ctrl.val().trim() === "")
+            this.makeInvalid(control.name);
+    };
+
+    this.removeReqFm = function (control) {
+        this.makeValid(control.name);
+    };
 
     this.RenderForm = function () {
         var Html = `<div class='form-wraper'>`;
         $.each(this.curForm.controls, function (i, control) {
             if (!control.hidden)
-                Html += `<label>${control.label}</label><div class='ctrl-wraper'>${control.bareControlHtml}</div><br/><br/>`;
+                Html += `<label>${control.label}</label><div for='${control.name}'><div class='ctrl-wraper'>${control.bareControlHtml}</div></div><br/><br/>`;
         });
         this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn formname-btn">Submit</button><button class="btn formname-btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
@@ -627,28 +638,31 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             inpVal = $input.val();
         //return inpVal.trim();
         return inpVal;
-    }
+    };
 
-    this.makeInvalid = function (msg = "This field is required") {
-        var contSel = `[for=${this.curCtrl.name}]`;
-        $(`${contSel} .chat-ctrl-cont`).after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
-        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
+    this.makeInvalid = function (name, msg = "This field is required") {
+        var contSel = `[for=${name}]`;
+        if ($(`${contSel} .req-cont`).length !== 0)
+            return;
+        var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
+        $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
+        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 3px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
         $(`${contSel}  .text-danger`).text(msg).show().animate({ opacity: "1" }, 300);
     };
 
-    this.makeValid = function () {
-        var contSel = `[for=${this.curCtrl.name}]`;
+    this.makeValid = function (name) {
+        var contSel = `[for=${name}]`;
         $(`${contSel}  .ctrl-wraper`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
         $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
     };
 
     this.checkRequired = function () {
         if (this.curCtrl.required && !this.curVal) {
-            this.makeInvalid();
+            this.makeInvalid(this.curCtrl.name);
             return false;
         }
         else {
-            this.makeValid();
+            this.makeValid(this.curCtrl.name);
             return true;
         }
     };
@@ -1009,7 +1023,26 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
             this.initControls[this.curCtrl.objType](this.curCtrl);
     };
 
+    this.submitReqCheck = function () {
+        var $firstCtrl = null;
+        $.each(this.curForm.controls, function (i, control) {
+            var $ctrl = $("#" + control.name);
+            if ($ctrl.length !== 0 && !$firstCtrl && $ctrl.val().trim() === "")
+                $firstCtrl = $ctrl;
+            this.makeReqFm(control);
+        }.bind(this));
+
+        if ($firstCtrl) {
+            $firstCtrl.select();
+            return false
+        }
+        else
+            return true;
+    };
+
     this.formSubmit_fm = function (e) {
+        if (!this.submitReqCheck())
+            return;
         var $btn = $(e.target).closest(".btn");
         var html = "<div class='sum-box'><table style='font-size: inherit;'>";
         $.each(this.curForm.controls, function (i, control) {
@@ -1051,10 +1084,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.showConfirm = function () {
         this.ClearFormVariables();
-        var msg = `Your ${this.curForm.name} form submitted successfully`;
-        this.msgFromBot(msg);
         this.DataCollection();
-        this.AskWhatU();
     }.bind(this);
 
     this.ClearFormVariables = function () {
@@ -1091,10 +1121,16 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
     };
 
     this.ajaxsuccess = function (rowAffected) {
-        if (rowAffected > 0)
+        if (rowAffected > 0) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
-        else
+            var msg = `Your ${this.curForm.name} form submitted successfully`;                        
+        }
+        else {
             EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+            var msg = `Your ${this.curForm.name} form submission failed`;
+        }
+        this.msgFromBot(msg);
+        this.AskWhatU();
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 

@@ -20,19 +20,14 @@
         Countrptfooter: 1
     };
 
-    this.EbObjectSections = {
-        ReportHeader: 'rpthead',
-        PageHeader: 'pghead',
-        ReportDetail: 'detail',
-        PageFooter: 'pgfooter',
-        ReportFooter: 'rptfooter'
-    };
+    this.EbObjectSections = ["ReportHeader", "PageHeader", "ReportDetail", "PageFooter", "ReportFooter"];
+
     this.msBoxSubNotation = {
-        rpthead: 'Rh',
-        pghead: 'Ph',
-        detail: 'Dt',
-        pgfooter: 'Pf',
-        rptfooter: 'Rf'
+        ReportHeader: { Notation: 'Rh', Counter:0},
+        PageHeader: { Notation: 'Ph', Counter: 0 },
+        ReportDetail: { Notation: 'Dt', Counter: 0 },
+        PageFooter: { Notation: 'Pf', Counter: 0 },
+        ReportFooter: { Notation: 'Rf', Counter: 0 }
     };
 
     this.pages = {
@@ -123,12 +118,22 @@
 
     this.getSectionToAddSum = function () {
         var objlist = [];
-        $("#detail0").parent().nextAll().not(".gutter,#detail").each(function (i, obj) {
+        $("#ReportDetail0").parent().nextAll().not("#detail").each(function (i, obj) {
             $(obj).children().not(".gutter").each(function (j, sections) {
                 objlist.push($(sections));
             })
         })
         return objlist;
+    };
+
+    this.tableResizableCols = function (obj) {
+        let $t = $(`#${obj.EbSid}`).find("table");
+        $t.ColResize();
+    };
+
+    this.killResizableCols = function (obj) {
+        let $t = $(`#${obj.EbSid}`).find("table");
+        $t.ColResize({ status:"destroy"});
     };
 
     this.ValidateCalcExpression = function (obj) {
@@ -236,16 +241,21 @@
             }.bind(this));
         }
         else {
+            var _row = $(`#${obj.EbSid} table tbody tr`).length;
             let _tdCount = $(`#${obj.EbSid} table tbody tr`).eq(0).children("td").length;
-            for (let c = 0; c < obj.RowCount; c++) {
+            //$(`#${obj.EbSid} table`).css("height", $(`#${obj.EbSid} table`).height() + (obj.RowCount * 26));
+            $(`#${obj.EbSid}`).css("height", $(`#${obj.EbSid} table`).height() + (obj.RowCount * 26));
+            for (let c = _row; c <= obj.RowCount; c++) {
                 $(`#${obj.EbSid} table tbody`).append(`<tr id="${obj.EbSid}_tr_${c}">`);
                 this.appendTd($(`#${obj.EbSid}_tr_${c}`), _tdCount);
             }
-            $(`#${obj.EbSid}`).css("height", "auto");
+            //$(`#${obj.EbSid}`).css("height", "auto");
             obj.Height = $(`#${obj.EbSid}`).height();
         }
         this.RbObj.makeTLayoutDroppable(obj);
         this.resizeTdOnLayoutResize(obj.EbSid, "set");
+        this.killResizableCols(obj);
+        this.tableResizableCols(obj);
     };
 
     this.appendTd = function ($ctrl, count) {
@@ -378,14 +388,14 @@
         }
 
         if (target.attr("Layer") === "Section") {
-            $(".multiSplit,.headersections,#page,.rulerleft").show();
-            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").hide();
+            $(".multiSplit,.headersections,#page").show();
+            $(".headersections-report-layer,#page-reportLayer").hide();
             $(".tracker_drag").css("height", "100%");
             this.RbObj.containment = ".page";
         }
         else {
-            $(".multiSplit,.headersections,#page,.rulerleft").hide();
-            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").show();
+            $(".multiSplit,.headersections,#page").hide();
+            $(".headersections-report-layer,#page-reportLayer").show();
             $(".tracker_drag").css("height", "100%");
             this.RbObj.containment = ".page-reportLayer";
         }
@@ -462,7 +472,7 @@
 
     this.start = function () {
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
-        $(window).on("scroll", this.windowscroll.bind(this));
+        //$(window).on("scroll", this.windowscroll.bind(this));
         $(".Rb_layer").off("click").on("click", this.switchlayer.bind(this));
         $(".add_calcfield").on("click", this.newCalcFieldSum.bind(this));
         $(".add_summarry").on("click", this.addSummarry.bind(this));

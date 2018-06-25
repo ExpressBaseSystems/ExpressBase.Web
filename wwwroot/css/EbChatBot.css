@@ -255,6 +255,7 @@
     border: solid 1px;
     padding: 5px;
     font-size: 13px;
+    transition-duration: 0.1s;
 }
 
     .formname-btn:hover {
@@ -338,7 +339,7 @@
     color: white !important;
     font-family: "Merriweat!important;er Sans", sans-serif;
     font-size: 14px !important;
-    border-bottom: 2px solid tansparent !important;
+    border-bottom: 2px solid transparent !important;
     border-left: 1px solid transparent !important;
     border-right: 1px solid transparent !important;
     box-shadow: 0 4px 2px -2px gray !important;
@@ -358,7 +359,7 @@
     }
 
     .form-wraper .btn-box {
-        margin-left: 10px;
+        /*margin-left: 10px;*/
     }
 
 .ctrl-wraper {
@@ -830,12 +831,13 @@
 
 .text-danger {
     display: none;
-    color: #ffffff;
-    background-color: #bd1818;
+    color: #ea0000;
     line-height: 1;
-    padding: 10px;
+    padding: 8px;
     position: absolute;
-    border-radius: 3px;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+    font-size: 13.5px;
     left: 50%;
     opacity: 0;
     transform: translate(-50%,0px);

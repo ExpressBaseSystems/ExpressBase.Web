@@ -6,17 +6,20 @@
 
 <div class="side-menu-container">
     <ul class="menuwrapper_ul_outer">
-        <li>
-            <a href="#" class="list-group-item outer_li" data-toggle="collapse" data-target="#security">
-                Security<i class="fa fa-chevron-right pull-right"></i>
-            </a>
-            <ul class="sub-menuObj collapse" id="security">
-                <li><a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Users">Users</a></li>
-                <li><a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=AnonymousUsers">Anonymous Users</a></li>
-                <li><a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=UserGroups">User Groups</a></li>
-                <li><a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Roles">Roles</a></li>
-            </ul>
-        </li>
+        @if (ViewBag.Role.Contains("SolutionOwner"))
+        {
+            <li>
+                <a href="#" class="list-group-item outer_li" data-toggle="collapse" data-target="#security">
+                    Security<i class="fa fa-chevron-right pull-right"></i>
+                </a>
+                <ul class="sub-menuObj collapse" id="security">
+                    <li><a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Users">Users</a></li>
+                    <li><a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=AnonymousUsers">Anonymous Users</a></li>
+                    <li><a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=UserGroups">User Groups</a></li>
+                    <li><a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Roles">Roles</a></li>
+                </ul>
+            </li>
+        }
         <li>
             <a href="#" class="list-group-item collapsed outer_li" data-toggle="collapse" data-target="#dropdown2">
                 Application<i class="fa fa-chevron-right pull-right"></i>

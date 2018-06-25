@@ -129,7 +129,7 @@
 
         $(`#${ctrl.name}_loading-image`).hide();
         //var EbCombo = new EbSelect(ctrl.name, ctrl.DataSourceId, ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000], ctrl);
-        var EbCombo = new EbSelect(ctrl);
+        var EbCombo = new EbSelect(ctrl, this.Bot);
         if (this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.selectedRows = EbCombo.getSelectedRow;
     };
@@ -173,7 +173,7 @@
             }
 
             var itempresent = $.grep(this.SelectedCards, function (a) {
-                if (a['cardid'] === $card.attr('card-id'))
+                if (a.cardid === $card.attr('card-id'))
                     return true;
             });
 

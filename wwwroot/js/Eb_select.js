@@ -39,9 +39,10 @@
 var z = 100;
 
 //var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
-var EbSelect = function (ctrl) {
+var EbSelect = function (ctrl, botObj) {
     //parameters   
     this.ComboObj = ctrl;
+    this.BotObj = botObj;
     this.name = ctrl.name;
     this.dsid = ctrl.dataSourceId;
     this.idField = "name";
@@ -88,13 +89,14 @@ var EbSelect = function (ctrl) {
     //init() for event binding....
     this.init = function () {
         $('#' + this.name + 'Wraper [class=open-indicator]').hide();
+        this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
         $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
         $('#' + this.name + 'Wraper  [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
         $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
         $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
-        $('#' + this.name + 'Wraper [type=search]').keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-        $('#' + this.name + 'Wraper [type=search]').dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
-        $('#' + this.name + 'Wraper [type=search]').keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
+        this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
+        this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
+        this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
 
         //set id for searchBox
         $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
@@ -110,13 +112,12 @@ var EbSelect = function (ctrl) {
         var $e = $(e.target);
         var searchVal = $e.val();
 
-        if (searchVal.trim() === "")
-            return;
-
         var mapedField = $e.closest(".searchable").attr("maped-column");
         var mapedFieldType = $e.closest(".searchable").attr("column-type");
         var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         if (!this.IsDatatableInit) {
+            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
+                return;
             var searchBy = " = ";
             if (mapedFieldType === "String")
                 searchBy = "*x*";
@@ -129,8 +130,11 @@ var EbSelect = function (ctrl) {
         }
         else {
             $filterInp.val($e.val());
-            this.datatable.Api.ajax.reload();
             this.Vobj.DDstate = true;
+            this.BotObj.makeValid(this.ComboObj.name);
+            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
+                return;
+            this.datatable.Api.ajax.reload();
         }
     };
 
@@ -398,13 +402,24 @@ var EbSelect = function (ctrl) {
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
         this.getSelectedRow();
+
+        if (VMs.length === 0)
+            this.$searchBoxes.css("min-width", "100%");
+        else
+            this.$searchBoxes.css("min-width", "inherit");
+
+        if (this.maxLimit === VMs.length)
+            this.$searchBoxes.hide();
+        else
+            this.$searchBoxes.show();
         setTimeout(function () {
             var maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () {
                 console.log($(this).height());
                 return $(this).height();
             }).get());
             $(".search-block .input-group").css("height", maxHeight + "px");
-        }, 10);
+            $('#' + this.name + 'Wraper [type=search]').val("");
+        }.bind(this), 10);
 
 
         console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
@@ -443,6 +458,7 @@ var EbSelect = function (ctrl) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
+            this.BotObj.makeValid(this.ComboObj.name);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
@@ -539,30 +555,20 @@ var EbSelect = function (ctrl) {
         $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
     };
 
-    this.makeInvalid = function (msg) {
-        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "0 0 5px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").prop('disabled', true);
-        $('#' + this.name + "errormsg").text(msg).show().animate({ opacity: "1" }, 300);
-    };
-
-    this.makeValid = function () {
-        $('#' + this.name + 'Wraper').closest(".ctrl-wraper").css("box-shadow", "inherit").siblings("[name=ctrlsend]").prop('disabled', false);
-        $('#' + this.name + "errormsg").hide().animate({ opacity: "0" }, 300);
-    };
-
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
         var container1 = $('#' + this.name + 'Container');
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                this.makeInvalid('This field  require minimum ' + this.minLimit + ' values');
+                this.BotObj.makeInvalid(this.ComboObj.name, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
-                    document.getElementById(this.dmNames[0]).setCustomValidity('This field  is required');
+                    this.BotObj.makeInvalid(this.ComboObj.name);
                 }
                 else {
-                    this.makeValid();
+                    this.BotObj.makeValid(this.ComboObj.name);
                 }
 
             }

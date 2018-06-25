@@ -12,9 +12,6 @@
     this.EbObject = dsobj;
     this.isNew = $.isEmptyObject(this.EbObject) ? true : false;
     this.objCollection = {};
-    this.splitarray = [];
-    this.btn_indx = null;
-    this.sectionArray = [];
     this.RefId = option.RefId || null;;
     this.height = null;
     this.width = null;
@@ -71,6 +68,7 @@
             $("#" + obj.EbSid).droppable({
                 accept: ".draggable,.dropped,.coloums",
                 hoverClass: "drop-hover",
+                tolerance: "fit",
                 drop: this.onDropFn.bind(this)
             });
         }
@@ -127,8 +125,8 @@
             $ruler.append($tick);
         }
 
-        var $rulerleft = $('.rulerleft').css({ "height": this.designHeight });
-        for (i = 0, step = 0; i < $rulerleft.innerHeight() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
+        var $rulerleft = $('.rulerleft').css({ "height": "calc(100% - 20px)" });
+        for (i = 0, step = 0; i < 300; i++ , step++) {
             $tick = $('<div>');
             if (step === 0) {
                 if (this.rulertype === "px")
@@ -146,61 +144,78 @@
                 $tick.addClass(this.rulerTypesObj[this.rulertype].major);
             $rulerleft.append($tick);
         }
-
-        var $rulerleft_lyr = $('.rulerleft_Lyr_rpt').css({ "height": this.height });
-        for (i = 0, step = 0; i < $rulerleft_lyr.innerHeight() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
-            $tick = $('<div>');
-            if (step === 0) {
-                if (this.rulertype === "px")
-                    $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(i * 5);
-                else
-                    $tick.addClass(this.rulerTypesObj[this.rulertype].label).html(k++);
-            }
-            else if ([1, 3, 5, 7, 9].indexOf(step) > -1) {
-                $tick.addClass(this.rulerTypesObj[this.rulertype].minor);
-                if (step === 9) {
-                    step = -1;
-                }
-            }
-            else
-                $tick.addClass(this.rulerTypesObj[this.rulertype].major);
-            $rulerleft_lyr.append($tick);
-        }
     };
 
     this.createPage = function () {
-        this.createHeaderBox();
-        $("#PageContainer").append(`<div class='page' id='page' style='position:relative;width:${this.width};height:${this.designHeight}'></div>
-                                    <div class='page-reportLayer' id='page-reportLayer' style='display:none;position:relative;width:${this.width};height:${this.height}'></div>`);
-        $(".page").resizable({
-            handles: "s",
-            stop: this.onPageResizeStop.bind(this),
-            resize: this.onPageResize.bind(this)
+        $(".page").css({ width: this.width });
+        $(`.page-reportLayer`).css({ width: this.width, height: this.height });
+        $(`.page-reportLayer`).droppable({
+            accept: ".draggable-to-page,.dropped",
+            hoverClass: "drop-hover",
+            drop: this.onDropFn.bind(this)
         });
-        $(".page-reportLayer").droppable({ accept: ".draggable-to-page,.dropped", drop: this.onDropFn.bind(this) });
-        $(".page .ui-resizable-s").addClass("pageReSizeHandle");
-        this.pageSplitters();
+        this.AppendInnerSec();
+        this.syncHeight();
+        $(`.headersections ._newsub_div`).off("click").on("click", this.appendNewSubDiv.bind(this));
     };
 
-    this.onPageResize = function () {
-        $('.headersections,.multiSplit').css("height", $('.page').height());
-        $(".rulerleft").css("height", $('.page').height());
-        $(".tracker_drag").css({ "height": $(".page").height() + 20 });
-        this.repExtern.OndragOfSections();
+    this.syncHeight = function () {
+        for (let i = 0; i < 5; i++) {
+            $(".headersections .header_box").eq(i).css({ height: $(".page .Eb_ReportSections").eq(i).innerHeight() });
+        }
     };
 
-    this.onPageResizeStop = function (event, ui) {
-        this.designHeight = $(".page").height() + "px";
-        $('.ruler,.rulerleft').empty();
-        this.ruler();
+    this.syncInner = function (_target) {
+        let sec = _target.attr("eb-type");
+        $(".multiSplit ." + sec + " ." + sec + "_sub").eq(_target.index()).css({ height: _target.outerHeight() });
     };
 
-    this.createHeaderBox = function () {
-        $("#PageContainer").append(`<div class='headersections' style='height:${this.designHeight};'></div>
-                                    <div class='multiSplit' id='multiSplit' style='height:${ this.designHeight};'></div>
-                                    <div class='headersections-report-layer' style='display:none;height:${this.height};'></div>`);
-        for (var i = 0; i < 5; i++) {
-            $("#multiSplit").append(`<div class='multiSplitHbox' data_val='${i}' eb-type='MultiSplitBox' id='box${i}' style='width: 100%;'></div>`);
+    this.makeSecResizable = function ($_jq) {
+        $(`.page ${$_jq}`).resizable({
+            handles: "s",
+            resize: function (e, ui) {
+                this.syncInner($(e.target));
+                this.syncHeight();
+            }.bind(this)
+        });
+    };
+
+    this.AppendInnerSec = function () {
+        for(let l = 0; l < this.EbObjectSections.length;l++) {
+            if (this.isNew)
+                this.appendSubSection(this.EbObjectSections[l], [1]);
+            else
+                this.appendSubSection(this.EbObjectSections[l], this.EditObj[this.repExtern.mapCollectionToSection(this.EbObjectSections[l])].$values);
+        }
+    };
+
+    this.appendSubSection = function (sections, subSecArray) {
+        for (let k = 0; k < subSecArray.length; k++) {
+            let id = sections + this.idCounter[sections + "Counter"]++;
+            let o = new EbObjects["Eb" + sections](id);
+            $(".page ." + sections).append(o.$Control.outerHTML());
+            this.isNew ? o.SectionHeight = parseFloat(this.designHeight) / 5 + "px" : null;
+            this.objCollection[id] = o;
+            this.RefreshControl(o);
+            this.pg.addToDD(o);
+            this.makeSecResizable(`#${id}`);
+            this.appendMSplitSec(sections, [1]);
+            this.pushSubsecToRptObj(sections, o);
+        }
+    };
+
+    this.appendNewSubDiv = function (e) {
+        let btn = $(e.target).closest("button");
+        let _sec = btn.attr("data-sec");
+        this.appendSubSection(_sec, [1]);
+        this.syncHeight();
+    };
+
+    this.appendMSplitSec = function (sections, subSecArray) {
+        for (let j = 0; j < subSecArray.length; j++) {
+            let h = $(`.page .${sections}`).height();
+            $(".multiSplit ." + sections).append(`<div class='multiSplitHboxSub ${sections}_sub' eb-type='MultiSplitBox' style='height:${parseFloat(this.designHeight) / 5}px'>
+                <p>${this.msBoxSubNotation[sections].Notation + this.msBoxSubNotation[sections].Counter++}</p></div>`);
         }
     };
 
@@ -215,149 +230,6 @@
             this.EbObject.PageFooters.$values.push(obj);
         else if (sections === 'ReportDetail')
             this.EbObject.Detail.$values.push(obj);
-    };
-
-    this.pageSplitters = function () {
-        var j = 0;
-        this.HA = [];
-        for (var sections in this.EbObjectSections) {
-            $("#page").append(`<div class='${sections}s' eb-type='${sections}' id='${this.EbObjectSections[sections]}' 
-            data_val='${j++}' style='width :100%;position: relative'> </div>`);
-            this.sectionArray.push("#" + this.EbObjectSections[sections]);
-            if (this.isNew)
-                this.appendSubSection(sections, [1]);
-            else
-                this.appendSubSection(sections, this.EditObj[this.repExtern.mapCollectionToSection(sections)].$values);
-        }
-        this.repExtern.headerSecSplitter(this.sectionArray, this.HA);
-        this.headerBox1_Split();
-    };//add page sections
-
-    this.appendSubSection = function (sections, subSecArray) {
-        var idArr = [], hArr = [], total = 0;
-        for (len = 0; len < subSecArray.length; len++) {
-            var SubSec_obj = new EbObjects["Eb" + sections](this.EbObjectSections[sections] + len);
-            $("#" + this.EbObjectSections[sections]).append(SubSec_obj.$Control.outerHTML());
-            SubSec_obj.SectionHeight = "100%";
-            SubSec_obj.BackColor = "#ffffff";
-            if (!this.isNew) {
-                this.repExtern.replaceProp(SubSec_obj, subSecArray[len]);
-                idArr.push("#" + SubSec_obj.EbSid);
-                hArr.push(SubSec_obj.Height);
-                total += parseInt(SubSec_obj.Height);
-            }
-            this.objCollection[this.EbObjectSections[sections] + len] = SubSec_obj;
-            this.RefreshControl(SubSec_obj);
-            this.pg.addToDD(SubSec_obj);
-            this.pushSubsecToRptObj(sections, SubSec_obj);//push subsec to report object.            
-        }
-        if (!this.isNew) {
-            this.HA.push(total);
-            idArr.length > 1 ? this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr)) : null;
-        }
-    };
-
-    this.headerBox1_Split = function () {
-        for (i = 0; i < 5; i++) {
-            $(".headersections").append(`<div class='head_Box1' id='${this.sectionArray[i].slice(1)}Hbox' data-index='${i}' style='width:100%'>
-        <div class='hbox_notation_div'>${this.msBoxSubNotation[this.sectionArray[i].slice(1)]}</div><div class='new_sec_btn'></div></div>`);
-        }
-        this.headerScaling();
-        this.splitButton();
-    };
-
-    this.headerScaling = function () {
-        this.repExtern.multisplit(this.HA);
-        this.repExtern.box(this.HA);
-        this.appendMultisplitBox();
-    };
-
-    this.appendMultisplitBox = function () {
-        $("#page").children().not(".gutter,.pageReSizeHandle").each(this.appMultisplBoxEXE.bind(this));
-        this.repExtern.splitterOndragFn();
-    };
-
-    this.appMultisplBoxEXE = function (i, obj) {
-        var idArr = [], hArr = [];
-        var $cont = $("#multiSplit").children().not(".gutter").eq(i);
-        for (len = 0; len < $(obj).children().not(".gutter").length; len++) {
-            var id = this.sectionArray[i].slice(1) + "subBox" + len;
-            $cont.append("<div class='multiSplitHboxSub' eb-type='MultiSplitBox' id='" + id + "' style='width: 100%;height:" + $(obj).height() + "px'>"
-                + "<p> " + this.msBoxSubNotation[this.sectionArray[i].slice(1)] + len + " </p></div>");
-            var focid = id.substring(0, id.indexOf('s')) + id.slice(-1);
-            $("#" + id).attr("onclick", "$('#" + focid + "').focus();");
-            idArr.push("#" + id);
-            hArr.push($(obj).outerHeight());
-        }
-        if (!this.isNew)
-            idArr.length > 1 ? this.repExtern.splitGeneric(idArr, this.repExtern.convertPixelToPercent(hArr)) : null;
-    };
-
-    this.splitButton = function () {
-        $('.headersections').children().not(".gutter").each(this.addButton.bind(this));
-    };
-
-    this.addButton = function (i, obj) {
-        $(obj).children(".new_sec_btn").append("<button class='btn btn-xs'  id='btn" + i + "'><i class='fa fa-plus'></i></button>");
-        $('#btn' + i).off("click").on("click", this.splitDiv.bind(this));
-    };//split button
-
-    this.splitDiv = function (e) {
-        this.splitarray = [];
-        this.btn_indx = $(e.target).closest(".head_Box1").attr("data-index");
-        $.each($('.page').children().not(".gutter"), this.splitDiv_inner.bind(this));
-    };
-
-    this.splitDiv_inner = function (i, obj) {
-        if ($(obj).attr('data_val') === this.btn_indx) {
-            this.$sec = $("#" + obj.id);
-            var id = obj.id + (this.subSecIdCounter["Count" + obj.id])++;
-            var objType = $(obj).attr("eb-type");
-            this.$sec.children('.gutter').remove();
-            var SubSec_obj = new EbObjects["Eb" + objType](id);
-            this.$sec.append(SubSec_obj.$Control.outerHTML());
-            SubSec_obj.BackColor = "#ffffff";
-            this.objCollection[id] = SubSec_obj;
-            this.RefreshControl(SubSec_obj);
-            this.pg.addToDD(SubSec_obj);
-            this.pushSubsecToRptObj(objType, SubSec_obj);//push subsec to report object.
-            $.each(this.$sec.children().not(".gutter"), this.splitMore.bind(this));
-            this.repExtern.splitGeneric(this.splitarray);
-            this.multiSplitBoxinner();
-        }
-    };//split sections multipple
-
-    this.splitMore = function (i, obj) {
-        this.splitarray.push("#" + obj.id);
-    };//subsection pushed into split array 
-
-    this.multiSplitBoxinner = function () {
-        var index = this.btn_indx;
-        var temp1 = [];
-        var msBoxSubNotationTemp = this.msBoxSubNotation;
-        var SecArray = this.sectionArray;
-        var flagsuccess = false;
-        $('.multiSplit').children(".multiSplitHbox").eq(this.btn_indx).children('.gutter').remove();
-        $('.multiSplit').children(".multiSplitHbox").each(function (i, obj) {
-            $('.page').children().not(".gutter").each(function (j, obj2) {
-                var count = $(obj2).children().not(".gutter").length;
-                if ($(obj).attr("data_val") === $(obj2).attr("data_val") && index === $(obj).attr("data_val")) {
-                    var id = obj2.id + "subBox" + (count - 1);
-                    $(obj).append("<div class='multiSplitHboxSub' eb-type='MultiSplitBox' id='" + id + "' style='width: 100%;'>"
-                        + "<p> " + msBoxSubNotationTemp[obj2.id] + (count - 1) + " </p></div>");
-                    var focid = id.substring(0, id.indexOf('s')) + id.slice(-1);
-                    $("#" + id).attr("onclick", "$('#" + focid + "').focus();");
-                    $.each($(obj).children().not(".gutter"), function (i, object) { temp1.push("#" + object.id); });
-                    flagsuccess = true;
-                    return false;
-                }
-            });
-            if (flagsuccess)
-                return false;
-        });
-        if (temp1 !== null) {
-            this.repExtern.splitGeneric(temp1);
-        }
     };
 
     this.DragDrop_Items = function () {
@@ -434,13 +306,13 @@
     };
 
     this.DropFurther = function () {
-		var l1 = this.leftwithMargin();
-		var top = (this.posTop - this.dropLoc.offset().top) - this.reDragTop;
-		if (this.dropLoc.hasClass('T_layout')) {
-			top = 0;
-			this.col.css({ width: this.dropLoc.innerWidth(), height: this.dropLoc.innerHeight() });
-		}
-		this.dropLoc.append(this.col.css({ left: l1, top: top  }));
+        var l1 = this.leftwithMargin();
+        var top = (this.posTop - this.dropLoc.offset().top) - this.reDragTop;
+        if (this.dropLoc.hasClass('T_layout')) {
+            top = 0;
+            this.col.css({ width: this.dropLoc.innerWidth(), height: this.dropLoc.innerHeight() });
+        }
+        this.dropLoc.append(this.col.css({ left: l1, top: top }));
         var obj1 = this.objCollection[this.col.attr('id')];
         obj1.Top = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().top;
         obj1.Left = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().left;
@@ -609,7 +481,7 @@
         this.EbObject.Width = this.width.slice(0, -2);
         this.EbObject.PaperSize = this.type;
         $.each($('.page-reportLayer').children(), this.findReportLayObjects.bind(this));
-        $.each($('.page').children().not(".gutter"), this.findPageSections.bind(this));
+        $.each($('.page').children(), this.findPageSections.bind(this));
 
         this.EbObject.Margin.Left = this.repExtern.convertTopoints(this.margin.Left);
         this.EbObject.Margin.Right = this.repExtern.convertTopoints(parseFloat(this.width) - this.margin.Right);
@@ -627,7 +499,7 @@
 
     this.findPageSections = function (i, sections) {
         this.sections = $(sections).attr('id');
-        $.each($("#" + this.sections).children().not(".gutter"), this.findPageSectionsSub.bind(this));
+        $.each($("#" + this.sections).children(), this.findPageSectionsSub.bind(this));
     };//........save/commit
 
     this.findPageSectionsSub = function (j, subsec) {
@@ -638,7 +510,7 @@
         this.objCollection[this.subsec].Height = $("#" + this.subsec).outerHeight();
         this.objCollection[this.subsec].WidthPt = this.repExtern.convertTopoints($("#" + this.subsec).outerWidth());
         this.objCollection[this.subsec].HeightPt = this.repExtern.convertTopoints($("#" + this.subsec).outerHeight());
-        $.each($("#" + this.subsec).children(), this.findPageElements.bind(this));
+        $.each($("#" + this.subsec).children().not(".ui-resizable-handle"), this.findPageElements.bind(this));
     };//.........save/commit
 
     this.findPageElements = function (k, elements) {
@@ -648,7 +520,7 @@
             this.RbCommon.buildTableHierarcy($(elements), this.j, eb_typeCntl);
             this.pushToSections($(elements), this.j, eb_typeCntl);
         }
-        else 
+        else
             this.pushToSections($(elements), this.j, eb_typeCntl);
     };
 
@@ -850,13 +722,13 @@
     }.bind(this);
 
     this.newReport = function () {
-        this.EbObject = new EbObjects["EbReport"]("Report1");
+        this.EbObject = new EbObjects["EbReport"]("Report");
         this.height = this.repExtern.convertPointToPixel(this.pages[this.type].height) + "px";
         this.width = this.repExtern.convertPointToPixel(this.pages[this.type].width) + "px";
-        this.designHeight = "450px";
+        this.designHeight = "300px";
         this.EbObject.PaperSize = this.type;
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
-        $('#PageContainer,.ruler,.rulerleft,.rulerleft_Lyr_rpt').empty();
+        $('.ruler,.rulerleft').empty();
         this.ruler();
         this.createPage();
         this.DragDrop_Items();
@@ -871,7 +743,7 @@
         this.designHeight = this.repExtern.convertPointToPixel(this.EditObj.DesignPageHeight) + "px";
         this.repExtern.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
-        $('#PageContainer,.ruler,.rulerleft,.rulerleft_Lyr_rpt').empty();
+        $('.ruler,.rulerleft').empty();
         this.ruler();
         this.createPage();
         this.DragDrop_Items();

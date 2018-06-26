@@ -58,8 +58,37 @@
             this.Rep.pg.removeFromDD($(selector.selector).attr("id"));
             $(selector.selector).remove();
         }
-        else
-            alert('no permission');
+        else {
+            if ($(selector.selector).index() !== 0) {
+                let sec = $(selector.selector).attr("eb-type");
+                delete this.Rep.objCollection[$(selector.selector).attr("id")];
+                this.removeSecEbobject(sec, $(selector.selector).attr("id"));
+                $(selector.selector).remove();
+                this.Rep.pg.removeFromDD($(selector.selector).attr("id"));
+                $(".multiSplit ." + sec).find(".multiSplitHboxSub").eq($(selector.selector).index()).remove();
+                this.Rep.syncHeight();
+            }
+        }
+    };
+
+    this.removeSecEbobject = function (sections,id) {
+        let array = null;
+        if (sections === 'ReportHeader')
+            array = this.Rep.EbObject.ReportHeaders.$values;
+        else if (sections === 'PageHeader')
+            array = this.Rep.EbObject.PageHeaders.$values;
+        else if (sections === 'ReportFooter')
+            array = this.Rep.EbObject.ReportFooters.$values;
+        else if (sections === 'PageFooter')
+            array = this.Rep.EbObject.PageFooters.$values;
+        else if (sections === 'ReportDetail')
+            array = this.Rep.EbObject.Detail.$values;
+
+        for (let j = 0; j < array.length; j++) {
+            let o = array[j];
+            if (o.EbSid === id)
+                array.splice(j,1);
+        }
     };
 
     this.contextMenuJustify = function (eType, selector, action, originalEvent) {

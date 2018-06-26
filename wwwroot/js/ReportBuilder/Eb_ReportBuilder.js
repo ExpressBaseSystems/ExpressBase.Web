@@ -59,7 +59,7 @@
             this.repExtern.setFontProp(obj);
         if (!('SectionHeight' in obj)) {
             $("#" + obj.EbSid).draggable({
-                cursor: "crosshair", containment: this.containment, appendTo: "body",
+                cursor: "crosshair", containment: this.containment, appendTo: "body", zIndex: 100,
                 start: this.onDrag_Start.bind(this), stop: this.onDrag_stop.bind(this), drag: this.ondragControl.bind(this)
             });
             $("#" + obj.EbSid).off('focusout').on("focusout", this.destroyResizable.bind(this));
@@ -181,7 +181,7 @@
     };
 
     this.AppendInnerSec = function () {
-        for(let l = 0; l < this.EbObjectSections.length;l++) {
+        for (let l = 0; l < this.EbObjectSections.length; l++) {
             if (this.isNew)
                 this.appendSubSection(this.EbObjectSections[l], [1]);
             else
@@ -189,17 +189,20 @@
         }
     };
 
-    this.appendSubSection = function (sections, subSecArray) {
+    this.appendSubSection = function (sections, subSecArray,_new = false) {
         for (let k = 0; k < subSecArray.length; k++) {
             let id = sections + this.idCounter[sections + "Counter"]++;
             let o = new EbObjects["Eb" + sections](id);
             $(".page ." + sections).append(o.$Control.outerHTML());
-            this.isNew ? o.SectionHeight = parseFloat(this.designHeight) / 5 + "px" : null;
+            if (!_new)
+                this.isNew ? o.SectionHeight = parseFloat(this.designHeight) / 5 + "px" : o.SectionHeight = this.repExtern.convertPointToPixel(subSecArray[k].HeightPt) + "px";
+            else if (_new)
+                o.SectionHeight = "60px";
             this.objCollection[id] = o;
             this.RefreshControl(o);
             this.pg.addToDD(o);
             this.makeSecResizable(`#${id}`);
-            this.appendMSplitSec(sections, [1]);
+            this.appendMSplitSec(sections, o);
             this.pushSubsecToRptObj(sections, o);
         }
     };
@@ -207,16 +210,14 @@
     this.appendNewSubDiv = function (e) {
         let btn = $(e.target).closest("button");
         let _sec = btn.attr("data-sec");
-        this.appendSubSection(_sec, [1]);
+        this.appendSubSection(_sec, [1],true);
         this.syncHeight();
     };
 
-    this.appendMSplitSec = function (sections, subSecArray) {
-        for (let j = 0; j < subSecArray.length; j++) {
-            let h = $(`.page .${sections}`).height();
-            $(".multiSplit ." + sections).append(`<div class='multiSplitHboxSub ${sections}_sub' eb-type='MultiSplitBox' style='height:${parseFloat(this.designHeight) / 5}px'>
+    this.appendMSplitSec = function (sections, obj) {
+        let h = $(`.page .${sections}`).height();
+        $(".multiSplit ." + sections).append(`<div class='multiSplitHboxSub ${sections}_sub' eb-type='MultiSplitBox' style='height:${obj.SectionHeight}'>
                 <p>${this.msBoxSubNotation[sections].Notation + this.msBoxSubNotation[sections].Counter++}</p></div>`);
-        }
     };
 
     this.pushSubsecToRptObj = function (sections, obj) {
@@ -306,14 +307,16 @@
     };
 
     this.DropFurther = function () {
+        var obj1 = this.objCollection[this.col.attr('id')];
         var l1 = this.leftwithMargin();
         var top = (this.posTop - this.dropLoc.offset().top) - this.reDragTop;
         if (this.dropLoc.hasClass('T_layout')) {
             top = 0;
             this.col.css({ width: this.dropLoc.innerWidth(), height: this.dropLoc.innerHeight() });
+            obj1.Width = this.dropLoc.innerWidth();
         }
         this.dropLoc.append(this.col.css({ left: l1, top: top }));
-        var obj1 = this.objCollection[this.col.attr('id')];
+
         obj1.Top = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().top;
         obj1.Left = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().left;
         obj1.ParentName = this.dropLoc.attr("eb-type");
@@ -721,6 +724,11 @@
         this.repExtern.minPgrid();
     }.bind(this);
 
+    this.pg.DD_onChange = function (e) {
+        if ($(e.target).find('option:selected').attr("data-name") === "Report")
+            this.pg.setObject(this.EbObject, AllMetas["EbReport"]);
+    }.bind(this);
+    
     this.newReport = function () {
         this.EbObject = new EbObjects["EbReport"]("Report");
         this.height = this.repExtern.convertPointToPixel(this.pages[this.type].height) + "px";

@@ -80,6 +80,9 @@
         border-radius: 2px;
         border: 1px solid #e8e6e6;
     }
+        .Eb_quick_menu .objitems .object_container:hover {
+            background-color: #f3f8ff;
+        }
 .Eb_quick_menu .modal-header {
     padding: 0;
     border-bottom: none;
@@ -131,16 +134,6 @@
 }
     .pwrd_by .pwrd_by-text {
         background: #eee;
-    }
-.objbox-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    color: #336699;
-}
-    .objbox-footer a {
-        color: #5d5e61;
     }
 .objitems h4 {
     margin: 3px 0 2px;

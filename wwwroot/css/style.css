@@ -114,6 +114,52 @@ body {
 }
 /*end login*/
 /*       Slider       */
+.w-100{
+    width:100%;
+}
+
+/*tenant logoin page*/
+.lg_content{
+
+}
+.h100andflex {
+    height: 100%;
+    padding-top: 65px;
+    display: flex;
+    align-items: center;
+}
+.m-l-60 {
+    float: right;
+    margin-right: 30px;
+    margin-top: unset;
+}
+.info_sec_log_container {
+    position: relative;
+    color: #777474;
+    font-family: Montserrat;
+    line-height: 2.5em;
+}
+    .info_sec_log_container h4 {
+        font-size: 35px;
+        font-weight: 300;
+    }
+    .info_sec_log_container p {
+        font-size: 20px;
+        font-weight: 300;
+    }
+.lg_img {
+    width: 93%;
+    position: relative;
+    left: 0;
+    margin-top: -100px;
+}
+.lg_img img{
+    width:100%;
+}
+.prelative{
+    position:relative;
+}
+/***end*****/
 /*forgetpassword msgBox*/
 .message-box-indexpage {
     background-color: #31d031;
@@ -250,251 +296,6 @@ Navigation bar
     border-radius: 50%;
 }
 
-.eb-banner {
-    background-color: #0280db;
-    padding: 15px 15px 15px 15px;
-    background-image: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
-}
-.eb-banner-text-img-sec {
-    width: 100%;
-}
-.get-start-sec {
-    font-family: Montserrat;
-}
-.no-creditcared {
-    text-align: center;
-    color: #cad4d3;
-    margin-bottom: 10px;
-    font-size: 13px;
-}
-.getStarted .no-creditcared {   
-    color: #7b7b7b;  
-}
-.get-start-sec input {
-    height: 45px;
-    box-shadow: none;
-}
-.get-start-sec span {
-    background-color: #23c523;
-    font-family: Montserrat;
-    font-weight: 300;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    color: white;
-    border: none;
-}
-    .get-start-sec span button {
-        background-color: transparent;
-        height: 45px;
-        border: none;
-        color: white;
-        font-family: Montserrat;
-    }
-        .get-start-sec span button:hover {
-            color: white;
-        }
-        .get-start-sec span button:focus {
-            color: white;
-        }
-    .get-start-sec .social-btn-sec {
-        margin-top: 10px;
-        text-align: center;
-    }
-    .get-start-sec .socialbtns {      
-        color: #ffffff;   
-    }
-.eb-banner .banner-img {
-    margin-top: 15rem;
-}
-    .eb-banner .banner-img img{
-        width:100%
-    }
-
-.bg-color-banner {
-    margin-top: 100px;
-}
-    .bg-color-banner h2 {
-        color: white;
-        font-size: 40px;
-        font-family: Montserrat;
-        font-weight: 300;
-        padding-bottom: 20px;
-    }
-    .bg-color-banner p {
-        width: 90%;
-        font-size: 16px;
-        line-height: 3.2rem;
-        color: white;
-        font-family: Montserrat;
-        font-weight: 300;
-    }
-.customers {
-    padding-top: 2em;
-    padding-bottom: 2em;
-}
-/*Work Shop*/
-.nopadding {
-    padding: 0 !important;
-}
-
-.work-shop {
-    font-family: Montserrat;
-    font-weight: 300;
-}
-.service-box {
-    width:100%;
-    float:left;
-}
-
-.content {
-    font-size: 1.5rem;
-    color: #828181;
-    line-height: 2.7rem;
-}
-
-.icon-box {
-    font-size: 40px;
-    color: #238fb1;
-}
-
-    .icon-box i {
-        margin-top: 22px !important;
-    }
-
-.ser-text {
-    font-size: 22px;
-    margin: 10px 0px 15px;
-}
-.feature_row_second {
-    margin-top: 4rem;
-}
-/*workshop ends*/
-/*aboutus*/
-.eb-banner-abtus-head {
-    padding-top: 130px;
-}
-    .eb-banner-abtus-head .banner-img-abtus img{
-        width:100%;
-    }
-/*team*/
-.team {
-    font-family: Montserrat;
-    font-weight: 300;
-}
-
-.profile {
-   
-}
-
-    .team_name {
-        font-size: 18px;
-        margin: 15px 0px 10px 0px;
-    }
-        .team_role {
-            font-size: 13px;
-            font-weight: lighter;
-            margin-top: 5px;
-        }
-
-    .profile .img-box {
-        display: flex;
-        justify-content: center;
-    }
-
-        .profile .img-box img {
-            width: 50%;
-            height: 50%;
-        }
-.img-box_lead {
-    padding: 0 12%;
-}
-/*end team*/
-/*overlay2*/
-.bg-white {
-    background-color: #fff !important;
-}
-
-.eb-integrations {
-    height: 300px;
-    background-color: #fafafa;
-}
-/*Footer*/
-footer {
-    padding-top: 30px;
-    background-color: #1c3c4c;
-    color: white;
-    padding-bottom: 30px;
-    font-family: Montserrat;
-    font-weight: 300;
-}
-    footer h5 {
-        color: #a7a7a7;
-        margin-top:0;
-    }
-
-    footer a {
-        text-decoration: none;
-        color: #a7a7a7;
-        font-size: 13px;
-        cursor:auto;
-    }
-
-        footer a:hover, footer a:focus {
-            color: #aaa;
-            text-decoration: none;
-            cursor: auto;
-            /*border-bottom: 1px dotted #999;*/
-        }
-    footer p {
-        color: #a7a7a7;
-        font-size: 12px;
-    }
-    footer .cmpny-details {
-        padding-left: 32px;
-    }
-    footer ul {
-        list-style-type: none;
-        padding: 0;
-        padding-left: 20px;
-    }
-    footer ul li {
-        margin-bottom:2px;
-    }
-
-.f_social {
-    background-color: #2e7dfd;
-    padding: 5px;
-    text-align: center;
-    border-radius: 50%;
-    margin: 6px;
-    float:left;
-    color:white;
-}
-.f_social i{
-    width:20px;
-}
-.copyright {
-    background-color: #1c3c4c;
-}
-
-    .copyright p {
-        color: #d8cdcd;
-        padding: 10px 0px 0px 0px;
-        font-size: 11px;
-        margin-bottom: 4px;
-    }
-
-.heading7 {
-    font-size: 15px;
-    font-weight: 700;
-    color: #3b5998;
-    margin-bottom: 10px;
-}
-/*Footer*/
-.btn-submit:hover, .btn-submit:focus {
-    background-color: #5fcf80;
-    color: #fff;
-}
 /*Responsive media queries*/
 @media (max-width: 768px) {
     .navbar-default .navbar-brand {
@@ -502,213 +303,14 @@ footer {
     }
 }
 
-@media (min-width: 769px) and (max-width: 980px) {
-    .ser-text {
-        font-size: 20px;
-    }
-
-    .service-box, .feature-info, .orga-stru {
-        margin-bottom: 30px;
-    }
-}
-
-@media (min-width: 451px) and (max-width: 768px) {
-    .ser-text {
-        font-size: 20px;
-    }
-
-    .service-box, .feature-info {
-        margin-bottom: 30px;
-    }
-
-    .service-box {
-        padding: 0 !important;
-    }
-    .cust_callout_content {height: auto !important;}
-    .multi_db_supp_text {width: 100%;}
-        .multi_db_supp_text p {text-align: center;}
-        .multi_db_supp_text h3 {text-align: center;}
-    ._quats{width:100% !important}
-    .mt {padding-top: 2em;}
-    .mb {padding-bottom: 2em;}
-    .h_b {margin-bottom: 1em;}
-    .pdl0xssm{padding-left:0;}
-    .pdr0xssm{padding-right:0;}
-    .img_main_callout img {height: 19px !important;}
-    .bg-color-banner h2 {padding-bottom: 30px;}
-}
-
 @media (min-width: 20px) and (max-width: 450px) {
-    .header-section p {
-        font-size: 20px;
+    .m-l-60 {
+        float: unset;
+        margin-right: unset;
     }
-    .heading {
-        margin-bottom: 20px;
-    }
-    .contact-form-button {
-        width: 40%;
-    }
-    .footer .social-links li {
-        margin: 0 5px 25px;
-    }
-    .modal-sm {
-        width: 300px;
-    }
-    .login-box-body {
-        padding: 15px 20px;
-    }
-    .navbar-default .navbar-brand {
-        margin-left: 10px;
-    }
-    .navbar-default .navbar-nav > li > a {
-        text-align: center;
-        font-size: 12px;
-        font-weight: normal;        
-    }
-    .eb-banner2-img {padding-left:15px;padding-right:15px;border:none;}
-    .chatbot-container img{width:98%;}
-    .parteners-last { padding-top:20px;}
-    .gl {text-align: center;}
-    .pr_cont{margin-bottom:30px;}
-    .pd-t6em {padding-top: 0 !important;}
-    .for-mob {display: flex;align-items: center;justify-content: center;}
-    .supportedBy {display: flex;align-items: center;justify-content: center;margin-bottom: 15px;}
-    .cmpny-details{text-align:center;}
-    .gl{text-align:center;}
-    .gl ul{ margin:0;padding:0;}
-    .f12 {font-size: 13px;}
-    .for-mob-pd-t{padding-top:15px;}
-    .copyright p {font-size: 9px;}
-    .techstack {height: 90px; padding: 10px;}
-    .b40 {margin-bottom: 0 !important;}
-    .bg-color-banner h2 {font-size: 35px;}
-    .bg-color-banner p {font-size: 14px;}
-    .get-start-sec .col-md-4{margin:20px 0;}
-    .multi_db_supp_img img {width: 100% !important;height: auto !important;}
-    .cust_callout_content {height: auto !important;padding:0 !important;text-align:left !important;}
-    .callfaction_cont{padding:0;}
-    .callfaction_cont .getstarted{font-size:9px;}
-    .emailtxt {font-size: 11px;}
-    .h_b {margin-bottom: 1em;}
-    .feature_row_second {margin-top: 0;}
-    .multi_db_supp_text p {font-size: 1.6rem !important;text-align: center;}
-    .mt { padding-top: 2em;}
-    .mb {padding-bottom: 2em;}
-    .multi_db_supp_text h3 {text-align: center;}
-    .img_main_callout {text-align: right;}
-    .bg-color-banner{padding:0 !important}
-    .ml12_5{margin-left:0 !important;}
-    .team_name {font-size: 14px;text-align:center;}
-    .team_role {font-size: 11px;text-align:center;}
-    .founder .detail-info h3 {text-align: center; font-size: 20px;}
-    .founder .detail-info p {padding: 0 5px;}
-    .founder .detail-info h4{text-align:center;}
-    .mv_com {font-size: 15px;}
-    .team_lead_txt{width:100% !important;}
-    .team_lead_img{width:100% !important;}
-    .flx {flex-direction: column-reverse;}
-    .team_lead p {margin-bottom: 3em;}
-    .message-box-indexpage {font-size: 12px;}
-}
-.ml12_5 {
-    margin-left:12.5%;
-}
-.login-box-body {
-    margin-top: 100px;
 }
 
-.aboutus-header {
-    min-height: 480px;
-    width: 100%;
-    font-family: Montserrat;
-    font-weight: 300;
-    background-image: url(../images/wall_people.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-.layer {
-    background-color: black;
-    float: left;
-    height: 480px;
-    width: 100%;
-    opacity: .6;
-    padding-top: 150px;
-    color: white;
-}
-.icon_mis {
-    width:100%;
-}
-.aboutus-header h1 {
-    color: white;
-    font-size: 3.5em;
-}
-.abt_us_sunH {
-    font-size: 1.9em;
-}
-.mv_com {
-    padding: 5px;
-    font-family: Montserrat;
-    font-weight: 300;
-    font-size: 17px;
-    line-height: 3.4rem;
-}
-.eb_mis {
-    margin-bottom: 2.6em;
-}
-.pd_for_img {
-    padding: 0px 10px 0px 40px;
-}
-.founder {  
-    font-family: Montserrat;
-}
-    .founder .detail-info {
-        line-height: 3rem;
-    }
-.al_bottom {
-    margin-top:13%;
-}
-.sign-in-ext {
-    margin-top: 50px;
-    background: url(../images/signinExt.jpg) no-repeat center center fixed;
-    height: calc(100vh - 50px);
-    width: 100%;
-}
-
-.cont-signin {
-    height: inherit;
-}
-
-.row-sign-in {
-    height: inherit;
-}
-
-.log-form {
-    height: inherit;
-    background-color: white;
-}
-
-.subscript {
-    font-size: 25px;
-}
-
-.getStarted {
-    padding-bottom: 6em;
-}
-    .getStarted .socialbtns {
-        color: #7b7b7b;
-    }
-.left {
-    text-align: left;
-    background-color: gainsboro;
-}
-
-.right {
-    text-align: center;
-    font-size: 12px;
-}
-
-
+/*layout inner pages style*/
 .main-cont {
     background-color: #f2f2f2;
     min-height: 100vh;
@@ -799,158 +401,7 @@ footer {
 #charttype img{
     height: 40px;
 }
-.techstack {
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80px;
-}
-.techstack a{
-    height:100%
-}
-.techstack img{
-    height:100%;
-}
-.supportedBy{
-    float:left;
-    width:100%;
-}
-.support_logos {
-    width: 25%;
-    float: left;
-    margin: 5% 7% 1% 0%;
-}
-.support_logos img{
-    width: 100%;
-}
-.f12{
-    font-size:12px;
-}
-.cust_img {
-    height: 70px;
-    display: flex;
-    justify-content: center;
-}
-.cust_img img{
-    height:100%;
-}
-.pr_img_cont {
-    height: 70px;
-    display: flex;
-    justify-content: center;
-}
-.pr_img_cont img{
-    height:100%;
-    width:auto;
-}
-.pr_text {
-    font-weight: 400;
-    font-family: Montserrat;
-}
-    .pr_text h4 {
-        margin: 15px 0px 15px;
-        font-size: 22px;
-        color: #4e4c4c;
-    }
-    .pr_text p {
-        font-size: 1.5rem;
-        line-height: 2.5rem;
-        color: #36424c;
-    }
-.pd-t6em{
-    padding-top:5em;
-}
-.pd-t-1em{
-    padding-top:1em;
-}
-.pr_link {
-    color: #238fb1;
-    font-size: 12px;
-    width: 100%;
-}
-.multi_db_supp {
-   
-}
-.multi_db_supp_img img{
-    height:326px;
-    float:right;
-}
-.multi_db_supp_text p {
-    font-weight: 400;
-    font-size: 1.7rem;
-    color: #828181;
-    margin-bottom: 1em;
-}
-.multi_db_supp_text {
-    font-family: Montserrat;
-    line-height: 3.5rem;
-}
-    .multi_db_supp_text h3 {
-        font-weight: 600;
-        font-size: 2.6rem;
-        margin-bottom: 25px;
-        color: #656565;
-        margin-bottom: 5px;
-    }
-.b40{
-    margin-bottom:40px;
-}
-.cust_callout_block {
-    padding: 20px;
-    text-align: center;
-}
-.img_main_callout {
-    margin-bottom: 20px;
-}
-.img_main_callout img{
-    height:22px;
-    width:auto;
-}
-.cust_callout_content {
-    color: rgb(255, 255, 255);
-    font-size: 17px;
-    font-weight: 300;
-    min-height: 185px;
-    text-align: center;
-    padding: 10px 40px;
-}
-.speakers {
-    background-color: #0280db;
-    background-image: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
-    font-family: Montserrat;
-    font-weight: 300;
-}
-.cw {
-    color: gainsboro;
-}
-.jb {
-    margin-left: 5px;
-    font-size: 18px;
-    display:none;
-}
-.team_lead p{
-    line-height:2.5rem;
-}
-.flx {
-    display:flex;
-}
-.team_lead_txt {
-    width: 66.6%;
-    position: relative;
-    min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
-    float:left;
-}
-.team_lead_img {
-    width: 33.3%;
-    position: relative;
-    min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
-    float: left;
-}
+
 
 /*eb loader css*/
 .eb-loader-prcbar {
@@ -1110,25 +561,111 @@ footer {
     }
 }
 
+
 /*home page dropdown*/
-.nav_drp_li .sub{
+.nav_drp_li .sub {
     padding: 7px 20px !important;
     color: #1488c5 !important;
     font-size: 15px;
-    font-family:open sans;
+    font-family: open sans;
 }
+
 .nav_drp_li .dropdown-menu {
     padding: 10px;
 }
 /*EbMsgBox*/
 .eb_messageBox_container {
     width: 100%;
-    padding: 8px 15px;
-    font-family: Montserrat, sans-serif;
+    padding: 10px;
+    font-family: Montserrat;
     font-size: 15px;
     display: none;
     text-align: center;
     position: fixed;
     z-index: 10000;
     top: 0;
+}
+/*dropdown menu*/
+.drp_container {
+    width: 600px;
+    padding: 10px;
+    border-top-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+}
+
+.drp_items_log {
+    float: left;
+    width: 60px;
+    padding: 0 8px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.drp_items_desc {
+    float: left;
+    width: calc(100% - 60px);
+    font-family: Montserrat;
+    padding-left: 15px;
+}
+
+    .drp_items_desc h4 {
+        margin: 0 0px 5px 0px;
+        font-weight: 300;
+        color: #585555;
+    }
+
+    .drp_items_desc p {
+        color: #8a8989;
+    }
+
+.drp_container a {
+    float: left;
+    display: flex;
+    padding: 20px 0;
+    border-bottom: 1px solid #f3f0f0;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+    .drp_container a:hover {
+        background-color: rgba(226, 220, 220, 0.14);
+        border-radius: 4px;
+    }
+
+    .drp_container a:last-child {
+        border-bottom: unset;
+    }
+
+.drp_items_log img {
+    height: auto !important;
+}
+
+.drp_container::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    top: -11px;
+    right: 32px;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(45deg);
+    border-left: 1px solid #c3c3c3;
+    border-top: 1px solid #c3c3c3;
+}
+
+.label-cs {
+    font-size: 12px;
+    background: #23c523;
+    color: white;
+    border-radius: 6px;
+    padding: 3px;
+}
+
+.disabled {
+    cursor: auto !important;
 }

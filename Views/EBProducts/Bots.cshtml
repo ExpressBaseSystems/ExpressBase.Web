@@ -46,23 +46,29 @@
         Html.RenderPartial("ExtPageHeader");
     }
     <script type="text/javascript">
-        window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
-        window.EXPRESSbase_APP_IDS = [13, 93, 94, 95, 96, 97, 98];
+        window.EXPRESSbase_SOLUTION_ID = "ebdbbttphoppwf20180612024639";
+        window.EXPRESSbase_APP_IDS = [1, 2, 3, 95, 96, 97, 98];
 
         $(document).ready(function () {
             d = document;
+            d.ebmod = '@ViewBag.Env';
+            var jssrc = "";
+            if (d.ebmod === 'Production')
+                jssrc = "https://expressbase.com";
+            else if (d.ebmod === 'Staging')
+                jssrc = "https://eb-test.info";
+
             d.appIdColl = window.EXPRESSbase_APP_IDS;
             d.ebbotThemeColorColl = ["#9400D3", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
             d.ebbotNameColl = ["Hotel", "Hospital", "School", "Service Center", "Human Resource", "Tracking", "E-Commerce"];
-            d.botdpURLColl = ["http://localhost:5000/images/svg/restaurant.svg", "http://localhost:5000/images/svg/doctor-stethoscope.svg", "http://localhost:5000/images/svg/college-graduation.svg", "http://localhost:5000/images/svg/call-center-worker-with-headset.svg", "http://localhost:5000/images/svg/human-head-silhouette-with-cogwheels.svg", "http://localhost:5000/images/svg/route.svg", "http://localhost:5000/images/svg/shopping-cart.svg"];
+            d.botdpURLColl = ["http://localhost:41500/images/assistant.png", "http://localhost:5000/images/svg/doctor-stethoscope.svg", "http://localhost:5000/images/svg/college-graduation.svg", "http://localhost:5000/images/svg/call-center-worker-with-headset.svg", "http://localhost:5000/images/svg/human-head-silhouette-with-cogwheels.svg", "http://localhost:5000/images/svg/route.svg", "http://localhost:5000/images/svg/shopping-cart.svg"];
             d.appIdCount = 0;
             d.createBotFns = [];
             for (var i = 0; i < d.appIdColl.length; i++) {
                 d = document;
                 d.createBotFns.push(function () {
                     s = d.createElement("script");
-                    s.src = "/js/ChatBot/ebbot-ext.js";
-                    //s.src = "https://expressbase.azurewebsites.net/js/ChatBot/ebbot-ext.js";
+                    s.src = jssrc + "/js/ChatBot/ebbot-ext.js";
                     s.async = 1;
                     d.getElementsByTagName("head")[0].appendChild(s);
                 });

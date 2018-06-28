@@ -47,7 +47,7 @@
     }
     <script type="text/javascript">
         window.EXPRESSbase_SOLUTION_ID = "ebdbbttphoppwf20180612024639";
-        window.EXPRESSbase_APP_IDS = [1, 2, 3, 95, 96, 97, 98];
+        window.EXPRESSbase_APP_IDS = [2, 3, 1, 95, 96, 97, 98];
 
         $(document).ready(function () {
             d = document;
@@ -60,7 +60,7 @@
 
             d.appIdColl = window.EXPRESSbase_APP_IDS;
             d.ebbotThemeColorColl = ["#9400D3", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
-            d.ebbotNameColl = ["Hotel", "Hospital", "School", "Service Center", "Human Resource", "Tracking", "E-Commerce"];
+            d.ebbotNameColl = ["Hotel", "Hospital", "Human Resource", "Service Center", "Human Resource", "Tracking", "E-Commerce"];
             d.botdpURLColl = ["http://localhost:41500/images/assistant.png", "http://localhost:5000/images/svg/doctor-stethoscope.svg", "http://localhost:5000/images/svg/college-graduation.svg", "http://localhost:5000/images/svg/call-center-worker-with-headset.svg", "http://localhost:5000/images/svg/human-head-silhouette-with-cogwheels.svg", "http://localhost:5000/images/svg/route.svg", "http://localhost:5000/images/svg/shopping-cart.svg"];
             d.appIdCount = 0;
             d.createBotFns = [];
@@ -284,7 +284,7 @@
                             <div class="row">
                                 <div class="livDemo_icons float-l">
                                     <div class="liveDemos_iconContainers float-l">
-                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="13" tabindex="1">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="2" tabindex="1">
                                             <div class="icon_noSec float-l">
                                                 <span>1</span>
                                             </div>
@@ -295,7 +295,7 @@
                                         </div>
                                     </div>
                                     <div class="liveDemos_iconContainers float-l">
-                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="93" tabindex="1">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="3" tabindex="1">
                                             <div class="icon_noSec float-l">
                                                 <span>2</span>
                                             </div>
@@ -306,7 +306,7 @@
                                         </div>
                                     </div>
                                     <div class="liveDemos_iconContainers float-l">
-                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="94" tabindex="1">
+                                        <div class="liveDemos_iconContainers_sub float-l icon-round" appid="1" tabindex="1">
                                             <div class="icon_noSec float-l">
                                                 <span>3</span>
                                             </div>
@@ -903,7 +903,7 @@
                 //$(d).scrollTop(1050);
                 var $round = $(event.target).closest(".icon-round");
                 var appid = $round.attr("appid");
-                if (d.latestAppid === appid)
+                if (d.latestAppid === appid && $($(`[appid=${appid}]`)[0]).css("display") !== 'none')
                     return;
                 var roundIdx = $(".icon-round").toArray().indexOf($round[0]);
                 d.appIdCount = roundIdx;
@@ -929,7 +929,7 @@
                 if ($(`.usecase-bots-cont [appid=${appid}]`).length === 0)
                     d.createBotFns[roundIdx]();
                 $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 0).css("right", "-5%").hide(300);
-                $(`.usecase-bots-cont [appid=${appid}]`).show(0, function () { $(this).animate({ opacity: '1', right: '5%' }, 400); });
+                $(`.usecase-bots-cont [appid=${appid}]`).show(0, function () { $(this).css("display", "flex"); $(this).animate({ opacity: '1', right: '5%' }, 400); });
 
                 $(".content").css("opacity", "0").hide(200);
                 $(`.content:eq(${roundIdx})`).show(0, function () { $(this).animate({ opacity: '1' }, 400); });

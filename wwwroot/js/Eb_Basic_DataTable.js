@@ -255,7 +255,7 @@ var EbBasicDataTable = function (Option) {
         //dq.Ispaging = this.EbObject.IsPaging;
         dq.Ispaging = true;
         dq.start = 0;
-        dq.length = 100;
+        dq.length = 25;/////////hard coding
         return dq;
     };
 

@@ -1,31 +1,37 @@
 ﻿.tag-cont {
     height: inherit;
-    background-color:white;
+    background-color: white;
 }
 
 .tag-wraper {
     border: solid 1px #eee;
     /*height:48%;*/
-    width:100%;
+    width: 100%;
 }
+
 .tag-scroll {
     overflow-y: auto;
     height: calc(100% - 30px);
 }
+
 .tag-wraper:nth-child(2) {
-    margin-top:5px;
+    margin-top: 5px;
 }
+
 .tag-cont .colTile:hover {
     cursor: move;
 }
+
 .chartCont canvas {
     height: 100% !important;
 }
-.botdata_cont{
-height: 100%; 
-z-index: 4; 
-box-shadow: 2px 9px 14px 0px rgba(189,189,189,1);
+
+.botdata_cont {
+    height: 100%;
+    z-index: 4;
+    box-shadow: 2px 9px 14px 0px rgba(189,189,189,1);
 }
+
 .tool-box-items span {
     margin-right: 5px;
 }

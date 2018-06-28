@@ -38,6 +38,8 @@
         else if (appinfo.AppType == 3) { typeIcon = "/images/svg/chat1.svg"; }
 
         }
+
+
     <div class="s-dash-workplace">
         <div class="col-md-12 pd-0 s-dash-solution-desc" style="margin-bottom:5px;">
             <div class="col-md-10" style="padding-left: 3px;">
@@ -73,7 +75,32 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
+                    @if (appinfo.AppType == 3) {
+                        var bot_wc_msg = "";
+                        var bot_tm_color = "";
+                        var bot_dp_url = "";
 
+                        @if(appinfo.AppSettings != null)
+                        {
+                            bot_wc_msg = appinfo.AppSettings.WelcomeMessage;
+                            bot_tm_color = appinfo.AppSettings.ThemeColor;
+                            bot_dp_url = appinfo.AppSettings.DpUrl;
+                        }
+                         
+                        <div>
+                            <label>Welcome Message: </label>
+                            <input type="text" id="bot_wc_msg" value="@bot_wc_msg" placeholder="Type here!">
+                        </div>
+                        <div>
+                            <label>Theme Colour:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input type="text" id="bot_tm_color" value="@bot_tm_color" placeholder="Type here!">
+                        </div>
+                        <div>
+                            <label>DP Url:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input type="text" id="bot_dp_url" value="@bot_dp_url" placeholder="Type here!">
+                        </div>
+                        <button onclick="UpdateBotSettings()">Update</button>
+                     }
                 </div>
                 <div class="tab-pane appdash_obj_container" id="Objects" role="tabpanel">
                     <div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>
@@ -90,4 +117,21 @@
 </div>
 <script>
     var adash = new AppDashWeb(Object_type, Obj_Collection);
+    function UpdateBotSettings() {
+        var appSettings = {};
+        appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
+        appSettings["ThemeColor"] = $("#bot_tm_color").val();
+        appSettings["DpUrl"] = $("#bot_dp_url").val();
+        $.ajax({
+            type: "POST",
+            url: "../Dev/UpdateAppSettings",
+            data: { id: @appinfo.Id, type: @appinfo.AppType, settings: JSON.stringify(appSettings) },
+            success: function (data) {
+                if (data > 0)
+                    alert("Settings Updated Successfully");
+                else
+                    alert("Something went wrong");
+            }
+        });
+    }
 </script>

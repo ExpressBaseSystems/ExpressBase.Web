@@ -1,4 +1,5 @@
-﻿var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
+﻿var default_colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC']
+var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
     this.label = label;
     this.data = data;
     this.backgroundColor = backgroundColor;
@@ -10,7 +11,7 @@ var datasetObj4Pie = function (label, data, backgroundColor, borderColor, fill) 
     this.data = data;
     var color = [], width = [];
     $.each(this.data, function (i, obj) {
-        color.push(getRandomColor());
+        color.push(randomColor());
         width.push(1);
     });
     this.backgroundColor = color;
@@ -87,7 +88,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         "bar": "fa fa-bar-chart",
         "line": "fa fa-line-chart",
         "pie": "fa fa-pie-chart",
-        "area":"fa fa-area-chart"
+        "area": "fa fa-area-chart",
+        "horizontalBar": "fa fa-bar-chart"
     };
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
@@ -99,7 +101,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 var id = $(ev.target).attr("id");
                 focusedId = id;
                 //if ($('#' + id).is(':last-child'))
-                    //$(".splitdiv_parent").scrollTo($("#" + focusedId));
+                //$(".splitdiv_parent").scrollTo($("#" + focusedId));
             }
         }
     }.bind(this);
@@ -152,7 +154,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else
             this.EbObject = dvcontainerObj.currentObj;
 
-        if ($(".filterCont #filterBox").children().not("button").length ==  0) {
+        if ($(".filterCont #filterBox").children().not("button").length == 0) {
             this.FD = false;
             $(".filterCont").hide();
             $("#btnGo" + this.tabNum).trigger("click");
@@ -249,7 +251,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#objname").text(obj.Name);
         }
     }.bind(this);
-   
+
     this.init = function () {
         this.columnInfo = this.EbObject;
         if (this.EbObject.Type !== "")
@@ -294,14 +296,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
         }
         this.GenerateButtons();
-        
+
     };
 
     this.createChartDivs = function () {
         //if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
-            $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append(
-                `<div id='graphcontainer_tab${this.tableId}' style='height:inherit;' class='chartCont'>
+        $("#content_" + this.tableId).empty();
+        $("#content_" + this.tableId).append(
+            `<div id='graphcontainer_tab${this.tableId}' style='height:inherit;' class='chartCont'>
                 <div class='col-md-2 no-padd' id='columnsDisplay${this.tableId}' style='height:inherit;'>
                 <div class='tag-cont'>
                   <div class='tag-wraper'><div class='pgHead'>Data</div><div class='tag-scroll'><div id='ColumnCont${this.tableId}'></div></div></div>
@@ -332,7 +334,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 <div id='canvasDiv${this.tableId}' style='height:100%;padding-bottom:10px;'><canvas id='myChart${this.tableId}'></canvas></div> 
                 </div> 
                 </div>`);
-            //this.GenerateButtons();
+        //this.GenerateButtons();
         //  "  <div class='tag-wraper'><div class='pgHead'>Measures</div><div class='tag-scroll'><div id='measure" + this.tableId + "'></div></div></div>" +
         //}
         //else {
@@ -346,7 +348,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tableId).click(this.init.bind(this));
-        if (this.login === "dc") {
+        //if (this.login === "dc") {
             $("#obj_icons").append(`<div style='display: inline;'>
             <div class='dropdown' id='graphDropdown_tab${ this.tableId}' style='display: inline-block;padding-top: 1px;'>
             <button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>
@@ -366,8 +368,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                             <div class="chartname">Line</div>
                         </div>
                         <div class="divLLType">
-                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/column-chart.svg"></a></div>
-                            <div class="chartname">Column</div>
+                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/horizontal-bar-chart.svg"></a></div>
+                            <div class="chartname">Horizontalbar</div>
                         </div>
                     </div>
                 </div>
@@ -388,36 +390,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                         </div>
                     </div>
                 </div>
-                <div class="divHLType">
-                    <div class="chartHeader">Distribution</div>
-                    <div id="Distribution" class="chartBody">
-                        <div class="divLLType">
-                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/Line-chart.svg"></a></div>
-                            <div class="chartname">Line</div>
-                        </div>
-                        <div class="divLLType">
-                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/bar-chart.svg"></a></div>
-                            <div class="chartname">Bar</div>
-                        </div>
-                        <div class="divLLType">
-                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/column-chart.svg"></a></div>
-                            <div class="chartname">Column</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="divHLType">
-                    <div class="chartHeader">Relationship</div>
-                    <div id="Relationship" class="chartBody">
-                        <div class="divLLType">
-                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/Line-chart.svg"></a></div>
-                            <div class="chartname">Line</div>
-                        </div>
-                        <div class="divLLType">
-                            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/horizontal-bar-chart.svg"></a></div>
-                            <div class="chartname">Horizontalbar</div>
-                        </div>
-                    </div>
-                </div>
                 
             <div>
                 
@@ -427,17 +399,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             <button id='btnColumnCollapse${ this.tableId}' class='btn' style='display: inline-block;'>
             <i class="fa fa-cogs" aria-hidden="true"></i>
             </button>`);
-        }
-        // <button id='reset_zoom${ this.tableId}' class='btn'>Reset zoom</button>
-        //<div class="divHLType">
-        //    <div class="chartHeader">Other</div>
-        //    <div id="Other" class="chartBody">
-        //        <div class="divLLType">
-        //            <div class="ddchart"><a tabindex="-1" href="#"><img src="../images/svg/google.svg"></a></div>
-        //                <div class="chartname">GoogleMap</div>
-        //            </div>
-        //        </div>
-        //    </div>
+        //}
         if (this.FD) {
             $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
         }
@@ -445,7 +407,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
         if (this.EbObject !== null && this.EbObject.Type !== "") {
             if (this.EbObject.Type !== "line")
-                $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${ _icons[this.EbObject.Type]}'></i>&nbsp;<span class = 'caret'></span>`);
+                $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons[this.EbObject.Type]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
         else {
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["bar"]}'></i>&nbsp;<span class = 'caret'></span>`);
@@ -474,7 +436,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#columnsDisplay" + this.tableId).append(`<div class="pgHead">User:<label></label></div>`);
             $("#xy" + this.tableId).hide();
             $(".toolicons").hide();
-            $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-9");            
+            $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-9");
             $("#columnsDisplay" + this.tableId).removeClass("col-md-2").addClass("col-md-3").addClass("botdata_cont").show();
 
         }
@@ -521,13 +483,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $.each(colsAll_XY, function (i, obj) {
                 if (obj.data != undefined) {
                     if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime") {
-                        if(gettypefromNumber(obj.Type) === "String")
-                            $("#diamension" + tid).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-font'></i></span>${obj.name}</li>`);
+                        if (gettypefromNumber(obj.Type) === "String")
+                            $("#diamension" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-font'></i></span>${obj.name}</li>`);
                         else
-                            $("#diamension" + tid).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-calendar'></i></span>${obj.name}</li>`);
+                            $("#diamension" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-calendar'></i></span>${obj.name}</li>`);
                     }
                     else if (gettypefromNumber(obj.Type) === "Numeric")
-                        $("#measure" + tid).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-sort-numeric-asc'></i></span>${obj.name}</li>`);
+                        $("#measure" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-sort-numeric-asc'></i></span>${obj.name}</li>`);
                 }
             });
             $('#data-table-list').killTree();
@@ -561,11 +523,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#X_col_name" + tid).empty();
             $("#Y_col_name" + tid).empty();
             $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
-                $("#X_col_name" + tid).append("<li class='colTile columnDrag' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></li>");
+                $("#X_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: -2px 2px 0px 4px;' >x</button></li>");
                 //this.Xindx.push(obj.data);
             });
             $.each(this.columnInfo.Yaxis.$values, function (i, obj) {
-                $("#Y_col_name" + tid).append("<li class='colTile columnDrag' style='margin: 0px 2px;padding: 0px 4px;width: auto; display:inline-block' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;' >x</button></li>");
+                $("#Y_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: -2px 2px 0px 4px;' >x</button></li>");
                 //this.Yindx.push(obj.data);
             });
         }
@@ -599,7 +561,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.getFilterValues = function () {
         var fltr_collection = [];
         var FdCont = ".filterCont";
-        var paramstxt = $(FdCont+" #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
+        var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         if (paramstxt != undefined) {
             var params = paramstxt.split(',');
             $.each(params, function (i, id) {
@@ -645,7 +607,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         else
             filterChanged = true;
-            //return false;
+        //return false;
     }
 
     this.getDataSuccess = function (result) {
@@ -680,7 +642,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             });
 
             $.each(this.data, this.getBarDataLabel.bind(this, xdx));
-            
+
             for (k = 0; k < ydx.length; k++) {
                 this.YLabel = [];
                 for (j = 0; j < this.data.length; j++)
@@ -717,15 +679,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     Inform.push(new informaion(obj.name, info));
                 }.bind(this));
             }
-            
+
         }
     };
-    
+
     this.getBarDataLabel = function (xdx, i, value) {
         for (k = 0; k < xdx.length; k++)
             this.XLabel.push(value[xdx[k]]);
     };
-    
+
     this.drawGeneralGraph = function () {
         $(".ppcont").hide();
         if (!this.bot) {
@@ -738,7 +700,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             if ($("#map" + this.tableId).children().length === 0)
-                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId+"' style='height:inherit;width:100%;'></div>");
+                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:inherit;width:100%;'></div>");
             Xlabel = this.XLabel;
             Ylabel = this.YLabel;
             showRoute = this.EbObject.ShowRoute;
@@ -753,7 +715,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $("#map" + this.tableId).empty();
                 initMap();
             }
-               
+
             $.LoadingOverlay("hide");
             if (this.bot) {
                 $("#map" + this.tableId).css("height", "inherit");
@@ -761,13 +723,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             return false;
         }
-        else
-        {
+        else {
             this.gdata = {
                 labels: this.XLabel,
                 datasets: this.dataset,
             };
-            this.animateOPtions = (this.columnInfo.ShowValue) ? new animateObj(0) : false;
+            //this.animateOPtions = (this.columnInfo.ShowValue) ? new animateObj(0) : false;
             this.goptions = {
                 scales: {
                     yAxes: [{
@@ -783,7 +744,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                         ticks: {
                             fontSize: 10,
                             fontColor: (this.columnInfo.YaxisLabelColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.YaxisLabelColor : "#000000"
-                        }
+                        },
+                        display: (this.type !== "pie") ? true : false
                     }],
                     xAxes: [{
                         scaleLabel: {
@@ -797,7 +759,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                         ticks: {
                             fontSize: 10,
                             fontColor: (this.columnInfo.XaxisLabelColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.XaxisLabelColor : "#000000"
-                        }
+                        },
+                        display: (this.type !== "pie") ? true : false
                     }]
                 },
                 zoom: {
@@ -813,39 +776,33 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     mode: 'x',
                 },
                 legend: {
-                    onClick: this.legendClick.bind(this)
+                    onClick: this.legendClick.bind(this),
+                    //position: "left"
                 },
+                //legend:false,
+                //legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>",
 
                 tooltips: {
-                    enabled: this.columnInfo.ShowTooltip
+                    enabled: this.columnInfo.ShowTooltip,
+                    callbacks: {
+                        label: this.toolTipCallback
+                    }
                 },
-                animation: this.animateOPtions
-                //{
-                //    duration:  1 ,
-                //    onComplete: function () {
-                //            var chartInstance = this.chart,
-                //                ctx = chartInstance.ctx;
-
-                //            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-                //            ctx.textAlign = 'center';
-                //            ctx.textBaseline = 'bottom';
-
-                //            this.data.datasets.forEach(function (dataset, i) {
-                //                var meta = chartInstance.controller.getDatasetMeta(i);
-                //                meta.data.forEach(function (bar, index) {
-                //                    var data = dataset.data[index];
-                //                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
-                //                });
-                //            });
-                //    }
-                //},
+                segmentShowStroke: this.columnInfo.ShowValue && this.type === "pie",
+                segmentStrokeWidth: 2,
+                animation: {
+                    animateRotate :true,
+                    duration: 1,
+                    //onProgress: (this.columnInfo.ShowValue && this.type === "pie") ? this.animationOnProgress : null,
+                    onComplete: (this.columnInfo.ShowValue && this.type !== "pie") ? this.animationOnComplete : null
+                },
             };
             if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
                 this.RemoveCanvasandCheckButton();
 
             $.LoadingOverlay("hide");
         }
-        
+
     };
 
     this.RemoveCanvasandCheckButton = function () {
@@ -857,7 +814,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.type = this.type.toLowerCase();
             //$("#graphDropdown_tab" + this.tableId + " button:first-child").html("<i class='" + _icons["bar"] + "'></i>" + "&nbsp;<span class = 'caret'></span>")
         }
-        
+
         if (this.type == "area" || this.type == "line") {
             if (this.gdata !== null) {
                 $.each(this.gdata.datasets, this.GdataDSiterFn.bind(this));
@@ -865,7 +822,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     this.drawGeneralGraph();
                 this.type = "line";
                 if (this.gdata.datasets[0].fill === true)
-                    $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${ _icons["area"]}'></i>&nbsp;<span class = 'caret'></span>`);
+                    $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["area"]}'></i>&nbsp;<span class = 'caret'></span>`);
                 else
                     $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["line"]}'></i>&nbsp;<span class = 'caret'></span>`);
             }
@@ -882,12 +839,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (!this.piedataFlag)
                 this.drawGeneralGraph();
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["pie"]}'></i>&nbsp;<span class = 'caret'></span>`);
+            delete this.goptions.legend["onClick"];
         }
         else if (this.type == "horizontalbar") {
             if (this.piedataFlag) {
                 this.drawGeneralGraph();
             }
             this.type = "horizontalBar"
+            $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["horizontalBar"]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
 
         //else if (ty == "bar")
@@ -913,21 +872,23 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#myChart" + this.tableId).remove();
         //$("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
         $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
-        
+
         if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0)
             this.drawGraph();
 
-        
+
     };
 
-   
     this.GdataDSiterFn = function (j, obj) {
-        //var ty = $("#graphDropdown_tab" + this.tableId + " button:eq(0)").text().trim();
-        if (this.type == "area") {
+        var cls = $("#graphDropdown_tab" + this.tableId + " button:eq(0) i").attr("class");
+
+        if (cls !== undefined && cls.indexOf("area") !== -1) {
             this.gdata.datasets[j].fill = true;
+            this.type = "area";
         }
         else {
             this.gdata.datasets[j].fill = false;
+            this.type = "line";
         }
     }
 
@@ -950,12 +911,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.setGraphType = function (e) {
         var current = this;
         this.type = $(e.target).parent().parent().next().text().toLowerCase();
-        $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class'${_icons[this.type]}'></i>&nbsp;<span class = 'caret'></span>`);
+        $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons[this.type]}'></i>&nbsp;<span class = 'caret'></span>`);
         if (this.type.trim() !== "googlemap") {
             if (this.columnInfo.$type.indexOf("EbGoogleMap") !== -1) {
                 $("#canvasDiv" + this.tableId).children("#map").remove();
                 var refid = this.EbObject.DataSourceRefId;
-                var columns = JSON.parse(JSON.stringify(this.EbObject.Columns)); 
+                var columns = JSON.parse(JSON.stringify(this.EbObject.Columns));
                 var pipe = this.EbObject.Pippedfrom;
                 this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
                 this.EbObject.DataSourceRefId = refid;
@@ -975,7 +936,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         else {
             var refid = this.EbObject.DataSourceRefId;
-            var columns = JSON.parse(JSON.stringify(this.EbObject.Columns)); 
+            var columns = JSON.parse(JSON.stringify(this.EbObject.Columns));
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             var pipe = this.EbObject.Pippedfrom;
@@ -1000,7 +961,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.colDrop = function (el, target, source, sibling) {
         if ($(target).attr("id") === "X_col_name" + this.tableId || $(target).attr("id") === "Y_col_name" + this.tableId) {
-            $(el).addClass("colTile");
+            $(el).addClass("columnDrag");
             $(el).children("span").remove();
             var temp;
             $(el).css("display", "inline-block");
@@ -1018,7 +979,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 this.columnInfo.Yaxis.$values.push(temp[0]);
                 //this.Yindx.push(temp[0].data);
                 if (this.type !== "googlemap")
-                    this.columnInfo.LegendColor.$values.push(new ChartColor(name, getRandomColor()));
+                    this.columnInfo.LegendColor.$values.push(new ChartColor(name, randomColor()));
             }
 
             if ($("#X_col_name" + this.tableId + " li").length == 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
@@ -1056,7 +1017,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#canvasDiv" + this.tableId).css("height", "calc(100% - 67px)");
         }
     };
-  
+
     this.toggleFilterdialog = function () {
         $(".filterCont").toggle();
     };
@@ -1071,14 +1032,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         var index = parseInt($(e.target).parent().attr("data-id"));
         if ($(e.target).parent().parent().attr("id") === "X_col_name" + this.tableId) {
             if (gettypefromNumber($(e.target).parent().attr("data-type")) === "String")
-                $("#diamension" + this.tableId).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-font'></i></span>${str.substr(0, str.length - 1)}</li>`);
+                $("#diamension" + this.tableId).append(`<li class='colTiles' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-font'></i></span>${str.substr(0, str.length - 1)}</li>`);
             else if (gettypefromNumber($(e.target).parent().attr("data-type")) === "DateTime")
-                $("#diamension" + this.tableId).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-calendar'></i></span>${str.substr(0, str.length - 1)}</li>`);
+                $("#diamension" + this.tableId).append(`<li class='colTiles' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-calendar'></i></span>${str.substr(0, str.length - 1)}</li>`);
             //index = this.Xindx.indexOf($(e.target).parent().attr("data-id"));
             //this.Xindx.pop(index);
         }
         else if ($(e.target).parent().parent().attr("id") === "Y_col_name" + this.tableId) {
-            $("#measure" + this.tableId).append(`<li class='colTiles columnDrag' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-sort-numeric-asc'></i></span>${str.substr(0, str.length - 1)}</li>`);
+            $("#measure" + this.tableId).append(`<li class='colTiles' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-sort-numeric-asc'></i></span>${str.substr(0, str.length - 1)}</li>`);
             //index = this.Yindx.indexOf($(e.target).parent().attr("data-id"));
             //this.Yindx.pop(index);
         }
@@ -1120,7 +1081,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.legendClick = function (event, legendItem) {
-        if (this.chartApi !== null) {
+        if (this.chartApi !== null && this.type !== "pie") {
             $("#fontSel").click();
         }
         $("#fontSel").off("change").on("change", this.reloadChart.bind(this, legendItem));
@@ -1143,7 +1104,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.RemoveCanvasandCheckButton();
     };
 
-    this.reloadChart_inner = function (legendItem, i, obj) {        
+    this.reloadChart_inner = function (legendItem, i, obj) {
         if (i === legendItem.datasetIndex) {
             this.gdata.datasets[i].backgroundColor = $("#fontSel").val();
             this.gdata.datasets[i].borderColor = $("#fontSel").val();
@@ -1155,23 +1116,51 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.gdata.datasets[i].borderColor[legendItem.index] = $("#fontSel").val();
     }
 
-   
     this.animationOnComplete = function () {
-            var chartInstance = this.chart,
-                ctx = chartInstance.ctx;
+        var chartInstance = this.chart,
+            ctx = chartInstance.ctx;
 
-            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
+        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
 
-            this.data.datasets.forEach(function (dataset, i) {
-                var meta = chartInstance.controller.getDatasetMeta(i);
-                meta.data.forEach(function (bar, index) {
-                    var data = dataset.data[index];
-                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
-                });
+        this.data.datasets.forEach(function (dataset, i) {
+            var meta = chartInstance.controller.getDatasetMeta(i);
+            meta.data.forEach(function (bar, index) {
+                var data = dataset.data[index];
+                ctx.fillText(data, bar._model.x, bar._model.y - 5);
             });
+        });
     };
+
+    this.animationOnProgress = function (animation) {
+        var canvas = document.getElementById("myChart" + this.tableId);
+        var ctx = canvas.getContext("2d");
+        var midX = canvas.width / 2;
+        var midY = canvas.height / 2
+
+        var radius = this.chartApi.outerRadius;
+        for (var i = 0; i < this.chartApi.segments.length; i++) {
+            ctx.fillStyle = "white";
+            var textSize = canvas.width / 10;
+            ctx.font = textSize + "px Verdana";
+            // Get needed variables
+            var value = this.chartApi.segments[i].value;
+            var startAngle = this.chartApi.segments[i].startAngle;
+            var endAngle = this.chartApi.segments[i].endAngle;
+            var middleAngle = startAngle + ((endAngle - startAngle) / 2);
+
+            // Compute text location
+            var posX = (radius / 2) * Math.cos(middleAngle) + midX;
+            var posY = (radius / 2) * Math.sin(middleAngle) + midY;
+
+            // Text offside by middle
+            var w_offset = ctx.measureText(value).width / 2;
+            var h_offset = textSize / 4;
+
+            ctx.fillText(value, posX - w_offset, posY + h_offset);
+        }
+    }.bind(this);
 
     this.updateDragula = function (status) {
         if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1) {
@@ -1198,12 +1187,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
         if (this.type !== "googlemap") {
             $("#X_col_name" + this.tableId).siblings("span").text("X-Axis");
-            $("#Y_col_name" + this.tableId).siblings("span").text("Y-Axis");  
+            $("#Y_col_name" + this.tableId).siblings("span").text("Y-Axis");
             $("#graphDropdown_tab" + this.tableId).show();
         }
         else {
             $("#X_col_name" + this.tableId).siblings("span").text("Longitude");
-            $("#Y_col_name" + this.tableId).siblings("span").text("Lattitude"); 
+            $("#Y_col_name" + this.tableId).siblings("span").text("Lattitude");
             $("#graphDropdown_tab" + this.tableId).hide();
         }
 
@@ -1211,17 +1200,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0) {
                 if (this.type !== "googlemap") {
                     $.each(this.EbObject.Yaxis.$values, function (i, obj) {
-                        this.columnInfo.LegendColor.$values.push(new ChartColor(obj.name, getRandomColor()));
+                        this.columnInfo.LegendColor.$values.push(new ChartColor(obj.name, randomColor()));
                     }.bind(this));
                 }
                 this.drawGeneralGraph();
             }
-               
-        }
-        //$("#X_col_name" + this.tableId).empty();
-        //$("#Y_col_name" + this.tableId).empty();        
 
-        //this.appendColumns();
+        }
     };
 
     this.acceptDrop1 = function (el, target, source, sibling) {
@@ -1234,7 +1219,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else if ($(target).children().length == 1) {
             return false;
         }
-            return true;
+        return true;
     };
 
     this.isMyScriptLoaded = function (url) {
@@ -1253,6 +1238,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.EbObject.Yaxis = this.prevObj.Yaxis;
         this.EbObject.Pippedfrom = this.prevObj.Pippedfrom;
     }
+
+    this.toolTipCallback = function (item, data) {
+        if (this.type === "pie")
+            return data.datasets[item.datasetIndex].label + ": " + data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index];
+    }.bind(this);
 
     this.start();
 };
@@ -1289,13 +1279,13 @@ function initMap() {
                 location: marker.getPosition(),
                 stopover: true
             });
-        }        
-        
+        }
+
         google.maps.event.addListener(marker, 'click', (function (marker, i) {
             return function () {
                 var content = "";
                 $.each(Inform, function (k, obj) {
-                    content += obj.name + ":" + obj.value[i]+"</br>";
+                    content += obj.name + ":" + obj.value[i] + "</br>";
                 });
                 if (content === "")
                     content = "no details";

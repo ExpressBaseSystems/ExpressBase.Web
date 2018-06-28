@@ -19,10 +19,10 @@
 
     @*
         <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />*@
-
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
+    
     <script type="text/javascript" src="~/js/jquery.min.js"></script>
     <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
 
     <script type="text/javascript">
         //window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
@@ -94,7 +94,8 @@
             $(`.usecase-bots-cont [appid=${appid}] .eb-chat-head`).css("background-color", d.ebbotThemeColorColl[i]);
             $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 400);
             $(".eb_iframecont").hide();
-            $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).css("display", "flex");$(this).animate({ opacity: '1' }, 400); });
+            $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).css("display", "flex"); $(this).animate({ opacity: '1' }, 400); });
+            setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);
             d.latestAppid = appid;
         }
     </script>

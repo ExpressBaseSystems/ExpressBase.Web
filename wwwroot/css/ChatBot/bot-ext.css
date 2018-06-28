@@ -89,6 +89,10 @@
 	.usecase-bots-cont {
 		width: 100% !important;
 	}
+
+	.chatmaximize {
+		display: none !important;
+	}
 }
 .eb-chatbtn {
 	bottom: calc( 65% - 55px) !important;

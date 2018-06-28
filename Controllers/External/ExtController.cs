@@ -35,28 +35,6 @@ namespace ExpressBase.Web.Controllers
         public ExtController(IServiceClient _client, IRedisClient _redis)
             : base(_client, _redis) { }
 
-        // GET: /<controller>/
-        [HttpPost]
-        [HttpGet]
-        public IActionResult Index()
-        {
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            ViewBag.useremail = TempData.Peek(RequestEmail);
-            ViewBag.message = TempData["Message"];
-
-            return View();
-        }
-
-        [HttpPost]
-        public bool JoinBeta()
-        {
-            string email = this.HttpContext.Request.Form["Email"];
-            if (this.ServiceClient.Post<bool>(new JoinbetaReq { Email = email }))
-                return true;
-            else
-                return false;
-        }
-
         [HttpGet]
         public IActionResult ResetPassword()
         {
@@ -98,14 +76,11 @@ namespace ExpressBase.Web.Controllers
             string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
 
-            if (!String.IsNullOrEmpty(sBToken )|| !String.IsNullOrEmpty(sRToken))
+            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
             {
-
                 if (IsTokensValid(sRToken, sBToken, hostParts[0]))
                 {
-                    if (hostParts[0] == RoutingConstants.MYACCOUNT)
-                        return Redirect(RoutingConstants.MYSOLUTIONS);
-                    else if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                    if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
                         return Redirect(RoutingConstants.MYAPPLICATIONS);
                     else
                         return RedirectToAction("UserDashboard", "TenantUser");
@@ -113,10 +88,28 @@ namespace ExpressBase.Web.Controllers
             }
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.ErrorMsg = TempData["ErrorMessage"];
+            return View();
+        }
+
+        public IActionResult TenantSignIn()
+        {
+            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(CharConstants.DOT);
+
+            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+
+            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+            {
+                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    return Redirect(RoutingConstants.MYSOLUTIONS);
+            }
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            ViewBag.ErrorMsg = TempData["ErrorMessage"];
 
             return View();
         }
-        
+
         public IActionResult test()
         {
 
@@ -218,7 +211,7 @@ namespace ExpressBase.Web.Controllers
                     var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
-                        return RedirectToAction("EbOnBoarding",new { Email = reqEmail }); // convert get to post
+                        return RedirectToAction("EbOnBoarding", new { Email = reqEmail }); // convert get to post
                 }
                 else
                     return RedirectToAction(RoutingConstants.INDEX, new RouteValueDictionary(new { controller = RoutingConstants.EXTCONTROLLER, action = RoutingConstants.INDEX })); // convert get to post;
@@ -297,9 +290,9 @@ namespace ExpressBase.Web.Controllers
 
             if (TenantSingleSignOn(btoken, rtoken, console))
             {
-                if(console == RoutingConstants.DC)
-                    return RedirectToAction("DevDashBoard","Dev");
-                else if(console == RoutingConstants.UC)
+                if (console == RoutingConstants.DC)
+                    return RedirectToAction("DevDashBoard", "Dev");
+                else if (console == RoutingConstants.UC)
                     return RedirectToAction("UserDashboard", "TenantUser");
             }
             return View();
@@ -496,7 +489,7 @@ namespace ExpressBase.Web.Controllers
         private void DecideConsole(string subDomain, out string whichconsole)
         {
             string cid = null;
-            if(subDomain == RoutingConstants.MYACCOUNT)
+            if (subDomain == RoutingConstants.MYACCOUNT)
             {
                 cid = CoreConstants.EXPRESSBASE;
                 whichconsole = EbAuthContext.TenantContext;
@@ -546,10 +539,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult errorredirect(string console)
         {
-            if (console == RoutingConstants.TC)
-                return RedirectToAction("SignIn", "Common");
-            else
-                return Redirect("/");
+            return Redirect("/");
         }
 
         [HttpGet]

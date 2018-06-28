@@ -20,19 +20,14 @@
         Countrptfooter: 1
     };
 
-    this.EbObjectSections = {
-        ReportHeader: 'rpthead',
-        PageHeader: 'pghead',
-        ReportDetail: 'detail',
-        PageFooter: 'pgfooter',
-        ReportFooter: 'rptfooter'
-    };
+    this.EbObjectSections = ["ReportHeader", "PageHeader", "ReportDetail", "PageFooter", "ReportFooter"];
+
     this.msBoxSubNotation = {
-        rpthead: 'Rh',
-        pghead: 'Ph',
-        detail: 'Dt',
-        pgfooter: 'Pf',
-        rptfooter: 'Rf'
+        ReportHeader: { Notation: 'Rh', Counter:0},
+        PageHeader: { Notation: 'Ph', Counter: 0 },
+        ReportDetail: { Notation: 'Dt', Counter: 0 },
+        PageFooter: { Notation: 'Pf', Counter: 0 },
+        ReportFooter: { Notation: 'Rf', Counter: 0 }
     };
 
     this.pages = {
@@ -89,14 +84,19 @@
         this.RbObj.margin.Left = $(".track_line_vert1").position().left;
         $(".track_line_vert2").css("left", parseFloat(this.RbObj.width) - this.RbObj.repExtern.convertPointToPixel(margin.Right));
         this.RbObj.margin.Right = $(".track_line_vert2").position().left;
+        $(".pageHeaders").css({ "padding-left": $(".track_line_vert1").position().left, "padding-right": parseFloat(this.RbObj.width) - $(".track_line_vert2").position().left});
     };
 
     this.onTrackerStop = function (e, ui) {
         var $t = $(ui.helper);
-        if ($t.hasClass("track_line_vert1"))
+        if ($t.hasClass("track_line_vert1")) {
+            $(".pageHeaders").css("padding-left", $t.position().left);
             this.RbObj.margin.Left = $t.position().left;
-        else
+        }
+        else {
+            $(".pageHeaders").css("padding-right", parseFloat(this.RbObj.width) - $t.position().left);
             this.RbObj.margin.Right = $t.position().left;
+        }
     };
 
     this.windowscroll = function () {
@@ -123,7 +123,7 @@
 
     this.getSectionToAddSum = function () {
         var objlist = [];
-        $("#detail0").parent().nextAll().not(".gutter,#detail").each(function (i, obj) {
+        $("#ReportDetail0").parent().nextAll().not("#detail").each(function (i, obj) {
             $(obj).children().not(".gutter").each(function (j, sections) {
                 objlist.push($(sections));
             })
@@ -270,13 +270,16 @@
     };
 
     this.resizeTdOnLayoutResize = function (id, opertaion) {
-        this.RbObj.TableCollection[id].forEach(function (obj) {
-            if (opertaion === "start" || opertaion === "set")
-                $(`#${obj.EbSid}`).css({ width: "100%", height: "100%" });
-            else if (opertaion === "stop" || opertaion === "set") {
-                this.RbObj.objCollection[obj.EbSid].Width = $(`#${obj.EbSid}`).width();
-                this.RbObj.objCollection[obj.EbSid].Height = $(`#${obj.EbSid}`).height();
-            }
+        $(`#${id}`).find("td").each(function (i,obj) {
+                if (opertaion === "start" || opertaion === "set")
+                    $(obj).find(".dropped").css({ width: "100%", height: "100%" });
+                else if (opertaion === "stop" || opertaion === "set") {
+                    if ($(obj).find(".dropped").length > 0) {
+                        let ctrl = $(obj).children(".dropped");
+                        this.RbObj.objCollection[ctrl.attr("id")].Width = $(`#${ctrl.attr("id")}`).innerWidth();
+                        this.RbObj.objCollection[ctrl.attr("id")].Height = $(`#${ctrl.attr("id")}`).innerHeight();
+                    }
+                }
         }.bind(this));
         this.RbObj.objCollection[id].Height = $("#" + id).height();
         this.RbObj.objCollection[id].Width = $("#" + id).width();
@@ -393,14 +396,14 @@
         }
 
         if (target.attr("Layer") === "Section") {
-            $(".multiSplit,.headersections,#page,.rulerleft").show();
-            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").hide();
+            $(".multiSplit,.headersections,#page").show();
+            $(".headersections-report-layer,#page-reportLayer").hide();
             $(".tracker_drag").css("height", "100%");
             this.RbObj.containment = ".page";
         }
         else {
-            $(".multiSplit,.headersections,#page,.rulerleft").hide();
-            $(".headersections-report-layer,#page-reportLayer,.rulerleft_Lyr_rpt").show();
+            $(".multiSplit,.headersections,#page").hide();
+            $(".headersections-report-layer,#page-reportLayer").show();
             $(".tracker_drag").css("height", "100%");
             this.RbObj.containment = ".page-reportLayer";
         }
@@ -477,7 +480,7 @@
 
     this.start = function () {
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
-        $(window).on("scroll", this.windowscroll.bind(this));
+        //$(window).on("scroll", this.windowscroll.bind(this));
         $(".Rb_layer").off("click").on("click", this.switchlayer.bind(this));
         $(".add_calcfield").on("click", this.newCalcFieldSum.bind(this));
         $(".add_summarry").on("click", this.addSummarry.bind(this));

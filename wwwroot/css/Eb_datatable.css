@@ -180,9 +180,21 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
 
 .columnDrag {
     margin: 0px 1px;
-    padding: 2px 5px;
+    padding: 5px 5px;
     width: auto;
     height: 25px;
+    background-color: #306395;
+    border-radius: 15px;
+    color: #f5f5f5;
+    display: inline-block
+}
+.colTiles {
+    font-size: 12px;
+}
+.colTiles.close {
+    font-size: 15px;
+    margin: -2px 2px 0px 4px;
+    color: black !important;
 }
 
 .noPadding {

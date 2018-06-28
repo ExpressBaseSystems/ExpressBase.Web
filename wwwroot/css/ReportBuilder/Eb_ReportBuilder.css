@@ -171,13 +171,16 @@
         color: #000000;
         border-right: 0;
     }
-.headersections-report-layer{
+.headersections-report-layer {
     width: 60px;
-    float: left;
     border: 1px solid #cccccc;
     background-color: #fafafa;
     color: #000000;
     border-right: 0;
+    display: none;
+    height: 100%;
+    position: absolute;
+    top: 0;
 }
 .multiSplit {
     width: 25px;
@@ -224,22 +227,11 @@
     z-index: 2;
     overflow: hidden;
 }
-.rulerleft_Lyr_rpt {
-    position: absolute;
-    border: 1px solid #aaa;
-    font-size: 10px;
-    background-color: #fbf7f7;
-    margin-left: -19px;
-    margin-top: 20px;
-    width: 20px;
-    z-index: 2;
-    overflow: hidden;
-}
 .ruler > div {
         display: inline-block;
         background: #000;
     }
-.rulerleft > div, .rulerleft_Lyr_rpt > div{
+.rulerleft > div{
     background: #000;
 }
     .ruler .tickLabel {
@@ -311,64 +303,64 @@
     width: 1px;
     height: 4px;
 }
-.rulerleft .tickLabel:first-of-type, .rulerleft_Lyr_rpt .tickLabel:first-of-type {
+.rulerleft .tickLabel:first-of-type {
     margin-left: 0;
     margin-top: -1px;
 }
-.rulerleft .tickLabel-cm:first-of-type, .rulerleft_Lyr_rpt .tickLabel-cm:first-of-type {
+.rulerleft .tickLabel-cm:first-of-type {
     margin-left: 0;
     margin-top: -1px;
 }
-.rulerleft .tickLabel-inch:first-of-type, .rulerleft_Lyr_rpt .tickLabel-inch:first-of-type{
+.rulerleft .tickLabel-inch:first-of-type{
     margin-left: 0;
     margin-top: -1px;
 }
-    .rulerleft .tickLabel, .rulerleft_Lyr_rpt .tickLabel {
+    .rulerleft .tickLabel {
         margin-top: 4px;
         width: 100%;
         height: 1px;
     }
-    .rulerleft .tickLabel-cm, .rulerleft_Lyr_rpt .tickLabel-cm {
+    .rulerleft .tickLabel-cm {
         margin-top: calc(1mm - 1px);
         width: 100%;
         height: 1px;
     }
-    .rulerleft .tickLabel-inch, .rulerleft_Lyr_rp .tickLabel-inch {
+    .rulerleft .tickLabel-inch {
         margin-top: calc(2.54mm - 1px);
         width: 100%;
         height: 1px;
     }
-    .rulerleft .tickMajor, .rulerleft_Lyr_rpt .tickMajor {
+    .rulerleft .tickMajor {
         margin-top: 4px;
         width: 6px;
         height: 1px;
         margin-left: 13px;
     }
-    .rulerleft .tickMajor-cm, .rulerleft_Lyr_rpt .tickMajor-cm {
+    .rulerleft .tickMajor-cm {
         margin-top: calc(1mm - 1px);
         width: 6px;
         height: 1px;
         margin-left: 13px;
     }
-    .rulerleft .tickMajor-inch, .rulerleft_Lyr_rpt .tickMajor-inch {
+    .rulerleft .tickMajor-inch{
         margin-top: calc(2.54mm - 1px);
         width: 6px;
         height: 1px;
         margin-left: 13px;
     }
-    .rulerleft .tickMinor, .rulerleft_Lyr_rpt .tickMinor {
+    .rulerleft .tickMinor {
         margin-top: 4px;
         width: 4px;
         height: 1px;
         margin-left: 14px;
     }
-    .rulerleft .tickMinor-cm, .rulerleft_Lyr_rpt .tickMinor-cm {
+    .rulerleft .tickMinor-cm {
         margin-top: calc(1mm - 1px);
         width: 4px;
         height: 1px;
         margin-left: 14px;
     }
-    .rulerleft .tickMinor-inch, .rulerleft_Lyr_rpt .tickMinor-inch {
+    .rulerleft .tickMinor-inch {
         margin-top: calc(2.54mm - 1px);
         width: 4px;
         height: 1px;
@@ -379,6 +371,7 @@
     margin-left: 59px;
     border: 1px solid #d8d8d8;
     background-color: white;
+    position:relative;
 }
 .page-outer-container {
     width: auto;
@@ -389,7 +382,6 @@
 }
 
 .page-outer-cont {
-    padding-right: 10px;
     padding-bottom: 50px;
     position: relative;
     z-index: 0;
@@ -546,30 +538,33 @@
     height: 0;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-right: 5px solid black;
+    border-right: 5px solid;
     margin-top: -5px;
     position: absolute;
     left: -2px;
+    border-right-color:inherit;
 }
 .arrow-up {
     width: 0;
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-bottom: 5px solid black;
+    border-bottom: 5px solid;
     margin-left: -5px;
     position: absolute;
     top: -2px;
+    border-bottom-color:inherit;
 }
 .arrow-right {
     width: 0;
     height: 0;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-left: 5px solid black;
+    border-left: 5px solid;
     margin-top: -5px;
     position: absolute;
     right: -2px;
+    border-left-color: inherit;
 }
 
 .arrow-down {
@@ -577,18 +572,20 @@
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 5px solid black;
+    border-top: 5px solid;
     margin-left: -5px;
     position: absolute;
     bottom: -2px;
+    border-top-color: inherit;
 }
 
 .multiSplitHboxSub {
     display: flex;
-    position:relative;
-    justify-content:center;
+    position: relative;
+    justify-content: center;
     align-items: center;
     font-size: 10px;
+    border-bottom: 1px solid #b5a9a9;
 }
     .multiSplitHboxSub .lock-icon {
         align-self: flex-end;
@@ -740,10 +737,12 @@
     background-color: #336699 !important;
     color: white !important;
 }
-.page-reportLayer {    
+.page-reportLayer {
     margin-left: 60px;
     border: 1px solid #d8d8d8;
     background-color: white;
+    display: none;
+    position: relative;
 }
 .track_line_vert1 {
     position: absolute;
@@ -846,4 +845,24 @@
 .tool_item_body{
     float:left;
     width:100%;
+}
+
+/*latest css repport*/
+.Eb_ReportSections {
+    position: relative;
+    width: 100%;
+}
+.header_box {
+    width: 100%;
+    position: relative;
+    border-bottom: 1px solid #b5a9a9;
+}
+.multiSplitHbox {
+    width: 100%;
+}
+.pageHeaders {
+    border-bottom: 1px solid #b5a9a9;
+}
+.Eb_ReportSections:not(.dropped) .ui-resizable-s{
+    bottom:0 !important;
 }

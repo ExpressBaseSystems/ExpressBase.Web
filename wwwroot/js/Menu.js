@@ -195,8 +195,8 @@
             appname = this.resultObj.AppList[_obj.AppId].AppName;
         $container.append(`
                 <div class='col-md-6 objitems' name='objBox'>
-                    <div class="object_container">
-                    <div class='col-md-11 col-lg-11 col-sm-11 pd-0'>
+                    <a class="object_container" href='${this.decideUrl(_obj)}'>
+                    <div class='col-md-12 col-lg-12 col-sm-12 pd-0'>
                         <h4 class='head4'>${_obj.ObjName}</h4>
                         <p class='text-justify'>${_obj.Description || 'no description'}</p>
                         <div class="label_container">
@@ -205,10 +205,7 @@
                                 <span name="Application" class="label">${appname}</span>
                         </div>
                     </div>
-                    <div class='col-md-1 pd-0 objbox-footer'>
-                        <a href='${this.decideUrl(_obj)}' class='btn'>${icon}</a>
-                    </div>
-                    </div>
+                    </a>
                 </div>`);
     };
 

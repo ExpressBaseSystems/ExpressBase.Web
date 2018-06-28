@@ -7,24 +7,173 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="~/" id="logo">
-                    <img class="img-responsive" src="~/images/EB_Logo.png">
-                </a>
+                @if (ViewBag.Env == "Development")
+                {
+                    <a href="http://localhost:41400" id="logo">
+                        <img class="img-responsive" src="~/images/EB_Logo.png">
+                    </a>
+                }
+                else if (ViewBag.Env == "Staging")
+                {
+                    <a href="https://eb-test.info" id="logo">
+                        <img class="img-responsive" src="~/images/EB_Logo.png">
+                    </a>
+                }
+                else if (ViewBag.Env == "Production")
+                {
+                    <a href="https://expressbase.com" id="logo">
+                        <img class="img-responsive" src="~/images/EB_Logo.png">
+                    </a>
+                }
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown nav_drp_li">
-                    <a class="hvr-underline-from-center dropdown-toggle" data-toggle="dropdown" id="products">Products <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a class="sub" href="https://reports.expressbase.com">Expressbase Reports</a></li>
-                            <li><a class="sub" href="https://bots.expressbase.com">Expressbase Bots</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="hvr-underline-from-center" href="~/AboutUs">About Us</a></li>
-                    <li id="signIn"><a class="hvr-underline-from-center" href="~/SignIn">Sign in</a></li>
+                    @if (ViewBag.Env == "Development")
+                    {
+                        <li><a class="hvr-underline-from-center" href="~/" id="Home">Home</a></li>
+                        <li>
+                            <a class="hvr-underline-from-center dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Products</a>
+                            <div class="dropdown-menu drp_container">
+                                <a class="w-100" href="http://localhost:41400/Products/Bots">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/chat_.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>ChatBots as a Service (BaaS))</h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100" href="http://localhost:41400/Products/Reports">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/bi.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Reporting as a Service (RaaS)</h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100 disabled">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/form_.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Forms as a Service (FaaS)<span class="label-cs pull-right">Coming soon</span></h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100 disabled">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/document_ .svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Managed.Documents<span class="label-cs pull-right">Coming soon</span></h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+                        <li><a class="hvr-underline-from-center" href="http://localhost:41400/Platform" id="Platform">Platform</a></li>
+                        <li><a class="hvr-underline-from-center" href="http://localhost:41400/AboutUs" id="AboutUs">About Us</a></li>
+                        <li id="signIn"><a class="hvr-underline-from-center" href="http://myaccountlocalhost:41500">Sign in &#8594;</a></li>
+                    }
+                    @if (ViewBag.Env == "Staging")
+                    {
+                        <li><a class="hvr-underline-from-center" href="~/" id="Home">Home</a></li>
+                        <li>
+                            <a class="hvr-underline-from-center dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Products</a>
+                            <div class="dropdown-menu drp_container">
+                                <a class="w-100" href="https://eb-test.info/Products/Bots">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/chat_.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>ChatBots as a Service</h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100" href="https://eb-test.info/Products/Reports">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/bi.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Reporting as a Service</h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100 disabled">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/form_.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Forms as a Service<span class="label-cs pull-right">Coming soon</span></h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100 disabled">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/document_ .svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Managed.Documents<span class="label-cs pull-right">Coming soon</span></h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+                        <li><a class="hvr-underline-from-center" href="https://eb-test.info/Platform" id="Platform">Platform</a></li>
+                        <li><a class="hvr-underline-from-center" href="https://eb-test.info/AboutUs" id="AboutUs">About Us</a></li>
+                        <li id="signIn"><a class="hvr-underline-from-center" href="https://myaccount.eb-test.info">Sign in &#8594;</a></li>
+                    }
+                    @if (ViewBag.Env == "Production")
+                    {
+                        <li><a class="hvr-underline-from-center" href="~/" id="Home">Home</a></li>
+                        <li>
+                            <a class="hvr-underline-from-center dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Products</a>
+                            <div class="dropdown-menu drp_container">
+                                <a class="w-100" href="https://expressbase.com/Products/Bots">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/chat_.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>ChatBots as a Service (BaaS))</h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100" href="https://expressbase.com/Products/Reports">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/bi.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Reporting as a Service (RaaS)</h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100 disabled">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/form_.svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Forms as a Service (FaaS)<span class="label-cs pull-right">Coming soon</span></h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                                <a class="w-100 disabled">
+                                    <div class="drp_items_log">
+                                        <img src="/images/svg/document_ .svg" class="w-100" />
+                                    </div>
+                                    <div class="drp_items_desc">
+                                        <h4>Managed.Documents<span class="label-cs pull-right">Coming soon</span></h4>
+                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+                        <li><a class="hvr-underline-from-center" href="https://expressbase.com/Platform" id="Platform">Platform</a></li>
+                        <li><a class="hvr-underline-from-center" href="https://expressbase.com/AboutUs" id="AboutUs">About Us</a></li>
+                        <li id="signIn"><a class="hvr-underline-from-center" href="https://myaccount.expressbase.com">Sign in &#8594;</a></li>
+                    }
                 </ul>
             </div>
         </div>
     </nav>
 </section>
-<!--/ Navigation bar-->

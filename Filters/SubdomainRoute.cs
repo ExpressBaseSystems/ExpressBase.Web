@@ -79,10 +79,21 @@ namespace ExpressBase.Web.Filters
 
         private void RouteToCorrectPage(RouteContext context, bool isGoing2SignIn2UC)
         {
+            var host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(CharConstants.DOT);
+
             if (isGoing2SignIn2UC) // USER CONSOLE
             {
-                context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EXTCONTROLLER; 
-                context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.USERSIGNIN2UC;
+                if (hostParts[0] == RoutingConstants.MYACCOUNT)
+                {
+                    context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EXTCONTROLLER;
+                    context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.TENANTSIGNIN;
+                }
+                else
+                {
+                    context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EXTCONTROLLER;
+                    context.RouteData.Values[RoutingConstants.ACTION] = RoutingConstants.USERSIGNIN2UC;
+                }
             }
             else // TENANT CONSOLE
             {

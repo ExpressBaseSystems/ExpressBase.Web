@@ -41,7 +41,7 @@
 
         let getPos = function (i) {
             let it = _tr0.find("td").eq(i);
-            let tdleft = it.position().left + it.innerWidth();
+            let tdleft = it.position().left + it.outerWidth();
             return calcPercent(tdleft);
         };
 

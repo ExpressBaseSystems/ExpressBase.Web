@@ -320,6 +320,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             return sum / data.length;
         });
 
+        jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+            "date-uk-pre": function (a) {
+                if (a == null || a == "") {
+                    return 0;
+                }
+                var ukDatea = a.split('/');
+                return (ukDatea[2] + ukDatea[1] + ukDatea[0]) * 1;
+            },
+
+            "date-uk-asc": function (a, b) {
+                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+            },
+
+            "date-uk-desc": function (a, b) {
+                return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+            }
+        });
+
         this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
         //this.table_jQO.on('length.dt', function (e, settings, len) {
@@ -748,7 +766,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     if (type === 'boolean') {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
                         if (!($(textid).is(':indeterminate')))
-                            filter_obj_arr.push(new filter_obj(colum, "=", val1));
+                            filter_obj_arr.push(new filter_obj(colum, "=", val1, "boolean"));
                     }
                     else {
                         oper = $('#' + table + '_' + colum + '_hdr_sel').text();
@@ -760,22 +778,22 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
                                         if (type === 'number') {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), "number"));
                                         }
                                         else if (type === 'date') {
                                             if (val2 > val1) {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1, "date"));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2, "date"));
                                             }
                                             else {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2, "date"));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1, "date"));
                                             }
                                         }
                                     }
                                 }
                                 else {
-                                    filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
+                                    filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val(), type));
                                 }
                             }
                         }
@@ -1346,6 +1364,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $('[data-toggle="tooltip"]').tooltip({
             placement: 'bottom'
         });
+
+        $("." + this.tableId + "_htext[type=date]").on("dblclick", this.dblclickDateColumn);
+
+        $("." + this.tableId + "_htext[type=date]").bind('paste', this.pasteDateColumn);
+
+        $("." + this.tableId + "_htext[type=date]").on("focusout", this.focusoutDateColumn.bind(this));
         this.filterDisplay();
 
         //if (focusedId !== undefined)
@@ -1574,7 +1598,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     //else
                     //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
                 }
-                else if (col.Type == parseInt(gettypefromString("DateTime"))) {
+                else if (col.Type == parseInt(gettypefromString("DateTime")) || col.Type == parseInt(gettypefromString("Date"))) {
                     if (parseInt(EbEnums.ControlType.Numeric) === col.FilterControl)
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex));
                     else if (parseInt(EbEnums.ControlType.Text) === col.FilterControl)
@@ -1631,11 +1655,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='date' data-toggle='tooltip' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='date' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
+
         return filter;
+
     };
 
     this.getFilterForString = function (header_text1, header_select, data_table, htext_class, data_colum, header_text2, zidx) {
@@ -1663,16 +1689,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         filter = "<center><input type='checkbox' id='" + id + "' data-toggle='tooltip' title='' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool" + this.tableId + "' style='vertical-align: middle;'></center>";
         return filter;
     };
-
-    //this.showOrHideFilter = function (e) {
-    //    if ($('#' + this.tableId + '_wrapper table thead tr[class=addedbyeb]').is(':visible'))
-    //        $('#' + this.tableId + '_wrapper table thead tr[class=addedbyeb]').hide();
-    //    else {
-    //        $('#' + this.tableId + '_wrapper table thead tr[class=addedbyeb]').show();
-    //    }
-
-    //    this.clearFilter(e);
-    //};
 
     this.clearFilter = function () {
         var flag = false;
@@ -1705,24 +1721,31 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var flag = false;
         var colum = $(e.target).attr('data-colum');
         var ctype = $(e.target).parents('.input-group').find("input").attr('data-coltyp');
+        var dateclas = (ctype === "date") ? "no-spin": "";
         $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
-        //" <input type='number' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">"dv173_1_discount_hdr_txt1
-        //$(e.target).parents('.input-group').find('#' + table + '_' + colum + '_hdr_txt2').eq(0).css('visibility', ((selText.trim() === 'B') ? 'visible' : 'hidden'));
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
-                $(e.target).parents('.input-group').append("<input type='" + ctype + "' class='between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
+                $(e.target).parents('.input-group').append("<input type='" + ctype + "' class='" + dateclas+" between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keyup", this.call_filter);
+                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("dblclick", this.dblclickDateColumn);
+                $("#" + this.tableId + "_" + colum + "_hdr_txt2").bind('paste', this.pasteDateColumn);
+                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("focusout", this.focusoutDateColumn.bind(this));
+                this.columnSearch = this.repopulate_filter_arr();
             }
-            //flag = true;
         }
         else if (selText.trim() !== 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 2) {
                 $(e.target).parents('.input-group').find("input").eq(1).remove();
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
-                //$("#" + this.tableId + "_" + colum + "_hdr_txt1").style("width", "100%", "important"); 
+                var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === colum; });
+                if (searchObj.length > 1) {
+                    var index = this.columnSearch.findIndex(x => x.Column == colum);
+                    this.columnSearch.splice(index, 2);
+                    if ($("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim() !== "")
+                        this.columnSearch.push(new filter_obj(colum, selText.trim(), $("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim(), ctype));
+                }
             }
-            //flag = false;
         }
         this.Api.columns.adjust();
         e.preventDefault();
@@ -1766,6 +1789,25 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
     }.bind(this);
+
+    this.dblclickDateColumn = function () {
+        this.type = "text";
+        this.select();
+    };
+
+    this.pasteDateColumn = function (e) {
+        var data = e.originalEvent.clipboardData.getData('Text');
+        var dt = data.split("/");
+        this.value = [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("-");
+        e.preventDefault();
+    };
+
+    this.focusoutDateColumn = function () {
+        $(event.target)[0].value = formatDate($(event.target)[0].value)
+        $(event.target)[0].type = "date";
+        if (this.Api)
+            this.Api.columns.adjust();
+    };
 
     this.toggleInFilter = function (e) {
         var table = $(e.target).attr('data-table');
@@ -2012,6 +2054,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
             }
         }
+        if (col.Type == parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
+            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
+                this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
+                this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
+                this.ebSettings.Columns.$values[i].mRender = this.renderlink4NewTable.bind(this);
+            }
+            else {
+                this.ebSettings.Columns.$values[i].render = this.renderDateformat.bind(this);
+                this.ebSettings.Columns.$values[i].mRender = this.renderDateformat.bind(this);
+            }
+        }
+
+
         if (col.Font !== null) {
             var style = document.createElement('style');
             style.type = 'text/css';
@@ -2169,6 +2224,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return `<label class='labeldata'>${data}</label>`;
     };
 
+    this.renderDateformat = function (data) {
+        if (typeof data !== "object") {
+            var date = new Date(parseInt(data.substr(6)));
+            var month = date.getMonth() + 1;
+            var dt = date.getDate();
+            return (dt.toString().length > 1 ? dt : "0" + dt) + "/" +(month.toString().length > 1 ? month : "0" + month)  + "/" + date.getFullYear();
+        }
+        else
+            return "";
+    };
+
     this.start();
 };
 
@@ -2288,6 +2354,8 @@ function gettypefromString(str) {
         return "8";
     else if (str == "Numeric")
         return "12";
+    else if (str == "Date")
+        return "5";
 }
 
 if (!String.prototype.splice) {
@@ -2309,11 +2377,6 @@ var Agginfo = function (col, deci) {
     this.deci_val = deci;
 };
 
-var filter_obj = function (colu, oper, valu) {
-    this.Column = colu;
-    this.Operator = oper;
-    this.Value = valu;
-};
 
 var displayFilter = function (col, oper, val, Loper) {
     this.name = col;
@@ -2337,7 +2400,7 @@ var EbTags = function (settings) {
                 this.id.append(`<div class="tagstyle priorfilter">${ctrl.logicOp}</div>`);
         }.bind(this));
 
-        if (this.displayColumnSearchArr.length > 0)
+        if (this.displayFilterDialogArr.length > 0 && this.displayColumnSearchArr.length >0)
             this.id.append(`<div class="tagstyle op">AND</div>`);
 
         $.each(this.displayColumnSearchArr, function (i, search) {
@@ -2371,4 +2434,17 @@ var EbTags = function (settings) {
     };
 
     this.show();
+}
+
+
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
 }

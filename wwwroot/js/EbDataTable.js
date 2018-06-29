@@ -608,36 +608,51 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
         if (this.columnSearch.length > 0) {
-            $.each(this.columnSearch, function (i, search) {
+            for (i = 0; i < this.columnSearch.length; i++) {
+            //$.each(this.columnSearch, function (i, search) {
+                search = this.columnSearch[i];
                 var o = new displayFilter();
                 o.name = search.Column;
                 o.operator = search.Operator;
-                if (search.Value.toString().includes("|")) {
-                    $.each(search.Value.split("|"), function (j, val) {
-                        if (val.trim() !== "") {
-                            var o = new displayFilter();
-                            o.name = search.Column;
-                            o.operator = search.Operator;
-                            o.value = val;
-                            if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "" )
-                                o.logicOp = "OR";
-                            else if (typeof this.columnSearch[i + 1] !== "undefined")
-                                o.logicOp = "AND";
-                            else
-                                o.logicOp = "";
-                            columnFilter.push(o);
-                        }
-                    }.bind(this));
+                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column });
+                if (searchobj.length === 1) {
+                    if (search.Value.toString().includes("|")) {
+                        $.each(search.Value.split("|"), function (j, val) {
+                            if (val.trim() !== "") {
+                                var o = new displayFilter();
+                                o.name = search.Column;
+                                o.operator = search.Operator;
+                                o.value = val;
+                                if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "")
+                                    o.logicOp = "OR";
+                                else if (typeof this.columnSearch[i + 1] !== "undefined")
+                                    o.logicOp = "AND";
+                                else
+                                    o.logicOp = "";
+                                columnFilter.push(o);
+                            }
+                        }.bind(this));
+                    }
+                    else {
+                        o.value = search.Value;
+                        if (typeof this.columnSearch[i + 1] !== "undefined")
+                            o.logicOp = "AND";
+                        else
+                            o.logicOp = "";
+                        columnFilter.push(o);
+                    }
                 }
                 else {
-                    o.value = search.Value;
+                    i++;
+                    o.value = searchobj[0].Value + " AND " + searchobj[1].Value;
+                    o.operator = "BETWEEN";
                     if (typeof this.columnSearch[i + 1] !== "undefined")
                         o.logicOp = "AND";
                     else
                         o.logicOp = "";
                     columnFilter.push(o);
                 }
-            }.bind(this));
+            }
         }
         this.Tags = new EbTags({ "displayFilterDialogArr": filterdialog, "displayColumnSearchArr": columnFilter, "id": "#filterDisplay_"+this.tableId+"", "remove": this.closeTag });
         //this.Tags = new EbTags({ "displayFilterDialogArr": $controls, "displayColumnSearchArr": this.columnSearch, "id": "#filter_Display", "remove": this.closeTag });
@@ -1367,7 +1382,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("." + this.tableId + "_htext[type=date]").on("dblclick", this.dblclickDateColumn);
 
-        $("." + this.tableId + "_htext[type=date]").bind('paste', this.pasteDateColumn);
+        //$("." + this.tableId + "_htext[type=date]").bind('paste', this.pasteDateColumn);
 
         $("." + this.tableId + "_htext[type=date]").on("focusout", this.focusoutDateColumn.bind(this));
         this.filterDisplay();
@@ -1729,22 +1744,23 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keyup", this.call_filter);
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("dblclick", this.dblclickDateColumn);
-                $("#" + this.tableId + "_" + colum + "_hdr_txt2").bind('paste', this.pasteDateColumn);
+                //$("#" + this.tableId + "_" + colum + "_hdr_txt2").bind('paste', this.pasteDateColumn);
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("focusout", this.focusoutDateColumn.bind(this));
-                this.columnSearch = this.repopulate_filter_arr();
+                //this.columnSearch = this.repopulate_filter_arr();
             }
         }
         else if (selText.trim() !== 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 2) {
                 $(e.target).parents('.input-group').find("input").eq(1).remove();
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
-                var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === colum; });
-                if (searchObj.length > 1) {
-                    var index = this.columnSearch.findIndex(x => x.Column == colum);
-                    this.columnSearch.splice(index, 2);
-                    if ($("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim() !== "")
-                        this.columnSearch.push(new filter_obj(colum, selText.trim(), $("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim(), ctype));
-                }
+                //var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === colum; });
+                //if (searchObj.length > 1) {
+                //    var index = this.columnSearch.findIndex(x => x.Column == colum);
+                //    this.columnSearch.splice(index, 2);
+                //    if ($("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim() !== "")
+                //        this.columnSearch.push(new filter_obj(colum, selText.trim(), $("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim(), ctype));
+                //}
+                //this.columnSearch = this.repopulate_filter_arr();
             }
         }
         this.Api.columns.adjust();
@@ -1753,6 +1769,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.call_filter = function (e) {
         if (e.keyCode === 13) {
+            this.changeDateOrder(e);
             var flag = true;
             if ($(e.target).siblings(".eb_finput").length === 1) {
                 if ($(e.target).val() === "") {
@@ -1782,6 +1799,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $('#' + this.tableId).DataTable().ajax.reload();
                 if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
                     $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+
+                $(e.target).trigger("click");
+                $(e.target).siblings().children("button").focus();
             }
         }
         else {
@@ -1807,6 +1827,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(event.target)[0].type = "date";
         if (this.Api)
             this.Api.columns.adjust();
+    };
+
+    this.changeDateOrder = function (e) {
+        var data = $(e.target).val().trim();
+        var dt = data.split("/");
+        if (dt.length === 1)
+            dt = data.split("-");
+        if(dt[0].length <= 2)
+            $(e.target).val([dt[2].trim(), dt[1].trim(), dt[0].trim()].join("-"));
+        else
+            $(e.target).val([dt[0].trim(), dt[1].trim(), dt[2].trim()].join("-"));
     };
 
     this.toggleInFilter = function (e) {

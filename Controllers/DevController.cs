@@ -597,5 +597,11 @@ namespace ExpressBase.Web.Controllers
             return refid;
         }
 
+		public int UpdateAppSettings(int id, int type, string settings)
+		{
+			SaveAppSettingsResponse response = this.ServiceClient.Get(new SaveAppSettingsRequest{AppId = id, AppType = type, Settings = settings });
+			return response.ResStatus;
+		}
+
     }
 }

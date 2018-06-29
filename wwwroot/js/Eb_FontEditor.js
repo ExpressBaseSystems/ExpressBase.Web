@@ -32,7 +32,7 @@
     };
 
     this.appendFontPropsSec = function () {
-        var Prophtml = (`<div class="col-md-7 pd-0 FEcol FEfont-family">
+        var Prophtml = (`<div class="col-md-6 pd-0 FEcol FEfont-family">
             <div class="FEhead-font" style="text-align:left">
             <div class="font-text">Font</div><input type="text" id="fontSearch" class="fontSearch" placeholder="search font"></div>
             <div class="FEcol-bdy" id="${this.ContainerId }FEfamily-bdy">
@@ -51,7 +51,7 @@
 
     this.appendMpropSec = function () {
         var MpropHtml = (`<div class="col-md-4 pd-0"><label style="width:40%">Font Color</label>
-            <input type="color" class="form-control" id="fontColor" style="height:17px;display:inline-block;width:50%;">
+            <input type="color" class="pg-fontcolor-inp" id="fontColor">
             </div>
             <div class="col-md-2 pd-0"><label style="width:40%">Caps</label>
             <input type="checkbox" name="caps" id="FE-caps" class="btn btn-info" style="display:inline-block;margin:0;height: 17px; width: 17px;">

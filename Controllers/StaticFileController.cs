@@ -197,7 +197,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception:" + e.ToString());
                 resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" + "\nResponse: " + res.ResponseStatus.Message });
             }
-            return resp;
+            return ((resp == null) ? new JsonResult("") : resp);
         }
 
         [HttpPost]

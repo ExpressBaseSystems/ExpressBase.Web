@@ -6,7 +6,7 @@
 }
     .eb_colResizer td {
         position: relative !important;
-        padding:0 !important;
+        padding:2px !important;
         border-bottom-color:transparent !important;
     }
     .eb_colResizer tbody {
@@ -33,4 +33,5 @@
     background: #eee;
     WIDTH: 100%;
     cursor: row-resize;
+    z-index: 1;
 }

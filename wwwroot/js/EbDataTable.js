@@ -1727,6 +1727,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.Api.ajax.reload();
             this.filterFlag = false;
             $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-times").addClass("fa-filter");
+            $(".tooltip").remove();
         }
     };
 
@@ -1740,7 +1741,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
-                $(e.target).parents('.input-group').append("<input type='" + ctype + "' class='" + dateclas+" between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2'>");
+                $(e.target).parents('.input-group').append("<input type='" + ctype + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype+"'>");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keyup", this.call_filter);
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("dblclick", this.dblclickDateColumn);
@@ -1769,7 +1770,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.call_filter = function (e) {
         if (e.keyCode === 13) {
-            this.changeDateOrder(e);
+            if ($(e.target).attr("data-coltyp") === "date")
+                this.changeDateOrder(e);
             var flag = true;
             if ($(e.target).siblings(".eb_finput").length === 1) {
                 if ($(e.target).val() === "") {
@@ -1823,7 +1825,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.focusoutDateColumn = function () {
-        $(event.target)[0].value = formatDate($(event.target)[0].value)
+        var data = $(event.target)[0].value;
+        var dt = data.split("/");
+        if (dt.length === 1)
+            dt = data.split("-");
+        if (dt[0].length <= 2)
+            data = [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("-");
+        else
+            data = [dt[0].trim(), dt[1].trim(), dt[2].trim()].join("-");
+        $(event.target)[0].value = formatDate(data);
         $(event.target)[0].type = "date";
         if (this.Api)
             this.Api.columns.adjust();

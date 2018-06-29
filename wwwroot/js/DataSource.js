@@ -231,7 +231,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 		else {
 			this.Parameter_Count = 0;
 		}
-		//this.CreateObjString();
 		this.DrawTable();
 	}
 
@@ -240,28 +239,25 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 		var value = null;
 		if (this.Parameter_Count !== 0) {
 			var filter_control_list = $("#all_control_names").val();
-			var myarray = filter_control_list.split(',');
-			for (var i = 0; i < myarray.length; i++) {
-				console.log($("#" + myarray[i]).val());
-				var type = $('#' + myarray[i]).attr('data-ebtype');
-				var name = $('#' + myarray[i]).attr('name');
-				if (type === "3")
-					value = $("[name=" + myarray[i] + "]:checked").val()
-				else
-					value = $('#' + myarray[i]).val();
-				if (type === '6')
-					value = value.substring(0, 10);
-				if (type === '16' && !(isNaN(value))) {
-					value = parseInt(value);
-					type = 8;
+			if (filter_control_list !== undefined) {
+				var myarray = filter_control_list.split(',');
+				for (var i = 0; i < myarray.length; i++) {
+					console.log($("#" + myarray[i]).val());
+					var type = $('#' + myarray[i]).attr('data-ebtype');
+					var name = $('#' + myarray[i]).attr('name');
+					if (type === "3")
+						value = $("[name=" + myarray[i] + "]:checked").val()
+					else
+						value = $('#' + myarray[i]).val();
+					if (type === '6')
+						value = value.substring(0, 10);
+					if (type === '16' && !(isNaN(value))) {
+						value = parseInt(value);
+						type = 8;
+					}
+					ParamsArray.push(new fltr_obj(type, name, value));
 				}
-				ParamsArray.push(new fltr_obj(type, name, value));
-				//ObjString += '{\"name\":\"' + name + '\",';
-				//ObjString += '\"type\":\"' + type + '\",';
-				//ObjString += '\"value\":\"' + value + '\"},';
 			}
-			//ObjString = ObjString.slice(0, -1) + ']';
-			//this.Object_String_WithVal = ObjString;
 		}
 		return ParamsArray;
 	}
@@ -389,7 +385,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 				this.ver_Refid = result.refId;
 				alert(this.ver_Refid);
 			}
-			/// this.CreateObjString();
 			this.DrawTable();
 		}
 		alert("Success");

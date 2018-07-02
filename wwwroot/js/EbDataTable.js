@@ -696,7 +696,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         this.RowCount = dd.recordsFiltered;
         return dd.data;
-        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.compareFilterValues = function () {
@@ -831,10 +830,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-        this.filterDisplay();
         this.Api.columns.adjust();
-
-        $("#eb_common_loader").EbLoader("hide");
 
         setTimeout(function () {
             this.createFilterRowHeader();
@@ -843,15 +839,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
 
-            //$("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
-            //$("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
-            //}
             this.addFilterEventListeners();
             //this.arrangeFooterWidth();
             //this.arrangefixedHedaerWidth();
             this.placeFilterInText();
             //this.check4Scroll();
             this.Api.columns.adjust();
+
+            $("#eb_common_loader").EbLoader("hide");
         }.bind(this), 10);
     }
 
@@ -1089,7 +1084,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.ebSettings.rowGrouping.$values.length > 0)
             this.doRowgrouping();
-        this.summarize2();
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
@@ -1097,6 +1091,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.addFilterEventListeners();
             this.placeFilterInText();
             this.arrangefixedHedaerWidth();
+            this.summarize2();
         }
         this.Api.columns.adjust();
     };
@@ -1186,30 +1181,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }
-
-
-        if (ps == 0) {
-            $.each(this.Api.settings().init().aoColumns, function (i, col) {
-                if (col.Aggregate) {
-                    $('#' + tid + '_btntotalpage').css("display", "inline");
-                    aggFlag = true;
-                    return false;
-                }
-            });
-
-            //if (!aggFlag) {
-            //    $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
-            //    $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(' + ps + ')').hide();
-            //    $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
-            //}
-        }
-        if (ps === 1) {
-            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
-            $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(' + ps + ')').hide();
-            $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
-        }
-        var j = 0;
-
         this.summarize2();
     };
 
@@ -1382,13 +1353,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("." + this.tableId + "_htext[type=date]").on("dblclick", this.dblclickDateColumn);
 
-        //$("." + this.tableId + "_htext[type=date]").bind('paste', this.pasteDateColumn);
-
         $("." + this.tableId + "_htext[type=date]").on("focusout", this.focusoutDateColumn.bind(this));
         this.filterDisplay();
 
-        //if (focusedId !== undefined)
-        //    $("#" + focusedId).css("width", window.outerWidth);
         this.Api.columns.adjust();
     };
 
@@ -1440,7 +1407,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
             this.addFilterEventListeners();
-
         }
     };
 
@@ -1709,6 +1675,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var flag = false;
         var tableid = this.tableId;
         $('.' + this.tableId + '_htext').each(function (i) {
+
             if ($(this).hasClass(tableid + '_hchk')) {
                 if (!($(this).is(':indeterminate'))) {
                     flag = true;
@@ -1754,14 +1721,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if ($(e.target).parents('.input-group').find("input").length == 2) {
                 $(e.target).parents('.input-group').find("input").eq(1).remove();
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
-                //var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === colum; });
-                //if (searchObj.length > 1) {
-                //    var index = this.columnSearch.findIndex(x => x.Column == colum);
-                //    this.columnSearch.splice(index, 2);
-                //    if ($("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim() !== "")
-                //        this.columnSearch.push(new filter_obj(colum, selText.trim(), $("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim(), ctype));
-                //}
-                //this.columnSearch = this.repopulate_filter_arr();
             }
         }
         this.Api.columns.adjust();

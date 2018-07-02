@@ -87,6 +87,14 @@
     border-collapse: separate;
 }
 
+.pg-wraper .pg-fontcolor-inp {
+    padding: 0px;
+    background-color: transparent;
+    width: 18px;
+    height: 22px;
+    border: none;
+}
+
 /*td {
     border: solid 1px #000;
 }*/
@@ -175,7 +183,6 @@
 }
 
 .fup .imgup-Cont {
-    border-radius: 3px;
     width: 65%;
     position: fixed;
     left: 18%;

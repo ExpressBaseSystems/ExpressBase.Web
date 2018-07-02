@@ -115,7 +115,7 @@
     this.UpdateDashboard_Success = function (data) {
 		$('#object_Dashboard_main').empty().append(data);
 		var words = this.ver_Refid.split("-");
-		window.location.search.replace(null, words[3])
+		window.history.pushState("data", "Title", 'Index?objid=' + words[3] + '&objtype=' + words[2]);
         menu.resultObj = null;//reload menu by amal on 27/04/2018
         menu.init();//reload menu by amal on 27/04/2018
 

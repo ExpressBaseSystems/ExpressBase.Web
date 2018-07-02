@@ -20,6 +20,7 @@ using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Constants;
 using System.Net.Http;
 using ExpressBase.Common.ServiceClients;
+using ExpressBase.Common.Application;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -29,18 +30,79 @@ namespace ExpressBase.Web.Controllers
         public BoteController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc) { }
 
         [HttpGet]
-        public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL)
+        public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL, string msg)
         {
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
-            ViewBag.tid = tid;
+			var host = this.HttpContext.Request.Host;
+			EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
+			ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);			
+			ViewBag.tid = tid;
             ViewBag.appid = appid;
-            ViewBag.botdpURL = botdpURL;
-            ViewBag.themeColor = themeColor.Replace("HEX","#");
-            return View();
-        }
+			ViewBag.settings = JsonConvert.SerializeObject(settings);
+			return View();
 
-        [HttpPost]
+			//this.ServiceClient.Headers.Add("SolId", tid);
+			//GetBotSettingsResponse settings = this.ServiceClient.Get<GetBotSettingsResponse>(new GetBotSettingsRequest { AppId = Convert.ToInt32(appid) });
+			//EbBotSettings seObj =  this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", tid, appid));
+			//if(seObj != null)
+			//{
+			//	settings.ThemeColor = seObj.ThemeColor ?? settings.ThemeColor;
+			//	settings.DpUrl = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(seObj.DpUrl)) ?? botdpURL;
+			//	settings.WelcomeMessage = seObj.WelcomeMessage ?? "Hi, I am EBbot from EXPRESSbase!";
+			//}
+		}
+
+		public FileContentResult Js(string id, string mode)
+		{
+			string[] args = id.Split("-");
+			string PushContent = "";
+			string solid = args[0];		
+
+			if (mode.Equals("s"))//if single bot
+			{
+				int appid = Convert.ToInt32(args[1]);
+				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}_app_settings", id));
+				PushContent = string.Format(@"
+					window.EXPRESSbase_SOLUTION_ID = '{0}';
+					window.EXPRESSbase_APP_ID = {1};
+					d.ebbotName = '{2}' || '< EBbot >';
+					d.ebbotThemeColor = '{3}' || '#055c9b';
+					d.botdpURL = '{4}';
+					d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage);
+			}
+			else
+			{
+				//int[] appids = args[1].Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+				//EbBotSettings temp = new EbBotSettings();
+				//string color = "";
+				//string name = "";
+				//string url = "";
+				//foreach(int i in appids)
+				//{
+				//	temp = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", solid, i));
+				//	if (temp == null)
+				//	{
+				//		temp = new EbBotSettings() { Name = "-EB-BOT-", ThemeColor = "#055c9b", DpUrl = " "};
+				//	}
+				//	color += "'" + temp.ThemeColor ?? "#055c9b" + "',";
+				//	name += "'" + temp.Name ?? "< EBbot >" + "',";
+				//	url += "'" + temp.DpUrl ?? " " + "',";			
+				//}
+
+				//PushContent = string.Format(@"
+				//	d.ebbotNameColl = [{0}];
+				//	d.ebbotThemeColorColl = [{1}];
+				//	d.botdpURLColl = [{2}];", name.Substring(0, name.Length-1), color.Substring(0, color.Length - 1), url.Substring(0, url.Length - 1));
+
+			}
+
+
+			string FileContent = System.IO.File.ReadAllText("wwwroot/js/ChatBot/ebbot-ext.js");
+			FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
+			return File(FileContent.ToUtf8Bytes(), "text/javascript");
+		}
+		
+		[HttpPost]
         public async Task<string> UploadImageOrginal(string base64, string filename, string refreshToken, string bearerToken)
         {
             this.ServiceClient.BearerToken = bearerToken;

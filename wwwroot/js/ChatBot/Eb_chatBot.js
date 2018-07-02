@@ -1,11 +1,12 @@
 ﻿//import { Array, Object } from "core-js/library/web/timers";
 
-var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serverEventUrl) {
+var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {    
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
-    this.ebbotThemeColor = _themeColor;
+    this.ebbotThemeColor = settings.ThemeColor || "#055c9b";
+    this.welcomeMessage = settings.WelcomeMessage || "Hi, I am EBbot from EXPRESSbase!";
     this.ServerEventUrl = _serverEventUrl;
-    this.botdpURL = 'url(' + _botdpURL + ')center center no-repeat';
+    this.botdpURL = 'url(' + settings.DpUrl + ')center center no-repeat';
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
@@ -58,7 +59,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
                 </svg><div>`);
 
         var html = document.getElementsByTagName('html')[0];
-        html.style.setProperty("--botdpURL", this.botdpURL);
+        //html.style.setProperty("--botdpURL", this.botdpURL);
         //html.style.setProperty("--botThemeColor", this.ebbotThemeColor);
 
         var $botMsgBox = this.$botMsgBox.clone();
@@ -1207,6 +1208,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
         this.FB.api('/me?fields=id,name,picture', function (response) {
             this.FBResponse = response;
             this.userDtls.name = this.FBResponse.name;
+            //this.userDtls.email = this.FBResponse.email;
             this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
             this.greetings();
         }.bind(this));
@@ -1214,7 +1216,7 @@ var Eb_chatBot = function (_solid, _appid, _themeColor, _botdpURL, ssurl, _serve
 
     this.FBNotLogined = function () {
         this.isAlreadylogined = false;
-        this.msgFromBot("Hi, I am EBbot from EXPRESSbase!");
+        this.msgFromBot(this.welcomeMessage);
         this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook", "I don't have facebook account"], "fblogin");
     }.bind(this);
 

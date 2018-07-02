@@ -75,29 +75,38 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
-                    @if (appinfo.AppType == 3) {
+                    @if (appinfo.AppType == 3)
+                    {
+                        var bot_name_txt = appinfo.Name;
                         var bot_wc_msg = "";
                         var bot_tm_color = "";
                         var bot_dp_url = "";
 
+
+
                         @if(appinfo.AppSettings != null)
                         {
+                            bot_name_txt = appinfo.AppSettings.Name;
                             bot_wc_msg = appinfo.AppSettings.WelcomeMessage;
                             bot_tm_color = appinfo.AppSettings.ThemeColor;
                             bot_dp_url = appinfo.AppSettings.DpUrl;
                         }
-                         
+
+                        <div>
+                            <label>Bot Name: </label>
+                            <input type="text" id="bot_name_txt" value="@bot_name_txt">
+                        </div>
                         <div>
                             <label>Welcome Message: </label>
-                            <input type="text" id="bot_wc_msg" value="@bot_wc_msg" placeholder="Type here!">
+                            <input type="text" id="bot_wc_msg" value="@bot_wc_msg">
                         </div>
                         <div>
                             <label>Theme Colour:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                            <input type="text" id="bot_tm_color" value="@bot_tm_color" placeholder="Type here!">
+                            <input type="text" id="bot_tm_color" value="@bot_tm_color">
                         </div>
                         <div>
                             <label>DP Url:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                            <input type="text" id="bot_dp_url" value="@bot_dp_url" placeholder="Type here!">
+                            <input type="text" id="bot_dp_url" value="@bot_dp_url">
                         </div>
                         <button onclick="UpdateBotSettings()">Update</button>
                      }
@@ -119,6 +128,7 @@
     var adash = new AppDashWeb(Object_type, Obj_Collection);
     function UpdateBotSettings() {
         var appSettings = {};
+        appSettings["Name"] = $("#bot_name_txt").val();
         appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
         appSettings["ThemeColor"] = $("#bot_tm_color").val();
         appSettings["DpUrl"] = $("#bot_dp_url").val();

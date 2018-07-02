@@ -58,10 +58,11 @@ function fltr_obj(type, name, value) {
     this.Value = value;
 };
 
-var filter_obj = function (colu, oper, valu) {
+var filter_obj = function (colu, oper, valu, typ) {
     this.Column = colu;
     this.Operator = oper;
     this.Value = valu;
+    this.Type = typ;
 };
 
 

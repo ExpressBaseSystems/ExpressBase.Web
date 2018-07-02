@@ -61,16 +61,16 @@
         padding: 0px;
     }
 </style>
+
 <script>
     var solid = "@ViewBag.tid";
     var appid = "@ViewBag.appid";
-    var themeColor = "@ViewBag.themeColor";
-    var botdpURL = "@ViewBag.botdpURL";
+    var settings = @Html.Raw(ViewBag.settings);
     var ServerEventUrl = "@ViewBag.ServerEventUrl";
     var chatBotObj = null;
     $(document).ready(function () {
 
-        chatBotObj = new Eb_chatBot(solid, appid, themeColor, window.atob(botdpURL), '@ViewBag.ServiceUrl', ServerEventUrl);
+        chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.ServiceUrl', ServerEventUrl);
 
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);

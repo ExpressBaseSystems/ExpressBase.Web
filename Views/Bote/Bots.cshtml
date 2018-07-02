@@ -32,25 +32,32 @@
             d = document;
             d.ebmod = '@ViewBag.Env';
             var BotList = @BotDtls ;
-            var jssrc = "http://files.localhost:41500";
+            var jssrc = "http://localhost:41500";
             if (d.ebmod === 'Production')
-                jssrc = "https://files.expressbase.com";
+                jssrc = "https://expressbase.com";
             else if (d.ebmod === 'Staging')
-                jssrc = "https://files.eb-test.info";
+                jssrc = "https://eb-test.info";
             window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
             window.EXPRESSbase_APP_IDS = [];
+            d.ebbotThemeColorColl = [];
+            d.botWelcomeMsgColl = [];
             botNames = [];
             botDpUrl = [];
             botIcon = [];
             $.each(BotList.$values, function (k, bobj) {
-                window.EXPRESSbase_APP_IDS.push(bobj['id']);
-                botNames.push(bobj['name']);
-                botDpUrl.push(jssrc + "/images/assistant.png");
-                botIcon.push(bobj['icon']);
+                if (bobj.botsettings === null) {
+                    bobj.botsettings = { Name : 'EbBot', DpUrl : '', ThemeColor : '#fcb714', WelcomeMessage : 'Hi, I am EBbot from EXPRESSbase!!!' };
+                }
+                window.EXPRESSbase_APP_IDS.push(bobj.id);
+                botNames.push(bobj.botsettings.Name);
+                botDpUrl.push(bobj.botsettings.DpUrl);
+                botIcon.push(bobj.icon);
+                d.ebbotThemeColorColl.push(bobj.botsettings.ThemeColor);
+                d.botWelcomeMsgColl.push(bobj.botsettings.WelcomeMessage);
             });
 
             d.appIdColl = window.EXPRESSbase_APP_IDS;
-            d.ebbotThemeColorColl = ["#fcb714", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
+            //d.ebbotThemeColorColl = ["#fcb714", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
             d.ebbotNameColl = botNames;
             d.botdpURLColl = botDpUrl;
 
@@ -60,7 +67,7 @@
                 d = document;
                 d.createBotFns.push(function () {
                     s = d.createElement("script");
-                    s.src = jssrc + "/js/ChatBot/ebbot-ext.js";
+                    s.src = jssrc + "/Bote/Js?id=" + window.EXPRESSbase_SOLUTION_ID + "-" + window.EXPRESSbase_APP_IDS.toString() + "&mode=m";
                     s.async = 1;
                     d.getElementsByTagName("head")[0].appendChild(s);
                 });
@@ -149,6 +156,12 @@
             text-align: center;
             color: white;
         }
+
+        .eb-banner-local {
+            padding: 15px;
+            background-color: #0280db;
+            background-image: linear-gradient(46deg,rgba(245,248,253,0.17) 0,rgba(0,0,0,0.32) 100%);
+        }
     </style>
 </head>
 <body>
@@ -161,7 +174,7 @@
             </div>
         </nav>
     </section>
-    <section class="slider eb-banner">
+    <section class="slider eb-banner-local">
         <div class="container-fluid">
             <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 botBtnsParent">
                 <div class="col-md-12"><h2 class="livebothead">Live Bots</h2></div>

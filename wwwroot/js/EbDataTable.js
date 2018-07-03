@@ -235,7 +235,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-striped table-bordered'></table></div>");
+            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-striped table-bordered compact'></table></div>");
             this.Init();
         }
     };
@@ -828,19 +828,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
+            //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
         this.Api.columns.adjust();
 
         setTimeout(function () {
+            if (this.login === "uc")
+                this.arrangeWindowHeight();
             this.createFilterRowHeader();
-            this.createFooter(0);
+            this.createFooter();
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
 
             this.addFilterEventListeners();
-            //this.arrangeFooterWidth();
+            this.arrangeFooterWidth();
             //this.arrangefixedHedaerWidth();
             this.placeFilterInText();
             //this.check4Scroll();
@@ -1055,6 +1057,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     };
 
+    this.arrangeWindowHeight = function () {
+        var filterId = "#filterDisplay_" + this.tableId;
+        if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
+            $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 54px)", "important");
+        else {
+            if ($(filterId).children().length === 0)
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
+            else if (!this.ebSettings.IsPaging)
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+        }
+    }
+
     this.copyLabelData = function (key, opt, event) {
 
     }
@@ -1088,6 +1102,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
         if (this.firstTime) {
+            if (this.login === "uc")
+                this.arrangeWindowHeight();
             this.addFilterEventListeners();
             this.placeFilterInText();
             this.arrangefixedHedaerWidth();
@@ -1129,8 +1145,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
     };
 
-    this.createFooter = function (ps) {
-        var tx = this.ebSettings;
+    this.createFooter = function () {
+        var ps = 0;
         var tid = this.tableId;
         var aggFlag = false;
         var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');

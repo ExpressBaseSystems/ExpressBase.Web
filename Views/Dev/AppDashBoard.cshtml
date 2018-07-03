@@ -91,9 +91,8 @@
                             bot_tm_color = appinfo.AppSettings.ThemeColor;
                             bot_dp_url = appinfo.AppSettings.DpUrl;
                         }
-
                         <div>
-                            <label>Bot Name: </label>
+                            <label>Bot Name: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                             <input type="text" id="bot_name_txt" value="@bot_name_txt">
                         </div>
                         <div>
@@ -109,6 +108,19 @@
                             <input type="text" id="bot_dp_url" value="@bot_dp_url">
                         </div>
                         <button onclick="UpdateBotSettings()">Update</button>
+                        
+                        <div>                            
+                            <textarea  style="margin: 0px; width: 638px; height: 212px;"><script type="text/javascript">
+    (function () {
+        d = document;
+        s = d.createElement("script");
+        s.src = "https://expressbase.com/Bote/Js?id=@ViewBag.cid-@appinfo.Id&mode=s";
+        s.async = 1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+    })();
+</script></textarea>
+                        </div>
+
                      }
                 </div>
                 <div class="tab-pane appdash_obj_container" id="Objects" role="tabpanel">

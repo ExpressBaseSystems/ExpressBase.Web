@@ -574,6 +574,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (i  < this.tempColumns.length) {
             if (from === "link") {
                 var type = this.tempColumns[i].Type;
+                if (type === 5 || type === 6)
+                    data = this.renderDateformat(data);
                 fltr_collection.push(new fltr_obj(type, this.tempColumns[i].name, data));
             }
             else {

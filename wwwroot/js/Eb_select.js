@@ -121,9 +121,7 @@ var EbSelect = function (ctrl, botObj) {
             var searchBy = " = ";
             if (mapedFieldType === "String")
                 searchBy = "*x*";
-
-            var filterObj = new filter_obj(mapedField, searchBy, searchVal);
-            var filterObj = new filter_obj(mapedField, searchBy, searchVal);
+            var filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
             this.InitDT();
             this.V_showDD();

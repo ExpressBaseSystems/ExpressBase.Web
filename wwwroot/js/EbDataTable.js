@@ -235,7 +235,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-striped table-bordered'></table></div>");
+            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-striped table-bordered compact'></table></div>");
             this.Init();
         }
     };
@@ -696,7 +696,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         this.RowCount = dd.recordsFiltered;
         return dd.data;
-        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.compareFilterValues = function () {
@@ -829,29 +828,27 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
+            //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-        this.filterDisplay();
         this.Api.columns.adjust();
 
-        $("#eb_common_loader").EbLoader("hide");
-
         setTimeout(function () {
+            if (this.login === "uc")
+                this.arrangeWindowHeight();
             this.createFilterRowHeader();
-            this.createFooter(0);
+            this.createFooter();
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
 
-            //$("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
-            //$("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper tfoot tr:eq(0)").css("height", $("#" + this.tableId + "_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)").css("height"));
-            //}
             this.addFilterEventListeners();
-            //this.arrangeFooterWidth();
+            this.arrangeFooterWidth();
             //this.arrangefixedHedaerWidth();
             this.placeFilterInText();
             //this.check4Scroll();
             this.Api.columns.adjust();
+
+            $("#eb_common_loader").EbLoader("hide");
         }.bind(this), 10);
     }
 
@@ -1060,6 +1057,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     };
 
+    this.arrangeWindowHeight = function () {
+        var filterId = "#filterDisplay_" + this.tableId;
+        if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
+            $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 54px)", "important");
+        else {
+            if ($(filterId).children().length === 0)
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
+            else if (!this.ebSettings.IsPaging)
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+        }
+    }
+
     this.copyLabelData = function (key, opt, event) {
 
     }
@@ -1089,14 +1098,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.ebSettings.rowGrouping.$values.length > 0)
             this.doRowgrouping();
-        this.summarize2();
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
         if (this.firstTime) {
+            if (this.login === "uc")
+                this.arrangeWindowHeight();
             this.addFilterEventListeners();
             this.placeFilterInText();
             this.arrangefixedHedaerWidth();
+            this.summarize2();
         }
         this.Api.columns.adjust();
     };
@@ -1134,8 +1145,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
     };
 
-    this.createFooter = function (ps) {
-        var tx = this.ebSettings;
+    this.createFooter = function () {
+        var ps = 0;
         var tid = this.tableId;
         var aggFlag = false;
         var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');
@@ -1186,30 +1197,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }
-
-
-        if (ps == 0) {
-            $.each(this.Api.settings().init().aoColumns, function (i, col) {
-                if (col.Aggregate) {
-                    $('#' + tid + '_btntotalpage').css("display", "inline");
-                    aggFlag = true;
-                    return false;
-                }
-            });
-
-            //if (!aggFlag) {
-            //    $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
-            //    $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(' + ps + ')').hide();
-            //    $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
-            //}
-        }
-        if (ps === 1) {
-            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + ps + ')').hide();
-            $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper tfoot tr:eq(' + ps + ')').hide();
-            $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper tfoot tr:eq(' + ps + ')').hide();
-        }
-        var j = 0;
-
         this.summarize2();
     };
 
@@ -1382,13 +1369,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("." + this.tableId + "_htext[type=date]").on("dblclick", this.dblclickDateColumn);
 
-        //$("." + this.tableId + "_htext[type=date]").bind('paste', this.pasteDateColumn);
-
         $("." + this.tableId + "_htext[type=date]").on("focusout", this.focusoutDateColumn.bind(this));
         this.filterDisplay();
 
-        //if (focusedId !== undefined)
-        //    $("#" + focusedId).css("width", window.outerWidth);
         this.Api.columns.adjust();
     };
 
@@ -1440,7 +1423,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
             this.addFilterEventListeners();
-
         }
     };
 
@@ -1709,6 +1691,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var flag = false;
         var tableid = this.tableId;
         $('.' + this.tableId + '_htext').each(function (i) {
+
             if ($(this).hasClass(tableid + '_hchk')) {
                 if (!($(this).is(':indeterminate'))) {
                     flag = true;
@@ -1754,14 +1737,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if ($(e.target).parents('.input-group').find("input").length == 2) {
                 $(e.target).parents('.input-group').find("input").eq(1).remove();
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
-                //var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === colum; });
-                //if (searchObj.length > 1) {
-                //    var index = this.columnSearch.findIndex(x => x.Column == colum);
-                //    this.columnSearch.splice(index, 2);
-                //    if ($("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim() !== "")
-                //        this.columnSearch.push(new filter_obj(colum, selText.trim(), $("#" + this.tableId + "_" + colum + "_hdr_txt1").val().trim(), ctype));
-                //}
-                //this.columnSearch = this.repopulate_filter_arr();
             }
         }
         this.Api.columns.adjust();

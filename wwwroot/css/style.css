@@ -302,11 +302,48 @@ Navigation bar
         font-size: 25px !important;
     }
 }
+@media (min-width: 451px) and (max-width: 768px) {
+    .drp_container {
+        width: 394px !important;
+    }
+}
 
 @media (min-width: 20px) and (max-width: 450px) {
     .m-l-60 {
         float: unset;
         margin-right: unset;
+    }
+
+    .navbar-nav .open .dropdown-menu {
+        position: relative;
+        float: left;
+    }
+
+    .navbar-nav li {
+        width: 100%;
+        position: relative;
+    }
+
+    .navbar-nav {
+        margin: 0 !important;
+    }
+
+    .drp_container::after {
+        display: none;
+    }
+
+    .navbar-nav .open .dropdown-menu {
+        position: relative;
+        float: left;
+    }
+
+    .navbar-collapse {
+        padding: 0;
+    }
+
+    .navbar-nav li[class='open'] {
+        background: #fafafa;
+        float: left;
     }
 }
 

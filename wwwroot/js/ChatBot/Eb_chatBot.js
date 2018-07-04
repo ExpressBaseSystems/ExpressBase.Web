@@ -843,7 +843,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var URL = url.substring(url.indexOf(",/") + 1);
         var EbSE = new EbServerEvents({
             ServerEventUrl: this.ServerEventUrl,
-            Channels: ["baabu"],
+            Channels: ["file-upload"],
+            Rtoken: this.refreshToken
         });
         EbSE.onUploadSuccess = function (obj, e) {
             $(`[for=${ctrlname}] .img-loader:last`).hide(100);

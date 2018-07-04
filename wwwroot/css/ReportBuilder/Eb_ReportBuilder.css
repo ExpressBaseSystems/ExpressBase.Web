@@ -121,8 +121,9 @@
     box-sizing: content-box;
     display: flex;
     align-items: center;
+    position:absolute;
 }
-    .dropped:hover {
+    .dropped:not(.eb_TableLayout):hover {
         cursor: pointer;
     }
     .dropped:focus {
@@ -145,7 +146,7 @@
     writing-mode: vertical-rl;
     text-orientation: sideways-right;
     top: 37px;
-    cursor:pointer;
+    cursor: pointer;
 }
 /*prop grid*/
 .PGgrid {
@@ -635,12 +636,14 @@
     bottom: -5px;
     left: 50%;
 }
-.dropped .ui-resizable-se .ui-icon, .ui-widget-content .ui-icon {
+.dropped .ui-resizable-se .ui-icon, .dropped .ui-widget-content .ui-icon {
     background-image: none;
 }
 .dropped .ui-resizable-se {   
     right: -5px;
     bottom: -5px;
+}
+.drp {
 }
 .page .shape-horrizontal .ui-resizable-handle {
     top: -3px;
@@ -781,54 +784,9 @@
     top:10px;
     right:10px;
 }
-.eb_table_container table {
-    margin: 0 !important;
-    height: 100%;
-    width: 100%;
-    min-height: 27px !important;
-    background: white;
-    border: inherit;
-}
-.eb_table_container table tbody,td,tr{
-    border:inherit;
-}
-.eb_table_container{
-    width:100%;
-    float:left;
-}
 .drop-hover {
     border: 2px solid #2391d2 !important;
 }
-.T_layout {
-    position: relative;
-    /*padding: 0 !important;*/
-}
-    .T_layout .dropped:focus {
-        border: 1px solid #316396 !important;
-    }
-    .T_layout .dropped:hover {
-        border: 1px solid #316396 !important;
-    }
-.eb_draggbale_table_handle {
-    font-size: 10px;
-    position: absolute;
-    bottom: -1px;
-    right: 0;
-    z-index: 5;
-    cursor: pointer;
-}
-.T_layout .ui-resizable-e {
-    right: 0px;
-    top: 0;
-    cursor: col-resize !important;
-}
-
-.T_layout .ui-resizable-handle {
-    background: none; 
-    height: 100%;
-    width: 2px;
-}
-
 /*toolbox new*/
 .tool_items {
     width: 100%;

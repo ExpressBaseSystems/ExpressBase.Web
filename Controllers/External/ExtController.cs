@@ -42,6 +42,14 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public bool JoinBeta()
+        {
+            string Email = this.HttpContext.Request.Form["Email"];
+            JoinbetaResponse f = this.ServiceClient.Post<JoinbetaResponse>(new JoinbetaReq { Email = Email });
+            return f.Status;
+        }
+
         [HttpGet]
         public IActionResult ForgotPassword()
         {

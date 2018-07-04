@@ -51,6 +51,12 @@ namespace ExpressBase.Web2
             // Added - uses IOptions<T> for your settings.
             services.AddOptions();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("https://eb-test.info", "https://expressbase.com"));
+            });
+
             var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
             {
@@ -92,6 +98,8 @@ namespace ExpressBase.Web2
 
             app.UseApplicationInsightsRequestTelemetry();
 
+            app.UseCors(builder => builder.WithOrigins("http://example.com"));
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -120,6 +128,8 @@ namespace ExpressBase.Web2
                     template: "{controller=Ext}/{action=Index}");
 
             });
+
+            app.UseCors("AllowSpecificOrigin");
 
             app.Use(async (context, next) =>
             {

@@ -6,7 +6,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.ebbotThemeColor = settings.ThemeColor || "#055c9b";
     this.welcomeMessage = settings.WelcomeMessage || "Hi, I am EBbot from EXPRESSbase!";
     this.ServerEventUrl = _serverEventUrl;
-    this.botdpURL = 'url(' + window.atob(settings.DpUrl || window.btoa('http://localhost:41500/images/businessmantest.png')) + ')center center no-repeat';//////////////
+    this.botdpURL = 'url(' + window.atob(settings.DpUrl || window.btoa('../images/businessmantest.png')) + ')center center no-repeat';
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');

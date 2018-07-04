@@ -76,41 +76,42 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
                     @if (appinfo.AppType == 3)
-                    {
-                        var bot_name_txt = appinfo.Name;
-                        var bot_wc_msg = "";
-                        var bot_tm_color = "";
-                        var bot_dp_url = "";
+    {
+        var bot_name_txt = appinfo.Name;
+        var bot_wc_msg = "";
+        var bot_tm_color = "";
+        var bot_dp_url = "";
 
 
 
-                        @if(appinfo.AppSettings != null)
-                        {
-                            bot_name_txt = appinfo.AppSettings.Name;
-                            bot_wc_msg = appinfo.AppSettings.WelcomeMessage;
-                            bot_tm_color = appinfo.AppSettings.ThemeColor;
-                            bot_dp_url = appinfo.AppSettings.DpUrl;
-                        }
-                        <div>
-                            <label>Bot Name: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                            <input type="text" id="bot_name_txt" value="@bot_name_txt">
-                        </div>
-                        <div>
-                            <label>Welcome Message: </label>
-                            <input type="text" id="bot_wc_msg" value="@bot_wc_msg">
-                        </div>
-                        <div>
-                            <label>Theme Colour:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                            <input type="text" id="bot_tm_color" value="@bot_tm_color">
-                        </div>
-                        <div>
-                            <label>DP Url:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                            <input type="text" id="bot_dp_url" value="@bot_dp_url">
-                        </div>
-                        <button onclick="UpdateBotSettings()">Update</button>
-                        
-                        <div>                            
-                            <textarea  style="margin: 0px; width: 638px; height: 212px;"><script type="text/javascript">
+                @if (appinfo.AppSettings != null)
+{
+    bot_name_txt = appinfo.AppSettings.Name;
+    bot_wc_msg = appinfo.AppSettings.WelcomeMessage;
+    bot_tm_color = appinfo.AppSettings.ThemeColor;
+    bot_dp_url = appinfo.AppSettings.DpUrl;
+}
+                <div>
+                    <label>Bot Name: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="text" id="bot_name_txt" value="@bot_name_txt">
+                </div>
+                <div>
+                    <label>Welcome Message: </label>
+                    <input type="text" id="bot_wc_msg" value="@bot_wc_msg">
+                </div>
+                <div>
+                    <label>Theme Colour:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="text" id="bot_tm_color" value="@bot_tm_color">
+                </div>
+                <div>
+                    <label>DP Url:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="text" id="bot_dp_url" value="@bot_dp_url">
+                    <button id="btnSelectDpClipart" class="" title="Select from Clipart" onclick="$('#AppDB_BotDemoDp').modal('show');">Select from clipart</button>
+                </div>
+                <button onclick="UpdateBotSettings()">Update</button>
+
+                <div>
+                    <textarea style="margin: 0px; width: 638px; height: 212px;"><script type="text/javascript">
     (function () {
         d = document;
         s = d.createElement("script");
@@ -119,9 +120,33 @@
         d.getElementsByTagName("head")[0].appendChild(s);
     })();
 </script></textarea>
-                        </div>
+                </div>
 
-                     }
+                <div id="AppDB_BotDemoDp" class="modal fade" role="dialog">
+                    <div class="modal-dialog" style="width:445px">
+                        <div class="modal-content">
+                            <div class="modal-header" style="">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <div>
+                                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Bot DP Clip Art</h4> </div>
+                                </div>
+                            </div>
+                            <div class="modal-body" style="height:185px">
+                                <div class="demodpdiv" style=" background:url('../images/demobotdp1.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp1.png')"></div>
+                                <div class="demodpdiv" style=" background:url('../images/demobotdp2.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp2.png')"></div>
+                                <div class="demodpdiv" style=" background:url('../images/demobotdp3.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp3.png')"></div>
+                                <div class="demodpdiv" style=" background:url('../images/demobotdp4.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp4.png')"></div>
+                                <div class="demodpdiv" style=" background:url('../images/demobotdp5.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp5.png')"></div>
+                                <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp6.png')"></div>
+                            </div>
+                            <div class="modal-footer" style="">                                
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+}
                 </div>
                 <div class="tab-pane appdash_obj_container" id="Objects" role="tabpanel">
                     <div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>
@@ -136,6 +161,17 @@
         </div>
     </div>
 </div>
+<style>
+    .demodpdiv {
+        width: 75px;
+        height: 75px;
+        cursor: pointer;
+        display: inline-block;
+    }
+    .demodpdiv:hover{
+        box-shadow: 1px 1px 2px 2px #ccc;
+    }
+</style>
 <script>
     var adash = new AppDashWeb(Object_type, Obj_Collection);
     function UpdateBotSettings() {
@@ -155,5 +191,9 @@
                     alert("Something went wrong");
             }
         });
+    }
+    function clickOnDemoDp(path) {
+        $('#AppDB_BotDemoDp').modal('hide');
+        $('#bot_dp_url').val(path);
     }
 </script>

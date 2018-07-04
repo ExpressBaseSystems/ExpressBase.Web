@@ -44,6 +44,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
+        [EnableCors("AllowSpecificOrigin")]
         public bool JoinBeta()
         {
             string Email = this.HttpContext.Request.Form["Email"];

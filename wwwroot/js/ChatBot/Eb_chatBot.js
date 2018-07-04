@@ -1,12 +1,12 @@
 ﻿//import { Array, Object } from "core-js/library/web/timers";
 
-var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {    
+var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
     this.ebbotThemeColor = settings.ThemeColor || "#055c9b";
     this.welcomeMessage = settings.WelcomeMessage || "Hi, I am EBbot from EXPRESSbase!";
     this.ServerEventUrl = _serverEventUrl;
-    this.botdpURL = 'url(' + settings.DpUrl + ')center center no-repeat';
+    this.botdpURL = 'url(' + window.atob(settings.DpUrl || window.btoa('../images/businessmantest.png')) + ')center center no-repeat';
     this.$chatCont = $('<div class="eb-chat-cont"></div>');
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
@@ -59,7 +59,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 </svg><div>`);
 
         var html = document.getElementsByTagName('html')[0];
-        //html.style.setProperty("--botdpURL", this.botdpURL);
+        html.style.setProperty("--botdpURL", this.botdpURL);
         //html.style.setProperty("--botThemeColor", this.ebbotThemeColor);
 
         var $botMsgBox = this.$botMsgBox.clone();
@@ -1124,7 +1124,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.ajaxsuccess = function (rowAffected) {
         if (rowAffected > 0) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
-            var msg = `Your ${this.curForm.name} form submitted successfully`;                        
+            var msg = `Your ${this.curForm.name} form submitted successfully`;
         }
         else {
             EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });

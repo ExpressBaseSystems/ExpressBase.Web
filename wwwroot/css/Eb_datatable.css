@@ -92,6 +92,18 @@ td.resizer {
     background-color: red;
 }
 
+.dataTables_scroll td {
+    border: none !important;
+}
+
+.DTFC_LeftWrapper td, .DTFC_RightWrapper td {
+    border: none !important;
+}
+
+div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
+    border: none;
+}
+
 .dataTables_scrollHead {
     padding-bottom: 150px !important;
     margin-bottom: -150px !important;

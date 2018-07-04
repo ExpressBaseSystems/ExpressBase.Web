@@ -34,7 +34,15 @@ var DvContainerObj = function (settings) {
     this.cellData = null;
     this.isExistReport = false;
     this.curTVobj = settings.dsobj;
-    this.PGobj = new Eb_PropertyGrid("pp_inner","uc");
+    //this.PGobj = new Eb_PropertyGrid("pp_inner", "uc");
+
+
+    this.PGobj = new Eb_PropertyGrid({
+        id: "pp_inner",
+        wc: "uc",
+        cid: this.cid,
+        $extCont: $(".ppcont")
+    });
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));

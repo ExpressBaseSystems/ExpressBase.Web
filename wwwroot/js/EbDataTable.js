@@ -193,7 +193,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
             if (this.login === "dc") {
-                this.propGrid = new Eb_PropertyGrid("pp_inner","dc");
+                //this.propGrid = new Eb_PropertyGrid("pp_inner", "dc");
+                this.propGrid = new Eb_PropertyGrid({
+                    id: "pp_inner",
+                    wc: "dc",
+                    cid: this.PGobj.cid,
+                    $extCont: $(".ppcont")
+                }, this.PGobj);
+
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -206,7 +213,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else
                 split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
             if (this.login === "dc") {
-                this.propGrid = new Eb_PropertyGrid("pp_inner","dc");
+                //this.propGrid = new Eb_PropertyGrid("pp_inner", "dc");
+
+                this.propGrid = new Eb_PropertyGrid({
+                    id: "pp_inner",
+                    wc: "dc",
+                    cid: this.cid,
+                    $extCont: $(".ppcont")
+                }, this.PGobj);
+
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);

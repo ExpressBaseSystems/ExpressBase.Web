@@ -13,8 +13,15 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 	this.Ssurl = ssurl;
 
 	this.EbObject = dsobj;
-	commonO.Current_obj = this.EbObject;
-	this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
+    commonO.Current_obj = this.EbObject;
+    //this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
+
+    this.propGrid = new Eb_PropertyGrid({
+        id: "dspropgrid" + tabNum,
+        wc: this.wc,
+        cid: this.cid,
+        $extCont: $(".ds-prop")
+    });
 
 	this.Init = function () {
 		//$('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));

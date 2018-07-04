@@ -220,7 +220,15 @@
         else {
             this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         }
-        this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG", null, null, this.PGobj);
+        //this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG", null, null, this.PGobj);
+
+        this.CE_PGObj = new Eb_PropertyGrid({
+            id: this.PGobj.wraperId + "_InnerPG",
+            wc: this.PGobj.wc,
+            cid: this.PGobj.cid,
+            $extCont: $(".property-grid-cont")
+        }, this.PGobj);
+
         this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
         this.CE_PGObj.parentId = this.PGobj.wraperId;
         this.setColTiles();
@@ -245,7 +253,11 @@
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
         this.setSelColtiles();
-        this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+        //this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
+
+        this.CE_PGObj = new Eb_PropertyGrid({
+            id: this.PGobj.wraperId + "_InnerPG"
+        });
     };
 
     this.getSelectedColsByProp = function (allCols) {

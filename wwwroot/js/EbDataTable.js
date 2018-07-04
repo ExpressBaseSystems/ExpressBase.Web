@@ -989,6 +989,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }
+        
 
         $("#" + this.tableId + " thead tr:eq(1) .eb_finput").parent().remove();
     };
@@ -1108,7 +1109,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.arrangeWindowHeight();
             this.addFilterEventListeners();
             this.placeFilterInText();
-            this.arrangefixedHedaerWidth();
+            //this.arrangefixedHedaerWidth();
             this.summarize2();
         }
         this.Api.columns.adjust();
@@ -2247,7 +2248,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var date = new Date(parseInt(data.substr(6)));
             var month = date.getMonth() + 1;
             var dt = date.getDate();
-            return (dt.toString().length > 1 ? dt : "0" + dt) + "/" +(month.toString().length > 1 ? month : "0" + month)  + "/" + date.getFullYear();
+            return (dt.toString().length > 1 ? dt : "0" + dt) + "-" +(month.toString().length > 1 ? month : "0" + month)  + "-" + date.getFullYear();
         }
         else
             return "";

@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
+    [EnableCors("AllowSpecificOrigin")]
     public class ExtController : EbBaseExtController
     {
         public const string RequestEmail = "reqEmail";
@@ -43,6 +44,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
+        [EnableCors("AllowSpecificOrigin")]
         public bool JoinBeta()
         {
             string Email = this.HttpContext.Request.Form["Email"];

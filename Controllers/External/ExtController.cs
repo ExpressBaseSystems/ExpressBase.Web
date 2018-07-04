@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
+    [EnableCors("AllowSpecificOrigin")]
     public class ExtController : EbBaseExtController
     {
         public const string RequestEmail = "reqEmail";

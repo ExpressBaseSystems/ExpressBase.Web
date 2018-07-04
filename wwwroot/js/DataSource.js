@@ -5,6 +5,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 	this.Versions;
 	this.Refid = refid;
 	this.relatedObjects;
+	this.FilterDialogRefId;
 	this.rel_arr = [];
 	this.Filter_Params;
 	this.Parameter_Count;
@@ -80,11 +81,15 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 		if (pname === "Name") {
 			$("#objname").text(this.EbObject.Name);
 		}
+		if (pname === "LinkRefid") {
+
+		}
 	}.bind(this);
 
 	this.GetFD = function () {
-		this.relatedObjects = this.EbObject.FilterDialogRefId;
-		if (this.relatedObjects !== "" && this.relatedObjects)
+		this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
+		//this.relatedObjects += this.FilterDialogRefId;
+		if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
 			$.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this));
 	};
 
@@ -390,6 +395,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 		alert("Success");
 		$("#close_popup").click();
 		$.LoadingOverlay("hide");
+	};
+
+	this.BeforeSave = function () {
+		if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
+			this.relatedObjects += this.FilterDialogRefId;
 	};
 
 	this.FetchUsedSqlFns_inner = function (i, sqlFn) {

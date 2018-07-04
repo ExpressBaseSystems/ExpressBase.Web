@@ -51,7 +51,7 @@
         this.UpdateDashboard();
         this.alertType = "success";
         this.messg.alert({
-            head: "alert",
+            head: "",
             body: this.alertMsg,
 			type: this.alertType,
 			delay: 3000

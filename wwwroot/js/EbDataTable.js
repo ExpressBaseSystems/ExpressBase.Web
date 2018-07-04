@@ -250,7 +250,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-striped table-bordered'></table></div>");
+            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-striped table-bordered compact'></table></div>");
             this.Init();
         }
     };
@@ -300,6 +300,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 $("#obj_icons .btn").prop("disabled", false);
                 $("#eb_common_loader").EbLoader("hide");
+                $("[data-coltyp=date]").datepicker("hide");
             }
         }.bind(this));
 
@@ -589,6 +590,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (i  < this.tempColumns.length) {
             if (from === "link") {
                 var type = this.tempColumns[i].Type;
+                if (type === 5 || type === 6)
+                    data = this.renderDateformat(data,"-");
                 fltr_collection.push(new fltr_obj(type, this.tempColumns[i].name, data));
             }
             else {
@@ -810,6 +813,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                                             filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), "number"));
                                         }
                                         else if (type === 'date') {
+                                            val1 = this.changeDateOrder(val1);
+                                            val2 = this.changeDateOrder(val2);
                                             if (val2 > val1) {
                                                 filter_obj_arr.push(new filter_obj(colum, ">=", val1, "date"));
                                                 filter_obj_arr.push(new filter_obj(colum, "<=", val2, "date"));
@@ -822,13 +827,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                                     }
                                 }
                                 else {
-                                    filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val(), type));
+                                    var data = $(textid).val();
+                                    if (type === "date")
+                                        data = this.changeDateOrder(data);
+                                    filter_obj_arr.push(new filter_obj(colum, oper, data, type));
                                 }
                             }
                         }
                     }
                 }
-            });
+            }.bind(this));
         }
         return filter_obj_arr;
     };
@@ -843,19 +851,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
-            this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
+            //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
         this.Api.columns.adjust();
 
         setTimeout(function () {
+            if (this.login === "uc")
+                this.arrangeWindowHeight();
             this.createFilterRowHeader();
-            this.createFooter(0);
+            this.createFooter();
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
 
             this.addFilterEventListeners();
-            //this.arrangeFooterWidth();
+            this.arrangeFooterWidth();
             //this.arrangefixedHedaerWidth();
             this.placeFilterInText();
             //this.check4Scroll();
@@ -1000,6 +1010,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }
+        
 
         $("#" + this.tableId + " thead tr:eq(1) .eb_finput").parent().remove();
     };
@@ -1036,12 +1047,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         if (colObj[0].Operator !== '' && colObj[0].Value !== '') {
                             if (colObj.length === 2) {
                                 $('#' + this.tableId + '_' + colum + '_hdr_sel').text("B");
-                                $(textid).val(colObj[0].Value);
+                                if (type === "date")
+                                    $(textid).val(this.retainDateOrder(colObj[0].Value));
+                                else
+                                    $(textid).val(colObj[0].Value);
                                 $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
-                                $(textid).siblings('input').val(colObj[1].Value);
+                                if (type === "date")
+                                    $(textid).siblings('input').val(this.retainDateOrder(colObj[1].Value));
+                                else
+                                    $(textid).siblings('input').val(colObj[1].Value);
                             }
                             else {
-                                $(textid).val(colObj[0].Value);
+                                if (type === "date")
+                                    $(textid).val(this.retainDateOrder(colObj[0].Value));
+                                else
+                                    $(textid).val(colObj[0].Value);
                                 $('#' + this.tableId + '_' + colum + '_hdr_sel').text(colObj[0].Operator);
                             }
                         }
@@ -1069,6 +1089,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
     };
+
+    this.arrangeWindowHeight = function () {
+        var filterId = "#filterDisplay_" + this.tableId;
+        if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
+            $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 54px)", "important");
+        else {
+            if ($(filterId).children().length === 0)
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
+            else if (!this.ebSettings.IsPaging)
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+        }
+    }
 
     this.copyLabelData = function (key, opt, event) {
 
@@ -1103,9 +1135,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
         if (this.firstTime) {
+            if (this.login === "uc")
+                this.arrangeWindowHeight();
             this.addFilterEventListeners();
             this.placeFilterInText();
-            this.arrangefixedHedaerWidth();
+            //this.arrangefixedHedaerWidth();
             this.summarize2();
         }
         this.Api.columns.adjust();
@@ -1144,8 +1178,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
     };
 
-    this.createFooter = function (ps) {
-        var tx = this.ebSettings;
+    this.createFooter = function () {
+        var ps = 0;
         var tid = this.tableId;
         var aggFlag = false;
         var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');
@@ -1366,9 +1400,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             placement: 'bottom'
         });
 
-        $("." + this.tableId + "_htext[type=date]").on("dblclick", this.dblclickDateColumn);
+        $("[data-coltyp=date]").datepicker({
+            dateFormat: "dd/mm/yy",
+        });
+        $("[data-coltyp=date]").on("click", function () {
+            $(this).datepicker("show");
+        });
 
-        $("." + this.tableId + "_htext[type=date]").on("focusout", this.focusoutDateColumn.bind(this));
         this.filterDisplay();
 
         this.Api.columns.adjust();
@@ -1651,11 +1689,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='date' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' placeholder='dd/mm/yyyy' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
-
+        
         return filter;
 
     };
@@ -1723,13 +1761,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
-                $(e.target).parents('.input-group').append("<input type='" + ctype + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype+"'>");
+                $(e.target).parents('.input-group').append("<input type='text' placeholder='dd/mm/yyyy' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype+"'>");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keyup", this.call_filter);
-                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("dblclick", this.dblclickDateColumn);
-                //$("#" + this.tableId + "_" + colum + "_hdr_txt2").bind('paste', this.pasteDateColumn);
-                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("focusout", this.focusoutDateColumn.bind(this));
-                //this.columnSearch = this.repopulate_filter_arr();
+                $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
+                    dateFormat: "dd/mm/yy",
+                });
+                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("click", function () {
+                    $(this).datepicker("show");
+                });
             }
         }
         else if (selText.trim() !== 'B') {
@@ -1744,8 +1784,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.call_filter = function (e) {
         if (e.keyCode === 13) {
-            if ($(e.target).attr("data-coltyp") === "date")
-                this.changeDateOrder(e);
             var flag = true;
             if ($(e.target).siblings(".eb_finput").length === 1) {
                 if ($(e.target).val() === "") {
@@ -1775,12 +1813,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $('#' + this.tableId).DataTable().ajax.reload();
                 if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
                     $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
-
-                $(e.target).trigger("click");
-                $(e.target).siblings().children("button").focus();
             }
         }
         else {
+            $("[data-coltyp=date]").datepicker("hide");
             this.columnSearch = this.repopulate_filter_arr();
         }
 
@@ -1813,15 +1849,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.Api.columns.adjust();
     };
 
-    this.changeDateOrder = function (e) {
-        var data = $(e.target).val().trim();
+    this.changeDateOrder = function (data) {
         var dt = data.split("/");
         if (dt.length === 1)
             dt = data.split("-");
         if(dt[0].length <= 2)
-            $(e.target).val([dt[2].trim(), dt[1].trim(), dt[0].trim()].join("-"));
+            return [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("-");
         else
-            $(e.target).val([dt[0].trim(), dt[1].trim(), dt[2].trim()].join("-"));
+            return [dt[0].trim(), dt[1].trim(), dt[2].trim()].join("-");
+    };
+
+    this.retainDateOrder = function (data) {
+        var dt = data.split("-");
+         return [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("/");
     };
 
     this.toggleInFilter = function (e) {
@@ -2239,12 +2279,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return `<label class='labeldata'>${data}</label>`;
     };
 
-    this.renderDateformat = function (data) {
+    this.renderDateformat = function (data,sym) {
         if (typeof data !== "object") {
             var date = new Date(parseInt(data.substr(6)));
             var month = date.getMonth() + 1;
             var dt = date.getDate();
-            return (dt.toString().length > 1 ? dt : "0" + dt) + "/" +(month.toString().length > 1 ? month : "0" + month)  + "/" + date.getFullYear();
+            if (sym === "-")
+                return (dt.toString().length > 1 ? dt : "0" + dt) + "-" + (month.toString().length > 1 ? month : "0" + month) + "-" + date.getFullYear();
+            else
+                return (dt.toString().length > 1 ? dt : "0" + dt) + "/" +(month.toString().length > 1 ? month : "0" + month)  + "/" + date.getFullYear();
         }
         else
             return "";

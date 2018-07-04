@@ -511,7 +511,7 @@ var DvContainerObj = function (settings) {
                     }
                 }
                 $(".dv-body2").removeClass("dv-pdf");
-                this.dvcol[focusedId].Api.draw();
+                //this.dvcol[focusedId].Api.draw();
             }
             else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
                 if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {

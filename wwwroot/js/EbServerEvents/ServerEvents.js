@@ -1,5 +1,5 @@
 ﻿var EbServerEvents = function (options) {
-
+    this.rTok = options.Rtoken || getrToken();
     this.ServerEventUrl = options.ServerEventUrl;
     this.Channels = options.Channels.join();
     this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
@@ -29,12 +29,12 @@
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-        console.log("stoped listening");
+        console.log("stopped listening");
     };
 
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
-            'Authorization': 'Bearer ' + getrToken(),
+            'Authorization': 'Bearer ' + this.rTok,
         }
     });   
 

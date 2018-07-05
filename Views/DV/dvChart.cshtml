@@ -51,14 +51,30 @@
         var dvTableObj = new EbObjects["EbChartVisualization"]("chart_" + Date.now());
         $("label.dvname").text(dvTableObj.Name);
         split.createContentWindow(dvTableObj.EbSid + "_" + ++counter, "EbChartVisualization");
-        pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter] = new Eb_PropertyGrid("ppgrid_dv" + dvTableObj.EbSid + "_" + counter);
+        //pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter] = new Eb_PropertyGrid("ppgrid_dv" + dvTableObj.EbSid + "_" + counter);
+
+
+        pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter] = new Eb_PropertyGrid({
+            id: "ppgrid_dv" + dvTableObj.EbSid + "_" + counter,
+            wc: "uc",
+            cid: this.cid,
+            $extCont: $(".ppcont")
+        });
         pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter].setObject(dvTableObj,  AllMetas["EbChartVisualization"]);
     }
     else {
         var dvTableObj = @Html.Raw(dvobj);
         $("label.dvname").text(dvTableObj.Name);
         split.createContentWindow(dvTableObj.EbSid + "_" + ++counter, "EbChartVisualization");
-        pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter] = new Eb_PropertyGrid("ppgrid_dv" + dvTableObj.EbSid + "_" + counter);
+        //pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter] = new Eb_PropertyGrid("ppgrid_dv" + dvTableObj.EbSid + "_" + counter);
+
+        pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter] = new Eb_PropertyGrid({
+            id: "ppgrid_dv" + dvTableObj.EbSid + "_" + counter,
+            wc: "uc",
+            cid: this.cid,
+            $extCont: $(".ppcont")
+        });
+
         pg["sub_window_dv" + dvTableObj.EbSid + "_" + counter].setObject(dvTableObj, AllMetas["EbChartVisualization"]);
         call2dv(dvTableObj);
     }

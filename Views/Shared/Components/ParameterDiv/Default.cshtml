@@ -48,6 +48,28 @@
             //else if (cObj.ObjType === 'Numeric') {
             //    var $input = $("[name=" + cObj.Name + "]");
             //}
+            else if (cObj.ObjType === 'ComboBox') {
+                var $input = $("[name=" + cObj.Name + "]");
+
+                Vue.component('v-select', VueSelect.VueSelect);
+                Vue.config.devtools = true;
+
+                $(`#${cObj.name}_loading-image`).hide();
+                MakeCaps(cObj);
+                var EbCombo = new EbSelect(cObj);
+
+                if (this.Bot.curCtrl !== undefined)
+                    this.Bot.curCtrl.selectedRows = EbCombo.getSelectedRow;
+            }
         }.bind(this));
+    }
+    function MakeCaps(obj) { 
+        $.each(obj, function (key, val) { 
+            cap_key = key.charAt(0).toLowerCase() + key.slice(1);
+            console.log(cap_key);
+            console.log(val);
+            obj[cap_key] = val;
+        });
+        console.log(obj);
     }
 </script>

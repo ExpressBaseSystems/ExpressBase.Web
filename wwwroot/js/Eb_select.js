@@ -39,10 +39,9 @@
 var z = 100;
 
 //var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
-var EbSelect = function (ctrl, botObj) {
+var EbSelect = function (ctrl) {
     //parameters   
     this.ComboObj = ctrl;
-    this.BotObj = botObj;
     this.name = ctrl.name;
     this.dsid = ctrl.dataSourceId;
     this.idField = "name";
@@ -129,7 +128,7 @@ var EbSelect = function (ctrl, botObj) {
         else {
             $filterInp.val($e.val());
             this.Vobj.DDstate = true;
-            this.BotObj.makeValid(this.ComboObj.name);
+            EbMakeValid(this.ComboObj.name);
             if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
                 return;
             this.datatable.Api.ajax.reload();
@@ -456,7 +455,7 @@ var EbSelect = function (ctrl, botObj) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
-            this.BotObj.makeValid(this.ComboObj.name);
+            EbMakeValid(this.ComboObj.name);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
@@ -559,14 +558,14 @@ var EbSelect = function (ctrl, botObj) {
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                this.BotObj.makeInvalid(this.ComboObj.name, 'This field  require minimum ' + this.minLimit + ' values');
+                EbMakeInvalid(this.ComboObj.name, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
-                    this.BotObj.makeInvalid(this.ComboObj.name);
+                    EbMakeInvalid(this.ComboObj.name);
                 }
                 else {
-                    this.BotObj.makeValid(this.ComboObj.name);
+                    EbMakeValid(this.ComboObj.name);
                 }
 
             }

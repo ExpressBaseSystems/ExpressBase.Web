@@ -25,7 +25,15 @@
 
     this.repExtern = new ReportExtended(this);
     this.RbCommon = new RbCommon(this);
-    this.pg = new Eb_PropertyGrid("propGrid", this.wc, this.Tenantid);
+    //this.pg = new Eb_PropertyGrid("propGrid", this.wc, this.Tenantid);
+
+    this.pg = new Eb_PropertyGrid({
+        id: "propGrid",
+        wc: this.wc,
+        cid: this.Tenantid,
+        $extCont: $("#PGgrid-report")
+    });
+
     this.RM = new ReportMenu(this);
 
     this.idCounter = CtrlCounters; //from c# //this.RbCommon.EbidCounter;
@@ -721,7 +729,7 @@
     }.bind(this);
 
     this.pg.Close = function () {
-        this.repExtern.minPgrid();
+        //this.repExtern.minPgrid();
     }.bind(this);
 
     this.pg.DD_onChange = function (e) {

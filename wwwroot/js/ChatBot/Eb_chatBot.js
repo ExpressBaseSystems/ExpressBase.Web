@@ -852,7 +852,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.curVal = obj.objId;
         }.bind(this);
 
-        $.post("../Bote/UploadFileAsync", {
+        $.post("../Boti/UploadFileAsync", {
             'base64': URL,
             "filename": ctrlname,
             "refreshToken": this.refreshToken,

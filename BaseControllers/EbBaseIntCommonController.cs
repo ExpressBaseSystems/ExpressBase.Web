@@ -19,21 +19,37 @@ namespace ExpressBase.Web.BaseControllers
 {
     public class EbBaseIntCommonController : EbBaseIntController
     {
-        public EbBaseIntCommonController(IServiceClient _ssclient) : base(_ssclient) { }
+        public EbBaseIntCommonController(IServiceClient _ssclient) : base(_ssclient)
+        {
+        }
 
-        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
+        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis)
+        {
+        }
 
-        public EbBaseIntCommonController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc) { }
+        public EbBaseIntCommonController(IServiceClient _ssclient, IEbMqClient _mqc) : base(_ssclient, _mqc)
+        {
+        }
 
-        public EbBaseIntCommonController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
+        public EbBaseIntCommonController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc)
+        {
+        }
 
-        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc) : base(_ssclient, _redis, _mqc) { }
+        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc) : base(_ssclient, _redis, _mqc)
+        {
+        }
 
-        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
+        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc)
+        {
+        }
 
-        public EbBaseIntCommonController(IServiceClient _ssclient, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _mqc, _sfc) { }
+        public EbBaseIntCommonController(IServiceClient _ssclient, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _mqc, _sfc)
+        {
+        }
 
-        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _mqc, _sfc) { }
+        public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _mqc, _sfc)
+        {
+        }
 
         public EbBaseIntCommonController(IServiceClient _ssclient, IRedisClient _redis, IMessageQueueClient _mqFactory, IMessageProducer _mqProducer)
             : base(_ssclient, _redis)
@@ -49,10 +65,8 @@ namespace ExpressBase.Web.BaseControllers
 
             //string path = context.HttpContext.Request.Path.Value.ToLower();
 
-
             string sBToken = context.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string sRToken = context.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
-
 
             if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
             {
@@ -60,13 +74,11 @@ namespace ExpressBase.Web.BaseControllers
             }
             else if (!IsTokensValid(sRToken, sBToken, hostParts[0]))
                 context.Result = new RedirectResult("/");
-
             else
             {
                 try
                 {
                     var bToken = new JwtSecurityToken(sBToken);
-
 
                     Session = new CustomUserSession();
                     Session.Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID];
@@ -105,7 +117,6 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.StaticFileServerUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STATICFILESERVER_EXT_URL);
                     controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
                 }
-
                 catch (System.ArgumentNullException ane)
                 {
                     if (ane.ParamName == RoutingConstants.BEARER_TOKEN || ane.ParamName == RoutingConstants.REFRESH_TOKEN)

@@ -78,8 +78,14 @@
             this.EbObject = this.rootContainerObj;
         }
     }
+    //this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
 
-    this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
+    this.PGobj = new Eb_PropertyGrid({
+        id: "pgWraper",
+        wc: this.wc,
+        cid: this.cid,
+        $extCont: $(".property-grid-cont")
+    });
     this.curControl = null;
     this.drake = null;
 
@@ -410,8 +416,6 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
-
-        this.PGobj.Close = function () { slideRight('.form-save-wraper', '#form-buider-propGrid'); };
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             if (CurProp === 'DataSourceId') {

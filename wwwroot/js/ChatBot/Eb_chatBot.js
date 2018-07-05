@@ -530,11 +530,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.makeReqFm = function (control) {
         var $ctrl = $("#" + control.name);
         if ($ctrl.length !== 0 && $ctrl.val().trim() === "")
-            this.makeInvalid(control.name);
+            EbMakeInvalid(control.name);
     };
 
     this.removeReqFm = function (control) {
-        this.makeValid(control.name);
+        EbMakeValid(control.name);
     };
 
     this.RenderForm = function () {
@@ -641,29 +641,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         return inpVal;
     };
 
-    this.makeInvalid = function (name, msg = "This field is required") {
-        var contSel = `[for=${name}]`;
-        if ($(`${contSel} .req-cont`).length !== 0)
-            return;
-        var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
-        $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
-        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 3px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
-        $(`${contSel}  .text-danger`).text(msg).show().animate({ opacity: "1" }, 300);
-    };
-
-    this.makeValid = function (name) {
-        var contSel = `[for=${name}]`;
-        $(`${contSel}  .ctrl-wraper`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
-        $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
-    };
-
     this.checkRequired = function () {
         if (this.curCtrl.required && !this.curVal) {
-            this.makeInvalid(this.curCtrl.name);
+            EbMnvalid(this.curCtrl.name);
             return false;
         }
         else {
-            this.makeValid(this.curCtrl.name);
+            EbMakeValid(this.curCtrl.name);
             return true;
         }
     };

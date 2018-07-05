@@ -15,7 +15,6 @@
     <link rel="icon" href="~/images/favicon.ico">
     <link async href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
     <link async href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="~/css/style.css" />
 
     @*
         <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />*@
@@ -102,7 +101,7 @@
             $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 400);
             $(".eb_iframecont").hide();
             $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).css("display", "flex"); $(this).animate({ opacity: '1' }, 400); });
-            setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);
+            setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);//////////
             d.latestAppid = appid;
         }
     </script>
@@ -161,6 +160,19 @@
             padding: 15px;
             background-color: #0280db;
             background-image: linear-gradient(46deg,rgba(245,248,253,0.17) 0,rgba(0,0,0,0.32) 100%);
+        }
+
+        .ext-pageheader .navbar {
+            height: auto;
+            padding: 5px;
+        }
+
+        .ext-pageheader .navbar-default {
+            background-color: white;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px -2px rgba(0, 0, 0, 0.1);
+        }
+        .ext-pageheader .navbar img {
+            height: 50px;
         }
     </style>
 </head>

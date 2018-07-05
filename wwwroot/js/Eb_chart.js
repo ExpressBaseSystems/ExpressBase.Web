@@ -281,7 +281,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.login === "uc") {
                 this.collapseGraph();
             }
-            $(".ppcont").hide();
+            $(".pgpin").click();
             $(".filterCont").hide();
             filterChanged = false;
             if (!this.isTagged)
@@ -419,7 +419,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.FD) {
             $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
         }
-        $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class= 'fa fa-cog' aria - hidden='true'></i ></button>")
+        //$("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class= 'fa fa-cog' aria - hidden='true'></i ></button>")
 
         if (this.EbObject !== null && this.EbObject.Type !== "") {
             if (this.EbObject.Type !== "line")

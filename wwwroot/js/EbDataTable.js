@@ -197,7 +197,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
                     wc: "dc",
-                    cid: this.PGobj.cid,
+                    cid: this.cid,
                     $extCont: $(".ppcont")
                 }, this.PGobj);
 
@@ -245,7 +245,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.initCompleteflag = false;
 
         $("#objname").text(this.dvName);
-        $(".ppcont").hide();
+        $(".pgpin").click();
         $(".filterCont").hide();
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
@@ -1099,7 +1099,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
             else if (!this.ebSettings.IsPaging)
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+            else
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 105px)", "important");
         }
+
+        if (login === "uc")
+            $(".stickBtn").css("top", "76px");
     }
 
     this.copyLabelData = function (key, opt, event) {
@@ -1135,12 +1140,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
         if (this.firstTime) {
-            if (this.login === "uc")
-                this.arrangeWindowHeight();
             this.addFilterEventListeners();
             this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
+            if (this.login === "uc")
+                this.arrangeWindowHeight();
         }
         this.Api.columns.adjust();
     };
@@ -1394,7 +1399,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
-        $("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
+        //$("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
         $(".columnMarker_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $('[data-toggle="tooltip"]').tooltip({
             placement: 'bottom'
@@ -1402,6 +1407,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("[data-coltyp=date]").datepicker({
             dateFormat: "dd/mm/yy",
+            beforeShow: function (elem,obj) {
+                $(".ui-datepicker").addClass("datecolumn-picker");
+            }
         });
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
@@ -1442,7 +1450,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.FD) {
                 $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
             }
-            $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class='fa fa-cog' aria-hidden='true'></i></button>");
+            //$("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class='fa fa-cog' aria-hidden='true'></i></button>");
             //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
             if (this.login == "uc") {
                 //if (!this.isContextual)
@@ -1766,6 +1774,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keyup", this.call_filter);
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
                     dateFormat: "dd/mm/yy",
+                    beforeShow: function (elem, obj) {
+                        $(".ui-datepicker").addClass("datecolumn-picker");
+                    }
                 });
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("click", function () {
                     $(this).datepicker("show");

@@ -463,3 +463,6 @@ table.dataTable tbody td.dt-body-right {
 .no-spin::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+.datecolumn-picker{
+    width:213px !important;
+}

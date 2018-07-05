@@ -2,7 +2,14 @@
     this.propObj;
     this.Refid = refid;
     this.EbObject = dsobj;
-    this.emailpropG = new Eb_PropertyGrid("PropertyG");
+    //this.emailpropG = new Eb_PropertyGrid("PropertyG");
+
+    this.emailpropG = new Eb_PropertyGrid({
+        id: "PropertyG",
+        wc: "uc",
+        cid: this.cid,
+        $extCont: $(".emailpg")
+    });
     this.ObjId = 0;
     this.ObjCollect = {};
     this.PosLeft;

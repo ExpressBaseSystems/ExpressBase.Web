@@ -79,7 +79,15 @@
     //else if (builderType === 3)
     //    this.rootContainerObj = new EbObjects.ReportObj(formid);
 
-    this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
+    //this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
+
+    this.PGobj = new Eb_PropertyGrid({
+        id: "pgWraper",
+        wc: this.wc,
+        cid: this.cid,
+        $extCont: $(".property-grid-cont")
+    });
+
     this.curControl = null;
     this.drake = null;
 
@@ -365,9 +373,6 @@
         //$("#commit").on("click", this.commit.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" +r $(this).find("option:selected").val()).focus(); });
-        this.PGobj.Close = function () {
-            slideRight('.form-save-wraper', '#form-buider-propGrid');
-        }
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));

@@ -484,7 +484,7 @@ var DvContainerObj = function (settings) {
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
         $("#Relateddiv").hide();
-        $(".ppcont").hide();
+        //$(".ppcont").hide();
         $(".filterCont").hide();
         if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) {
             focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");

@@ -1,14 +1,14 @@
-﻿@{ 
+﻿@{
     string url = "";
     if (ViewBag.Env == "Development")
     {
         url = "http://localhost:41400";
     }
-    else if(ViewBag.Env == "Staging")
+    else if (ViewBag.Env == "Staging")
     {
         url = "http://eb-test.info";
     }
-    else if(ViewBag.Env == "Production")
+    else if (ViewBag.Env == "Production")
     {
         url = "https://expressbase.com";
     }
@@ -17,65 +17,74 @@
 <section class="ext-pageheader" id="pgheaderExt">
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                    <a href="@url" id="logo">
-                        <img class="img-responsive" src="~/images/EB_Logo.png">
-                    </a>
+                <a class="navbar-brand" href="@url"><img class="img-responsive" src="~/images/EB_Logo.png"></a>
             </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                        <li><a class="hvr-underline-from-center" href="@url" id="Home">Home</a></li>
-                        <li>
-                            <a class="hvr-underline-from-center dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Products</a>
-                            <div class="dropdown-menu drp_container">
+                    <li><a class="hvr-underline-from-center" href="@url" id="Home">Home</a></li>
+                    <li class="dropdown">
+                        <a href="" class="dropdown-toggle hvr-underline-from-center" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Products <span class="caret"></span></a>
+                        <ul class="dropdown-menu drp_container">
+                            <li>
                                 <a class="w-100" href="@url/Products/Reports">
-                                    <div class="drp_items_log">
+                                    <div class="drp_items_log hidden-xs">
                                         <img src="/images/svg/bi.svg" class="w-100" />
                                     </div>
                                     <div class="drp_items_desc">
                                         <h4>Reporting as a Service</h4>
-                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                        <p>Drag-n-Drop reporting tools on the Cloud.</p>
                                     </div>
                                 </a>
+                            </li>
+                            <li>
                                 <a class="w-100" href="@url/Products/Bots">
-                                    <div class="drp_items_log">
+                                    <div class="drp_items_log hidden-xs">
                                         <img src="/images/svg/chat_.svg" class="w-100" />
                                     </div>
                                     <div class="drp_items_desc">
                                         <h4>ChatBots as a Service</h4>
-                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                        <p>Build & Deploy enterprise grade bots with just drag-n-drop.</p>
                                     </div>
                                 </a>
+                            </li>
+                            <li>
                                 <a class="w-100 disabled">
-                                    <div class="drp_items_log">
+                                    <div class="drp_items_log hidden-xs">
                                         <img src="/images/svg/form_.svg" class="w-100" />
                                     </div>
                                     <div class="drp_items_desc">
                                         <h4>Forms as a Service<span class="label-cs pull-right">Coming soon</span></h4>
-                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                        <p>Build & Deploy enterprise data forms with just drag-n-drop.</p>
                                     </div>
                                 </a>
-                                <a class="w-100 disabled">
-                                    <div class="drp_items_log">
+                            </li>
+                            <li>
+                                <a class="w-100 disabled" style="border-bottom:unset;">
+                                    <div class="drp_items_log hidden-xs">
                                         <img src="/images/svg/document_ .svg" class="w-100" />
                                     </div>
                                     <div class="drp_items_desc">
                                         <h4>Managed.Documents<span class="label-cs pull-right">Coming soon</span></h4>
-                                        @*<p>Lorem ipsum dolor sit, consectetur adipiscing elit.</p>*@
+                                        <p>Manage your Files.</p>
                                     </div>
                                 </a>
-                            </div>
-                        </li>
-                        <li><a class="hvr-underline-from-center" href="@url/Platform" id="Platform">Platform</a></li>
-                        <li><a class="hvr-underline-from-center" href="@url/AboutUs" id="AboutUs">About Us</a></li>
-                        <li id="signIn"><a class="hvr-underline-from-center" href="">Sign in &#8594;</a></li>                   
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a class="hvr-underline-from-center" href="@url/Platform" id="Platform">Platform</a></li>
+                    <li><a class="hvr-underline-from-center" href="@url/AboutUs" id="AboutUs">About Us</a></li>
                 </ul>
-            </div>
-        </div>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
     </nav>
 </section>

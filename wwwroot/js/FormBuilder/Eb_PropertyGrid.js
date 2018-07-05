@@ -1,9 +1,10 @@
-﻿var Eb_PropertyGrid = function (id, wc, cid, parentPG) {
-    this.wc = wc;
-    this.cid = cid;
+﻿var Eb_PropertyGrid = function (options, parentPG) {
+    this.wc = options.wc;
+    this.cid = options.cid;
     this.ParentPG = parentPG;
-    this.$wraper = $("#" + id);
-    this.wraperId = id;
+    this.wraperId = options.id;
+    this.$wraper = $("#" + this.wraperId);
+    this.$extCont = options.$extCont || this.$wraper.parent();
     this.parentId = null;
     this.$controlsDD = $(".controls-dd-cont select");
     this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
@@ -436,6 +437,7 @@
     };
     // PGclose fn
     this.CloseFn = function (e) {
+        this.minimise();
         this.Close();
     };
 
@@ -445,6 +447,9 @@
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div><span>Properties </span><div class="icon-cont  pull-right pgpin"><i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div><div id='" + this.wraperId + "_HelpBox' class='propgrid-helpbox'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
+        this.$stickBtn = $("<div class='stickBtn'><i class='fa fa-wrench' aria-hidden='true'></i> Properties </div>");
+        this.$stickBtn.on("click", this.maximise.bind(this));
+        $(document.body).append(this.$stickBtn);
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", ".pgpin", this.CloseFn.bind(this));
         this.CXVE = new Eb_pgCXVE(this);
@@ -666,7 +671,6 @@
         $("#" + this.wraperId + " .propgrid-helpbox").show();
         //console.log("default test :" + JSON.stringify(props));
     };
-    this.init();
 
     // makes PG readonly
     this.ReadOnly = function () {
@@ -706,4 +710,21 @@
         $('#' + this.wraperId + " .sub-controls-DD-cont").css("cursor", "inherit");// CE DD, + cont
         $('#' + this.wraperId + ' .CEctrlsCont button').css("cursor", "inherit").prop('disabled', false);//coltile X
     };
+
+    this.maximise = function () {
+        this.$stickBtn.hide(300);
+        this.$extCont.show(300);
+    };
+
+    this.minimise = function (dir, leftDiv, rightDiv) {
+        this.$stickBtn.show(300);
+        this.$extCont.hide(300);
+        let pgtop = (this.$wraper.offset().top - $(window).scrollTop());
+        setTimeout(function () {
+            this.$stickBtn.css("top", (pgtop + (this.$stickBtn.width() / 2)) + "px");
+            this.$stickBtn.css("right", (0 - (this.$stickBtn.width() / 2)) + "px");
+        }.bind(this), 301);        
+    }
+
+    this.init();
 };

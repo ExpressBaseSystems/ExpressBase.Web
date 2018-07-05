@@ -30,9 +30,9 @@
 {
     @await Component.InvokeAsync("PageHeaderCommon")
 }
-<div class="row splitdiv_parent">
-    <div class='sub-windows' id='sub_window_dv' tabindex='1'>
-        <div class='split-inner'>
+<div class="row repdiv_parent">
+    <div class='rep-windows' id='rep-windows_dv' tabindex='1'>
+        <div class='rep-inner'>
             <div class='col-md-3 fdCont padd-2 fd' id='sub_windows_sidediv_dv' style='display: block;padding-left: 0px;padding-right: 0px;'>
                 <div class="pgHead"> Param window <div class="icon-cont  pull-right"><i class="fa fa-times" aria-hidden="true"></i></div></div>
                 @{
@@ -147,26 +147,34 @@
 @if (!ViewBag.RenderLimit)
 {
     <style>
-        .sub-windows {
-            padding: 38px 0px 10px 0px !important;
+        .rep-windows {
+            /*padding: 10px 0px 10px 0px !important;*/
         }
+        
     </style>
 }
 else
 {
     <style>
-        .sub-windows {
+        .rep-windows {
             padding: 0 !important;
-        }
-
-        .sub-windows {
             height: calc(100vh - 73px) !important;
         }
+
     </style>
 }
 <style>
 
-
+    .repdiv_parent {
+        height: calc(100vh - 40px);
+        margin-top: 37px;
+    }
+    .rep-inner{
+        height:100%
+    }
+    .rep-windows {
+        height: 100%
+    }
     select.selectpicker {
         display: block;
         margin: 0 auto;

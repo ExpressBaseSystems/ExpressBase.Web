@@ -654,9 +654,9 @@
             if (typeof props === 'string' || typeof metas === 'string') {
                 console.error('Eb_PropertyGrid got "string" parameter instead of "object"');
                 return null;
-            } else if (typeof id === 'object') {
-                console.error('Eb_PropertyGrid got "object" parameter instead of "string"');
-                return;
+            //} else if (typeof id === 'object') {
+            //    console.error('Eb_PropertyGrid got "object" parameter instead of "string"');
+            //    return;
             } else if (typeof props !== 'object' || props === null || typeof metas !== 'object' || metas === null) {
                 console.error('Eb_PropertyGrid must get an object in order to initialize the grid.');
                 return;

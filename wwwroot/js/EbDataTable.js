@@ -197,7 +197,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
                     wc: "dc",
-                    cid: this.PGobj.cid,
+                    cid: this.cid,
                     $extCont: $(".ppcont")
                 }, this.PGobj);
 

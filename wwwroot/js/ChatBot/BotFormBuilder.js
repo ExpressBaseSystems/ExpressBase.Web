@@ -308,6 +308,21 @@
 
     };
 
+    this.BeforeSave = function () {
+        var relObjs = '';
+        $.each(this.rootContainerObj.Controls.$values, function (indx, ctrl) {
+            if (ctrl.ObjType === 'SimpleSelect' && ctrl.DataSourceId !== '') 
+                relObjs += ctrl.DataSourceId + ',';
+            else if (ctrl.ObjType === 'ComboBox' && ctrl.DataSourceId !== '')
+                relObjs += ctrl.DataSourceId + ',';
+            else if (ctrl.ObjType === 'DynamicCardSet' && ctrl.DataSourceId !== '')
+                relObjs += ctrl.DataSourceId + ',';
+            else if (ctrl.ObjType === 'StaticCardSet' && ctrl.DataSourceId !== '')
+                relObjs += ctrl.DataSourceId + ',';            
+        }.bind(relObjs));
+        this.rootContainerObj.relatedObjects = relObjs.substring(0, relObjs.length - 1);
+    }
+
     this.AfterSave = function (TblName) {
         if (this.validateTableName(TblName)) {
             $.ajax({

@@ -1084,6 +1084,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
             else if (!this.ebSettings.IsPaging)
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
+            else
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 105px)", "important");
         }
     }
 
@@ -1120,12 +1122,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
         if (this.firstTime) {
-            if (this.login === "uc")
-                this.arrangeWindowHeight();
             this.addFilterEventListeners();
             this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
+            if (this.login === "uc")
+                this.arrangeWindowHeight();
         }
         this.Api.columns.adjust();
     };

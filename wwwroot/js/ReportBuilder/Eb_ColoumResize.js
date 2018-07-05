@@ -20,7 +20,7 @@
         let setWidthAndH = function () {
             _tr0.find("td").each(function (j, o) {
                 if (j < _len - 1)
-                    $(o).css("width", calcPercent($(o).innerWidth()) + "%");
+                    $(o).css("width", calcPercent($(o).innerWidth(), _table) + "%");
             });
             //_table.find("tr").each(function (k, ob) {
             //    if (k < _rowCount)
@@ -31,10 +31,11 @@
         let appendHandle = function () {
             let pid = _table.closest(".dropped").attr("id");
             for (let i = 0; i < _len - 1; i++) {
-                _table.closest(".dropped").append(`<div class="eb_resize_e" id="${pid + i}" index="${i}" style="left:${getPos(i)}%"></div>`);
+                _table.closest(".dropped").append(`<div class="eb_resize_e" wt="${pid}" id="${pid + i}" index="${i}" style="left:${getPos(i)}%"></div>`);
             }
             for (let j = 0; j < _rowCount; j++) {
-                _table.closest(".dropped").append(`<div class="eb_resize_row" id="eb_resize_row${pid + j}" index="${j}" style="top:${getTop(j)}%"></div>`);
+                _table.closest(".dropped").append(
+                    `<div class="eb_resize_row"  wt="${pid}" id="eb_resize_row${pid + j}" index="${j}" style="top:${getTop(j)}%"></div>`);
             }
             drag_ble();
         };
@@ -42,13 +43,13 @@
         let getPos = function (i) {
             let it = _tr0.find("td").eq(i);
             let tdleft = it.position().left + it.outerWidth();
-            return calcPercent(tdleft);
+            return calcPercent(tdleft,_table);
         };
 
         let getTop = function (i) {
             let tr = _table.find("tr").eq(i);
-            let tdtop = tr.position().top + tr.innerHeight();
-            return calcPercentTop(tdtop);
+            let tdtop = tr.position().top + tr.height();
+            return calcPercentTop(tdtop,_table);
         };
 
         let drag_ble = function () {
@@ -57,7 +58,7 @@
                 containment: "parent",
                 stop: dragStop.bind(this),
                 drag: ondrag.bind(this),
-                start:startDrag.bind(this)
+                start: startDrag.bind(this)
             });
 
             let f = $(`.${_resizerV}`).draggable({
@@ -68,15 +69,13 @@
             });
         };
 
-        let dragStopV = function (e,ui) {
-            try {
-                let tri = parseInt($(e.target).attr("index"));
-                let l = $(e.target).position().top;
-                let ltd = _table.find("tr").eq(tri).position().top;
-                _table.find("tr").eq(tri).css({ "height": calcPercentTop(l - ltd) + "%" });
-                setNextTr(tri);
-            }
-            catch{ };
+        let dragStopV = function (e, ui) {
+            let t = $(e.target).attr("wt");
+            let tri = parseInt($(e.target).attr("index"));
+            let l = $(e.target).position().top;
+            let ltd = $(`#${t}`).find("tr").eq(tri).position().top;
+            $(`#${t}`).find("tr").eq(tri).css({ "height": calcPercentTop(l - ltd, $(`#${t}`)) + "%" });
+            setNextTr(tri, $(`#${t}`));
         }
 
         let startDragV = function (e, ui) {
@@ -87,52 +86,50 @@
             _dragpos = $(e.target).position().left;
         };
 
-        let ondrag = function (e,ui) {
-            $('.dropped').hover(function () {
-                $(this).css("cursor", "col-resize");
-            });
+        let ondrag = function (e, ui) {
+            //$('.dropped').hover(function () {
+            //    $(this).css("cursor", "col-resize");
+            //});
         };
 
         let dragStop = function (e, ui) {
-            try {
-                let tdi = parseInt($(e.target).attr("index"));
-                let l = $(e.target).position().left;
-                let ltd = _tr0.find("td").eq(tdi).position().left;
-                _tr0.find("td").eq(tdi).css({ "width": calcPercent(l - ltd) + "%" });
-                setNext(tdi);
-            }
-            catch{ };
+            let t = $(e.target).attr("wt");
+            let tdi = parseInt($(e.target).attr("index"));
+            let l = $(e.target).position().left;
+            let ltd = $(`#${t}`).find("tr").eq(0).find("td").eq(tdi).position().left;
+            $(`#${t}`).find("tr").eq(0).find("td").eq(tdi).css({ "width": calcPercent(l - ltd, $(`#${t}`)) +"%" });
+            setNext(tdi, $(`#${t}`));
         };
 
-        let setNext = function (tdi) {
+        let setNext = function (tdi,$t) {
             let index = tdi + 1;
-            let resizer = _table.closest(".dropped").find(".eb_resize_e").eq(tdi);
-            let _nextNode = _table.closest(".dropped").find(".eb_resize_e").eq(index)
+            let resizer = $t.closest(".dropped").find(".eb_resize_e").eq(tdi);
+            let _nextNode = $t.closest(".dropped").find(".eb_resize_e").eq(index)
 
             if (_nextNode.length > 0) {
                 let l = resizer.position().left;
-                let tdw = _tr0.find("td").eq(index).outerWidth();
+                let tdw = $t.find("tr").eq(0).find("td").eq(index).outerWidth();
                 if (_dragpos > l)
-                    _tr0.find("td").eq(index).css({ "width": calcPercent(tdw + (_dragpos - l)) + "%" });
+                    $t.find("tr").eq(0).find("td").eq(index).css({ "width": calcPercent(tdw + (_dragpos - l), $t) + "%" });
                 else
-                    _tr0.find("td").eq(index).css({ "width": calcPercent(tdw - (l - _dragpos)) + "%" });
+                    $t.find("tr").eq(0).find("td").eq(index).css({ "width": calcPercent(tdw - (l - _dragpos), $t) + "%" });
             }
             else
                 refresh();
         };
 
-        let setNextTr = function (tri) {
+        let setNextTr = function (tri,$t) {
             let index = tri + 1;
-            let resizer = _table.closest(".dropped").find(`.${_resizerV}`).eq(tri);
-            let _nextNode = _table.closest(".dropped").find(`.${_resizerV}`).eq(index)
+            let resizer = $t.closest(".dropped").find(`.eb_resize_row`).eq(tri);
+            let _nextNode = $t.closest(".dropped").find(`.eb_resize_row`).eq(index)
 
             if (_nextNode.length > 0) {
                 let l = resizer.position().top;
-                let trh = _table.find("tr").eq(index).innerHeight();
+                let trh = $t.find("tr").eq(index).innerHeight();
                 if (_dragpos > l)
-                    _table.find("tr").eq(index).css({ "height": calcPercentTop(trh + (_dragpos - l)) + "%" });
+                    $t.find("tr").eq(index).css({ "height": calcPercentTop(trh + (_dragpos - l), $t) + "%" });
                 else
-                    _table.find("tr").eq(index).css({ "height": calcPercentTop(trh - (l - _dragpos)) + "%" });
+                    $t.find("tr").eq(index).css({ "height": calcPercentTop(trh - (l - _dragpos), $t) + "%" });
             }
             else
                 refreshTr();
@@ -152,13 +149,13 @@
             });
         }
 
-        let calcPercent = function (val) {
-            let per = val / _table.innerWidth() * 100;
+        let calcPercent = function (val,table) {
+            let per = val / table.innerWidth() * 100;
             return per;
         };
 
-        let calcPercentTop = function (val) {
-            let per = val / _table.innerHeight() * 100;
+        let calcPercentTop = function (val,table) {
+            let per = val / table.innerHeight() * 100;
             return per;
         };
 

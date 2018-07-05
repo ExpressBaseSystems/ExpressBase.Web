@@ -39,10 +39,6 @@
     this.TableCollection = {};
 
     this.RefreshControl = function (obj) {
-        if (obj.ParentName === "TableLayout") {
-            obj.Left = 0; obj.Top = 0;
-            this.RbCommon.tableResizableCols(obj);
-        }
         var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
         $.each(metas, function (i, meta) {
@@ -53,8 +49,6 @@
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
 
-        if ('RowCount' in obj)
-            this.RbCommon.tableResizableCols(obj);
         if ('Font' in obj)
             this.repExtern.setFontProp(obj);
         if (!('SectionHeight' in obj)) {
@@ -72,7 +66,6 @@
                 drop: this.onDropFn.bind(this)
             });
         }
-        this.makeTLayoutDroppable(obj);
         $("#" + obj.EbSid).attr("tabindex", "1");
         $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
@@ -279,67 +272,37 @@
     };//on drop func of dropable
 
     this.DropFirst = function (Title) {
-        var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++;
-        var obj = new EbObjects["Eb" + this.Objtype](Objid);
-        this.dropLoc.append(obj.$Control.outerHTML());
-        this.objCollection[Objid] = obj;
-        if (this.Objtype === "TableLayout")
-            this.TableCollection[Objid] = new Array();
-
-        obj.Top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
-        obj.Left = this.leftwithMargin();
-
-        if (this.col.hasClass('coloums')) {
-            obj.DbType = this.col.attr("DbType");
-            obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
-            obj.ColumnName = this.col.text().trim();
+        if (this.Objtype === "TableLayout") {
+            let o = new EbTableLayout(this);
+            this.TableCollection[o.EbSid] = o;
         }
-        if (this.dropLoc.hasClass('T_layout')) {
-            obj.Width = this.dropLoc.innerWidth();
-            obj.Height = this.dropLoc.innerHeight();
-            obj.Top = 0;
-            this.TableCollection[this.dropLoc.closest(".eb_table_container").attr("id")].push(obj);
+        else {
+            var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++;
+            var obj = new EbObjects["Eb" + this.Objtype](Objid);
+            this.dropLoc.append(obj.$Control.outerHTML());
+            this.objCollection[Objid] = obj;
+            obj.Top = this.getPositionTop();
+            obj.Left = this.leftwithMargin();
+            if (this.col.hasClass('coloums')) {
+                obj.DbType = this.col.attr("DbType");
+                obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
+                obj.ColumnName = this.col.text().trim();
+            }
+            obj.Title = Title;
+            obj.ParentName = this.dropLoc.attr("eb-type");
+            this.pg.addToDD(obj);
+            this.RefreshControl(obj);
         }
-        obj.Title = Title;
-        obj.ParentName = this.dropLoc.attr("eb-type");
-        this.pg.addToDD(obj);
-        this.RefreshControl(obj);
     };
 
     this.DropFurther = function () {
         var obj1 = this.objCollection[this.col.attr('id')];
         var l1 = this.leftwithMargin();
-        var top = (this.posTop - this.dropLoc.offset().top) - this.reDragTop;
-        if (this.dropLoc.hasClass('T_layout')) {
-            top = 0;
-            this.col.css({ width: this.dropLoc.innerWidth(), height: this.dropLoc.innerHeight() });
-            obj1.Width = this.dropLoc.innerWidth();
-        }
+        var top = this.getPositionTop();
         this.dropLoc.append(this.col.css({ left: l1, top: top }));
-
-        obj1.Top = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().top;
-        obj1.Left = this.dropLoc.hasClass("T_layout") ? 0 : this.col.position().left;
+        obj1.Top = this.col.position().top;
+        obj1.Left = this.col.position().left;
         obj1.ParentName = this.dropLoc.attr("eb-type");
-    };
-
-    this.makeTLayoutDroppable = function (obj) {
-        if ('ColoumCount' in obj && 'RowCount' in obj) {
-            $(`#${obj.EbSid}`).children('table').find('td').addClass("T_layout").droppable({
-                accept: ".draggable,.dropped,.coloums",
-                greedy: true,
-                hoverClass: "drop-hover",
-                drop: this.onDropFn.bind(this)
-            });
-        }
-        this.makeTLayoutTdResize(obj);
-    };
-
-    this.makeTLayoutTdResize = function (obj) {
-        if ('ColoumCount' in obj && 'RowCount' in obj) {
-            //$(`#${obj.EbSid} table td`).resizable({
-            //    handles:"e"
-            //});
-        }
     };
 
     this.leftwithMargin = function () {
@@ -349,13 +312,25 @@
             l = (this.posLeft - this.dropLoc.offset().left) - this.positionTandL['left'];
         else
             l = (this.posLeft - this.dropLoc.offset().left) - this.reDragLeft;
-        if (l < $(".track_line_vert1").position().left)
-            l = this.margin.Left;
-        else if (l + r > $(".track_line_vert2").position().left)
-            l = this.margin.Right - r;
-        if (this.dropLoc.hasClass("T_layout"))
+        //if (l < $(".track_line_vert1").position().left)
+        //    l = this.margin.Left;
+        //else if (l + r > $(".track_line_vert2").position().left)
+        //    l = this.margin.Right - r;
+        if (this.dropLoc.hasClass("T_layout_td"))
             l = 0;
         return l;
+    };
+
+    this.getPositionTop = function () {
+        let top = null;
+        if (!this.col.hasClass('dropped'))
+            top = (this.posTop - this.dropLoc.offset().top) - this.positionTandL['top'];
+        else
+            top = (this.posTop - this.dropLoc.offset().top) - this.reDragTop;
+
+        if (this.dropLoc.hasClass("T_layout_td"))
+            top = 0;
+        return top;
     };
 
     this.onReSizeFn = function (event, ui) {
@@ -578,20 +553,12 @@
     };//page size change fn
 
     this.setpageMode = function (obj) {
-        //if ($("#page").css("display") === "none")
-        //    $(".headersections-report-layer,#page-reportLayer").hide();
-        //else
-        //    $(".page").show();
         [this.height, this.width] = [this.width, this.height];
-        this.designHeight = this.height;
-        $('.ruler,.rulerleft').empty();
-        this.ruler();
-        $(".headersections,.multiSplit").css({ "height": this.height });
-        $("#page").css({ "height": this.height, "width": this.width });
-        $("#page-reportLayer").css({ "height": this.designHeight, "width": this.width });
-        $(".headersections-report-layer").css({ "height": this.designHeight });
-        this.repExtern.OndragOfSections();
-        this.repExtern.splitterOndragFn();
+        //this.designHeight = this.height;
+        //$(".headersections,.multiSplit").css({ "height": this.height });
+        $("#page").css({ "width": this.width});
+        $("#page-reportLayer").css({ "width": this.width,height:this.height});
+        $(".headersections-report-layer").css({ "height": this.height });
     };//page layout lands/port
 
     this.setSplitArrayFSec = function (i, obj) {
@@ -676,12 +643,8 @@
     }
 
     this.pg.PropertyChanged = function (obj, pname) {
-        if ('SectionHeight' in obj) {
-            this.sizeArray = [];
-            this.idArray = [];
-            $("#" + obj.EbSid).parent().children().not(".gutter").each(this.setSplitArrayFSec.bind(this));
-            this.RefreshControl(obj);
-            this.repExtern.splitGeneric(this.idArray, this.sizeArray);
+        if (pname === 'RowCount' || pname === 'ColoumCount') {
+            this.TableCollection[obj.EbSid].addCells(obj, pname);
         }
         else if (pname === "DataSourceRefId") {
             this.getDataSourceColoums(obj.DataSourceRefId);

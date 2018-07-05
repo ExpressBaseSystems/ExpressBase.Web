@@ -388,6 +388,7 @@
     z-index: 0;
     float: left;
     margin-left: 280px;
+    width: 76%;
 }
 .pageCanvas {
     position: relative;   

@@ -148,7 +148,7 @@ namespace ExpressBase.Web2
                     context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.info *.eb-test.info;");
                 }
                 if (env.IsProduction())
-                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM https://*.expressbase.com");
+                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN *.expressbase.com");
                 await next();
             }); // for web forwarding with masking
         }

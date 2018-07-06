@@ -419,10 +419,10 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $.LoadingOverlay("hide");
     };
 
-    this.BeforeSave = function () {
-        if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
-            this.relatedObjects += this.FilterDialogRefId;
-    };
+	this.CreateRelationString = function () {
+		if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
+			this.relatedObjects += this.FilterDialogRefId;
+	};
 
     this.FetchUsedSqlFns_inner = function (i, sqlFn) {
         if (this.EbObject.Sql.indexOf(sqlFn.name) !== -1) {

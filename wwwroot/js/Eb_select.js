@@ -189,6 +189,7 @@ var EbSelect = function (ctrl) {
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
         o.columnSearch = this.filterArray;
+        o.keys = true;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.columns;//////////////////////////////////////////////////////

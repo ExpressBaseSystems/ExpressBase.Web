@@ -192,7 +192,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
-                    wc: "uc",
+                    wc: "dc",
                     cid: this.cid,
                     $extCont: $(".ppcont")
                 });
@@ -212,7 +212,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
-                    wc: "uc",
+                    wc: "dc",
                     cid: this.cid,
                     $extCont: $(".ppcont")
                 });
@@ -1258,7 +1258,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.toolTipCallback = function (item, data) {
         if (this.type === "pie")
             return data.datasets[item.datasetIndex].label + ": " + data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index];
-    }.bind(this);
+	}.bind(this);
+
+	this.CreateRelationString = function () { };
 
     this.start();
 };

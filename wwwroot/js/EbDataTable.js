@@ -614,7 +614,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 o.name = $($(ctrl).children()[0]).text();
                 o.operator = "=";
                 if (ctype === "ComboBox")
-                    o.value = $(ctrl).find("input").attr("display-member");
+                    o.value = $(ctrl).find("input").attr("display-members");
                 else if (ctype === "Date")
                     o.value = $(ctrl).find("input").val();
                 else

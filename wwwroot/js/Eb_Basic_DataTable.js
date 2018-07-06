@@ -85,6 +85,13 @@ var EbBasicDataTable = function (Option) {
         $(".icon-cont").hide();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
+
+        /// temporary for filterdialog
+        if (this.ebSettings.Columns.$values.$values)
+            this.ebSettings.Columns.$values = this.ebSettings.Columns.$values.$values;
+        console.log("this.ebSettings.Columns =" , this.ebSettings.Columns);
+
+
         this.dvName = this.ebSettings.Name;
         this.initCompleteflag = false;
 
@@ -167,7 +174,7 @@ var EbBasicDataTable = function (Option) {
         });
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-            alert("ajax erpttt......");
+            alert(message);
         };
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
@@ -228,7 +235,7 @@ var EbBasicDataTable = function (Option) {
         o.select = true;
         o.keys = true,
             o.ajax = {
-                url: "../boti/getData",
+                url: "../dv/getData",
                 type: 'POST',
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
@@ -246,13 +253,13 @@ var EbBasicDataTable = function (Option) {
         dq.TFilters = this.columnSearch;
         this.filterValues = this.getFilterValues("filter");
         dq.Params = this.filterValues;
-        //dq.rowData = this.rowData;
+        dq.rowData = this.rowData;
         dq.OrderByCol = this.order_info.col;
         dq.OrderByDir = this.order_info.dir;
         if (this.columnSearch.length > 0) {
             this.filterFlag = true;
         }
-        //dq.Ispaging = this.EbObject.IsPaging;
+        dq.Ispaging = this.EbObject.IsPaging;
         dq.Ispaging = true;
         dq.start = 0;
         dq.length = 25;/////////hard coding
@@ -384,7 +391,7 @@ var EbBasicDataTable = function (Option) {
         if (a.data > b.data) return 1;
         if (a.data === b.data) return 0;
     };
-    
+
     this.getAgginfo = function () {
         var _ls = [];
         $.each(this.ebSettings.Columns.$values, this.getAgginfo_inner.bind(this, _ls));
@@ -644,7 +651,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.DTKeyPressCallback = function (e, datatable, key, cell, originalEvent) {
-            Option.keyPressCallbackFn(e, datatable, key, cell, originalEvent);
+        Option.keyPressCallbackFn(e, datatable, key, cell, originalEvent);
     };
 
     this.doRowgrouping = function () {
@@ -1608,7 +1615,7 @@ var EbBasicDataTable = function (Option) {
             return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' />`;
     };
     this.getRowDataByUid = function (Uid) {
-        var $tr = $("#"+this.tableId+" tr[data-uid='" + Uid + "']");
+        var $tr = $("#" + this.tableId + " tr[data-uid='" + Uid + "']");
         var rowData = this.Api.row($tr).data();
         return rowData;
     };

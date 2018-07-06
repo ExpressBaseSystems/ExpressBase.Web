@@ -1,6 +1,8 @@
 ﻿using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -35,7 +37,13 @@ namespace ExpressBase.Web.Components
                 }
                 ViewBag.HtmlHead = paramDiv.GetHead();
                 ViewBag.HtmlBody = paramDiv.GetHtml();
+
                 ViewBag.FilterObj = Common.EbSerializers.Json_Serialize(paramDiv);
+
+                var serializerSettings = new JsonSerializerSettings();
+                serializerSettings.TypeNameHandling = TypeNameHandling.All;
+                serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                ViewBag.FilterObj = JsonConvert.SerializeObject(paramDiv, serializerSettings);
             }
 
             return View();

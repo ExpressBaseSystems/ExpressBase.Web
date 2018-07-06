@@ -458,6 +458,8 @@
                                 <div class='guid-hb' id='guid-hb'></div>`);
     };//drag stop fn of control
 
+	this.CreateRelationString = function () { };
+
     this.BeforeSave = function () {
         this.repExtern.emptyControlCollection(this.EbObject);
         this.EbObject.DesignPageHeight = this.repExtern.convertTopoints($("#page").outerHeight());

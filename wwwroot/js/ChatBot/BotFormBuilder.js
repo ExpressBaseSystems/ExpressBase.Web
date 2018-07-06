@@ -314,7 +314,7 @@
 
     };
 
-    this.BeforeSave = function () {
+	this.CreateRelationString = function () {
         var relObjs = '';
         $.each(this.rootContainerObj.Controls.$values, function (indx, ctrl) {
             if (ctrl.ObjType === 'SimpleSelect' && ctrl.DataSourceId !== '') 

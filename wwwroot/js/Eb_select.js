@@ -48,7 +48,13 @@ var EbSelect = function (ctrl) {
     if (!(Object.keys(ctrl.valueMember).includes("name")))//////////////////
         this.idField = "columnName";////////////////////////
     this.vmName = ctrl.valueMember[this.idField]; //ctrl.vmName;
-    this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
+
+    /// temporary for filterdialog
+    if (!Array.isArray(ctrl.displayMembers))
+        this.dmNames = ctrl.displayMembers.$values.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
+    else
+        this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
+
     this.maxLimit = (ctrl.maxLimit === 0) ? 9999999999999999999999 : ctrl.maxLimit;
     this.minLimit = ctrl.minLimit;//ctrl.minLimit;
     this.multiSelect = (ctrl.maxLimit > 1);

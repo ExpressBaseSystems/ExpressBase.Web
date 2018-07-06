@@ -422,6 +422,8 @@ var EbSelect = function (ctrl) {
             this.Vobj.valueMembers = this.Vobj.valueMembers.splice(0, this.maxLimit);
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
+
+        $("#" + this.ComboObj.id).attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
         this.getSelectedRow();
 
         if (VMs.length === 0)

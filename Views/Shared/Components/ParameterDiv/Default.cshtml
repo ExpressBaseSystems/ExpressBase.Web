@@ -11,7 +11,7 @@
 
 <div id='filterBox' class="filter-box">
     @Html.Raw(ViewBag.HtmlBody)
-    <button class="btn pull-right" id="btnGo"><i class="fa fa-play" aria-hidden="true"></i></button>
+    <button class="filter-run" id="btnGo"><i class="fa fa-play" aria-hidden="true"></i></button>
 </div>
 
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
@@ -58,9 +58,6 @@
                 $(`#${cObj.name}_loading-image`).hide();
                 //MakeCaps(cObj);
                 var EbCombo = new EbSelect(cObj);
-
-                //if (this.Bot.curCtrl !== undefined)
-                alert(EbCombo.getSelectedRow);
             }
         }.bind(this));
     };

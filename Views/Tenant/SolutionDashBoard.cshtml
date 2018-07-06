@@ -1,10 +1,14 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";   
+    Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
 <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
+<script src="~/js/EbCropper.js" type="text/javascript"></script>
 <script src="~/js/validator.js" type="text/javascript"></script>
 <script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
 <script>
@@ -55,7 +59,15 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
-
+                    <div class="form-group">
+                        <div class="col-md-4 pd-0">
+                            <label>Upload Logo</label>
+                            <button id="log-upload-btn" class="btn log-upload-b">Change Logo <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                        </div>
+                        <div class="col-md-8 pd-0 logo_img_cont">
+                            <img src="" class="img-responsive pull-right" id="oB_logo-prev" />
+                        </div>
+                    </div>
                 </div>
                 <div class="tab-pane" id="Connections" role="tabpanel">
                     <div class="connectons-container">
@@ -241,12 +253,12 @@
                                             <td>ReadOnly User</td>
                                             <td><input name="ReadOnlyUserName" type="text" class="form-control" /></td>
                                             <td><input name="ReadOnlyPassword" type="text" class="form-control" /></td>
-                                        </tr>                                      
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <div class="uname-advanced-sec form-inline">
                                     <label style="margin-right:5px;">Advanced</label>
-                                     <label class="switch">
+                                    <label class="switch">
                                         <input type="checkbox" id="UserNamesAdvanced">
                                         <span class="slider round"></span>
                                     </label>
@@ -274,7 +286,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="IsNew" />
-                        <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId"/>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -424,6 +436,7 @@
         </div>
     </div>
 </div>
+<div class="eb-cropie" id="cropsection"></div>
 <script>
     var sdb = new SolutionDashBoard(EbConnections,'@ViewBag.SolutionInfo.EsolutionId');
 </script>

@@ -478,7 +478,7 @@
             for (var i = 0; i < myarray.length; i++) {
                 console.log($("#" + myarray[i]).val());
                 var type = $('#' + myarray[i]).attr('data-ebtype');
-                var name = $('#' + myarray[i]).attr('name');
+                var name = $('#' + myarray[i]).attr('id');
                 if (type === "3")
                     value = $("[name=" + myarray[i] + "]:checked").val()
                 else

@@ -122,13 +122,21 @@
                 console.log($("#" + myarray[i]).val());
                 var type = $('#' + myarray[i]).attr('data-ebtype');
                 var name = $('#' + myarray[i]).attr('id');
-                Console.log(name);
                 if (type === "3")
                     value = $("[name=" + myarray[i] + "]:checked").val()
                 else
                     value = $('#' + myarray[i]).val();
                 if (type === '6')
                     value = value.substring(0, 10);
+                else
+                    if (typeof value === "string") {
+                        //value = value.trim();
+                    }
+
+                if (type === '16' && !(isNaN(value))) {
+                    value = parseInt(value);
+                    type = 8;
+                }
                 ParamsArray.push(new fltr_obj(type, name, value));
             }
         }

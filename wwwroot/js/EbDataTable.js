@@ -613,10 +613,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var ctype = $(ctrl).attr("ctype");
                 o.name = $($(ctrl).children()[0]).text();
                 o.operator = "=";
-                if (ctype !== "Date")
-                    o.value = $($(ctrl).children()[1]).val();
-                else
+                if (ctype === "ComboBox")
+                    o.value = $(ctrl).find("input").attr("display-member");
+                else if (ctype === "Date")
                     o.value = $(ctrl).find("input").val();
+                else
+                    o.value = $($(ctrl).children()[1]).val();
+                    
                 if (typeof $controls[i + 1] !== "undefined")
                     o.logicOp = "AND";
                 else

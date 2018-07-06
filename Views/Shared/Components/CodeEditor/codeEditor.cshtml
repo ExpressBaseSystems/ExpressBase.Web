@@ -165,6 +165,7 @@
     }
 
     .ds-cont {
+        position: relative;
         margin: 0 auto;
         height: calc( 100vh - 76.5px);
         margin-top: 37px;
@@ -195,6 +196,10 @@
             z-index: 9;
         }
 
+        .ds-cont .CodeMirror pre {
+            z-index: 0 !important;
+        }
+
         .ds-cont .code-window {
             height: 100%;
         }
@@ -205,8 +210,46 @@
             color: black;
         }
 
-    .param-div {
-        position: fixed;
+        .ds-cont .filter-box {
+            padding: 1px;
+        }
+
+    .filter-box .input-group-addon {
+        border-radius: 0px;
+        border: 0px;
+    }
+
+    .filter-box .filter-run {
+        border: none;
+        color: white;
+        background-color: #369;
+        padding: 4px 12px;
+        float: right;
+        border-radius: 2px;
+    }
+
+        .filter-box .filter-run:hover {
+            background-color: #247;
+        }
+
+        .filter-box .search-wraper {
+            border: solid 1px #ddd;
+        }
+        .ds-cont .param-div-cont {
+        position: absolute;
+        background-color: white;
+        height: calc( 100vh - 77px);
+    }
+
+    .ds-cont .param-div {
+        position: absolute;
+        left: 0px;
+        min-width: 300px;
+        height: 100%;
+        background-color: white;
+        box-shadow: var(--eb-shadow);
+        border: 1px solid #ccc;
+        z-index: 9;
     }
 
     .CodeMirror-gutters {

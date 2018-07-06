@@ -118,13 +118,13 @@ var EbSelect = function (ctrl) {
         var searchVal = $e.val();
 
         var mapedField = $e.closest(".searchable").attr("maped-column");
-        var mapedFieldType = $e.closest(".searchable").attr("column-type");
+        var mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         if (!this.IsDatatableInit) {
             if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
                 return;
             var searchBy = " = ";
-            if (mapedFieldType === "String")
+            if (mapedFieldType === "string")
                 searchBy = "*x*";
             var filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
@@ -139,6 +139,23 @@ var EbSelect = function (ctrl) {
                 return;
             this.datatable.Api.ajax.reload();
         }
+    };
+
+
+
+    this.getTypeForDT = function (type) {
+        type = parseInt(type);
+        var res = "";
+        if (type === 16)
+            res = "string";
+        else if ([7, 8, 9, 10, 11, 12, 21].contains(type))
+            res = "number";
+        else if (type === 3)
+            res = "boolean";
+        else if ([5, 6, 17, 26].contains(type))
+            res = "date";
+
+        return res;
     };
 
     this.srchBoxIdSetter = function (i) {
@@ -405,6 +422,8 @@ var EbSelect = function (ctrl) {
             this.Vobj.valueMembers = this.Vobj.valueMembers.splice(0, this.maxLimit);
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
+
+        $("#" + this.ComboObj.id).attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
         this.getSelectedRow();
 
         if (VMs.length === 0)
@@ -526,7 +545,10 @@ var EbSelect = function (ctrl) {
     };
 
     this.tagCloseBtnHand = function (e) {
-        $(this.DTSelector + ' [type=checkbox][value=' + this.Vobj.valueMembers.splice(delid(), 1) + ']').prop("checked", false);
+        if (this.ComboObj.multiSelect)
+            $(this.DTSelector + ' [type=checkbox][value=' + this.Vobj.valueMembers.splice(delid(), 1) + ']').prop("checked", false);
+        else
+            this.Vobj.valueMembers.splice(delid(), 1);
         $.each(this.dmNames, function (i, name) {
             this.Vobj.displayMembers[name].splice(delid(), 1);
         }.bind(this));

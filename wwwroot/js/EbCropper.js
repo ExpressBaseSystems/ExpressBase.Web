@@ -83,7 +83,15 @@
     };
 
     this.startSE = function () {
-        this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.info", Channels: ["file-upload"] });
+        let url = "";
+        if (window.location.host.indexOf("localhost") >= 0)
+            url = "https://sedev.eb-test.info";
+        else if (window.location.host.indexOf("eb-test.info") >= 0)
+            url = "https://se.eb-test.info";
+        else
+            url = "https://se.expressbase.com";
+
+        this.ss = new EbServerEvents({ ServerEventUrl: url, Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (m, e) {
             
         }.bind(this);//server event return id after upload success
@@ -118,9 +126,10 @@
     this.upload = function () {
         var url = this.Type === "logo" ? "../StaticFile/UploadLogoAsync" : "../StaticFile/UploadDPAsync";
         if (this.fileurl) {
+        this.crop();
             $.post(url, {
                 'base64': this.fileurl,
-                'tid':this.Tid
+                'tid': this.Tid
             });
             this.toggleModal();
         }

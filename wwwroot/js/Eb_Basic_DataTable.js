@@ -462,7 +462,7 @@ var EbBasicDataTable = function (Option) {
                                     }
                                 }
                                 else {
-                                    filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
+                                    filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val(), type));
                                 }
                             }
                         }

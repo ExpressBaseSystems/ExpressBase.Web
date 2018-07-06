@@ -9,9 +9,9 @@
 
 }
 
-<div id='filterBox'>
+<div id='filterBox' class="filter-box">
     @Html.Raw(ViewBag.HtmlBody)
-    <button class="btn pull-right" id="btnGo"><i class="fa fa-play" aria-hidden="true"></i></button>
+    <button class="filter-run" id="btnGo"><i class="fa fa-play" aria-hidden="true"></i></button>
 </div>
 
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js"></script>
@@ -21,6 +21,35 @@
 <script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
 <script src="https://rawgit.com/digitalBush/jquery.maskedinput/1.4.1/dist/jquery.maskedinput.min.js"></script>
 <script src="~/js/Eb_Basic_DataTable.js"></script>
+
+<style>
+    .ds-cont .filter-box {
+        padding: 1px;
+    }
+
+    .filter-box .input-group-addon {
+        border-radius: 0px;
+        border: 0px;
+    }
+
+    .filter-box .filter-run {
+        border: none;
+        color: white;
+        background-color: #369;
+        padding: 4px 12px;
+        float: right;
+        border-radius: 2px;
+    }
+
+        .filter-box .filter-run:hover {
+            background-color: #247;
+        }
+
+    .filter-box .search-wraper {
+        border: solid 1px #ddd;
+    }
+</style>
+
 <script>
 
     $(document).ready(function () {
@@ -58,9 +87,6 @@
                 $(`#${cObj.name}_loading-image`).hide();
                 //MakeCaps(cObj);
                 var EbCombo = new EbSelect(cObj);
-
-                //if (this.Bot.curCtrl !== undefined)
-                alert(EbCombo.getSelectedRow);
             }
         }.bind(this));
     };

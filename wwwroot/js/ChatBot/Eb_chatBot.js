@@ -158,11 +158,15 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.continueAsFBUser = function (e) {
         this.postmenuClick(e, "");
-        if (this.CurFormIdx === 0)
+        if (this.CurFormIdx === 0) {
+            this.sendCtrl("Continue as " + this.userDtls.name);
             this.authenticate();
+        }
         else
             this.FB.logout(function (response) {
-                this.msgFromBot("You are successfully logout from our App");
+                //this.msgFromBot("You are successfully logout from our App");///////////////////////
+                this.sendCtrl("Not " + this.userDtls.name);
+                this.collectContacts();
             }.bind(this));
     }.bind(this);
 

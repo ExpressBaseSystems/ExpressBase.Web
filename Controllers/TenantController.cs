@@ -58,6 +58,7 @@ namespace ExpressBase.Web.Controllers
             GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });       
             ViewBag.Connections = JsonConvert.SerializeObject(resp.EBSolutionConnections);
             ViewBag.SolutionInfo = resp.Data;
+            ViewBag.cid = Sid;
             return View();
         }            
         

@@ -420,5 +420,7 @@
         fun: this.del
     }];
 
+	this.CreateRelationString = function () { };
+
     this.Init();
 };

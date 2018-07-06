@@ -54,11 +54,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $("#obj_icons").append(`
             <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'> <i class='fa fa-play' aria-hidden='true'></i></button >
             `);
-        if (this.FD === true) {
-            $("#obj_icons").append(`<button id='btnToggleFD' class='btn' data-toggle='tooltip' title='Toggle ParameterDiv'> <i class='fa fa-filter' aria-hidden='true'></i></button>`);
-        }
+        //if (this.FD === true) {
+        //    $("#obj_icons").append(`<button id='btnToggleFD' class='btn' data-toggle='tooltip' title='Toggle ParameterDiv'> <i class='fa fa-filter' aria-hidden='true'></i></button>`);
+        //}
         $("#run").off("click").on("click", this.RunDs.bind(this));
-        $("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
+        //$("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
     }
 
     this.SetCode = function (e) {
@@ -103,35 +103,44 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.AppendFD = function (result) {
         $('#paramdiv' + tabNum).remove();
         $('#ds-page' + tabNum).prepend(`
-                <div id='paramdiv${tabNum}' class='col-md-2 param-div'>
+                <div id='paramdiv-Cont${tabNum}' class='param-div-cont'>
+                <div id='paramdiv${tabNum}' class='param-div'>
                     <div class='pgHead'>
                         <h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6>
                         <div class="icon-cont  pull-right" id='close_paramdiv${tabNum}'><i class="fa fa-times" aria-hidden="true"></i></div>
                     </div>
                     </div>
+                    </div>
                 `);
         $('#paramdiv' + tabNum).show();
-        $('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
+        //$('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.RunDs.bind(this));
         $.LoadingOverlay("hide");
+
+        this.stickBtn = new EbStickButton({
+            $wraper: $(".param-div"),
+            $extCont: $(".param-div"),
+            icon:"fa-filter",
+            dir: "left",
+            label: "Parameters"
+        });
     };
 
     this.CloseParamDiv = function () {
-        $('#paramdiv' + tabNum).hide();
-        $('#codewindow' + tabNum).removeClass("col-md-8 col-md-offset-2").addClass("col-md-10");
+        this.stickBtn.minimise();
     };
 
-    this.ToggleFD = function () {
-        if ($('#paramdiv' + tabNum).css("display") === "none") {
-            $('#paramdiv' + tabNum).show();
-            $('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
-        }
-        else {
-            this.CloseParamDiv();
-        }
-    };
+    //this.ToggleFD = function () {
+    //    if ($('#paramdiv' + tabNum).css("display") === "none") {
+    //        $('#paramdiv' + tabNum).show();
+    //        $('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
+    //    }
+    //    else {
+    //        this.CloseParamDiv();
+    //    }
+    //};
 
     this.AddVerNavTab = function (navitem, tabitem) {
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
@@ -264,7 +273,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                     if (type === '6')
                         value = value.substring(0, 10);
                     else
-                        if (typeof value ==="string") {
+                        if (typeof value === "string") {
                             //value = value.trim();
                         }
 

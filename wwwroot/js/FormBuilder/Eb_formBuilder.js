@@ -1,4 +1,5 @@
-﻿var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
+﻿
+var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
     this.wc = wc;
     this.cid = cid;
     this.Name = formid;
@@ -354,7 +355,7 @@
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-    
+	this.CreateRelationString = function () { };
 
     this.Init = function () {
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {

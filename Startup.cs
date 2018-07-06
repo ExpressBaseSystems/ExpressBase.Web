@@ -4,6 +4,8 @@ using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,18 +46,24 @@ namespace ExpressBase.Web2
                   opts.ApplicationDiscriminator = "expressbase.web";
               }); // for antiforgery checking 
 
-            services.AddMvc();
-
-            services.AddSingleton<AreaRouter>();
-
-            // Added - uses IOptions<T> for your settings.
-            services.AddOptions();
-
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
                     builder => builder.WithOrigins("https://eb-test.info", "https://expressbase.com"));
             });
+
+            services.AddMvc();
+
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
+            });
+            services.AddSingleton<AreaRouter>();
+
+            // Added - uses IOptions<T> for your settings.
+            services.AddOptions();
+
+
 
             var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>

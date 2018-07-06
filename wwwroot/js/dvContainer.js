@@ -34,7 +34,15 @@ var DvContainerObj = function (settings) {
     this.cellData = null;
     this.isExistReport = false;
     this.curTVobj = settings.dsobj;
-    this.PGobj = new Eb_PropertyGrid("pp_inner","uc");
+    //this.PGobj = new Eb_PropertyGrid("pp_inner", "uc");
+
+
+    this.PGobj = new Eb_PropertyGrid({
+        id: "pp_inner",
+        wc: "uc",
+        cid: this.cid,
+        $extCont: $(".ppcont")
+    });
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
@@ -448,7 +456,7 @@ var DvContainerObj = function (settings) {
                     //arrows: false,
                     //dots: true,
                     prevArrow: "<i class='pull-left fa fa-angle-left ' aria-hidden='true'></i>",
-                    nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 0;' aria-hidden='true'></i>"
+                    nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 15px;' aria-hidden='true'></i>"
                     //prevArrow: $("#prev"),
                     //nextArrow: $("#next")
                 });
@@ -476,7 +484,7 @@ var DvContainerObj = function (settings) {
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
         $("#Relateddiv").hide();
-        $(".ppcont").hide();
+        //$(".ppcont").hide();
         $(".filterCont").hide();
         if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) {
             focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
@@ -497,6 +505,7 @@ var DvContainerObj = function (settings) {
                     this.dvcol[focusedId].GenerateButtons();
                     $("#Common_obj_icons").hide();
                     $("#obj_icons").show();
+                    $(".stickBtn").show();
                     if (__count !== "0") {
                         $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                         this.eventBind();
@@ -512,6 +521,7 @@ var DvContainerObj = function (settings) {
                 $(".dv-body2").removeClass("dv-pdf");
             }
             else {
+                $(".stickBtn").hide();
                 $("#obj_icons").hide();
                 $("#Common_obj_icons").show();
                 $("#Common_obj_icons").empty();
@@ -536,6 +546,7 @@ var DvContainerObj = function (settings) {
                     this.dvcol[focusedId].GenerateButtons();
                     $("#Common_obj_icons").hide();
                     $("#obj_icons").show();
+                    $(".stickBtn").show();
                     if (__count !== "0") {
                         $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                         this.eventBind();
@@ -549,6 +560,7 @@ var DvContainerObj = function (settings) {
                 }
             }
             else {
+                $(".stickBtn").hide();
                 $("#obj_icons").hide();
                 $("#Common_obj_icons").show();
                 $("#Common_obj_icons").empty();

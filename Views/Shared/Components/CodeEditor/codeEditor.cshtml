@@ -15,91 +15,93 @@
     <script src="~/js/SqlBuilder/Sort.js" type="text/javascript"></script>
     <script src="~/js/SqlBuilder/whereClause.js" type="text/javascript"></script>*@
 
-<div class="ds-page" id="ds-page@(ViewBag.tabnum)">
-    <div class='col-md-10 code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
+<div class="ds-page ds-cont" id="ds-page@(ViewBag.tabnum)">
+    <div class='code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
         <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
     </div>
-    <div class='col-md-2 col-md-offset-10 ds-prop'>
+    <div class='ds-prop'>
         <div id='dspropgrid@(ViewBag.tabnum)' class='pull-right' style='padding:0px'></div>
     </div>
 </div>
-<section class="topbar">
-    <div class="container-fluid">
-        <div class="row h_toolbar">
-            <a type="button" class="btn" href="~/QB/outerQueryBuilder"><i class="glyphicon glyphicon-backward"></i></a>
-            <label id="QBheadtext"><b>VISUAL SQL QUERY BUILDER</b></label>
-            <button type="button" class="btn pull-right" data-target="#myModal" data-toggle="modal"><i class="glyphicon glyphicon-floppy-saved"></i></button>
-        </div>
-    </div>
-</section>
-<div class="container-fluid builder-window">
-    <div class="row builder-window-row">
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 Builder-toolbox">
-            <div id="tables-cont"></div>
-            <ul id="column-cont"></ul>
-            <div id="dragula-tables-cont"></div>
-            <ul id="dragula-column-cont"></ul>
-        </div>
-        <div class="col-lg-10 col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-md-10 col-sm-10 col-xs-12 Builder-work-pane pd-0">
-            <ul class="nav nav-tabs" role="tablist">
-                <li class="active"><a href="#Design" aria-controls="home" role="tab" data-toggle="tab">Design</a></li>
-                <li><a href="#Condition" aria-controls="Condition" role="tab" data-toggle="tab">Condition</a></li>
-                <li><a href="#Query" aria-controls="Query" role="tab" data-toggle="tab">Query</a></li>
-            </ul>
-            <!-- Tab panes -->
-            <div class="tab-content tabs">
-                <div class="tab-pane active De" id="Design">
-                    <div class="DesignPane drop" id="designpane" style="height:700px;width:100%">
-                    </div>
-                    <div class="col-sm-2 sortfunction sortfunction">
-                    </div>
-                </div>
-                <div class="tab-pane condition-tab" id="Condition">
-                    <div class="conditiong-gp-container" id="groupBox0">
-                        <div class="ConditionPanes-header conditiong-gp-container-header form-inline">
-                            <div class="btn-group btn-toggle where-toggle" id="grpBtnId00">
-                                <button class="btn btn-sm btn-default grpAndOrBtn" value="AND">AND</button>
-                                <button class="btn btn-sm btn-default grpAndOrBtn active" value="OR">OR</button>
-                            </div>
-                            <div class="pull-right" id="saveError"></div>
-                            <div class="btn-group where-btns pull-right">
-                                <button type="button" data-counter="0" class="btn btn-xs btn-success where-btn2 addGroup" id="group0"><i class="glyphicon glyphicon-plus-sign"></i>Group</button>
-                                <button type="button" class="btn btn-xs btn-success saveQuery">SAVE</button>
-                            </div>
-                        </div>
-                        <div class="conditiong-gp-container-body" id="firstBody">
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane QueryPane" id="Query">
-                    <textarea id="QueryPane"></textarea>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Save File</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" id="queryobj_name" name="Name" class="form-control fileNameText" />
-                    </div>
-                    <input type="hidden" id="json_input" name="Json" />
-                </div>
-                <div class="modal-footer">
-                    <input type="button" id="save_queryobj" class="btn btn-default saveQB" value="Save" />
-                </div>
-            </div>
 
+@*qUERY bUILDER*@
+@*<section class="topbar">
+        <div class="container-fluid">
+            <div class="row h_toolbar">
+                <a type="button" class="btn" href="~/QB/outerQueryBuilder"><i class="glyphicon glyphicon-backward"></i></a>
+                <label id="QBheadtext"><b>VISUAL SQL QUERY BUILDER</b></label>
+                <button type="button" class="btn pull-right" data-target="#myModal" data-toggle="modal"><i class="glyphicon glyphicon-floppy-saved"></i></button>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
+    <div class="container-fluid builder-window">
+        <div class="row builder-window-row">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 Builder-toolbox">
+                <div id="tables-cont"></div>
+                <ul id="column-cont"></ul>
+                <div id="dragula-tables-cont"></div>
+                <ul id="dragula-column-cont"></ul>
+            </div>
+            <div class="col-lg-10 col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-md-10 col-sm-10 col-xs-12 Builder-work-pane pd-0">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="active"><a href="#Design" aria-controls="home" role="tab" data-toggle="tab">Design</a></li>
+                    <li><a href="#Condition" aria-controls="Condition" role="tab" data-toggle="tab">Condition</a></li>
+                    <li><a href="#Query" aria-controls="Query" role="tab" data-toggle="tab">Query</a></li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content tabs">
+                    <div class="tab-pane active De" id="Design">
+                        <div class="DesignPane drop" id="designpane" style="height:700px;width:100%">
+                        </div>
+                        <div class="col-sm-2 sortfunction sortfunction">
+                        </div>
+                    </div>
+                    <div class="tab-pane condition-tab" id="Condition">
+                        <div class="conditiong-gp-container" id="groupBox0">
+                            <div class="ConditionPanes-header conditiong-gp-container-header form-inline">
+                                <div class="btn-group btn-toggle where-toggle" id="grpBtnId00">
+                                    <button class="btn btn-sm btn-default grpAndOrBtn" value="AND">AND</button>
+                                    <button class="btn btn-sm btn-default grpAndOrBtn active" value="OR">OR</button>
+                                </div>
+                                <div class="pull-right" id="saveError"></div>
+                                <div class="btn-group where-btns pull-right">
+                                    <button type="button" data-counter="0" class="btn btn-xs btn-success where-btn2 addGroup" id="group0"><i class="glyphicon glyphicon-plus-sign"></i>Group</button>
+                                    <button type="button" class="btn btn-xs btn-success saveQuery">SAVE</button>
+                                </div>
+                            </div>
+                            <div class="conditiong-gp-container-body" id="firstBody">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane QueryPane" id="Query">
+                        <textarea id="QueryPane"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Save File</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="queryobj_name" name="Name" class="form-control fileNameText" />
+                        </div>
+                        <input type="hidden" id="json_input" name="Json" />
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" id="save_queryobj" class="btn btn-default saveQB" value="Save" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>*@
 <script>
 
     @*var builder = new QueryBuilder("@ViewBag.TableSchema");*@//edited  by amal
@@ -162,9 +164,46 @@
         z-index: 0;
     }
 
-    .ds-prop {
-        position: fixed;
+    .ds-cont {
+        margin: 0 auto;
+        height: calc( 100vh - 76.5px);
+        margin-top: 37px;
+        box-shadow: var(--eb-shadow);
+        border: solid #3bb58242;
+        border-width: 1px 1px 1px 0px;
+        border-radius: 2px 3px 3px 2px;
+        overflow: hidden;
     }
+
+        .ds-cont .CodeMirror-gutters {
+            background-color: #3bb582;
+        }
+
+        .ds-cont .CodeMirror-gutter-elt {
+            color: white;
+        }
+
+        .ds-cont .ds-prop {
+            position: fixed;
+            right: 0px;
+            top: 37px;
+            width: 300px;
+            height: 100%;
+            background-color: white;
+            box-shadow: var(--eb-shadow);
+            border: 1px solid #ccc;
+            z-index: 9;
+        }
+
+        .ds-cont .code-window {
+            height: 100%;
+        }
+
+        .ds-cont .CodeMirror {
+            font-family: monospace;
+            height: 100%;
+            color: black;
+        }
 
     .param-div {
         position: fixed;

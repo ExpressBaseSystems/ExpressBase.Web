@@ -78,8 +78,14 @@
             this.EbObject = this.rootContainerObj;
         }
     }
+    //this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
 
-    this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
+    this.PGobj = new Eb_PropertyGrid({
+        id: "pgWraper",
+        wc: this.wc,
+        cid: this.cid,
+        $extCont: $(".property-grid-cont")
+    });
     this.curControl = null;
     this.drake = null;
 
@@ -308,6 +314,21 @@
 
     };
 
+    this.BeforeSave = function () {
+        var relObjs = '';
+        $.each(this.rootContainerObj.Controls.$values, function (indx, ctrl) {
+            if (ctrl.ObjType === 'SimpleSelect' && ctrl.DataSourceId !== '') 
+                relObjs += ctrl.DataSourceId + ',';
+            else if (ctrl.ObjType === 'ComboBox' && ctrl.DataSourceId !== '')
+                relObjs += ctrl.DataSourceId + ',';
+            else if (ctrl.ObjType === 'DynamicCardSet' && ctrl.DataSourceId !== '')
+                relObjs += ctrl.DataSourceId + ',';
+            else if (ctrl.ObjType === 'StaticCardSet' && ctrl.DataSourceId !== '')
+                relObjs += ctrl.DataSourceId + ',';            
+        }.bind(relObjs));
+        this.rootContainerObj.relatedObjects = relObjs.substring(0, relObjs.length - 1);
+    }
+
     this.AfterSave = function (TblName) {
         if (this.validateTableName(TblName)) {
             $.ajax({
@@ -410,8 +431,6 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
-
-        this.PGobj.Close = function () { slideRight('.form-save-wraper', '#form-buider-propGrid'); };
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             if (CurProp === 'DataSourceId') {

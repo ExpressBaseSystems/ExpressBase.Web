@@ -188,7 +188,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
             if (this.login === "dc") {
-                this.propGrid = new Eb_PropertyGrid("pp_inner");
+                //this.propGrid = new Eb_PropertyGrid("pp_inner");
+
+                this.propGrid = new Eb_PropertyGrid({
+                    id: "pp_inner",
+                    wc: "uc",
+                    cid: this.cid,
+                    $extCont: $(".ppcont")
+                });
+
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
@@ -200,7 +208,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             else
                 split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
             if (this.login === "dc") {
-                this.propGrid = new Eb_PropertyGrid("pp_inner");
+                //this.propGrid = new Eb_PropertyGrid("pp_inner");
+
+                this.propGrid = new Eb_PropertyGrid({
+                    id: "pp_inner",
+                    wc: "uc",
+                    cid: this.cid,
+                    $extCont: $(".ppcont")
+                });
+
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
@@ -265,7 +281,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.login === "uc") {
                 this.collapseGraph();
             }
-            $(".ppcont").hide();
+            $(".pgpin").click();
             $(".filterCont").hide();
             filterChanged = false;
             if (!this.isTagged)
@@ -403,7 +419,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.FD) {
             $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
         }
-        $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class= 'fa fa-cog' aria - hidden='true'></i ></button>")
+        //$("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class= 'fa fa-cog' aria - hidden='true'></i ></button>")
 
         if (this.EbObject !== null && this.EbObject.Type !== "") {
             if (this.EbObject.Type !== "line")

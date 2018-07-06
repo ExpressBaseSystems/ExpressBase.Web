@@ -1,0 +1,40 @@
+﻿.eb_TableLayout{
+    width:300px;
+    position:absolute;
+    height:25px;
+}
+    .eb_TableLayout .table {
+        margin-bottom: 0 !important;
+        height: 100%;
+        width: 100%;
+    }
+        .eb_TableLayout .table .T_layout_td{
+            position:relative;
+            padding:2px !important;
+        }
+        .eb_TableLayout .table .T_layout_td:not(:last-child) {
+          border-right-color:transparent;
+        }
+        .eb_draggbale_table_handle {
+            position: absolute;
+            right: 0px;
+            font-size: 10px;
+            bottom: 0;
+            cursor: pointer;
+        }
+.T_layout_td .dropped{
+    position:relative !important;
+    width:100% !important;
+    height:100% !important;
+    top:0 !important;
+    left:0 !important;
+    border:none !important;
+}
+.eb_resize_e {
+    position: absolute;
+    height: 100%;
+    background: #dddddd;
+    width: 2px;
+    cursor: col-resize;
+    z-index:10;
+}

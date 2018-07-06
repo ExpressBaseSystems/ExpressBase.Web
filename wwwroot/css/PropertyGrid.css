@@ -331,8 +331,8 @@
 
 .pgGroupCell {
     vertical-align: inherit !important;
-    padding-top: 0.61em !important;
-    padding-bottom: 0.61em !important;
+    padding-top: 0.6em !important;
+    padding-bottom: 0.6em !important;
     padding-left: 0.4em !important;
 }
 
@@ -619,7 +619,7 @@
 }
 
 .pgRow {
-    background-color: rgba(0, 0, 0, 0.041);
+    background-color: rgba(0, 0, 0, 0.045);
     animation-duration:0.3s;
 }
 

@@ -23,7 +23,7 @@
     this.EbObjectSections = ["ReportHeader", "PageHeader", "ReportDetail", "PageFooter", "ReportFooter"];
 
     this.msBoxSubNotation = {
-        ReportHeader: { Notation: 'Rh', Counter:0},
+        ReportHeader: { Notation: 'Rh', Counter: 0 },
         PageHeader: { Notation: 'Ph', Counter: 0 },
         ReportDetail: { Notation: 'Dt', Counter: 0 },
         PageFooter: { Notation: 'Pf', Counter: 0 },
@@ -84,7 +84,7 @@
         this.RbObj.margin.Left = $(".track_line_vert1").position().left;
         $(".track_line_vert2").css("left", parseFloat(this.RbObj.width) - this.RbObj.repExtern.convertPointToPixel(margin.Right));
         this.RbObj.margin.Right = $(".track_line_vert2").position().left;
-        $(".pageHeaders").css({ "padding-left": $(".track_line_vert1").position().left, "padding-right": parseFloat(this.RbObj.width) - $(".track_line_vert2").position().left});
+        $(".pageHeaders").css({ "padding-left": $(".track_line_vert1").position().left, "padding-right": parseFloat(this.RbObj.width) - $(".track_line_vert2").position().left });
     };
 
     this.onTrackerStop = function (e, ui) {
@@ -123,8 +123,8 @@
 
     this.getSectionToAddSum = function () {
         var objlist = [];
-        $("#ReportDetail0").parent().nextAll().not("#detail").each(function (i, obj) {
-            $(obj).children().not(".gutter").each(function (j, sections) {
+        $("#ReportDetail0").parent().nextAll().not("#ReportDetail").each(function (i, obj) {
+            $(obj).children().each(function (j, sections) {
                 objlist.push($(sections));
             })
         })
@@ -138,7 +138,7 @@
 
     this.killResizableCols = function (obj) {
         let $t = $(`#${obj.EbSid}`).find("table");
-        $t.ColResize({ status:"destroy"});
+        $t.ColResize({ status: "destroy" });
     };
 
     this.ValidateCalcExpression = function (obj) {
@@ -179,7 +179,7 @@
         var vexp = $("#calcF_valueExpr").val().trim();
         var Objid = "CalcField" + (this.RbObj.idCounter["CalcFieldCounter"])++;
         var obj = new EbObjects["EbCalcField"](Objid);
-        $("#detail0").append(obj.$Control.outerHTML());
+        $("#ReportDetail0").append(obj.$Control.outerHTML());
         obj.ValueExpression = btoa(vexp);
         obj.Name = name || Objid;
         obj.Title = name || Objid;
@@ -270,23 +270,23 @@
     };
 
     this.resizeTdOnLayoutResize = function (id, opertaion) {
-        $(`#${id}`).find("td").each(function (i,obj) {
-                if (opertaion === "start" || opertaion === "set")
-                    $(obj).find(".dropped").css({ width: "100%", height: "100%" });
-                else if (opertaion === "stop" || opertaion === "set") {
-                    if ($(obj).find(".dropped").length > 0) {
-                        let ctrl = $(obj).children(".dropped");
-                        this.RbObj.objCollection[ctrl.attr("id")].Width = $(`#${ctrl.attr("id")}`).innerWidth();
-                        this.RbObj.objCollection[ctrl.attr("id")].Height = $(`#${ctrl.attr("id")}`).innerHeight();
-                    }
+        $(`#${id}`).find("td").each(function (i, obj) {
+            if (opertaion === "start" || opertaion === "set")
+                $(obj).find(".dropped").css({ width: "100%", height: "100%" });
+            else if (opertaion === "stop" || opertaion === "set") {
+                if ($(obj).find(".dropped").length > 0) {
+                    let ctrl = $(obj).children(".dropped");
+                    this.RbObj.objCollection[ctrl.attr("id")].Width = $(`#${ctrl.attr("id")}`).innerWidth();
+                    this.RbObj.objCollection[ctrl.attr("id")].Height = $(`#${ctrl.attr("id")}`).innerHeight();
                 }
+            }
         }.bind(this));
         this.RbObj.objCollection[id].Height = $("#" + id).height();
         this.RbObj.objCollection[id].Width = $("#" + id).width();
     };
 
     this.makeReadOnlyonPg = function (curObject) {
-        this.RbObj.pg.MakeReadOnly(["Width","Height","Left","Top"]);
+        this.RbObj.pg.MakeReadOnly(["Width", "Height", "Left", "Top"]);
     };
 
     this.buildTableHierarcy = function ($elements, index, eb_typeCntl) {
@@ -320,16 +320,39 @@
     this.drawTableOnEdit = function (editControl) {
         var tobj = this.RbObj.drawEbControls(editControl);
         this.RbObj.TableCollection[tobj.EbSid] = new Array();
-        this.modifyTable(tobj, "RowCount");
-        this.modifyTable(tobj, "ColoumCount");
+        this.addCells(tobj);
+        this.setWH(tobj,editControl.CellCollection.$values);
         this.renderTableControls(tobj, editControl);
+    };
+
+    this.addCells = function (tobj) {
+        $(`#${tobj.EbSid} table tbody tr`).each(function (i, tr) {
+            this.appendTd($(tr), tobj.ColoumCount);
+        }.bind(this));
+
+        let _tdCount = $(`#${tobj.EbSid} table tbody tr`).eq(0).children("td").length;
+        for (let c = 0; c < tobj.RowCount; c++) {
+            $(`#${tobj.EbSid} table tbody`).append(`<tr id="${tobj.EbSid}_tr_${c}">`);
+            this.appendTd($(`#${tobj.EbSid}_tr_${c}`), _tdCount);
+        }
+        this.RbObj.makeTLayoutDroppable(tobj);
+        //this.resizeTdOnLayoutResize(tobj.EbSid, "set");
+        this.killResizableCols(tobj);
+        this.tableResizableCols(tobj);
+    };
+    this.setWH = function (table, cells) {
+        cells.forEach(function (item) {
+            $(`#${table.EbSid} table`).find("tr").eq(item.RowIndex).css({
+                height: parseFloat(item.Height) / parseFloat(table.Height) * 100 + "%"
+            });
+        }.bind(this));
     };
 
     this.renderTableControls = function (tobj, editControl) {
         this.tobj = tobj;
         editControl.CellCollection.$values.forEach(function (ctrls) {
             this.RbObj.containerId = $(`#${tobj.EbSid}`).find("tr").eq(ctrls.RowIndex).find("td").eq(ctrls.CellIndex);
-            this.RbObj.containerId.css("height", ctrls.Height);
+            //this.RbObj.containerId.css("height", ctrls.Height);
             ctrls.ControlCollection.$values.forEach(this.drawControls.bind(this));
         }.bind(this));
         this.resizeTdOnLayoutResize(this.tobj.EbSid, "set");
@@ -347,11 +370,11 @@
         paramsList.forEach(function (param) {
             if (param.type === "16")
                 icon = _icons["String"];
-            else if (param.type === "7" || param.type === "8" || param.type === "10" || param.type === "11" || param.type === "12" || param.type === "21") 
+            else if (param.type === "7" || param.type === "8" || param.type === "10" || param.type === "11" || param.type === "12" || param.type === "21")
                 icon = _icons["Numeric"];
             else if (param.type === "3")
                 icon = _icons["Bool"];
-            else if (param.type === "5" || param.type === "6" || param.type === "17" || param.type === "26") 
+            else if (param.type === "5" || param.type === "6" || param.type === "17" || param.type === "26")
                 icon = _icons["DateTime"];
             $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><span eb-type='Parameter' class='fd_params draggable textval'><i class='fa ${icon}'></i> ${param.name}</span></li>`);
         });
@@ -361,7 +384,7 @@
     };
 
     this.drawDsColTree = function (colList) {
-        var type,icon = "";
+        var type, icon = "";
         $.each(colList, function (i, columnCollection) {
             $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {
@@ -409,8 +432,8 @@
         }
     };
 
-	commonO.PreviewObject = function () {
-		$("#preview_wrapper").empty();
+    commonO.PreviewObject = function () {
+        $("#preview_wrapper").empty();
         commonO.Save();
     };
 
@@ -423,13 +446,13 @@
                 cache: false,
                 data: {
                     refid: this.refid,
-                    renderLimit:true
-				},
-				beforeSend: function () {
-					$("#eb_common_loader").EbLoader("show");
-				},
-				success: function (result) {
-				//	$("#eb_common_loader").EbLoader("hide");
+                    renderLimit: true
+                },
+                beforeSend: function () {
+                    $("#eb_common_loader").EbLoader("show");
+                },
+                success: function (result) {
+                    //	$("#eb_common_loader").EbLoader("hide");
                     $("#preview_wrapper").html(result);
                     $("#btnGo").on("click", this.render.bind(this));
                     if ($("#btnGo").length <= 0) {
@@ -440,13 +463,13 @@
                 }.bind(this)
             });
         }
-    }.bind(this); 
+    }.bind(this);
 
-     this.render = function() {
+    this.render = function () {
         //$("#sub_windows_sidediv_dv").css("display", "none");
         //$("#content_dv").removeClass("col-md-9").addClass("col-md-12");
         //$.LoadingOverlay("show");
-		 $("#eb_common_loader").EbLoader("show");
+        $("#eb_common_loader").EbLoader("show");
 
         var ParamsArray = [];
         var filter_control_list = $("#all_control_names").val();
@@ -472,10 +495,10 @@
         //    $("#filter").trigger("click");
         //    return;
         //}
-         $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}&Params=${JSON.stringify(ParamsArray)}`);
+        $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}&Params=${JSON.stringify(ParamsArray)}`);
         // $("#RptModal").modal('hide');
         //$.LoadingOverlay("hide");
-         $("#eb_common_loader").EbLoader("hide");
+        $("#eb_common_loader").EbLoader("hide");
     }
 
     this.start = function () {

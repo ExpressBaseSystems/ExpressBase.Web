@@ -106,7 +106,13 @@
     <script>
         $(document).ready(function () {
             var propObj;
-            var emailpropG = new Eb_PropertyGrid("PropertyG");
+            //var emailpropG = new Eb_PropertyGrid("PropertyG");
+
+
+            var emailpropG = new Eb_PropertyGrid({
+                id: "PropertyG",
+                $extCont: $(".emailpg")
+            });
 
 
             if ('@ViewBag.dsobj'.indexOf("EbEmailTemplate") == -1)

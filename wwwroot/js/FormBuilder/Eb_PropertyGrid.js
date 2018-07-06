@@ -4,7 +4,7 @@
     this.ParentPG = parentPG;
     this.wraperId = options.id;
     this.$wraper = $("#" + this.wraperId);
-    this.$extCont = options.$extCont || this.$wraper.parent();
+    this.$extCont = options.$extCont;
     this.parentId = null;
     this.$controlsDD = $(".controls-dd-cont select");
     this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
@@ -437,7 +437,7 @@
     };
     // PGclose fn
     this.CloseFn = function (e) {
-        this.minimise();
+        this.stickBtn.minimise();
         this.Close();
     };
 
@@ -447,9 +447,11 @@
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div><span>Properties </span><div class="icon-cont  pull-right pgpin"><i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div><div id='" + this.wraperId + "_HelpBox' class='propgrid-helpbox'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
-        this.$stickBtn = $("<div class='stickBtn'><i class='fa fa-wrench' aria-hidden='true'></i> Properties </div>");
-        this.$stickBtn.on("click", this.maximise.bind(this));
-        $(document.body).append(this.$stickBtn);
+        this.stickBtn = new EbStickButton({
+            $wraper: this.$wraper,
+            $extCont: this.$extCont,
+            label:"Properties"
+        });
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", ".pgpin", this.CloseFn.bind(this));
         this.CXVE = new Eb_pgCXVE(this);
@@ -654,9 +656,9 @@
             if (typeof props === 'string' || typeof metas === 'string') {
                 console.error('Eb_PropertyGrid got "string" parameter instead of "object"');
                 return null;
-            //} else if (typeof id === 'object') {
-            //    console.error('Eb_PropertyGrid got "object" parameter instead of "string"');
-            //    return;
+                //} else if (typeof id === 'object') {
+                //    console.error('Eb_PropertyGrid got "object" parameter instead of "string"');
+                //    return;
             } else if (typeof props !== 'object' || props === null || typeof metas !== 'object' || metas === null) {
                 console.error('Eb_PropertyGrid must get an object in order to initialize the grid.');
                 return;
@@ -696,7 +698,7 @@
     this.ReadWrite = function () {
         this.IsReadonly = false;
 
-        $('#' + this.wraperId + " .pgHead span").text('Property').css("opacity", "1");
+        $('#' + this.wraperId + " .pgHead span").text('Properties').css("opacity", "1");
         $('#' + this.wraperId + " input").removeAttr('readonly').css("pointer-events", "unset");
         $('#' + this.wraperId + " .propgrid-table-cont select").prop('disabled', false);
         $('#' + this.wraperId + " .propgrid-table-cont .btn").css("background-color", "#fff").css("cursor", "inherit");
@@ -710,21 +712,6 @@
         $('#' + this.wraperId + " .sub-controls-DD-cont").css("cursor", "inherit");// CE DD, + cont
         $('#' + this.wraperId + ' .CEctrlsCont button').css("cursor", "inherit").prop('disabled', false);//coltile X
     };
-
-    this.maximise = function () {
-        this.$stickBtn.hide(300);
-        this.$extCont.show(300);
-    };
-
-    this.minimise = function (dir, leftDiv, rightDiv) {
-        this.$stickBtn.show(300);
-        this.$extCont.hide(300);
-        let pgtop = (this.$wraper.offset().top - $(window).scrollTop());
-        setTimeout(function () {
-            this.$stickBtn.css("top", (pgtop + (this.$stickBtn.width() / 2)) + "px");
-            this.$stickBtn.css("right", (0 - (this.$stickBtn.width() / 2)) + "px");
-        }.bind(this), 301);        
-    }
 
     this.init();
 };

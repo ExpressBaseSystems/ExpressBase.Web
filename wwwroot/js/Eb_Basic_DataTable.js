@@ -28,7 +28,7 @@ var EbBasicDataTable = function (Option) {
     this.filterFlag = false;
     this.filterValues = [];
     this.FlagPresentId = false;
-    this.columnSearch = Option.columnSearch;
+    this.columnSearch = Option.columnSearch || [];
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -462,7 +462,7 @@ var EbBasicDataTable = function (Option) {
                                     }
                                 }
                                 else {
-                                    filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val()));
+                                    filter_obj_arr.push(new filter_obj(colum, oper, $(textid).val(), type));
                                 }
                             }
                         }

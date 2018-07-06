@@ -69,19 +69,17 @@
     var ServerEventUrl = "@ViewBag.ServerEventUrl";
     var chatBotObj = null;
     $(document).ready(function () {
-
-        chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.ServiceUrl', ServerEventUrl);
-
         var html = document.getElementsByTagName('html')[0];
-        html.style.setProperty("--botThemeColor", chatBotObj.ebbotThemeColor);
+        html.style.setProperty("--botThemeColor", (settings.ThemeColor || "#055c9b"));
+
+        chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.ServiceUrl', ServerEventUrl);        
+
+        $.get("https://ipinfo.io", function (response) {
+            chatBotObj.userDtls.ip = response.ip;
+            chatBotObj.userDtls.browser = getBrowserName();
+        }, "jsonp");
     });
-
-    $.get("https://ipinfo.io", function (response) {
-        chatBotObj.userDtls.ip = response.ip;
-        chatBotObj.userDtls.browser = getBrowserName();
-    }, "jsonp");
-
-
+    
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {
         console.log('statusChangeCallback');

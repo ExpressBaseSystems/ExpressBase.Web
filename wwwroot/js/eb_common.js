@@ -109,11 +109,11 @@ Array.prototype.contains = function (element) {
 function isPrintable(e) {
     var keycode = e.keyCode;
 
-    var valid = 
-        (keycode > 47 && keycode < 58)   || // number keys
-        keycode === 32 || keycode === 13   || // spacebar & return key(s) (if you want to allow carriage returns)
-        (keycode > 64 && keycode < 91)   || // letter keys
-        (keycode > 95 && keycode < 112)  || // numpad keys
+    var valid =
+        (keycode > 47 && keycode < 58) || // number keys
+        keycode === 32 || keycode === 13 || // spacebar & return key(s) (if you want to allow carriage returns)
+        (keycode > 64 && keycode < 91) || // letter keys
+        (keycode > 95 && keycode < 112) || // numpad keys
         (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
         (keycode > 218 && keycode < 223);   // [\]' (in order)
 
@@ -139,7 +139,7 @@ function getEbObjectTypes() {
         TableVisualization: { Id: 16, ImgSrc: "form1.svg" },
         ChartVisualization: { Id: 17, ImgSrc: "form1.svg" },
         BotForm: { Id: 18, ImgSrc: "chat1.svg" },
-    } 
+    }
     return Eb_ObjectTypes;
 }
 
@@ -160,4 +160,40 @@ function EbMakeValid(name) {
     var contSel = `[for=${name}]`;
     $(`${contSel}  .ctrl-wraper`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
+};
+
+
+var EbStickButton = function (option) {
+    this.label = option.label;
+    this.icon = option.icon || "fa-wrench";
+    this.$stickBtn = $(`<div class='stickBtn'><i class='fa ${this.icon}' aria-hidden='true'></i> ${this.label} </div>`);
+    this.$wraper = option.$wraper;
+    this.$extCont = option.$extCont || this.$wraper.parent();
+    this.delay = option.delay || 300;
+    this.dir = option.dir || "right";
+    $(document.body).append(this.$stickBtn);
+
+    this.toggleStickButton = function () {
+
+        if (this.$stickBtn.css("display") === "none")
+            this.maximise();
+        else
+            this.minimise();
+    };
+
+    this.maximise = function () {
+        this.$stickBtn.hide(this.delay);
+        this.$extCont.show(this.delay);
+    };
+
+    this.minimise = function () {
+        this.$stickBtn.show(this.delay);
+        this.$extCont.hide(this.delay);
+        let pgtop = (this.$wraper.offset().top - $(window).scrollTop());
+        setTimeout(function () {
+            this.$stickBtn.css("top", (pgtop + (this.$stickBtn.width() / 2)) + "px");
+            this.$stickBtn.css(this.dir, (0 - (this.$stickBtn.width() / 2)) + "px");
+        }.bind(this), this.delay + 1);
+    }
+    this.$stickBtn.on("click", this.maximise.bind(this));
 };

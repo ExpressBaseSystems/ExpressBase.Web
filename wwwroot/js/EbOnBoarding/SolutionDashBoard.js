@@ -237,6 +237,23 @@
         form.submit();
     };
 
+    this.LogoImageUpload = function () {
+        var logoCrp = new cropfy({
+            Container: 'onboarding_logo',
+            Toggle: '#log-upload-btn',
+            isUpload: true,  //upload to cloud
+            enableSE: true, //enable server event
+            Browse: true,  //browse image
+            Result: 'base64',
+            Type: 'logo',
+            Tid: this.Sid, //if type is logo
+            Preview: "#oB_logo-prev"
+        });
+        logoCrp.getFile = function (file) {
+
+        }.bind(this);
+    };
+
     this.init = function () {
         this.appendDataDb(this.Connections.DataDbConnection);
         this.appendFilesDb(this.Connections.FilesDbConnection);
@@ -251,6 +268,7 @@
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         $(".single__sso").on("click", this.goToSolutionWindow.bind(this));
+        this.LogoImageUpload();
     };
 
     this.init();

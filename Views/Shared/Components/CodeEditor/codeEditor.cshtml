@@ -210,22 +210,34 @@
             color: black;
         }
 
-        .ds-cont .param-div-cont {
-            position: absolute;
-            background-color: white;
-            height: calc( 100vh - 77px);
+        .ds-cont .filter-box {
+            padding: 1px;
         }
 
-        .ds-cont .param-div {
-            position: absolute;
-            left: 0px;
-            width: 300px;
-            height: 100%;
-            background-color: white;
-            box-shadow: var(--eb-shadow);
-            border: 1px solid #ccc;
-            z-index: 9;
-        }
+    .filter-box .input-group-addon {
+        border-radius: 0px;
+        border: 0px;
+    }
+
+    .filter-box .search-wraper {
+        border: solid 1px #ddd;
+    }
+        .ds-cont .param-div-cont {
+        position: absolute;
+        background-color: white;
+        height: calc( 100vh - 77px);
+    }
+
+    .ds-cont .param-div {
+        position: absolute;
+        left: 0px;
+        width: 300px;
+        height: 100%;
+        background-color: white;
+        box-shadow: var(--eb-shadow);
+        border: 1px solid #ccc;
+        z-index: 9;
+    }
 
     .CodeMirror-gutters {
         z-index: 0;

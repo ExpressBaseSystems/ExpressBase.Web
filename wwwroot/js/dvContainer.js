@@ -1,6 +1,7 @@
 ﻿var focusedId;
 var prevfocusedId;
 var filterChanged = false;
+var dvcounter = 0;
 var DvContainerObj = function (settings) {
     this.ssurl = settings.ss_url;
     this.wc = settings.wc;
@@ -173,6 +174,7 @@ var DvContainerObj = function (settings) {
                 data: { refid: this.dvRefid, objtype: $(e.target).attr("objtype"), dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
                 success: function (dvObj) {
                     counter++;
+                    dvcounter++;
                     dvObj = JSON.parse(dvObj);
                     dvcontainerObj.currentObj = dvObj.DsObj;
                     dvcontainerObj.currentObj.Name = (count > 0) ? dvcontainerObj.currentObj.Name + "(" + (count + 1) + ")" : dvcontainerObj.currentObj.Name;
@@ -200,7 +202,7 @@ var DvContainerObj = function (settings) {
         this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
         dvcontainerObj.previousObj = dvcontainerObj.currentObj;
 
-        if (counter === 24) {
+        if (dvcounter === 24) {
             this.ReportExist();
             if (!this.isExistReport) {
                 EbMessage("show", { Message: "Max Limit(25) reached. Please close some visualizations....", AutoHide: false, Backgorund: "#f94a41" });
@@ -220,6 +222,7 @@ var DvContainerObj = function (settings) {
                 if ($(`#reportIframe_${copycelldata}`).length === 0) {
                     var obj = new Object();
                     obj.$type = "EbReport";
+                    dvcounter++;
                     obj.EbSid = "container_Report" + ++counter;
                     obj.Pippedfrom = "";
                     obj.cellData = this.cellData;
@@ -260,6 +263,7 @@ var DvContainerObj = function (settings) {
                     data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2], dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
                     success: function (dvObj) {
                         counter++;
+                        dvcounter++;
                         dvObj = JSON.parse(dvObj);
                         dvcontainerObj.currentObj = dvObj.DsObj;
                         this.curTVobj = dvObj.DsObj;
@@ -277,6 +281,7 @@ var DvContainerObj = function (settings) {
         }
         else {
             counter++;
+            dvcounter++;
             dvcontainerObj.currentObj = new EbObjects["EbGoogleMap"]("Container_" + Date.now());
             dvcontainerObj.currentObj.Columns = dvcontainerObj.previousObj.Columns;
             dvcontainerObj.currentObj.DSColumns = dvcontainerObj.previousObj.DSColumns;
@@ -784,6 +789,7 @@ var DvContainerObj = function (settings) {
     };
 
     this.removeSlide = function () {
+        dvcounter--;
         var index = $("#" + focusedId).attr("data-slick-index")
         $('.splitdiv_parent').slick('slickRemove', $("#" + focusedId).attr("data-slick-index"));
         delete this.dvcol[focusedId];
@@ -793,7 +799,7 @@ var DvContainerObj = function (settings) {
         $.each($(".slick-track").children(), function (i, sub) {
             $(sub).attr("data-slick-index",i);
         });
-        counter--;
+        
     }
 
     this.init();

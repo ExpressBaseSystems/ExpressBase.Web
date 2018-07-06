@@ -543,7 +543,10 @@ var EbSelect = function (ctrl) {
     };
 
     this.tagCloseBtnHand = function (e) {
-        $(this.DTSelector + ' [type=checkbox][value=' + this.Vobj.valueMembers.splice(delid(), 1) + ']').prop("checked", false);
+        if (this.ComboObj.multiSelect)
+            $(this.DTSelector + ' [type=checkbox][value=' + this.Vobj.valueMembers.splice(delid(), 1) + ']').prop("checked", false);
+        else
+            this.Vobj.valueMembers.splice(delid(), 1);
         $.each(this.dmNames, function (i, name) {
             this.Vobj.displayMembers[name].splice(delid(), 1);
         }.bind(this));

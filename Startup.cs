@@ -106,8 +106,6 @@ namespace ExpressBase.Web2
 
             app.UseApplicationInsightsRequestTelemetry();
 
-            app.UseCors(builder => builder.WithOrigins("http://example.com"));
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -28,7 +28,7 @@ var EbBasicDataTable = function (Option) {
     this.filterFlag = false;
     this.filterValues = [];
     this.FlagPresentId = false;
-    this.columnSearch = Option.columnSearch;
+    this.columnSearch = Option.columnSearch || [];
 
     this.extraCol = [];
     this.modifyDVFlag = false;

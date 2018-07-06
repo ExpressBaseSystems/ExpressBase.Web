@@ -2302,7 +2302,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else
             return "";
-    };
+	};
+
+	this.CreateRelationString = function () { };
 
     this.start();
 };

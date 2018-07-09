@@ -49,7 +49,10 @@ namespace ExpressBase.Web2
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder.WithOrigins("https://eb-test.info", "https://expressbase.com"));
+                    builder => builder
+                     .SetIsOriginAllowedToAllowWildcardSubdomains()
+                    .WithOrigins("https://*.eb-test.info", "https://*.expressbase.com")
+                    .AllowAnyMethod());
             });
 
             services.AddMvc();

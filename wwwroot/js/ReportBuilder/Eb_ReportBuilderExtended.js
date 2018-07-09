@@ -13,21 +13,6 @@
         });
     }
 
-    this.minMaxPG = function () {
-        $("#max-pg").on('click', this.minPgrid.bind(this));
-    }
-
-    this.minPgrid = function () {
-        this.pGcontainer.animate({
-            width: "toggle"
-        }, "fast", function () {
-            if (this.pGcontainer.css("display") === 'none')
-                $("#max-pg").show();
-            else
-                $("#max-pg").hide();
-            }.bind(this));
-    };
-
     this.keyInteractions = function (event) {
         var eb_cntrol = this.Rpt.objCollection[event.target.id];
         var js_cntrol = event;
@@ -215,7 +200,6 @@
             });            
         }
     };
-    
-    this.minMaxPG();
+   
     $('body').off("keydown").on("keydown", ".dropped", this.keyInteractions.bind(this));
 }

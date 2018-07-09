@@ -282,7 +282,7 @@
     this.DropFirst = function (Title) {
         if (this.Objtype === "TableLayout") {
             let o = new EbTableLayout(this);
-            this.TableCollection[o.EbSid] = o;
+            this.TableCollection[o.EbCtrl.EbSid] = o;
         }
         else {
             var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++;
@@ -345,7 +345,7 @@
         var resizeId = $(event.target).attr("id");
         var type = $(event.target).attr('eb-type');
         if (type === "TableLayout") {
-            this.RbCommon.resizeTdOnLayoutResize($(event.target).attr("id"), "stop");
+            this.RbCommon.resizeTdOnLayoutResize($(event.target).attr("id"));
         }
         else {
             this.objCollection[resizeId].Width = $(event.target).width();
@@ -354,12 +354,6 @@
             this.pg.setObject(this.objCollection[resizeId], AllMetas["Eb" + type]);
         }
     };//on resize event
-
-    this.startResize = function (event, ui) {
-        if ($(event.target).attr('eb-type') === "TableLayout") {
-            this.RbCommon.resizeTdOnLayoutResize($(event.target).attr("id"), "start");
-        }
-    };
 
     this.elementOnFocus = function (event) {
         event.stopPropagation();
@@ -403,7 +397,6 @@
             object.resizable({
                 containment: "parent",
                 handles: handles,
-                start: this.startResize.bind(this),
                 stop: this.onReSizeFn.bind(this),
             });
         }

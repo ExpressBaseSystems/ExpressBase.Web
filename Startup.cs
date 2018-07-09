@@ -49,7 +49,10 @@ namespace ExpressBase.Web2
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder.WithOrigins("https://eb-test.info", "https://expressbase.com"));
+                    builder => builder
+                     .SetIsOriginAllowedToAllowWildcardSubdomains()
+                    .WithOrigins("https://*.eb-test.info", "https://*.expressbase.com")
+                    .AllowAnyMethod());
             });
 
             services.AddMvc();
@@ -106,8 +109,6 @@ namespace ExpressBase.Web2
 
             app.UseApplicationInsightsRequestTelemetry();
 
-            app.UseCors(builder => builder.WithOrigins("http://example.com"));
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -148,7 +149,7 @@ namespace ExpressBase.Web2
                     context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.info *.eb-test.info;");
                 }
                 if (env.IsProduction())
-                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM https://*.expressbase.com");
+                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN");
                 await next();
             }); // for web forwarding with masking
         }

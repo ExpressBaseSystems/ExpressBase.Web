@@ -147,13 +147,15 @@
             this.btnFbConnect.css("display", "none");
             this.anonymousUserId = this.userinfo["AnonymousUserID"];
             this.txtName.val(this.userinfo["FullName"]);
-            this.txtEmail.val(this.userinfo["EmailID"]);
+            if (this.userinfo["EmailID"].trim() !== "") {
+                this.txtEmail.val(this.userinfo["EmailID"]);
+                this.validateEmail();
+            }
             this.txtPhPrimary.val(this.userinfo["PhoneNumber"]);
             if (this.userinfo["SocialID"].trim() !== "") {
                 $("#lblFbId").attr("data-id", this.userinfo["SocialID"]);
                 $("#userFbLink").text((this.userinfo["FullName"].trim().length > 0) ? this.userinfo["FullName"].trim() : "facebook");
-            }
-            this.validateEmail();
+            }            
             this.initFbConnect();
         }
         else {
@@ -295,7 +297,7 @@
                     $("#userFbLink").show();
                     $("#imgUserFbProfPic").attr("src", "http://graph.facebook.com/" + $("#lblFbId").attr("data-id") + "/picture?type=square");
                     $("#imgUserFbProfPic").show();
-                    FBpicture();
+                    //FBpicture();
                 }
             }
             else {
@@ -540,8 +542,7 @@
             return;
         }    
         if (this.txtDateOfBirth.val().length < 8) {
-            EbMessage("show", { Message: 'Please Enter Date of Birth', AutoHide: true, Backgorund: '#bf1e1e' });
-            return;
+            this.txtDateOfBirth.val('2000/01/01');
         }
 
         this.btnCreateUser.attr("disabled", "true");

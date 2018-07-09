@@ -82,7 +82,6 @@ var EbBasicDataTable = function (Option) {
 
     this.getColumnsSuccess = function () {
         this.showLoader();
-        $(".icon-cont").hide();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
 

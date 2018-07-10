@@ -85,8 +85,16 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.contactSubmit = function (e) {
+        let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
+        let email = $("#anon_mail").val().trim();
+        let phone = $("#anon_phno").val().trim();
+        if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
+            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
         this.msgFromBot("Thank you.");
-        this.authenticateAnon($("#anon_mail").val().trim(), $("#anon_phno").val().trim());
+        this.authenticateAnon(email, phone);
         $(e.target).closest('.msg-cont').remove();
     }.bind(this);
 
@@ -1170,7 +1178,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": this.FBResponse.id,
                 "wc": "bc",
-                "anon_email": null,
+                "anon_email": this.userDtls.email,
                 "anon_phno": null,
                 "user_ip": this.userDtls.ip,
                 "user_browser": this.userDtls.browser,
@@ -1194,10 +1202,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.FBLogined = function () {
-        this.FB.api('/me?fields=id,name,picture', function (response) {
+        this.FB.api('/me?fields=id,name,picture,email', function (response) {
             this.FBResponse = response;
             this.userDtls.name = this.FBResponse.name;
-            //this.userDtls.email = this.FBResponse.email;
+            this.userDtls.email = this.FBResponse.email;
             this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
             this.greetings();
         }.bind(this));

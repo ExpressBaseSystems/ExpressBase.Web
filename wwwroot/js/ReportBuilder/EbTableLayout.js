@@ -32,6 +32,7 @@
         this.Report.repExtern.replaceProp(this.EbCtrl, this.EditCtrl);
         this.EbCtrl.EbSid = id; this.EbCtrl.Name = id;
         this.Report.objCollection[id] = this.EbCtrl;
+        this.Report.pg.addToDD(this.Report.objCollection[id]);
         this.Table = $(`#${id}`);
         this.Table.css({
             left: this.EbCtrl.Left,
@@ -65,16 +66,20 @@
         this.refreshCols();
     };
 
-    this.drawControls = function ($td,ebCtrl) {
+    this.drawControls = function ($td, ebCtrl) {
         var eb_type = ebCtrl.$type.split(",")[0].split(".").pop().substring(2);
-        var Objid = eb_type + this.Report.idCounter[eb_type + "Counter"]++;
-        var $control = new EbObjects["Eb" + eb_type](Objid);
-        $td.append($control.$Control.outerHTML());
-        this.Report.repExtern.replaceProp($control, ebCtrl);
-        $control.EbSid = Objid; $control.Name = Objid;
-        this.Report.objCollection[Objid] = $control;
-        this.Report.pg.addToDD(this.Report.objCollection[Objid]);
-        this.Report.RefreshControl(this.Report.objCollection[Objid]);
+        if (eb_type === "TableLayout")
+            this.Report.RbCommon.drawTableOnEdit(ebCtrl);
+        else {
+            var Objid = eb_type + this.Report.idCounter[eb_type + "Counter"]++;
+            var $control = new EbObjects["Eb" + eb_type](Objid);
+            $td.append($control.$Control.outerHTML());
+            this.Report.repExtern.replaceProp($control, ebCtrl);
+            $control.EbSid = Objid; $control.Name = Objid;
+            this.Report.objCollection[Objid] = $control;
+            this.Report.pg.addToDD(this.Report.objCollection[Objid]);
+            this.Report.RefreshControl(this.Report.objCollection[Objid]);
+        }
     };
 
     this.setPosition = function (id) {
@@ -199,9 +204,9 @@
         }.bind(this));
     };
 
-    this.setTdPixelH = function () {
+    this.setTdPixelW = function () {
         this.Table.find("tr").eq(0).find("td").each(function (k, o) {
-            $(o).css({ width: $(o).width() });
+                $(o).css({ width: $(o).width() });
         }.bind(this));
     };
 
@@ -242,7 +247,7 @@
     this.deleteCell = function (obj, pname) {
         let lastnode = null;
         if (pname === "ColoumCount") {
-            this.setTdPixelH();
+            this.setTdPixelW();
             for (let z = 0; z < this.ColCount - obj.ColoumCount;z++) {
                 $(`#${obj.EbSid}`).find("tr").each(function (i, o) {
                     lastnode = $(o).find("td:last-child");
@@ -252,6 +257,7 @@
                 });
             }
             this.ColCount = obj.ColoumCount;
+            this.Table.find("tr").eq(0).find("td:last-child").css("width", "auto");
         }
         else if (pname === "RowCount") {
             this.setTrPixelH();
@@ -261,6 +267,7 @@
                 lastnode.remove();
             }
             this.RowCount = obj.RowCount;
+            this.Table.find("tr:last-child").css("height", "auto");
         }
         this.killResizableCols(obj);
         this.InitColResize(obj.EbSid);

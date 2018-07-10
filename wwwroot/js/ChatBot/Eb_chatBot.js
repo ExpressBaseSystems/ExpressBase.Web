@@ -309,6 +309,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         o.showSerialColumn = true;
         o.showCheckboxColumn = false;
         o.showFilterRow = false;
+        o.IsPaging = false;
+        o.wc = 'bc';
         //o.scrollHeight = this.scrollHeight + "px";
         //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
@@ -329,11 +331,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.showTypingAnim();
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8000/ds/data/' + this.curChartViz.DataSourceRefId,
+            url: '../boti/getData',
             data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
             success: this.getDataSuccess.bind(this),
             error: function () { }
         });
@@ -678,9 +680,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.curVal = this.getValue($input);
         if (this.curCtrl.objType === "ImageUploader") {
             if (!this.checkRequired()) { return; }
-            this.replyAsImage($msgDiv, $input[0], next_idx);
-            this.formValues[id] = this.curVal;// last value set from outer fn
-            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
+            this.replyAsImage($msgDiv, $input[0], next_idx, id);
+            //if()
+            //this.formValues[id] = this.curVal;// last value set from outer fn
+            //this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
         else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.objType === "ComboBox") {
             if (!this.checkRequired()) { return; }
@@ -809,9 +812,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         return '<div class="chat-ctrl-cont">' + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
     };
 
-    this.replyAsImage = function ($prevMsg, input, idx) {
+    this.replyAsImage = function ($prevMsg, input, idx, ctrlname) {
         console.log("replyAsImage()");
-        var ctrlname = this.curCtrl.name;
         var fname = input.files[0].name;
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -834,7 +836,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
-    this.uploadImage = function (url, ctrlname, idx) {
+    this.uploadImage = function (url, id, idx) {
         console.log("uploadImage");
         var URL = url.substring(url.indexOf(",/") + 1);
         var EbSE = new EbServerEvents({
@@ -843,21 +845,22 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             Rtoken: this.refreshToken
         });
         EbSE.onUploadSuccess = function (obj, e) {
-            $(`[for=${ctrlname}] .img-loader:last`).hide(100);
-            this.callGetControl(idx);
-            this.curVal = obj.objId;
+            $(`[for=${id}] .img-loader:last`).hide(100);
+            this.callGetControl(this.nxtCtrlIdx);
+
+            this.formValues[id] = obj.objectId;
+            this.formValuesWithType[id] = [this.formValues[id], 16];
+
         }.bind(this);
 
         $.post("../Boti/UploadFileAsync", {
             'base64': URL,
-            "filename": ctrlname,
-            "refreshToken": this.refreshToken,
-            "bearerToken": this.bearerToken,
+            "filename": id,
             "type": URL.trim(".")[URL.trim(".").length - 1]
         }).done(function (result) {
-            $(`[for=${ctrlname}] .img-loader:last`).hide(100);
-            this.callGetControl(idx);
-            this.curVal = result;
+            //$(`[for=${id}] .img-loader:last`).hide(100);
+            //this.callGetControl(this.nxtCtrlIdx);
+            //this.curVal = result;
         }.bind(this))
     }.bind(this);
 

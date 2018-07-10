@@ -3,6 +3,7 @@
     this.cid = options.cid;
     this.ParentPG = parentPG;
     this.wraperId = options.id;
+    this.$scope = options.$scope || $(document.body)
     this.$wraper = $("#" + this.wraperId);
     this.$extCont = options.$extCont;
     this.parentId = null;
@@ -447,11 +448,14 @@
         this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div><span>Properties </span><div class="icon-cont  pull-right pgpin"><i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div><div id='" + this.wraperId + "_HelpBox' class='propgrid-helpbox'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
-        this.stickBtn = new EbStickButton({
-            $wraper: this.$wraper,
-            $extCont: this.$extCont,
-            label:"Properties"
-        });
+        if (!this.ParentPG) {
+            this.stickBtn = new EbStickButton({
+                $wraper: this.$wraper,
+                $extCont: this.$extCont,
+                label: "Properties",
+                $scope: this.$scope
+            });
+        }
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", ".pgpin", this.CloseFn.bind(this));
         this.CXVE = new Eb_pgCXVE(this);

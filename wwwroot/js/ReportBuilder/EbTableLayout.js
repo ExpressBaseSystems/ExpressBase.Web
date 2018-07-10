@@ -1,11 +1,14 @@
 ﻿let EbTableLayout = function (report,EbControl) {
     this.Report = report || null;
     this.EbCtrl = {};
-    this.EditCtrl = EbControl;
+    this.EditCtrl = EbControl || {};
+    this.isNew = $.isEmptyObject(this.EditCtrl) ? true: false;
     this.Table = null;
     const _resizer = "eb_resize_e";
     const _resizerV = "eb_resize_row";
     let _dragpos = null;
+    this.ColCount = null;
+    this.RowCount = null;
 
     this.createTable = function () {
         let id = this.Report.Objtype + (this.Report.idCounter[this.Report.Objtype + "Counter"])++;
@@ -13,6 +16,8 @@
         this.Report.dropLoc.append(this.getHtml(id));
         this.Report.objCollection[id] = this.EbCtrl;
         this.Table = $(`#${id}`);
+        this.ColCount = this.EbCtrl.ColoumCount;
+        this.RowCount = this.EbCtrl.RowCount;
         this.setPosition(id);
         this.draggableT(id);
         this.makeResizable(id);
@@ -34,12 +39,14 @@
             width: this.EbCtrl.Width,
             height: this.EbCtrl.Height
         });
-        
+        this.ColCount = this.EbCtrl.ColoumCount;
+        this.RowCount = this.EbCtrl.RowCount;
         this.draggableT(id);
         this.makeResizable(id);
         this.addCells(this.EbCtrl, "RowCount");
         this.addCells(this.EbCtrl, "ColoumCount");
         this.setCells();
+        this.isNew = true;
     };
 
     this.setCells = function () {
@@ -186,23 +193,75 @@
         }
     };
 
+    this.setTrPixelH = function () {
+        this.Table.find("tr").each(function (k, o) {
+            $(o).css({ height: $(o).height() });
+        }.bind(this));
+    };
+
+    this.setTdPixelH = function () {
+        this.Table.find("tr").eq(0).find("td").each(function (k, o) {
+            $(o).css({ width: $(o).width() });
+        }.bind(this));
+    };
+
+    this.pgChange = function (obj, pname) {
+        if (this.RowCount > obj.RowCount || this.ColCount > obj.ColoumCount)
+            this.deleteCell(obj, pname);
+        else if (this.RowCount < obj.RowCount || this.ColCount < obj.ColoumCount)
+            this.addCells(obj, pname);
+    };
+
     this.addCells = function (obj, pname) {
         if (pname === "ColoumCount") {
+            let _tdCount = $(`#${obj.EbSid} table tbody tr`).eq(0).children("td").length;
             $(`#${obj.EbSid} table tbody tr`).each(function (i, tr) {
-                this.appendTd($(tr), obj.ColoumCount);
+                this.appendTd($(tr), obj.ColoumCount - _tdCount);
             }.bind(this));
         }
         else if (pname === "RowCount") {
+            this.setTrPixelH();
             var _row = $(`#${obj.EbSid} table tbody tr`).length;
             let _tdCount = $(`#${obj.EbSid} table tbody tr`).eq(0).children("td").length;
-            $(`#${obj.EbSid}`).css("height", $(`#${obj.EbSid} table`).height() + (obj.RowCount * 26));
-            for (let c = _row; c <= obj.RowCount; c++) {
+            if (this.isNew)
+                $(`#${obj.EbSid}`).css("height", $(`#${obj.EbSid} table`).height() + ((obj.RowCount - _row) * 26));
+            for (let c = _row; c <= obj.RowCount-1; c++) {
                 $(`#${obj.EbSid} table tbody`).append(`<tr id="${obj.EbSid}_tr_${c}">`);
                 this.appendTd($(`#${obj.EbSid}_tr_${c}`), _tdCount);
             }
             obj.Height = $(`#${obj.EbSid}`).height();
         }
+        this.RowCount = obj.RowCount;
+        this.ColCount = obj.ColoumCount;
+
         this.makeTLayoutDroppable(obj.EbSid);
+        this.killResizableCols(obj);
+        this.InitColResize(obj.EbSid);
+    };
+
+    this.deleteCell = function (obj, pname) {
+        let lastnode = null;
+        if (pname === "ColoumCount") {
+            this.setTdPixelH();
+            for (let z = 0; z < this.ColCount - obj.ColoumCount;z++) {
+                $(`#${obj.EbSid}`).find("tr").each(function (i, o) {
+                    lastnode = $(o).find("td:last-child");
+                    if (lastnode.closest("tr").index() === 0)
+                        $(`#${obj.EbSid}`).width($(`#${obj.EbSid}`).width() - lastnode.width());
+                    lastnode.remove();
+                });
+            }
+            this.ColCount = obj.ColoumCount;
+        }
+        else if (pname === "RowCount") {
+            this.setTrPixelH();
+            for (let y = 0; y < this.RowCount - obj.RowCount; y++) {
+                lastnode = $(`#${obj.EbSid}`).find("tr:last-child");
+                $(`#${obj.EbSid}`).height($(`#${obj.EbSid}`).height() - lastnode.height());
+                lastnode.remove();
+            }
+            this.RowCount = obj.RowCount;
+        }
         this.killResizableCols(obj);
         this.InitColResize(obj.EbSid);
     };
@@ -267,6 +326,8 @@
         let _nextNode = this.Table.find(`.eb_resize_row`).eq(index);
         let nextnode = this.Table.find("tr").eq(index);
         if (_nextNode.length > 0 && _nextNode.length > 0) {
+            let h = _nextNode.position().top - resizer.position().top;
+            nextnode.css("height", this.calcPercentTop(h + 2) + "%");
         }
     };
 

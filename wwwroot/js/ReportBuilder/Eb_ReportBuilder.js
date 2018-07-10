@@ -647,7 +647,7 @@
 
     this.pg.PropertyChanged = function (obj, pname) {
         if (pname === 'RowCount' || pname === 'ColoumCount') {
-            this.TableCollection[obj.EbSid].addCells(obj, pname);
+            this.TableCollection[obj.EbSid].pgChange(obj, pname);
         }
         else if (pname === "DataSourceRefId") {
             this.getDataSourceColoums(obj.DataSourceRefId);
@@ -671,8 +671,6 @@
         else if (pname === "Font") {
             this.repExtern.setFontProp(obj);
         }
-        else if (pname === "ColoumCount" || pname === "RowCount")
-            this.RbCommon.modifyTable(obj, pname);
         else if (pname === "Function") {
             this.changeSummaryFunc(obj);
             this.RefreshControl(obj);

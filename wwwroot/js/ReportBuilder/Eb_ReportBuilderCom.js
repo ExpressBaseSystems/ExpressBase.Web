@@ -157,6 +157,7 @@
     }
 
     this.setCalcFieldType = function (obj, result) {
+        obj.CalcFieldIntType = result.Type;
         if (result.Type === 16)
             obj.CalcFieldType = "Text";
         else if (result.Type === 7 || result.Type === 8 || result.Type === 10 || result.Type === 11 || result.Type === 12 || result.Type === 21)

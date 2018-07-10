@@ -31,7 +31,7 @@
         this.Table.css({
             left: this.EbCtrl.Left,
             top: this.EbCtrl.Top,
-            width: this.EbCtrl.width,
+            width: this.EbCtrl.Width,
             height: this.EbCtrl.Height
         });
         

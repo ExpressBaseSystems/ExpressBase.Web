@@ -41,7 +41,7 @@
     this.EbObjectSections = this.RbCommon.EbObjectSections;
     this.msBoxSubNotation = this.RbCommon.msBoxSubNotation;
     this.pages = this.RbCommon.pages;
-    this.TextAlign = this.RbCommon.TextAlign;
+    this.TextAlign = EbEnums["EbTextAlign"];
     this.rulerTypesObj = this.RbCommon.EbRuler;
     this.GenerateButtons = function () { };
     this.TableCollection = {};
@@ -282,7 +282,7 @@
     this.DropFirst = function (Title) {
         if (this.Objtype === "TableLayout") {
             let o = new EbTableLayout(this);
-            this.TableCollection[o.EbSid] = o;
+            this.TableCollection[o.EbCtrl.EbSid] = o;
         }
         else {
             var Objid = this.Objtype + (this.idCounter[this.Objtype + "Counter"])++;
@@ -345,7 +345,7 @@
         var resizeId = $(event.target).attr("id");
         var type = $(event.target).attr('eb-type');
         if (type === "TableLayout") {
-            this.RbCommon.resizeTdOnLayoutResize($(event.target).attr("id"), "stop");
+            this.RbCommon.resizeTdOnLayoutResize($(event.target).attr("id"));
         }
         else {
             this.objCollection[resizeId].Width = $(event.target).width();
@@ -355,12 +355,6 @@
         }
     };//on resize event
 
-    this.startResize = function (event, ui) {
-        if ($(event.target).attr('eb-type') === "TableLayout") {
-            this.RbCommon.resizeTdOnLayoutResize($(event.target).attr("id"), "start");
-        }
-    };
-
     this.elementOnFocus = function (event) {
         event.stopPropagation();
         var curControl = $(event.target);
@@ -369,7 +363,7 @@
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
         if (!curControl.hasClass("pageHeaders"))
             this.Resizable(curControl);
-        this.RM.Menu(curControl);
+        //this.RM.Menu(curControl);
         if (curControl.parent().hasClass("T_layout"))//change
             this.RbCommon.makeReadOnlyonPg(curObject);//change
     };//obj send to pg on focus
@@ -403,7 +397,6 @@
             object.resizable({
                 containment: "parent",
                 handles: handles,
-                start: this.startResize.bind(this),
                 stop: this.onReSizeFn.bind(this),
             });
         }
@@ -654,7 +647,7 @@
 
     this.pg.PropertyChanged = function (obj, pname) {
         if (pname === 'RowCount' || pname === 'ColoumCount') {
-            this.TableCollection[obj.EbSid].addCells(obj, pname);
+            this.TableCollection[obj.EbSid].pgChange(obj, pname);
         }
         else if (pname === "DataSourceRefId") {
             this.getDataSourceColoums(obj.DataSourceRefId);
@@ -678,8 +671,6 @@
         else if (pname === "Font") {
             this.repExtern.setFontProp(obj);
         }
-        else if (pname === "ColoumCount" || pname === "RowCount")
-            this.RbCommon.modifyTable(obj, pname);
         else if (pname === "Function") {
             this.changeSummaryFunc(obj);
             this.RefreshControl(obj);

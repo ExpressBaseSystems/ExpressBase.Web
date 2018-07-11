@@ -50,13 +50,14 @@ namespace ExpressBase.Web.Filters
             string[] hostParts = host.Split(CharConstants.DOT);
 
             object _subDomain = null;
-            if (Enum.TryParse(typeof(SubDomains), hostParts[0], out _subDomain))
-            {
-                context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EB_PRODUCTS;
-                context.RouteData.Values[RoutingConstants.ACTION] = ((SubDomains)_subDomain).ToString();
-            }
-            
-            else if (path.Value.Equals(CharConstants.BACKSLASH.ToString())) // '/'
+            //if (Enum.TryParse(typeof(SubDomains), hostParts[0], out _subDomain))
+            //{
+            //    context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EB_PRODUCTS;
+            //    context.RouteData.Values[RoutingConstants.ACTION] = ((SubDomains)_subDomain).ToString();
+            //}
+
+            /*else*/
+            if (path.Value.Equals(CharConstants.BACKSLASH.ToString())) // '/'
             {
                 if (Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.PRODUCTION)
                     this.RouteToCorrectPage(context, (hostParts.Length == RoutingConstants.HOSTPARTSLEN_IS_3));

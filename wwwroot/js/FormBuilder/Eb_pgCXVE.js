@@ -231,7 +231,8 @@
             id: this.PGobj.wraperId + "_InnerPG",
             wc: this.PGobj.wc,
             cid: this.PGobj.cid,
-            $extCont: $(".property-grid-cont")
+            $extCont: $(".property-grid-cont"),
+            IsInnerCall: true
         }, this.PGobj);
 
         this.CE_PGObj.IsReadonly = this.PGobj.IsReadonly;
@@ -259,10 +260,12 @@
         this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
         this.setSelColtiles();
         //this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
-
-        this.CE_PGObj = new Eb_PropertyGrid({
-            id: this.PGobj.wraperId + "_InnerPG"
-        });
+        if (this.editor !== 8) {
+            this.CE_PGObj = new Eb_PropertyGrid({
+                id: this.PGobj.wraperId + "_InnerPG",
+                IsInnerCall: true
+            });
+        }
     };
 
     this.getSelectedColsByProp = function (allCols) {

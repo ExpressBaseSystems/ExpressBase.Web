@@ -934,7 +934,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //this.filterValues = this.getFilterValues("link");
         var splitarray = this.linkDV.split("-");
         if (splitarray[2] === "3") {
-            var url = "http://" + this.url + "/ReportRender/BeforeRender?refid=" + this.linkDV;
+            var url = "../ReportRender/BeforeRender?refid=" + this.linkDV;
             var copycelldata = cData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
             if ($(`#RptModal${copycelldata}`).length !== 0)
                 $(`#RptModal${copycelldata}`).remove();
@@ -959,7 +959,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             this.tabNum++;
-            var url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;
+            var url = "../DV/dv?refid=" + this.linkDV;
 
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
@@ -1189,7 +1189,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.doRowgrouping = function () {
         var rows = this.Api.rows().nodes();
         var last = null;
-        var count = this.ebSettings.Columns.$values.length;
+        var count = this.Api.columns()[0].length;
         this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0]).data().each(function (group, i) {
             if (last !== group) {
                 $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");

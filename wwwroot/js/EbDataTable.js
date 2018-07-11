@@ -246,7 +246,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.initCompleteflag = false;
 
         $("#objname").text(this.dvName);
-        $(".pgpin").click();
+        this.propGrid.ClosePG()
         $(".filterCont").hide();
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {

@@ -94,7 +94,7 @@
 
     this.loadFont = function (e) {
         fontName = $(e.target).val();
-        this.loadCSS('http://fonts.googleapis.com/css?family=' + fontName);
+        this.loadCSS('https://fonts.googleapis.com/css?family=' + fontName);
         $('#font-preview').css('font-family', fontName);
         this.fontObject.Font = fontName;
     }

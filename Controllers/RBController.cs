@@ -77,7 +77,11 @@ namespace ExpressBase.Web.Controllers
 
         public string ValidateCalcExpression(string refid, string expression)
         {
-            ValidateCalcExpressionResponse res = this.ServiceClient.Get<ValidateCalcExpressionResponse>(new ValidateCalcExpressionRequest { DataSourceRefId = refid, ValueExpression = expression });
+            EbDataSource ds = this.Redis.Get<EbDataSource>(refid);
+            if (ds.FilterDialogRefId != string.Empty)
+                ds.AfterRedisGet(this.Redis, this.ServiceClient);
+            List<Param> FilterControls = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null;
+            ValidateCalcExpressionResponse res = this.ServiceClient.Get<ValidateCalcExpressionResponse>(new ValidateCalcExpressionRequest { DataSourceRefId = refid, ValueExpression = expression ,Parameters = FilterControls });
             return JsonConvert.SerializeObject(res);
         }
 

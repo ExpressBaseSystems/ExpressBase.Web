@@ -85,8 +85,16 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.contactSubmit = function (e) {
+        let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
+        let email = $("#anon_mail").val().trim();
+        let phone = $("#anon_phno").val().trim();
+        if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
+            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
         this.msgFromBot("Thank you.");
-        this.authenticateAnon($("#anon_mail").val().trim(), $("#anon_phno").val().trim());
+        this.authenticateAnon(email, phone);
         $(e.target).closest('.msg-cont').remove();
     }.bind(this);
 
@@ -301,6 +309,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         o.showSerialColumn = true;
         o.showCheckboxColumn = false;
         o.showFilterRow = false;
+        o.IsPaging = false;
+        o.wc = 'bc';
         //o.scrollHeight = this.scrollHeight + "px";
         //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
@@ -321,11 +331,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.showTypingAnim();
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8000/ds/data/' + this.curChartViz.DataSourceRefId,
+            url: '../boti/getData',
             data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
             success: this.getDataSuccess.bind(this),
             error: function () { }
         });
@@ -670,9 +680,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.curVal = this.getValue($input);
         if (this.curCtrl.objType === "ImageUploader") {
             if (!this.checkRequired()) { return; }
-            this.replyAsImage($msgDiv, $input[0], next_idx);
-            this.formValues[id] = this.curVal;// last value set from outer fn
-            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
+            this.replyAsImage($msgDiv, $input[0], next_idx, id);
+            //if()
+            //this.formValues[id] = this.curVal;// last value set from outer fn
+            //this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
         else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.objType === "ComboBox") {
             if (!this.checkRequired()) { return; }
@@ -801,9 +812,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         return '<div class="chat-ctrl-cont">' + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
     };
 
-    this.replyAsImage = function ($prevMsg, input, idx) {
+    this.replyAsImage = function ($prevMsg, input, idx, ctrlname) {
         console.log("replyAsImage()");
-        var ctrlname = this.curCtrl.name;
         var fname = input.files[0].name;
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -826,7 +836,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $('.eb-chatBox').scrollTop(99999999999);
     };
 
-    this.uploadImage = function (url, ctrlname, idx) {
+    this.uploadImage = function (url, id, idx) {
         console.log("uploadImage");
         var URL = url.substring(url.indexOf(",/") + 1);
         var EbSE = new EbServerEvents({
@@ -835,21 +845,22 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             Rtoken: this.refreshToken
         });
         EbSE.onUploadSuccess = function (obj, e) {
-            $(`[for=${ctrlname}] .img-loader:last`).hide(100);
-            this.callGetControl(idx);
-            this.curVal = obj.objId;
+            $(`[for=${id}] .img-loader:last`).hide(100);
+            this.callGetControl(this.nxtCtrlIdx);
+
+            this.formValues[id] = obj.objectId;
+            this.formValuesWithType[id] = [this.formValues[id], 16];
+
         }.bind(this);
 
         $.post("../Boti/UploadFileAsync", {
             'base64': URL,
-            "filename": ctrlname,
-            "refreshToken": this.refreshToken,
-            "bearerToken": this.bearerToken,
+            "filename": id,
             "type": URL.trim(".")[URL.trim(".").length - 1]
         }).done(function (result) {
-            $(`[for=${ctrlname}] .img-loader:last`).hide(100);
-            this.callGetControl(idx);
-            this.curVal = result;
+            //$(`[for=${id}] .img-loader:last`).hide(100);
+            //this.callGetControl(this.nxtCtrlIdx);
+            //this.curVal = result;
         }.bind(this))
     }.bind(this);
 
@@ -1170,7 +1181,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 "appid": this.EXPRESSbase_APP_ID,
                 "socialId": this.FBResponse.id,
                 "wc": "bc",
-                "anon_email": null,
+                "anon_email": this.userDtls.email,
                 "anon_phno": null,
                 "user_ip": this.userDtls.ip,
                 "user_browser": this.userDtls.browser,
@@ -1194,10 +1205,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.FBLogined = function () {
-        this.FB.api('/me?fields=id,name,picture', function (response) {
+        this.FB.api('/me?fields=id,name,picture,email', function (response) {
             this.FBResponse = response;
             this.userDtls.name = this.FBResponse.name;
-            //this.userDtls.email = this.FBResponse.email;
+            this.userDtls.email = this.FBResponse.email;
             this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
             this.greetings();
         }.bind(this));

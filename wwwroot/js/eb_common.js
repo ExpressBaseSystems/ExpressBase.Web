@@ -176,7 +176,8 @@ var EbStickButton = function (option) {
     this.$extCont = option.$extCont || this.$wraper.parent();
     this.delay = option.delay || 300;
     this.dir = option.dir || "right";
-    $(document.body).append(this.$stickBtn);
+    this.$scope = option.$scope || $(document.body)
+    $(this.$scope).append(this.$stickBtn);
 
     this.toggleStickButton = function () {
 

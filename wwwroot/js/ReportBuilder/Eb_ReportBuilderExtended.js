@@ -9,24 +9,9 @@
 
     if (!this.Rpt.isNew) {
         ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'].forEach(function (item) {
-            $("head").append($("<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family='" + item +"'/>"));
+            $("head").append($("<link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family='" + item +"'/>"));
         });
     }
-
-    this.minMaxPG = function () {
-        $("#max-pg").on('click', this.minPgrid.bind(this));
-    }
-
-    this.minPgrid = function () {
-        this.pGcontainer.animate({
-            width: "toggle"
-        }, "fast", function () {
-            if (this.pGcontainer.css("display") === 'none')
-                $("#max-pg").show();
-            else
-                $("#max-pg").hide();
-            }.bind(this));
-    };
 
     this.keyInteractions = function (event) {
         var eb_cntrol = this.Rpt.objCollection[event.target.id];
@@ -215,7 +200,6 @@
             });            
         }
     };
-    
-    this.minMaxPG();
+   
     $('body').off("keydown").on("keydown", ".dropped", this.keyInteractions.bind(this));
 }

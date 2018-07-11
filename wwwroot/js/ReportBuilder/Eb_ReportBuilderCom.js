@@ -157,6 +157,7 @@
     }
 
     this.setCalcFieldType = function (obj, result) {
+        obj.CalcFieldIntType = result.Type;
         if (result.Type === 16)
             obj.CalcFieldType = "Text";
         else if (result.Type === 7 || result.Type === 8 || result.Type === 10 || result.Type === 11 || result.Type === 12 || result.Type === 21)
@@ -239,46 +240,12 @@
             ${$funcselect.val()} (${fields.find('option:selected').text().trim()})</div></li>`);
     };
 
-    this.modifyTable = function (obj, pname) {
-        if (pname === "ColoumCount") {
-            $(`#${obj.EbSid} table tbody tr`).each(function (i, tr) {
-                this.appendTd($(tr), obj.ColoumCount);
-            }.bind(this));
-        }
-        else {
-            var _row = $(`#${obj.EbSid} table tbody tr`).length;
-            let _tdCount = $(`#${obj.EbSid} table tbody tr`).eq(0).children("td").length;
-            //$(`#${obj.EbSid} table`).css("height", $(`#${obj.EbSid} table`).height() + (obj.RowCount * 26));
-            $(`#${obj.EbSid}`).css("height", $(`#${obj.EbSid} table`).height() + (obj.RowCount * 26));
-            for (let c = _row; c <= obj.RowCount; c++) {
-                $(`#${obj.EbSid} table tbody`).append(`<tr id="${obj.EbSid}_tr_${c}">`);
-                this.appendTd($(`#${obj.EbSid}_tr_${c}`), _tdCount);
-            }
-            //$(`#${obj.EbSid}`).css("height", "auto");
-            obj.Height = $(`#${obj.EbSid}`).height();
-        }
-        this.RbObj.makeTLayoutDroppable(obj);
-        this.resizeTdOnLayoutResize(obj.EbSid, "set");
-        this.killResizableCols(obj);
-        this.tableResizableCols(obj);
-    };
-
-    this.appendTd = function ($ctrl, count) {
-        for (let t = 0; t < count; t++) {
-            $ctrl.append("<td eb-type='TableLayout'>");
-        }
-    };
-
-    this.resizeTdOnLayoutResize = function (id, opertaion) {
+    this.resizeTdOnLayoutResize = function (id) {
         $(`#${id}`).find("td").each(function (i, obj) {
-            if (opertaion === "start" || opertaion === "set")
-                $(obj).find(".dropped").css({ width: "100%", height: "100%" });
-            else if (opertaion === "stop" || opertaion === "set") {
-                if ($(obj).find(".dropped").length > 0) {
-                    let ctrl = $(obj).children(".dropped");
-                    this.RbObj.objCollection[ctrl.attr("id")].Width = $(`#${ctrl.attr("id")}`).innerWidth();
-                    this.RbObj.objCollection[ctrl.attr("id")].Height = $(`#${ctrl.attr("id")}`).innerHeight();
-                }
+            if ($(obj).find(".dropped").length > 0) {
+                let ctrl = $(obj).children(".dropped").eq(0);
+                this.RbObj.objCollection[ctrl.attr("id")].Width = $(`#${ctrl.attr("id")}`).innerWidth();
+                this.RbObj.objCollection[ctrl.attr("id")].Height = $(`#${ctrl.attr("id")}`).innerHeight();
             }
         }.bind(this));
         this.RbObj.objCollection[id].Height = $("#" + id).height();
@@ -300,7 +267,7 @@
             td_obj.RowIndex = $(js_objtd).parent("tr").index();
             td_obj.CellIndex = $(js_objtd).index();
             td_obj.Height = $(js_objtd).closest("tr").height();
-            td_obj.Width = $(js_objtd).closest("tr").width();
+            td_obj.Width = $(js_objtd).width();
             this.getTdCtrls($(js_objtd), td_obj);
         }.bind(this));
     };
@@ -308,61 +275,27 @@
     this.getTdCtrls = function ($td, eb_obj) {
         $td.find(".dropped").each(function (k, ebctrl) {
             if ($(ebctrl).length >= 1) {
-                this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
-                this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
-                eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
-                this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
+                var eb_type = this.RbObj.objCollection[$(ebctrl).attr("id")].$type.split(",")[0].split(".").pop().substring(2);
+                if (eb_type === "TableLayout")
+                    this.innerTableOnEdit(this.RbObj.objCollection[$(ebctrl).attr("id")]);
+                else {
+                    this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
+                    this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
+                    eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
+                    this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
+                }
             }
         }.bind(this));
         this._table.CellCollection.$values.push(eb_obj);
     };
 
     this.drawTableOnEdit = function (editControl) {
-        var tobj = this.RbObj.drawEbControls(editControl);
-        this.RbObj.TableCollection[tobj.EbSid] = new Array();
-        this.addCells(tobj);
-        this.setWH(tobj,editControl.CellCollection.$values);
-        this.renderTableControls(tobj, editControl);
+        let o = new EbTableLayout(this.RbObj, editControl);
+        this.RbObj.TableCollection[o.EbCtrl.EbSid] = o;
     };
 
-    this.addCells = function (tobj) {
-        $(`#${tobj.EbSid} table tbody tr`).each(function (i, tr) {
-            this.appendTd($(tr), tobj.ColoumCount);
-        }.bind(this));
+    this.innerTableOnEdit = function (ebctrl) {
 
-        let _tdCount = $(`#${tobj.EbSid} table tbody tr`).eq(0).children("td").length;
-        for (let c = 0; c < tobj.RowCount; c++) {
-            $(`#${tobj.EbSid} table tbody`).append(`<tr id="${tobj.EbSid}_tr_${c}">`);
-            this.appendTd($(`#${tobj.EbSid}_tr_${c}`), _tdCount);
-        }
-        this.RbObj.makeTLayoutDroppable(tobj);
-        //this.resizeTdOnLayoutResize(tobj.EbSid, "set");
-        this.killResizableCols(tobj);
-        this.tableResizableCols(tobj);
-    };
-    this.setWH = function (table, cells) {
-        cells.forEach(function (item) {
-            $(`#${table.EbSid} table`).find("tr").eq(item.RowIndex).css({
-                height: parseFloat(item.Height) / parseFloat(table.Height) * 100 + "%"
-            });
-        }.bind(this));
-    };
-
-    this.renderTableControls = function (tobj, editControl) {
-        this.tobj = tobj;
-        editControl.CellCollection.$values.forEach(function (ctrls) {
-            this.RbObj.containerId = $(`#${tobj.EbSid}`).find("tr").eq(ctrls.RowIndex).find("td").eq(ctrls.CellIndex);
-            //this.RbObj.containerId.css("height", ctrls.Height);
-            ctrls.ControlCollection.$values.forEach(this.drawControls.bind(this));
-        }.bind(this));
-        this.resizeTdOnLayoutResize(this.tobj.EbSid, "set");
-    };
-
-    this.drawControls = function (ctrls) {
-        ctrls.LeftPt = 0;
-        ctrls.TopPt = 0;
-        var newc = this.RbObj.drawEbControls(ctrls);
-        this.RbObj.TableCollection[this.tobj.EbSid].push(newc);
     };
 
     this.drawDsParmsTree = function (paramsList) {
@@ -475,28 +408,28 @@
         var filter_control_list = $("#all_control_names").val();
         if (filter_control_list !== undefined) {
             var myarray = filter_control_list.split(',');
-			for (var i = 0; i < myarray.length; i++) {
-				console.log($("#" + myarray[i]).val());
-				var type = $('#' + myarray[i]).attr('data-ebtype');
-				var name = $('#' + myarray[i]).attr('id');
-				if (type === "3")
-					value = $("[name=" + myarray[i] + "]:checked").val()
-				else
-					value = $('#' + myarray[i]).val();
-				if (type === '6')
-					value = value.substring(0, 10);
-				else
-					if (typeof value === "string") {
-						//value = value.trim();
-					}
+            for (var i = 0; i < myarray.length; i++) {
+                console.log($("#" + myarray[i]).val());
+                var type = $('#' + myarray[i]).attr('data-ebtype');
+                var name = $('#' + myarray[i]).attr('id');
+                if (type === "3")
+                    value = $("[name=" + myarray[i] + "]:checked").val()
+                else
+                    value = $('#' + myarray[i]).val();
+                if (type === '6')
+                    value = value.substring(0, 10);
+                else
+                    if (typeof value === "string") {
+                        //value = value.trim();
+                    }
 
 
-				if (type === '16' && !(isNaN(value))) {
-					value = parseInt(value);
-					type = 8;
-				}
-				ParamsArray.push(new fltr_obj(type, name, value));
-			}
+                if (type === '16' && !(isNaN(value))) {
+                    value = parseInt(value);
+                    type = 8;
+                }
+                ParamsArray.push(new fltr_obj(type, name, value));
+            }
         }
 
         //if (!validateFD()) {

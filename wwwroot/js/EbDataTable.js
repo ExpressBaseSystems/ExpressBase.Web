@@ -69,6 +69,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.firstTime = false;
     this.tempColumns = [];
     this.filterHtml = "";
+    this.orderColl = [];
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -91,7 +92,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.call2FD = function () {
         this.relatedObjects = this.EbObject.DataSourceRefId;
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "unset","margin-right":"unset" } }, maskLoader: false });
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "unset", "margin-right": "unset" } }, maskLoader: false });
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
@@ -245,12 +246,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.initCompleteflag = false;
 
         $("#objname").text(this.dvName);
-        $(".pgpin").click();
+        this.propGrid.ClosePG()
         $(".filterCont").hide();
         this.addSerialAndCheckboxColumns();
+        //hard coding
+        if (this.EbObject.rowGrouping.$values.length > 0) {
+            this.ebSettings.LeftFixedColumn = 0;
+            this.ebSettings.RightFixedColumn = 0;
+        }
+
+        //----------
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
-            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-striped table-bordered compact'></table></div>");
+            $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");
             this.Init();
         }
     };
@@ -258,7 +266,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.validateFD = function () {
         var isValid = true;
         var FdCont = ".filterCont";
-        var $ctrls = $(FdCont+"  #filterBox").find("[required]");
+        var $ctrls = $(FdCont + "  #filterBox").find("[required]");
         $.each($ctrls, function (idx, ctrl) {
             if ($(ctrl).val().trim() === "") {
                 EbMessage("show", { Message: ctrl.id + " is empty" });
@@ -417,9 +425,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    //o.lengthMenu = [[-1], ["All"]];
         //    o.dom = "rti";
         //}
-        //rowGroup: {
-        //    dataSrc: 'submitter'
-        //}
+        //o.rowGroup = {
+        //    dataSrc: 4
+        //};
         //o.paging = false;
         //o.rowReorder = true;
         //o.order = [[8, "asc"]];
@@ -521,8 +529,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //if (this.filterValues === null || this.filterValues === undefined || this.filterValues.length === 0 || filterChanged || this.login === "dc" || this.login === "uc")
         this.filterValues = this.getFilterValues("filter");
         dq.Params = this.filterValues;
-        dq.OrderByCol = this.order_info.col;
-        dq.OrderByDir = this.order_info.dir;
+        if (this.EbObject.rowGrouping.$values.length > 0) {
+            var temp = $.grep(this.orderColl, function (obj) { return obj.Column === this.EbObject.rowGrouping.$values[0].name }.bind(this));
+            this.orderColl = $.grep(this.orderColl, function (obj) { return obj.Column !== this.EbObject.rowGrouping.$values[0].name }.bind(this));
+            if (this.order_info.col === this.EbObject.rowGrouping.$values[0].name)
+                this.orderColl.unshift(new order_obj(this.EbObject.rowGrouping.$values[0].name, this.order_info.dir));
+            else {
+                if (temp.length > 0)
+                    this.orderColl.unshift(temp[0]);
+                else
+                    this.orderColl.unshift(new order_obj(this.EbObject.rowGrouping.$values[0].name, 1));
+            }
+        }
+        //    dq.OrderByCol = this.EbObject.rowGrouping.$values[0].name;
+        //else
+        //    dq.OrderByCol = this.order_info.col;
+        //dq.OrderByDir = this.order_info.dir;
+        if (this.orderColl.length > 0)
+            dq.OrderBy = this.orderColl;
         if (this.columnSearch.length > 0) {
             this.filterFlag = true;
         }
@@ -587,11 +611,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.rowObj2filter = function (fltr_collection, from, i, data) {
-        if (i  < this.tempColumns.length) {
+        if (i < this.tempColumns.length) {
             if (from === "link") {
                 var type = this.tempColumns[i].Type;
                 if (type === 5 || type === 6)
-                    data = this.renderDateformat(data,"-");
+                    data = this.renderDateformat(data, "-");
                 fltr_collection.push(new fltr_obj(type, this.tempColumns[i].name, data));
             }
             else {
@@ -619,7 +643,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     o.value = $(ctrl).find("input").val();
                 else
                     o.value = $($(ctrl).children()[1]).val();
-                    
+
                 if (typeof $controls[i + 1] !== "undefined")
                     o.logicOp = "AND";
                 else
@@ -630,7 +654,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.columnSearch.length > 0) {
             for (i = 0; i < this.columnSearch.length; i++) {
-            //$.each(this.columnSearch, function (i, search) {
+                //$.each(this.columnSearch, function (i, search) {
                 search = this.columnSearch[i];
                 var o = new displayFilter();
                 o.name = search.Column;
@@ -675,7 +699,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }
-        this.Tags = new EbTags({ "displayFilterDialogArr": filterdialog, "displayColumnSearchArr": columnFilter, "id": "#filterDisplay_"+this.tableId+"", "remove": this.closeTag });
+        this.Tags = new EbTags({ "displayFilterDialogArr": filterdialog, "displayColumnSearchArr": columnFilter, "id": "#filterDisplay_" + this.tableId + "", "remove": this.closeTag });
         //this.Tags = new EbTags({ "displayFilterDialogArr": $controls, "displayColumnSearchArr": this.columnSearch, "id": "#filter_Display", "remove": this.closeTag });
     };
 
@@ -688,7 +712,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     var val = this.columnSearch[index].Value.replace(obj.value + "|", "");
                 else
                     var val = this.columnSearch[index].Value.replace("|" + obj.value, "");
-                if(val.trim() != "")
+                if (val.trim() != "")
                     this.columnSearch[index].Value = val;
                 else
                     this.columnSearch.splice(index, 1);
@@ -976,7 +1000,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
         var scrollfoot = $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner table');
 
-        if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn.length > 0) {
+        if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0) {
             if (this.ebSettings.LeftFixedColumn > 0) {
                 for (var j = 0; j < this.ebSettings.LeftFixedColumn; j++) {
                     $(lfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j).css("width"));
@@ -1013,7 +1037,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }
-        
+
 
         $("#" + this.tableId + " thead tr:eq(1) .eb_finput").parent().remove();
     };
@@ -1163,10 +1187,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.doRowgrouping = function () {
-        var rows = this.Api.rows({ page: 'current' }).nodes();
+        var rows = this.Api.rows().nodes();
         var last = null;
         var count = this.ebSettings.Columns.$values.length;
-        this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0], { page: 'current' }).data().each(function (group, i) {
+        this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0]).data().each(function (group, i) {
             if (last !== group) {
                 $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");
                 last = group;
@@ -1254,8 +1278,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var _ls;
         if (col.bVisible) {
             var temp = $.grep(this.eb_agginfo, function (agg) { return agg.colname === col.name });
-            //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
-            if (temp.length > 0) {
+            //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.Type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
+            if (col.Aggregate) {
                 var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = this.tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
@@ -1410,7 +1434,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("[data-coltyp=date]").datepicker({
             dateFormat: "dd/mm/yy",
-            beforeShow: function (elem,obj) {
+            beforeShow: function (elem, obj) {
                 $(".ui-datepicker").addClass("datecolumn-picker");
             }
         });
@@ -1590,6 +1614,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (col !== '' && col !== "#") {
             this.order_info.col = tempobj[0].name;
             this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
+            this.orderColl = $.grep(this.orderColl, function (obj) { return obj.Column !== this.order_info.col }.bind(this));
+            if (this.EbObject.rowGrouping.$values.length === 0)
+                this.orderColl = [];
+            this.orderColl.push(new order_obj(this.order_info.col, this.order_info.dir));
         }
     };
 
@@ -1704,7 +1732,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
-        
+
         return filter;
 
     };
@@ -1768,11 +1796,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var flag = false;
         var colum = $(e.target).attr('data-colum');
         var ctype = $(e.target).parents('.input-group').find("input").attr('data-coltyp');
-        var dateclas = (ctype === "date") ? "no-spin": "";
+        var dateclas = (ctype === "date") ? "no-spin" : "";
         $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
-                $(e.target).parents('.input-group').append("<input type='text' placeholder='dd/mm/yyyy' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype+"'>");
+                $(e.target).parents('.input-group').append("<input type='text' placeholder='dd/mm/yyyy' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keyup", this.call_filter);
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
@@ -1867,7 +1895,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var dt = data.split("/");
         if (dt.length === 1)
             dt = data.split("-");
-        if(dt[0].length <= 2)
+        if (dt[0].length <= 2)
             return [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("-");
         else
             return [dt[0].trim(), dt[1].trim(), dt[2].trim()].join("-");
@@ -1875,7 +1903,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.retainDateOrder = function (data) {
         var dt = data.split("-");
-         return [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("/");
+        return [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("/");
     };
 
     this.toggleInFilter = function (e) {
@@ -2293,7 +2321,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return `<label class='labeldata'>${data}</label>`;
     };
 
-    this.renderDateformat = function (data,sym) {
+    this.renderDateformat = function (data, sym) {
         if (typeof data !== "object") {
             var date = new Date(parseInt(data.substr(6)));
             var month = date.getMonth() + 1;
@@ -2301,13 +2329,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (sym === "-")
                 return (dt.toString().length > 1 ? dt : "0" + dt) + "-" + (month.toString().length > 1 ? month : "0" + month) + "-" + date.getFullYear();
             else
-                return (dt.toString().length > 1 ? dt : "0" + dt) + "/" +(month.toString().length > 1 ? month : "0" + month)  + "/" + date.getFullYear();
+                return (dt.toString().length > 1 ? dt : "0" + dt) + "/" + (month.toString().length > 1 ? month : "0" + month) + "/" + date.getFullYear();
         }
         else
             return "";
-	};
+    };
 
-	this.CreateRelationString = function () { };
+    this.CreateRelationString = function () { };
 
     this.start();
 };
@@ -2324,7 +2352,6 @@ function returnOperator(op) {
     else
         return op;
 }
-
 
 function csv(gdata) {
     //gdata = ["201607:58179.28","201608:66329.35","201609:67591.27","201610:61900.93","201611:38628.72","201612:48536.31","201701:25256.74","201702:0"];
@@ -2380,6 +2407,7 @@ function renderLineGraphs(id) {
 function GPointPopup(e) {
     //alert(e.pageX);
 };
+
 $.fn.setCursorPosition = function (pos) {
     this.each(function (index, elem) {
         if (elem.setSelectionRange) {
@@ -2451,7 +2479,6 @@ var Agginfo = function (col, deci) {
     this.deci_val = deci;
 };
 
-
 var displayFilter = function (col, oper, val, Loper) {
     this.name = col;
     this.operator = oper;
@@ -2474,7 +2501,7 @@ var EbTags = function (settings) {
                 this.id.append(`<div class="tagstyle priorfilter">${ctrl.logicOp}</div>`);
         }.bind(this));
 
-        if (this.displayFilterDialogArr.length > 0 && this.displayColumnSearchArr.length >0)
+        if (this.displayFilterDialogArr.length > 0 && this.displayColumnSearchArr.length > 0)
             this.id.append(`<div class="tagstyle op">AND</div>`);
 
         $.each(this.displayColumnSearchArr, function (i, search) {
@@ -2509,8 +2536,6 @@ var EbTags = function (settings) {
 
     this.show();
 }
-
-
 
 function formatDate(date) {
     var d = new Date(date),

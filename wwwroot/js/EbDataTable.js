@@ -249,6 +249,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.propGrid.ClosePG()
         $(".filterCont").hide();
         this.addSerialAndCheckboxColumns();
+        //hard coding
+        if (this.EbObject.rowGrouping.$values.length > 0) {
+            this.ebSettings.LeftFixedColumn = 0;
+            this.ebSettings.RightFixedColumn = 0;
+        }
+
+        //----------
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");

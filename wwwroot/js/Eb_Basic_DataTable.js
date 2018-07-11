@@ -38,6 +38,7 @@ var EbBasicDataTable = function (Option) {
 
     this.init = function () {
         this.EbObject = new EbTableVisualization(this.tableId);
+        this.EbObject.IsPaging = Option.IsPaging || false;
         this.$dtLoaderCont = $("<div id='dtloadercont' class='dt-loader-cont'></div>");
         this.$dtLoaderCont.insertBefore($("#" + this.contId));
         this.call2FD();
@@ -228,13 +229,13 @@ var EbBasicDataTable = function (Option) {
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
-        o.dom = "<'col-md-12 noPadding display_none'>rt";
-        o.paging = false;
-        o.lengthChange = false;
+        o.dom = (this.EbObject.IsPaging ? "p" : "") + "<'col-md-12 noPadding display_none'>rt";
+        o.paging = this.EbObject.IsPaging;
+        //o.lengthChange = false;
         o.select = true;
         o.keys = true,
             o.ajax = {
-                url: "../dv/getData",
+                url: (Option.wc === 'bc' ? "../boti/getData" : "../dv/getData"),
                 type: 'POST',
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
@@ -259,9 +260,10 @@ var EbBasicDataTable = function (Option) {
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-        dq.Ispaging = true;
-        dq.start = 0;
-        dq.length = 25;/////////hard coding
+        if (Option.wc === 'bc') {
+            dq.start = 0;
+            dq.length = 25;/////////hard coding
+        }       
         return dq;
     };
 
@@ -635,7 +637,8 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
-        Option.fnKeyUpCallback(e, dt, type, indexes);
+        if (Option.fnKeyUpCallback)
+            Option.fnKeyUpCallback(e, dt, type, indexes);
     };
 
     this.clickCallbackFunc = function (e) {
@@ -646,7 +649,8 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.dblclickCallbackFunc = function (e) {
-        Option.fnDblclickCallback(e);
+        if (Option.fnDblclickCallback)
+            Option.fnDblclickCallback(e);
     };
 
     this.DTKeyPressCallback = function (e, datatable, key, cell, originalEvent) {

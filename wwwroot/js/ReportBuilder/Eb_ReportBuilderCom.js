@@ -275,10 +275,15 @@
     this.getTdCtrls = function ($td, eb_obj) {
         $td.find(".dropped").each(function (k, ebctrl) {
             if ($(ebctrl).length >= 1) {
-                this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
-                this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
-                eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
-                this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
+                var eb_type = this.RbObj.objCollection[$(ebctrl).attr("id")].$type.split(",")[0].split(".").pop().substring(2);
+                if (eb_type === "TableLayout")
+                    this.innerTableOnEdit(this.RbObj.objCollection[$(ebctrl).attr("id")]);
+                else {
+                    this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
+                    this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
+                    eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
+                    this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
+                }
             }
         }.bind(this));
         this._table.CellCollection.$values.push(eb_obj);
@@ -287,6 +292,10 @@
     this.drawTableOnEdit = function (editControl) {
         let o = new EbTableLayout(this.RbObj, editControl);
         this.RbObj.TableCollection[o.EbCtrl.EbSid] = o;
+    };
+
+    this.innerTableOnEdit = function (ebctrl) {
+
     };
 
     this.drawDsParmsTree = function (paramsList) {

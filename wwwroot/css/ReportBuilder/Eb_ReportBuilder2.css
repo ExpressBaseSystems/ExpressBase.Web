@@ -18,13 +18,14 @@
             .eb_TableLayout .table tr:not(:last-child) td{
                 border-bottom-color: transparent;
             }
-        .eb_draggbale_table_handle {
-            position: absolute;
-            right: 0px;
-            font-size: 10px;
-            bottom: 0;
-            cursor: pointer;
-        }
+.eb_draggbale_table_handle {
+    position: absolute;
+    right: 0px;
+    font-size: 10px;
+    bottom: 0;
+    cursor: pointer;
+    z-index: 5;
+}
 .T_layout_td .dropped{
     position:relative !important;
     width:100% !important;

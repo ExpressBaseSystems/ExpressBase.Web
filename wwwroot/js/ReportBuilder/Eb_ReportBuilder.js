@@ -41,7 +41,7 @@
     this.EbObjectSections = this.RbCommon.EbObjectSections;
     this.msBoxSubNotation = this.RbCommon.msBoxSubNotation;
     this.pages = this.RbCommon.pages;
-    this.TextAlign = this.RbCommon.TextAlign;
+    this.TextAlign = EbEnums["EbTextAlign"];
     this.rulerTypesObj = this.RbCommon.EbRuler;
     this.GenerateButtons = function () { };
     this.TableCollection = {};
@@ -363,7 +363,7 @@
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
         if (!curControl.hasClass("pageHeaders"))
             this.Resizable(curControl);
-        this.RM.Menu(curControl);
+        //this.RM.Menu(curControl);
         if (curControl.parent().hasClass("T_layout"))//change
             this.RbCommon.makeReadOnlyonPg(curObject);//change
     };//obj send to pg on focus

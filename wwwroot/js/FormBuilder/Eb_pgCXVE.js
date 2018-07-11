@@ -43,8 +43,10 @@
 
         this.reDrawRelatedPGrows();
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
-        if ((this.editor > 6 && this.editor < 15) || (this.editor > 15 && this.editor < 15))
-            this.PGobj[OnChangeExec]();// call Onchange exec for non inp field CXVEs
+        if ((this.editor > 6 && this.editor < 15) || (this.editor > 15 && this.editor < 15)) {
+            let func = this.PGobj.OnChangeExec[_CurProp].bind(PropsObj, this.PGobj);
+            func();// call Onchange exec for non inp field CXVEs
+        }
     };
 
     this.CXVE_close = function (e) {

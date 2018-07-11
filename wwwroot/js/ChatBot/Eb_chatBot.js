@@ -543,8 +543,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.makeReqFm = function (control) {
         var $ctrl = $("#" + control.name);
-        if ($ctrl.length !== 0 && $ctrl.val().trim() === "")
-            EbMakeInvalid(control.name);
+        if ($ctrl.length !== 0 && control.required && $ctrl.val().trim() === "")
+            EbMakeInvalid(control.name, '.ctrl-wraper');
     };
 
     this.removeReqFm = function (control) {
@@ -555,7 +555,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var Html = `<div class='form-wraper'>`;
         $.each(this.curForm.controls, function (i, control) {
             if (!control.hidden)
-                Html += `<label>${control.label}</label><div for='${control.name}'><div class='ctrl-wraper'>${control.bareControlHtml}</div></div><br/><br/>`;
+                Html += `<label>${control.label}</label><div for='${control.name}'><div class='ctrl-wraper'>${control.bareControlHtml}</div></div><br/>`;
         });
         this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn formname-btn">Submit</button><button class="btn formname-btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
@@ -657,7 +657,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.checkRequired = function () {
         if (this.curCtrl.required && !this.curVal) {
-            EbMnvalid(this.curCtrl.name);
+            EbMakeInvalid(this.curCtrl.name, '.chat-ctrl-cont');
             return false;
         }
         else {
@@ -1028,9 +1028,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $firstCtrl = null;
         $.each(this.curForm.controls, function (i, control) {
             var $ctrl = $("#" + control.name);
-            if ($ctrl.length !== 0 && !$firstCtrl && $ctrl.val().trim() === "")
-                $firstCtrl = $ctrl;
-            this.makeReqFm(control);
+            if ($ctrl.length !== 0 && control.required && $ctrl.val().trim() === "") {
+                if (!$firstCtrl)
+                    $firstCtrl = $ctrl;
+                this.makeReqFm(control);
+            }
         }.bind(this));
 
         if ($firstCtrl) {

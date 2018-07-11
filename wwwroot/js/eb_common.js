@@ -65,6 +65,11 @@ var filter_obj = function (colu, oper, valu, typ) {
     this.Type = typ;
 };
 
+var order_obj = function (colu, dir) {
+    this.Column = colu;
+    this.Direction = dir;
+};
+
 
 //function getFilterValues() {
 //    var fltr_collection = [];

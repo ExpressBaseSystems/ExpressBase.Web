@@ -285,7 +285,7 @@ div.dataTables_wrapper div.dataTables_processing {
 }
 
 .odd{
-    background-color: rgba(49,99,150,0.07) !important;
+    background-color: rgba(49,99,150,0.09) !important;
 }
 
 .even:hover {

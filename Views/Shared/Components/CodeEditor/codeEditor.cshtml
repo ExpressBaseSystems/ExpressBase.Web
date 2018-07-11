@@ -15,17 +15,18 @@
     <script src="~/js/SqlBuilder/Sort.js" type="text/javascript"></script>
     <script src="~/js/SqlBuilder/whereClause.js" type="text/javascript"></script>*@
 
-<div class="ds-page ds-cont" id="ds-page@(ViewBag.tabnum)">
+<section class="ds-page ds-cont adv-dsb-cont" id="ds-page@(ViewBag.tabnum)">
     <div class='code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
         <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
     </div>
     <div class='ds-prop'>
         <div id='dspropgrid@(ViewBag.tabnum)' class='pull-right' style='padding:0px'></div>
     </div>
-</div>
+</section>
 
 @*qUERY bUILDER*@
-@*<section class="topbar">
+<section class="simple-dsb-cont">
+    @*<section class="topbar">
         <div class="container-fluid">
             <div class="row h_toolbar">
                 <a type="button" class="btn" href="~/QB/outerQueryBuilder"><i class="glyphicon glyphicon-backward"></i></a>
@@ -33,7 +34,7 @@
                 <button type="button" class="btn pull-right" data-target="#myModal" data-toggle="modal"><i class="glyphicon glyphicon-floppy-saved"></i></button>
             </div>
         </div>
-    </section>
+    </section>*@
     <div class="container-fluid builder-window">
         <div class="row builder-window-row">
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 Builder-toolbox">
@@ -42,11 +43,11 @@
                 <div id="dragula-tables-cont"></div>
                 <ul id="dragula-column-cont"></ul>
             </div>
-            <div class="col-lg-10 col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-md-10 col-sm-10 col-xs-12 Builder-work-pane pd-0">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 Builder-work-pane pd-0">
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="active"><a href="#Design" aria-controls="home" role="tab" data-toggle="tab">Design</a></li>
                     <li><a href="#Condition" aria-controls="Condition" role="tab" data-toggle="tab">Condition</a></li>
-                    <li><a href="#Query" aria-controls="Query" role="tab" data-toggle="tab">Query</a></li>
+                    @*<li><a href="#Query" aria-controls="Query" role="tab" data-toggle="tab">Query</a></li>*@
                 </ul>
                 <!-- Tab panes -->
                 <div class="tab-content tabs">
@@ -73,13 +74,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane QueryPane" id="Query">
+                    @*<div class="tab-pane QueryPane" id="Query">
                         <textarea id="QueryPane"></textarea>
-                    </div>
+                    </div>*@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="myModal" role="dialog">
+       @* <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog">
                 <!-- Modal content-->
                 <div class="modal-content">
@@ -100,8 +101,9 @@
                 </div>
 
             </div>
-        </div>
-    </div>*@
+        </div>*@
+    </div>
+</section>
 <script>
 
     @*var builder = new QueryBuilder("@ViewBag.TableSchema");*@//edited  by amal

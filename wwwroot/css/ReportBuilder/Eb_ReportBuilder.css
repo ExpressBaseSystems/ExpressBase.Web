@@ -1,97 +1,4 @@
-﻿.get_ScreenDpi_div {
-    height: 1in;
-    width: 1in;
-    display:none;
-}
-/*side menuBar*/
-.side-toolbar {
-    position: fixed;
-    height: calc(100% - 70px);
-    width: 250px;
-}
-.eb-toolBoxReport{
-    height:100%;
-}
-.tool-box-items {
-    margin-left: 0px !important;
-    margin-top: 4px !important;
-}
-/*treee*/
-.tree, .tree ul {
-    margin: 0;
-    padding: 0;
-    list-style: none
-}
-
-    .tree ul {
-        margin-left: 1em;
-        position: relative
-    }
-
-        .tree ul ul {
-            margin-left: .5em
-        }
-
-        .tree ul:before {
-            content: "";
-            display: block;
-            width: 0;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            border-left: 1px solid #353644;
-        }
-
-    .tree li {
-        margin: 0;
-        padding: 0 1em;
-        line-height: 2em;
-        color: #353638;
-        font-weight: 400;
-        position: relative;
-    }
-
-    .tree ul li:before {
-        content: "";
-        display: block;
-        width: 10px;
-        height: 0;
-        border-top: 1px solid;
-        margin-top: -1px;
-        position: absolute;
-        top: 1em;
-        left: 0
-    }
-
-    .tree ul li:last-child:before {
-        background: #fff;
-        height: auto;
-        top: 1em;
-        bottom: 0
-    }
-
-.indicator {
-    margin-right: 5px;
-}
-
-.tree li a {
-    text-decoration: none;
-    color: #353644;
-    font-size: 13px;
-}
-
-.tree li button, .tree li button:active, .tree li button:focus {
-    text-decoration: none;
-    color: #369;
-    border: none;
-    background: transparent;
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
-    outline: 0;
-}
-/*tree end*/
-.toolbox .draggable {
+﻿.toolbox .draggable {
     cursor: move;
 }
 .toolbox ul {
@@ -381,15 +288,6 @@
     float: left;
     max-width: 100%;
 }
-
-.page-outer-cont {
-    padding-bottom: 50px;
-    position: relative;
-    z-index: 0;
-    float: left;
-    margin-left: 280px;
-    width: 76%;
-}
 .pageCanvas {
     position: relative;   
     margin-bottom: 50px;
@@ -416,16 +314,6 @@
     bottom: 0;
     width: 100%;
     text-align: center;
-}
-
-.eb-rpt-container .toolbox {
-    height: 100%;
-    padding: 0 !important;
-    width: 100%;
-    background-color: white;
-    border: 1px solid #ccc;
-    overflow-y: auto;
-    border-top-right-radius: 4px;
 }
 .eb-rpt-container {
     background-color: #f2f2f2;
@@ -787,23 +675,6 @@
 }
 .drop-hover {
     border: 2px solid #2391d2 !important;
-}
-/*toolbox new*/
-.tool_items {
-    width: 100%;
-    float: left;
-    padding-bottom: 5px;
-}
-.tool_item_head {
-    padding: 2px 5px;
-    border-bottom: 1px solid #ddd;
-    background: #eee;
-    font-size: 13px;
-    cursor: pointer;
-}
-.tool_item_body{
-    float:left;
-    width:100%;
 }
 
 /*latest css repport*/

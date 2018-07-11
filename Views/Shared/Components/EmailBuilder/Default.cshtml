@@ -10,27 +10,54 @@
     <title>Summernote</title>
 
     <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" />@*jith*@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
     <style>
         .emailpg {
-            display: block;
             position: fixed;
+            top: 0;
             right: 0;
+            z-index: 4;
+            padding-top: 37px;
+            border: 1px solid #ccc;
+            box-shadow: var(--eb-shadow);
+            height: 100%;
+            background-color: white;
+            width: 300px;
+        }
+
+        .page-outer-cont {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        .panel-body {
+            height:unset !important;
+            min-height: calc(100vh - 122px);
+            overflow: unset !important;
         }
     </style>
 </head>
 <body>
     <div class="container-fluid">
-        <div class="col-md-2" id="colselect" style="height: 500px;overflow-y: auto;">
-            <ul id="data-table-list"></ul>
-
+        <div class="side-toolbar" id="colselect">
+            <div class="toolbox">
+                <div class="tool_items">
+                    <div class="tool_item_head">
+                        <i class="fa fa-caret-down"></i> Data
+                    </div>
+                    <div class="tool_item_body">
+                        <ul id="data-table-list"></ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-8" id="summernot_container@(ViewBag.tabnum)">
+        <div class="page-outer-cont" id="summernot_container@(ViewBag.tabnum)">
             <div id="summernote@(ViewBag.tabnum)">
                 @Html.Raw(body)
             </div>
         </div>
-        <div class="col-md-3 pull-right emailpg">
+        <div class="emailpg">
             <div id="PropertyG"></div>
         </div>
     </div>

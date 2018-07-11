@@ -12,6 +12,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Object_String_WithVal;
     this.FD = false;
     this.Ssurl = ssurl;
+    this.delay = 300;
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
@@ -21,8 +22,30 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         id: "dspropgrid" + tabNum,
         wc: this.wc,
         cid: this.cid,
-        $extCont: $(".ds-prop")
+        $extCont: $(".ds-prop"),
+        $scope: $(".adv-dsb-cont")
     });
+
+    this.toggleBuilder = function (e) {
+        var $e = $(e.target).closest("button");
+        var stat = $e.attr("state");
+        var $simpleSec = $(".simple-dsb-cont");
+        var $advSec = $(".adv-dsb-cont");
+        if (stat === "simple") {
+            $e.attr("state", "advanced")
+            $simpleSec.hide(this.delay);
+            $advSec.show(this.delay);
+
+            $simpleSec.animate({});
+        }
+        else {
+            if ($e.attr("is-edited") === "true")
+                return;
+            $e.attr("state", "simple")
+            $simpleSec.show(this.delay);
+            $advSec.hide(this.delay);
+        }
+    };
 
     this.Init = function () {
         //$('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
@@ -54,10 +77,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $("#obj_icons").append(`
             <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'> <i class='fa fa-play' aria-hidden='true'></i></button >
             `);
+        $(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
         //if (this.FD === true) {
         //    $("#obj_icons").append(`<button id='btnToggleFD' class='btn' data-toggle='tooltip' title='Toggle ParameterDiv'> <i class='fa fa-filter' aria-hidden='true'></i></button>`);
         //}
         $("#run").off("click").on("click", this.RunDs.bind(this));
+        $('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
+        $(".adv-dsb-cont").hide(this.delay);
         //$("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
     }
 
@@ -122,9 +148,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.stickBtn = new EbStickButton({
             $wraper: $(".param-div"),
             $extCont: $(".param-div"),
-            icon:"fa-filter",
+            icon: "fa-filter",
             dir: "left",
-            label: "Parameters"
+            label: "Parameters",
         });
     };
 
@@ -419,10 +445,10 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $.LoadingOverlay("hide");
     };
 
-	this.CreateRelationString = function () {
-		if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
-			this.relatedObjects += this.FilterDialogRefId;
-	};
+    this.CreateRelationString = function () {
+        if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
+            this.relatedObjects += this.FilterDialogRefId;
+    };
 
     this.FetchUsedSqlFns_inner = function (i, sqlFn) {
         if (this.EbObject.Sql.indexOf(sqlFn.name) !== -1) {

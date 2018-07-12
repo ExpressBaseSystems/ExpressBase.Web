@@ -269,11 +269,12 @@ div.dataTables_wrapper div.dataTables_processing {
 
 .dataTables_scrollFootInner .form-control, .DTFC_LeftFootWrapper .form-control, .DTFC_RightFootWrapper .form-control {
     height: inherit !important;
-    padding: 2px;
+    padding: 7px 0px;
     border: none !important;
     direction: rtl;
     border-radius: 0 !important;
     box-shadow: none !important;
+    font-size: 10px;
 }
 
 .dataTables_scrollHeadInner table {

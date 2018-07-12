@@ -46,8 +46,7 @@
         if ((this.editor > 6 && this.editor < 15) || (this.editor > 15 && this.editor < 15)) {
             let func = this.PGobj.OnChangeExec[_CurProp]
             if (func) {
-                func.bind(PropsObj, this.PGobj);
-                func();// call Onchange exec for non inp field CXVEs
+                func.bind(PropsObj, this.PGobj)();// call Onchange exec for non inp field CXVEs
             }
         }
     };

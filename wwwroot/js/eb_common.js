@@ -149,22 +149,22 @@ function getEbObjectTypes() {
 }
 
 
-function EbMakeInvalid(name, _ctrlCont,  msg = "This field is required") {
-    var contSel = `[for=${name}]`;
+function EbMakeInvalid(contSel, _ctrlCont,  msg = "This field is required") {
+    //var contSel = `[for=${name}]`;//
     if ($(`${contSel} .req-cont`).length !== 0)
         return;
     //var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
     var $ctrlCont = $(`${contSel}  ${_ctrlCont}`);
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
-    $(`${contSel}  .ctrl-wraper`).css("box-shadow", "0 0 3px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
+    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "0 0 3px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
     $(`${contSel}  .text-danger`).text(msg).show().animate({ opacity: "1" }, 300);
 }
 
 
 
-function EbMakeValid(name, _ctrlCont) {
-    var contSel = `[for=${name}]`;
-    $(`${contSel}  .ctrl-wraper`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+function EbMakeValid(contSel, _ctrlCont) {
+    //var contSel = `[for=${name}]`;
+    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
 };
 

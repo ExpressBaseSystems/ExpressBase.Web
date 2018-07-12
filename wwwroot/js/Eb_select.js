@@ -134,7 +134,7 @@ var EbSelect = function (ctrl) {
         else {
             $filterInp.val($e.val());
             this.Vobj.DDstate = true;
-            EbMakeValid(this.ComboObj.name);
+            EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
             if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
                 return;
             this.datatable.Api.ajax.reload();
@@ -481,7 +481,7 @@ var EbSelect = function (ctrl) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
-            EbMakeValid(this.ComboObj.name);
+            EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
@@ -587,14 +587,14 @@ var EbSelect = function (ctrl) {
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                EbMakeInvalid(this.ComboObj.name, `#${this.ComboObj.name}Container`, 'This field  require minimum ' + this.minLimit + ' values');
+                EbMakeInvalid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
-                    EbMakeInvalid(this.ComboObj.name);
+                    EbMakeInvalid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
                 }
                 else {
-                    EbMakeValid(this.ComboObj.name);
+                    EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
                 }
 
             }

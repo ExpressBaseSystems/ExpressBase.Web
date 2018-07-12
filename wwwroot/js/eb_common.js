@@ -162,7 +162,7 @@ function EbMakeInvalid(name, _ctrlCont,  msg = "This field is required") {
 
 
 
-function EbMakeValid(name) {
+function EbMakeValid(name, _ctrlCont) {
     var contSel = `[for=${name}]`;
     $(`${contSel}  .ctrl-wraper`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();

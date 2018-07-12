@@ -98,13 +98,6 @@
     color: #000000;
     cursor: pointer;
 }
-.headersections .btn {
-    align-self: flex-end;
-    border: none;
-    background-color: #fafafa;
-    color: #333;
-    margin-bottom: 3px;
-}
 .gutter.gutter-vertical {
     background-color: #ccc;
     cursor: ns-resize;
@@ -309,12 +302,6 @@
         justify-content: center;
         align-items: center;
     }
-.head_Box1 .new_sec_btn {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-}
 .eb-rpt-container {
     background-color: #f2f2f2;
 }
@@ -505,9 +492,10 @@
     display: flex;
 }
 .dropped .ui-resizable-handle {
-    background: #89c5dc;
+    background: #2f6194;
     height: 7px;
     width: 7px;
+    border-radius: 50%;
 }
 .dropped .ui-resizable-n {
     top: -5px;
@@ -522,7 +510,7 @@
     top: calc(50% - 4px);
 }
 .dropped .ui-resizable-s {
-    bottom: -5px;
+    bottom: -5px !important;
     left: 50%;
 }
 .dropped .ui-resizable-se .ui-icon, .dropped .ui-widget-content .ui-icon {
@@ -532,7 +520,8 @@
     right: -5px;
     bottom: -5px;
 }
-.drp {
+.sub_sec_notation{
+    margin:0;
 }
 .page .shape-horrizontal .ui-resizable-handle {
     top: -3px;
@@ -595,15 +584,17 @@
 .page .wm-container .ui-resizable-handle {
     opacity: 1;
 }
-.page .locked:hover:before {
-    background-color: #eaa6a6;
-    opacity:.5;
+.page .locked:hover {
+    cursor: not-allowed !important;
 }
-.page .locked:before {
-    content: "";
+.page-outer-container .locked:before {
+    content: "\f023";
+    font-family: FontAwesome;
     display: block;
-    height: 100%;
-    width: 100%;
+    position: absolute;
+    right: 3px;
+    top: 0px;
+    font-size: 12px;
 }
 /*summary editor*/
 .summarry-editor-container {
@@ -674,7 +665,7 @@
     right:10px;
 }
 .drop-hover {
-    border: 2px solid #2391d2 !important;
+    border: 2px solid #316396 !important;
 }
 
 /*latest css repport*/
@@ -693,6 +684,10 @@
 .pageHeaders {
     border-bottom: 1px solid #b5a9a9;
 }
-.Eb_ReportSections:not(.dropped) .ui-resizable-s{
-    bottom:0 !important;
+    .pageHeaders:focus {
+        outline: none;
+        border: 2px solid #316396;
+    }
+.Eb_ReportSections:not(.dropped) .ui-resizable-s {
+    bottom: -4px;
 }

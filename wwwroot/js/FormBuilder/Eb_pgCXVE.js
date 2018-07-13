@@ -119,7 +119,7 @@
             $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         //this.CurEditor = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).editor;
-        if (this.editor > 6 && this.editor < 11 || this.editor === 22 || this.editor === 24)
+        if (this.editor > 6 && this.editor < 11 || this.editor === 22 || this.editor === 24 || this.editor === 26)
             this.initCE();
         else if (this.editor === 11)// JS
             this.initJE();
@@ -202,7 +202,7 @@
         if (this.editor === 7 || this.editor === 22) {
             this.initHelper7_22();
         }
-        else if ((this.editor > 7 && this.editor < 11) || this.editor === 24) {
+        else if ((this.editor > 7 && this.editor < 11) || this.editor === 24 || this.editor === 26) {
             var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
             this.CEHelper(sourceProp);
         }
@@ -212,12 +212,10 @@
     };
 
     this.initHelper7_22 = function () {
-        var DD_html = `<div class="sub-controls-DD-cont pull-left"> <select class="selectpicker"> </select> <button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button> </div>`;
         var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
         if (sourceProp)
             getObjByval(this.PGobj.Metas, "name", sourceProp).source = this.PGobj.CurProp;
         $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0)").hide();
-        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
         $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp));
 
         if (this.PGobj.CurProp === "Controls") {/////////////////////////need CE test and correction
@@ -254,8 +252,11 @@
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
             $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         }
-        else if (this.editor === 24)
+        else if (this.editor === 24 || this.editor === 26) {
+            if (this.editor === 26)
+                this.setObjTypeDD();
             this.selectedCols = this.getSelectedColsByProp(this.allCols);
+        }
         else
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
@@ -287,11 +288,11 @@
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
             else if (this.editor === 9 || this.editor === 8)
                 this.movingObj = this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1)[0];
-            else if (this.editor === 24)
+            else if (this.editor === 24 || this.editor === 26)
                 this.movingObj = getObjByval(this.allCols, "name", el.id);
         }
         else {
-            if (this.editor === 9 || this.editor === 8 || this.editor === 24)
+            if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26)
                 this.movingObj = getObjByval(this.allCols, "name", el.id);
             else if (this.editor === 10)
                 this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
@@ -315,7 +316,7 @@
                     this.selectedCols.splice(idx, 0, this.movingObj);
                 else
                     this.selectedCols.push(this.movingObj);
-            } else if (this.editor === 24) {
+            } else if (this.editor === 24 || this.editor === 26) {
                 this.movingObj[this.Dprop] = true;//////// hard code
                 this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
                 if (sibling.length > 0)
@@ -330,7 +331,7 @@
             else
                 this.allCols.push(this.movingObj);
         }
-        else if (this.editor === 24) {
+        else if (this.editor === 24 || this.editor === 26) {
             this.movingObj[this.Dprop] = false;//////// hard code
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn);
@@ -624,6 +625,9 @@
     };
 
     this.setObjTypeDD = function () {
+        var DD_html = `<div class="sub-controls-DD-cont pull-left"> <select class="selectpicker"> </select> <button type="button" class="CE-add" ><i class="fa fa-plus" aria-hidden="true"></i></button> </div>`;
+        $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
+
         var options = "";
         var SubTypes = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).options;
         if (SubTypes) {
@@ -655,7 +659,7 @@
             this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1)[0]
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
-        else if (this.editor === 24) {
+        else if (this.editor === 24 || this.editor === 26) {
             getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
@@ -679,7 +683,7 @@
             else
                 obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];/////////// optimize
         }
-        else if (this.editor === 9 || this.editor === 10 || this.editor === 24) {
+        else if (this.editor === 9 || this.editor === 10 || this.editor === 24 || this.editor === 26) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
         }
         else if (this.editor === 22) {

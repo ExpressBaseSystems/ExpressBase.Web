@@ -32,8 +32,8 @@
 
     this.pages = {
         0: {
-            width: 612,
-            height: 792
+            width: 1191,
+            height:1684
         },//A2
         1: {
             width: 841.8898,
@@ -106,7 +106,7 @@
         else
             $layer = ".page";
         $(".tracker_drag").css({ "height": ($($layer).height() - $(window).scrollTop()) + 20, "top": $(window).scrollTop() });
-    };
+    };//need to remove
 
     this.getsummaryfns = function (eb_type) {//neeed to change
         var fn = null;
@@ -129,16 +129,6 @@
             })
         })
         return objlist;
-    };
-
-    this.tableResizableCols = function (obj) {
-        let $t = $(`#${obj.EbSid}`).find("table");
-        $t.ColResize();
-    };
-
-    this.killResizableCols = function (obj) {
-        let $t = $(`#${obj.EbSid}`).find("table");
-        $t.ColResize({ status: "destroy" });
     };
 
     this.ValidateCalcExpression = function (obj) {

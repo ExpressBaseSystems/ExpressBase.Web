@@ -75,7 +75,7 @@
             });
         }
         $("#" + obj.EbSid).attr("tabindex", "1");
-        $("#" + obj.EbSid).off("focus").on("focus", this.elementOnFocus.bind(this));
+        $("#" + obj.EbSid).not(".locked").off("focus").on("focus", this.elementOnFocus.bind(this));
     };//render after pgchange
 
     this.getDataSourceColoums = function (refid) {
@@ -157,7 +157,6 @@
         });
         this.AppendInnerSec();
         this.syncHeight();
-        $(`.headersections ._newsub_div`).off("click").on("click", this.appendNewSubDiv.bind(this));
     };
 
     this.syncHeight = function () {
@@ -208,9 +207,7 @@
         }
     };
 
-    this.appendNewSubDiv = function (e) {
-        let btn = $(e.target).closest("button");
-        let _sec = btn.attr("data-sec");
+    this.appendNewSubDiv = function (_sec) {
         this.appendSubSection(_sec, [1],true);
         this.syncHeight();
     };
@@ -218,7 +215,7 @@
     this.appendMSplitSec = function (sections, obj) {
         let h = $(`.page .${sections}`).height();
         $(".multiSplit ." + sections).append(`<div class='multiSplitHboxSub ${sections}_sub' eb-type='MultiSplitBox' style='height:${obj.SectionHeight}'>
-                <p>${this.msBoxSubNotation[sections].Notation + this.msBoxSubNotation[sections].Counter++}</p></div>`);
+                <p class="sub_sec_notation">${this.msBoxSubNotation[sections].Notation + this.msBoxSubNotation[sections].Counter++}</p></div>`);
     };
 
     this.pushSubsecToRptObj = function (sections, obj) {
@@ -361,10 +358,11 @@
         var curObject = this.objCollection[event.target.id];
         var type = curControl.attr('eb-type');
         this.pg.setObject(curObject, AllMetas["Eb" + type]);
-        if (!curControl.hasClass("pageHeaders"))
+        if ((!curControl.hasClass("pageHeaders")) && (!curControl.parent().hasClass("T_layout_td")) && (!curControl.hasClass("locked"))) {
             this.Resizable(curControl);
+        }
         //this.RM.Menu(curControl);
-        if (curControl.parent().hasClass("T_layout"))//change
+        if (curControl.parent().hasClass("T_layout_td"))//change
             this.RbCommon.makeReadOnlyonPg(curObject);//change
     };//obj send to pg on focus
 

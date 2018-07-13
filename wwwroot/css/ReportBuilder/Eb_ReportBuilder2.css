@@ -1,4 +1,8 @@
-﻿.eb_TableLayout{
+﻿
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+    border: 2px solid #888;
+}
+.eb_TableLayout{
     width:300px;
     position:absolute;
     height:25px;
@@ -12,6 +16,17 @@
             position:relative;
             padding:2px !important;
         }
+        .eb_TableLayout .table .T_layout_td {
+            position: relative;
+            padding: 2px !important;
+        }
+            .eb_TableLayout .table .T_layout_td:hover {
+                background-color: #eee;
+            }
+            .eb_TableLayout .table .T_layout_td .dropped:focus {
+                background-color: #2f6194 !important;
+                color: white !important;
+            }
         .eb_TableLayout .table .T_layout_td:not(:last-child) {
           border-right-color:transparent;
         }
@@ -37,16 +52,16 @@
 .eb_resize_e {
     position: absolute;
     height: 100%;
-    background: #dddddd;
+    background: #888;
     width: 2px;
     cursor: col-resize;
-    z-index:10;
+    z-index: 10;
 }
 .eb_resize_row {
     position: absolute;
     width: 100%;
     height: 2px;
-    background-color: #dddddd;
+    background-color: #888;
     cursor: n-resize;
     z-index: 5;
 }

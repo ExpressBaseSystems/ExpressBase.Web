@@ -83,7 +83,7 @@
         //else if (type === 25) {
         //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
         //}
-        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25) {//  If collection editor
+        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26) {//  If collection editor
             if (meta.Limit === 0 && type !== 25) {
                 valueHTML = '<span class="cxv-inp">(Collection)</span>'
                     + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';

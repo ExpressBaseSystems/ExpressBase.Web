@@ -173,7 +173,7 @@
 
 	this.OpenPrevVer = function (e) {
 		$.LoadingOverlay("show");
-		this.ver_Refid = ($(e.target).attr("data-id")) === null ? $(e.target).parent().attr("data-id") : $(e.target).attr("data-id");
+		this.ver_Refid = (($(e.target).attr("data-id")) === null || ($(e.target).attr("data-id")) === undefined) ? $(e.target).parent().attr("data-id") : $(e.target).attr("data-id");
 
 		$.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
 			.done(this.VersionCode_success.bind(this));

@@ -25,7 +25,6 @@
 
     this.repExtern = new ReportExtended(this);
     this.RbCommon = new RbCommon(this);
-    //this.pg = new Eb_PropertyGrid("propGrid", this.wc, this.Tenantid);
 
     this.pg = new Eb_PropertyGrid({
         id: "propGrid",
@@ -33,8 +32,6 @@
         cid: this.Tenantid,
         $extCont: $("#PGgrid-report")
     });
-
-    this.RM = new ReportMenu(this);
 
     this.idCounter = CtrlCounters; //from c# //this.RbCommon.EbidCounter;
     this.subSecIdCounter = this.RbCommon.subSecCounter;
@@ -406,19 +403,6 @@
             $(event.target).resizable("destroy");
     }
 
-    this.keyBoardShortcuts = function (e) {
-        e.preventDefault(); event.stopPropagation();
-        var obj = this.repExtern.keyboardevents(e, this.control, this.objCollection[this.control.attr('id')]);
-        this.pg.setObject(this.objCollection[this.control.attr('id')], AllMetas["Eb" + this.control.attr('eb-type')]);
-    }
-
-    this.removeElementFn = function (e) {
-        if (!$(e.target).hasClass("pageHeaders"))
-            this.control.remove();
-        else
-            alert("no permission");
-    };
-
     this.addImageFn = function (obj) {
         if (obj.Image)
             obj.Source = 'url(' + window.location.protocol + "//" + window.location.host + "/static/" + obj.Image + ".JPG" + ') center no-repeat';
@@ -454,10 +438,10 @@
     this.BeforeSave = function () {
         this.repExtern.emptyControlCollection(this.EbObject);
         this.EbObject.DesignPageHeight = this.repExtern.convertTopoints($("#page").outerHeight());
-        this.EbObject.HeightPt = this.repExtern.convertTopoints(this.height.slice(0, -2));
-        this.EbObject.WidthPt = this.repExtern.convertTopoints(this.width.slice(0, -2));
-        this.EbObject.Height = this.height.slice(0, -2);
-        this.EbObject.Width = this.width.slice(0, -2);
+        this.EbObject.HeightPt = this.repExtern.convertTopoints(parseFloat(this.height));
+        this.EbObject.WidthPt = this.repExtern.convertTopoints(parseFloat(this.width));
+        this.EbObject.Height = parseFloat(this.height);
+        this.EbObject.Width = parseFloat(this.width);
         this.EbObject.PaperSize = this.type;
         $.each($('.page-reportLayer').children(), this.findReportLayObjects.bind(this));
         $.each($('.page').children(), this.findPageSections.bind(this));
@@ -532,42 +516,27 @@
         if (obj.PaperSize !== 5) {
             this.height = this.repExtern.convertPointToPixel(this.pages[this.type].height) + "px";
             this.width = this.repExtern.convertPointToPixel(this.pages[this.type].width) + "px";
-            $('.ruler,.rulerleft').empty();
-            this.ruler();
-            $(".headersections,.multiSplit").css({ "height": this.height });
-            $("#page,#page-reportLayer").css({ "height": this.height, "width": this.width });
+            $(".page").css("width", this.width);
+            $(".page-reportLayer").css({ "height": this.height, "width": this.width });
             $(".headersections-report-layer").css({ "height": this.height });
-
         }
         else if (obj.PaperSize === 5) {
             if (obj.CustomPaperHeight !== 0 && obj.CustomPaperWidth !== 0) {
                 this.height = obj.CustomPaperHeight;
                 this.width = obj.CustomPaperWidth;
-                $('.ruler,.rulerleft').empty();
-                this.ruler();
-                $(".headersections,.multiSplit").css({ "height": this.height });
-                $("#page").css({ "height": this.height, "width": this.width });
+                $(".page").css({ "width": this.width });
+                $(".headersections-report-layer").css({ "height": this.height });
+                $(".page-reportLayer").css({ "height": this.height, "width": this.width });
             }
         }
-        this.repExtern.OndragOfSections();
-        this.repExtern.splitterOndragFn();
     };//page size change fn
 
     this.setpageMode = function (obj) {
         [this.height, this.width] = [this.width, this.height];
-        //this.designHeight = this.height;
-        //$(".headersections,.multiSplit").css({ "height": this.height });
         $("#page").css({ "width": this.width});
         $("#page-reportLayer").css({ "width": this.width,height:this.height});
         $(".headersections-report-layer").css({ "height": this.height });
     };//page layout lands/port
-
-    this.setSplitArrayFSec = function (i, obj) {
-        this.idArray.push("#" + obj.id);
-        var size = (($(obj).height() / $(obj).parent().height()) * 100) + 1.2;
-        this.sizeArray.push(size);
-        $(obj).siblings(".gutter").remove();
-    };//section split for pg change
 
     this.rulerChangeFn = function (e) {
         this.rulertype = $(e.target).val();
@@ -594,7 +563,7 @@
 
     this.renderOnedit = function () {
         for (var objPropIndex in this.EditObj) {
-            if (typeof this.EditObj[objPropIndex] === "object" && objPropIndex !== "Margin") {
+			if (typeof this.EditObj[objPropIndex] === "object" && objPropIndex !== "Margin" && objPropIndex !== "DataSourceRefId") {
                 if (objPropIndex === "ReportObjects")
                     this.appendHTMLonEdit(this.EditObj[objPropIndex].$values, "ReportObjects");
                 else
@@ -650,7 +619,7 @@
         else if (pname === "DataSourceRefId") {
             this.getDataSourceColoums(obj.DataSourceRefId);
         }
-        else if (pname === "PaperSize") {
+        else if (pname === "PaperSize" || pname === "CustomPaperHeight" || pname === "CustomPaperWidth") {
             this.setpageSize(obj);
         }
         else if (pname === "IsLandscape") {
@@ -680,10 +649,6 @@
         else {
             this.RefreshControl(obj);
         }
-    }.bind(this);
-
-    this.pg.Close = function () {
-        //this.repExtern.minPgrid();
     }.bind(this);
 
     this.pg.DD_onChange = function (e) {
@@ -725,6 +690,7 @@
             this.newReport();
         else
             this.editReport();
+        this.RM = new ReportMenu(this);
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
         this.margin.Left = $(".track_line_vert1").position().left;
         this.margin.Right = $(".track_line_vert2").position().left;

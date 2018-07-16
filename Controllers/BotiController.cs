@@ -161,7 +161,9 @@ namespace ExpressBase.Web.Controllers
                     if (control is EbSimpleSelect)
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-                    }
+						(control as EbSimpleSelect).BareControlHtml = (control as EbSimpleSelect).GetBareHtml();
+
+					}
                     else if (control is EbDynamicCardSet)
                     {
                         EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
@@ -217,10 +219,18 @@ namespace ExpressBase.Web.Controllers
             return Obj;
         }
 
-        public int InserBotDetails(string TableName, List<BotInsert> Fields)
+        public int InsertBotDetails(string TableName, List<BotInsert> Fields)
         {
-            var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
-            return x.RowAffected;
+			try
+			{
+				var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
+				return x.RowAffected;
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine("Exception in InsertBotDetails. Message: "+ ex.Message);
+				return 0;
+			}            
         }
 
         [HttpPost]

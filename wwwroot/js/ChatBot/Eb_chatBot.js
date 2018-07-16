@@ -65,12 +65,14 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $botMsgBox = this.$botMsgBox.clone();
         $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone()).css("width", "82px");
         this.$TypeAnimMsg = $botMsgBox;
+
         $("body").on("click", ".eb-chat-inp-cont .msg-send", this.send_btn);
         $("body").on("click", ".msg-cont [name=ctrlsend]", this.ctrlSend);
         $("body").on("click", ".msg-cont [name=ctrledit]", this.ctrlEdit);
         $("body").on("click", ".eb-chatBox [name=formsubmit]", this.formSubmit);
         $("body").on("click", ".eb-chatBox [name=formcancel]", this.formCancel);
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
+        $("body").on("click", ".eb-chatBox [name=formcancel_fm]", this.formCancel_fm);
         $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
         $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
@@ -79,6 +81,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.initConnectionCheck();
         this.showDate();
+        this.showTypingAnim();
         //$('body').confirmation({
         //    selector: '.eb-chatBox'
         //});
@@ -487,7 +490,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             return;
         };
         this.sendMsg(msg);
-        $('.eb-chatBox').scrollTop(99999999999);
+        //$('.eb-chatBox').scrollTop(99999999999);
         $e.val('');
 
     }.bind(this);
@@ -544,11 +547,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.makeReqFm = function (control) {
         var $ctrl = $("#" + control.name);
         if ($ctrl.length !== 0 && control.required && $ctrl.val().trim() === "")
-            EbMakeInvalid(control.name, '.ctrl-wraper');
+            EbMakeInvalid(`[for=${control.name}]`, '.ctrl-wraper');
     };
 
     this.removeReqFm = function (control) {
-        EbMakeValid(control.name);
+        EbMakeValid(`[for=${control.name}]`, '.ctrl-wraper');
     };
 
     this.RenderForm = function () {
@@ -557,7 +560,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             if (!control.hidden)
                 Html += `<label>${control.label}</label><div for='${control.name}'><div class='ctrl-wraper'>${control.bareControlHtml}</div></div><br/>`;
         });
-        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn formname-btn">Submit</button><button class="btn formname-btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
+        this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn formname-btn">Submit</button><button name="formcancel_fm" class="btn formname-btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
 
     this.setFormControls = function () {
@@ -657,11 +660,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.checkRequired = function () {
         if (this.curCtrl.required && !this.curVal) {
-            EbMakeInvalid(this.curCtrl.name, '.chat-ctrl-cont');
+            EbMakeInvalid(`[for=${this.curCtrl.name}]`, '.chat-ctrl-cont');
             return false;
         }
         else {
-            EbMakeValid(this.curCtrl.name);
+            EbMakeValid(`[for=${this.curCtrl.name}]`, '.chat-ctrl-cont');
             return true;
         }
     };
@@ -833,7 +836,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $imgtag = $(`<div class="img-box" for="${ctrlname}"><div class="img-loader"></div><span class="img-edit"  idx="${this.curForm.controls.indexOf(this.curCtrl)}"  for="${ctrlname}" name="ctrledit"><i class="fa fa-pencil" aria-hidden="true"></i></span><img src="${path}" alt="amal face" width="100%"><div class="file-name">${filename}</div>${this.getTime()}</div>`);
         $msg.find('.msg-wraper-user').append($imgtag);
         $msg.insertAfter($prevMsg);
-        $('.eb-chatBox').scrollTop(99999999999);
+        //$('.eb-chatBox').scrollTop(99999999999);
     };
 
     this.uploadImage = function (url, id, idx) {
@@ -943,21 +946,21 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').text(msg).append(this.getTime());
         this.$chatBox.append($msg);
-        $('.eb-chatBox').scrollTop(99999999999);
+        //$('.eb-chatBox').scrollTop(99999999999);
     };
 
     this.sendCtrl = function (msg) {
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').append(msg).append(this.getTime());
         this.$chatBox.append($msg);
-        $('.eb-chatBox').scrollTop(99999999999);
+        //$('.eb-chatBox').scrollTop(99999999999);
     };
 
     this.sendCtrlAfter = function ($prevMsg, msg) {
         var $msg = this.$userMsgBox.clone();
         $msg.find('.msg-wraper-user').html(msg).append(this.getTime());;
         $msg.insertAfter($prevMsg);
-        $('.eb-chatBox').scrollTop(99999999999);
+        //$('.eb-chatBox').scrollTop(99999999999);
     };
 
     this.startTypingAnim = function ($msg) {
@@ -1013,7 +1016,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.msgFromBot(msg, callbackFn, ctrlname);
             }.bind(this), this.typeDelay + 1);
         }
-        $('.eb-chatBox').scrollTop(99999999999);
+        //$('.eb-chatBox').scrollTop(99999999999);
+        //$('.eb-chatBox').animate({ scrollTop: $('.eb-chatBox')[0].scrollHeight });
+        
     }.bind(this);
 
     //load control script
@@ -1068,6 +1073,14 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.showConfirm();
     }.bind(this);
 
+    this.formCancel_fm = function (e) {
+        var $btn = $(e.target).closest(".btn");
+        this.sendMsg($btn.text());
+        $('.msg-wraper-user [name=ctrledit]').remove();
+        $btn.closest(".msg-cont").remove();
+        this.AskWhatU();
+    }.bind(this);
+
     this.formSubmit = function (e) {
         var $btn = $(e.target).closest(".btn");
         this.sendMsg($btn.text());
@@ -1098,10 +1111,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
     //save botform
     this.DataCollection = function () {
+        this.showTypingAnim();
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url: "../Boti/InserBotDetails",
+            url: "../Boti/InsertBotDetails",
             data: {
                 TableName: this.curForm.tableName, Fields: this.getFormValuesWithTypeColl()
             },
@@ -1124,6 +1138,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.ajaxsuccess = function (rowAffected) {
+        this.hideTypingAnim();
         if (rowAffected > 0) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
             var msg = `Your ${this.curForm.name} form submitted successfully`;
@@ -1212,11 +1227,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.userDtls.name = this.FBResponse.name;
             this.userDtls.email = this.FBResponse.email;
             this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
+            this.hideTypingAnim();
             this.greetings();
         }.bind(this));
     }.bind(this);
 
     this.FBNotLogined = function () {
+        this.hideTypingAnim();
         this.isAlreadylogined = false;
         this.msgFromBot(this.welcomeMessage);
         this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook", "I don't have facebook account"], "fblogin");

@@ -4,9 +4,28 @@
     this.copyORcut = null;
     this.objCollection = this.Rep.objCollection;
     this.repExtern = this.Rep.repExtern;
+    this.L = 0;
+    this.T = 0;
+
+    this.disableMenuItem = function (key, opt) {
+        let flag = opt.$trigger.data('cutDisabled');
+        if (key === "delete") {
+            if (opt.$trigger.hasClass("locked"))
+                flag = !opt.$trigger.data('cutDisabled');
+        }
+        else if (key === "lock") {
+            if (opt.$trigger.hasClass("locked"))
+                flag = !opt.$trigger.data('cutDisabled');
+        }
+        else if (key === "unlock") {
+            if (!opt.$trigger.hasClass("locked"))
+                flag = !opt.$trigger.data('cutDisabled');
+        }
+        return flag;
+    };
 
     this.contextMenucopy = function (eType, selector, action, originalEvent) {
-        this.copyStack = Object.assign({}, this.objCollection[$(selector.$trigger).attr('id')]);
+        this.copyStack = $.extend({}, this.objCollection[$(selector.$trigger).attr('id')]);
         this.copyORcut = 'copy';
     };
 
@@ -23,9 +42,9 @@
             var Objid = null;
             var Objtype = $("#" + this.copyStack.EbSid).attr('eb-type');
             if (this.copyORcut === 'copy') {
-                Objid = Objtype + (this.Rep.idCounter["Eb" + Objtype + "Counter"])++;
+                Objid = Objtype + (this.Rep.idCounter[Objtype + "Counter"]++);
                 $obj = new EbObjects["Eb" + Objtype](Objid);
-                this.repExtern.replaceWOPtConvProp($obj, this.copyStack);
+                this.Rep.repExtern.replaceWOPtConvProp($obj, this.copyStack);
                 $obj.EbSid = Objid;
                 $obj.Name = Objid;
             }
@@ -33,8 +52,8 @@
                 $obj = this.copyStack;
                 Objid = this.copyStack.EbSid;
             }
-            $obj.Top = action.originalEvent.pageY - $(selector.$trigger).offset().top;
-            $obj.Left = action.originalEvent.pageX - $(selector.$trigger).offset().left;
+            $obj.Top = this.T;
+            $obj.Left = this.L;
             $(selector.$trigger).append($obj.$Control.outerHTML());
             this.objCollection[Objid] = $obj;
             this.Rep.RefreshControl($obj);
@@ -104,15 +123,9 @@
         else if ($(selector.$trigger).hasClass("pageHeaders")) {
             $(selector.$trigger).addClass('locked').droppable({
                 disabled: true
-            });
-            $(selector.$trigger).children().each(function (i, obj) { $("#" + obj.id).addClass('locked').draggable('disable'); });
-            var locksymbDiv = $(selector.$trigger).attr("id").slice(0, -1) + 'subBox' + $(selector.$trigger).attr('id').slice(-1);
-            $('#' + locksymbDiv).append('<i class="fa fa-lock lock-icon" aria-hidden="true"></i>');
-            if ($(selector.$trigger).siblings().length === 0) {
-                $('#btn' + $(selector.$trigger).attr("data_val")).attr('disabled', 'disabled');
-            }
-            $(selector.$trigger).parent().next('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
-            $(selector.$trigger).parent().prev('.gutter').css({ "cursor": "not-allowed", "pointer-events": "none" });
+            }).resizable("disable");
+            $(selector.$trigger).find(".dropped").each(function (i, obj) { $("#" + obj.id).addClass('locked').draggable('disable'); });
+            $(".headersections").find("[data-sec='" + $(selector.$trigger).attr("eb-type") + "']").find(".hbox_notation_div").addClass("locked");
         }
     };
 
@@ -123,15 +136,9 @@
         else if ($(selector.$trigger).hasClass("pageHeaders")) {
             $(selector.$trigger).removeClass('locked').droppable({
                 disabled: false
-            });
+            }).resizable("enable");
             $(selector.$trigger).children().each(function (i, obj) { $("#" + obj.id).removeClass('locked').draggable('enable'); });
-            var locksymbDiv = $(selector.$trigger).attr("id").slice(0, -1) + 'subBox' + $(selector.$trigger).attr('id').slice(-1);
-            $('#' + locksymbDiv).children("i").remove();
-            if ($(selector.$trigger).siblings().length === 0) {
-                $('#btn' + $(selector.$trigger).attr("data_val")).removeAttr('disabled');
-            }
-            $(selector.$trigger).parent().next().css({ "cursor": "ns-resize", "pointer-events": "auto" });
-            $(selector.$trigger).parent().prev('.gutter').css({ "cursor": "ns-resize", "pointer-events": "auto" });
+            $(".headersections").find("[data-sec='" + $(selector.$trigger).attr("eb-type") + "']").find(".hbox_notation_div").removeClass("locked");
         }
     };
 
@@ -170,10 +177,13 @@
     this.options = {
         "copy": { name: "Copy", icon: "copy", callback: this.contextMenucopy.bind(this) },
         "cut": { name: "Cut", icon: "cut", callback: this.contextMenucut.bind(this) },
-        "paste": { name: "Paste", icon: "paste", callback: this.contextMenupaste.bind(this) },
-        "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) },
-        "lock": { name: "Lock", icon: "fa-lock", callback: this.lockControl.bind(this) },
-        "unlock": { name: "unlock", icon: "fa-unlock", callback: this.unLockControl.bind(this) },
+        "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this), disabled: this.disableMenuItem.bind(this)},
+        "lock": {
+            name: "Lock", icon: "fa-lock", callback: this.lockControl.bind(this),
+            disabled: this.disableMenuItem.bind(this) },
+        "unlock": {
+            name: "unlock", icon: "fa-unlock", callback: this.unLockControl.bind(this),
+            disabled: this.disableMenuItem.bind(this) },
         "fold2": {
             "name": "Align", icon: "",
             "items": {
@@ -214,34 +224,95 @@
             selector: '.pageHeaders',
             autoHide: true,
             build: function ($trigger, e) {
+                this.L = e.offsetX; this.T = e.offsetY;
                 return {
                     items: {
-                        "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) },
-                        "lock": { name: "Lock", icon: "fa-lock", callback: this.lockControl.bind(this) },
-                        "unlock": { name: "unlock", icon: "fa-unlock", callback: this.unLockControl.bind(this) }
+                        "delete": {
+                            name: "Delete",icon: "delete",callback: this.contextMenudelete.bind(this),
+                            disabled: function (key, opt) {
+                                if (opt.$trigger.parent().children().length <= 1 || opt.$trigger.hasClass("locked"))
+                                    return !opt.$trigger.data('cutDisabled');
+                            }
+                        },
+                        "paste": {
+                            name: "Paste", icon: "paste", callback: this.contextMenupaste.bind(this), disabled: function (key, opt) {
+                                if (this.copyStack === null)
+                                    return !opt.$trigger.data('cutDisabled');
+                            }.bind(this)
+                        },
+                        "lock": {
+                            name: "Lock", icon: "fa-lock", callback: this.lockControl.bind(this),
+                            disabled: function (key, opt) {
+                                if (opt.$trigger.hasClass("locked"))
+                                    return !opt.$trigger.data('cutDisabled');
+                            }
+                        },
+                        "unlock": {
+                            name: "unlock", icon: "fa-unlock", callback: this.unLockControl.bind(this),
+                            disabled: function (key, opt) {
+                                if (!opt.$trigger.hasClass("locked"))
+                                    return !opt.$trigger.data('cutDisabled');
+                            }
+                        }
+                    }
+                };
+            }.bind(this)
+        });
+
+        $.contextMenu({
+            selector: '.T_layout_td',
+            autoHide: true,
+            build: function ($trigger, e) {
+                return {
+                    items: {
+                        "fold1": {
+                            "name": "Delete", icon: "delete",
+                            "items": {
+                                "row": { name: "Row", callback: this.deleteRow_col.bind(this) },
+                                "col": { name: "Coloum", callback: this.deleteRow_col.bind(this) }
+                            }
+                        }
+                    }
+                };
+            }.bind(this)
+        });
+
+        $.contextMenu({
+            selector: ".header_box",
+            autoHide: true,
+            build: function ($trigger, e) {
+                return {
+                    items: {
+                        "AddSubSection":{
+                            "name": "Add SubSection",
+                            icon: "fa-text",
+                            icon: "fa-plus",
+                            callback: function (eType, selector, action, originalEvent) {
+                                let _sec = selector.$trigger.attr("data-sec");
+                                this.Rep.appendNewSubDiv(_sec);
+                            }.bind(this)
+                        }
                     }
                 };
             }.bind(this)
         });
     };
 
+    this.deleteRow_col = function (eType, selector, action, originalEvent) {
+        let tid = selector.$trigger.closest(".dropped").attr("id");
+        let ind = selector.$trigger.index();
+        this.Rep.TableCollection[tid].delFromMenu(selector.$trigger, eType);
+    };
+
     this.getMenu = function ($trigger, e) {
         let m = $.extend({}, this.options);
         let eb_type = $trigger.attr("eb-type");
         if ($trigger.hasClass("EbCol") || $trigger.hasClass("CalcField"))
-            this.appendOptions(["DF", "TA"], m);
+            $.extend(m, this.dyOpt["DF"], this.dyOpt["TA"]);
         else {
-            this.appendOptions(["TA"], m);
+            $.extend(m,this.dyOpt["TA"]);
         }
         return m;
-    };
-
-    this.appendOptions = function (arrOfkeys, ob) {
-        arrOfkeys.forEach(function (item) {
-            for (var key in this.dyOpt[item]) {
-                ob[key] = this.dyOpt[item][key];
-            }
-        }.bind(this));
     };
 
     this.initContextMenu();

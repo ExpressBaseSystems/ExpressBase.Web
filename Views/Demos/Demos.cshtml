@@ -1,0 +1,430 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<link href="~/css/Demos/Demos.css" rel="stylesheet" />
+@{
+    string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
+    string DpUrl = "/static/dp/dp_" + ViewBag.UId + ".png";
+    string ml = "0px";
+}
+<script src="~/js/Eb_CommonHeader.js" type="text/javascript"></script>
+<div class="row" id="">
+    <div class="toolbar objectDashB-toolbar">
+        <div class="col-md-5 pd-0">
+            @{
+                if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+                {
+                    <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
+                }
+                else
+                {
+                    ml = "10px";
+                }
+            }
+            <div class="solution_logo_cont pull-left" style="margin-left:@ml">
+                <img src="~/images/contact.png" data-src= class="solution_logo" />
+            </div>
+            <div class="brd_cr_t EbHeadTitle">
+                <div class="brd_row"><span class="eb_context">@ViewBag.cid</span><span class="eb_slash">/</span> Home <span class="eb_slash">/</span></div>
+                <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>
+            </div>
+        </div>
+        <div class="col-md-7 pd-0 comon_header_dy">
+            <div class='toolicons form-inline pull-right'>
+                <div id="obj_icons" style="display:inline">
+                    <button class="btn"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                    <button class="btn"><i class="fa fa-print" aria-hidden="true"></i></button>
+                    <button class="btn"><i class="fa fa-cogs" aria-hidden="true"></i></button>
+                </div>
+                @if (ViewBag.wc == "dc")
+                {
+                    <button class='btn' id="minmize">
+                        <i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin">
+                        </i>
+                    </button>
+
+                }
+                <div class='form-group'>
+                    <button class="btn notification_menu" style="display:none;">
+                        <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
+                    </button>
+                    <div class="dropdown obj_dash_proimage_drp">
+                        <img src="~/images/proimg.jpg" data-src=@DpUrl data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image" />
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <ul class="drp_ul">
+                                <li class="drp_item border_b" style="height:50px;">
+                                    <img src="~/images/proimg.jpg" data-src=@DpUrl class="proimage_inner Eb_Image" />
+                                    <div class="user_info">
+                                        <h4>@ViewBag.UserDisplayName</h4>
+                                        <p>@ViewBag.email</p>
+                                    </div>
+                                </li>
+                                <li class="drp_item border_b"><a onclick="LoadMyProfile()"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                <li class="drp_item"><a href="@Url.Action("Logout","Tenantuser")"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class='btn' style="display:none;" id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="eb_common_loader" id="eb_common_loader"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="form_body">
+        <div class="form__inline">
+            <div class="col-md-4">
+                <label>Voucher Number</label>
+                <div class="form-inline">
+                    <select class="form-control">
+                        <option>DXB</option>
+                    </select>
+                    <input type="text" class="form-control" value="SLY01-007727" />
+                    <button class="btn btn-default"><i class="fa fa-refresh"></i></button>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Voucher Date</label>
+                    <div class="input-group">
+                        <input id="email" type="text" class="form-control" name="">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Ref. No</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Ref. Date</label>
+                    <div class="input-group">
+                        <input id="email" type="text" class="form-control" name="">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Salary for the Month of</label>
+                    <select class="form-control">
+                        <option>July, 2018</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form__inline">
+            <div class="col-md-6">
+                <label>Employee</label>
+                <div class="form-inline">
+                    <input type="text" class="form-control" value="" />
+                    <button class="btn btn-default">...</button>
+                    <input type="text" class="form-control" value="" />
+                    <button class="btn btn-default">...</button>
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input">
+                        Avails OT
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Work Days</label>
+                    <input type="number" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Absent Days</label>
+                    <input type="number" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Approved Leaves</label>
+                    <input type="number" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="form__inline bottom_form">
+            <div class="col-md-6 br_right">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Basic Actual</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Full OT</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Full Holidays</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">EID OT</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">EID Holidays</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">SPA Actual</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">TRA Actual</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">HRA Actual</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Other Allow. Actual</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Oven Allow. Actual</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Mixer Allow. Actual</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Desp Allow. Actual</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-6 pd-l-0">
+                            <label>Daily wage</label>
+                            <input type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Rate/Hr</label>
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Paid OT</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Paid Holidays</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Paid Eid OT</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Paid Eid Holi</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-6">
+                    <div class="hd">(A)</div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Basic Earned</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Paid OT Earned</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Paid Holi Earned</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">EID OT Earned</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">EID Holi Earned</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">SPA Earned</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">TRA Earned</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">HRA Earned</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Other Allowence</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Oven Allowence</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Mixer Allowence</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Despatch Allowence</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Fixed Allowence</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">(.) Cash Adv/loan</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">(.) Other Ded</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Total Payable(A)</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="hd">(B)</div>
+                    <div class="form-group">
+                        <div class="col-md-6 pd-l-0">
+                            <label>Balance OT</label>
+                            <input type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Bal. OT Earned</label>
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-6 pd-l-0">
+                            <label>Bal Holidays</label>
+                            <input type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Bal. Holi Earned</label>
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">(.) Cash Adv/loan</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">(.) Other Ded</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-6 pd-0">Total Payable(A)</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="remarks">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>
+                        Remarks
+                    </label>
+                    <textarea class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4 pdt26">
+                <div class="form-group">
+                    <label class="col-md-4 pd-0 TOTAL">Total Payable</label>
+                    <div class="col-md-8">
+                        <input type="number" class="form-control SEL" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

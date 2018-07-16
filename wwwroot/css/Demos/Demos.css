@@ -1,0 +1,72 @@
+﻿.form_body {
+    padding-top: 42px;
+    float: left;
+    width: 100%;
+}
+.form__inline{
+    float:left;
+    width:100%;
+}
+    .form__inline .form-group {
+        float: left;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    .form__inline .form-control {
+        height: 25px !important;
+        padding: 1px 12px;
+    }
+    .pd-l-0{
+        padding-left:0;
+    }
+.br_right{
+    border-right:1px solid #ccc;
+}
+.bottom_form {
+    margin-top: 5px;
+    border-top: 1px solid #cfced0;
+    padding-top: 15px;
+    border-bottom: 1px solid #cfced0;
+}
+.form__inline .btn{
+    padding: 1px 12px !important;
+}
+.form__inline label {
+    font-weight: 600;
+    font-family: open sans;
+    font-size: 13px;
+}
+.hd {
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 0 10px;
+    position: relative;
+    border-bottom: 1px solid #b9a8a8;
+    float: left;
+    width: 100%;
+}
+.remarks textarea.form-control {
+    height: 40px !important;
+}
+.pdt26 {
+    padding-top: 26px;
+}
+.TOTAL {
+    FONT-SIZE: 20PX;
+    COLOR: #d21717;
+    FONT-FAMILY: OPEN SANS;
+}
+.SEL {
+    font-weight: 700;
+    font-size: 20px;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    opacity: 1;
+}
+input[type=number]{
+    padding-right:0 !important;
+}
+.input-group-addon {
+    padding: 4px 12px;
+}

@@ -362,7 +362,6 @@
 
     commonO.saveOrCommitSuccess = function (refid) {
         this.refid = refid || null;
-        if (this.RbObj.EbObject.DataSourceRefId) {
             $.ajax({
                 url: "../ReportRender/Index",
                 type: "POST",
@@ -375,7 +374,6 @@
                     $("#eb_common_loader").EbLoader("show");
                 },
                 success: function (result) {
-                    //	$("#eb_common_loader").EbLoader("hide");
                     $("#preview_wrapper").html(result);
                     $("#btnGo").on("click", this.render.bind(this));
                     if ($("#btnGo").length <= 0) {
@@ -385,7 +383,6 @@
                     }
                 }.bind(this)
             });
-        }
     }.bind(this);
 
     this.render = function () {

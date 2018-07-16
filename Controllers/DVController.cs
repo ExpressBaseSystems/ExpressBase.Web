@@ -251,10 +251,13 @@ namespace ExpressBase.Web.Controllers
         //copied to boti - febin
         public DataSourceDataResponse getData(TableDataRequest request)
         {
+            
+            request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+            request.DataVizObjString = null;
             DataSourceDataResponse resultlist1 = null;
             try
             {
-                resultlist1 = this.ServiceClient.Get(request);
+                resultlist1 = this.ServiceClient.Post(request);
             }
             catch (Exception e)
             {

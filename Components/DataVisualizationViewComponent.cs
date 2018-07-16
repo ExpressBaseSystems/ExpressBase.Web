@@ -81,7 +81,7 @@ namespace ExpressBase.Web.Components
             //dvobj.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
             //dvobj.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
 
-
+            var indx = -1;
             foreach (EbDataColumn column in __columns)
             {
                 DVBaseColumn _col = null;
@@ -100,7 +100,9 @@ namespace ExpressBase.Web.Components
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
 
                 dvobj.Columns.Add(_col);
+                indx = column.ColumnIndex;
             }
+            //dvobj.Columns.Add(new DVNumericColumn { Data = ++indx, Name = "RATE_GRAFT", sTitle = "RATE+GRAFT", Type = EbDbTypes.Int32, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right",Formula = "T0.RATE+T0.GRAFT" });
             dvobj.DSColumns = dvobj.Columns;
             return dvobj;
         }

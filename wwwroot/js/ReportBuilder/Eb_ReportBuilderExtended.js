@@ -143,7 +143,7 @@
 
     this.emptyControlCollection = function (rptObj) {
         for (var objPropIndex in rptObj) {
-            if (typeof rptObj[objPropIndex] === "object" && objPropIndex !== "ReportObjects" && objPropIndex !== "$Control" && objPropIndex !== "Margin") 
+            if (typeof rptObj[objPropIndex] === "object" && objPropIndex !== "ReportObjects" && objPropIndex !== "$Control" && objPropIndex !== "Margin" && objPropIndex !== "DataSourceRefId") 
                 this.emptyCConESec(rptObj[objPropIndex]);
             else if (objPropIndex === "ReportObjects")
                 rptObj[objPropIndex].$values.length = 0

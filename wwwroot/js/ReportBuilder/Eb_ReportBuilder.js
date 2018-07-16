@@ -596,7 +596,7 @@
 
     this.renderOnedit = function () {
         for (var objPropIndex in this.EditObj) {
-            if (typeof this.EditObj[objPropIndex] === "object" && objPropIndex !== "Margin") {
+			if (typeof this.EditObj[objPropIndex] === "object" && objPropIndex !== "Margin" && objPropIndex !== "DataSourceRefId") {
                 if (objPropIndex === "ReportObjects")
                     this.appendHTMLonEdit(this.EditObj[objPropIndex].$values, "ReportObjects");
                 else

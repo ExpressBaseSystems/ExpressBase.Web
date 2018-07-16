@@ -219,28 +219,28 @@
 
     this.addCells = function (obj, pname) {
         if (pname === "ColoumCount") {
-            let _tdCount = $(`#${obj.EbSid} table tbody tr`).eq(0).children("td").length;
-            $(`#${obj.EbSid} table tbody tr`).each(function (i, tr) {
+            let _tdCount = this.Table.find("tr").eq(0).children("td").length;
+            this.Table.find("tr").each(function (i, tr) {
                 this.appendTd($(tr), obj.ColoumCount - _tdCount);
             }.bind(this));
         }
         else if (pname === "RowCount") {
             this.setTrPixelH();
-            var _row = $(`#${obj.EbSid} table tbody tr`).length;
-            let _tdCount = $(`#${obj.EbSid} table tbody tr`).eq(0).children("td").length;
+            var _row = this.Table.find("tr").length;
+            let _tdCount = this.Table.find("tr").eq(0).children("td").length;
             if (this.isNew)
-                $(`#${obj.EbSid}`).css("height", $(`#${obj.EbSid} table`).height() + ((obj.RowCount - _row) * 26));
+                this.Table.css("height", this.Table.height() + ((obj.RowCount - _row) * 26));
             for (let c = _row; c <= obj.RowCount-1; c++) {
-                $(`#${obj.EbSid} table tbody`).append(`<tr id="${obj.EbSid}_tr_${c}">`);
+                this.Table.find("tbody").append(`<tr id="${obj.EbSid}_tr_${c}">`);
                 this.appendTd($(`#${obj.EbSid}_tr_${c}`), _tdCount);
             }
-            obj.Height = $(`#${obj.EbSid}`).height();
+            obj.Height = this.Table.height();
         }
         this.RowCount = obj.RowCount;
         this.ColCount = obj.ColoumCount;
 
         this.makeTLayoutDroppable(obj.EbSid);
-        this.killResizableCols(obj);
+        this.killResizableCols();
         this.InitColResize(obj.EbSid);
     };
 
@@ -249,12 +249,12 @@
         if (pname === "ColoumCount") {
             this.setTdPixelW();
             for (let z = 0; z < this.ColCount - obj.ColoumCount;z++) {
-                $(`#${obj.EbSid}`).find("tr").each(function (i, o) {
+                this.Table.find("tr").each(function (i, o) {
                     lastnode = $(o).find("td:last-child");
                     if (lastnode.closest("tr").index() === 0)
-                        $(`#${obj.EbSid}`).width($(`#${obj.EbSid}`).width() - lastnode.width());
+                        this.Table.width($(`#${obj.EbSid}`).width() - lastnode.width());
                     lastnode.remove();
-                });
+                }.bind(this));
             }
             this.ColCount = obj.ColoumCount;
             this.Table.find("tr").eq(0).find("td:last-child").css("width", "auto");
@@ -262,22 +262,46 @@
         else if (pname === "RowCount") {
             this.setTrPixelH();
             for (let y = 0; y < this.RowCount - obj.RowCount; y++) {
-                lastnode = $(`#${obj.EbSid}`).find("tr:last-child");
-                $(`#${obj.EbSid}`).height($(`#${obj.EbSid}`).height() - lastnode.height());
+                lastnode = this.Table.find("tr:last-child");
+                this.Table.height(this.Table.height() - lastnode.height() - 2);
                 lastnode.remove();
             }
             this.RowCount = obj.RowCount;
             this.Table.find("tr:last-child").css("height", "auto");
         }
-        this.killResizableCols(obj);
+        this.killResizableCols();
         this.InitColResize(obj.EbSid);
     };
 
-    this.killResizableCols = function (obj) {
+    this.delFromMenu = function ($td, type) {
+        let index = $td.index();
+        if (type === "row") {
+            this.setTrPixelH();
+            this.Table.height(this.Table.height() - $td.height() - 2);
+            $td.closest("tr").remove();
+            this.RowCount = this.RowCount - 1;
+            this.EbCtrl.RowCount = this.EbCtrl.RowCount - 1;
+            this.Table.find("tr:last-child").css("height", "auto");
+        }
+        else if (type === "col") {
+            this.setTdPixelW();
+            this.Table.find("tr").each(function (i, o) {
+                let node = $(o).find("td").eq(index);
+                this.Table.width(this.Table.width() - node.width());
+                node.remove();
+            }.bind(this));
+            this.ColCount = this.ColCount - 1; this.EbCtrl.ColoumCount = this.EbCtrl.ColoumCount - 1;
+            this.Table.find("tr").eq(0).find("td:last-child").css("width", "auto");
+        }
+        this.killResizableCols();
+        this.InitColResize(this.Table.attr("id"));
+    };
+
+    this.killResizableCols = function () {
         this.Table.find(`.${_resizer}`).draggable("destroy");
         this.Table.find(`.${_resizerV}`).draggable("destroy");
-        $(`#${obj.EbSid}`).find(".eb_resize_e").remove();
-        $(`#${obj.EbSid}`).find(".eb_resize_row").remove();
+        this.Table.find(".eb_resize_e").remove();
+        this.Table.find(".eb_resize_row").remove();
     };
 
     this.dragHandle = function () {

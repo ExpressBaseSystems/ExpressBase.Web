@@ -98,7 +98,7 @@ namespace ExpressBase.Web.Components
                     _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
                 else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
-
+                _col.EbSid = column.Type.ToString() + column.ColumnIndex;
                 dvobj.Columns.Add(_col);
             }
             dvobj.DSColumns = dvobj.Columns;

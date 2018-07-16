@@ -254,7 +254,7 @@
                     if (lastnode.closest("tr").index() === 0)
                         this.Table.width($(`#${obj.EbSid}`).width() - lastnode.width());
                     lastnode.remove();
-                });
+                }.bind(this));
             }
             this.ColCount = obj.ColoumCount;
             this.Table.find("tr").eq(0).find("td:last-child").css("width", "auto");

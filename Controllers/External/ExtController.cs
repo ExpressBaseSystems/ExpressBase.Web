@@ -120,13 +120,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult test()
-        {
-
-            ViewBag.StripePublishKey = "pk_test_s1b6p5MmoOrYVcev3IPk3UMd";
-            return View();
-        }
-
         [HttpPost]
         public IActionResult StripeResponse()
         {
@@ -615,14 +608,6 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.SuccessMessage = "Verification failed";
             return View();
         }
-
-
-        [HttpGet]
-        public IActionResult SMSCallBack()
-        {
-            return View();
-        }
-
 
         [HttpPost]
         public void SMSCallBack(int i)

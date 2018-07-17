@@ -39,12 +39,6 @@ namespace ExpressBase.Web.Controllers
 
         public DevController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-        // GET: /<controller>/
-        public IActionResult Index()
-        {
-            //return RedirectToAction("DevSignIn");
-            return View();
-        }
         [HttpGet("MyApplications")]
         public IActionResult DevDashboard()
         {
@@ -68,20 +62,6 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Types = JsonConvert.SerializeObject(_dict);
             ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
             ViewBag.AppInfo = _objects.AppInfo;
-            return View();
-        }
-
-        public IActionResult objects()
-        {
-            return View();
-        }
-
-        public IActionResult ListApplications()
-        {
-
-            IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest());
-            ViewBag.dict = resultlist.Data;
             return View();
         }
 
@@ -362,58 +342,7 @@ namespace ExpressBase.Web.Controllers
             else
                 TempData[Msg] = "Application Creation failed.";
             return View();
-        }      
-
-        //public IActionResult CreateApplication(int i)
-        //{
-        //    var req = this.HttpContext.Request.Form;
-
-        //    IServiceClient client = this.ServiceClient;
-        //    var resultlist = client.Get<GetApplicationResponse>(new GetApplicationRequest{ id =Convert.ToInt32(req["itemid"]) });
-        //    ViewBag.applicationname = resultlist.Data["applicationname"];
-        //    ViewBag.description = resultlist.Data["description"];
-        //    ViewBag.Obj_id = req["itemid"];
-        //    return View();          
-        //}       
-        public IActionResult CreateApplicationModule()
-        {
-            return View();
-        }
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public JsonResult SaveApplications()
-        //{
-        //    var req = this.HttpContext.Request.Form;
-        //    IServiceClient client = this.ServiceClient;
-        //    ViewBag.Header = "Create Application";
-        //    var ds = new EbObjectSaveOrCommitRequest();
-        //    ds.IsSave = false;
-        //    ds.RefId = (string.IsNullOrEmpty(req["objid"])) ? string.Empty : req["objid"].ToString();           //Convert.ToInt32(_dict["id"]);//remember to pass 0 or value from view
-        //  //  ds.EbObjectType = (int)EbObjectType.Application;
-        //    ds.Name = req["name"];
-        //    ds.Description = req["description"];
-        //    ds.Json = EbSerializers.Json_Serialize(new EbApplication
-        //    {
-        //        Name = req["name"],
-        //       // EbObjectType = EbObjectType.Application
-        //    });
-        //    ds.Status = ObjectLifeCycleStatus.Live;
-        //    ds.TenantAccountId = ViewBag.cid;
-        //    ds.ChangeLog = "";
-        //    ds.Relations = null;
-
-        //    ViewBag.IsNew = "false";
-        //    var res = client.Post<EbObjectSaveOrCommitResponse>(ds);
-        //    if (res.Id > 0)
-        //    {
-        //        return Json("Success");
-        //    }
-        //    else
-        //    {
-        //        return Json("Failed");
-        //    }
-        //}
+        } 
         
         [HttpGet]
         public IActionResult Eb_EmailBuilder()

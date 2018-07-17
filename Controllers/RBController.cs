@@ -87,8 +87,8 @@ namespace ExpressBase.Web.Controllers
 
         public List<string> GetLocConfigKeys()
         {
-            var resp = ServiceClient.Get<GetLocationConfigResponse>(new GetLocationConfigRequest { LocId = 0 });
-            List<EbLocationConfig> KeysConf = resp.Data;
+            var resp = ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
+            List<EbLocationConfig> KeysConf = resp.Config;
             List<string> Keys = new List<string>();
             foreach (EbLocationConfig c in KeysConf)
             {

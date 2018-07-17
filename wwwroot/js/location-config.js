@@ -1,102 +1,107 @@
-﻿var Eb_locationConfig = function (data) {
-	this.counter = 0;
-	this.keycounter = 0;
-	this.data = data;
-	this.Init = function () {
-		$('#createconfig').on('click', (this.CreateConf.bind(this)));
-		$('#addkey').on('click', (this.AddEmptyRow));
+﻿var Eb_locationMeta = function (Config, locations) {
+    this.Locations = locations;
+    this.data = Config;
+    this.counter = 0;
+    this.trCount = 2;
+    this.Configaration = {};
+    this.init = function () {
+        this.Addmeta();
+        $('#locspace').off("submit").on('submit', this._CreateLocation.bind(this));
 
-		$(data).each(function (i, item) {
-			this.AddKey(item);
-		}.bind(this));
-		this.AddKey();
-	};
+        $(this.data).each(function (i, item) {
+            this.AddKey(item);
+        }.bind(this));
+        $(".solution_container").off("click").on("click", this.locationEdit.bind(this));
+        $('#createconfig').on('click', this.CreateConf.bind(this));
+        $('#add_key_btn').on('click', this.AddEmptyRow.bind(this));
+    };
 
-	this.CreateConf = function () {
-		var values = []; 
-		var items = $('.keypair');
-		items.each(function (i, item) {
-			var o = new Object();
-			o.name = $(item).children().find(".keyname").val();
-			o.isrequired = ($(item).children().find(".isreq").is(":checked")) ? "T" : "F";
-			o.KeyId = $(item).children().find(".keyid").val();
-			values.push(o);
-		});
-		$.post("../TenantUser/CreateConfig", { keys: values });
-	};
+    this.locationEdit = function (e) {
+        var locid = $(e.target).closest(".solution_container").attr("locid");
+        var obj = this.Locations[parseInt(locid)];
+        $('#create_loc_mod').modal("toggle");
+        $("#create_loc_mod input[name='LocId']").val(obj.LocId);
+        $("#create_loc_mod input[name='longname']").val(obj.LongName);
+        $("#create_loc_mod input[name='shortname']").val(obj.ShortName);
+        for (var item in obj.Meta) {
+            $(`#create_loc_mod input[name='${item}']`).val(obj.Meta[item]);
+        }
+    };
 
-	this.AddEmptyRow = function () {
-		this.AddKey();
-	}.bind(this);
-
-	this.AddKey = function (item) {
-		item = item || { Name: "", Isrequired: "", KeyId: "" };
-		$('#textspace').append(`
-				<div class="form-group keypair">
-					<label class="control-label col-sm-2 index" >Key ${++this.keycounter}:</label>
-					<div class="col-sm-5">
-						<input type="text" class="form-control keyname" placeholder="Enter key name" name="keyname" value="${item.Name}">
-					</div>
-					<div class="col-sm-2">
-						<label class="control-label ">Is Required: <input type="checkbox" class="isreq" id="check${++this.counter}"></label>
-						<input type="hidden" value="${item.KeyId}" class="keyid" id="keyid${item.KeyId}"/>
-					</div>  
-							 <i class="fa fa-trash delete"  id="delete${this.counter}"></i> 
-				</div>
-            `);
-		$(`#delete${this.counter}`).on('click', (this.DeleteKey.bind(this)));
-		$(`#check${this.counter}`).prop("checked", item.Isrequired === "true");
-
-	}.bind(this);
-
-	this.DeleteKey = function (e) {
-		$(e.target).parent().remove();
-		this.UpdateIndexOnDelete();
-		this.keycounter--;
-	};
-
-	this.UpdateIndexOnDelete = function () {
-		$('.keypair .index').each(function (i, item) {
-			item.textContent = "key " + parseInt(i + 1) + ":";
-		});
-	};
-
-	this.Init();
-}
-
-var Eb_locationMeta = function (data, meta,locid) {
-	this.l_counter = 0;
-	this.l_data = data;
-	this.l_meta = meta;
-	this.l_id = locid;
-	this.init = function () {
-		this.Addmeta();
-		$('#createloc').on('click', this._CreateLocation.bind(this));
-
-	};
-
-	this.Addmeta = function () {
-		$(this.l_data).each(function (i, l_item) {
-
-			$('#locspace').append(`
+    this.Addmeta = function () {
+        $(this.data).each(function (i, l_item) {
+            $('#locspace').append(`
 					<div class="form-group">
-                        <label class="control-label col-sm-2">${l_item.Name} :</label>
-                        <div class="col-sm-5">
-                            <input type="text" class="form-control keyname" placeholder="Enter ${l_item.Name} " id=l_key${i} kname="${l_item.Name}" value="${(/*typeof (this.l_meta[l_item.Name]) === "undefined" ||*/ this.l_meta===null ) ? "" : (this.l_meta[l_item.Name])}">
+                        <label class="control-label col-sm-3">${l_item.Name} </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control keyname" placeholder="Enter ${l_item.Name} " id=l_key${i} name="${l_item.Name}" value="">
                         </div>
                     </div>
 					`);
-		}.bind(this));
-	}.bind(this);
+        }.bind(this));
+    }.bind(this);
 
-	this._CreateLocation = function () {
-		var m = new Object();
-		$(data).each(function (i, item) {
-			var n = item.Name;
-			m[item.Name] = $(`#l_key${i}`).val();
-		});
-		$.post("../TenantUser/CreateLocation", { locid: this.l_id,lname: $('#lname').val(), sname: $('#sname').val(), img: " ", meta: JSON.stringify(m) });
-	}.bind(this);
+    this._CreateLocation = function (e) {
+        e.preventDefault();
+        let m = {};
+        $(this.data).each(function (i, item) {
+            m[item.Name] = $(`input[name='${item.Name}']`).val();
+        });
+        $.post("../TenantUser/CreateLocation", {
+            locid: $("input[name='LocId']").val(),
+            lname: $("input[name='longname']").val(),
+            sname: $("input[name='shortname']").val(),
+            img: " ",
+            meta: JSON.stringify(m)
+        }, function (result) {
+            if (result)
+                $('#create_loc_mod').modal("toggle");
+        }.bind(this));
+    }.bind(this);
 
-	this.init();
+    this.CreateConf = function () {
+        var values = [];
+        var items = $('.keypair');
+        items.each(function (i, item) {
+            var o = new Object();
+            o.name = $(item).children().find(".keyname").val();
+            o.isrequired = ($(item).children().find(".isreq").is(":checked")) ? "T" : "F";
+            o.KeyId = $(item).children().find(".keyid").val();
+            values.push(o);
+        });
+        $.post("../TenantUser/CreateConfig", { keys: values });
+    };
+
+    this.AddEmptyRow = function () {
+        var o = new Object();
+        o.Name = $("input[name='KeyName']").val();
+        o.Isrequired = $("input[name='IsRequired']").is(":checked");
+        o.Type = $("select[name='KeyType']").val();
+        this.AddKey(o);
+    }.bind(this);
+
+    this.AddKey = function (item) {
+        let icon = "";
+        let count = this.trCount++;
+        item = item || { Name: "", Isrequired: false, KeyId: "" };
+        if (eval(item.Isrequired))
+            icon = `<i class="fa fa-check fa-green"></i>`;
+        $('#textspace tbody').append(`<tr count="${count}">
+                                    <td>${item.Name}</td>
+                                    <td class="text-center">${icon}</td>
+                                    <td class="text-center">${item.Type}</td>
+                                    <td class="text-center"><i class="fa fa-trash delete_field"></i></td>
+                                </tr>`);
+        this.Configaration[count] = item;
+        $(`.delete_field`).on('click', this.DeleteKey.bind(this));
+        $(`#check${this.counter}`).prop("checked", item.Isrequired === "true");
+
+    }.bind(this);
+
+    this.DeleteKey = function (e) {
+        var key = $(e.target).closest("tr").attr("count");
+        delete this.Configaration[key];
+    };
+
+    this.init();
 };

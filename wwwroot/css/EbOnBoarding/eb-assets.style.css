@@ -1,0 +1,51 @@
+﻿.Locations_container{
+    float:left;
+    width:100%;
+    padding:15px;
+}
+.locpage {
+    margin-top: 100px;
+}
+.new_location_bdy {
+    float: left;
+    width: 100%;
+}
+.new_location_bdy .form-group {
+    float:left;
+    width:100%;
+}
+.create_loc_mod{
+    font-family:open sans;
+
+}
+.location_conf .btn_container {
+    margin-bottom: 15px;
+    width:100%;
+}
+.location_conf .btn_container .btn{
+    margin-left: 15px;
+}
+.hoveron_block:hover{
+    background-color:#fafafa;
+    cursor:pointer;
+}
+#textspace table thead {
+    background-color: #055d9c;
+    color: white;
+}
+#textspace table td, #textspace table th {
+    font-size: 14px;
+}
+.fa-green{
+    color:darkgreen;
+}
+.btn_color_bl {
+    color: #fff;
+    background-color: #055d9c;
+    border-color: #055d9c;
+}
+    .btn_color_bl:hover {
+        color: #fff;
+        background-color: #1f71ad;
+        border-color: #1f71ad;
+    }

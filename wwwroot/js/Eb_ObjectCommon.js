@@ -45,7 +45,7 @@
 		this.tags = $('#tags').val();
 		this.UpdateDashboard();
 
-		EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor});
+		EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor });
 
 		$.LoadingOverlay("hide");
 		$('#close_popup').trigger('click');
@@ -56,7 +56,12 @@
 		if (data === "RestrictedStatementinQuerry") {
 			this.alertBgColor = "#e83c46";
 			this.alertMsg = "Querry Contains Restricted Keywords !!";
-			EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor });
+			EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+		}
+		else if (data === "nameIsNotUnique") {
+			this.alertBgColor = "#e83c46";
+			this.alertMsg = "Name alredy exists";
+			EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide:false});
 		}
 		else {
 			var target = this.target;//edits by amal

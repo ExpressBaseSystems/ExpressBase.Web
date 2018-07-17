@@ -41,25 +41,6 @@
         }.bind(this));
     };
 
-    this.bindFuncsToDom = function () {
-        $.each(this.filterObj.controls.$values, function (k, cObj) {
-            //creating onChangeExeFuncs and binding to dom elements
-            if (cObj.onChangeExe && cObj.onChangeExe !== '') {
-                this.onChangeExeFuncs[cObj.name] = new Function("form", atob(cObj.onChangeExe));
-                if (cObj.objType === 'TextBox') {
-                    $("body").on("change", ('#' + cObj.name), this.ctrlValueChanged.bind(this, cObj.name));
-                }
-                else if (cObj.objType === 'RadioGroup') {
-                    $("body").on("change", "input[name='" + cObj.name + "']", this.ctrlValueChanged.bind(this, cObj.name));
-                }
-            }
-        }.bind(this));
-    }
-
-    this.ctrlValueChanged = function (name) {
-        this.onChangeExeFuncs[name](this.formObject);
-    }
-
     this.initFormObject = function () {
         $.each(this.filterObj.controls.$values, function (k, cObj) {
             this.formObject[cObj.name] = cObj;
@@ -75,7 +56,7 @@
     }
 
     this.getValue = function (ctrlObj) {
-        if (ctrlObj.objType === 'TextBox') {
+        if (ctrlObj.objType === 'TextBox' || ctrlObj.objType === 'Date') {
             return ($('#' + ctrlObj.name).val());
         }
         else if (ctrlObj.objType === 'RadioGroup') {
@@ -83,8 +64,8 @@
         }
     }
 
-    this.setValue = function (ctrlObj, val){
-        if (ctrlObj.objType === 'TextBox') {
+    this.setValue = function (ctrlObj, val) {
+        if (ctrlObj.objType === 'TextBox' || ctrlObj.objType === 'Date') {
             $('#' + ctrlObj.name).val(val);
         }
         else if (ctrlObj.objType === 'RadioGroup') {
@@ -92,7 +73,39 @@
         }
     }
 
+    this.bindFuncsToDom = function () {
+        this.onChangeExeFlag = false;
+        $.each(this.filterObj.controls.$values, function (k, cObj) {
+            //creating onChangeExeFuncs and binding to dom elements
+            if (cObj.onChangeExe && cObj.onChangeExe !== '') {
+                this.onChangeExeFuncs[cObj.name] = new Function("form", atob(cObj.onChangeExe));
+                if (cObj.objType === 'TextBox') {
+                    $("body").on("change", ('#' + cObj.name), this.ctrlValueChanged.bind(this, cObj.name));
+                }
+                else if (cObj.objType === 'RadioGroup') {
+                    this.onChangeExeFlag = true;
+                    $("body").on("change", "input[name='" + cObj.name + "']", this.ctrlValueChanged.bind(this, cObj.name));
+                }
+            }
+        }.bind(this));
 
+        if (this.onChangeExeFlag)
+            this.initialLoad();
+
+    }
+
+    this.ctrlValueChanged = function (name) {
+        this.onChangeExeFuncs[name](this.formObject);
+    }
+
+    this.initialLoad = function () {
+        $.each(this.filterObj.controls.$values, function (k, cObj) {
+            if (cObj.objType === 'RadioGroup') {
+                $("body input[name='" + cObj.name + "']:eq(0)").prop("checked", true).trigger("change");
+                return false;
+            }
+        });
+    }
 
     this.init();
 }

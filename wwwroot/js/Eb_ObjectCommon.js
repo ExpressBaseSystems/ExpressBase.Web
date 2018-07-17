@@ -11,14 +11,9 @@
 	this.ControlCollection = {};
 	this.tabchangeFlag = false;
 	this.alertMsg = null;
-	this.alertType = null;
+	this.alertBgColor = null;
 	this.flagRun = false;
 	this.FlagSave = false;
-	this.messg = new EbAlert(
-		{
-			id: "dshbrd_alert",
-			possition: "top-right"
-		});
 	this.saveOrCommitSuccess = function (refif) { };//edit by amal
 	this.PreviewObject = function () { };//edits by amal
 
@@ -49,63 +44,71 @@
 	this.ShowMessage = function () {
 		this.tags = $('#tags').val();
 		this.UpdateDashboard();
-		this.alertType = "success";
-		this.messg.alert({
-			head: "",
-			body: this.alertMsg,
-			type: this.alertType,
-			delay: 3000
-		})
+
+		EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor });
+
 		$.LoadingOverlay("hide");
 		$('#close_popup').trigger('click');
 	};
 
 	this.UpdateTab = function (data) {
 		//var target = $("#versionNav li.active a").attr("href");
-		var target = this.target;//edits by amal
-		this.ver_Refid = data;
-		var getNav = $("#versionNav li.active a").attr("href");
-		$(getNav).attr("data-id", this.ver_Refid);
-		if (this.Current_obj.Status === null || this.Current_obj.Status === undefined) {
-			this.Current_obj.Status = "Dev";
+		if (data === "RestrictedStatementinQuerry") {
+			this.alertBgColor = "#e83c46";
+			this.alertMsg = "Querry Contains Restricted Keywords !!";
+			EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
 		}
-		if (this.Current_obj.VersionNumber !== null && this.Current_obj.VersionNumber !== undefined) {
-			if (!this.FlagSave) {
-				this.Current_obj.VersionNumber = this.Current_obj.VersionNumber.replace(/.w/g, '');
-				this.alertMsg = "Commit Success";
-			}
-			else {
-				this.alertMsg = "Save Success";
-				this.FlagSave = false;
-			}
+		else if (data === "nameIsNotUnique") {
+			this.alertBgColor = "#e83c46";
+			this.alertMsg = "Name alredy exists";
+			EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide:false});
 		}
 		else {
-			if (this.FlagSave) {
-				this.Current_obj.VersionNumber = "1.0.0.w";
-				this.alertMsg = "Save Success";
-				this.FlagSave = false;
+			var target = this.target;//edits by amal
+			this.ver_Refid = data;
+			var getNav = $("#versionNav li.active a").attr("href");
+			$(getNav).attr("data-id", this.ver_Refid);
+			if (this.Current_obj.Status === null || this.Current_obj.Status === undefined) {
+				this.Current_obj.Status = "Dev";
+			}
+			this.alertBgColor = "#00AD6E";
+			if (this.Current_obj.VersionNumber !== null && this.Current_obj.VersionNumber !== undefined) {
+				if (!this.FlagSave) {
+					this.Current_obj.VersionNumber = this.Current_obj.VersionNumber.replace(/.w/g, '');
+					this.alertMsg = "Commit Success";
+				}
+				else {
+					this.alertMsg = "Save Success";
+					this.FlagSave = false;
+				}
 			}
 			else {
-				this.Current_obj.VersionNumber = "1.0.0";
-				this.alertMsg = "Commit Success";
+				if (this.FlagSave) {
+					this.Current_obj.VersionNumber = "1.0.0.w";
+					this.alertMsg = "Save Success";
+					this.FlagSave = false;
+				}
+				else {
+					this.Current_obj.VersionNumber = "1.0.0";
+					this.alertMsg = "Commit Success";
+				}
 			}
-		}
-		this.ObjCollection[target].EbObject = this.Current_obj;
-		this.ObjCollection[target].Refid = this.ver_Refid;
+			this.ObjCollection[target].EbObject = this.Current_obj;
+			this.ObjCollection[target].Refid = this.ver_Refid;
 
-		$(`#versionNav [href='${target}']`).attr("data-verNum", this.Current_obj.VersionNumber);//edits by amal
-		$(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
-		//$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
-		//$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
+			$(`#versionNav [href='${target}']`).attr("data-verNum", this.Current_obj.VersionNumber);//edits by amal
+			$(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
+			//$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
+			//$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
 
-		if (this.flagRun) {
-			this.ObjCollection[target].SaveSuccess();
+			if (this.flagRun) {
+				this.ObjCollection[target].SaveSuccess();
+			}
+			else
+				this.ShowMessage();
+			this.saveOrCommitSuccess(data);//edit by amal
 		}
-		else
-			this.ShowMessage();
 		$.LoadingOverlay("hide");
-
-		this.saveOrCommitSuccess(data);//edit by amal
 	};
 
 	this.UpdateDashboard = function () {
@@ -429,6 +432,7 @@
 		this.ver_Refid = _refid;
 		$.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
 			.done(this.VersionCode_success.bind(this));
+		this.alertBgColor = "#00AD6E";
 		this.alertMsg = "Success";
 		this.ShowMessage();
 	}

@@ -253,8 +253,10 @@
             $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         }
         else if (this.editor === 24 || this.editor === 26) {
-            if (this.editor === 26)
+            if (this.editor === 26) {
                 this.setObjTypeDD();
+                this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+            }
             this.selectedCols = this.getSelectedColsByProp(this.allCols);
         }
         else
@@ -317,7 +319,7 @@
                 else
                     this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24 || this.editor === 26) {
-                this.movingObj[this.Dprop] = true;//////// hard code
+                this.movingObj[this.Dprop] = true;
                 this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
                 if (sibling.length > 0)
                     this.allCols.splice(idx, 0, this.movingObj);
@@ -332,7 +334,8 @@
                 this.allCols.push(this.movingObj);
         }
         else if (this.editor === 24 || this.editor === 26) {
-            this.movingObj[this.Dprop] = false;//////// hard code
+            this.movingObj[this.Dprop] = false;
+            this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn);
     };
@@ -448,6 +451,7 @@
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").off("keydown").on("keydown", this.OTileKeydown.bind(this, data));
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("click").on("click", ".colTile", this.VTileClick.bind(this, data));
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("keydown").on("keydown", ".colTile", this.VTileKeydown.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("dblclick").on("dblclick", ".colTile", this.VTileDblClick.bind(this, data));
         if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
             var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
@@ -508,20 +512,30 @@
         }
     };
 
+    this.VTileDblClick = function () {
+        var $e = $(event.target).closest(".colTile");
+        $e.attr("is-selected", "false");
+        $e.click();
+        $("#" + this.PGobj.wraperId + " .modal-footer [name=CXE_OK]").click();
+    };
+
     this.VTileKeydown = function (data) {
         var $e = $(event.target).closest(".colTile");
-        if (event.which === 13 || event.which === 32) {
+        if (event.which === 32) {
             $e.click();
-            if (event.which === 13) {
-                if ($e.attr("is-selected") === "true")
-                    $("#" + this.PGobj.wraperId + " .modal-footer [name=CXE_OK]").click();
-            }
+        }
+        else if (event.which === 13) {
+            $e.attr("is-selected", "false");
+            $e.click();
+            $("#" + this.PGobj.wraperId + " .modal-footer [name=CXE_OK]").click();
         }
         else if (event.which === 40) {
-            $e.next().focus();
+            $e.removeClass("Otile-active");
+            $e.next().focus().addClass("Otile-active");
         }
         else if (event.which === 38) {
-            $e.prev().focus();
+            $e.removeClass("Otile-active");
+            $e.prev().focus().addClass("Otile-active");
         }
         else if (event.which === 37) {
             $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile[is-selected=true]").focus();
@@ -538,8 +552,8 @@
         $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
         $.each(data[ObjName], function (i, obj) {
             if (obj.versionNumber)
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                    + '<i class="fa fa-check pull-right" style="display:none; color:#5cb85c; font-size: 18px;" aria-hidden="true"></i></div>');
+                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
+                    + '<i class="fa fa-check pull-right" style="display:none; color:rgb(1, 189, 1); font-size: 18px;" aria-hidden="true"></i></div>');
         }.bind(this));
         if (this.PGobj.PropsObj[this.PGobj.CurProp] && this.OSECurVobj && $e.attr("name") === this.OSECurVobj.name)
             $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
@@ -547,15 +561,22 @@
 
     this.VTileClick = function () {
         var $e = $(event.target).closest(".colTile");
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
-        var refId = $e.attr("data-refid");
-        this.PGobj.PropsObj[this.PGobj.CurProp] = refId;
-        $(event.target).attr("is-selected", true).find(".fa-check").show();
-        var ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
-        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);/////
-        $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(ObjName + ", " + $e.attr("ver-no"));
-        $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").attr("refid", refId);
-        this.OSECurVobj = getObjByval(this.OSE_curTypeObj[ObjName], "versionNumber", $e.attr("ver-no"));
+
+        if ($e.attr("is-selected") === "false") {
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
+            var refId = $e.attr("data-refid");
+            this.PGobj.PropsObj[this.PGobj.CurProp] = refId;
+            $e.attr("is-selected", true).find(".fa-check").show();
+            var ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
+            $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);/////
+            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(ObjName + ", " + $e.attr("ver-no"));
+            $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").attr("refid", refId);
+            this.OSECurVobj = getObjByval(this.OSE_curTypeObj[ObjName], "versionNumber", $e.attr("ver-no"));
+        }
+        else {
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
+            this.PGobj.PropsObj[this.PGobj.CurProp] = "";
+        }
     };
 
     this.refreshDD = function (e) {
@@ -571,7 +592,8 @@
             $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource</h4>");
             return;
         }
-
+        $("#" + containerId).empty();
+        $("#" + this.CEctrlsContId).empty();
         var idField = "name";//////////////////////
         if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
             idField = "ColumnName";////////////////////////
@@ -712,7 +734,16 @@
             obj.Name = ShortName;
             this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
         }
-        this.setColTiles();
+        if (this.editor === 26) {
+            if (!obj.name)
+                obj.name = ShortName;
+            obj[this.Dprop] = true;
+            this.selectedCols.push(obj);
+            this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
+            this.setSelColtiles();
+        }
+        else
+            this.setColTiles();
         $("#" + EbSid).click();
     };
 

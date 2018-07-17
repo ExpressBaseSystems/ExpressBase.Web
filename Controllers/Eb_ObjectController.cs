@@ -102,12 +102,12 @@ namespace ExpressBase.Web.Controllers
                 //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
                 if (dsobj != null)
                 {
-                    dsobj.AfterRedisGet(this.Redis,this.ServiceClient);
+                    dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
                     ViewBag.dsObj = dsobj;
                 }
-               
+
             }
-            else if(type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization))
+            else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization))
             {
                 var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
@@ -117,7 +117,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
-            else if(type.Equals(EbObjectTypes.Report))
+            else if (type.Equals(EbObjectTypes.Report))
             {
                 var typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
@@ -147,21 +147,21 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
-			//else if (type.Equals(EbObjectTypes.BotForm))
-			//{
-			//	var typeArray = typeof(EbBotForm).GetTypeInfo().Assembly.GetTypes();
-			//	_c2js = new Context2Js(typeArray, BuilderType.BotForm, typeof(EbBotForm));
-			//	if (dsobj != null)
-			//	{
-			//		dsobj.AfterRedisGet(this.Redis);
-			//		var settings = new JsonSerializerSettings();
-			//		settings.TypeNameHandling = TypeNameHandling.All;
-			//		settings.Converters.Add(new DictionaryConverter());
-			//		ViewBag.dsObj = EbSerializers.Json_Serialize(dsobj, settings);
-			//	}
-			//}
+            //else if (type.Equals(EbObjectTypes.BotForm))
+            //{
+            //	var typeArray = typeof(EbBotForm).GetTypeInfo().Assembly.GetTypes();
+            //	_c2js = new Context2Js(typeArray, BuilderType.BotForm, typeof(EbBotForm));
+            //	if (dsobj != null)
+            //	{
+            //		dsobj.AfterRedisGet(this.Redis);
+            //		var settings = new JsonSerializerSettings();
+            //		settings.TypeNameHandling = TypeNameHandling.All;
+            //		settings.Converters.Add(new DictionaryConverter());
+            //		ViewBag.dsObj = EbSerializers.Json_Serialize(dsobj, settings);
+            //	}
+            //}
 
-			ViewBag.Meta = _c2js.AllMetas;
+            ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;
             ViewBag.EbObjectTypes = _c2js.EbObjectTypes;
 
@@ -172,34 +172,45 @@ namespace ExpressBase.Web.Controllers
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
+            if (obj is EbDataSource)
+            {
+                bool ContainsRestricted = (obj as EbDataSource).Sql.ToLower().ContainsAny("update", "delete", "insert", "alter", "drop", "create", "truncate");
+                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+            }
             if (string.IsNullOrEmpty(_refid))
             {
-                var ds = new EbObject_Create_New_ObjectRequest();
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = _json;
-                ds.Status = ObjectLifeCycleStatus.Dev;
-                ds.Relations = _rel_obj;
-                ds.IsSave = false;
-                ds.Tags = _tags;
-                ds.Apps = _apps;
-
-                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-                refid = res.RefId;
-
+                var uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
+                if (uniqnameresp.IsUnique)
+                {
+                    var ds = new EbObject_Create_New_ObjectRequest
+                    {
+                        Name = obj.Name,
+                        Description = obj.Description,
+                        Json = _json,
+                        Status = ObjectLifeCycleStatus.Dev,
+                        Relations = _rel_obj,
+                        IsSave = false,
+                        Tags = _tags,
+                        Apps = _apps
+                    };
+                    var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                    refid = res.RefId;
+                }
+                else return "nameIsNotUnique";
             }
             else
             {
-                var ds = new EbObject_CommitRequest();
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = _json;
-                ds.Relations = _rel_obj;
-                ds.RefId = _refid;
-                ds.ChangeLog = _changeLog;
-                ds.Tags = _tags;
-                ds.Apps = _apps;
-
+                var ds = new EbObject_CommitRequest
+                {
+                    Name = obj.Name,
+                    Description = obj.Description,
+                    Json = _json,
+                    Relations = _rel_obj,
+                    RefId = _refid,
+                    ChangeLog = _changeLog,
+                    Tags = _tags,
+                    Apps = _apps
+                };
                 var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
                 refid = res.RefId;
             }
@@ -211,31 +222,45 @@ namespace ExpressBase.Web.Controllers
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
+            if (obj is EbDataSource)
+            {
+                bool ContainsRestricted = (obj as EbDataSource).Sql.ToLower().ContainsAny("update", "delete", "insert", "alter", "drop", "create", "truncate");
+                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+            }
             if (string.IsNullOrEmpty(_refid))
             {
-                var ds = new EbObject_Create_New_ObjectRequest();
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = _json;
-                ds.Status = ObjectLifeCycleStatus.Dev;
-                ds.Relations = _rel_obj;
-                ds.IsSave = true;
-                ds.Tags = _tags;
-                ds.Apps = _apps;
+                var uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
+                if (uniqnameresp.IsUnique)
+                {
+                    var ds = new EbObject_Create_New_ObjectRequest
+                    {
+                        Name = obj.Name,
+                        Description = obj.Description,
+                        Json = _json,
+                        Status = ObjectLifeCycleStatus.Dev,
+                        Relations = _rel_obj,
+                        IsSave = true,
+                        Tags = _tags,
+                        Apps = _apps
+                    };
 
-                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-                refid = res.RefId;
+                    var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                    refid = res.RefId;
+                }
+                else return "nameIsNotUnique";
             }
             else
             {
-                var ds = new EbObject_SaveRequest();
-                ds.RefId = _refid;
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = _json;
-                ds.Relations = _rel_obj;
-                ds.Tags = _tags;
-                ds.Apps = _apps;
+                var ds = new EbObject_SaveRequest
+                {
+                    RefId = _refid,
+                    Name = obj.Name,
+                    Description = obj.Description,
+                    Json = _json,
+                    Relations = _rel_obj,
+                    Tags = _tags,
+                    Apps = _apps
+                };
 
                 var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
                 refid = res.RefId;
@@ -471,7 +496,8 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public IActionResult UpdateObjectDashboard(string refid)
-        { var resultlist = this.ServiceClient.Get<EbObjectUpdateDashboardResponse>(new EbObjectUpdateDashboardRequest { Refid = refid });
+        {
+            var resultlist = this.ServiceClient.Get<EbObjectUpdateDashboardResponse>(new EbObjectUpdateDashboardRequest { Refid = refid });
             var rlist = resultlist.Data;
             string _objname = "";
             string _status = "";
@@ -490,7 +516,7 @@ namespace ExpressBase.Web.Controllers
                 _apps = element.Apps;
                 _dashbord_tiles = element.Dashboard_Tiles;
             }
-            return ViewComponent("ObjectDashboard", new { refid = refid, objname = _objname, status = _status, vernum= _vernum, workcopies = _workcopies, _tags =_tags, _apps = _apps , _dashbord_tiles = _dashbord_tiles });
+            return ViewComponent("ObjectDashboard", new { refid = refid, objname = _objname, status = _status, vernum = _vernum, workcopies = _workcopies, _tags = _tags, _apps = _apps, _dashbord_tiles = _dashbord_tiles });
         }
 
     }

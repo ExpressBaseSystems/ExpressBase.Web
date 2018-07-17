@@ -319,7 +319,7 @@
                 else
                     this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24 || this.editor === 26) {
-                this.movingObj[this.Dprop] = true;//////// hard code
+                this.movingObj[this.Dprop] = true;
                 this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
                 if (sibling.length > 0)
                     this.allCols.splice(idx, 0, this.movingObj);
@@ -334,7 +334,8 @@
                 this.allCols.push(this.movingObj);
         }
         else if (this.editor === 24 || this.editor === 26) {
-            this.movingObj[this.Dprop] = false;//////// hard code
+            this.movingObj[this.Dprop] = false;
+            this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
         }
         $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn);
     };
@@ -718,6 +719,8 @@
         if (this.editor === 26) {
             if (!obj.name)
                 obj.name = ShortName;
+            obj[this.Dprop] = true;
+            this.selectedCols.push(obj);
             this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
             this.setSelColtiles();
         }

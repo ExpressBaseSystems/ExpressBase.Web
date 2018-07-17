@@ -514,6 +514,10 @@
         background-color: #aaaaaa;
     }
 
+.pgCXEditor-Cont .pgpin {
+    display: none;
+}
+
 .DD-refresh {
     margin-right: 20px;
     margin-top: 2.4px;
@@ -622,7 +626,7 @@
 
 .pgRow {
     background-color: rgba(0, 0, 0, 0.045);
-    animation-duration:0.3s;
+    animation-duration: 0.3s;
 }
 
     .pgRow:hover {

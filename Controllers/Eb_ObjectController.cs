@@ -172,34 +172,41 @@ namespace ExpressBase.Web.Controllers
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
+            if(obj is EbDataSource)
+            {
+               bool ContainsRestricted = (obj as EbDataSource).Sql.ToLower().ContainsAny("update", "delete", "insert", "alter", "drop", "create", "truncate");
+                if(ContainsRestricted) return "RestrictedStatementinQuerry";
+            }
             if (string.IsNullOrEmpty(_refid))
             {
-                var ds = new EbObject_Create_New_ObjectRequest();
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = _json;
-                ds.Status = ObjectLifeCycleStatus.Dev;
-                ds.Relations = _rel_obj;
-                ds.IsSave = false;
-                ds.Tags = _tags;
-                ds.Apps = _apps;
-
+                var ds = new EbObject_Create_New_ObjectRequest
+                {
+                    Name = obj.Name,
+                    Description = obj.Description,
+                    Json = _json,
+                    Status = ObjectLifeCycleStatus.Dev,
+                    Relations = _rel_obj,
+                    IsSave = false,
+                    Tags = _tags,
+                    Apps = _apps
+                };
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
 
             }
             else
             {
-                var ds = new EbObject_CommitRequest();
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = _json;
-                ds.Relations = _rel_obj;
-                ds.RefId = _refid;
-                ds.ChangeLog = _changeLog;
-                ds.Tags = _tags;
-                ds.Apps = _apps;
-
+                var ds = new EbObject_CommitRequest
+                {
+                    Name = obj.Name,
+                    Description = obj.Description,
+                    Json = _json,
+                    Relations = _rel_obj,
+                    RefId = _refid,
+                    ChangeLog = _changeLog,
+                    Tags = _tags,
+                    Apps = _apps
+                };
                 var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
                 refid = res.RefId;
             }
@@ -211,31 +218,40 @@ namespace ExpressBase.Web.Controllers
         {
             string refid;
             var obj = EbSerializers.Json_Deserialize(_json);
+            if (obj is EbDataSource)
+            {
+                bool ContainsRestricted = (obj as EbDataSource).Sql.ToLower().ContainsAny("update", "delete", "insert", "alter", "drop", "create", "truncate");
+                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+            }
             if (string.IsNullOrEmpty(_refid))
             {
-                var ds = new EbObject_Create_New_ObjectRequest();
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = _json;
-                ds.Status = ObjectLifeCycleStatus.Dev;
-                ds.Relations = _rel_obj;
-                ds.IsSave = true;
-                ds.Tags = _tags;
-                ds.Apps = _apps;
+                var ds = new EbObject_Create_New_ObjectRequest
+                {
+                    Name = obj.Name,
+                    Description = obj.Description,
+                    Json = _json,
+                    Status = ObjectLifeCycleStatus.Dev,
+                    Relations = _rel_obj,
+                    IsSave = true,
+                    Tags = _tags,
+                    Apps = _apps
+                };
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
                 refid = res.RefId;
             }
             else
             {
-                var ds = new EbObject_SaveRequest();
-                ds.RefId = _refid;
-                ds.Name = obj.Name;
-                ds.Description = obj.Description;
-                ds.Json = _json;
-                ds.Relations = _rel_obj;
-                ds.Tags = _tags;
-                ds.Apps = _apps;
+                var ds = new EbObject_SaveRequest
+                {
+                    RefId = _refid,
+                    Name = obj.Name,
+                    Description = obj.Description,
+                    Json = _json,
+                    Relations = _rel_obj,
+                    Tags = _tags,
+                    Apps = _apps
+                };
 
                 var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
                 refid = res.RefId;

@@ -9,6 +9,7 @@
     this.$extCont = options.$extCont;
     this.parentId = null;
     this.$controlsDD = $(".controls-dd-cont select");
+    this.dependedProp = options.dependedProp;
     this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
     this.AllObjects = {};
     this.PropsObj = {};
@@ -360,21 +361,25 @@
         }
         // Close the table and apply it to the div
         var $innerHTML = $(this.innerHTML).hide();
+        $innerHTML.css("transition-duration", "0.3s;");
         this.$PGcontainer.html($innerHTML);
         $innerHTML.fadeIn(300);
     };
 
     //Creates Table rows and group them by property Group name 
     this.buildRows = function () {
-        var propArray = [];
-        for (var property in this.PropsObj) { propArray.push(property); }
+        if (this.PropsObj["IsCustomColumn"] !== true)
+            delete this.PropsObj[this.dependedProp];
+        var propArray = Object.keys(this.PropsObj);
+        //for (var property in this.PropsObj) { propArray.push(property); }
         propArray.sort();
         var prop = null;
         for (var i in propArray) {
             prop = propArray[i];
             var _meta = getObjByval(this.Metas, "name", prop);
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
-            if (_meta === undefined || !this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || (this.wc === "uc" && _meta.HideForUser) || !this.isContains(this.Metas, prop) || ((_meta.MetaOnly === undefined) ? false : _meta.MetaOnly))
+            if (_meta === undefined || !this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || (this.wc === "uc" && _meta.HideForUser) ||
+                !this.isContains(this.Metas, prop) || ((_meta.MetaOnly === undefined) ? false : _meta.MetaOnly))
                 continue;
             if (this.IsSortByGroup) {
                 // Check what is the group of the current property or use the default 'Other' group

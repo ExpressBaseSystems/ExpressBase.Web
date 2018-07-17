@@ -267,7 +267,8 @@
         if (this.editor !== 8) {
             this.CE_PGObj = new Eb_PropertyGrid({
                 id: this.PGobj.wraperId + "_InnerPG",
-                IsInnerCall: true
+                IsInnerCall: true,
+                dependedProp: getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Dprop2
             });
         }
     };
@@ -438,7 +439,7 @@
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
         $.each(data, function (name, val) {
             if (name)
-                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" name ="' + name + '">' + name.replace("<", "&lt;").replace(">", "&gt;")
+                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" is-selected="false" tabindex="1" name ="' + name + '">' + name.replace("<", "&lt;").replace(">", "&gt;")
                     + '<i class="fa fa-chevron-circle-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
             ObjType = val[0].refId.split("-")[2];
         }.bind(this));
@@ -544,19 +545,23 @@
 
     this.OTileClick = function (data) {
         var $e = $(event.target).closest(".colTile");
-        $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeClass("Otile-active");
-        $e.addClass("Otile-active");
-        var ObjName = $e.attr("name");
-        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".ColT-right-arrow").removeAttr("style");
-        $e.attr("is-selected", true).find(".ColT-right-arrow").css("visibility", "visible");
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
-        $.each(data[ObjName], function (i, obj) {
-            if (obj.versionNumber)
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                    + '<i class="fa fa-check pull-right" style="display:none; color:rgb(1, 189, 1); font-size: 18px;" aria-hidden="true"></i></div>');
-        }.bind(this));
-        if (this.PGobj.PropsObj[this.PGobj.CurProp] && this.OSECurVobj && $e.attr("name") === this.OSECurVobj.name)
-            $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
+        if ($e.attr("is-selected") === "false") {
+            $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeClass("Otile-active");
+            $e.addClass("Otile-active");
+            var ObjName = $e.attr("name");
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".ColT-right-arrow").removeAttr("style");
+            $e.attr("is-selected", true).find(".ColT-right-arrow").css("visibility", "visible");
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
+            $.each(data[ObjName], function (i, obj) {
+                if (obj.versionNumber) {
+                    var $verTile = $('<div class="colTile" style="display:none" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
+                        + '<i class="fa fa-check pull-right" style="display:none; color:rgb(1, 189, 1); font-size: 18px;" aria-hidden="true"></i></div>');
+                    $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verTile.show(100));
+                }
+            }.bind(this));
+            if (this.PGobj.PropsObj[this.PGobj.CurProp] && this.OSECurVobj && $e.attr("name") === this.OSECurVobj.name)
+                $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
+        }
     };
 
     this.VTileClick = function () {
@@ -602,7 +607,7 @@
             var type = control.$type.split(",")[0].split(".").pop();
             if (!(control.Name || control.name))
                 var label = control.EbSid;
-            var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
+            var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" tabindex="-1" class="close">&times;</button></div>');
             if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
@@ -698,7 +703,7 @@
         var obj = null;
         var type = $e.attr("eb-type");
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
-        $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
+        $e.css("background-color", "#b1bfc1").css("color", "#222");
         if (this.editor === 7) {
             if (this.PGobj.CurProp === "Controls")///////////////////////need CE test and correction
                 obj = this.PropsObj.Controls.GetByName(id);
@@ -738,6 +743,7 @@
             if (!obj.name)
                 obj.name = ShortName;
             obj[this.Dprop] = true;
+            obj["IsCustomColumn"] = true;
             this.selectedCols.push(obj);
             this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
             this.setSelColtiles();

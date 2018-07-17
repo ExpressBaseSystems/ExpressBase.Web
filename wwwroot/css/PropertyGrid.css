@@ -45,19 +45,19 @@
     z-index: 1;
 }
 
-    .pg-wraper .pg-inp, .pgTdval .dropdown-toggle, .pgTdval .cxv-inp {
-        border: solid 1px #ddd;
-        width: calc(100% - 24px) !important;
-        float: left;
-        background-color: white;
-        height: 21px;
-        -webkit-tap-highlight-color: rgba(255,255,255,0);
-        padding: 3px;
-        font-size: 11.5px;
-        -webkit-transition: box-shadow .1s ease,border-color .1s ease;
-        transition: box-shadow .1s ease,border-color .1s ease;
-        box-shadow: none;
-    }
+.pg-wraper .pg-inp, .pgTdval .dropdown-toggle, .pgTdval .cxv-inp {
+    border: solid 1px #ddd;
+    width: calc(100% - 24px) !important;
+    float: left;
+    background-color: white;
+    height: 21px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    padding: 3px;
+    font-size: 11.5px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
 
 .cxv-inp {
     vertical-align: sub;
@@ -436,6 +436,11 @@
     .CE-all-ctrlsCont .close {
         display: none;
     }
+
+.pgCXEditor-Cont .modal-header .close:focus {
+    outline: none;
+    color:maroon;
+}
 
 .pgCXEditor-Cont .modal-footer {
     padding: 10px 15px;

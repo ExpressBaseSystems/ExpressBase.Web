@@ -244,10 +244,10 @@
     margin: 3px 1px;
     border-radius: 15px;
     font-size: 13px;
-    border: solid 1px #d6d6d6;
     cursor: pointer;
     color: #111;
     user-select: none;
+    transition-duration: 0.3s;
 }
 
     .colTile:hover {
@@ -256,20 +256,27 @@
         color: #000;
     }
 
-    .colTile:focus {
-        background-color: #c2c8ce;
+    .colTile:focus, .OSE-verTile-Cont .colTile:focus {
+        background-color: #94bccc;
         outline: none;
-        color: #000;
+        color: #222;
+    }
+    .colTile[is-selected=true] {
+        background-color: #aebbbd;
+        outline: none;
+        color: #222;
     }
 
-.OSE-verTile-Cont .colTile:focus {
-    background-color: rgb(238, 238, 238);
-}
+    .Otile-active {
+        background-color: #aebbbd;
+        color: #222;
+    }
 
 .ColT-right-arrow {
     visibility: hidden;
     font-size: 19px;
     color: white;
+    transition-duration: 0.1s;
 }
 
 .colTile .ColT-right-arrow {
@@ -596,11 +603,6 @@
 /*.propgrid-table-cont .pg-table tr:hover td {
     border: solid 1px #ddf;
 }*/
-
-.Otile-active {
-    background-color: #b1bfc1;
-    color: #222;
-}
 
 .pg-wraper {
     color: rgba(17, 17, 68, 0.86);

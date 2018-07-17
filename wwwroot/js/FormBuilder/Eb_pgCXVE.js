@@ -253,8 +253,10 @@
             $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
         }
         else if (this.editor === 24 || this.editor === 26) {
-            if (this.editor === 26)
+            if (this.editor === 26) {
                 this.setObjTypeDD();
+                this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+            }
             this.selectedCols = this.getSelectedColsByProp(this.allCols);
         }
         else
@@ -571,7 +573,8 @@
             $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource</h4>");
             return;
         }
-
+        $("#" + containerId).empty();
+        $("#" + this.CEctrlsContId).empty();
         var idField = "name";//////////////////////
         if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
             idField = "ColumnName";////////////////////////
@@ -712,7 +715,14 @@
             obj.Name = ShortName;
             this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
         }
-        this.setColTiles();
+        if (this.editor === 26) {
+            if (!obj.name)
+                obj.name = ShortName;
+            this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
+            this.setSelColtiles();
+        }
+        else
+            this.setColTiles();
         $("#" + EbSid).click();
     };
 

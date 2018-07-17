@@ -553,7 +553,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         dq.Ispaging = this.EbObject.IsPaging;
         if (dq.length === -1)
             dq.length = this.RowCount;
-        return dq;
+        dq.DataVizObjString = JSON.stringify(this.EbObject);
+        //return dq;
     };
 
     this.getFilterValues = function (from) {
@@ -2323,7 +2324,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderDateformat = function (data, sym) {
-        if (typeof data !== "object") {
+        if (typeof data !== "object" && typeof data !== "undefined") {
             var date = new Date(parseInt(data.substr(6)));
             var month = date.getMonth() + 1;
             var dt = date.getDate();

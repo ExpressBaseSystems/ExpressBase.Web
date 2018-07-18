@@ -261,16 +261,17 @@
         outline: none;
         color: #222;
     }
+
     .colTile[is-selected=true] {
         background-color: #aebbbd;
         outline: none;
         color: #222;
     }
 
-    .Otile-active {
-        background-color: #aebbbd;
-        color: #222;
-    }
+.Otile-active {
+    background-color: #aebbbd;
+    color: #222;
+}
 
 .ColT-right-arrow {
     visibility: hidden;
@@ -404,7 +405,7 @@
 }
 
 .pgCXEditor-Cont .modal-body {
-    height: 51vh;
+    height: calc(100% - 111px);
 }
 
 /*overridding*/
@@ -418,6 +419,10 @@
     padding: 2px;
 }
 
+.OSE-body, .CE-body {
+    height: 100%;
+}
+
 
 .controls-dd-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
     width: 100%;
@@ -425,22 +430,32 @@
 
 .editTbl {
     table-layout: fixed;
-    height: 46.7vh;
+    height: 100%;
 }
 
 .CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont, .CE-all-ctrlsCont {
     overflow-y: auto;
-    height: 40vh;
+    height: calc(100% - 33px);
 }
 
     .CE-all-ctrlsCont .close {
         display: none;
     }
 
+.pgCXEditor-Cont .modal-header .close:focus {
+    outline: none;
+    color: maroon;
+}
+
 .pgCXEditor-Cont .modal-footer {
     padding: 10px 15px;
     text-align: right;
     border-top: 1px solid #e5e5e5;
+}
+
+.pgCXEditor-Cont .modal-footer-body {
+    width: calc(100% - 46px);
+    float: left;
 }
 
 .pgCXEditor-Cont .pgHead .fa-times {
@@ -606,6 +621,7 @@
 
 .pg-wraper {
     color: rgba(17, 17, 68, 0.86);
+    height: 100%;
 }
 
 .form-buider-cont {
@@ -671,7 +687,11 @@
 
 .searchinp {
     float: left;
-    width: 50%;
+    width: 100%;
     padding: 3px;
     border: solid 1px #dddddd;
+}
+
+.modal-footer-body .input-group-addon {
+    border-radius: 0;
 }

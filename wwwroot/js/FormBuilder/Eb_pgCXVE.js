@@ -103,14 +103,14 @@
     this.pgCXE_BtnClicked = function (e) {
         this.curCXEbtn = $(e.target);
         var visibleModalLength = $('.pgCXEditor-bg').filter(function () { return $(this).css('display') !== 'none'; }).length;
-        var right = ((window.screen.availWidth / 4) + -visibleModalLength * 10) + "px";
+        var right = (this.modalRight + -visibleModalLength * 10) + "px";
         if ($(e.target).closest("tr").attr("tr-for") === "23")
             var _meta = this.PGobj.getDictMeta(this.PGobj.PropsObj[this.PGobj.CurProp]);
         else
             var _meta = this.PGobj.Metas;
 
         $(this.pgCXE_Cont_Slctr).css("right", right);
-        $(this.pgCXE_Cont_Slctr).css("top", (14 + visibleModalLength + "vh"));
+        $(this.pgCXE_Cont_Slctr).css("top", (this.modalTop + visibleModalLength * 7 + "px"));
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurProplabel = getObjByval(_meta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
@@ -192,7 +192,7 @@
             <div id="${this.CEctrlsContId}" class="CEctrlsCont"></div>
             </td>
 
-            <td style="padding: 0px;"><div id="${this.PGobj.wraperId}_InnerPG" class="inner-PG-Cont"><div></td>
+            <td style="padding: 0px;width: 44%;"><div id="${this.PGobj.wraperId}_InnerPG" class="inner-PG-Cont"><div></td>
             </tr>
             </tbody>
             </table>
@@ -267,7 +267,8 @@
         if (this.editor !== 8) {
             this.CE_PGObj = new Eb_PropertyGrid({
                 id: this.PGobj.wraperId + "_InnerPG",
-                IsInnerCall: true
+                IsInnerCall: true,
+                dependedProp: getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Dprop2
             });
         }
     };
@@ -438,13 +439,20 @@
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
         $.each(data, function (name, val) {
             if (name)
-                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" tabindex="1" name ="' + name + '">' + name.replace("<", "&lt;").replace(">", "&gt;")
+                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" is-selected="false" tabindex="1" name ="' + name + '">' + name.replace("<", "&lt;").replace(">", "&gt;")
                     + '<i class="fa fa-chevron-circle-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
             ObjType = val[0].refId.split("-")[2];
         }.bind(this));
         this.PGobj.OSElist[ObjType] = data;
         if ($(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").length === 0) {
-            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append('<input class="searchinp" placeholder="🔎 Search object..." type="text"/>');
+            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(`
+                <div  class='input-group' style='width: 50%;'>
+                        <span class='input-group-addon'><i class='fa fa-search aria-hidden='true' class='input-group-addon'></i></span> 
+                        <input class="searchinp" placeholder="Search object..." type="text"/>
+                </div>`);
+
+                
+
             $(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").off("keyup").on("keyup", this.searchObj);
         }
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").off("focus").on("focus", this.OTileClick.bind(this, data));
@@ -544,19 +552,23 @@
 
     this.OTileClick = function (data) {
         var $e = $(event.target).closest(".colTile");
-        $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeClass("Otile-active");
-        $e.addClass("Otile-active");
-        var ObjName = $e.attr("name");
-        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".ColT-right-arrow").removeAttr("style");
-        $e.attr("is-selected", true).find(".ColT-right-arrow").css("visibility", "visible");
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
-        $.each(data[ObjName], function (i, obj) {
-            if (obj.versionNumber)
-                $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append('<div class="colTile" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                    + '<i class="fa fa-check pull-right" style="display:none; color:rgb(1, 189, 1); font-size: 18px;" aria-hidden="true"></i></div>');
-        }.bind(this));
-        if (this.PGobj.PropsObj[this.PGobj.CurProp] && this.OSECurVobj && $e.attr("name") === this.OSECurVobj.name)
-            $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
+        if ($e.attr("is-selected") === "false") {
+            $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeClass("Otile-active");
+            $e.addClass("Otile-active");
+            var ObjName = $e.attr("name");
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").attr("is-selected", false).find(".ColT-right-arrow").removeAttr("style");
+            $e.attr("is-selected", true).find(".ColT-right-arrow").css("visibility", "visible");
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
+            $.each(data[ObjName], function (i, obj) {
+                if (obj.versionNumber) {
+                    var $verTile = $('<div class="colTile" style="display:none" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
+                        + '<i class="fa fa-check pull-right" style="display:none; color:rgb(1, 189, 1); font-size: 18px;" aria-hidden="true"></i></div>');
+                    $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verTile.show(100));
+                }
+            }.bind(this));
+            if (this.PGobj.PropsObj[this.PGobj.CurProp] && this.OSECurVobj && $e.attr("name") === this.OSECurVobj.name)
+                $(this.pgCXE_Cont_Slctr + ' .OSE-verTile-Cont [ver-no="' + this.OSECurVobj.versionNumber + '"]')[0].click();
+        }
     };
 
     this.VTileClick = function () {
@@ -589,7 +601,7 @@
 
     this.set9ColTiles = function (containerId, values) {
         if (this.Dprop && this.allCols.length === 0) {
-            $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource</h4>");
+            $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource for this property</h4>");
             return;
         }
         $("#" + containerId).empty();
@@ -602,7 +614,7 @@
             var type = control.$type.split(",")[0].split(".").pop();
             if (!(control.Name || control.name))
                 var label = control.EbSid;
-            var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" class="close">&times;</button></div>');
+            var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" tabindex="-1" class="close">&times;</button></div>');
             if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
@@ -698,7 +710,7 @@
         var obj = null;
         var type = $e.attr("eb-type");
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
-        $e.css("background-color", "#b1bfc1").css("color", "#222").css("border", "solid 1px #b1bfc1");
+        $e.css("background-color", "#b1bfc1").css("color", "#222");
         if (this.editor === 7) {
             if (this.PGobj.CurProp === "Controls")///////////////////////need CE test and correction
                 obj = this.PropsObj.Controls.GetByName(id);
@@ -738,6 +750,7 @@
             if (!obj.name)
                 obj.name = ShortName;
             obj[this.Dprop] = true;
+            obj["IsCustomColumn"] = true;
             this.selectedCols.push(obj);
             this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
             this.setSelColtiles();
@@ -760,8 +773,13 @@
     };
 
     this.Init = function () {
+        let modalSizePercent = 65;
+        let modalWidth = window.screen.availWidth * (modalSizePercent / 100);
+        let modalHeight = modalWidth / 1.574;
+        this.modalRight = window.screen.availWidth * ((1 - (modalSizePercent / 100)) / 2);
+        this.modalTop= ((window.screen.availHeight - modalHeight) / 2) - 15;
         var CXVE_html = '<div class="pgCXEditor-bg">'
-            + `<div class="pgCXEditor-Cont" style="width:${window.screen.availWidth / 2}px;right:${window.screen.availWidth / 4}px;">`
+            + `<div class="pgCXEditor-Cont" style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;">`
 
             + '<div class="modal-header">'
             + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'

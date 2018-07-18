@@ -53,11 +53,8 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult PaypalReturn(string res, string token,string tok)
+        public IActionResult PaypalReturn(string res, string tok, string token)
         {
-            Console.WriteLine("POST Request Headers : " + base.Request.ToJson());
-            
-
             if(res.ToLower().Trim() == "accept")
             {
                 Console.WriteLine("Before HttpPost");

@@ -96,7 +96,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag, login: this.login },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login },
             success: this.ajaxSucc
         });
     };
@@ -174,8 +174,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
-                this.EbObject.Columns.$values = [];
-                this.EbObject.DSColumns.$values = [];
+                //this.EbObject.Columns.$values = [];
+                //this.EbObject.DSColumns.$values = [];
                 this.call2FD();
             }
         }

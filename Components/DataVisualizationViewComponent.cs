@@ -33,33 +33,21 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, string forWrap)
+        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag)
         {
             var dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.serviceclient = this.ServiceClient;
             if (dvobj != null)
             {
-                //if (!string.IsNullOrEmpty(dvRefId))
-                //{
-                //    var dvObject = (ViewBag.wc == "dc") ? this.Redis.Get<EbDataVisualization>(dvRefId) : this.Redis.Get<EbDataVisualization>(dvRefId + ViewBag.UId);
-                //    if (dvObject == null)
-                //        dvObject = this.Redis.Get<EbDataVisualization>(dvRefId);
-                //    dvObject.AfterRedisGet(this.Redis);
-                //    ViewBag.data = dvObject;
-                //}
-                //else
-                if (dvobj.Columns == null  || dvobj.Columns.Count == 0)
+                dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
+                if (flag)
                     ViewBag.data = getDVObject(dvobj);
                 else
-                {
-                    dvobj.AfterRedisGet(this.Redis,this.ServiceClient);
                     ViewBag.data = dvobj;
-                }
             }
-            //ViewBag.Meta = Meta.Replace("\\r\\n", string.Empty);
             ViewBag.dvRefId = dvRefId;
-            ViewBag.forWrap = forWrap;
+            //ViewBag.forWrap = forWrap;
             return View();
         }
         
@@ -68,18 +56,14 @@ namespace ExpressBase.Web.Components
             //DataSourceColumnsResponse columnresp = null;
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
             if (columnresp == null || columnresp.Columns.Count == 0)
-                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new TableColumnsRequest { RefId = dvobj.DataSourceRefId, TenantAccountId = ViewBag.cid });
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new TableColumnsRequest { RefId = dvobj.DataSourceRefId, TenantAccountId = ViewBag.cid, Params = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() :  null});
 
-            dvobj.AfterRedisGet(this.Redis,this.ServiceClient);
 
             var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
             int _pos = __columns.Count+100;
 
-            dvobj.Columns = new DVColumnCollection();
+            var Columns = new DVColumnCollection();
             dvobj.IsPaged = columnresp.IsPaged.ToString();
-            // Add Serial & Checkbox
-            //dvobj.Columns.Add(new DVNumericColumn { Name = "serial", sTitle = "#", Type = DbType.Int64, bVisible = true, sWidth = "10px", Pos = -2 });
-            //dvobj.Columns.Add(new DVBooleanColumn { Name = "checkbox", sTitle = "checkbox", Type = DbType.Boolean, bVisible = false, sWidth = "10px", Pos = -1 });
 
             var indx = -1;
             foreach (EbDataColumn column in __columns)
@@ -99,13 +83,37 @@ namespace ExpressBase.Web.Components
                 else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight" };
                 _col.EbSid = column.Type.ToString() + column.ColumnIndex;
-                dvobj.Columns.Add(_col);
+                Columns.Add(_col);
                 indx = column.ColumnIndex;
             }
             //dvobj.Columns.Add(new DVNumericColumn { Data = ++indx, Name = "RATE_GRAFT", sTitle = "RATE+GRAFT", Type = EbDbTypes.Int32, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right",Formula = "T0.RATE+T0.GRAFT" });
+            if (dvobj.Columns == null || dvobj.Columns.Count == 0)
+                dvobj.Columns = Columns;
+            else
+                dvobj.Columns = compareDVColumns(dvobj.Columns, Columns);
             dvobj.DSColumns = dvobj.Columns;
             return dvobj;
         }
+
+        private DVColumnCollection compareDVColumns(DVColumnCollection OldColumns, DVColumnCollection CurrentColumns)
+        {
+            var NewColumns = new DVColumnCollection();
+            foreach(DVBaseColumn oldcol in OldColumns)
+            {
+                var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type);
+                if (tempCol != null)
+                {
+                    oldcol.Data = tempCol.Data;
+                    NewColumns.Add(oldcol);
+                }
+            }
+
+            foreach (DVBaseColumn curcol in CurrentColumns)
+                NewColumns.Add(curcol);
+
+            return NewColumns;
+        }
     }
-   
+
+    
 }

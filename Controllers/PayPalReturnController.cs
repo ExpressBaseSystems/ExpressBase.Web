@@ -40,7 +40,7 @@ namespace ExpressBase.Web.Controllers
             Console.WriteLine("Rejected By User");
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult PaypalReturn(string res)
         {
             Console.WriteLine("POST Request Headers : ");

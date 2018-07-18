@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ExpressBase.Web.Controllers
 {
-    public enum UserAcceptance { WAITING, ACCEPTED, CANCELED};
+    public enum UserAcceptance { WAITING, ACCEPTED, CANCELED };
 
     public class PaymentReturnController : EbBaseExtController
     {

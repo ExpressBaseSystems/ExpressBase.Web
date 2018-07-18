@@ -103,14 +103,14 @@
     this.pgCXE_BtnClicked = function (e) {
         this.curCXEbtn = $(e.target);
         var visibleModalLength = $('.pgCXEditor-bg').filter(function () { return $(this).css('display') !== 'none'; }).length;
-        var right = ((window.screen.availWidth / 4) + -visibleModalLength * 10) + "px";
+        var right = (this.modalRight + -visibleModalLength * 10) + "px";
         if ($(e.target).closest("tr").attr("tr-for") === "23")
             var _meta = this.PGobj.getDictMeta(this.PGobj.PropsObj[this.PGobj.CurProp]);
         else
             var _meta = this.PGobj.Metas;
 
         $(this.pgCXE_Cont_Slctr).css("right", right);
-        $(this.pgCXE_Cont_Slctr).css("top", (14 + visibleModalLength + "vh"));
+        $(this.pgCXE_Cont_Slctr).css("top", (this.modalTop + visibleModalLength * 7 + "px"));
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurProplabel = getObjByval(_meta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
@@ -192,7 +192,7 @@
             <div id="${this.CEctrlsContId}" class="CEctrlsCont"></div>
             </td>
 
-            <td style="padding: 0px;"><div id="${this.PGobj.wraperId}_InnerPG" class="inner-PG-Cont"><div></td>
+            <td style="padding: 0px;width: 44%;"><div id="${this.PGobj.wraperId}_InnerPG" class="inner-PG-Cont"><div></td>
             </tr>
             </tbody>
             </table>
@@ -445,7 +445,14 @@
         }.bind(this));
         this.PGobj.OSElist[ObjType] = data;
         if ($(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").length === 0) {
-            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append('<input class="searchinp" placeholder="🔎 Search object..." type="text"/>');
+            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(`
+                <div  class='input-group' style='width: 50%;'>
+                        <span class='input-group-addon'><i class='fa fa-search aria-hidden='true' class='input-group-addon'></i></span> 
+                        <input class="searchinp" placeholder="Search object..." type="text"/>
+                </div>`);
+
+                
+
             $(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").off("keyup").on("keyup", this.searchObj);
         }
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").off("focus").on("focus", this.OTileClick.bind(this, data));
@@ -594,7 +601,7 @@
 
     this.set9ColTiles = function (containerId, values) {
         if (this.Dprop && this.allCols.length === 0) {
-            $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource</h4>");
+            $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource for this property</h4>");
             return;
         }
         $("#" + containerId).empty();
@@ -766,8 +773,13 @@
     };
 
     this.Init = function () {
+        let modalSizePercent = 65;
+        let modalWidth = window.screen.availWidth * (modalSizePercent / 100);
+        let modalHeight = modalWidth / 1.574;
+        this.modalRight = window.screen.availWidth * ((1 - (modalSizePercent / 100)) / 2);
+        this.modalTop= ((window.screen.availHeight - modalHeight) / 2) - 15;
         var CXVE_html = '<div class="pgCXEditor-bg">'
-            + `<div class="pgCXEditor-Cont" style="width:${window.screen.availWidth / 2}px;right:${window.screen.availWidth / 4}px;">`
+            + `<div class="pgCXEditor-Cont" style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;">`
 
             + '<div class="modal-header">'
             + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'

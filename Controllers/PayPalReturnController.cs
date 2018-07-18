@@ -11,6 +11,8 @@ using ExpressBase.Web.BaseControllers;
 using ServiceStack;
 using ServiceStack.Redis;
 using Microsoft.AspNetCore.Mvc;
+using Flurl.Http;
+using System.Net.Http;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -40,21 +42,33 @@ namespace ExpressBase.Web.Controllers
             Console.WriteLine("Rejected By User");
         }
 
-        [HttpGet]
-        public IActionResult PaypalReturn(string res)
+        private async Task<HttpResponseMessage> Send(FlurlRequest request)
         {
-            Console.WriteLine("POST Request Headers : ");
-            foreach (var header in base.Request.Headers)
-            {
-                Console.WriteLine(header.Key + " : " + header.Value.ToString());
-            }
-            Console.WriteLine("\n\nPOST Request Body : ");
-            Console.WriteLine(GetStringFromStream(base.Request.Body));
-            Console.WriteLine("\n\nRESULT : " + res);
+            return await request.SendAsync(HttpMethod.Post); 
+        }
+
+        private async Task<string> GetresponseString(HttpResponseMessage response)
+        {
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        [HttpGet]
+        public IActionResult PaypalReturn(string res, string token,string tok)
+        {
+            Console.WriteLine("POST Request Headers : " + base.Request.ToJson());
+            
 
             if(res.ToLower().Trim() == "accept")
             {
-                HandleApproval();
+                Console.WriteLine("Before HttpPost");
+                FlurlClient flurlClient = new FlurlClient();
+                flurlClient.Headers.Add("Content-Type", "application/json");
+                flurlClient.Headers.Add("Authorization", "Bearer " + tok);
+                FlurlRequest fRequest = new FlurlRequest("https://api.sandbox.paypal.com/v1/payments/billing-agreements/" + token + "/agreement-execute/");
+                fRequest.Client = flurlClient;
+                var frespone = Send(fRequest).Result;
+                string responseString = GetresponseString(frespone).Result;
+                Console.WriteLine("HTTP Response : " + responseString);
             }
             else
             {

@@ -305,31 +305,32 @@
     };
 
     this.onDragendFn = function (el) {
-        var sibling = $(el).next();
+        var $sibling = $(el).next();
         var target = $(el).parent()[0];
-        var idx = sibling.index() - 1;
+        var idx = $sibling.index() - 1;
         if (target.id !== this.CE_all_ctrlsContId) {// target 2nd column
             if (this.editor === 7) {
-                if (sibling.length > 0)
+                if ($sibling.length > 0)
                     this.CElist.splice(idx, 0, this.movingObj);
                 else
                     this.CElist.push(this.movingObj);
             } else if (this.editor === 9 || this.editor === 8) {
-                if (sibling.length > 0)
+                if ($sibling.length > 0)
                     this.selectedCols.splice(idx, 0, this.movingObj);
                 else
                     this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24 || this.editor === 26) {
+                idx = this.allCols.indexOf(getObjByval(this.allCols, "name", $sibling.attr("id")));
                 this.movingObj[this.Dprop] = true;
                 this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
-                if (sibling.length > 0)
+                if ($sibling.length > 0)
                     this.allCols.splice(idx, 0, this.movingObj);
                 else
                     this.allCols.push(this.movingObj);
             }
         }
         else if (this.editor === 10) {
-            if (sibling.length > 0)
+            if ($sibling.length > 0)
                 this.allCols.splice(idx, 0, this.movingObj);
             else
                 this.allCols.push(this.movingObj);
@@ -614,7 +615,8 @@
             var type = control.$type.split(",")[0].split(".").pop();
             if (!(control.Name || control.name))
                 var label = control.EbSid;
-            var $tile = $('<div class="colTile" onclick="$(this).focus()" tabindex="1" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" tabindex="-1" class="close">&times;</button></div>');
+            var $tile = $(`<div class="colTile" onclick="$(this).focus()" is-customobj="${control["IsCustomColumn"] || false}" tabindex="1" id="` + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
+                + name + '<button type="button" tabindex="-1" class="close">' + (control["IsCustomColumn"] ? '<i class="fa fa-minus-circle"></i>' : '&times;') + '</button></div>');
             if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
@@ -675,7 +677,7 @@
 
     this.colTileCloseFn = function (e) {
         e.stopPropagation();
-        var $tile = $(e.target).parent().remove();
+        var $tile = $(e.target).closest(".colTile").remove();
         if (this.editor === 7) {
             this.PGobj.removeFromDD.bind(this.PGobj)($tile.attr("id"));
             var DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1)[0];
@@ -693,14 +695,24 @@
             this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1)[0]
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
-        else if (this.editor === 24 || this.editor === 26) {
+        else if (this.editor === 24) {
             getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
+        }
+
+        else if (this.editor === 26) {
+            if ($tile.attr("is-customobj") === "true") {// if delete
+                var delobj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", $tile.attr("id"))), 1)[0];
+            }
+            else {// if close
+                getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+                $("#" + this.CE_all_ctrlsContId).prepend($tile);
+            }
         }
     }.bind(this);
 
     this.colTileFocusFn = function (e) {
-        var $e = $(e.target);
+        var $e = $(e.target).closest(".colTile");
         var id = $e.attr("id");
         $(':focus').blur();
         if (!$e.hasClass("colTile")) {
@@ -732,11 +744,21 @@
         return isDictSubProp ? this.PGobj.PropsObj["CustomFields"].$values : this.PGobj.PropsObj;
     };
 
+    this.getMaxNumberFromItemName = function ($items) {
+        let tempArr = [];
+        $.each($items, function (i, el) {
+            var lastNum = parseInt(el.id.replace(/[^0-9]/g, '')) || 0;
+            tempArr.push(lastNum);
+        });
+        return tempArr.max();
+    };
+
     this.CE_AddFn = function () {
         var $DD = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected");
         var SelType = $DD.val();
         //let lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
-        let lastItemCount = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
+        //let lastItemCount = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
+        let lastItemCount = this.getMaxNumberFromItemName($(this.pgCXE_Cont_Slctr + " .CE-body .colTile"));
         var ShortName = $DD.text() + (lastItemCount + 1);
         var EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
         if (this.PGobj.CurProp === "Controls") {////////////// need CE test and correction
@@ -753,9 +775,10 @@
             obj.data = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
             obj[this.Dprop] = true;
             obj["IsCustomColumn"] = true;
-            this.selectedCols.push(obj);
+            this.selectedCols = this.getSelectedColsByProp(this.allCols);
             this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
             this.setSelColtiles();
+            $("#" + obj.name).attr("is-customobj", "true")
         }
         else
             this.setColTiles();

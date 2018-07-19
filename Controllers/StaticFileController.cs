@@ -14,8 +14,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
     public class StaticFileExtController : EbBaseExtController
@@ -339,6 +337,38 @@ namespace ExpressBase.Web.Controllers
         {
             List<FileMeta> resp = this.FileClient.Post(new InitialFileReq { Type = (FileClass)type });
             return resp;
+        }
+
+        [HttpPost]
+        public async Task<string> UploadLocAsync(string base64,string extra)
+        {
+
+            var dict = extra.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, string>>(extra);
+
+            UploadAsyncResponse res = new UploadAsyncResponse();
+            string Id = string.Empty;
+            string url = string.Empty;
+            byte[] myFileContent;
+            try
+            {
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+                uploadImageRequest.ImageInfo = new FileMeta();
+                string base64Norm = base64.Replace("data:image/png;base64,", "");
+                myFileContent = System.Convert.FromBase64String(base64Norm);
+                uploadImageRequest.ImageByte = myFileContent;
+                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;
+                uploadImageRequest.ImageInfo.FileName = String.Format("location_dp_{0}.{1}", dict["Name"], uploadImageRequest.ImageInfo.FileType);
+                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+
+                res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString() + "\n Response:" + res.ResponseStatus.Message);
+                return "upload failed";
+            }
+
+            return url;
         }
     }
 }

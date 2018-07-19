@@ -1,0 +1,185 @@
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="~/images/favicon.ico">
+    @* BOOTSTRAP CSS *@
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-checkbox.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />@*amal*@
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />@*amal*@
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
+
+    @* JQUERY CSS *@
+    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">@*jith*@
+    <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
+
+    @* OTHER CSS *@
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />@*jith*@
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.css" />@*amal*@
+
+    @* EB CSS *@
+    <link rel="stylesheet" type="text/css" href="~/css/GridStackStyle.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version=@bApnd />@*amal*@
+    <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version=@bApnd />@*amal*@
+
+    @* JQUERY JS *@
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>@*jith*@
+    <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/jquery.fontselect.min.js" asp-append-version=@bApnd></script>
+
+    @* BOOTSTRAP JS *@
+    <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>@*Dona*@
+    <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
+
+    @* OTHER JS *@
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>@*amal*@
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>@*amal*@
+    <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+    <script type="text/javascript" src="~/js/jwt-decode.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ss-utils.js" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbServerEvents/eventsource.min.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script type="text/javascript" src="~/js/ElementQueries.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>@*jith*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/js/plugins/piexif.min.js" type="text/javascript"></script>@*amal*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/js/plugins/sortable.min.js" type="text/javascript"></script>@*amal*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/js/plugins/purify.min.js" type="text/javascript"></script>@*amal*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>@*amal*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/js/fileinput.min.js"></script>@*amal*@
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.js"></script>@*amal*@
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>@*dona*@
+
+    @* EB JS *@
+    <script src="~/js/EbLoader.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script type="text/javascript" src="~/js/Eb_FontEditor.js" asp-append-version=@bApnd></script>
+    <script src="~/js/EbServerEvents/ServerEvents.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version=@bApnd></script>@*jith*@
+    <script type="text/javascript" src="~/js/Eb_ObjectCommon.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version=@bApnd></script>@*amal*@
+    <script type="text/javascript" src="~/js/Menu.js" asp-append-version=@bApnd></script>
+
+    @*code editor*@
+    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" asp-append-version=@bApnd>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
+    <script src="~/lib/codemirror/lib/codemirror.js"></script>
+    <script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
+    <script src="~/lib/codemirror/addon/hint/javascript-hint.js"></script>
+    <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
+    <script src="~/lib/codemirror/addon/hint/sql-hint.js"></script>
+    <script src="~/lib/codemirror/mode/sql/sql.js"></script>
+    <script src="~/lib/codemirror/addon/fold/foldcode.js"></script>
+    <script src="~/lib/codemirror/addon/fold/foldgutter.js"></script>
+    <script src="~/lib/codemirror/addon/fold/brace-fold.js"></script>
+    <script src="~/lib/codemirror/addon/fold/xml-fold.js"></script>
+    <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
+    <script src="~/lib/codemirror/mode/xml/xml.js"></script>
+    <script src="~/lib/codemirror/addon/hint/anyword-hint.js"></script>
+    <script src="~/lib/codemirror/mode/clike/clike.js"></script>
+    <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
+</head>
+<body>
+    <div id="tenatDtls" class="container-fluid">
+        @{
+            string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
+
+            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+            {
+                <div class="modal fade Eb_quick_menu" tabindex="-1" role="dialog" id='ObjModal'>
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="row mr-0">
+                                    <div class="col-md-3 col-lg-3 col-sm-3 pd-5 q_men_IMGsection text-center">
+                                        <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
+                                    </div>
+                                    <div class="col-md-9 col-lg-9 col-sm-9 header_topmenu" id="topmenu">
+                                        <div class="breadcrumb_wrapper"></div>
+                                        <button class="btn c_btn cls_btn pull-right" data-toggle="tooltip" title="Close" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
+                                        @{
+                                            if (ViewBag.wc == "dc")
+                                            {
+                                                <div class="dropdown drp_new pull-right">
+                                                    <button class="btn btn-default dropdown-toggle" type="button" id="newBuildermenu1" data-toggle="dropdown">
+                                                        <span class="fa fa-plus"></span>
+                                                        New Object
+                                                    </button>
+                                                    <ul class="dropdown-menu drp_new_wrapper" role="menu" id="drp_new_wrapper" aria-labelledby="newBuildermenu1"></ul>
+                                                </div>
+                                            }
+                                        }
+
+                                        <div class="searchBox pull-right">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control search_input" id="searchobj" placeholder="Search from all.">
+                                                <span class="input-group-addon search_icon"><i class="material-icons">search</i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="quick_menu_load" id="quick_menu_load"></div>
+                            </div>
+                            <div class="modal-body menu_wrapper">
+                                <div class="col-md-3 col-lg-3 pd-0 menu_sidebar">
+                                    <div id="EbsideBar" class="menu_sidebar_sub"></div>
+                                </div>
+                                <div class="col-md-9 col-lg-9 menu_workpane" id="ObjListCont">
+                                    <div id="objList" class="objList_Container">
+                                        <div class="menu_notifiction">Application empty.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer pwrd_by">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-9 pwrd_by-text">Powered by expressbase</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div id="layout_div" class="container-fluid main-cont">
+        @RenderBody()
+        @RenderSection("EbHead", false)
+    </div>
+</body>
+</html>
+<script>
+    var menu = new menujs('@ViewBag.wc');//init menu
+    $("#layout_div").data("menu", menu);
+    $('.Eb_Image').Lazy();
+</script>

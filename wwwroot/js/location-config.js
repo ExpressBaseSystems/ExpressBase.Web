@@ -17,7 +17,7 @@
         $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
 
         $(".solution_container").off("click").on("click", this.locationEdit.bind(this));
-        this.imageUploader("Logo_container", "#Logo_toggle", "#Logo_prev", { Name: "Logo" });
+        this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo" });
         $(`body`).off("click").on("click", ".delete_field", this.deleteConfig.bind(this));
     };
 
@@ -49,7 +49,7 @@
                 if (result > 1) {
                     o.KeyId = result;
                     this.AddKey(o);
-                    this.AddMeta([o]);
+                    this.Addmeta([o]);
                     this.data.push(o);
                     $("#add_new_key").modal("toggle");
                     this.clearInputs($("#add_new_key"));
@@ -62,7 +62,7 @@
         $(objectColl).each(function (i, l_item) {
             if (l_item.Type === "Text") {
                 $('#locspace').append(`
-					<div class="form-group">
+					<div class="form-group" locKey="${l_item.Name}">
                         <label class="col-sm-3">${l_item.Name} </label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control keyname" placeholder="Enter ${l_item.Name} " id=l_key${i} name="${l_item.Name}" value="">
@@ -71,13 +71,13 @@
 					`);
             }
             else if (l_item.Type === "Image") {
-                $('#locspace').append(`<div class="form-group">
-                        <label class="col-sm-3">Logo</label>
-                        <div class="col-sm-2">
+                $('#locspace').append(`<div class="form-group" locKey="${l_item.Name}">
+                        <label class="col-sm-3">${l_item.Name}</label>
+                        <div class="col-sm-3">
                             <input type="hidden" value="" name="${l_item.Name}"/>
                             <button key="${l_item.Name}" id="${l_item.Name}_toggle" class="btn btn-default">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
-                        <div class="col-md-7 logo_img_cont">
+                        <div class="col-md-6 logo_img_cont">
                             <img src="" class="img-responsive pull-right" id="${l_item.Name}_prev" />
                         </div>
                     </div>
@@ -199,7 +199,22 @@
     };
 
     this.deleteConfig = function (e) {
+        let name = $(e.target).closest("tr").attr("key");
+        $.post("../TenantUser/DeletelocConf", { id: this.getKeyId(name) }, function (result) {
+            if (result) {
+                $(e.target).closest("tr").remove();
+                $(`#locspace div[lockey='${name}']`).remove();
+            }
+        }.bind(this));
+    };
 
+    this.getKeyId = function (keyname) {
+        let r = "";
+        $(this.data).each(function (l, item) {
+            if (item.Name === keyname)
+                r = item.KeyId;
+        }.bind(this));
+        return r;
     };
 
     this.DeleteKey = function (e) {

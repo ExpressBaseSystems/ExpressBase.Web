@@ -523,7 +523,7 @@ namespace ExpressBase.Web.Controllers
 
         public bool CheckRestricted(string _sql)
         {
-            bool ContainsRestricted  = Regex.IsMatch(_sql.ToLower(), @"\b(create\s | update\s|delete\s|insert\s|alter\s|truncate\s|drop\s)");
+            bool ContainsRestricted  = Regex.IsMatch(_sql.ToLower(), @"\b(create\s|update\s|delete\s|insert\s|alter\s|truncate\s|drop\s)");
             return ContainsRestricted;
         }
     }

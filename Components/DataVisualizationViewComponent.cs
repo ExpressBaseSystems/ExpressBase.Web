@@ -41,10 +41,10 @@ namespace ExpressBase.Web.Components
             if (dvobj != null)
             {
                 dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
-                if (flag)
+                //if (flag)
                     ViewBag.data = getDVObject(dvobj);
-                else
-                    ViewBag.data = dvobj;
+                //else
+                //    ViewBag.data = dvobj;
             }
             ViewBag.dvRefId = dvRefId;
             //ViewBag.forWrap = forWrap;

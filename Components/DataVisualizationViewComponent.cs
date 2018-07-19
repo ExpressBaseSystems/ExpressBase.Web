@@ -104,6 +104,8 @@ namespace ExpressBase.Web.Components
                 if (tempCol != null)
                 {
                     oldcol.Data = tempCol.Data;
+                    if (oldcol.EbSid == null || oldcol.EbSid == "")
+                        oldcol.EbSid = oldcol.Type.ToString() + oldcol.Data;
                     NewColumns.Add(oldcol);
                 }
             }

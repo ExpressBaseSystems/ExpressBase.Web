@@ -166,7 +166,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.tmpPropertyChanged = function (obj, Pname) {
         this.isSecondTime = true;
-        //this.EbObject = obj;
         if (this.login == "dc")
             commonO.Current_obj = obj;
         else
@@ -174,8 +173,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
-                //this.EbObject.Columns.$values = [];
-                //this.EbObject.DSColumns.$values = [];
                 this.call2FD();
             }
         }
@@ -185,6 +182,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else if (Pname == "Columns") {
             console.log(obj);
+        }
+        else if (pname === "Formula") {
+            this.ValidateCalcExpression(obj);
         }
     }.bind(this);
 
@@ -2338,6 +2338,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.CreateRelationString = function () { };
+
+    this.ValidateCalcExpression = function (obj) {
+        $.ajax({
+            url: "../RB/ValidateCalcExpression",
+            type: "POST",
+            cache: false,
+            data: {
+                refid: this.EbObject.DataSourceRefId,
+                expression: atob(obj.ValueExpression)
+            },
+            success: function (result) {
+               
+            }.bind(this)
+        });
+    }
 
     this.start();
 };

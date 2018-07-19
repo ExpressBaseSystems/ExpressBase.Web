@@ -214,13 +214,14 @@
 /* Standard syntax */
 @keyframes example {
     from {
-        opacity: 0.8;
+        opacity: 0;
         transform: perspective(4000px) rotateY(90deg); /* Standard syntax */
     }
 
-    
+
 
     to {
+        opacity: 1;
         transform: perspective(4000px) rotateY(0deg); /* Standard syntax */
     }
 }

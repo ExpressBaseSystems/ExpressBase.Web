@@ -19,6 +19,7 @@ using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
 using ExpressBase.Common.JsonConverters;
 using ExpressBase.Web.BaseControllers;
+using System.Text.RegularExpressions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -174,7 +175,7 @@ namespace ExpressBase.Web.Controllers
             var obj = EbSerializers.Json_Deserialize(_json);
             if (obj is EbDataSource)
             {
-                bool ContainsRestricted = (obj as EbDataSource).Sql.ToLower().ContainsAny("update", "delete", "insert", "alter", "drop", "create", "truncate");
+                bool ContainsRestricted = CheckRestricted((obj as EbDataSource).Sql);
                 if (ContainsRestricted) return "RestrictedStatementinQuerry";
             }
             if (string.IsNullOrEmpty(_refid))
@@ -224,7 +225,7 @@ namespace ExpressBase.Web.Controllers
             var obj = EbSerializers.Json_Deserialize(_json);
             if (obj is EbDataSource)
             {
-                bool ContainsRestricted = (obj as EbDataSource).Sql.ToLower().ContainsAny("update", "delete", "insert", "alter", "drop", "create", "truncate");
+                bool ContainsRestricted = CheckRestricted((obj as EbDataSource).Sql);
                 if (ContainsRestricted) return "RestrictedStatementinQuerry";
             }
             if (string.IsNullOrEmpty(_refid))
@@ -233,19 +234,19 @@ namespace ExpressBase.Web.Controllers
                 if (uniqnameresp.IsUnique)
                 {
                     var ds = new EbObject_Create_New_ObjectRequest
-                    {
-                        Name = obj.Name,
-                        Description = obj.Description,
-                        Json = _json,
-                        Status = ObjectLifeCycleStatus.Dev,
-                        Relations = _rel_obj,
-                        IsSave = true,
-                        Tags = _tags,
-                        Apps = _apps
-                    };
+                {
+                    Name = obj.Name,
+                    Description = obj.Description,
+                    Json = _json,
+                    Status = ObjectLifeCycleStatus.Dev,
+                    Relations = _rel_obj,
+                    IsSave = true,
+                    Tags = _tags,
+                    Apps = _apps
+                };
 
-                    var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-                    refid = res.RefId;
+                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                refid = res.RefId;
                 }
                 else return "nameIsNotUnique";
             }
@@ -454,6 +455,7 @@ namespace ExpressBase.Web.Controllers
             var rlist = resultlist.Data;
             return rlist;
         }
+
         public string ChangeStatus(string _refid, string _changelog, string _status)
         {
             var ds = new EbObjectChangeStatusRequest();
@@ -499,25 +501,30 @@ namespace ExpressBase.Web.Controllers
         {
             var resultlist = this.ServiceClient.Get<EbObjectUpdateDashboardResponse>(new EbObjectUpdateDashboardRequest { Refid = refid });
             var rlist = resultlist.Data;
-            string _objname = "";
-            string _status = "";
-            string _vernum = "";
-            string[] _workcopies = { };
+            string objname = "";
+            string status = "";
+            string vernum = "";
+            string[] workcopies = { };
             string _tags = "";
             string _apps = "";
             EbObjectWrapper_Dashboard _dashbord_tiles = new EbObjectWrapper_Dashboard();
             foreach (var element in rlist)
             {
-                _objname = element.Name;
-                _status = element.Status;
-                _vernum = element.VersionNumber;
-                _workcopies = element.Wc_All;
+                objname = element.Name;
+                status = element.Status;
+                vernum = element.VersionNumber;
+                workcopies = element.Wc_All;
                 _tags = element.Tags;
                 _apps = element.Apps;
                 _dashbord_tiles = element.Dashboard_Tiles;
             }
-            return ViewComponent("ObjectDashboard", new { refid = refid, objname = _objname, status = _status, vernum = _vernum, workcopies = _workcopies, _tags = _tags, _apps = _apps, _dashbord_tiles = _dashbord_tiles });
+            return ViewComponent("ObjectDashboard", new { refid, objname, status = status, vernum, workcopies,_tags, _apps, _dashbord_tiles });
         }
 
+        public bool CheckRestricted(string _sql)
+        {
+            bool ContainsRestricted  = Regex.IsMatch(_sql.ToLower(), @"\b(create\s|update\s|delete\s|insert\s|alter\s|truncate\s|drop\s)");
+            return ContainsRestricted;
+        }
     }
 }

@@ -1,0 +1,193 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts
+@using ExpressBase.Common
+@using ExpressBase.Common.LocationNSolution;
+@using Newtonsoft.Json;
+
+@{
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+@await Component.InvokeAsync("PageHeaderCommon")
+
+<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
+<link href="~/css/EbOnBoarding/eb-assets.style.css" rel="stylesheet" />
+<script type="text/javascript" src="~/js/location-config.js"></script>@*dona*@
+
+<div class="row s-dash-container">
+    <div class="pd-0 tdasboard-sidebar">
+        <div class="t-container">
+            <ul class="list-group menuwrapper_ul_outer">
+                <li class="list-group-item outer_li">Solutions<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
+                <li class="list-group-item outer_li">Billing<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
+                <li class="list-group-item outer_li">Support<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
+            </ul>
+        </div>
+    </div>
+    <div class="s-dash-workplace">
+        <div class="col-md-12 pd-0 s-dash-solution-desc" style="margin-bottom:5px;">
+            <div class="col-md-10" style="padding-left: 3px;">
+                <h3 class="mr-t-0">Locations <span class="apps_count"></span></h3>
+            </div>
+            <div class="col-md-2 pd-0">
+                <a class="btn btn_color_bl pull-right" data-toggle="modal" data-target="#create_loc_mod">
+                    Add New Location
+                </a>
+            </div>
+        </div>
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item active" style="width:50%;">
+                    <a class="nav-link" data-toggle="tab" href="#locations_tab" role="tab">
+                        <i class="fa fa-list" aria-hidden="true"></i> Locations
+                    </a>
+                </li>
+                <li class="nav-item" style="width:50%;">
+                    <a class="nav-link" data-toggle="tab" href="#location_conf" role="tab"><i class="fa fa-cogs" aria-hidden="true"></i> Location Config</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="locations_tab" role="tabpanel">
+                    @foreach (KeyValuePair<int, EbSolutionLocation> loc in ViewBag.Locations)
+                    {
+                        <div class="solution_container" locid=@ViewBag.Locations[loc.Key].LocId>
+                            <div class="solution_container_pd hoveron_block">
+                                <div class='col-md-1 pd-0'>
+
+                                </div>
+                                <div class="col-md-11">
+                                    <h4 class='head4'>@ViewBag.Locations[loc.Key].LongName</h4>
+                                    <p class='text-justify'>@ViewBag.Locations[loc.Key].ShortName</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="tab-pane location_conf" id="location_conf" role="tabpanel">
+                    <div class="form-inline btn_container">
+                        <button class="btn btn-default pull-right" id="createconfig">Configure</button>
+                        <button class="btn btn-default pull-right" data-toggle="modal" data-target="#add_new_key" id="addkey">Add Key</button>
+                    </div>
+                    <form class="form-horizontal conf_container" id="textspace" method="post">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Key Name</th>
+                                    <th scope="col" class="text-center">Required</th>
+                                    <th scope="col" class="text-center">Type</th>
+                                    <th scope="col" class="text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr count="1">
+                                    <td>Name</td>
+                                    <td class="text-center"><i class="fa fa-check fa-green"></i></td>
+                                    <td class="text-center">Text</td>
+                                    <td class="text-center"></td>
+                                </tr>
+                                <tr count="2">
+                                    <td>Short Name</td>
+                                    <td class="text-center"><i class="fa fa-check fa-green"></i></td>
+                                    <td class="text-center">Text</td>
+                                    <td class="text-center"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        @*<div class="form-group">
+                                <label class="col-md-1 index">Key 1</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="Enter Name" name="keyname" value="Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-1 index">Key 2</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="Enter Short Name" name="keyname" value="Short Name">
+                                </div>
+                            </div>*@
+                    </form>
+                </div>
+            </div>
+            @*<div class="Locations_container">
+
+                </div>*@
+        </div>
+    </div>
+</div>
+<div class="modal fade create_loc_mod" id="create_loc_mod" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New Location</h4>
+            </div>
+            <div class="modal-body new_location_bdy">
+                <form method="post" id="locspace">
+                    <input type="hidden" name="LocId" />
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Name </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control keyname" placeholder="Enter Name" name="longname" id="lname" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Short Name </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control keyname" placeholder="Enter Short Name" name="shortname" id="sname" value="">
+                        </div>
+                    </div>
+                    <input type="submit" style="display:none;" id="new_loc_submit" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary pull-right" onclick="$('#new_loc_submit').click();" value="" id="createloc">Add</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade create_loc_mod" id="add_new_key" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Key</h4>
+            </div>
+            <div class="modal-body new_location_bdy">
+                <form>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Key Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="KeyName" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Required</label>
+                        <div class="col-sm-9">
+                            <input type="checkbox" name="IsRequired" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Type</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="KeyType">
+                                <option value="Text">Text</option>
+                                <option value="Image">Image</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-color_bl pull-right" id="add_key_btn">Add</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+   @{
+       var locs = JsonConvert.SerializeObject(ViewBag.Locations);
+   }
+      var Loc_ = new Eb_locationMeta(@Html.Raw(ViewBag.Config),@Html.Raw(locs));
+</script>

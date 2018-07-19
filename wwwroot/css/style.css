@@ -1,4 +1,7 @@
-.alt {background-color: rgb(243, 249, 249);}
+.alt {
+    background-color: rgb(243, 249, 249);
+}
+
 body {
     padding: 0 !important;
     --ebbg: #0280db;
@@ -14,22 +17,79 @@ body {
     --fontf: Montserrat;
     --eb-black: #272c33;
     --eb-black-color: #c8c9ce;
+    /*jith*/
+    --colorDDD: #ddf;
+    --sild1pxDDD: solid 1px var(--colorDDD);
+    --pgTdBorder: solid 1px #eeeeff;
+    /*gradients*/
+    /*--gbm: -webkit-gradient(linear, left top, right bottom, color-stop(0.44, #336699), color-stop(0.16, #49b18f), color-stop(0.92, rgb(220, 9, 144)));*/
+    --gbm: -webkit-gradient(linear, left top, left bottom, color-stop(0.44, #336689), color-stop(0.16, #235187), color-stop(0.92, rgb(61, 115, 140)));
+    --blackpipe: -webkit-linear-gradient(top, #4c4c4c 3%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 46%,#000000 53%,#111111 64%,#2b2b2b 82%,#1c1c1c 94%,#131313 100%);
+    --blum: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.86, #369), color-stop(0.72, rgb(73,125,189)));
 }
-.mb {padding-bottom: 5em;}
-.mt {padding-top: 5em;}
-    .mt:first-child {padding-top: 4em;}
-.mt0{margin:0;}
-.h_b {margin-bottom: 2em;}
-.eb_font_H {font-weight: 600;font-size: 2.6rem;color: #656565;font-family: Montserrat;}
-.eb_font_T {font-weight: 400;color: #828181;font-family: Montserrat;}
-.nopadding {padding: 0;}
-.pd-b-0{padding-bottom:0 !important;}
-.pd-l-0{padding-left:0;}
-.pd-r-0{padding-right:0;}
-.jumb {box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);}
-    .jumb:hover {transform: translateY(-1px);box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);}
+
+.mb {
+    padding-bottom: 5em;
+}
+
+.mt {
+    padding-top: 5em;
+}
+
+    .mt:first-child {
+        padding-top: 4em;
+    }
+
+.mt0 {
+    margin: 0;
+}
+
+.h_b {
+    margin-bottom: 2em;
+}
+
+.eb_font_H {
+    font-weight: 600;
+    font-size: 2.6rem;
+    color: #656565;
+    font-family: Montserrat;
+}
+
+.eb_font_T {
+    font-weight: 400;
+    color: #828181;
+    font-family: Montserrat;
+}
+
+.nopadding {
+    padding: 0;
+}
+
+.pd-b-0 {
+    padding-bottom: 0 !important;
+}
+
+.pd-l-0 {
+    padding-left: 0;
+}
+
+.pd-r-0 {
+    padding-right: 0;
+}
+
+.jumb {
+    box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+}
+
+    .jumb:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+    }
 /****** LOGIN MODAL ******/
-.login_spiner {display:none;}
+.login_spiner {
+    display: none;
+}
+
 .log_error {
     display: none;
     max-width: 400px;
@@ -46,30 +106,37 @@ body {
     font-size: 15px;
     margin-left: 28.2%;
 }
+
 .eb_login {
     height: 100vh;
     max-height: 100vh;
     background-color: #f9f9f9;
 }
+
 .log_error_close {
     position: absolute;
     right: 22px;
 }
+
 .inputEmail {
-    border-top-right-radius:4px !important;
-    border-bottom-right-radius:4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
 }
+
 .remembrpw {
     font-size: 13px;
     color: #898a8a;
-    margin-bottom:2rem;
+    margin-bottom: 2rem;
 }
+
 .mb-25 {
-    margin-bottom:25px;
+    margin-bottom: 25px;
 }
-.eb_login .container{
-    height:inherit;
+
+.eb_login .container {
+    height: inherit;
 }
+
 .login_container {
     max-width: 400px;
     width: 100% !important;
@@ -83,81 +150,93 @@ body {
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     position: relative;
 }
+
     .login_container form {
         padding: 30px;
     }
+
     .login_container h1 {
         font-size: 1.8em;
         margin-bottom: 10px;
         font-weight: 300;
         margin-top: 10px;
     }
-.login_container a {
-    text-decoration: none;
-    color: #666;
-    text-align: center;
-    display: inline-block;
-}
 
-.login_container .signin-btn {
-    width: 100%;
-    background-color: #31d031;
-    color: white;
-}
+    .login_container a {
+        text-decoration: none;
+        color: #666;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .login_container .signin-btn {
+        width: 100%;
+        background-color: #31d031;
+        color: white;
+    }
+
 .login-sec-image {
     width: 100%;
     padding-top: 10px;
     padding-bottom: 15px;
 }
-.login-sec-image img{
-   height:50px;
-}
+
+    .login-sec-image img {
+        height: 50px;
+    }
 /*end login*/
 /*       Slider       */
-.w-100{
-    width:100%;
+.w-100 {
+    width: 100%;
 }
 
 /*tenant logoin page*/
-.lg_content{
-
+.lg_content {
 }
+
 .h100andflex {
     height: 100%;
     padding-top: 65px;
     display: flex;
     align-items: center;
 }
+
 .m-l-60 {
     float: right;
     margin-right: 30px;
     margin-top: unset;
 }
+
 .info_sec_log_container {
     position: relative;
     color: #777474;
     font-family: Montserrat;
     line-height: 2.5em;
 }
+
     .info_sec_log_container h4 {
         font-size: 35px;
         font-weight: 300;
     }
+
     .info_sec_log_container p {
         font-size: 20px;
         font-weight: 300;
     }
+
 .lg_img {
     width: 93%;
     position: relative;
     left: 0;
     margin-top: -100px;
 }
-.lg_img img{
-    width:100%;
-}
-.prelative{
-    position:relative;
+
+    .lg_img img {
+        width: 100%;
+    }
+
+.prelative {
+    position: relative;
 }
 /***end*****/
 /*forgetpassword msgBox*/
@@ -259,10 +338,9 @@ Navigation bar
 
 /*Responsive media queries*/
 @media (max-width: 768px) {
-    
 }
+
 @media (min-width: 451px) and (max-width: 768px) {
-    
 }
 
 @media (min-width: 450px) and (max-width: 800px) {
@@ -281,11 +359,13 @@ Navigation bar
         display: none;
     }
 }
+
 @media (min-width: 20px) and (max-width: 450px) {
     .m-l-60 {
         float: unset;
         margin-right: unset;
     }
+
     .ext-pageheader .navbar-collapse {
         text-align: center;
     }
@@ -362,43 +442,43 @@ Navigation bar
     color: rgb(255, 255, 255);
     padding: 12px;
     border-radius: 50%;
-    z-index:1;
+    z-index: 1;
 }
 
 /*chart.....................................................*/
 
- #charttype {
+#charttype {
     display: flex;
     flex-direction: column;
 }
 
- .chartBody {
+.chartBody {
     display: flex;
     flex-direction: row;
 }
 
- .divLLType {
+.divLLType {
     margin: 10px;
     cursor: pointer;
 }
 
-     .divLLType:hover {
+    .divLLType:hover {
         background-color: #d0cbf9;
     }
 
- .chartHeader {
+.chartHeader {
     background-color: #e4dcdc;
     font-size: 13px;
     padding-left: 10px;
 }
 
- .chartname {
+.chartname {
     font-size: 11px;
     padding-left: 8px;
     margin-top: 3px;
 }
 
-#charttype img{
+#charttype img {
     height: 40px;
 }
 
@@ -450,6 +530,7 @@ Navigation bar
         left: 100%;
     }
 }
+
 .loader_mask_EB {
     width: 100%;
     height: 100%;
@@ -462,8 +543,9 @@ Navigation bar
     justify-content: center;
     align-items: center;
 }
+
 .eb_common_loader {
-    bottom:0;
+    bottom: 0;
 }
 /*eb loader css end*/
 .lds-spinner {
@@ -666,3 +748,35 @@ Navigation bar
 .disabled {
     cursor: auto !important;
 }
+/*
+    Dragula style BEGIN  https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css
+*/
+
+.gu-mirror {
+    position: fixed !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    opacity: .8;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    filter: alpha(opacity=80)
+}
+
+.gu-hide {
+    display: none !important
+}
+
+.gu-unselectable {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important
+}
+
+.gu-transit {
+    opacity: .2;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+    filter: alpha(opacity=20)
+}
+/*
+    Dragula style END
+*/

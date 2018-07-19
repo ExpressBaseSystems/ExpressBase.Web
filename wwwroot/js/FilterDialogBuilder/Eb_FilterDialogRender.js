@@ -77,8 +77,8 @@
         this.onChangeExeFlag = false;
         $.each(this.filterObj.controls.$values, function (k, cObj) {
             //creating onChangeExeFuncs and binding to dom elements
-            if (cObj.onChangeExe && cObj.onChangeExe !== '') {
-                this.onChangeExeFuncs[cObj.name] = new Function("form", atob(cObj.onChangeExe));
+            if (cObj.onChange && cObj.onChange !== '') {
+                this.onChangeExeFuncs[cObj.name] = new Function("form", atob(cObj.onChange));
                 if (cObj.objType === 'TextBox') {
                     $("body").on("change", ('#' + cObj.name), this.ctrlValueChanged.bind(this, cObj.name));
                 }
@@ -100,8 +100,11 @@
 
     this.initialLoad = function () {
         $.each(this.filterObj.controls.$values, function (k, cObj) {
-            if (cObj.objType === 'RadioGroup') {
-                $("body input[name='" + cObj.name + "']:eq(0)").prop("checked", true).trigger("change");
+            if (cObj.objType === 'RadioGroup' && cObj.onChange && cObj.onChange !== '') {
+                if(cObj.defaultValue !== "")
+                    $("body input[name='" + cObj.name + "'][value='" + cObj.defaultValue+"']").prop("checked", true).trigger("change");
+                else
+                    $("body input[name='" + cObj.name + "']:eq(0)").prop("checked", true).trigger("change");
                 return false;
             }
         });

@@ -71,6 +71,12 @@ namespace ExpressBase.Web2.Controllers
             var resp = ServiceClient.Post<SaveLocationMetaResponse>(new SaveLocationMetaRequest { Locid = Convert.ToInt32(locid), Longname = lname, Shortname = sname, Img = img, ConfMeta = meta });
             return resp.Id;
         }
+
+        public int DeletelocConf(int id)
+        {
+            var resp = ServiceClient.Post<DeleteLocResponse>(new DeleteLocRequest { Id = id});
+            return resp.id;
+        }
     }
 }
 

@@ -103,14 +103,14 @@
     this.pgCXE_BtnClicked = function (e) {
         this.curCXEbtn = $(e.target);
         var visibleModalLength = $('.pgCXEditor-bg').filter(function () { return $(this).css('display') !== 'none'; }).length;
-        var right = ((window.screen.availWidth / 4) + -visibleModalLength * 10) + "px";
+        var right = (this.modalRight + -visibleModalLength * 10) + "px";
         if ($(e.target).closest("tr").attr("tr-for") === "23")
             var _meta = this.PGobj.getDictMeta(this.PGobj.PropsObj[this.PGobj.CurProp]);
         else
             var _meta = this.PGobj.Metas;
 
         $(this.pgCXE_Cont_Slctr).css("right", right);
-        $(this.pgCXE_Cont_Slctr).css("top", (14 + visibleModalLength + "vh"));
+        $(this.pgCXE_Cont_Slctr).css("top", (this.modalTop + visibleModalLength * 7 + "px"));
         this.editor = parseInt(e.target.getAttribute("editor"));
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurProplabel = getObjByval(_meta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
@@ -136,7 +136,7 @@
 
         $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
         if (this.editor !== 8)
-            $("#" + this.CEctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+            $("#" + this.CEctrlsContId).off("focus", ".colTile").on("focus", ".colTile", this.colTileFocusFn.bind(this));
         $("#" + this.PGobj.wraperId + ' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
         $("#" + this.PGobj.wraperId + ' .modal-header').off("click", ".close").on("click", ".close", this.CXVE_close.bind(this));
 
@@ -192,7 +192,7 @@
             <div id="${this.CEctrlsContId}" class="CEctrlsCont"></div>
             </td>
 
-            <td style="padding: 0px;"><div id="${this.PGobj.wraperId}_InnerPG" class="inner-PG-Cont"><div></td>
+            <td style="padding: 0px;width: 44%;"><div id="${this.PGobj.wraperId}_InnerPG" class="inner-PG-Cont"><div></td>
             </tr>
             </tbody>
             </table>
@@ -250,7 +250,7 @@
         }
         else if (this.editor === 10) {
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
-            $("#" + this.CE_all_ctrlsContId).off("click", ".colTile").on("click", ".colTile", this.colTileFocusFn.bind(this));
+            $("#" + this.CE_all_ctrlsContId).off("focus", ".colTile").on("focus", ".colTile", this.colTileFocusFn.bind(this));
         }
         else if (this.editor === 24 || this.editor === 26) {
             if (this.editor === 26) {
@@ -305,31 +305,32 @@
     };
 
     this.onDragendFn = function (el) {
-        var sibling = $(el).next();
+        var $sibling = $(el).next();
         var target = $(el).parent()[0];
-        var idx = sibling.index() - 1;
+        var idx = $sibling.index() - 1;
         if (target.id !== this.CE_all_ctrlsContId) {// target 2nd column
             if (this.editor === 7) {
-                if (sibling.length > 0)
+                if ($sibling.length > 0)
                     this.CElist.splice(idx, 0, this.movingObj);
                 else
                     this.CElist.push(this.movingObj);
             } else if (this.editor === 9 || this.editor === 8) {
-                if (sibling.length > 0)
+                if ($sibling.length > 0)
                     this.selectedCols.splice(idx, 0, this.movingObj);
                 else
                     this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24 || this.editor === 26) {
+                idx = this.allCols.indexOf(getObjByval(this.allCols, "name", $sibling.attr("id")));
                 this.movingObj[this.Dprop] = true;
                 this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
-                if (sibling.length > 0)
+                if ($sibling.length > 0)
                     this.allCols.splice(idx, 0, this.movingObj);
                 else
                     this.allCols.push(this.movingObj);
             }
         }
         else if (this.editor === 10) {
-            if (sibling.length > 0)
+            if ($sibling.length > 0)
                 this.allCols.splice(idx, 0, this.movingObj);
             else
                 this.allCols.push(this.movingObj);
@@ -440,19 +441,26 @@
         $.each(data, function (name, val) {
             if (name)
                 $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" is-selected="false" tabindex="1" name ="' + name + '">' + name.replace("<", "&lt;").replace(">", "&gt;")
-                    + '<i class="fa fa-chevron-circle-right pull-right ColT-right-arrow"  aria-hidden="true"></i></div>');
+                    + '<i class="fa fa-chevron-circle-right pull-right ColT-right-arrow" aria-hidden="true"></i></div>');
             ObjType = val[0].refId.split("-")[2];
         }.bind(this));
         this.PGobj.OSElist[ObjType] = data;
         if ($(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").length === 0) {
-            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append('<input class="searchinp" placeholder="🔎 Search object..." type="text"/>');
+            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(`
+                <div  class='input-group' style='width: 50%;'>
+                        <span class='input-group-addon'><i class='fa fa-search aria-hidden='true' class='input-group-addon'></i></span> 
+                        <input class="searchinp" placeholder="Search object..." type="text"/>
+                </div>`);
+
+
+
             $(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").off("keyup").on("keyup", this.searchObj);
         }
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").off("focus").on("focus", this.OTileClick.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").off("keydown").on("keydown", this.OTileKeydown.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("click").on("click", ".colTile", this.VTileClick.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("keydown").on("keydown", ".colTile", this.VTileKeydown.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("dblclick").on("dblclick", ".colTile", this.VTileDblClick.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").off("keydown").on("keydown", this.OTileKeydown.bind(this));
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("click").on("click", ".colTile", this.VTileClick.bind(this));
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("keydown").on("keydown", ".colTile", this.VTileKeydown.bind(this));
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("dblclick").on("dblclick", ".colTile", this.VTileDblClick.bind(this));
         if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
             var $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
@@ -500,7 +508,7 @@
         return ObjName;
     };
 
-    this.OTileKeydown = function (data) {
+    this.OTileKeydown = function () {
         var $e = $(event.target).closest(".colTile");
         if (event.which === 13 || event.which === 39) {
             $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile:visible:first").focus();
@@ -520,7 +528,7 @@
         $("#" + this.PGobj.wraperId + " .modal-footer [name=CXE_OK]").click();
     };
 
-    this.VTileKeydown = function (data) {
+    this.VTileKeydown = function () {
         var $e = $(event.target).closest(".colTile");
         if (event.which === 32) {
             $e.click();
@@ -594,7 +602,7 @@
 
     this.set9ColTiles = function (containerId, values) {
         if (this.Dprop && this.allCols.length === 0) {
-            $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource</h4>");
+            $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource for this property</h4>");
             return;
         }
         $("#" + containerId).empty();
@@ -607,7 +615,8 @@
             var type = control.$type.split(",")[0].split(".").pop();
             if (!(control.Name || control.name))
                 var label = control.EbSid;
-            var $tile = $('<div class="colTile" id="' + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>' + name + '<button type="button" tabindex="-1" class="close">&times;</button></div>');
+            var $tile = $(`<div class="colTile" onclick="$(this).focus()" is-customobj="${control["IsCustomColumn"] || false}" tabindex="1" id="` + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
+                + name + '<button type="button" tabindex="-1" class="close">' + (control["IsCustomColumn"] ? '<i class="fa fa-minus-circle"></i>' : '&times;') + '</button></div>');
             if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
@@ -668,7 +677,7 @@
 
     this.colTileCloseFn = function (e) {
         e.stopPropagation();
-        var $tile = $(e.target).parent().remove();
+        var $tile = $(e.target).closest(".colTile").remove();
         if (this.editor === 7) {
             this.PGobj.removeFromDD.bind(this.PGobj)($tile.attr("id"));
             var DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1)[0];
@@ -686,14 +695,24 @@
             this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1)[0]
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
-        else if (this.editor === 24 || this.editor === 26) {
+        else if (this.editor === 24) {
             getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
+        }
+
+        else if (this.editor === 26) {
+            if ($tile.attr("is-customobj") === "true") {// if delete
+                var delobj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", $tile.attr("id"))), 1)[0];
+            }
+            else {// if close
+                getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+                $("#" + this.CE_all_ctrlsContId).prepend($tile);
+            }
         }
     }.bind(this);
 
     this.colTileFocusFn = function (e) {
-        var $e = $(e.target);
+        var $e = $(e.target).closest(".colTile");
         var id = $e.attr("id");
         $(':focus').blur();
         if (!$e.hasClass("colTile")) {
@@ -725,10 +744,21 @@
         return isDictSubProp ? this.PGobj.PropsObj["CustomFields"].$values : this.PGobj.PropsObj;
     };
 
+    this.getMaxNumberFromItemName = function ($items) {
+        let tempArr = [];
+        $.each($items, function (i, el) {
+            var lastNum = parseInt(el.id.replace(/[^0-9]/g, '')) || 0;
+            tempArr.push(lastNum);
+        });
+        return tempArr.max();
+    };
+
     this.CE_AddFn = function () {
         var $DD = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected");
         var SelType = $DD.val();
-        var lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
+        //let lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
+        //let lastItemCount = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
+        let lastItemCount = this.getMaxNumberFromItemName($(this.pgCXE_Cont_Slctr + " .CE-body .colTile"));
         var ShortName = $DD.text() + (lastItemCount + 1);
         var EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
         if (this.PGobj.CurProp === "Controls") {////////////// need CE test and correction
@@ -742,15 +772,17 @@
         if (this.editor === 26) {
             if (!obj.name)
                 obj.name = ShortName;
+            obj.data = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
             obj[this.Dprop] = true;
             obj["IsCustomColumn"] = true;
-            this.selectedCols.push(obj);
+            this.selectedCols = this.getSelectedColsByProp(this.allCols);
             this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
             this.setSelColtiles();
+            $("#" + obj.name).attr("is-customobj", "true")
         }
         else
             this.setColTiles();
-        $("#" + EbSid).click();
+        $("#" + obj.name).focus();
     };
 
     this.changeCopyToRef = function () {
@@ -766,8 +798,13 @@
     };
 
     this.Init = function () {
+        let modalSizePercent = 65;
+        let modalWidth = window.screen.availWidth * (modalSizePercent / 100);
+        let modalHeight = modalWidth / 1.574;
+        this.modalRight = window.screen.availWidth * ((1 - (modalSizePercent / 100)) / 2);
+        this.modalTop = ((window.screen.availHeight - modalHeight) / 2) - 15;
         var CXVE_html = '<div class="pgCXEditor-bg">'
-            + `<div class="pgCXEditor-Cont" style="width:${window.screen.availWidth / 2}px;right:${window.screen.availWidth / 4}px;">`
+            + `<div class="pgCXEditor-Cont" style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;">`
 
             + '<div class="modal-header">'
             + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'
@@ -778,7 +815,7 @@
             + '<div class="modal-footer">'
             + '<div class="modal-footer-body">'
             + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn"  onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);">OK</button>'
+            + '<button type="button" name="CXE_OK" class="btn" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);">OK</button>'
             + '</div>'
 
             + '</div>'

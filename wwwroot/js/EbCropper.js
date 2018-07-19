@@ -10,10 +10,12 @@
     this.fileurl = null;
     this.cropie = null;
     this.getFile = function (b65) { return b65; }//return b65 croped image
+    this.getObjId = function (id) { };
     this.Type = option.Type;//type of image logo or dp
     //this.ResizeViewPort = option.ResizeViewPort ? true : false;//enable resizing of viewport
     this.Preview = option.Preview||null;//previw el should be uniq and it sould be an img tag
     this.Tid = option.Tid || null;
+    this.Extra = option.Extra || {};
 
     var _typeRatio = {
         'logo': {
@@ -27,6 +29,10 @@
         'doc': {
             width: 200,
             height: 200
+        },
+        'location': {
+            width: 250,
+            height: 100
         }
     };
 
@@ -93,7 +99,7 @@
 
         this.ss = new EbServerEvents({ ServerEventUrl: url, Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (m, e) {
-            
+            this.getObjId(m);
         }.bind(this);//server event return id after upload success
     };
 
@@ -115,7 +121,7 @@
     };
 
     this.modalHide = function () {
-        this.ss.stopListening();
+
     };
 
     this.saveCropfy = function () {
@@ -124,12 +130,20 @@
     };
 
     this.upload = function () {
-        var url = this.Type === "logo" ? "../StaticFile/UploadLogoAsync" : "../StaticFile/UploadDPAsync";
+        var url = "";
+        if (this.Type === "logo")
+            url = "../StaticFile/UploadLogoAsync";
+        else if (this.Type === "dp")
+            url = "../StaticFile/UploadDPAsync";
+        else if (this.Type === "location")
+            url = "../StaticFile/UploadLocAsync";
+
         if (this.fileurl) {
         this.crop();
             $.post(url, {
                 'base64': this.fileurl,
-                'tid': this.Tid
+                'tid': this.Tid,
+                'extra': JSON.stringify(this.Extra)//object
             });
             this.toggleModal();
         }

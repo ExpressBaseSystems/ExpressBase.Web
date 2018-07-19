@@ -48,10 +48,10 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpPost]
-        public bool CreateConfig(List<EbLocationConfig> keys)
+        public int CreateConfig(EbLocationConfig conf)
         {
-            var resp = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { ConfString = keys });
-            return true;
+            var resp = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { Conf = conf });
+            return resp.Id;
         }
 
         [HttpGet]
@@ -64,11 +64,12 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpPost]
-        public bool CreateLocation(string locid, string lname, string sname, string img, string meta)
+        public int CreateLocation(string locid, string lname, string sname, string img, string meta)
         {
-            img = "../image";
+            if (img == null)
+                img = "../img";
             var resp = ServiceClient.Post<SaveLocationMetaResponse>(new SaveLocationMetaRequest { Locid = Convert.ToInt32(locid), Longname = lname, Shortname = sname, Img = img, ConfMeta = meta });
-            return true;
+            return resp.Id;
         }
     }
 }

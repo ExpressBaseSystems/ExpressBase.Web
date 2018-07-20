@@ -1,33 +1,39 @@
 ﻿var Eb_locationMeta = function (Config, locations, tid) {
     this.Locations = locations;
     this.data = Config;
-    this.counter = 0;
-    this.trCount = 2;
-    this.Configaration = [];
     this.LocationObj = {};
     this.Cropies = {};
     this.Tid = tid || null;
     this.init = function () {
         $(this.data).each(function (i, item) {
             this.AddKey(item);
-            this.Addmeta(this.data);
         }.bind(this));
-
+        this.Addmeta(this.data);
         $('#add_key_btn').on('click', this.AddNewKey.bind(this));//new key
         $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
 
         $(".solution_container").off("click").on("click", this.locationEdit.bind(this));
-        this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo" });
+        this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo",FileName:"" },false);
         $(`body`).off("click").on("click", ".delete_field", this.deleteConfig.bind(this));
+        $("#locspace input[name='longname']").on("change", this.setLocNameToImg.bind(this));
     };
 
-    this.AddKey = function (item) {
-        if (this.uniqCheck(item)) {
+    this.setLocNameToImg = function (e) {
+        $(".disablebtn").prop("disabled", false);
+        this.Cropies['Logo'].Extra.FileName = $(e.target).val() + this.Cropies['Logo'].Extra.Name;
+        $(this.data).each(function (i, item) {
+            if (item.Type === "Image") {
+                this.Cropies[item.Name].Extra.FileName = $(e.target).val() + this.Cropies[item.Name].Extra.Name;
+            }
+        }.bind(this));
+    };
+
+    this.AddKey = function (item,ispush) {
             let icon = ""; let btn = `<i class="fa fa-trash delete_field"></i>`;
-            item = item || { Name: "", Isrequired: false, KeyId: "" };
-            if (item.Isrequired === "T")
+            item = item || { Name: "", IsRequired: false, Id: "" };
+            if (item.IsRequired)
                 icon = `<i class="fa fa-check fa-green"></i>`;
-            if (item.Name === "Name" || item.Name === "Short Name" || item.Name === "Logo")
+            if (item.Name === "Name" || item.Name === "ShortName" || item.Name === "Logo")
                 btn = "";
             $('#textspace tbody').append(`<tr key="${item.Name}">
                                     <td>${item.Name}</td>
@@ -35,20 +41,20 @@
                                     <td class="text-center">${item.Type}</td>
                                     <td class="text-center">${btn}</td>
                                 </tr>`);
-            this.Configaration.push(item);
-        }
+        if (ispush)
+            this.data.push(item);
     };
 
     this.AddNewKey = function () {
         var o = new Object();
         o.Name = $("input[name='KeyName']").val();
-        o.Isrequired = $("input[name='IsRequired']").is(":checked") ? "T" : "F";
+        o.IsRequired = $("input[name='IsRequired']").is(":checked") ? true : false;
         o.Type = $("select[name='KeyType']").val();
-        if (this.validateForm(o)) {
+        if (this.uniqCheckCF(o)) {
             $.post("../TenantUser/CreateConfig", { conf: o }, function (result) {
                 if (result > 1) {
-                    o.KeyId = result;
-                    this.AddKey(o);
+                    o.Id = result;
+                    this.AddKey(o, true);
                     this.Addmeta([o]);
                     this.data.push(o);
                     $("#add_new_key").modal("toggle");
@@ -56,6 +62,8 @@
                 }
             }.bind(this));
         }
+        else
+            alert("key exist");
     };
 
     this.Addmeta = function (objectColl) {
@@ -75,19 +83,20 @@
                         <label class="col-sm-3">${l_item.Name}</label>
                         <div class="col-sm-3">
                             <input type="hidden" value="" name="${l_item.Name}"/>
-                            <button key="${l_item.Name}" id="${l_item.Name}_toggle" class="btn btn-default">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                            <button key="${l_item.Name}" id="${l_item.Name}_toggle" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
                         <div class="col-md-6 logo_img_cont">
                             <img src="" class="img-responsive pull-right" id="${l_item.Name}_prev" />
                         </div>
                     </div>
 					`);
-                this.imageUploader(l_item.Name + "container", "#" + l_item.Name + "_toggle", "#" + l_item.Name + "_prev", { Name: l_item.Name });
+                this.imageUploader(l_item.Name + "container", "#" + l_item.Name + "_toggle", "#" + l_item.Name + "_prev", { Name: l_item.Name, FileName: "" },true);
             }
         }.bind(this));
     };
 
-    this.imageUploader = function (container, toggle, prev, extra) {
+    this.imageUploader = function (container, toggle, prev, extra, viwportresize) {
+        let resize = viwportresize ? true : false;
         this.Cropies[extra.Name] = new cropfy({
             Container: container,
             Toggle: toggle,
@@ -98,7 +107,8 @@
             Type: 'location',
             Tid: this.Tid,
             Preview: prev,
-            Extra: extra
+            Extra: extra,
+            ResizeViewPort: resize,
         });
         this.Cropies[extra.Name].getObjId = function (o) {
             $(`input[name='${extra.Name}']`).val(o.objectId);
@@ -119,24 +129,26 @@
                 img: $(`input[name='Logo']`).val(),
                 meta: JSON.stringify(m)
             }, function (result) {
-                    if (result >= 1) {
-                        $('#create_loc_mod').modal("toggle");
-                        let locid = parseInt($("input[name='LocId']").val());
-                        if (locid > 0) {
-                            $(`div[locid='${locid}']`).find(".head4").text($("input[name='longname']").val());
-                            $(`div[locid='${locid}']`).find(".shortname").text($("input[name='shortname']").val());
-                        }
-                        else {
-                            this.addLocationTile({
-                                LocId: result,
-                                LongName: $("input[name='longname']").val(),
-                                ShortName: $("input[name='shortname']").val()
-                            });
-                        }
-                        this.clearInputs($('#create_loc_mod'));
+                if (result >= 1) {
+                    $('#create_loc_mod').modal("toggle");
+                    let locid = parseInt($("input[name='LocId']").val());
+                    if (locid > 0) {
+                        $(`div[locid='${locid}']`).find(".head4").text($("input[name='longname']").val());
+                        $(`div[locid='${locid}']`).find(".shortname").text($("input[name='shortname']").val());
                     }
+                    else {
+                        this.addLocationTile({
+                            LocId: result,
+                            LongName: $("input[name='longname']").val(),
+                            ShortName: $("input[name='shortname']").val()
+                        });
+                    }
+                    this.clearInputs($('#create_loc_mod'));
+                }
             }.bind(this));
         }
+        else
+            alert("name exist");
     };
 
     this.locationEdit = function (e) {
@@ -151,14 +163,16 @@
         }
     };
 
-    this.validateForm = function (o) {
+    this.uniqCheckCF = function (o) {
         let f = true;
-        for (let key in o) {
-            if (o[key].length !== 0 || o[key] === "T" || o[key] === "F") 
-                f = true;
-            else
-                f = false;
+        if (o.Name !== "Name" || o.Name !== "ShortName" || o.Name !== "Logo") {
+            $(this.data).each(function (k, item) {
+                if (item.Name === o.Name)
+                    f = false;
+            }.bind(this));
         }
+        else
+            f = false;
         return f;
     };
 
@@ -167,22 +181,13 @@
         if ($("input[name='longname']").val() === "" || $("input[name='shortname']").val() === "")
             f = false;
         $(this.data).each(function (k, item) {
-            if (eval(item.Isrequired)) {
+            if (item.IsRequired) {
                 if ($(`input[name='${item.Name}']`).val() === "")
                     f=false;
             }
         }.bind(this));
         return f;
     }
-
-    this.uniqCheck = function (item) {
-        let flag = true;
-        for (let i = 0; i < this.Configaration.length; i++) {
-            if (this.Configaration[i].Name === escape(item.Name))
-                flag = false;
-        }
-        return flag;
-    };
 
     this.addLocationTile = function (o) {
         $(`#locations_tab`).append(`<div class="solution_container" locid="${o.LocId}">
@@ -204,6 +209,7 @@
             if (result) {
                 $(e.target).closest("tr").remove();
                 $(`#locspace div[lockey='${name}']`).remove();
+                this.DeleteKey(name);
             }
         }.bind(this));
     };
@@ -212,20 +218,16 @@
         let r = "";
         $(this.data).each(function (l, item) {
             if (item.Name === keyname)
-                r = item.KeyId;
+                r = item.Id;
         }.bind(this));
         return r;
     };
 
-    this.DeleteKey = function (e) {
-        var rw = $(e.target).closest("tr");
-        let k = rw.attr("key");
-        for (let i = 0; i < this.Configaration.length; i++) {
-            if (this.Configaration[i].Name === escape(k)) {
-                this.Configaration.splice(i, 1);
-            }
-        }
-        rw.remove();
+    this.DeleteKey = function (name) {
+        $(this.data).each(function (i,o) {
+            if (o.Name === name)
+                this.data.splice(i, 1);
+        }.bind(this))
     };
 
     this.clearInputs = function ($jq) {

@@ -48,7 +48,7 @@ namespace ExpressBase.Web2.Controllers
         }
 
         [HttpPost]
-        public int CreateConfig(EbLocationConfig conf)
+        public int CreateConfig(EbLocationCustomField conf)
         {
             var resp = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { Conf = conf });
             return resp.Id;

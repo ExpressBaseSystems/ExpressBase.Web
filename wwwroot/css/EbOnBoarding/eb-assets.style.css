@@ -49,3 +49,6 @@
         background-color: #1f71ad;
         border-color: #1f71ad;
     }
+#locspace .logo_img_cont {
+    height: 34px !important;
+}

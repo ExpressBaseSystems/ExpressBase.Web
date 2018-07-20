@@ -207,6 +207,27 @@
     background-color: white;
     padding: 3px;
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    animation-name: example;
+    animation-duration: 0.5s;
+}
+
+/* Standard syntax */
+@keyframes example {
+    from {
+        opacity: 0;
+        transform: perspective(4000px) rotateY(90deg); /* Standard syntax */
+        -webkit-transform: perspective(4000px) rotateY(90deg); /* Safari */
+    }
+
+    40% {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform: perspective(4000px) rotateY(0deg); /* Standard syntax */
+        -webkit-transform: perspective(4000px) rotateY(0deg); /* Safari */
+    }
 }
 
     .pgCXEditor-Cont .propgrid-table-cont {
@@ -226,6 +247,7 @@
     left: 0px;
     z-index: 1000;
     background-color: rgba(0, 0, 0, 0.3);
+    animation-duration:0.45s;
 }
 
 .CE-controls-head, .inner-PG-Cont .pgHead {
@@ -400,10 +422,23 @@
     width: 200px;
 }
 
-.pgCXEditor-Cont .btn {
-    border-radius: 1px !important;
+.pgCXEditor-Cont .OSE-DD-cont .btn {
+    border-radius: 0px !important;
 }
 
+.pgCXEditor-Cont .btn[name="CXE_OK"] {
+    border-radius: 0px !important;
+    border: none;
+    padding: 6px 14px;
+    font-weight: bold;
+    transition-duration: 0.2s;
+}
+
+    .pgCXEditor-Cont .btn[name="CXE_OK"]:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        border-radius: 1px !important;
+    }
 .pgCXEditor-Cont .modal-body {
     height: calc(100% - 111px);
 }
@@ -454,7 +489,7 @@
 }
 
 .pgCXEditor-Cont .modal-footer-body {
-    width: calc(100% - 46px);
+    width: calc(100% - 50px);
     float: left;
 }
 
@@ -511,6 +546,7 @@
     font-size: 13px;
     box-shadow: none;
     border: none;
+    border-radius: 0;
     border-right: solid 1PX #e5e5e5;
 }
 
@@ -687,11 +723,109 @@
 
 .searchinp {
     float: left;
-    width: 100%;
+    width: calc(100% + 25px);
     padding: 3px;
     border: solid 1px #dddddd;
 }
 
 .modal-footer-body .input-group-addon {
     border-radius: 0;
+}
+
+
+
+/*FontStyle Editor Styles*/
+.FEhead {
+    background: #abd7ec;
+    height: 30px;
+    text-align: center;
+    padding: 3px;
+    font-size: 15px;
+}
+
+.FEhead-font {
+    background: #abd7ec;
+    height: 30px;
+}
+
+.FEcol {
+    border: 1px solid #ccc;
+    margin-left: 20px;
+}
+
+.FEfont-family {
+}
+
+.fup .FECont .modal-body:first-child {
+    margin-left: 0px;
+}
+
+.fup .FECont {
+    border-radius: 3px;
+    width: 60%;
+    height: 75VH;
+    position: fixed;
+    left: 10%;
+    top: 10vh;
+    background-color: white;
+    padding: 3px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+
+    .fup .FECont .modal-body {
+        height: 53vh;
+    }
+
+.pd-0 {
+    padding: 0 !important;
+}
+
+.FEcol-bdy {
+    overflow-y: auto;
+    width: 100%;
+}
+
+.fup .FE-section {
+    width: inherit;
+    height: 150px;
+}
+
+.FEhead-font .fontSearch {
+    float: right;
+    margin: 2px;
+    display: inline-block;
+}
+
+.FE-sectionMprop {
+    width: inherit;
+    height: 50px;
+    margin-left: 20px;
+}
+
+.FE-section select {
+    border-radius: 0px;
+    padding: 0;
+    border-radius: 1px;
+}
+
+    .FE-section select option {
+        padding: 0 5px;
+    }
+
+.font-text {
+    display: inline-block;
+    height: 30px;
+    padding: 3px;
+    font-size: 15px;
+}
+
+.font-editor-contaner {
+    width: 50% !important;
+    left: 25% !important;
+    top: 15vh !important;
+}
+
+.font_ed_focus option:focus {
+    background: blue;
+    color: white;
 }

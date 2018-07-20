@@ -120,6 +120,8 @@
     this.initForm = function () {
         this.chkboxHide.parent().hide();
         this.chkboxHide.parent().prev().hide();
+        this.txtEmail.val("");
+        this.pwdPassword.val("");
         if (this.itemId > 1) {
             this.menuBarObj.setName("Edit User");
             //$(this.divFormHeading).text("Edit User");

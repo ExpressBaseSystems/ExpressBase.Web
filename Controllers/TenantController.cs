@@ -25,8 +25,6 @@ using ExpressBase.Common.Connections;
 using ExpressBase.Common.Constants;
 using ExpressBase.Web.BaseControllers;
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
     public class TenantController : EbBaseIntCommonController
@@ -34,12 +32,6 @@ namespace ExpressBase.Web.Controllers
         public const string Msg = "Msg";
 
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
-
-        // GET: /<controller>/
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         [HttpGet("MySolutions")]
         public IActionResult TenantDashboard()
@@ -55,13 +47,13 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MySolutions/{Sid}")]
         public IActionResult SolutionDashBoard(string Sid)
         {
-            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });       
+            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });
             ViewBag.Connections = JsonConvert.SerializeObject(resp.EBSolutionConnections);
             ViewBag.SolutionInfo = resp.Data;
             ViewBag.cid = Sid;
             return View();
-        }            
-        
+        }
+
         [HttpPost]
         public void EbCreateSolution(int i)
         {
@@ -69,11 +61,11 @@ namespace ExpressBase.Web.Controllers
             string DbName = req["Isid"];
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
-               SolutionName = req["Sname"],
-               Isid = req["Isid"],
-               Esid = req["Esid"],
-               Description = req["Desc"],
-               Subscription = req["Subscription"]
+                SolutionName = req["Sname"],
+                Isid = req["Isid"],
+                Esid = req["Esid"],
+                Description = req["Desc"],
+                Subscription = req["Subscription"]
             });
             if (res.Solnid > 0)
                 TempData[Msg] = "New Solution Created.";
@@ -84,11 +76,12 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             string apptype = req["AppType"];
-            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest {
-                AppName=req["AppName"],
+            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest
+            {
+                AppName = req["AppName"],
                 AppType = Convert.ToInt32(req["AppType"]),
-                Description=req["DescApp"],
-                AppIcon=req["AppIcon"],
+                Description = req["DescApp"],
+                AppIcon = req["AppIcon"],
                 Sid = req["Sid"]
             });
 
@@ -108,21 +101,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-
-        [HttpGet]
-        public IActionResult TenantAddAccount()
-        {
-            var resultset = this.ServiceClient.Get<GetProductPlanResponse>(new GetProductPlanRequest { });
-            ViewBag.plans = JsonConvert.SerializeObject(resultset.Plans);
-            //ViewBag.Sid = resultset.Sid;
-            return View();
-        }
-
-        public IActionResult TenantHome()
-        {
-            return View();
-        }
-
         public IActionResult Logout()
         {
             ViewBag.Fname = null;
@@ -134,11 +112,6 @@ namespace ExpressBase.Web.Controllers
 
         }
 
-        public IActionResult ResetPassword()
-        {
-            return View();
-        }
-
         [HttpGet]
         public IActionResult EmailConfirmation()
         {
@@ -148,78 +121,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult EmailConfirmation(int i)
         {
-
-            {
-                return View();
-            }
-        }
-
-        [HttpGet]
-        public IActionResult TenantProfile()
-        {
-            ViewBag.logtype = HttpContext.Request.Query["t"];
-            ViewBag.TId = Convert.ToInt32(HttpContext.Request.Query["Id"]);
-
             return View();
         }
-
-        [HttpPost]
-        public IActionResult TenantProfile(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            IServiceClient client = this.ServiceClient;
-            var res = client.Post<TokenRequiredUploadResponse>(new TokenRequiredUploadRequest { op = "updatetenant", Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value), Token = ViewBag.token });
-            if (res.id >= 0)
-            {
-                return RedirectToAction("TenantDashboard", new RouteValueDictionary(new { controller = "Tenant", action = "TenantDashboard", Id = res.id }));
-            }
-            return View();
-
-        }
-
-        public IActionResult marketPlace()
-        {
-            return View();
-        }
-
-        public IActionResult dbConfig()
-        {
-            return View();
-        }
-
-
-
-        public IActionResult SimpleAdvanced()
-        {
-            return View();
-        }
-
-        public IActionResult SimpleDbConf()
-        {
-            return View();
-        }
-
-        public IActionResult Engineering()
-        {
-            return View();
-        }
-
-        //public JsonResult GetEbObjects_json()
-        //  {
-        //      var req = this.HttpContext.Request.Form;
-        //      IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-        //      var resultlist = client.Get<EbObjectResponse>(new EbObjectRequest { TenantAccountId = ViewBag.cid, Token = ViewBag.token });
-        //      var rlist = resultlist.Data;
-        //      Dictionary<int, string> ObjList = new Dictionary<int, string>();
-        //      foreach (var element in rlist)
-        //      {
-        //          if (element.EbObjectType.ToString() == req["ebobjtype"])
-        //          {
-        //              ObjList[element.Id] = element.Name;
-        //          }
-        //      }
-        //      return Json(ObjList);
-        //  }
 
         public IActionResult CreateApplications()
         {

@@ -729,3 +729,11 @@
 
     this.init();
 };
+
+/**
+ *---- REFERENCE-----
+ * jqPropertyGrid
+ * https://github.com/ValYouW/jqPropertyGrid
+ * Author: YuvalW (ValYouW)
+ * License: MIT
+ */

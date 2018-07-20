@@ -245,7 +245,7 @@
     .close:focus {
         color: #f00 !important;
         text-decoration: none;
-        cursor: pointer;
+        cursor: pointer !important;
     }
 
 .temp {

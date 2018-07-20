@@ -286,6 +286,7 @@
 
     this.onDragFn = function (el, source) {
         $(':focus').blur();
+        $(el).find('.close').css("opacity", "0");
         if (source.id !== this.CE_all_ctrlsContId) {// target 2nd source
             if (this.editor === 7)
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
@@ -305,6 +306,7 @@
     };
 
     this.onDragendFn = function (el) {
+        $(el).find('.close').css("opacity", "0.2");
         var $sibling = $(el).next();
         var target = $(el).parent()[0];
         var idx = $sibling.index() - 1;
@@ -339,7 +341,8 @@
             this.movingObj[this.Dprop] = false;
             this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
         }
-        $(el).off("click", ".close").on("click", ".close", this.colTileCloseFn);
+        $(el).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
+        $(el).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
     };
 
     this.initCSE = function () {
@@ -616,7 +619,7 @@
             if (!(control.Name || control.name))
                 var label = control.EbSid;
             var $tile = $(`<div class="colTile" onclick="$(this).focus()" is-customobj="${control["IsCustomColumn"] || false}" tabindex="1" id="` + name + '" eb-type="' + type + '" setSelColtiles><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
-                + name + '<button type="button" tabindex="-1" class="close">' + (control["IsCustomColumn"] ? '<i class="fa fa-minus-circle"></i>' : '&times;') + '</button></div>');
+                + name + '<button type="button" tabindex="-1" class="coltile-left-arrow close"><i class="fa ' + (control["IsCustomColumn"] ? 'fa-minus-circle' : 'fa-arrow-circle-left') + '"></i></button><button type="button" tabindex="-1" class="coltile-right-arrow close"><i class="fa fa-arrow-circle-right"></i></button></div>');
             if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
@@ -624,7 +627,7 @@
                     $("#" + this.CEctrlsContId).append($tile);// 2nd column
             }
         }.bind(this));
-        $("#" + this.CEctrlsContId + " .colTile").off("click", ".close").on("click", ".close", this.colTileCloseFn);
+        $("#" + this.CEctrlsContId).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
     };
 
     this.setSelColtiles = function () {
@@ -637,6 +640,7 @@
                 selObjs.push(getObjByval(this.allCols, idField, ctrl[idField]));
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
+            $("#" + this.CE_all_ctrlsContId).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
         }
     };
 
@@ -657,7 +661,7 @@
                 //this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
             }.bind(this));
         }
-        $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileCloseFn);
+        $("#" + this.CEctrlsContId).off("click", ".close").on("click", ".close", this.colTileLeftArrow);
     };
 
     this.setObjTypeDD = function () {
@@ -675,7 +679,31 @@
         }
     };
 
-    this.colTileCloseFn = function (e) {
+    this.colTileRightArrow = function (e) {
+        e.stopPropagation();
+        //var $tile = $(e.target).closest(".colTile").remove(); if (this.editor === 7) {
+        //}
+        //else if (this.editor === 9 || this.editor === 8) {
+        //    this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1)[0]
+        //    $("#" + this.CE_all_ctrlsContId).prepend($tile);
+        //}
+        //else if (this.editor === 24) {
+        //    getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+        //    $("#" + this.CE_all_ctrlsContId).prepend($tile);
+        //}
+
+        //else if (this.editor === 26) {
+        //    if ($tile.attr("is-customobj") === "true") {// if delete
+        //        this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", $tile.attr("id"))), 1)[0];
+        //    }
+        //    else {// if close
+        //        getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+        //        $("#" + this.CE_all_ctrlsContId).prepend($tile);
+        //    }
+        //}
+    }.bind(this);
+
+    this.colTileLeftArrow = function (e) {
         e.stopPropagation();
         var $tile = $(e.target).closest(".colTile").remove();
         if (this.editor === 7) {
@@ -759,9 +787,6 @@
         for (var i = deletedColumnIdx; i < this.allCols.length; i++) {
             objectToBeUpdated = getObjByval(this.allCols, "data", (i + 1));
             objectToBeUpdated.data = i;
-        }
-        for (var i = 0; i < this.allCols.length; i++) {
-            console.log(getObjByval(this.allCols, "data", i).name +" : " + getObjByval(this.allCols, "data", i).data);
         }
     }
 

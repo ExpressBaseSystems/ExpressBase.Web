@@ -1,9 +1,6 @@
 ﻿var Eb_locationMeta = function (Config, locations, tid) {
     this.Locations = locations;
     this.data = Config;
-    this.counter = 0;
-    this.trCount = 2;
-    this.Configaration = [];
     this.LocationObj = {};
     this.Cropies = {};
     this.Tid = tid || null;
@@ -26,7 +23,7 @@
         this.Cropies['Logo'].Extra.FileName = $(e.target).val() + this.Cropies['Logo'].Extra.Name;
         $(this.data).each(function (i, item) {
             if (item.Type === "Image") {
-                this.Cropies[item.FileName].Extra.Name = $(e.target).val() + this.Cropies[item.Name].Extra.Name;
+                this.Cropies[item.Name].Extra.FileName = $(e.target).val() + this.Cropies[item.Name].Extra.Name;
             }
         }.bind(this));
     };

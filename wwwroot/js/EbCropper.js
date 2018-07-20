@@ -12,7 +12,7 @@
     this.getFile = function (b65) { return b65; }//return b65 croped image
     this.getObjId = function (id) { };
     this.Type = option.Type;//type of image logo or dp
-    //this.ResizeViewPort = option.ResizeViewPort ? true : false;//enable resizing of viewport
+    this.ResizeViewPort = option.ResizeViewPort ? true : false;//enable resizing of viewport
     this.Preview = option.Preview||null;//previw el should be uniq and it sould be an img tag
     this.Tid = option.Tid || null;
     this.Extra = option.Extra || {};
@@ -115,6 +115,7 @@
         this.cropie = $("#" + this.Container + "_cropy_container").croppie({
             viewport: _typeRatio[this.Type],
             enableOrientation: true,
+            enableResize: this.ResizeViewPort,
             enforceBoundary: false,
             enableExif: true
         });
@@ -187,7 +188,7 @@
         this.appendModal();
         $("#" + this.Container + "_modal").on('shown.bs.modal', this.modalShown.bind(this));
         $("#" + this.Container + "_modal").on('hide.bs.modal', this.modalHide.bind(this));
-        $("body").off("click").on("click", this.Toggle, this.toggleModal.bind(this));
+        $(this.Toggle).off("click").on("click",this.toggleModal.bind(this));
     };
     this.start();
 };

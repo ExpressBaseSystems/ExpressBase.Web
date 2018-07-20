@@ -4,7 +4,7 @@
 @using Newtonsoft.Json;
 
 @{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
@@ -57,7 +57,7 @@
                         <div class="solution_container" locid=@ViewBag.Locations[loc.Key].LocId>
                             <div class="solution_container_pd hoveron_block">
                                 <div class='col-md-1 pd-0'>
-
+                                    @*<img src="../static/@ViewBag.Locations[loc.Key].Img .JPG" />*@
                                 </div>
                                 <div class="col-md-11">
                                     <h4 class='head4'>@ViewBag.Locations[loc.Key].LongName</h4>
@@ -151,7 +151,7 @@
                         <label class="col-sm-3">Logo</label>
                         <div class="col-sm-3">
                             <input type="hidden" value="" name="Logo" />
-                            <button key="Logo" id="Logo_toggle_btn" class="btn btn-default">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                            <button key="Logo" id="Logo_toggle_btn" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
                         <div class="col-md-6 logo_img_cont">
                             <img src="" class="img-responsive pull-right" id="Logo_prev" />

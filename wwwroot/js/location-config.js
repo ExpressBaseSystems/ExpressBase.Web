@@ -17,8 +17,19 @@
         $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
 
         $(".solution_container").off("click").on("click", this.locationEdit.bind(this));
-        this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo" });
+        this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo" },false);
         $(`body`).off("click").on("click", ".delete_field", this.deleteConfig.bind(this));
+        $("#locspace input[name='longname']").on("change", this.setLocNameToImg.bind(this));
+    };
+
+    this.setLocNameToImg = function (e) {
+        $(".disablebtn").prop("disabled", false);
+        this.Cropies['Logo'].Extra.Name = $(e.target).val() + this.Cropies['Logo'].Extra.Name;
+        $(this.data).each(function (i, item) {
+            if (item.Type === "Image") {
+                this.Cropies[item.Name].Extra.Name = $(e.target).val() + this.Cropies[item.Name].Extra.Name;
+            }
+        }.bind(this));
     };
 
     this.AddKey = function (item) {
@@ -75,19 +86,20 @@
                         <label class="col-sm-3">${l_item.Name}</label>
                         <div class="col-sm-3">
                             <input type="hidden" value="" name="${l_item.Name}"/>
-                            <button key="${l_item.Name}" id="${l_item.Name}_toggle" class="btn btn-default">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                            <button key="${l_item.Name}" id="${l_item.Name}_toggle" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
                         <div class="col-md-6 logo_img_cont">
                             <img src="" class="img-responsive pull-right" id="${l_item.Name}_prev" />
                         </div>
                     </div>
 					`);
-                this.imageUploader(l_item.Name + "container", "#" + l_item.Name + "_toggle", "#" + l_item.Name + "_prev", { Name: l_item.Name });
+                this.imageUploader(l_item.Name + "container", "#" + l_item.Name + "_toggle", "#" + l_item.Name + "_prev", { Name: l_item.Name },true);
             }
         }.bind(this));
     };
 
-    this.imageUploader = function (container, toggle, prev, extra) {
+    this.imageUploader = function (container, toggle, prev, extra, viwportresize) {
+        let resize = viwportresize ? true : false;
         this.Cropies[extra.Name] = new cropfy({
             Container: container,
             Toggle: toggle,
@@ -98,7 +110,8 @@
             Type: 'location',
             Tid: this.Tid,
             Preview: prev,
-            Extra: extra
+            Extra: extra,
+            ResizeViewPort: resize,
         });
         this.Cropies[extra.Name].getObjId = function (o) {
             $(`input[name='${extra.Name}']`).val(o.objectId);
@@ -167,7 +180,7 @@
         if ($("input[name='longname']").val() === "" || $("input[name='shortname']").val() === "")
             f = false;
         $(this.data).each(function (k, item) {
-            if (eval(item.Isrequired)) {
+            if (item.Isrequired === "T") {
                 if ($(`input[name='${item.Name}']`).val() === "")
                     f=false;
             }

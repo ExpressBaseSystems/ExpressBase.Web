@@ -195,10 +195,14 @@ namespace ExpressBase.Web.Controllers
                         Apps = _apps
                     };
                     var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                    if(res.ExceptionMessage!=string.Empty && res.RefId== null)
+                    {
+                        return res.ExceptionMessage;
+                    }
                     refid = res.RefId;
-                }
-                else return "nameIsNotUnique";
             }
+            else return "nameisnotunique";
+        }
             else
             {
                 var ds = new EbObject_CommitRequest

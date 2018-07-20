@@ -52,15 +52,21 @@
 	};
 
 	this.UpdateTab = function (data) {
+		if (data.indexOf("Specify a diffrent name." )>0)
+		{
+			this.alertBgColor = "#e83c46";
+			this.alertMsg = data;
+			EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+		}
 		//var target = $("#versionNav li.active a").attr("href");
-		if (data === "RestrictedStatementinQuerry") {
+		else if (data === "RestrictedStatementinQuerry") {
 			this.alertBgColor = "#e83c46";
 			this.alertMsg = "Querry Contains Restricted Keywords !!";
 			EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
 		}
 		else if (data === "nameIsNotUnique") {
 			this.alertBgColor = "#e83c46";
-			this.alertMsg = "Name alredy exists";
+			this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
 			EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide:false});
 		}
 		else {

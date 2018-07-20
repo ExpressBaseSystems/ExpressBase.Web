@@ -703,6 +703,7 @@
         else if (this.editor === 26) {
             if ($tile.attr("is-customobj") === "true") {// if delete
                 var delobj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", $tile.attr("id"))), 1)[0];
+                this.updateColumnIndex(delobj);
             }
             else {// if close
                 getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
@@ -752,6 +753,17 @@
         });
         return tempArr.max();
     };
+
+    this.updateColumnIndex = function (delobj) {
+        deletedColumnIdx = delobj.data;
+        for (var i = deletedColumnIdx; i < this.allCols.length; i++) {
+            objectToBeUpdated = getObjByval(this.allCols, "data", (i + 1));
+            objectToBeUpdated.data = i;
+        }
+        for (var i = 0; i < this.allCols.length; i++) {
+            console.log(getObjByval(this.allCols, "data", i).name +" : " + getObjByval(this.allCols, "data", i).data);
+        }
+    }
 
     this.CE_AddFn = function () {
         var $DD = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected");

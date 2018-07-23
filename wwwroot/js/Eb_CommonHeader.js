@@ -1,5 +1,4 @@
 ﻿var EbHeader = function () {
-
     var _objName = $(".EbHeadTitle #objname");
     var _btnContainer = $(".comon_header_dy #obj_icons");
     var _layout = $("#layout_div");
@@ -29,5 +28,4 @@
     };
 
     _layout.data("EbHeader", this);
-
 };

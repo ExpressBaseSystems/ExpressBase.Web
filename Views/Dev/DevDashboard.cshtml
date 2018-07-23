@@ -1,14 +1,13 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts
 @using ExpressBase.Common
 @{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
 <script>
-    var cm = new MenuBarCommon().setName("Developer Console");
+    var cm = new EbHeader().setName("Developer Console");
 </script>
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar">

@@ -1,17 +1,15 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script src="~/js/EbCropper.js" type="text/javascript"></script>
 <script src="~/js/EbOnBoarding/EbOnBoarding.js" type="text/javascript"></script>
-<script src="~/js/validator.js" type="text/javascript"></script>
 @await Component.InvokeAsync("PageHeaderCommon")
 <script>
-    var cm = new MenuBarCommon().setName("Create Solution");
+    var cm = new EbHeader().setName("Create Solution");
 </script>
 <div class="row tAddAcc height-100">
     <section class="card">

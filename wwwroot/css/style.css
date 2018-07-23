@@ -27,6 +27,35 @@ body {
     --blackpipe: -webkit-linear-gradient(top, #4c4c4c 3%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 46%,#000000 53%,#111111 64%,#2b2b2b 82%,#1c1c1c 94%,#131313 100%);
     --blum: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.86, #369), color-stop(0.72, rgb(73,125,189)));
 }
+.ebbtn {
+    border: 0;
+    border-radius: 3px;
+    -webkit-transition: .2s;
+    transition: .2s;
+    box-shadow: 0 3px 13px rgba(0,0,0,0.09), 0 1px 5px 0 rgba(0,0,0,0.14);
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    padding: 9px 16px;
+    font-size: 14px;
+    letter-spacing: .5px;
+    font-weight: 400;
+    background: #fff;
+    color: #0d2366;
+    text-decoration:none;
+}
+    .ebbtn:hover {
+        -webkit-transform: translateY(-2px) scale(1.01);
+        -ms-transform: translateY(-2px) scale(1.01);
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 5px 16px 1px rgba(0,0,0,0.13), 0 1px 4px 0 rgba(0,0,0,0.09);
+        text-decoration: none;
+        color:white;
+    }
+.eb_btnblue {
+    background: #528ff0;
+    color: #fff;
+}
 
 .mb {
     padding-bottom: 5em;
@@ -90,32 +119,10 @@ body {
     display: none;
 }
 
-.log_error {
-    display: none;
-    max-width: 400px;
-    width: 100% !important;
-    color: #86181d;
-    background-color: #ffdce0;
-    border-color: rgba(27,31,35,0.15);
-    margin: 0 auto;
-    border-radius: 4px;
-    font-family: Montserrat;
-    padding: 15px;
-    margin-top: 2em;
-    position: fixed;
-    font-size: 15px;
-    margin-left: 28.2%;
-}
-
 .eb_login {
     height: 100vh;
     max-height: 100vh;
     background-color: #f9f9f9;
-}
-
-.log_error_close {
-    position: absolute;
-    right: 22px;
 }
 
 .inputEmail {
@@ -780,3 +787,9 @@ Navigation bar
 /*
     Dragula style END
 */
+/*error page*/
+.error_cont {
+    height: 100vh;
+    background-color: #f2f2f2;
+}
+/*error page end*/

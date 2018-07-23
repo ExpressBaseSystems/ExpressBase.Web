@@ -37,6 +37,7 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
     <script type="text/javascript" src="~/js/ss-utils.js" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbServerEvents/eventsource.min.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/store.legacy.min.js"></script>@*amal*@
 
     @* EB JS *@
     <script src="~/js/EbLoader.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
@@ -47,7 +48,7 @@
     <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>@*jith*@
     <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version=@bApnd></script>@*jith*@
     <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version=@bApnd></script>@*amal*@
-    <script type="text/javascript" src="~/js/Menu.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbQuickMenu/Menu.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/Eb_CommonHeader.js" asp-append-version=@bApnd></script>@*amal*@
 </head>
 <body>
@@ -87,6 +88,7 @@
                                                 <span class="input-group-addon search_icon"><i class="material-icons">search</i></span>
                                             </div>
                                         </div>
+                                        <button class="btn c_btn pull-right" id="menu_refresh"><i class="material-icons">refresh</i></button>
                                     </div>
                                 </div>
                                 <div class="quick_menu_load" id="quick_menu_load"></div>
@@ -118,7 +120,7 @@
 </body>
 </html>
 <script>
-    var menu = new menujs('@ViewBag.wc');//init menu
+    var menu = new menujs('@ViewBag.wc','@ViewBag.cid','@ViewBag.UId');//init menu
     $("#layout_div").data("menu", menu);
     $('.Eb_Image').Lazy();
 </script>

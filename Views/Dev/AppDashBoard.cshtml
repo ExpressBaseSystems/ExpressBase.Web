@@ -1,16 +1,14 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts
 @using ExpressBase.Common
 @{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
 <script>
-    var cm = new MenuBarCommon().setName("Application DashBoard");
+    var cm = new EbHeader().setName("Application DashBoard");
 </script>
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
-<script src="~/js/validator.js" type="text/javascript"></script>
-<script src="~/js/EbDashBoards/AppDashWeb.js" type="text/javascript"></script>
+<script src="~/js/EbDashBoards/AppDashBoard.js" type="text/javascript"></script>
 <script>
     var Object_type = @Html.Raw(ViewBag.Types);
     var Obj_Collection = @Html.Raw(ViewBag.Objects);
@@ -173,7 +171,7 @@
     }
 </style>
 <script>
-    var adash = new AppDashWeb(Object_type, Obj_Collection);
+    var adash = new AppDashBoard(Object_type, Obj_Collection);
     function UpdateBotSettings() {
         var appSettings = {};
         appSettings["Name"] = $("#bot_name_txt").val();

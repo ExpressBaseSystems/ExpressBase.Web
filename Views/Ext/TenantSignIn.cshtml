@@ -1,80 +1,60 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <title>EXPRESSbase: Rapid Application Development & Delivery Platform for SMBs.</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
-    <link rel="icon" href="~/images/favicon.ico">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="~/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/Pwd.css" />
-
-    <script type="text/javascript" src="~/js/jquery.min.js"></script>
-    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
-    <script async type="text/javascript" src="~/js/validator.js"></script>
-    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="~/js/EbLoader.js" type="text/javascript"></script>
-</head>
-<body>
-    @{
-        Html.RenderPartial("ExtPageHeader");
+﻿@{
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPageHeader");
+}
+<script>
+    $("#signIn").remove();
+    function onSubmit(token) {
+        document.getElementById("log_form").submit();
+        $(".loader_top").EbLoader("show");
     }
-    <script>
-        $("#signIn").remove();
-        function onSubmit(token) {
-            document.getElementById("log_form").submit();
-            $(".loader_top").EbLoader("show");
-        }
-    </script>
-    <section class="eb_login">
-        <div class="container">
-            <div class="row h100andflex">
-                <div class="log_error">@ViewBag.ErrorMsg<i class="fa fa-close log_error_close" onclick="$('.log_error').hide();"></i></div>
-                <div class="lg_content">
-                    <div class="info_sec_log_container hidden-xs hidden-sm">
-                        <h4>Empowering SMBs to Take off</h4>
-                        <p>
-                            Fast growing Small & Midsize Businesses
-                            deserve<br /> rapidly evolving software.
-                        </p>
-                    </div>
-                    <div class="lg_img hidden-xs hidden-sm">
-                        <img src="~/images/paper_plane_PNG20.png" />
-                    </div>
+</script>
+<section class="eb_login">
+    <div class="container">
+        <div class="row h100andflex">
+            <div class="lg_content">
+                <div class="info_sec_log_container hidden-xs hidden-sm">
+                    <h4>Empowering SMBs to Take off</h4>
+                    <p>
+                        Fast growing Small & Midsize Businesses
+                        deserve<br /> rapidly evolving software.
+                    </p>
                 </div>
-                <div class="login_container m-l-60">
-                    <div class="loader_top" id="loader_profile"></div>
-                    <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
-                        <h1 class="text-center">Sign In</h1><br>
-                        <div class="form-group mb-25">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                                <input type="email" name="uname" class="form-control inputEmail" placeholder="Email" id="inputEmail" data-error="Email address is invalid." required><br />
-                            </div>
-                            <div class="help-block with-errors f12 text-right"></div>
+                <div class="lg_img hidden-xs hidden-sm">
+                    <img src="~/images/paper_plane_PNG20.png" />
+                </div>
+            </div>
+            <div class="login_container m-l-60">
+                <div class="loader_top" id="loader_profile"></div>
+                <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
+                    <h1 class="text-center">Sign In</h1><br>
+                    <div class="form-group mb-25">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                            <input type="email" name="uname" class="form-control inputEmail" placeholder="Email" id="inputEmail" data-error="Email address is invalid." required><br />
                         </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                                <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                        <div class="help-block with-errors f12 text-right"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                            <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox icheck remembrpw text-right">
+                            <label>
+                                <input type="checkbox" id="loginrem"> Remember Me
+                            </label>
+                            <div class="nopadding" style="float:left;">
+                                <a href="~/Ext/ForgotPassword">Forgot password?</a>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="checkbox icheck remembrpw text-right">
-                                <label>
-                                    <input type="checkbox" id="loginrem"> Remember Me
-                                </label>
-                                <div class="nopadding" style="float:left;">
-                                    <a href="~/Ext/ForgotPassword">Forgot password?</a>
-                                </div>
-                            </div>
-                            <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit'>
-                                Sign In
-                            </button>
-                        </div>
-                        @*<div class="form-group text-center">Or Sign In by</div>
+                        <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit'>
+                            Sign In
+                        </button>
+                    </div>
+                    @*<div class="form-group text-center">Or Sign In by</div>
                         <div class="form-group" style="padding-left: 34px;float: left;">
                             <div class="col-xs-2 col-sm-2">
                                 <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
@@ -107,10 +87,12 @@
                                 </a>
                             </div>
                         </div>*@
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
-    </section>
-</body>
-</html>
+    </div>
+</section>
+<script>
+    if ('@ViewBag.ErrorMsg')
+        EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
+</script>

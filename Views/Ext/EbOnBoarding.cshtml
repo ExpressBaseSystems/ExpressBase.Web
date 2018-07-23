@@ -1,9 +1,8 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
@@ -334,10 +333,5 @@
     $(document).ready(function () {
         var boarding = new EbOnBoarding('@ViewBag.iSid');
     });
-    //$.getJSON("http://freegeoip.net/json/", function (data) {
-    //    var country = data.country_name;
-    //    $('#country').val(country);
-    //});
     $("#AppIcon").iconpicker({ placement: 'top', iconset: 'fontawesome', icon: 'fa-home' }).on('change', function (e) { $("input[name='AppIcon']").val(e.icon); });
-
 </script>

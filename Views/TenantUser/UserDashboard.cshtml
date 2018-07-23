@@ -1,8 +1,11 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
+<script>
+    var cm = new EbHeader().setName("User Console");
+</script>
 <script>
     $(document).ready(function () {
         $('#quik_menu').click();

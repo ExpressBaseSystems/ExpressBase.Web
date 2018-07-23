@@ -1,4 +1,4 @@
-﻿var AppDashWeb = function (obtypes,objcoll) {
+﻿var AppDashBoard = function (obtypes,objcoll) {
     this.ObjTypes = obtypes;
     this.ObjCollection = objcoll;
     this.objectTab = $("#Objects");

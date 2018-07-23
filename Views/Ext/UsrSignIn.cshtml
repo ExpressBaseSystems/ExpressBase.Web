@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
 }
 <script src="~/js/eb_common.js"></script>
 <script>
@@ -90,12 +90,12 @@
     </div>
 </section>
 <script>
-
     $(document).ready(function () {
         $('.Eb_Image').Lazy();
 
-     if ('@ViewBag.ErrorMsg')
-            $(".log_error").show();
+        if ('@ViewBag.ErrorMsg')
+            EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
+
     $("#log_form").on("submit", function () {
         $(".loader_top").EbLoader("show");
      });

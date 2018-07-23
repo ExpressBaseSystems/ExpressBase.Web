@@ -1,28 +1,10 @@
-﻿
-@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+﻿@{
+    Layout = "~/Views/Shared/LayoutBuilders.cshtml";
     @using ExpressBase.Common;
     @using ExpressBase.Common.Objects;
     @using ExpressBase.Common.Structures;
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
-@*<script src="~/js/FilterDialogBuilder/Eb_FilterDialogRender.js"></script>*@
-<style>
-    .tab-section-common .nav-tabs {
-        border-bottom: 2px solid #316396;
-        padding-bottom: 1px;
-    }
-    .tab-section-common {
-        background: white;
-        position: fixed;
-        width: 100%;
-        z-index: 1;
-        border-bottom: 4px solid #f2f2f2;
-    }
-    .tab-cont-common {
-        margin-top: 34px;
-    }
-</style>
 <script>
 @Html.Raw(ViewBag.Meta);
 @Html.Raw(ViewBag.JsObjects);

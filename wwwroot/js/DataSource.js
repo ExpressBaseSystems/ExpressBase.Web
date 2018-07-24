@@ -70,8 +70,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
-        $(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
-        $('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
+        //$(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
+        //$('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
     }
 
     this.GenerateButtons = function () {
@@ -83,7 +83,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //    $("#obj_icons").append(`<button id='btnToggleFD' class='btn' data-toggle='tooltip' title='Toggle ParameterDiv'> <i class='fa fa-filter' aria-hidden='true'></i></button>`);
         //}
         $("#run").off("click").on("click", this.RunDs.bind(this));
-        $(".adv-dsb-cont").hide(this.delay);
+
+
+
+        //$(".adv-dsb-cont").hide(this.delay);
+        $(".simple-dsb-cont").hide(this.delay);
         //$("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
     }
 
@@ -454,7 +458,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (this.EbObject.Sql.indexOf(sqlFn.name) !== -1) {
             this.rel_arr.push(i);
         }
-    };
+	};
+
+	//commonO.PreviewObject = function () {
+	//	$("#preview_wrapper").empty();
+	//	this.RunDs();
+	//}.bind(this);
 
     this.Init();
 }

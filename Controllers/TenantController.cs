@@ -63,7 +63,7 @@ namespace ExpressBase.Web.Controllers
             {
                 SolutionName = req["Sname"],
                 Isid = req["Isid"],
-                Esid = req["Esid"],
+                Esid = req["Isid"],
                 Description = req["Desc"],
                 Subscription = req["Subscription"]
             });

@@ -48,6 +48,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult AppDashBoard(int Id, EbApplicationTypes Type)
         {
             Dictionary<int, string> _dict = new Dictionary<int, string>();

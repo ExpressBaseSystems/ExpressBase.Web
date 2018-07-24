@@ -215,7 +215,9 @@ var EbBasicDataTable = function (Option) {
         chkObj.pos = "-1";
 
         this.extraCol.push(chkObj);
-        this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
+        var _array = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this));
+        if (_array.length > 0)
+            this.hiddenIndex = _array[0].data;
     }
 
     this.createTblObject = function () {

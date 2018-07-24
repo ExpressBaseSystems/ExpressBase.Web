@@ -108,9 +108,9 @@
                 },
                 data: {
                     Sname: $("[name='Sname']").val().trim(),
-                    Esid: $("[name='Esid']").val().toLowerCase().trim(),
+                    Esid: $("[name='EbSid']").val().toLowerCase().trim(),
                     Desc: $("[name='Desc']").val().trim(),
-                    Isid: $("[name='Isid']").val().toLowerCase().trim(),
+                    Isid: $("[name='EbSid']").val().toLowerCase().trim(),
                     Subscription: JSON.stringify(this.objSubscription),
                     ProfileInfo: $("[name='ProfileInfo']").val()
                 }
@@ -178,6 +178,7 @@
         $("#prod-prev").on('click', this.scrollToProd.bind(this));
         $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));
         $("#app-form").on("submit", this.showLoaderOnAppSub.bind(this));
+        $("#ebsid").on("change", function (e) { $("#sid_on_appcreation").val($(e.target).val());});
     };
 
     this.init();

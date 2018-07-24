@@ -899,30 +899,7 @@ body {
 .appselected {
     outline: 2px solid #4aade3;
 }
-/*confirmation for solution*/
 
-.confTo-solution .modal-dialog {
-    width: 500px;
-    margin: 100px auto;
-}
-
-.confTo-solution .confTo-solution-container {
-    height: 210px;
-    padding: 50px 50px 50px 50px;
-    background: white;
-}
-
-.confTo-solution .confTo-solution-inner {
-    height: 100%;
-}
-
-.confTo-solution .heading {
-    height: 70%;
-}
-
-.confTo-solution .form-inline {
-    height: 30%;
-}
 /*toggle button*/
 .uname-advanced-sec .switch {
     position: relative;

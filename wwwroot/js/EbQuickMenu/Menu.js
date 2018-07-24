@@ -1,7 +1,10 @@
-﻿var menujs = function (login) {
+﻿var menujs = function (login,Tid,Uid) {
     this.login = login;
     this.resultObj = null;
     this.objTypes = null;
+    this.Tid = Tid || null;
+    this.Uid = Uid || null;
+    this.SideBarHtml = null;
 
     this.init = function () {
         $(document).bind('keypress', function (event) {
@@ -13,6 +16,13 @@
         $(".Eb_quick_menu").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
         $('.Eb_quick_menu').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
         $('.Eb_quick_menu').off("click").on('click', ".for_brd", this.setBrdCrump.bind(this));
+        $('.Eb_quick_menu').off("click").on('click', "#menu_refresh", this.refreshMenu.bind(this));
+    };
+
+    this.refreshMenu = function () {
+        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", "");
+        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login, "");
+        this.showModal();
     };
     
     this.searchObjects = function (e) {
@@ -20,7 +30,7 @@
         var srch = $(e.target).val().toLowerCase();
         var count = 0;
         $.each($("#" + srchBody).children(".objitems"), function (i, obj) {
-            var cmpstr = $(obj).children().children(".col-md-11").find(".head4").text().toLowerCase();
+            var cmpstr = $(obj).find(".head4").text().toLowerCase();
             if (cmpstr.indexOf(srch) !== -1) {
                 $(obj).show();
                 count++;
@@ -35,10 +45,12 @@
     };
 
     this.showModal = function () {
-        if ($.isEmptyObject(this.resultObj)) {
+        let o = store.get("EbMenuObjects_" + this.Tid + this.Uid + this.login) || {};
+        if ($.isEmptyObject(o)) {
             $("#ObjModal").modal('show');
             $("#quick_menu_load").EbLoader("show");
             $.get("../TenantUser/getSidebarMenu", function (result) {
+                store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", result);
                 $("#EbsideBar").empty();
                 $("#EbsideBar").append(result);
                 $("#quick_menu_load").EbLoader("hide");
@@ -49,6 +61,14 @@
         }
         else {
             $("#ObjModal").modal('show');
+            $("#quick_menu_load").EbLoader("show");
+            let r = store.get("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");
+            $("#EbsideBar").empty();
+            $("#EbsideBar").append(r);
+            $("#quick_menu_load").EbLoader("hide");
+            $(".Obj_link").off("click").on("click", this.appendObType.bind(this));
+            $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
+            this.login === "dc" ? this.newBuilderMenu() : null;
         }
     };
 

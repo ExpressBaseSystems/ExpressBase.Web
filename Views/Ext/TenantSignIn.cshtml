@@ -12,7 +12,6 @@
 <section class="eb_login">
     <div class="container">
         <div class="row h100andflex">
-            <div class="log_error">@ViewBag.ErrorMsg<i class="fa fa-close log_error_close" onclick="$('.log_error').hide();"></i></div>
             <div class="lg_content">
                 <div class="info_sec_log_container hidden-xs hidden-sm">
                     <h4>Empowering SMBs to Take off</h4>
@@ -93,3 +92,7 @@
         </div>
     </div>
 </section>
+<script>
+    if ('@ViewBag.ErrorMsg')
+        EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
+</script>

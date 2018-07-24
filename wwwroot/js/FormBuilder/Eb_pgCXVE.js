@@ -344,6 +344,7 @@
             this.movingObj[this.Dprop] = false;
             this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
         }
+        $(el).off("click", ".coltile-delete").off("click", ".coltile-delete").on("click", ".coltile-delete", this.colTileDel);
         $(el).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
         $(el).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
     };
@@ -635,6 +636,7 @@
                     $("#" + this.CEctrlsContId).append($tile);// 2nd column
             }
         }.bind(this));
+        $(this.pgCXE_Cont_Slctr + " .editTbl").off("click", ".coltile-delete").on("click", ".coltile-delete", this.colTileDel);
         $("#" + this.CEctrlsContId).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
     };
 
@@ -711,6 +713,17 @@
         }
     }.bind(this);
 
+    this.colTileDel = function (e) {
+        e.stopPropagation();
+        var $tile = $(e.target).closest(".colTile").remove();
+        if (this.editor === 26) {
+            if ($tile.attr("is-customobj") === "true") {// if delete
+                var delobj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", $tile.attr("id"))), 1)[0];
+                this.updateColumnIndex(delobj);
+            }
+        }
+    }.bind(this);
+
     this.colTileLeftArrow = function (e) {
         e.stopPropagation();
         var $tile = $(e.target).closest(".colTile").remove();
@@ -737,14 +750,8 @@
         }
 
         else if (this.editor === 26) {
-            if ($tile.attr("is-customobj") === "true") {// if delete
-                var delobj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", $tile.attr("id"))), 1)[0];
-                this.updateColumnIndex(delobj);
-            }
-            else {// if close
-                getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
-                $("#" + this.CE_all_ctrlsContId).prepend($tile);
-            }
+            getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+            $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
     }.bind(this);
 

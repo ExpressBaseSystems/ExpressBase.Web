@@ -36,6 +36,8 @@ var EbBasicDataTable = function (Option) {
     this.isTagged = false;
     this.isRun = false;
 
+    this.orderColl = [];
+
     this.init = function () {
         this.EbObject = new EbTableVisualization(this.tableId);
         this.EbObject.IsPaging = Option.IsPaging || false;
@@ -213,7 +215,9 @@ var EbBasicDataTable = function (Option) {
         chkObj.pos = "-1";
 
         this.extraCol.push(chkObj);
-        this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
+        var _array = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this));
+        if (_array.length > 0)
+            this.hiddenIndex = _array[0].data;
     }
 
     this.createTblObject = function () {
@@ -254,8 +258,8 @@ var EbBasicDataTable = function (Option) {
         this.filterValues = this.getFilterValues("filter");
         dq.Params = this.filterValues;
         dq.rowData = this.rowData;
-        dq.OrderByCol = this.order_info.col;
-        dq.OrderByDir = this.order_info.dir;
+        if (this.orderColl.length > 0)
+            dq.OrderBy = this.orderColl;
         if (this.columnSearch.length > 0) {
             this.filterFlag = true;
         }
@@ -1043,6 +1047,8 @@ var EbBasicDataTable = function (Option) {
         if (col !== '' && col !== "#") {
             this.order_info.col = tempobj[0].name;
             this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
+            this.orderColl = [];
+            this.orderColl.push(new order_obj(this.order_info.col, this.order_info.dir));
         }
     };
 

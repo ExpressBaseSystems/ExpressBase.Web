@@ -134,7 +134,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this, callback));
     };
 
-    this.AppendFD = function (result, callback) {
+	this.AppendFD = function (callback , result) {
         $('#paramdiv' + tabNum).remove();
         $('#ds-page' + tabNum).prepend(`
                 <div id='paramdiv-Cont${tabNum}' class='param-div-cont'>
@@ -146,7 +146,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                     </div>
                     </div>
                 `);
-        $('#paramdiv' + tabNum).show();
         //$('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
@@ -161,7 +160,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         });
 
         if (callback)
-            this.stickBtn.minimise();
+			this.stickBtn.minimise();
+		else
+			$('#paramdiv' + tabNum).show();
     };
 
     this.CloseParamDiv = function () {

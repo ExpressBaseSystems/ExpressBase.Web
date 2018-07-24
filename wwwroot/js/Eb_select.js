@@ -39,7 +39,7 @@
 var z = 100;
 
 //var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
-var EbSelect = function (ctrl) {
+var EbSelect = function (ctrl, options) {
     //parameters   
     this.ComboObj = ctrl;
     this.name = ctrl.name;
@@ -210,6 +210,8 @@ var EbSelect = function (ctrl) {
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.columns;//////////////////////////////////////////////////////
+        if (options)
+            o.wc = options.wc;
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);

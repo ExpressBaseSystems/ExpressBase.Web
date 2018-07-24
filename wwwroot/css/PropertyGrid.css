@@ -270,11 +270,15 @@
     user-select: none;
 }
 
+[pg-editor-type='7'] .colTile {
+    padding: 4.5px 5.5px;
+}
+
 .colTile {
-    padding: 4px 8px;
+    padding: 4px 4.5px;
     background-color: #c8d4ef;
     margin: 3px 1px;
-    border-radius: 15px;
+    border-radius: 25px;
     font-size: 13px;
     cursor: move;
     color: #111;
@@ -429,7 +433,7 @@
 
 
 .sub-controls-DD-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-    width: 200px;
+    width: 205px;
 }
 
 .pgCXEditor-Cont .OSE-DD-cont .btn {
@@ -487,7 +491,12 @@
 .coltile .coltile-delete {
 }
 
-.CE-all-ctrlsCont .coltile-left-arrow, .CEctrlsCont .coltile-right-arrow {
+.coltile-right-arrow, .coltile-delete {
+    float: right;
+}
+
+.coltile-left-arrow {
+    float: left;
 }
 
 .CE-all-ctrlsCont .coltile-left-arrow {
@@ -544,6 +553,7 @@
     background-color: transparent;
     border: 1px solid transparent;
     border-left: none !important;
+    margin-left: -4px;
 }
 
     .CE-add:hover {
@@ -661,6 +671,7 @@
     font-size: 18px;
     margin-top: -1px;
     color: #000;
+    padding: 1px;
 }
 
 .propgrid-table-cont .pg-table tr:focus {

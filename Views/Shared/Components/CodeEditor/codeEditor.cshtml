@@ -3,6 +3,9 @@
     var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
     string readonlyval = (dsObj != null) ? dsObj.VersionNumber.Substring(dsObj.VersionNumber.Length - 1) : "w";
 }
+<script type="text/javascript" src="~/js/DataSource.js"></script>@*Dona*@
+
+
 @*<link href="~/css/SqlBuilder/Home.css" rel="stylesheet" />
     <link href="~/css/SqlBuilder/QBuilder.css" rel="stylesheet" />
     <link href="~/css/SqlBuilder/whereClause.css" rel="stylesheet" />
@@ -27,14 +30,14 @@
 @*qUERY bUILDER*@
 <section class="simple-dsb-cont">
     @*<section class="topbar">
-        <div class="container-fluid">
-            <div class="row h_toolbar">
-                <a type="button" class="btn" href="~/QB/outerQueryBuilder"><i class="glyphicon glyphicon-backward"></i></a>
-                <label id="QBheadtext"><b>VISUAL SQL QUERY BUILDER</b></label>
-                <button type="button" class="btn pull-right" data-target="#myModal" data-toggle="modal"><i class="glyphicon glyphicon-floppy-saved"></i></button>
+            <div class="container-fluid">
+                <div class="row h_toolbar">
+                    <a type="button" class="btn" href="~/QB/outerQueryBuilder"><i class="glyphicon glyphicon-backward"></i></a>
+                    <label id="QBheadtext"><b>VISUAL SQL QUERY BUILDER</b></label>
+                    <button type="button" class="btn pull-right" data-target="#myModal" data-toggle="modal"><i class="glyphicon glyphicon-floppy-saved"></i></button>
+                </div>
             </div>
-        </div>
-    </section>*@
+        </section>*@
     <div class="container-fluid builder-window">
         <div class="row builder-window-row">
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 Builder-toolbox">
@@ -75,33 +78,33 @@
                         </div>
                     </div>
                     @*<div class="tab-pane QueryPane" id="Query">
-                        <textarea id="QueryPane"></textarea>
-                    </div>*@
+                            <textarea id="QueryPane"></textarea>
+                        </div>*@
                 </div>
             </div>
         </div>
-       @* <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Save File</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" id="queryobj_name" name="Name" class="form-control fileNameText" />
+        @* <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Save File</h4>
                         </div>
-                        <input type="hidden" id="json_input" name="Json" />
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" id="queryobj_name" name="Name" class="form-control fileNameText" />
+                            </div>
+                            <input type="hidden" id="json_input" name="Json" />
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" id="save_queryobj" class="btn btn-default saveQB" value="Save" />
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <input type="button" id="save_queryobj" class="btn btn-default saveQB" value="Save" />
-                    </div>
-                </div>
 
-            </div>
-        </div>*@
+                </div>
+            </div>*@
     </div>
 </section>
 <script>

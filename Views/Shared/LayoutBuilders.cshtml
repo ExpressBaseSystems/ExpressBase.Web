@@ -76,6 +76,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>@*amal*@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/js/fileinput.min.js"></script>@*amal*@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.js"></script>@*amal*@
+    <script type="text/javascript" src="~/js/store.legacy.min.js"></script>@*amal*@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>@*dona*@
     <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 
@@ -92,7 +93,7 @@
     <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version=@bApnd></script>@*jith*@
     <script type="text/javascript" src="~/js/Eb_ObjectCommon.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version=@bApnd></script>@*amal*@
-    <script type="text/javascript" src="~/js/Menu.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbQuickMenu/Menu.js" asp-append-version=@bApnd></script>
 
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
@@ -152,6 +153,7 @@
                                                 <span class="input-group-addon search_icon"><i class="material-icons">search</i></span>
                                             </div>
                                         </div>
+                                        <button class="btn c_btn pull-right" id="menu_refresh"><i class="material-icons">refresh</i></button>
                                     </div>
                                 </div>
                                 <div class="quick_menu_load" id="quick_menu_load"></div>
@@ -164,11 +166,10 @@
                                     <div id="objList" class="objList_Container">
                                         <div class="menu_notifiction">Application empty.</div>
                                     </div>
+                                    <div class="modal-footer pwrd_by">
+                                        Powered by expressbase
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="modal-footer pwrd_by">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-9 pwrd_by-text">Powered by expressbase</div>
                             </div>
                         </div>
                     </div>
@@ -183,7 +184,7 @@
 </body>
 </html>
 <script>
-    var menu = new menujs('@ViewBag.wc');//init menu
+    var menu = new menujs('@ViewBag.wc','@ViewBag.cid','@ViewBag.UId');//init menu
     $("#layout_div").data("menu", menu);
     $('.Eb_Image').Lazy();
 </script>

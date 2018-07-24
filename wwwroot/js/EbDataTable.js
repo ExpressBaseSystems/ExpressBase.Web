@@ -1843,18 +1843,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
-                $(e.target).parents('.input-group').append("<input type='text' placeholder='dd/mm/yyyy' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                if (ctype === "date") {
+                    $(e.target).parents('.input-group').append("<input type='text' placeholder='dd/mm/yyyy' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                    $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
+                        dateFormat: "dd/mm/yy",
+                        beforeShow: function (elem, obj) {
+                            $(".ui-datepicker").addClass("datecolumn-picker");
+                        }
+                    });
+                    $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("click", function () {
+                        $(this).datepicker("show");
+                    });
+                }
+                else {
+                    $(e.target).parents('.input-group').append("<input type='number' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                }
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").addClass("between-inp");
                 $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("keyup", this.call_filter);
-                $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
-                    dateFormat: "dd/mm/yy",
-                    beforeShow: function (elem, obj) {
-                        $(".ui-datepicker").addClass("datecolumn-picker");
-                    }
-                });
-                $("#" + this.tableId + "_" + colum + "_hdr_txt2").on("click", function () {
-                    $(this).datepicker("show");
-                });
+                
             }
         }
         else if (selText.trim() !== 'B') {

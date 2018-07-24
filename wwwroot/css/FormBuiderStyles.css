@@ -132,7 +132,7 @@
 
 .web-form-wraper {
     display: inline-block;
-    width: 63.5%;
+    width: 74.7%;
 }
 
 .form-save-wraper {
@@ -141,12 +141,16 @@
 }
 
 .property-grid-cont {
-    position: relative;
-    float: right;
-    width: 30%;
-    height: 86vh;
-    visibility: hidden;
-    z-index: 3;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 4;
+    padding-top: 37px;
+    border: 1px solid #ccc;
+    box-shadow: var(--eb-shadow);
+    height: 100%;
+    background-color: white;
+    width: 400px;
 }
 
 .tool {
@@ -198,6 +202,7 @@
     box-shadow: 4px 2px 4px 0 rgba(26, 26, 26, 0.26);
     z-index: 9;
     cursor: default;
+    animation-duration: 0.3s;
 }
 
     .stickBtn:hover {
@@ -228,7 +233,7 @@
 }
 
 .web-form-buider-cont .toolbox-cont {
-    width: 12%;
+    width: 25%;
 }
 
 .tdDropable {
@@ -263,11 +268,16 @@
     border-radius: 2px;*/
 }
 
-    .form-buider-form .Eb-ctrlContainer:focus {
-        outline: none;
-        border: 1px solid #ccc;
-        margin: 1px;
-    }
+.web-form-wraper .Eb-ctrlContainer {
+    border: solid 1px rgba(255, 0, 0, 0);
+    animation-duration:0.3s;
+}
+
+.form-buider-form .Eb-ctrlContainer:focus {
+    outline: none;
+    border: 1px solid #ccc;
+    margin: 1px;
+}
 
 /*rendering*/
 .form-render-table {

@@ -197,10 +197,9 @@
             </tbody>
             </table>
             </div>`);
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html($CEbody);
         if ($(".editTbl>tbody>tr>td:visible").length === 3)
             $CEbody.find(".editTbl>tbody>tr>td:last").css("width", "44%");
-
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html($CEbody);
 
         if (this.editor === 7 || this.editor === 22) {
             this.initHelper7_22();
@@ -382,7 +381,7 @@
 
     this.initOSE = function () {
         this.curEditorLabel = "Object Selector";
-        var OSEbody = `<div class="OSE-body">
+        var OSEbody = `<div pg-editor-type="${this.editor}" class="OSE-body">
             <table class="table table-bordered editTbl">
             <tbody>
             <tr>

@@ -398,7 +398,7 @@ namespace ExpressBase.Web.Controllers
                 myFileContent = System.Convert.FromBase64String(base64Norm);
                 uploadImageRequest.ImageByte = myFileContent;
                 uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;
-                uploadImageRequest.ImageInfo.FileName = String.Format("loc_dp_{0}.{1}", dict["FileName"].ToLower(), uploadImageRequest.ImageInfo.FileType);
+                uploadImageRequest.ImageInfo.FileName = String.Format("loc_{0}.{1}", dict["FileName"].ToLower(), uploadImageRequest.ImageInfo.FileType);
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                 res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);

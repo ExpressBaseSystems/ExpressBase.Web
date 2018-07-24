@@ -330,7 +330,7 @@
 </div>
 <script>
     $(document).ready(function () {
-        var boarding = new EbOnBoarding('@ViewBag.iSid');
+        var boarding = new EbOnBoarding();
     });
     $("#AppIcon").iconpicker({ placement: 'top', iconset: 'fontawesome', icon: 'fa-home' }).on('change', function (e) { $("input[name='AppIcon']").val(e.icon); });
 </script>

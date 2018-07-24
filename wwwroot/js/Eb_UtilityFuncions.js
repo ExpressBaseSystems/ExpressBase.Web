@@ -17,11 +17,11 @@ function slide(dir, leftDiv, rightDiv, $stickBtn) {
 
     if ($rightDiv.css("display") !== "none") {
         $rightDiv.data("width", rW);
-        $rightDiv.animate({ width: 0 }, 300);
+        $rightDiv.animate({ width: 0, opacity: 0 }, 300);
         $leftDiv.animate({ width: lW + rW + "px" }, 300);
 
         setTimeout(function () {
-            $(document.body).append($stickBtn);
+            $(document.body).append($stickBtn.show());
             $stickBtn.css("top", (198 + ($stickBtn.width() / 2)) + "px").css(dir, (0 - ($stickBtn.width() / 2)) + "px");
             $rightDiv.hide();
         }, 301);
@@ -34,7 +34,7 @@ function slide(dir, leftDiv, rightDiv, $stickBtn) {
             $("#stickBtnL").remove();
 
         $rightDiv.show();
-        $rightDiv.animate({ width: rW + "px" }, 300);
+        $rightDiv.animate({ width: rW + "px", opacity: 1}, 300);
         $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
     }
 };

@@ -135,8 +135,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#btnGo" + this.tabNum).click();
         })
         if (text !== "") {
-            if (typeof commonObj !== "undefined")
-                this.EbObject = commonObj.Current_obj;
+            if (typeof commonO !== "undefined")
+                this.EbObject = commonO.Current_obj;
             else
                 this.EbObject = dvcontainerObj.currentObj;
         }

@@ -161,6 +161,7 @@
                 $("#data-table-list ul[id='t" + i + "'").append("<li id = " + obj.columnName + " data-mytbl = 'Table" + i + ".'  class='coloums draggable'>" + obj.columnName + "</li>");
             });
         });
+        $('#data-table-list').killTree();
         $('#data-table-list').treed();
         $('#summernot_container' + tabNum + ' .note-editable').focus();
         $('.coloums').draggable({
@@ -228,25 +229,25 @@
     this.DrawDsTree = function () {
         $.fn.extend({
             treed: function (o) {
-
-                var openedClass = 'glyphicon-minus-sign';
-                var closedClass = 'glyphicon-plus-sign';
+                var openedClass = 'fa-minus-square-o';
+                var closedClass = 'fa-plus-square-o';
+                var ic = o || 'fa-plus-square-o';
 
                 if (typeof o !== 'undefined') {
                     if (typeof o.openedClass !== 'undefined') {
-                        openedClass = o.openedClass;
+                        //openedClass = o.openedClass;
                     }
                     if (typeof o.closedClass !== 'undefined') {
-                        closedClass = o.closedClass;
+                        //closedClass = o.closedClass;
                     }
                 }
                 var tree = $(this);
                 tree.addClass("tree");
                 tree.find('li').has("ul").each(function () {
                     var branch = $(this);
-                    branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
+                    branch.prepend("<i class='indicator fa " + ic + "'></i>");
                     branch.addClass('branch');
-                    branch.on('click', function (e) {
+                    branch.off("click").on('click', function (e) {
                         if (this === e.target) {
                             var icon = $(this).children('i:first');
                             icon.toggleClass(openedClass + " " + closedClass);
@@ -256,21 +257,34 @@
                     branch.children().children().toggle();
                 });
                 tree.find('.branch .indicator').each(function () {
-                    $(this).on('click', function () {
+                    $(this).off("click").on('click', function (e) {
                         $(this).closest('li').click();
                     });
                 });
                 tree.find('.branch>a').each(function () {
-                    $(this).on('click', function (e) {
+                    $(this).off("click").on('click', function (e) {
                         $(this).closest('li').click();
                         e.preventDefault();
                     });
                 });
                 tree.find('.branch>button').each(function () {
-                    $(this).on('click', function (e) {
+                    $(this).off("off").on('click', function (e) {
                         $(this).closest('li').click();
                         e.preventDefault();
                     });
+                });
+            }
+        });
+        $.fn.extend({
+            killTree: function (o) {
+                var tree = $(this);
+                tree.removeClass("tree");
+                tree.find('li').has("ul").each(function () {
+                    var branch = $(this);
+                    branch.children().children().show();
+                    branch.children("i").remove();
+                    branch.removeClass('branch');
+                    branch.off("click");
                 });
             }
         });

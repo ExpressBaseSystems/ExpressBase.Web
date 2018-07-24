@@ -478,8 +478,12 @@ var EbSelect = function (ctrl) {
 
     this.V_showDD = function () {
         this.Vobj.DDstate = true;
-        if (!this.IsDatatableInit)
-            this.InitDT();
+        if (!this.IsDatatableInit) {
+            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
+                alert(`enter minimum ${this.ComboObj.minSeachLength} charecter in searchBox`);
+            else
+                this.InitDT();
+        }
         else {
             EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
             setTimeout(function () {

@@ -7,7 +7,7 @@
 /*side menuBar*/
 .side-toolbar {
     position: fixed;
-    height: calc(100% - 70px);
+    height: calc(100% - 73px);
     width: 250px;
 }
 

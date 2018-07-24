@@ -39,9 +39,9 @@
         form.style.display = "none";
         form.setAttribute("method", "post");
         if (console === "dc")
-            form.setAttribute("action", "http://" + sid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
+            form.setAttribute("action", window.location.protocol + "//" + sid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
         else if (console === "uc")
-            form.setAttribute("action", "http://" + sid + "." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
+            form.setAttribute("action", window.location.protocol + "//" + sid + "." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
         form.setAttribute("target", "_blank");
         var token = document.createElement("input");
         token.setAttribute("name", "Btoken");

@@ -96,8 +96,8 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult CreateSolution()
         {
-            var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
-            ViewBag.iSid = ebids.Sid;
+            //var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
+            //ViewBag.iSid = ebids.Sid;
             return View();
         }
 

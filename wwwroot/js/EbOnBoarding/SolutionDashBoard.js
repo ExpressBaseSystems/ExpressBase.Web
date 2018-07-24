@@ -211,15 +211,16 @@
     };
 
     this.goToSolutionWindow = function (e) {
-        var console = $(e.target).closest(".btn").attr("wc");
+        var console = $(e.target).closest(".single__sso").attr("wc");
+        var sid = $(e.target).closest(".single__sso").attr("sid");
         var tk = getTok();
         var rtk = getrToken();
         var form = document.createElement("form");
         form.setAttribute("method", "post");
         if (console === "dc")
-            form.setAttribute("action", "http://" + sid + "-dev." + window.location.host + "/Ext/SwitchContext");
+            form.setAttribute("action", window.location.protocol + "//" + sid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
         else if (console === "uc")
-            form.setAttribute("action", "http://" + sid + "." + window.location.host + "/Ext/SwitchContext");
+            form.setAttribute("action", window.location.protocol + "//" + sid + "." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
         form.setAttribute("target", "_blank");
         var token = document.createElement("input");
         token.setAttribute("name", "Btoken");

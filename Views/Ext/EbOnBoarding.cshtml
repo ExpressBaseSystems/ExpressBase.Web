@@ -96,7 +96,7 @@
                     <form class="subscript-submit" method="post" id="sol-form-submit">
                         <label>Solution URL</label>
                         <div class="client-id-sec">
-                            <input type="text" required="required" id="cid" name="Esid" value="@ViewBag.iSid" readonly class="form-control input-clientId text-right" />
+                            <input type="text" id="ebsid" name="EbSid" class="form-control input-clientId" required/>
                             <div class="clientId-auto">.expressbase.com</div>
                         </div>
                         <div class="form-group">
@@ -107,7 +107,6 @@
                             <label>Description</label>
                             <textarea class="form-control" id="Desc" name="Desc"></textarea>
                         </div>
-                        <input type="hidden" id="isid" name="Isid" value="@ViewBag.iSid" />
                         <input type="submit" id="sol-form-sub" style="display:none;" />
                     </form>
                     <div class="form-group">
@@ -285,7 +284,7 @@
                                 </span>
                             </div>
                         </div>
-                        <input type="hidden" id="Sid" name="Sid" value="@ViewBag.iSid" />
+                        <input type="hidden" id="sid_on_appcreation" name="Sid" value="" />
                         <input type="submit" id="app-form-sub" style="display:none;" />
                     </form>
                 </div>

@@ -61,13 +61,7 @@
     
     this.init = function () {
         $(".apps_count").text("(" + this.EbSolutionColl.length + ")");
-        if (this.IsSSO)           
-            $("#confTo-solution").modal("toggle");
-
         this.drawSolutionTiles();
-        $("#skip").on("click", function () {
-            $("#confTo-solution").modal("toggle");
-        });
     };
   
     this.init();

@@ -33,21 +33,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade confTo-solution" id="confTo-solution" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-        <div class="confTo-solution-container">
-            <div class="confTo-solution-inner">
-                <div class="heading">
-                    Your Solution is ready now.
-                </div>
-                <div class="btn-section form-inline">
-                    <button id="goToSolution" class="btn">Go to Application</button>
-                    <button id="skip" class="btn pull-right">Continue.</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
     var Tdb = TenantDashBoard(@Html.Raw(ViewBag.Solutions), @sso, "@ViewBag.Email", @aptype);
     if ('@ViewBag.Msg')

@@ -1,7 +1,7 @@
 ﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList) {
     this.menuBarObj = $("#layout_div").data("EbHeader");
     this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
-    this.appCollection = appCollection.$values;
+    this.appCollection = appCollection._acol.$values;
     this.roleId = roleId;
     this.roleInfo = roleInfo;
     this.permission = permission.$values;
@@ -364,9 +364,9 @@
                 tblColumn.push({ data: 'x' + (a + 1), title: b, render: this.tblColumnRender, width: '80px', orderable: false, className: "text-center"});
             }.bind(this));
             var appindex = $("#selectApp").find(":selected").attr("data-index");
-            $.each(this.appCollection[appindex].ObjectTypes, function (j, a) {
+            $.each(this.appCollection[appindex].ObjectTypes._otypecol, function (j, a) {
                 if (j == value.Op_Id) {
-                    $.each(a.$values, function (k, b) {
+                    $.each(a._obcol.$values, function (k, b) {
                         var obt= new Object();
                         obt.x0 = b.Obj_Name;
                         var appindex = $("#selectApp").find(":selected").attr("data-index");

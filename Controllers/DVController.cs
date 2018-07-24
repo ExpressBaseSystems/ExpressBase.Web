@@ -251,8 +251,8 @@ namespace ExpressBase.Web.Controllers
         //copied to boti - febin
         public DataSourceDataResponse getData(TableDataRequest request)
         {
-            
-            request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+            if(request.DataVizObjString != null)
+                request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
             request.DataVizObjString = null;
             DataSourceDataResponse resultlist1 = null;
             try

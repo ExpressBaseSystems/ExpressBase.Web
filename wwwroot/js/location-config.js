@@ -20,11 +20,10 @@
 
     this.setLocNameToImg = function (e) {
         $(".disablebtn").prop("disabled", false);
-        this.Cropies['Logo'].Extra.FileName = $(e.target).val() + this.Cropies['Logo'].Extra.Name;
+        this.Cropies['Logo'].Extra.FileName = $(e.target).val() + "_" + this.Cropies['Logo'].Extra.Name;
         $(this.data).each(function (i, item) {
-            if (item.Type === "Image") {
-                this.Cropies[item.Name].Extra.FileName = $(e.target).val() + this.Cropies[item.Name].Extra.Name;
-            }
+            if (item.Type === "Image")
+                this.Cropies[item.Name].Extra.FileName = $(e.target).val() + "_"  + this.Cropies[item.Name].Extra.Name;
         }.bind(this));
     };
 
@@ -82,7 +81,6 @@
                 $('#locspace').append(`<div class="form-group" locKey="${l_item.Name}">
                         <label class="col-sm-3">${l_item.Name}</label>
                         <div class="col-sm-3">
-                            <input type="hidden" value="" name="${l_item.Name}"/>
                             <button key="${l_item.Name}" id="${l_item.Name}_toggle" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
                         <div class="col-md-6 logo_img_cont">
@@ -111,7 +109,7 @@
             ResizeViewPort: resize,
         });
         this.Cropies[extra.Name].getObjId = function (o) {
-            $(`input[name='${extra.Name}']`).val(o.objectId);
+            //$(`input[name='${extra.Name}']`).val(o.objectId);
         };
     };
 
@@ -119,14 +117,18 @@
         e.preventDefault();
         let m = {};
         $(this.data).each(function (i, item) {
-            m[item.Name] = $(`input[name='${item.Name}']`).val();
-        });
+            if (item.Type === "Image")
+                m[item.Name] = "loc_dp_" + this.Cropies[item.Name].Extra.FileName;
+            else
+                m[item.Name] = $(`input[name='${item.Name}']`).val();
+        }.bind(this));
+
         if (this.validateNewLoc()) {
             $.post("../TenantUser/CreateLocation", {
                 locid: $("input[name='LocId']").val(),
                 lname: $("input[name='longname']").val(),
                 sname: $("input[name='shortname']").val(),
-                img: $(`input[name='Logo']`).val(),
+                img: "loc_dp_" + this.Cropies['Logo'].Extra.FileName,
                 meta: JSON.stringify(m)
             }, function (result) {
                 if (result >= 1) {

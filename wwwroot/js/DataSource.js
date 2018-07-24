@@ -454,7 +454,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (this.EbObject.Sql.indexOf(sqlFn.name) !== -1) {
             this.rel_arr.push(i);
         }
-    };
+	};
+
+	//commonO.PreviewObject = function () {
+	//	$("#preview_wrapper").empty();
+	//	this.RunDs();
+	//}.bind(this);
 
     this.Init();
 }

@@ -53,7 +53,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste', (this.SetCode.bind(this)));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
-        $(".selectpicker").selectpicker();
+        $(".selectpicker").selectpicker();             
 
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
@@ -63,7 +63,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         else {
             if (this.EbObject.FilterDialogRefId !== "")
                 this.FD = true;
-            this.GetFD();
+            var callback = true;
+            //var callback = function () {
+            //    this.stickBtn.minimise();
+            //}.bind(this);
+            this.GetFD(callback);
         }
         this.GenerateButtons();
 
@@ -123,14 +127,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
     }.bind(this);
 
-    this.GetFD = function () {
+    this.GetFD = function (callback) {
         this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
         //this.relatedObjects += this.FilterDialogRefId;
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
-            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this));
+            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this, callback));
     };
 
-    this.AppendFD = function (result) {
+    this.AppendFD = function (result, callback) {
         $('#paramdiv' + tabNum).remove();
         $('#ds-page' + tabNum).prepend(`
                 <div id='paramdiv-Cont${tabNum}' class='param-div-cont'>
@@ -148,7 +152,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.RunDs.bind(this));
         $.LoadingOverlay("hide");
-
         this.stickBtn = new EbStickButton({
             $wraper: $(".param-div"),
             $extCont: $(".param-div"),
@@ -156,6 +159,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             dir: "left",
             label: "Parameters",
         });
+
+        if (callback)
+            this.stickBtn.minimise();
     };
 
     this.CloseParamDiv = function () {
@@ -458,12 +464,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (this.EbObject.Sql.indexOf(sqlFn.name) !== -1) {
             this.rel_arr.push(i);
         }
-	};
+    };
 
-	//commonO.PreviewObject = function () {
-	//	$("#preview_wrapper").empty();
-	//	this.RunDs();
-	//}.bind(this);
+    //commonO.PreviewObject = function () {
+    //	$("#preview_wrapper").empty();
+    //	this.RunDs();
+    //}.bind(this);
 
     this.Init();
 }

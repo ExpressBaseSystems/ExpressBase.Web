@@ -26,11 +26,12 @@
 }
 
 .dv-body-dev .sub-windows {
-    height: calc(100vh - 115px) !important;
+    /*height: calc(100vh - 115px) !important;*/
+    height: 100%;
 }
 
 .dv-body-dev .dataTables_scroll {
-    height: calc(100vh - 181px) !important;
+    height: calc(100vh - 101px) !important;
 }
 
 .dv-body-dev .filter-display {
@@ -78,8 +79,12 @@
 .padd-2 {
 }
 
+.dv-body-dev {
+    height: calc(100vh - 74px) !important;
+}
 .dv-body-dev .dv {
-    height: calc( 100vh - 115px ) !important;
+    /*height: calc( 100vh - 115px ) !important;*/
+    height: 100%;
 }
 
 .dv .toolbar-com {

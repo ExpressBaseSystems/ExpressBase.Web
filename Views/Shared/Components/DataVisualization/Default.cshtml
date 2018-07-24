@@ -33,13 +33,13 @@
     var dvGlobal = new Object();
     @Html.Raw(ViewBag.HtmlHead);
     if ('@ViewBag.wc' === 'uc' || typeof prevfocusedId !== 'undefined' ) {
-        dvcontainerObj.currentObj, @Html.Raw(dvobj);
+        dvcontainerObj.currentObj =  @Html.Raw(dvobj);
     }
     else if ('@ViewBag.wc' === 'dc') {
         commonO = $("#layout_div").data("commonObj");
         console.log(commonO);
 
-        commonObj.Current_obj =  @Html.Raw(dvobj);
+        commonO.Current_obj =  @Html.Raw(dvobj);
     }
     else {
         dvGlobal.Current_obj =  @Html.Raw(dvobj);

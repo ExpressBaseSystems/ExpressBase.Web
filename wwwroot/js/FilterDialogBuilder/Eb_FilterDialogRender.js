@@ -108,8 +108,8 @@
                 return false;
             }
         });
-
-        this.$filterBox.parent().css("width", this.filterObj.width+"px")
+        if (this.filterObj.width > 150)
+            this.$filterBox.parent().css("width", this.filterObj.width + "px");
     }
 
     this.init();

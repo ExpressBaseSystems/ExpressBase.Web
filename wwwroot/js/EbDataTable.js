@@ -173,13 +173,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
-                //$(".filterCont").show();
-                if (this.login === "dc") {
-                    this.stickBtn.minimise();
-                }
-                else {
-                    dvcontainerObj.stickBtn.minimise();
-                }
+                ////$(".filterCont").show();
+                //if (this.login === "dc") {
+                //    this.stickBtn.minimise();
+                //}
+                //else {
+                //    dvcontainerObj.stickBtn.minimise();
+                //}
             }
             $("#eb_common_loader").EbLoader("hide");
         }
@@ -1551,9 +1551,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 "</div>" +
                 "</div>" +
                 "</div>");
-            if (this.FD) {
-                $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
-            }
+            //if (this.FD) {
+            //    $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
+            //}
             //$("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class='fa fa-cog' aria-hidden='true'></i></button>");
             //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
             if (this.login == "uc") {

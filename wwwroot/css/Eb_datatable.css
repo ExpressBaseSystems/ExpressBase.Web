@@ -332,6 +332,7 @@ table.dataTable tbody td.dt-body-right {
     /*overflow-y: scroll !important;*/
 }
 
+
     .dataTables_scrollBody tabl tr td:hover{
         background-color:aqua !important;
     }

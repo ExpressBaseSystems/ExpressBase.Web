@@ -160,9 +160,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         });
 
         if (callback)
-			this.stickBtn.minimise();
-		else
-			$('#paramdiv' + tabNum).show();
+            this.stickBtn.hide();
+        else
+            this.stickBtn.maximise();
     };
 
     this.CloseParamDiv = function () {
@@ -357,10 +357,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $("#sample" + commonO.tabNum).dataTable({
                 aoColumns: cols,
                 serverSide: true,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                lengthMenu: [[20, 50, 100], [20, 50, 100]],
                 scrollX: "100%",
                 scrollY: "300px",
                 processing: true,
+                dom: "liprt",
+                paging : true,
+                lengthChange : true,
                 ajax: {
                     //url: this.Ssurl + "/ds/data/" + this.Refid,
                     url: "../CE/getData",

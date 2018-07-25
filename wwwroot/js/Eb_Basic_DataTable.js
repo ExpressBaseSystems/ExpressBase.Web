@@ -8,6 +8,7 @@ var EbBasicDataTable = function (Option) {
     this.showCheckboxColumn = (typeof Option.showCheckboxColumn !== "undefined" && Option.showCheckboxColumn !== "" && Option.showCheckboxColumn !== null) ? Option.showCheckboxColumn : true;
     this.showFilterRow = (typeof Option.showFilterRow !== "undefined" && Option.showFilterRow !== "" && Option.showFilterRow !== null) ? Option.showFilterRow : true;
     this.scrollHeight = Option.scrollHeight || "inherit";
+    console.log(this.scrollHeight);
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.columns = Option.columns || null;
     this.hiddenIndex = null;
@@ -513,6 +514,7 @@ var EbBasicDataTable = function (Option) {
             if (Option.fninitComplete)
                 Option.fninitComplete();
         }.bind(this), 10);
+        $(".dataTables_scroll").css("height", this.scrollHeight);
     }
 
     this.contextMenu = function () {

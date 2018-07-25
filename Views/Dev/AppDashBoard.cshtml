@@ -109,7 +109,7 @@
                 <button onclick="UpdateBotSettings()">Update</button>
 
                 <div>
-                    <textarea style="margin: 0px; width: 638px; height: 212px;"><script type="text/javascript">
+                    <textarea id="txtemdscript" style="margin: 0px; width: 638px; height: 212px;"><script type="text/javascript">
     (function () {
         d = document;
         s = d.createElement("script");
@@ -118,7 +118,9 @@
         d.getElementsByTagName("head")[0].appendChild(s);
     })();
 </script></textarea>
+                    <button onclick="$('#txtemdscript').select(); document.execCommand('copy');">Copy to Clipboard</button>
                 </div>
+
 
                 <div id="AppDB_BotDemoDp" class="modal fade" role="dialog">
                     <div class="modal-dialog" style="width:445px">

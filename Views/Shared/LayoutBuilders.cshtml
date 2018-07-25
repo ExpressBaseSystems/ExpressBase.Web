@@ -118,64 +118,11 @@
 </head>
 <body>
     <div id="tenatDtls" class="container-fluid">
-        @{
-            string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
 
-            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+            @if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
             {
-                <div class="modal fade Eb_quick_menu" tabindex="-1" role="dialog" id='ObjModal'>
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <div class="row mr-0">
-                                    <div class="col-md-3 col-lg-3 col-sm-3 pd-5 q_men_IMGsection text-center">
-                                        <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
-                                    </div>
-                                    <div class="col-md-9 col-lg-9 col-sm-9 header_topmenu" id="topmenu">
-                                        <div class="breadcrumb_wrapper"></div>
-                                        <button class="btn c_btn cls_btn pull-right" data-toggle="tooltip" title="Close" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
-                                        @{
-                                            if (ViewBag.wc == "dc")
-                                            {
-                                                <div class="dropdown drp_new pull-right">
-                                                    <button class="btn btn-default dropdown-toggle" type="button" id="newBuildermenu1" data-toggle="dropdown">
-                                                        <span class="fa fa-plus"></span>
-                                                        New Object
-                                                    </button>
-                                                    <ul class="dropdown-menu drp_new_wrapper" role="menu" id="drp_new_wrapper" aria-labelledby="newBuildermenu1"></ul>
-                                                </div>
-                                            }
-                                        }
-
-                                        <div class="searchBox pull-right">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control search_input" id="searchobj" placeholder="Search from all.">
-                                                <span class="input-group-addon search_icon"><i class="material-icons">search</i></span>
-                                            </div>
-                                        </div>
-                                        <button class="btn c_btn pull-right" id="menu_refresh"><i class="material-icons">refresh</i></button>
-                                    </div>
-                                </div>
-                                <div class="quick_menu_load" id="quick_menu_load"></div>
-                            </div>
-                            <div class="modal-body menu_wrapper">
-                                <div class="col-md-3 col-lg-3 pd-0 menu_sidebar">
-                                    <div id="EbsideBar" class="menu_sidebar_sub"></div>
-                                </div>
-                                <div class="col-md-9 col-lg-9 menu_workpane" id="ObjListCont">
-                                    <div id="objList" class="objList_Container">
-                                        <div class="menu_notifiction">Application empty.</div>
-                                    </div>
-                                    <div class="modal-footer pwrd_by">
-                                        Powered by expressbase
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                Html.RenderPartial("EbQuickMenu");
             }
-        }
     </div>
     <div id="layout_div" class="container-fluid main-cont">
         @RenderBody()

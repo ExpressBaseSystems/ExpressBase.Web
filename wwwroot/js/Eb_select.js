@@ -199,7 +199,7 @@ var EbSelect = function (ctrl, options) {
         o.showSerialColumn = true;
         o.showCheckboxColumn = this.ComboObj.multiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.scrollHeight + "px";
+        o.scrollHeight = this.ComboObj.dropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -476,12 +476,21 @@ var EbSelect = function (ctrl, options) {
     this.V_hideDD = function () {
         this.Vobj.DDstate = false;
         this.RemoveRowFocusStyle();
-    }
+    };
+    this.getMaxLenVal = function () {
+        var val = "";
+        $.each(this.$searchBoxes, function (i, el) {
+            if ($(el).val().trim().length > val.length)
+                val = $(el).val().trim();
+        });
+        return val;
+    };
 
     this.V_showDD = function () {
         this.Vobj.DDstate = true;
         if (!this.IsDatatableInit) {
-            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
+            searchVal = this.getMaxLenVal();
+            if (searchVal === "" || this.ComboObj.minSeachLength > searchVal.length)
                 alert(`enter minimum ${this.ComboObj.minSeachLength} charecter in searchBox`);
             else
                 this.InitDT();

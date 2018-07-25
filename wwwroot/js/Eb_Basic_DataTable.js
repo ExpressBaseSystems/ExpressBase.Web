@@ -513,6 +513,7 @@ var EbBasicDataTable = function (Option) {
             if (Option.fninitComplete)
                 Option.fninitComplete();
         }.bind(this), 10);
+        $(".dataTables_scroll").css("height", this.scrollHeight+"px");
     }
 
     this.contextMenu = function () {

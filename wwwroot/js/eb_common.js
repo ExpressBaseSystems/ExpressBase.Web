@@ -149,7 +149,7 @@ function getEbObjectTypes() {
 }
 
 
-function EbMakeInvalid(contSel, _ctrlCont,  msg = "This field is required") {
+function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required") {
     //var contSel = `[for=${name}]`;//
     if ($(`${contSel} .req-cont`).length !== 0)
         return;
@@ -178,6 +178,7 @@ var EbStickButton = function (option) {
     this.delay = option.delay || 300;
     this.dir = option.dir || "right";
     this.$scope = option.$scope || $(document.body)
+    this.pgtop = option.btnTop || (this.$wraper.offset().top - $(window).scrollTop());
     $(this.$scope).append(this.$stickBtn);
 
     this.toggleStickButton = function () {
@@ -196,10 +197,16 @@ var EbStickButton = function (option) {
     this.minimise = function () {
         this.$stickBtn.show(this.delay);
         this.$extCont.hide(this.delay);
-        let pgtop = (this.$wraper.offset().top - $(window).scrollTop());
         setTimeout(function () {
-            this.$stickBtn.css("top", (pgtop + (this.$stickBtn.width() / 2)) + "px");
+            this.$stickBtn.css("top", (this.pgtop + (this.$stickBtn.width() / 2)) + "px");
             this.$stickBtn.css(this.dir, (0 - (this.$stickBtn.width() / 2)) + "px");
+        }.bind(this), this.delay + 1);
+    }
+
+    this.hide = function () {
+        this.minimise();
+        setTimeout(function () {
+            this.$stickBtn.hide();
         }.bind(this), this.delay + 1);
     }
     this.$stickBtn.on("click", this.maximise.bind(this));

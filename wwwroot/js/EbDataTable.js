@@ -173,13 +173,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
-                //$(".filterCont").show();
-                if (this.login === "dc") {
-                    this.stickBtn.minimise();
-                }
-                else {
-                    dvcontainerObj.stickBtn.minimise();
-                }
+                ////$(".filterCont").show();
+                //if (this.login === "dc") {
+                //    this.stickBtn.minimise();
+                //}
+                //else {
+                //    dvcontainerObj.stickBtn.minimise();
+                //}
             }
             $("#eb_common_loader").EbLoader("hide");
         }

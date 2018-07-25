@@ -7,6 +7,10 @@
     var sso = ViewBag.IsSSO == "true" ? "true" : "false";
     var aptype = ViewBag.AppType != null ? ViewBag.AppType : 0;
 }
+<script>
+    $(".solution_logo ").attr("src", "/images/Eb_Logo.png");
+     var cm = new EbHeader().setName("My Solutions");
+</script>
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar">
         <div class="t-container">

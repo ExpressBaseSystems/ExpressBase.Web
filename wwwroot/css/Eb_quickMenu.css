@@ -210,7 +210,7 @@
     float: left;
     padding: 6px 0px;
     padding-right: 10px;
-    font-size:16px;
+    font-size: 18px;
 }
     .breadcrumb_wrapper .active_lnk {
         color: #4e79a5;
@@ -261,4 +261,9 @@
 }
 .appdash_obj_container .obj_count, .Eb_quick_menu .obj_count {
     margin-left: 0.4em;
+}
+.shrtcurt_info{
+    position:absolute;
+    width:100%;
+    color:white;
 }

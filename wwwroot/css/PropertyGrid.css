@@ -290,23 +290,23 @@
     cursor: inherit;
 }
 
-    .colTile:hover {
-        background-color: var(--colorDDD);
-        outline: none;
-        color: #000;
-    }
+.colTile:hover {
+    background-color: var(--colorDDD);
+    outline: none;
+    color: #000;
+}
 
-    .colTile:focus, .OSE-verTile-Cont .colTile:focus {
-        background-color: #94bccc;
-        outline: none;
-        color: #222;
-    }
+.colTile:focus, .OSE-verTile-Cont .colTile:focus {
+    background-color: #94bccc;
+    outline: none;
+    color: #222;
+}
 
-    .colTile[is-selected=true] {
-        background-color: #aebbbd;
-        outline: none;
-        color: #222;
-    }
+.colTile[is-selected=true] {
+    background-color: #aebbbd;
+    outline: none;
+    color: #222;
+}
 
 .Otile-active {
     background-color: #aebbbd;
@@ -492,11 +492,12 @@
     height: calc(100% - 33px);
 }
 
-.coltile .coltile-delete {
-}
-
 .coltile-right-arrow, .coltile-delete {
     float: right;
+}
+
+.CE-all-ctrlsCont .colTile .coltile-delete {
+    float: left;
 }
 
 .coltile-left-arrow {

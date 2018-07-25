@@ -51,6 +51,13 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Connections = JsonConvert.SerializeObject(resp.EBSolutionConnections);
             ViewBag.SolutionInfo = resp.Data;
             ViewBag.cid = Sid;
+            if(this.HttpContext.Request.IsHttps)
+                ViewBag.Protocol = "https://";
+            else
+                ViewBag.Protocol = "http://";
+            ViewBag.Domain = this.HttpContext.Request.Host;
+            ViewBag.rToken = Request.Cookies["rToken"];
+            ViewBag.bToken = Request.Cookies["bToken"];
             return View();
         }
 

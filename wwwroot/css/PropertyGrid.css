@@ -286,6 +286,10 @@
     transition-duration: 0.3s;
 }
 
+[pg-editor-type="13"] .colTile {
+    cursor: inherit;
+}
+
     .colTile:hover {
         background-color: var(--colorDDD);
         outline: none;
@@ -607,11 +611,17 @@
     display: none;
 }
 
+.DD-refresh:hover {
+    color: #2d5f91;
+    transform: rotateZ(180deg);
+}
+
 .DD-refresh {
     margin-right: 20px;
     margin-top: 2.4px;
     float: right;
     font-size: 14px;
+    transition-duration: 1s;
 }
 
 /*.controls-dd-cont .dropdown-toggle {

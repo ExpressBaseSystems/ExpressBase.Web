@@ -27,7 +27,7 @@
                 </div>
             </div>`);
         }
-        $("body").on("click",".single__sso", this.goToSolutionWindow.bind(this));
+        $("body").off("click").on("click",".single__sso", this.goToSolutionWindow.bind(this));
     };
 
     this.goToSolutionWindow = function (e) {

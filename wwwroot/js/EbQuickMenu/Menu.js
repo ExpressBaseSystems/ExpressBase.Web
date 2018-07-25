@@ -15,7 +15,7 @@
         $(".Eb_quick_menu #searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $(".Eb_quick_menu").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
         $('.Eb_quick_menu').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
-        $('.Eb_quick_menu').off("click").on('click', ".for_brd", this.setBrdCrump.bind(this));
+        //$('.Eb_quick_menu').off("click").on('click', ".for_brd", this.setBrdCrump.bind(this));
         $('.Eb_quick_menu').off("click").on('click', "#menu_refresh", this.refreshMenu.bind(this));
     };
 
@@ -115,11 +115,11 @@
         $(".Eb_quick_menu .obj_search_input").off("click").on("click", function (e) { e.stopPropagation(); });
     };
 
-    this.setBrdCrump = function(el){
-        var el_li = $(el.target).closest("li");
-        var url = `<span class='brd_cr_items'>${el_li.parent().prev().text().trim()}</span>/<span class='brd_cr_items active_lnk'>${$(el.target).text().trim()}</span>`;
-        $(".Eb_quick_menu .breadcrumb_wrapper").empty().append(url);
-    }
+    //this.setBrdCrump = function(el){
+    //    var el_li = $(el.target).closest("li");
+    //    var url = `<span class='brd_cr_items'>${el_li.parent().prev().text().trim()}</span>/<span class='brd_cr_items active_lnk'>${$(el.target).text().trim()}</span>`;
+    //    $(".Eb_quick_menu .breadcrumb_wrapper").empty().append(url);
+    //}
 
     this.apndOTypeContainer = function ($ob, _objArray) {
         for (let i = 0; i < _objArray.length; i++) {

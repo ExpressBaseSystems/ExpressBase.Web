@@ -160,9 +160,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         });
 
         if (callback)
-			this.stickBtn.minimise();
-		else
-			$('#paramdiv' + tabNum).show();
+            this.stickBtn.hide();
+        else
+            this.stickBtn.maximise();
     };
 
     this.CloseParamDiv = function () {

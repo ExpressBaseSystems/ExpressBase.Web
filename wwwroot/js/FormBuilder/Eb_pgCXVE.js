@@ -101,6 +101,8 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
+        this.PGobj.CurProp = e.target.getAttribute("for");
+        this.CurMeta = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp);
         this.curCXEbtn = $(e.target);
         var visibleModalLength = $('.pgCXEditor-bg').filter(function () { return $(this).css('display') !== 'none'; }).length;
         var right = (this.modalRight + -visibleModalLength * 10) + "px";
@@ -112,13 +114,12 @@
         $(this.pgCXE_Cont_Slctr).css("right", right);
         $(this.pgCXE_Cont_Slctr).css("top", (this.modalTop + visibleModalLength * 7 + "px"));
         this.editor = parseInt(e.target.getAttribute("editor"));
-        this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurProplabel = getObjByval(_meta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
-        //this.CurProplabel = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
+        //this.CurProplabel = this.CurMeta.alias || this.PGobj.CurProp;
         if (!(this.editor === 17 || this.editor === 14 || this.editor === 21))
             $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
-        //this.CurEditor = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).editor;
+        //this.CurEditor = this.CurMeta.editor;
         if (this.editor > 6 && this.editor < 11 || this.editor === 22 || this.editor === 24 || this.editor === 26)
             this.initCE();
         else if (this.editor === 11)// JS
@@ -205,7 +206,7 @@
             this.initHelper7_22();
         }
         else if ((this.editor > 7 && this.editor < 11) || this.editor === 24 || this.editor === 26) {
-            var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
+            var sourceProp = this.CurMeta.source;
             this.CEHelper(sourceProp);
         }
         this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
@@ -214,11 +215,11 @@
     };
 
     this.initHelper7_22 = function () {
-        var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
+        var sourceProp = this.CurMeta.source;
         if (sourceProp)
             getObjByval(this.PGobj.Metas, "name", sourceProp).source = this.PGobj.CurProp;
         $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0)").hide();
-        $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp));
+        $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((this.CurMeta.alias || this.PGobj.CurProp));
 
         if (this.PGobj.CurProp === "Controls") {/////////////////////////need CE test and correction
             this.CElist = this.PGobj.PropsObj.Controls.$values;
@@ -243,7 +244,7 @@
     };
 
     this.CEHelper = function (sourceProp) {
-        this.Dprop = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Dprop;
+        this.Dprop = this.CurMeta.Dprop;
         this.allCols = this.PGobj.PropsObj[sourceProp].$values;
         if (this.editor === 8) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
@@ -270,7 +271,7 @@
             this.CE_PGObj = new Eb_PropertyGrid({
                 id: this.PGobj.wraperId + "_InnerPG",
                 IsInnerCall: true,
-                dependedProp: getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Dprop2
+                dependedProp: this.CurMeta.Dprop2
             });
         }
     };
@@ -285,7 +286,7 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if (this.editor === 8 && getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Limit === this.selectedCols.length) {
+        if (this.editor === 8 && this.CurMeta.Limit === this.selectedCols.length) {
             return false;
         }
         return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10) && !this.PGobj.IsReadonly;
@@ -407,7 +408,7 @@
             </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
         var options = "";
-        var ObjTypes = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).options;
+        var ObjTypes = this.CurMeta.options;
         if (ObjTypes !== null)
             for (var i = 0; i < ObjTypes.length; i++) { options += '<option obj-type="' + EbObjectTypes[ObjTypes[i]] + '">' + ObjTypes[i] + '</option>' }
         else
@@ -660,7 +661,7 @@
 
     this.setColTiles = function () {
         $("#" + this.CEctrlsContId).empty();
-        var SubTypes = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).options;
+        var SubTypes = this.CurMeta.options;
         if (SubTypes) {
             $.each(this.CElist, function (i, control) {
                 var type = control.$type.split(",")[0].split(".")[2];
@@ -683,7 +684,7 @@
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(DD_html);
 
         var options = "";
-        var SubTypes = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).options;
+        var SubTypes = this.CurMeta.options;
         if (SubTypes) {
             for (var i = 0; i < SubTypes.length; i++) {
                 var ObjName = SubTypes[i].split("-/-")[0]; var DispName = SubTypes[i].split("-/-")[1];
@@ -734,7 +735,7 @@
         if (this.editor === 7) {
             this.PGobj.removeFromDD.bind(this.PGobj)($tile.attr("id"));
             var DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1)[0];
-            var sourceProp = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).source;
+            var sourceProp = this.CurMeta.source;
             if (sourceProp) {
                 $.each(this.PGobj.PropsObj[sourceProp].$values, function (i, obj) {
                     $.each(obj, function (prop, val) {
@@ -802,7 +803,7 @@
     };
 
     this.updateColumnIndex = function (delobj) {
-        deletedColumnIdx = delobj.data;
+        let deletedColumnIdx = delobj.data;
         for (var i = deletedColumnIdx; i < this.allCols.length; i++) {
             objectToBeUpdated = getObjByval(this.allCols, "data", (i + 1));
             objectToBeUpdated.data = i;

@@ -207,12 +207,12 @@
     background-color: white;
     padding: 3px;
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
-    animation-name: example;
+    animation-name: flip;
     animation-duration: 0.5s;
 }
 
 /* Standard syntax */
-@keyframes example {
+@keyframes flip {
     from {
         opacity: 0;
         transform: perspective(4000px) rotateY(90deg); /* Standard syntax */

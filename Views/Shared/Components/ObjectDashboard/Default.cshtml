@@ -521,7 +521,12 @@
     });
 
         $('#minmize').click(function () {
-            $('.dashbord').animate({ width: 'toggle' });
+            //$('.dashbord').animate({ width: 'toggle' });
+            var $dashB = $('.dashbord');
+            if ($dashB.css("display") ==="none")
+                $dashB.show().animate({ right: "0", opacity: 1 }, 300);
+            else
+                $dashB.animate({ right: "-" + $dashB.css("width"), opacity: 0.5 }, 300, function () { $(this).hide() });
         });
 
         function LoadMyProfile() {

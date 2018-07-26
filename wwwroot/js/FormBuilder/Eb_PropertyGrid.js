@@ -618,13 +618,14 @@
         var groupName = $GroupHeadRow.attr("group-h");
         var $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
         if (groupName !== "All") {
+            let delay = 100;
             if (isExpanded) {
                 $("#" + this.wraperId + " [group=" + groupName + "]").filter("[subtype-of]").hide(200);
-                $groupRows.hide();
+                $groupRows.hide(delay);
             }
             else {
-                $groupRows.not("[is-showprop]").show();
-                $groupRows.filter("[is-showprop=true]").show();
+                $groupRows.not("[is-showprop]").show(delay);
+                $groupRows.filter("[is-showprop=true]").show(delay);
                 $("#" + this.wraperId + " [group=" + groupName + "]").filter("[is-expanded]").find(".fa-caret-right").click().click();
             }
         }

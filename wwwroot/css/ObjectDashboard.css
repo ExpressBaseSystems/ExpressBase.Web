@@ -14,6 +14,7 @@
     margin-top: 34px;
 }
 .dashbord {
+    display:none;
     height: 100%;
     color: #ffffff;
     padding: 15px;
@@ -21,7 +22,9 @@
     position: fixed;
     z-index: 9;
     right: 0;
-    top:0;
+    top: 0;
+    opacity:0.5;
+    right:-380px;
     width: 380px;
     background-color: #f8f8f8;
     -webkit-box-shadow: -2px 0 6px 0 rgba(0,0,0,.15);
@@ -32,6 +35,7 @@
     -o-transition: transform .4s ease;
     transition: transform .4s ease;
     overflow: auto;
+    animation-duration: 0.3s;
 }
 
 .prof_dp {

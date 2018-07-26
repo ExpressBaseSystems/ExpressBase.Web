@@ -94,7 +94,7 @@
             window.editor.setValue(atob(PropsObj[this.PGobj.CurProp]));
             window.editor.focus();
         }
-        else if (this.editor === 7 || this.editor === 22)
+        else if (this.editor === 7 || this.editor === 22 || this.editor === 26)
             $("#" + this.CEctrlsContId + " .colTile:eq(0)").click();
         else if (this.editor === 16)
             $(".strE-texarea").focus();

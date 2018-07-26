@@ -696,8 +696,8 @@
         e.stopPropagation();
         let $tile = $(e.target).closest(".colTile").remove();
         if (this.editor === 9 || this.editor === 8) {
-            this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1)[0]
-            $("#" + this.CEctrlsContId).prepend($tile);
+            this.selectedCols.push(getObjByval(this.allCols, "name", $tile.attr("id")));
+            $("#" + this.CEctrlsContId).append($tile);
         }
         else if (this.editor === 24) {
             getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = true;// hard code
@@ -744,7 +744,7 @@
             }
         }
         else if (this.editor === 9 || this.editor === 8) {
-            this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1)[0]
+            this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1);
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
         else if (this.editor === 24) {

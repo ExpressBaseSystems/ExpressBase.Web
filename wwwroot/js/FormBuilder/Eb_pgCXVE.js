@@ -284,7 +284,12 @@
         return res;
     };
 
-    this.acceptFn = function (el, target, source, sibling) { return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10) && !this.PGobj.IsReadonly; };
+    this.acceptFn = function (el, target, source, sibling) {
+        if (this.editor === 8 && getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp).Limit === this.selectedCols.length) {
+            return false;
+        }
+        return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10) && !this.PGobj.IsReadonly;
+    };
 
     this.onDragFn = function (el, source) {
         $(':focus').blur();

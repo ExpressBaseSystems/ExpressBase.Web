@@ -85,17 +85,17 @@
         //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
         //}
         else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26) {//  If collection editor
-            if (meta.Limit === 0 && type !== 25) {
-                valueHTML = '<span class="cxv-inp">(Collection)</span>'
-                    + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-            }
-            else {
+            if ((meta.Limit === 1 && type === 25) || (meta.Limit === 1 && type === 8)) {
                 var _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
                 _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.name || a.ColumnName || a.Name))];
                 //_meta.enumoptions = ["--none--","one"];
                 value = value ? _meta.enumoptions.indexOf(value.name || value.ColumnName || value.Name) : 0;
                 return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf, true);
+            }
+            else {
+                valueHTML = '<span class="cxv-inp">(Collection)</span>'
+                    + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             }
         }
         else if (type === 11) {    // If JS editor

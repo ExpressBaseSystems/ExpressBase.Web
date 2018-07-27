@@ -286,10 +286,21 @@
         return res;
     };
 
-    this.acceptFn = function (el, target, source, sibling) {
-        if (this.editor === 8 && this.CurMeta.Limit === this.selectedCols.length) {
-            return false;
+    this.checkLimit = function ($e, delay) {
+        if (this.CurMeta.Limit !== 0 && this.CurMeta.Limit === this.selectedCols.length) {
+            delay = delay || 300;
+            $e.css("animation", "vibrate 0.07s infinite 0s linear");
+            setTimeout(function () {
+                $e.css("animation", "inherit");
+            }, delay);
+            return true;
         }
+        return false;
+    }
+
+    this.acceptFn = function (el, target, source, sibling) {
+        if (this.checkLimit($(el), 1000))
+            return false;
         return !(source.id === this.CE_all_ctrlsContId && target.id === this.CE_all_ctrlsContId && this.editor !== 10) && !this.PGobj.IsReadonly;
     };
 
@@ -693,26 +704,20 @@
     };
 
     this.colTileRightArrow = function (e) {// not tested for editors other than 26
+        let $tile = $(e.target).closest(".colTile")
+        if (this.checkLimit($tile))
+            return false;
         e.stopPropagation();
-        let $tile = $(e.target).closest(".colTile").remove();
-        if (this.editor === 9 || this.editor === 8) {
-            this.selectedCols.push(getObjByval(this.allCols, "name", $tile.attr("id")));
-            $("#" + this.CEctrlsContId).append($tile);
-        }
-        else if (this.editor === 24) {
+        $tile.remove();
+        if (this.editor === 24) {
             getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = true;// hard code
         }
-        else if (this.editor === 26) {
-            //if ($tile.attr("is-customobj") === "true") {// if delete
-            //    this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1)[0];
-            //}
-            //else {// if close
-
-            getObjByval(this.allCols, "name", $tile.attr("id"))[this.Dprop] = true;// hard code
-            this.selectedCols.splice(0, 0, getObjByval(this.allCols, "name", $tile.attr("id")));
-            $("#" + this.CEctrlsContId).prepend($tile);
+        else if (this.editor === 9 || this.editor === 8 || this.editor === 26) {
+            if (this.editor === 26)
+                getObjByval(this.allCols, "name", $tile.attr("id"))[this.Dprop] = true;// hard code
+            this.selectedCols.push(getObjByval(this.allCols, "name", $tile.attr("id")));
+            $("#" + this.CEctrlsContId).append($tile);
             $tile.focus();
-            //}
         }
     }.bind(this);
 

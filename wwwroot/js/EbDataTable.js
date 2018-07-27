@@ -304,15 +304,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.RGIndex = [];
             this.ebSettings.LeftFixedColumn = 0;
             this.ebSettings.RightFixedColumn = 0;
-            $.each(this.EbObject.rowGrouping.$values, function (i, obj) {
-                $.each(this.EbObject.Columns.$values, function (i, Cobj) {
-                    if (Cobj.name === obj.name) {
-                        Cobj.bVisible = false;
-                        return false;
-                    }
-                });
-                this.RGIndex.push(obj.data);
-            }.bind(this));
+            //$.each(this.EbObject.rowGrouping.$values, function (i, obj) {
+            //    $.each(this.EbObject.Columns.$values, function (i, Cobj) {
+            //        if (Cobj.name === obj.name) {
+            //            Cobj.bVisible = false;
+            //            return false;
+            //        }
+            //    });
+            //    this.RGIndex.push(obj.data);
+            //}.bind(this));
         }
 
         //----------

@@ -1277,52 +1277,52 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.doRowgrouping = function () {
-        //var rows = this.Api.rows().nodes();
-        //var last = null;
-        //var count = this.Api.columns()[0].length;
-        //this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0]).data().each(function (group, i) {
-        //    if (last !== group) {
-        //        $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");
-        //        last = group;
-        //    }
-        //});
         var rows = this.Api.rows().nodes();
-        var rowsdata = this.Api.rows().data();
-        var index = this.RGIndex;
-        var count = this.Api.columns()[0].length;
-        var dataCount = 0;
         var last = null;
-        var colobj = {};
-        $.each(this.NumericIndex, function (k, num) {
-            if (!(num in colobj)) {
-                colobj[num] = new Array();
+        var count = this.Api.columns()[0].length;
+        this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0]).data().each(function (group, i) {
+            if (last !== group) {
+                $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");
+                last = group;
             }
         });
-        $.each(rowsdata, function (i, _dataArray) {
-            var groupString="";
-            $.each(index, function (j, dt) {
-                groupString += _dataArray[dt];
-                if (typeof index[j + 1] !== "undefined")
-                    groupString += ",";
-            });            
+        //var rows = this.Api.rows().nodes();
+        //var rowsdata = this.Api.rows().data();
+        //var index = this.RGIndex;
+        //var count = this.Api.columns()[0].length;
+        //var dataCount = 0;
+        //var last = null;
+        //var colobj = {};
+        //$.each(this.NumericIndex, function (k, num) {
+        //    if (!(num in colobj)) {
+        //        colobj[num] = new Array();
+        //    }
+        //});
+        //$.each(rowsdata, function (i, _dataArray) {
+        //    var groupString="";
+        //    $.each(index, function (j, dt) {
+        //        groupString += _dataArray[dt];
+        //        if (typeof index[j + 1] !== "undefined")
+        //            groupString += ",";
+        //    });            
 
-            if (last !== groupString) {
-                var groupstring = this.getSubRow(colobj,groupString,count);
-                //$(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + groupString + "</td></tr>");
-                $(rows).eq(i).before(groupstring);
-                last = groupString;
-                $.each(colobj, function (key, val) {
-                    colobj[key] = [];
-                    colobj[key].push(_dataArray[key]);
-                });
-            }
-            else {
-                dataCount++;
-                $.each(colobj, function (key, val) {
-                    colobj[key].push(_dataArray[key]);
-                });
-            }
-        }.bind(this));
+        //    if (last !== groupString) {
+        //        var rowstring = this.getSubRow(colobj,groupString,count);
+        //        //$(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + groupString + "</td></tr>");
+        //        $(rows).eq(i).before(rowstring);
+        //        last = groupString;
+        //        $.each(colobj, function (key, val) {
+        //            colobj[key] = [];
+        //            colobj[key].push(_dataArray[key]);
+        //        });
+        //    }
+        //    else {
+        //        dataCount++;
+        //        $.each(colobj, function (key, val) {
+        //            colobj[key].push(_dataArray[key]);
+        //        });
+        //    }
+        //}.bind(this));
     };
 
     this.doRowgrouping_inner = function (last, rows, group, i) {
@@ -1335,28 +1335,43 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.getSubRow = function (colobj, groupString, count) {
         var i = 0;
         var str = "";
-        $.each(colobj, function (key, val) {
-            if (colobj[key].length === 0)
-                str = "<tr class='group'><td colspan=" + count + ">" + groupString + "</td>";
-            else {
-                if (i === 0) {
-                    var spannum = parseInt(key) - 1;
-                    str = "<tr class='group'><td colspan=" + spannum + ">" + groupString + "</td><td>" + getSum(val) + "," + getAverage(val).toFixed(2)+"</td>";
-                }
+        //$.each(colobj, function (key, val) {
+        //    if (colobj[key].length === 0)
+        //        str = "<tr class='group'><td colspan=" + count + ">" + groupString + "</td>";
+        //    else {
+        //        if (i === 0) {
+        //            var spannum = parseInt(key) - 1;
+        //            str = "<tr class='group'><td colspan=" + spannum + ">" + groupString + "</td><td>" + getSum(val) + "," + getAverage(val).toFixed(2)+"</td>";
+        //        }
 
-                else {
-                    let diff = key - Object.keys(colobj)[i - 1];
-                    if (diff > 1)
-                        str += "<td colspan=" + diff + "> " + getSum(val) + "," + getAverage(val).toFixed(2) +" </td>"
+        //        else {
+        //            let diff = key - Object.keys(colobj)[i - 1];
+        //            if (diff > 1)
+        //                str += "<td colspan=" + diff + "> " + getSum(val) + "," + getAverage(val).toFixed(2) +" </td>"
+        //            else
+        //                str += "<td> " + getSum(val) + "," + getAverage(val).toFixed(2) +" </td>"
+        //        }
+
+        //    }
+        //    i++;
+        //});
+        //str += "</tr>";
+        if (colobj[Object.keys(colobj)[0]].length === 0)
+            return "<tr class='group'><td colspan=" + count + ">" + groupString + "</td>";
+        else {
+            str = "<tr class='group'><td>" + groupString+"</td>";
+            $.each(this.EbObject.Columns.$values, function (k, obj) {
+                if (obj.bVisible) {
+                    if (Object.keys(colobj).contains(k.toString())) {
+                        var val = colobj[k];
+                        str += "<td>" + getSum(val) + "," + getAverage(val).toFixed(2)+"</td>";
+                    }
                     else
-                        str += "<td> " + getSum(val) + "," + getAverage(val).toFixed(2) +" </td>"
+                        str += "<td>&nbsp;</td>"; 
                 }
-
-            }
-            i++;
-        });
-        str += "</tr>";
-        return str;
+            });
+        }
+        return str+"</tr>";
     };
 
     this.doSerial = function () {

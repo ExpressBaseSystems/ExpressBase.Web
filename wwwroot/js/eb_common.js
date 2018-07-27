@@ -216,3 +216,11 @@ var EbStickButton = function (option) {
     }
     this.$stickBtn.on("click", this.maximise.bind(this));
 };
+
+function getSum(_array) {
+    return _array.reduce(function (a, b) { return parseInt(a) + parseInt(b); });
+}
+
+function getAverage(_array) {
+    return getSum(_array) / _array.length;
+}

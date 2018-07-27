@@ -70,6 +70,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.tempColumns = [];
     this.filterHtml = "";
     this.orderColl = [];
+    this.RGIndex = [];
+    this.NumericIndex = [];
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -218,7 +220,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else if (Pname == "Columns") {
             console.log(obj);
         }
-        else if (pname === "Formula") {
+        else if (Pname === "Formula") {
             this.ValidateCalcExpression(obj);
         }
     }.bind(this);
@@ -297,9 +299,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         this.addSerialAndCheckboxColumns();
         //hard coding
+        this.orderColl = [];
         if (this.EbObject.rowGrouping.$values.length > 0) {
+            this.RGIndex = [];
             this.ebSettings.LeftFixedColumn = 0;
             this.ebSettings.RightFixedColumn = 0;
+            $.each(this.EbObject.rowGrouping.$values, function (i, obj) {
+                $.each(this.EbObject.Columns.$values, function (i, Cobj) {
+                    if (Cobj.name === obj.name) {
+                        Cobj.bVisible = false;
+                        return false;
+                    }
+                });
+                this.RGIndex.push(obj.data);
+            }.bind(this));
         }
 
         //----------
@@ -577,21 +590,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.filterValues = this.getFilterValues("filter");
         dq.Params = this.filterValues;
         if (this.EbObject.rowGrouping.$values.length > 0) {
-            var temp = $.grep(this.orderColl, function (obj) { return obj.Column === this.EbObject.rowGrouping.$values[0].name }.bind(this));
-            this.orderColl = $.grep(this.orderColl, function (obj) { return obj.Column !== this.EbObject.rowGrouping.$values[0].name }.bind(this));
-            if (this.order_info.col === this.EbObject.rowGrouping.$values[0].name)
-                this.orderColl.unshift(new order_obj(this.EbObject.rowGrouping.$values[0].name, this.order_info.dir));
-            else {
-                if (temp.length > 0)
-                    this.orderColl.unshift(temp[0]);
-                else
-                    this.orderColl.unshift(new order_obj(this.EbObject.rowGrouping.$values[0].name, 1));
-            }
+            //var temp = $.grep(this.orderColl, function (obj) { return obj.Column === this.EbObject.rowGrouping.$values[0].name }.bind(this));
+            //this.orderColl = $.grep(this.orderColl, function (obj) { return obj.Column !== this.EbObject.rowGrouping.$values[0].name }.bind(this));
+            //if (this.order_info.col === this.EbObject.rowGrouping.$values[0].name)
+            //    this.orderColl.unshift(new order_obj(this.EbObject.rowGrouping.$values[0].name, this.order_info.dir));
+            //else {
+            //    if (temp.length > 0)
+            //        this.orderColl.unshift(temp[0]);
+            //    else
+            //        this.orderColl.unshift(new order_obj(this.EbObject.rowGrouping.$values[0].name, 1));
+            //}
+            for (var i = this.EbObject.rowGrouping.$values.length -1; i > -1; i--)
+                this.orderColl.unshift(new order_obj(this.EbObject.rowGrouping.$values[i].name, 1));
         }
-        //    dq.OrderByCol = this.EbObject.rowGrouping.$values[0].name;
-        //else
-        //    dq.OrderByCol = this.order_info.col;
-        //dq.OrderByDir = this.order_info.dir;
         if (this.orderColl.length > 0)
             dq.OrderBy = this.orderColl;
         if (this.columnSearch.length > 0) {
@@ -838,8 +849,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double"))) && col.name !== "serial")
+        if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double"))) && col.name !== "serial") {
             _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces));
+            this.NumericIndex.push(col.data);
+        }
     };
 
     this.getFooterFromSettingsTbl = function () {
@@ -1264,15 +1277,52 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.doRowgrouping = function () {
+        //var rows = this.Api.rows().nodes();
+        //var last = null;
+        //var count = this.Api.columns()[0].length;
+        //this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0]).data().each(function (group, i) {
+        //    if (last !== group) {
+        //        $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");
+        //        last = group;
+        //    }
+        //});
         var rows = this.Api.rows().nodes();
-        var last = null;
+        var rowsdata = this.Api.rows().data();
+        var index = this.RGIndex;
         var count = this.Api.columns()[0].length;
-        this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0]).data().each(function (group, i) {
-            if (last !== group) {
-                $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");
-                last = group;
+        var dataCount = 0;
+        var last = null;
+        var colobj = {};
+        $.each(this.NumericIndex, function (k, num) {
+            if (!(num in colobj)) {
+                colobj[num] = new Array();
             }
         });
+        $.each(rowsdata, function (i, _dataArray) {
+            var groupString="";
+            $.each(index, function (j, dt) {
+                groupString += _dataArray[dt];
+                if (typeof index[j + 1] !== "undefined")
+                    groupString += ",";
+            });            
+
+            if (last !== groupString) {
+                var groupstring = this.getSubRow(colobj,groupString,count);
+                //$(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + groupString + "</td></tr>");
+                $(rows).eq(i).before(groupstring);
+                last = groupString;
+                $.each(colobj, function (key, val) {
+                    colobj[key] = [];
+                    colobj[key].push(_dataArray[key]);
+                });
+            }
+            else {
+                dataCount++;
+                $.each(colobj, function (key, val) {
+                    colobj[key].push(_dataArray[key]);
+                });
+            }
+        }.bind(this));
     };
 
     this.doRowgrouping_inner = function (last, rows, group, i) {
@@ -1280,6 +1330,33 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $(rows).eq(i).before("<tr class='group'><td colspan=" + this.ebSettings.Columns.$values.length + ">" + group + "</td></tr>");
             last = group;
         }
+    };
+
+    this.getSubRow = function (colobj, groupString, count) {
+        var i = 0;
+        var str = "";
+        $.each(colobj, function (key, val) {
+            if (colobj[key].length === 0)
+                str = "<tr class='group'><td colspan=" + count + ">" + groupString + "</td>";
+            else {
+                if (i === 0) {
+                    var spannum = parseInt(key) - 1;
+                    str = "<tr class='group'><td colspan=" + spannum + ">" + groupString + "</td><td>" + getSum(val) + "," + getAverage(val).toFixed(2)+"</td>";
+                }
+
+                else {
+                    let diff = key - Object.keys(colobj)[i - 1];
+                    if (diff > 1)
+                        str += "<td colspan=" + diff + "> " + getSum(val) + "," + getAverage(val).toFixed(2) +" </td>"
+                    else
+                        str += "<td> " + getSum(val) + "," + getAverage(val).toFixed(2) +" </td>"
+                }
+
+            }
+            i++;
+        });
+        str += "</tr>";
+        return str;
     };
 
     this.doSerial = function () {
@@ -1705,9 +1782,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (col !== '' && col !== "#") {
             this.order_info.col = tempobj[0].name;
             this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
-            this.orderColl = $.grep(this.orderColl, function (obj) { return obj.Column !== this.order_info.col }.bind(this));
-            if (this.EbObject.rowGrouping.$values.length === 0)
-                this.orderColl = [];
+            //this.orderColl = $.grep(this.orderColl, function (obj) { return obj.Column !== this.order_info.col }.bind(this));
+            //if (this.EbObject.rowGrouping.$values.length === 0)
+            //    this.orderColl = [];
+            this.orderColl = [];
             this.orderColl.push(new order_obj(this.order_info.col, this.order_info.dir));
         }
     };

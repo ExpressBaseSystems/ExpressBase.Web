@@ -17,9 +17,19 @@
                     ml = "10px";
                 }
             }
-            <div class="solution_logo_cont pull-left" style="margin-left:@ml">
-                <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
-            </div>
+                    <div class="solution_logo_cont pull-left" style="margin-left:@ml">
+                        @{
+                            if (ViewBag.wc == "tc")
+                            {
+                                <img src="~/images/EB_Logo.png" class="solution_logo" />
+                            }
+                            else
+                            {
+                                <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
+                            }
+                        }
+
+                    </div>
             <div class="brd_cr_t EbHeadTitle">
                 <div class="brd_row"><span class="eb_context">@ViewBag.cid</span><span class="eb_slash">/</span> Home <span class="eb_slash">/</span></div>
                 <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>

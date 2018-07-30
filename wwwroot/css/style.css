@@ -799,6 +799,25 @@ Navigation bar
 /*error page*/
 .error_cont {
     height: 100vh;
-    background-color: #f2f2f2;
+    background-color: white;
 }
+    .error_cont .error_wrapper {
+        width: 600px;
+        margin: 90px auto;
+        text-align: center;
+        font-family: Montserrat;
+        color: #737272;
+    }
+    .error_cont .errorcode_img {
+        padding: 0 50px;
+    }
+        .error_cont .errorcode_img img {
+            width: 100%;
+            height: auto;
+        }
+    .error_cont .backto_home {
+        margin: 0 auto;
+        width: 260px;
+        margin-top: 20px;
+    }
 /*error page end*/

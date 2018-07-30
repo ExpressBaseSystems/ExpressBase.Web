@@ -641,12 +641,5 @@ namespace ExpressBase.Web.Controllers
             }
             return string.Empty;
         }
-
-        [HttpGet]
-        public IActionResult Error()
-        {
-
-            return View();
-        }
     }
 }

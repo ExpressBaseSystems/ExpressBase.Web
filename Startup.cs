@@ -121,6 +121,8 @@ namespace ExpressBase.Web2
 
             app.UseApplicationInsightsExceptionTelemetry();
 
+            app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
+
             app.UseStaticFiles();
 
             app.UseMvc(routes =>

@@ -1,0 +1,51 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPageHeader");
+}
+
+@{
+    var statusCode = Model;
+    var statusmessage = "";
+    switch (statusCode)
+    {
+        case 400:
+            statusmessage = "Bad request: The request cannot be fulfilled due to bad syntax";
+            break;
+        case 403:
+            statusmessage = "Forbidden";
+            break;
+        case 404:
+            statusmessage = "Page not found";
+            break;
+        case 408:
+            statusmessage = "The server timed out waiting for the request";
+            break;
+        case 500:
+            statusmessage = "Internal Server Error - server was unable to finish processing the request";
+            break;
+        default:
+            statusmessage = "That’s odd... Something we didn't expect happened";
+            break;
+    }
+}
+<div class="error_cont">
+    <div class="error_wrapper">
+        <div class="errorcode_img">
+            @{
+                if (Model == 404)
+                {
+                    <img src="~/images/eb_404.jpg" />
+
+                }
+
+            }
+        </div>
+        <h2 class="text-center">@statusmessage</h2>
+        <button class="ebbtn eb_btnblue backto_home" id="backto_home" onclick="javascript: history.go(-1)">Go Back</button>
+    </div>
+</div>
+<script>
+    $("#backto_home").off("click").on("click", function (e) { 
+
+    });
+</script>

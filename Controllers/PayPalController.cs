@@ -17,6 +17,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using Microsoft.AspNetCore.Mvc;
 using ExpressBase.Common.ServiceStack.ReqNRes;
+using ExpressBase.Common.Enums;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -97,6 +98,35 @@ namespace ExpressBase.Web.Controllers
             var x = this.ServiceClient.Get<PayPalPaymentResponse>(req);
 
             return Redirect(x.Test);
+        }
+
+        [HttpGet("Billing")]
+        public IActionResult Billing()
+        {
+           
+            return View();
+        }
+
+        public void CreditCardPayment()
+        {
+            var req = this.HttpContext.Request.Form;
+            var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
+            {
+                BillingMethod = PaymentMethod.bank,
+                HolderName = req["CardHolder"],
+                CardNumber = req["CardNumber"],
+                ExpYear = Convert.ToInt32(req["ExpiryMonth"]),
+                ExpMonth = Convert.ToInt32(req["ExpiryYear"]),
+                Cvv = Convert.ToInt32(req["Cvv"])
+            });
+        }
+
+        public void PayPalPayment()
+        {
+            var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
+            {
+                BillingMethod = PaymentMethod.paypal,
+            });
         }
 
     }

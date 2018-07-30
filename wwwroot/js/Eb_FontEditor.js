@@ -1,7 +1,6 @@
 ﻿var FontEditor = function (params,fontEditobj) {
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId;
-    this.fonts = EbFonts;
     this.fontObject = $.isEmptyObject(fontEditobj) ? { Font: "Times-Roman", Size: 14, Style: 0 , color: "#333333", Caps: false, Strikethrough: false, Underline: false } : fontEditobj ;
     this.ItextFonts = ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'];
     this.fontStyle = {

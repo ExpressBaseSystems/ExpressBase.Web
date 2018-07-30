@@ -53,7 +53,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste', (this.SetCode.bind(this)));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
-        $(".selectpicker").selectpicker();
+        $(".selectpicker").selectpicker();             
 
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
@@ -63,15 +63,19 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         else {
             if (this.EbObject.FilterDialogRefId !== "")
                 this.FD = true;
-            this.GetFD();
+            var callback = true;
+            //var callback = function () {
+            //    this.stickBtn.minimise();
+            //}.bind(this);
+            this.GetFD(callback);
         }
         this.GenerateButtons();
 
         this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
-        $(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
-        $('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
+        //$(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
+        //$('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
     }
 
     this.GenerateButtons = function () {
@@ -83,7 +87,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //    $("#obj_icons").append(`<button id='btnToggleFD' class='btn' data-toggle='tooltip' title='Toggle ParameterDiv'> <i class='fa fa-filter' aria-hidden='true'></i></button>`);
         //}
         $("#run").off("click").on("click", this.RunDs.bind(this));
-        $(".adv-dsb-cont").hide(this.delay);
+
+
+
+        //$(".adv-dsb-cont").hide(this.delay);
+        $(".simple-dsb-cont").hide(this.delay);
         //$("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
     }
 
@@ -119,14 +127,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
     }.bind(this);
 
-    this.GetFD = function () {
+    this.GetFD = function (callback) {
         this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
         //this.relatedObjects += this.FilterDialogRefId;
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
-            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this));
+            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this, callback));
     };
 
-    this.AppendFD = function (result) {
+	this.AppendFD = function (callback , result) {
         $('#paramdiv' + tabNum).remove();
         $('#ds-page' + tabNum).prepend(`
                 <div id='paramdiv-Cont${tabNum}' class='param-div-cont'>
@@ -138,13 +146,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                     </div>
                     </div>
                 `);
-        $('#paramdiv' + tabNum).show();
         //$('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.RunDs.bind(this));
-        $.LoadingOverlay("hide");
-
+        //$.LoadingOverlay("hide");
         this.stickBtn = new EbStickButton({
             $wraper: $(".param-div"),
             $extCont: $(".param-div"),
@@ -152,6 +158,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             dir: "left",
             label: "Parameters",
         });
+
+        if (callback)
+            this.stickBtn.hide();
+        else
+            this.stickBtn.maximise();
     };
 
     this.CloseParamDiv = function () {
@@ -238,7 +249,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //}
     this.RunDs = function () {
         commonO.flagRun = true;
-        $.LoadingOverlay("show");
+        //$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
         if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
             if (this.EbObject.VersionNumber.slice(-1) === "w") {
                 commonO.Save();
@@ -345,10 +357,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $("#sample" + commonO.tabNum).dataTable({
                 aoColumns: cols,
                 serverSide: true,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                lengthMenu: [[20, 50, 100], [20, 50, 100]],
                 scrollX: "100%",
                 scrollY: "300px",
                 processing: true,
+                dom: "liprt",
+                paging : true,
+                lengthChange : true,
                 ajax: {
                     //url: this.Ssurl + "/ds/data/" + this.Refid,
                     url: "../CE/getData",
@@ -365,7 +380,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
         }
 
-        $.LoadingOverlay("hide");
+        //$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.Load_tble_Data = function (dq) {
@@ -442,7 +458,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
         alert("Success");
         $("#close_popup").click();
-        $.LoadingOverlay("hide");
+        //$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.CreateRelationString = function () {
@@ -455,6 +472,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.rel_arr.push(i);
         }
     };
+
+    //commonO.PreviewObject = function () {
+    //	$("#preview_wrapper").empty();
+    //	this.RunDs();
+    //}.bind(this);
 
     this.Init();
 }

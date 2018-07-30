@@ -331,6 +331,20 @@
         this.RbObj.DragDrop_Items();
     };
 
+    this.drawLocConfig = function () {
+        let conf = this.RbObj.LocConfig;
+        for (let i = 0; i < conf.length; i++) {
+            let icon = (conf[i].Type === "Image") ? `fa-picture-o` : 'fa-text-width';
+            $("#eb-Location-config ul[id='eb-Location-config_child']").append(`
+                        <li class="styl"><span eb-type='LocField${conf[i].Type}' class='draggable textval'>
+                        <i class="fa ${icon}"></i> ${conf[i].Name}</span>
+                        </li>`);
+        }
+        $('#eb-Location-config').killTree();
+        $('#eb-Location-config').treed();
+        this.RbObj.DragDrop_Items();
+    };
+
     this.switchlayer = function (e) {
         var target = $(e.target).closest(".Rb_layer");
         if (!target.hasClass("layeractive")) {

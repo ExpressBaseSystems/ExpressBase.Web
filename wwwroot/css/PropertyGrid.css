@@ -207,12 +207,12 @@
     background-color: white;
     padding: 3px;
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
-    animation-name: example;
+    animation-name: flip;
     animation-duration: 0.5s;
 }
 
-/* Standard syntax */
-@keyframes example {
+/* animations */
+@keyframes flip {
     from {
         opacity: 0;
         transform: perspective(4000px) rotateY(90deg); /* Standard syntax */
@@ -230,13 +230,35 @@
     }
 }
 
-    .pgCXEditor-Cont .propgrid-table-cont {
-        height: 30.9vh;
+@keyframes vibrate {
+    0% {
+        transform: translateX(-4px);
+        box-shadow: 0 0 5px 0 maroon;
     }
 
-    .pgCXEditor-Cont .CodeMirror {
-        height: 46vh;
+    50% {
+        transform: translateX(4px);
+        box-shadow: 0 0 5px 0 maroon;
     }
+}
+
+.pgCXEditor-Cont .propgrid-table-cont {
+    height: 30.9vh;
+}
+
+.pgCXEditor-Cont .CodeMirror {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+
+
+.pgCXEditor-Cont .CodeMirror-cursor {
+    height: 20px !important;
+}
 
 .pgCXEditor-bg, .imgup-bg {
     display: none;
@@ -247,7 +269,7 @@
     left: 0px;
     z-index: 1000;
     background-color: rgba(0, 0, 0, 0.3);
-    animation-duration:0.45s;
+    animation-duration: 0.45s;
 }
 
 .CE-controls-head, .inner-PG-Cont .pgHead {
@@ -260,35 +282,43 @@
     user-select: none;
 }
 
+[pg-editor-type='7'] .colTile {
+    padding: 4.5px 5.5px;
+}
+
 .colTile {
-    padding: 4px 8px;
+    padding: 4px 4.5px;
     background-color: #c8d4ef;
     margin: 3px 1px;
-    border-radius: 15px;
+    border-radius: 25px;
     font-size: 13px;
-    cursor: pointer;
+    cursor: move;
     color: #111;
     user-select: none;
     transition-duration: 0.3s;
 }
 
-    .colTile:hover {
-        background-color: var(--colorDDD);
-        outline: none;
-        color: #000;
-    }
+[pg-editor-type="13"] .colTile {
+    cursor: inherit;
+}
 
-    .colTile:focus, .OSE-verTile-Cont .colTile:focus {
-        background-color: #94bccc;
-        outline: none;
-        color: #222;
-    }
+.colTile:hover {
+    background-color: var(--colorDDD);
+    outline: none;
+    color: #000;
+}
 
-    .colTile[is-selected=true] {
-        background-color: #aebbbd;
-        outline: none;
-        color: #222;
-    }
+.colTile:focus, .OSE-verTile-Cont .colTile:focus {
+    background-color: #94bccc;
+    outline: none;
+    color: #222;
+}
+
+.colTile[is-selected=true] {
+    background-color: #aebbbd;
+    outline: none;
+    color: #222;
+}
 
 .Otile-active {
     background-color: #aebbbd;
@@ -419,7 +449,7 @@
 
 
 .sub-controls-DD-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-    width: 200px;
+    width: 205px;
 }
 
 .pgCXEditor-Cont .OSE-DD-cont .btn {
@@ -439,6 +469,7 @@
         color: white;
         border-radius: 1px !important;
     }
+
 .pgCXEditor-Cont .modal-body {
     height: calc(100% - 111px);
 }
@@ -470,12 +501,29 @@
 
 .CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont, .CE-all-ctrlsCont {
     overflow-y: auto;
+    overflow-x: hidden;
     height: calc(100% - 33px);
 }
 
-    .CE-all-ctrlsCont .close {
-        display: none;
-    }
+.coltile-right-arrow, .coltile-delete {
+    float: right;
+}
+
+.CE-all-ctrlsCont .colTile .coltile-delete {
+    float: left;
+}
+
+.coltile-left-arrow {
+    float: left;
+}
+
+.CE-all-ctrlsCont .coltile-left-arrow {
+    display: none;
+}
+
+.CEctrlsCont .coltile-right-arrow {
+    display: none;
+}
 
 .pgCXEditor-Cont .modal-header .close:focus {
     outline: none;
@@ -523,6 +571,7 @@
     background-color: transparent;
     border: 1px solid transparent;
     border-left: none !important;
+    margin-left: -4px;
 }
 
     .CE-add:hover {
@@ -576,11 +625,17 @@
     display: none;
 }
 
+.DD-refresh:hover {
+    color: #2d5f91;
+    transform: rotateZ(180deg);
+}
+
 .DD-refresh {
     margin-right: 20px;
     margin-top: 2.4px;
     float: right;
     font-size: 14px;
+    transition-duration: 1s;
 }
 
 /*.controls-dd-cont .dropdown-toggle {
@@ -640,6 +695,7 @@
     font-size: 18px;
     margin-top: -1px;
     color: #000;
+    padding: 1px;
 }
 
 .propgrid-table-cont .pg-table tr:focus {

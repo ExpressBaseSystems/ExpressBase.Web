@@ -108,6 +108,47 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        [HttpGet("static/loc/{filename}")]
+        public IActionResult GetLocImages(string filename)
+        {
+            filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
+
+            DownloadFileResponse dfs = null;
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                if (filename.StartsWith(StaticFileConstants.LOC))
+                {
+                    HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
+                    dfs = this.FileClient.Get<DownloadFileResponse>
+                            (new DownloadFileRequest
+                            {
+                                FileDetails = new FileMeta
+                                {
+                                    FileName = filename,
+                                    FileType = filename.Split(CharConstants.DOT)[1].ToLower()
+                                }
+                            });
+                }
+
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+                resp = new EmptyResult();
+            }
+
+            return resp;
+        }
+
         [HttpGet("static/{filename}")]
         public IActionResult GetFile(string filename)
         {
@@ -357,7 +398,7 @@ namespace ExpressBase.Web.Controllers
                 myFileContent = System.Convert.FromBase64String(base64Norm);
                 uploadImageRequest.ImageByte = myFileContent;
                 uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;
-                uploadImageRequest.ImageInfo.FileName = String.Format("location_dp_{0}.{1}", dict["Name"], uploadImageRequest.ImageInfo.FileType);
+                uploadImageRequest.ImageInfo.FileName = String.Format("loc_{0}.{1}", dict["FileName"].ToLower(), uploadImageRequest.ImageInfo.FileType);
                 uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
 
                 res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);

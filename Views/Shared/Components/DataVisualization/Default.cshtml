@@ -33,7 +33,7 @@
     var dvGlobal = new Object();
     @Html.Raw(ViewBag.HtmlHead);
     if ('@ViewBag.wc' === 'uc' || typeof prevfocusedId !== 'undefined' ) {
-        dvcontainerObj.currentObj, @Html.Raw(dvobj);
+        dvcontainerObj.currentObj =  @Html.Raw(dvobj);
     }
     else if ('@ViewBag.wc' === 'dc') {
         commonO = $("#layout_div").data("commonObj");

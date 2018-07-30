@@ -153,13 +153,14 @@
     <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="~/js/EmailBuilder.js" asp-append-version=@bApnd></script>@*bini*@
     <script type="text/javascript" src="~/js/MultiLanguage.js" asp-append-version=@bApnd></script>@*febin*@
-    <script type="text/javascript" src="~/js/Menu.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbQuickMenu/Menu.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>@*febin*@
     <script type="text/javascript" src="~/js/ManageRoles.js" asp-append-version=@bApnd></script>@*febin*@
     <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>@*febin*@
     <script type="text/javascript" src="~/js/CommonList.js" asp-append-version=@bApnd></script>@*febin*@
     <script type="text/javascript" src="~/js/Survey/EbSurvey.js" asp-append-version=@bApnd></script>@*febin*@
     <script type="text/javascript" src="~/js/location-config.js" asp-append-version=@bApnd>></script>@*dona*@
+    <script type="text/javascript" src="~/js/store.legacy.min.js"></script>@*amal*@
 
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
@@ -219,6 +220,7 @@
                                                 <span class="input-group-addon search_icon"><i class="material-icons">search</i></span>
                                             </div>
                                         </div>
+                                        <button class="btn c_btn pull-right" id="menu_refresh"><i class="material-icons">refresh</i></button>
                                     </div>
                                 </div>
                                 <div class="quick_menu_load" id="quick_menu_load"></div>
@@ -231,11 +233,10 @@
                                     <div id="objList" class="objList_Container">
                                         <div class="menu_notifiction">Application empty.</div>
                                     </div>
+                                    <div class="modal-footer pwrd_by">
+                                        Powered by expressbase
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="modal-footer pwrd_by">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-9 pwrd_by-text">Powered by expressbase</div>
                             </div>
                         </div>
                     </div>
@@ -250,15 +251,7 @@
 </body>
 </html>
 <script>
-    var menu = new menujs('@ViewBag.wc');//init menu
+   var menu = new menujs('@ViewBag.wc','@ViewBag.cid','@ViewBag.UId');//init menu
     $("#layout_div").data("menu", menu);
-    //img load
     $('.Eb_Image').Lazy();
-
-    EbFonts = {};
-    EbFontsCallback = function (data, status) {
-        EbFonts = data;
-    };
 </script>
-@*<script src="https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBEWdu2IGQZ2dE2BK8v3BzEe2-Msb2jipA&callback=EbFontsCallback"></script>amal*@
-<script src="https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBWjEI20zK2D3RPFyTKd6v045OGHO0Mwvk&callback=EbFontsCallback"></script>

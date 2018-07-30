@@ -21,8 +21,6 @@ using ExpressBase.Common.JsonConverters;
 using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseIntCommonController

@@ -24,6 +24,7 @@
 <script>
     $(".outer").append(`@Html.Raw(ViewBag.menu)`);
     menu.resultObj = @Html.Raw(obj);
+    store.set("EbMenuObjects_"+"@ViewBag.cid" + "@ViewBag.UId" + "@ViewBag.wc",@Html.Raw(obj));
     menu.objTypes =@Html.Raw(ViewBag.Types);
 </script>
 

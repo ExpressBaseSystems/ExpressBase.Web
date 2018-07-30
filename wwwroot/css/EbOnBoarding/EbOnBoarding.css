@@ -167,14 +167,21 @@ body {
     float: left;
     border: 1px solid #ccc;
     border-radius: 3px;
-    display:flex;
+    display: flex;
+    color: inherit;
+    text-decoration: none;
 }
+    .solution_container_pd:hover, .solution_container_pd:focus {
+        color: inherit;
+        text-decoration: none;
+        background-color: #f5f5f5;
+    }
 
 .tdasboard-sidebar {
     height: 100%;
     position: fixed;
-    width:18%;
-    float:left;
+    width: 18%;
+    float: left;
 }
 
 .t-container {
@@ -182,7 +189,7 @@ body {
     width: 100%;
     padding-top: 30px;
     font-family: open sans;
-    background-color: var(--eb-black);
+    background-color: #031b4d;
     border: 0 solid #e7e7e7;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
@@ -241,6 +248,7 @@ body {
 
     .s-dash-workplace .nav > li {
         width: 25%;
+        font-weight: 400;
     }
 
         .s-dash-workplace .nav > li > a {
@@ -899,30 +907,7 @@ body {
 .appselected {
     outline: 2px solid #4aade3;
 }
-/*confirmation for solution*/
 
-.confTo-solution .modal-dialog {
-    width: 500px;
-    margin: 100px auto;
-}
-
-.confTo-solution .confTo-solution-container {
-    height: 210px;
-    padding: 50px 50px 50px 50px;
-    background: white;
-}
-
-.confTo-solution .confTo-solution-inner {
-    height: 100%;
-}
-
-.confTo-solution .heading {
-    height: 70%;
-}
-
-.confTo-solution .form-inline {
-    height: 30%;
-}
 /*toggle button*/
 .uname-advanced-sec .switch {
     position: relative;
@@ -1060,14 +1045,17 @@ body {
     color: #989c9e;
     text-align:center;
 }
-.application_t_wrapper {
+.s-dash-workplace-tabs .devdshtab {
+    font-size: 16px !important;
+}
+/*.application_t_wrapper {
     width:100%;
     float:left;
 }
-    .application_t_wrapper h4 {
+    .application_t_wrapper .appname {
         color: #0090bb;
     }
-    .application_t_wrapper h4 .apps_count{
+    .application_t_wrapper .appname .apps_count {
         color: #908787;
         margin-left: .3em;
     }
@@ -1075,11 +1063,11 @@ body {
     width: 100%;
     float: left;
     padding: 15px 0px 25px 0px;
-}
+}*/
 .apptype_icon_devd {
-    height: 25px;
+    height: 20px;
     width: auto;
-    margin-top: -10px;
+    margin-top: -8px;
     margin-right: .3em;
 }
 /*app dash*/

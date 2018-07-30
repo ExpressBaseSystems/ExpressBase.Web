@@ -173,7 +173,21 @@
     this.testConnection = function (e) {
         var form = this.objectifyForm($("#" + $(e.target).attr("whichform")).serializeArray());
         var url = $(e.target).attr("url");
-        this.testAjaxCall(form, $(e.target).attr("whichform"), url);
+        if (this.validateConnection(form))
+            this.testAjaxCall(form, $(e.target).attr("whichform"), url);
+        else
+            EbMessage("show", { Message: "Connection info incomplete", Background: "red" });
+    };
+
+    this.validateConnection = function (form) {
+        let f = true;
+        for (let k in form) {
+            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken"].indexOf(k) < 0) 
+                f = (form[k].length > 0) ? true : false;
+            if (!f)
+                return false;
+        }
+        return f;
     };
 
     this.testAjaxCall = function (form, formid, ControllerUrl) {
@@ -182,17 +196,17 @@
             url: "../ConnectionManager/" + ControllerUrl,
             data: form,
             beforeSend: function () {
-                $("#" + formid).LoadingOverlay("show");
+                $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }.bind(this)
         }).done(function (data) {
+            $("#dbConnection_loder").EbLoader("hide");
             if (data) {
-                alert("Connection Ready");
+                EbMessage("show", { Message: "Test Connection Success" });
                 $("#" + formid + " .saveConnection").show();
                 $("#" + formid + " .testConnection").hide();
             }
             else
-                alert("Can't connect to this..");
-            $("#" + formid).LoadingOverlay("hide");
+                EbMessage("show", { Message: "Test Connection Failed",Background:"red" });
         }.bind(this));
     };
 
@@ -210,32 +224,33 @@
             $(".advanced-tr").hide();
     };
 
-    this.goToSolutionWindow = function (e) {
-        var console = $(e.target).closest(".btn").attr("wc");
-        var tk = getTok();
-        var rtk = getrToken();
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        if (console === "dc")
-            form.setAttribute("action", "http://" + sid + "-dev." + window.location.host + "/Ext/SwitchContext");
-        else if (console === "uc")
-            form.setAttribute("action", "http://" + sid + "." + window.location.host + "/Ext/SwitchContext");
-        form.setAttribute("target", "_blank");
-        var token = document.createElement("input");
-        token.setAttribute("name", "Btoken");
-        token.setAttribute("value", tk);
-        form.appendChild(token);
-        var rtoken = document.createElement("input");
-        rtoken.setAttribute("name", "Rtoken");
-        rtoken.setAttribute("value", rtk);
-        form.appendChild(rtoken);
-        var AppType = document.createElement("input");
-        AppType.setAttribute("name", "WhichConsole");
-        AppType.setAttribute("value", console );
-        form.appendChild(AppType);
-        document.body.appendChild(form);
-        form.submit();
-    };
+    //this.goToSolutionWindow = function (e) {
+    //    var console = $(e.target).closest(".single__sso").attr("wc");
+    //    var sid = $(e.target).closest(".single__sso").attr("sid");
+    //    var tk = getTok();
+    //    var rtk = getrToken();
+    //    var form = document.createElement("form");
+    //    form.setAttribute("method", "post");
+    //    if (console === "dc")
+    //        form.setAttribute("action", window.location.protocol + "//" + sid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
+    //    else if (console === "uc")
+    //        form.setAttribute("action", window.location.protocol + "//" + sid + "." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
+    //    form.setAttribute("target", "_blank");
+    //    var token = document.createElement("input");
+    //    token.setAttribute("name", "Btoken");
+    //    token.setAttribute("value", tk);
+    //    form.appendChild(token);
+    //    var rtoken = document.createElement("input");
+    //    rtoken.setAttribute("name", "Rtoken");
+    //    rtoken.setAttribute("value", rtk);
+    //    form.appendChild(rtoken);
+    //    var AppType = document.createElement("input");
+    //    AppType.setAttribute("name", "WhichConsole");
+    //    AppType.setAttribute("value", console );
+    //    form.appendChild(AppType);
+    //    document.body.appendChild(form);
+    //    form.submit();
+    //};
 
     this.LogoImageUpload = function () {
         var logoCrp = new cropfy({
@@ -249,7 +264,7 @@
             Tid: this.Sid, //if type is logo
             Preview: "#oB_logo-prev"
         });
-        logoCrp.getFile = function (file) {
+        logoCrp.getObjId = function (file) {
 
         }.bind(this);
     };
@@ -267,7 +282,7 @@
         $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
-        $(".single__sso").on("click", this.goToSolutionWindow.bind(this));
+        //$(".single__sso").on("click", this.goToSolutionWindow.bind(this));
         this.LogoImageUpload();
     };
 

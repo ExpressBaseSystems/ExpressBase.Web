@@ -139,6 +139,18 @@
                             </ul>
                             <a class="btn_calcfield_new add_calcfield">New <i class="fa fa-plus"></i></a>
                         </div>
+                        <div style="position:relative;">
+                            <ul id="eb-Location-config" class="tool-box-items">
+                                <li>
+                                    <a> Location Info </a>
+                                    <ul id="eb-Location-config_child">
+                                        <li class="styl"><span eb-type='LocFieldText' class='draggable textval'><i class="fa fa-text-width"></i> LongName</span></li>
+                                        <li class="styl"><span eb-type='LocFieldText' class='draggable textval'><i class="fa fa-text-width"></i> ShortName</span></li>
+                                        <li class="styl"><span eb-type='LocFieldImage' class='draggable textval'><i class="fa fa-picture-o"></i> Logo</span></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="Basic_fields tool_items">
@@ -254,19 +266,19 @@
                         </div>
                     </div>
                     <div class="page" id="page">
-                        <div class="ReportHeader Eb_ReportSections rpthead" eb-type="ReportHeader" id="rpthead" data_val="0">
+                        <div class="ReportHeader Eb_ReportSections rpthead page_grid" eb-type="ReportHeader" id="rpthead" data_val="0">
 
                         </div>
-                        <div class="PageHeader Eb_ReportSections pghead" eb-type="PageHeader" id="pghead" data_val="1">
+                        <div class="PageHeader Eb_ReportSections pghead page_grid" eb-type="PageHeader" id="pghead" data_val="1">
 
                         </div>
-                        <div class="ReportDetail Eb_ReportSections detail" eb-type="ReportDetail" id="detail" data_val="2">
+                        <div class="ReportDetail Eb_ReportSections detail page_grid" eb-type="ReportDetail" id="detail" data_val="2">
 
                         </div>
-                        <div class="PageFooter Eb_ReportSections pgfooter" eb-type="PageFooter" id="pgfooter" data_val="3">
+                        <div class="PageFooter Eb_ReportSections pgfooter page_grid" eb-type="PageFooter" id="pgfooter" data_val="3">
 
                         </div>
-                        <div class="ReportFooter Eb_ReportSections rptfooter" eb-type="ReportFooter" id="rptfooter" data_val="4">
+                        <div class="ReportFooter Eb_ReportSections rptfooter page_grid" eb-type="ReportFooter" id="rptfooter" data_val="4">
 
                         </div>
                     </div>
@@ -361,12 +373,13 @@
     </div>
 </div>
 <script>
-    $('#running-summary').treed("fa-calculator");
-    $('#calcFields').treed("fa-calculator");
+    $('#running-summary').treed();
+    $('#calcFields').treed();
     $('#special-fields').treed();
     $('#other-fields').treed();
     $('#data-table-list').treed();
     $('#ds_parameter_list').treed();
+    $("#eb-Location-config").treed();
 
     if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
@@ -380,7 +393,8 @@
         TabNum: @ViewBag.tabnum,
         ServiceUrl: '@ViewBag.ServiceUrl',
         Wc: '@ViewBag.wc',
-        Cid:'@ViewBag.cid'
+        Cid: '@ViewBag.cid',
+        LocationConfig: @Html.Raw(ViewBag.LocConfig),
     });
 
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = RBobj;

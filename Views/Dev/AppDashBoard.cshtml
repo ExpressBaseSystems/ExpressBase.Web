@@ -1,16 +1,14 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts
 @using ExpressBase.Common
 @{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
 <script>
-    var cm = new MenuBarCommon().setName("Application DashBoard");
+    var cm = new EbHeader().setName("Application DashBoard");
 </script>
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
-<script src="~/js/validator.js" type="text/javascript"></script>
-<script src="~/js/EbDashBoards/AppDashWeb.js" type="text/javascript"></script>
+<script src="~/js/EbDashBoards/AppDashBoard.js" type="text/javascript"></script>
 <script>
     var Object_type = @Html.Raw(ViewBag.Types);
     var Obj_Collection = @Html.Raw(ViewBag.Objects);
@@ -49,7 +47,7 @@
             </div>
             <div class="col-md-2 pd-0">
                 <div class="btn-group pull-right">
-                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="ebbtn eb_btnblue dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         New Object <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" id="object_types_drd">
@@ -111,7 +109,7 @@
                 <button onclick="UpdateBotSettings()">Update</button>
 
                 <div>
-                    <textarea style="margin: 0px; width: 638px; height: 212px;"><script type="text/javascript">
+                    <textarea id="txtemdscript" style="margin: 0px; width: 638px; height: 212px;"><script type="text/javascript">
     (function () {
         d = document;
         s = d.createElement("script");
@@ -120,7 +118,9 @@
         d.getElementsByTagName("head")[0].appendChild(s);
     })();
 </script></textarea>
+                    <button onclick="$('#txtemdscript').select(); document.execCommand('copy');">Copy to Clipboard</button>
                 </div>
+
 
                 <div id="AppDB_BotDemoDp" class="modal fade" role="dialog">
                     <div class="modal-dialog" style="width:445px">
@@ -173,7 +173,7 @@
     }
 </style>
 <script>
-    var adash = new AppDashWeb(Object_type, Obj_Collection);
+    var adash = new AppDashBoard(Object_type, Obj_Collection);
     function UpdateBotSettings() {
         var appSettings = {};
         appSettings["Name"] = $("#bot_name_txt").val();

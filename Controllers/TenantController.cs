@@ -51,6 +51,13 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Connections = JsonConvert.SerializeObject(resp.EBSolutionConnections);
             ViewBag.SolutionInfo = resp.Data;
             ViewBag.cid = Sid;
+            if(this.HttpContext.Request.IsHttps)
+                ViewBag.Protocol = "https://";
+            else
+                ViewBag.Protocol = "http://";
+            ViewBag.Domain = this.HttpContext.Request.Host;
+            ViewBag.rToken = Request.Cookies["rToken"];
+            ViewBag.bToken = Request.Cookies["bToken"];
             return View();
         }
 
@@ -63,7 +70,7 @@ namespace ExpressBase.Web.Controllers
             {
                 SolutionName = req["Sname"],
                 Isid = req["Isid"],
-                Esid = req["Esid"],
+                Esid = req["Isid"],
                 Description = req["Desc"],
                 Subscription = req["Subscription"]
             });
@@ -96,8 +103,8 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult CreateSolution()
         {
-            var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
-            ViewBag.iSid = ebids.Sid;
+            //var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
+            //ViewBag.iSid = ebids.Sid;
             return View();
         }
 

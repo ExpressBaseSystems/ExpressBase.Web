@@ -52,3 +52,73 @@
 #locspace .logo_img_cont {
     height: 34px !important;
 }
+/*solution-dash_loaders*/
+.dbConnection_loder {
+    bottom: 0;
+    left: 0;
+}
+.relative{
+    position:relative;
+}
+/*billing*/
+.billing_wrap {
+    font-family: open sans;
+    background-color: white;
+    padding: 30px;
+    border-radius: 4px;
+    margin-top: 30px;
+    float: left;
+    width: 100%;
+    line-height: 2.4rem;
+}
+    .billing_wrap .head__ {
+        margin-bottom: 15px;
+    }
+    .billing_wrap .s-dash-workplace {
+        width: 100%;
+        padding: 0;
+    }
+        .billing_wrap .s-dash-workplace .s-dash-workplace-tabs {
+            background: white;
+            min-height: unset;
+            box-shadow: unset;
+        }
+    .billing_wrap .s-dash-workplace .nav > li {
+        width: unset;
+    }
+        .billing_wrap .s-dash-workplace .tab-content {
+            padding: 0;
+            float: left;
+            width: 100%;
+            border: 2px solid #dddddd;
+            border-top: none;font-weight:400;
+        }
+    .billing_wrap .paypal_btn {
+        width: 100%;
+        font-size: 16px;
+        font-weight: 600;
+        background-color: #1664e0;
+        color: white;
+        margin: 15px 0;
+    }
+    .billing_wrap .s-dash-workplace .tab-pane {
+        padding: 30px;
+    }
+    .billing_wrap .credit_info_head {
+        width: 100%;
+        float: left;
+    }
+    .billing_wrap .credit_info {
+        display: none;
+        width: 66%;
+        float: left;
+        margin-top: 40px;
+        margin-left: 17%;
+        padding: 30px;
+        border: 1px solid #dddddd;
+        transition: all .5s;
+        border-radius: 5px;
+    }
+        .billing_wrap .credit_info .form-horizontal {
+            padding: 0 15px;
+        }

@@ -1,7 +1,7 @@
-﻿var EbOnBoarding = function (tid,context) {
+﻿var EbOnBoarding = function (context) {
     this.objSubscription = {};
     var _prevId = "#profimage";
-    var _tid = tid;
+    var _tid = "";
     var _context = context;
     this.getSolutionName = function (e) {
         $('#Hidd-sname').val($(e.target).val());
@@ -38,7 +38,7 @@
             Result: 'base64',
             Type: 'logo',
             Tid: _tid, //if type is logo
-            Preview:"#oB_logo-prev"
+            Preview: "#oB_logo-prev"
         });
         logoCrp.getFile = function (file) {
 
@@ -71,7 +71,7 @@
 
     this.submitProfile = function (e) {
         e.preventDefault();
-        var info = this.validateProfileInfo();        
+        var info = this.validateProfileInfo();
         if (info) {
             $.ajax({
                 type: 'POST',
@@ -85,7 +85,7 @@
                 $('#eb-mesageBox').show().text("Profile Saved");
                 $('#eb-mesageBox').fadeOut(5000);
                 $("#save-profile").hide();
-                $("#prof-info-skip, #basic-info, #product-info").show();                
+                $("#prof-info-skip, #basic-info, #product-info").show();
                 this.scrollProfToLeft();
             }.bind(this));
         }
@@ -108,9 +108,9 @@
                 },
                 data: {
                     Sname: $("[name='Sname']").val().trim(),
-                    Esid: $("[name='Esid']").val().toLowerCase().trim(),
+                    Esid: $("[name='EbSid']").val().toLowerCase().trim(),
                     Desc: $("[name='Desc']").val().trim(),
-                    Isid: $("[name='Isid']").val().toLowerCase().trim(),
+                    Isid: $("[name='EbSid']").val().toLowerCase().trim(),
                     Subscription: JSON.stringify(this.objSubscription),
                     ProfileInfo: $("[name='ProfileInfo']").val()
                 }
@@ -118,6 +118,7 @@
                 $("#loader_product-info").EbLoader("hide");
                 if (_context) {
                     window.history.back();
+                    window.location.reload();
                 }
                 else {
                     $('#eb-mesageBox').show().text("Solution Created");
@@ -163,14 +164,14 @@
         $("#loader_app_info").EbLoader("show");
     };
 
-    this.init = function () { 
+    this.init = function () {
         this.LogoImageUpload();
         $('#solutionname').on("change", this.getSolutionName.bind(this));
         $('#cid').on("change", this.getClientId.bind(this));
         $("#Desc").on("change", this.getDesc.bind(this));
         $('.eb_prd_link').on('click', this.subscribeProd.bind(this));
         $("#prof-submit").on("submit", this.submitProfile.bind(this));
-        $("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));       
+        $("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));
         $("#prof-info-skip,#plan-prev").on('click', this.scrollProfToLeft.bind(this));
         $("#prof-to-prev").on('click', this.scrollToProfSec.bind(this));
         $("#s-info-skip").on('click', this.scrollToProd.bind(this));
@@ -178,6 +179,7 @@
         $("#prod-prev").on('click', this.scrollToProd.bind(this));
         $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));
         $("#app-form").on("submit", this.showLoaderOnAppSub.bind(this));
+        $("#ebsid").on("change", function (e) { $("#sid_on_appcreation").val($(e.target).val()); });
     };
 
     this.init();

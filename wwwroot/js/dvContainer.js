@@ -45,6 +45,14 @@ var DvContainerObj = function (settings) {
         $extCont: $(".ppcont")
     });
 
+    this.stickBtn = new EbStickButton({
+        $wraper: $(".filterCont"),
+        $extCont: $(".filterCont"),
+        icon: "fa-filter",
+        dir: "left",
+        label: "Parameters",
+    });
+
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));
         $("#next").off("click").on("click", this.gotoNext.bind(this));
@@ -460,7 +468,7 @@ var DvContainerObj = function (settings) {
                     cssEase: 'ease-in',
                     //arrows: false,
                     //dots: true,
-                    prevArrow: "<i class='pull-left fa fa-angle-left ' aria-hidden='true'></i>",
+                    prevArrow: "<i class='pull-left fa fa-angle-left ' aria-hidden='true' style='left: 15px;'></i>",
                     nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 15px;' aria-hidden='true'></i>"
                     //prevArrow: $("#prev"),
                     //nextArrow: $("#next")

@@ -1,15 +1,16 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-
 @await Component.InvokeAsync("PageHeaderCommon")
-
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 <script src="~/js/EbOnBoarding/TenantDashBoard.js" type="text/javascript"></script>
 @{
     var sso = ViewBag.IsSSO == "true" ? "true" : "false";
     var aptype = ViewBag.AppType != null ? ViewBag.AppType : 0;
 }
+<script>
+    $(".solution_logo ").attr("src", "/images/Eb_Logo.png");
+     var cm = new EbHeader().setName("My Solutions");
+</script>
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar">
         <div class="t-container">
@@ -26,7 +27,7 @@
                 <h3 class="mr-t-0">Solutions <span class="apps_count"></span></h3>
             </div>
             <div class="col-md-2 pd-0">
-                <a href='@Url.Action("CreateSolution","Tenant")' class="btn btn-info pull-right new_sol_lk"><i class="fa fa-plus"></i> New Solution</a>
+                <a href='@Url.Action("CreateSolution","Tenant")' class="ebbtn eb_btnblue pull-right new_sol_lk"><i class="fa fa-plus"></i> New Solution</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">            
@@ -36,26 +37,10 @@
         </div>
     </div>
 </div>
-<div class="modal fade confTo-solution" id="confTo-solution" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-        <div class="confTo-solution-container">
-            <div class="confTo-solution-inner">
-                <div class="heading">
-                    Your Solution is ready now.
-                </div>
-                <div class="btn-section form-inline">
-                    <button id="goToSolution" class="btn">Go to Application</button>
-                    <button id="skip" class="btn pull-right">Continue.</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
     var Tdb = TenantDashBoard(@Html.Raw(ViewBag.Solutions), @sso, "@ViewBag.Email", @aptype);
     if ('@ViewBag.Msg')
         EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-
 </script>
 
 

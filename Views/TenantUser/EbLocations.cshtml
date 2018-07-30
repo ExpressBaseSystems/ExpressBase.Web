@@ -4,19 +4,20 @@
 @using Newtonsoft.Json;
 
 @{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
 
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 <link href="~/css/EbOnBoarding/eb-assets.style.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script src="~/js/EbCropper.js" type="text/javascript"></script>
 <script type="text/javascript" src="~/js/location-config.js"></script>@*dona*@
+<script>
+    var cm = new EbHeader().setName("Configure Locations");
+</script>
 
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar">
@@ -34,7 +35,7 @@
                 <h3 class="mr-t-0">Locations <span class="apps_count"></span></h3>
             </div>
             <div class="col-md-2 pd-0">
-                <a class="btn btn_color_bl pull-right" data-toggle="modal" data-target="#create_loc_mod">
+                <a class="ebbtn eb_btnblue pull-right" data-toggle="modal" data-target="#create_loc_mod">
                     <i class="fa fa-plus"></i> New Location
                 </a>
             </div>
@@ -47,17 +48,17 @@
                     </a>
                 </li>
                 <li class="nav-item" style="width:50%;">
-                    <a class="nav-link" data-toggle="tab" href="#location_conf" role="tab"><i class="fa fa-cogs" aria-hidden="true"></i> Location Config</a>
+                    <a class="nav-link" data-toggle="tab" href="#location_conf" role="tab"><i class="fa fa-cogs" aria-hidden="true"></i> Customize</a>
                 </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="locations_tab" role="tabpanel">
-                    @foreach (KeyValuePair<int, EbSolutionLocation> loc in ViewBag.Locations)
+                    @foreach (KeyValuePair<int, EbLocation> loc in ViewBag.Locations)
                     {
                         <div class="solution_container" locid=@ViewBag.Locations[loc.Key].LocId>
                             <div class="solution_container_pd hoveron_block">
                                 <div class='col-md-1 pd-0'>
-
+                                    @*<img src="../static/@ViewBag.Locations[loc.Key].Img .JPG" />*@
                                 </div>
                                 <div class="col-md-11">
                                     <h4 class='head4'>@ViewBag.Locations[loc.Key].LongName</h4>
@@ -79,7 +80,7 @@
                                     <th scope="col" class="text-center">Field Name</th>
                                     <th scope="col" class="text-center">Required</th>
                                     <th scope="col" class="text-center">Type</th>
-                                    <th scope="col" class="text-center"></th>
+                                    <th scope="col" class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -90,7 +91,7 @@
                                     <td class="text-center"></td>
                                 </tr>
                                 <tr key="Short Name">
-                                    <td>Short Name</td>
+                                    <td>ShortName</td>
                                     <td class="text-center"><i class="fa fa-check fa-green"></i></td>
                                     <td class="text-center">Text</td>
                                     <td class="text-center"></td>
@@ -142,7 +143,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-3">Short Name </label>
+                        <label class="col-sm-3">ShortName </label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control keyname" placeholder="Enter Short Name " id="shortname" name="shortname" value="">
                         </div>
@@ -151,7 +152,7 @@
                         <label class="col-sm-3">Logo</label>
                         <div class="col-sm-3">
                             <input type="hidden" value="" name="Logo" />
-                            <button key="Logo" id="Logo_toggle_btn" class="btn btn-default">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                            <button key="Logo" id="Logo_toggle_btn" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
                         <div class="col-md-6 logo_img_cont">
                             <img src="" class="img-responsive pull-right" id="Logo_prev" />
@@ -160,7 +161,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary pull-right" value="" id="createloc">Add</button>
+                <button class="ebbtn eb_btnblue pull-right" value="" id="createloc">Add</button>
             </div>
         </div>
 
@@ -200,7 +201,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-color_bl pull-right" id="add_key_btn">Add</button>
+                <button class="ebbtn eb_btnblue pull-right" id="add_key_btn">Add</button>
             </div>
         </div>
 

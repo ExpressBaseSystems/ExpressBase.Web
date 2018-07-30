@@ -5,14 +5,14 @@
     var cur_status = option.Status || null;
     var tabNum = option.TabNum || null;
     var ssurl = option.ServiceUrl || null;
-
+    this.LocConfig = option.LocationConfig || {};
     this.wc = option.Wc;
     this.containment = ".page";
     this.Tenantid = option.Cid;
     this.EbObject = dsobj;
     this.isNew = $.isEmptyObject(this.EbObject) ? true : false;
     this.objCollection = {};
-    this.RefId = option.RefId || null;;
+    this.RefId = option.RefId || null;
     this.height = null;
     this.width = null;
     this.designHeight = null;
@@ -690,6 +690,7 @@
             this.newReport();
         else
             this.editReport();
+        this.RbCommon.drawLocConfig();
         this.RM = new ReportMenu(this);
         $("#rulerUnit").on('change', this.rulerChangeFn.bind(this));
         this.margin.Left = $(".track_line_vert1").position().left;

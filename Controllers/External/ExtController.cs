@@ -101,7 +101,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult TenantSignIn()
+        public IActionResult TenantSignIn(string Email)
         {
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
@@ -116,7 +116,7 @@ namespace ExpressBase.Web.Controllers
             }
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.ErrorMsg = TempData["ErrorMessage"];
-
+            ViewBag.Email = (Email != null) ? Email : null;
             return View();
         }
 
@@ -173,37 +173,6 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()
         {
-            // Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", req["g-recaptcha-response"]);
-            //if (!data.Success)
-            //{
-            //    if (data.ErrorCodes.Count > 0)
-            //    {
-            //        var error = data.ErrorCodes[0].ToLower();
-            //        switch (error)
-            //        {
-            //            case ("missing-input-secret"):
-            //                ViewBag.CaptchaMessage = "The secret parameter is missing.";
-            //                break;
-            //            case ("invalid-input-secret"):
-            //                ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
-            //                break;
-
-            //            case ("missing-input-response"):
-            //                ViewBag.CaptchaMessage = "The captcha input is missing.";
-            //                break;
-            //            case ("invalid-input-response"):
-            //                ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
-            //                break;
-
-            //            default:
-            //                ViewBag.CaptchaMessage = "Error occured. Please try again";
-            //                break;
-            //        }
-            //    }
-            //}
-            //else
-            //{
-
             try
             {
                 string reqEmail = this.HttpContext.Request.Form[TokenConstants.EMAIL];
@@ -217,14 +186,15 @@ namespace ExpressBase.Web.Controllers
                         return RedirectToAction("EbOnBoarding", new { Email = reqEmail }); // convert get to post
                 }
                 else
-                    return RedirectToAction(RoutingConstants.INDEX, new RouteValueDictionary(new { controller = RoutingConstants.EXTCONTROLLER, action = RoutingConstants.INDEX })); // convert get to post;
+                {
+                    return RedirectToAction("TenantSignIn", new { Email = reqEmail });
+                }
+                    
             }
             catch (WebServiceException e)
             {
                 Console.WriteLine("Exception:" + e.ToString());
             }
-            // }
-
             return View();
         }
 
@@ -232,8 +202,8 @@ namespace ExpressBase.Web.Controllers
         public IActionResult EbOnBoarding(string Email)
         {
             ViewBag.useremail = Email;
-            var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
-            ViewBag.iSid = ebids.Sid;
+            //var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
+            //ViewBag.iSid = ebids.Sid;
             return View();
         }
 
@@ -671,7 +641,5 @@ namespace ExpressBase.Web.Controllers
             }
             return string.Empty;
         }
-
     }
-
 }

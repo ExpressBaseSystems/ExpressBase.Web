@@ -1,23 +1,25 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
 @await Component.InvokeAsync("PageHeaderCommon")
 
+@using System;
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script src="~/js/EbCropper.js" type="text/javascript"></script>
-<script src="~/js/validator.js" type="text/javascript"></script>
 <script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
 <script>
     var EbConnections = @Html.Raw(ViewBag.Connections);
-    $("#quik_menu").hide();
     var protocol = window.location.protocol;
     var host = window.location.host.indexOf("-dev") > -1 ? window.location.host.replace("-dev", "") : window.location.host;
+    var cm = new EbHeader().setName("Solution Settings");
 </script>
-
+@{ 
+    string sso_dev = ViewBag.Protocol + ViewBag.SolutionInfo.EsolutionId + "-dev." + ViewBag.Domain + "/Ext/SwitchContext";
+    string sso_user = ViewBag.Protocol + ViewBag.SolutionInfo.EsolutionId+ "." + ViewBag.Domain + "/Ext/SwitchContext";
+}
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar">
         <div class="t-container">
@@ -38,8 +40,22 @@
                 </p>
             </div>
             <div class="col-md-3 pd-0 form-inline">
-                <a class="btn pull-right btn-orange single__sso" wc="dc"><i class="fa fa-wrench"></i> Dev</a>
-                <a class="btn pull-right btn-blue single__sso" wc="uc"><i class="fa fa-user-o" aria-hidden="true"></i> User</a>
+                <form method="post" action="@sso_dev.Replace("myaccount.","")" target="_blank">
+                    <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
+                    <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
+                    <input type="hidden" name="WhichConsole" value="dc" />
+                    <button class="ebbtn eb_btnorange pull-right btn_s_fr" type="submit" sid="@ViewBag.SolutionInfo.EsolutionId" wc="dc">
+                        <i class="fa fa-wrench"></i> Dev
+                    </button>
+                </form>
+                <form method="post" action="@sso_user.Replace("myaccount.","")" target="_blank">
+                    <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
+                    <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
+                    <input type="hidden" name="WhichConsole" value="uc" />
+                    <button class="ebbtn eb_btnblue pull-right" sid="@ViewBag.SolutionInfo.EsolutionId" wc="uc">
+                        <i class="fa fa-user-o" aria-hidden="true"></i> User
+                    </button>
+                </form>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
@@ -62,7 +78,7 @@
                     <div class="form-group">
                         <div class="col-md-4 pd-0">
                             <label>Upload Logo</label>
-                            <button id="log-upload-btn" class="btn log-upload-b">Change Logo <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                            <button id="log-upload-btn" class="btn btn-default log-upload-b">Change Logo <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                         </div>
                         <div class="col-md-8 pd-0 logo_img_cont">
                             <img src="" class="img-responsive pull-right" id="oB_logo-prev" />
@@ -198,15 +214,16 @@
         </div>
     </div>
 </div>
-<div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog">
+<div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="margin-top:100px;">
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="" method="post" id="dbConnectionSubmit" data-toggle="validator">
-                <div class="modal-header">
+                <div class="modal-header relative">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">DataBase Connection</h4>
+                    <div id="dbConnection_loder" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="dbConnection_mask">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -290,9 +307,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary saveConnection" style="display:none">Save</button>
-                    <a whichform="dbConnectionSubmit" url="DataDbTest" class="btn btn-primary testConnection">Test Connection</a>
+                    <a whichform="dbConnectionSubmit" url="DataDbTest" class="ebbtn eb_btnblue testConnection">Test Connection</a>
                 </div>
             </form>
         </div>

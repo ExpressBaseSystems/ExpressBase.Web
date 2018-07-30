@@ -38,7 +38,15 @@
                 }
             }
             <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber"><i class='fa @(icon)' aria-hidden='true'></i> v @ViewBag.VersionNumber</a></li>
-            <li class=""><a data-toggle="tab" class="cetab" id="preview_tab_btn" href="#preview_tab"><i class="fa fa-play-circle" aria-hidden="true"></i> Preview</a></li>
+            @if (ViewBag.ObjType == (int)EbObjectTypes.Report)
+            {
+                <li class="">
+                    <a data-toggle="tab" class="cetab" id="preview_tab_btn" href="#preview_tab">
+                        <i class="fa fa-play-circle" aria-hidden="true"></i> Preview
+                    </a>
+                </li>
+            }
+
         </ul>
     </div>
     <div class="tab-content tab-cont-common" id="versionTab">
@@ -90,9 +98,12 @@
                 }
             }
         </div>
-        <div class="tab-pane preview_tab" id="preview_tab">
-            <div class="container-fluid" id="preview_wrapper">
+        @if (ViewBag.ObjType == (int)EbObjectTypes.Report)
+        {
+            <div class="tab-pane preview_tab" id="preview_tab">
+                <div class="container-fluid" id="preview_wrapper">
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>

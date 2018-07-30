@@ -207,12 +207,12 @@
     background-color: white;
     padding: 3px;
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
-    animation-name: example;
+    animation-name: flip;
     animation-duration: 0.5s;
 }
 
-/* Standard syntax */
-@keyframes example {
+/* animations */
+@keyframes flip {
     from {
         opacity: 0;
         transform: perspective(4000px) rotateY(90deg); /* Standard syntax */
@@ -227,6 +227,18 @@
         opacity: 1;
         transform: perspective(4000px) rotateY(0deg); /* Standard syntax */
         -webkit-transform: perspective(4000px) rotateY(0deg); /* Safari */
+    }
+}
+
+@keyframes vibrate {
+    0% {
+        transform: translateX(-4px);
+        box-shadow: 0 0 5px 0 maroon;
+    }
+
+    50% {
+        transform: translateX(4px);
+        box-shadow: 0 0 5px 0 maroon;
     }
 }
 
@@ -489,6 +501,7 @@
 
 .CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont, .CE-all-ctrlsCont {
     overflow-y: auto;
+    overflow-x: hidden;
     height: calc(100% - 33px);
 }
 

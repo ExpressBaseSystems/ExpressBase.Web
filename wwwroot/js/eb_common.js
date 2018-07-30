@@ -192,11 +192,16 @@ var EbStickButton = function (option) {
     this.maximise = function () {
         this.$stickBtn.hide(this.delay);
         this.$extCont.show(this.delay);
+        //this.$extCont.show().animate({ width: this.extWidth, opacity: 1 }, this.delay);
     };
 
     this.minimise = function () {
+        //this.extWidth = this.$extCont.width();
         this.$stickBtn.show(this.delay);
         this.$extCont.hide(this.delay);
+        //this.$extCont.animate({ width: 0 , opacity:0}, this.delay, function () { $(this).hide() });
+
+
         setTimeout(function () {
             this.$stickBtn.css("top", (this.pgtop + (this.$stickBtn.width() / 2)) + "px");
             this.$stickBtn.css(this.dir, (0 - (this.$stickBtn.width() / 2)) + "px");
@@ -211,3 +216,11 @@ var EbStickButton = function (option) {
     }
     this.$stickBtn.on("click", this.maximise.bind(this));
 };
+
+function getSum(_array) {
+    return _array.reduce(function (a, b) { return parseInt(a) + parseInt(b); });
+}
+
+function getAverage(_array) {
+    return getSum(_array) / _array.length;
+}

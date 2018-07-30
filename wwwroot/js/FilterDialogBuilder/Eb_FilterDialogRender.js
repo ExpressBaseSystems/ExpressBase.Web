@@ -89,7 +89,7 @@
             }
         }.bind(this));
 
-        if (this.onChangeExeFlag)
+        //if (this.onChangeExeFlag)
             this.initialLoad();
 
     }
@@ -108,6 +108,8 @@
                 return false;
             }
         });
+        if (this.filterObj.width > 150)
+            this.$filterBox.parent().css("width", this.filterObj.width + "px");
     }
 
     this.init();

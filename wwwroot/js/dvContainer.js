@@ -468,7 +468,7 @@ var DvContainerObj = function (settings) {
                     cssEase: 'ease-in',
                     //arrows: false,
                     //dots: true,
-                    prevArrow: "<i class='pull-left fa fa-angle-left ' aria-hidden='true'></i>",
+                    prevArrow: "<i class='pull-left fa fa-angle-left ' aria-hidden='true' style='left: 15px;'></i>",
                     nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 15px;' aria-hidden='true'></i>"
                     //prevArrow: $("#prev"),
                     //nextArrow: $("#next")

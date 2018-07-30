@@ -189,6 +189,17 @@ var EbSelect = function (ctrl, options) {
 
     // init datatable
     this.InitDT = function () {
+
+        var searchVal = this.getMaxLenVal();
+        if (searchVal === "" || this.ComboObj.minSeachLength > searchVal.length) {
+            //alert(`enter minimum ${this.ComboObj.minSeachLength} charecter in searchBox`);
+            EbMakeInvalid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`, `Enter minimum ${this.ComboObj.minSeachLength} character(s) to search`);
+            setTimeout(function () {
+                EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
+            }.bind(this), 2000000);
+            return;
+        }
+
         this.IsDatatableInit = true;
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
@@ -199,7 +210,7 @@ var EbSelect = function (ctrl, options) {
         o.showSerialColumn = true;
         o.showCheckboxColumn = this.ComboObj.multiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.scrollHeight + "px";
+        o.scrollHeight = this.ComboObj.dropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -467,8 +478,13 @@ var EbSelect = function (ctrl, options) {
             this.InitDT();
         if (this.Vobj.DDstate)
             this.V_hideDD();
-        else
-            this.V_showDD();
+        else {
+            searchVal = this.getMaxLenVal();
+            if (searchVal === "" || this.ComboObj.minSeachLength > searchVal.length)
+                return;
+            else
+                this.V_showDD();
+        }
 
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },500);
     };
@@ -476,16 +492,20 @@ var EbSelect = function (ctrl, options) {
     this.V_hideDD = function () {
         this.Vobj.DDstate = false;
         this.RemoveRowFocusStyle();
-    }
+    };
+    this.getMaxLenVal = function () {
+        var val = "";
+        $.each(this.$searchBoxes, function (i, el) {
+            if ($(el).val().trim().length > val.length)
+                val = $(el).val().trim();
+        });
+        return val;
+    };
 
     this.V_showDD = function () {
         this.Vobj.DDstate = true;
-        if (!this.IsDatatableInit) {
-            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
-                alert(`enter minimum ${this.ComboObj.minSeachLength} charecter in searchBox`);
-            else
-                this.InitDT();
-        }
+        if (!this.IsDatatableInit)
+            this.InitDT();
         else {
             EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
             setTimeout(function () {

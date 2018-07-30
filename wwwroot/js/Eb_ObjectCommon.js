@@ -47,12 +47,13 @@
 
 		EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor });
 
-		$.LoadingOverlay("hide");
+		//$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
 		$('#close_popup').trigger('click');
 	};
 
-	this.UpdateTab = function (data) {
-		if (data.indexOf("Specify a diffrent name." )>0)
+    this.UpdateTab = function (data) {
+		if (data.indexOf("Specify a diffrent name.")> 0 )
 		{
 			this.alertBgColor = "#e83c46";
 			this.alertMsg = data;
@@ -114,7 +115,8 @@
 				this.ShowMessage();
 			this.saveOrCommitSuccess(data);//edit by amal
 		}
-		$.LoadingOverlay("hide");
+        //$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
 	};
 
 	this.UpdateDashboard = function () {
@@ -133,7 +135,8 @@
 	};
 
 	this.LoadStatusPage = function () {
-		$.LoadingOverlay("show");
+		//$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
 		this.tabNum++;
 		var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> Status " + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
 		var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade vernav'>";
@@ -145,7 +148,8 @@
 
 	this.getLifecyleInner = function (text) {
 		$('#vernav' + this.tabNum).append(text);
-		$.LoadingOverlay("hide");
+		//$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
 	};
 
 	this.AddVerNavTab = function (navitem, tabitem) {
@@ -163,7 +167,8 @@
 	};
 
 	this.Version_List = function () {
-		$.LoadingOverlay("show");
+		//$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
 		this.tabNum++;
 		var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
 		var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'></div>";
@@ -177,11 +182,13 @@
 	this.versionHistoryInner = function (result) {
 		$("#vernav" + this.tabNum).append(result);
 		$("#vernav" + this.tabNum + " .view_code").off("click").on("click", this.OpenPrevVer.bind(this));
-		$.LoadingOverlay("hide");
+		//$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
 	};
 
 	this.OpenPrevVer = function (e) {
-		$.LoadingOverlay("show");
+		//$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
 		this.ver_Refid = (($(e.target).attr("data-id")) === null || ($(e.target).attr("data-id")) === undefined) ? $(e.target).parent().attr("data-id") : $(e.target).attr("data-id");
 
 		$.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
@@ -211,8 +218,8 @@
 		$('#vernav' + this.tabNum).append(data);
 		if (this.Current_obj !== null)
 			this.UpdateCreateVersionDD();
-		$.LoadingOverlay("hide");
-
+		//$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
 	};
 
 	this.Compare = function () {
@@ -257,7 +264,8 @@
 	};
 
 	this.Differ = function () {
-		$.LoadingOverlay("show");
+		//$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
 		var Refid1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').val();
 		var Refid2 = $('#selected_Ver_2_' + this.tabNum + ' option:selected').val();
 		var v1 = $('#selected_Ver_1_' + this.tabNum + ' option:selected').attr("data-tokens");
@@ -274,7 +282,8 @@
 		}
 		if (Refid2 === "Select Version") {
 			alert("Please Select A Version");
-			$.LoadingOverlay("hide");
+			//$.LoadingOverlay("hide");
+            $("#eb_common_loader").EbLoader("hide");
 		}
 		else {
 			$.post('../Eb_Object/GetObjectsToDiff', { ver1refid: Refid1, ver2refid: Refid2 }).done(this.showDiff.bind(this, vernum1, vernum2));
@@ -299,7 +308,8 @@
 			$('.leftPane').scrollTop($(this).scrollTop());
 			$('.leftPane').scrollLeft($(this).scrollLeft());
 		});
-		$.LoadingOverlay("hide");
+		//$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
 	};
 
 	this.TabChangeSuccess = function (e) {
@@ -338,7 +348,8 @@
 
 	this.Save = function () {
 		this.FlagSave = true;
-		$.LoadingOverlay("show");
+		//$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
 		var tagvalues = $('#tags').val();
 		var apps = $("#apps").val();
 		if (apps === "")
@@ -360,7 +371,8 @@
 	};
 
 	this.Commit = function () {
-		$.LoadingOverlay("show");
+		//$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
 		var tagvalues = $('#tags').val();
 		var apps = $("#apps").val();
 		if (apps === "")
@@ -407,7 +419,8 @@
 
 		if (selected_opt === "_major") {
 			if (confirm('Are you sure you want to create Major version?')) {
-				$.LoadingOverlay("show");
+				//$.LoadingOverlay("show");
+                $("#eb_common_loader").EbLoader("show");
 				$.post("../Eb_Object/Create_Major_Version", {
 					_refId: this.ver_Refid, _type: type
 				}, this.OpenVersionAfterCreate.bind(this));
@@ -415,7 +428,8 @@
 		}
 		if (selected_opt === "_minor") {
 			if (confirm('Are you sure you want to create Minor version?')) {
-				$.LoadingOverlay("show");
+				//$.LoadingOverlay("show");
+                $("#eb_common_loader").EbLoader("show");
 				$.post("../Eb_Object/Create_Minor_Version", {
 					_refId: this.ver_Refid,
 					_type: type
@@ -424,7 +438,8 @@
 		}
 		if (selected_opt === "_patch") {
 			if (confirm('Are you sure you want to create Patch version?')) {
-				$.LoadingOverlay("show");
+				//$.LoadingOverlay("show");
+                $("#eb_common_loader").EbLoader("show");
 				$.post("../Eb_Object/Create_Patch_Version", {
 					_refId: this.ver_Refid,
 					_type: type
@@ -434,7 +449,8 @@
 	};
 
 	this.OpenVersionAfterCreate = function (_refid) {
-		$.LoadingOverlay("show");
+		//$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
 		this.ver_Refid = _refid;
 		$.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
 			.done(this.VersionCode_success.bind(this));

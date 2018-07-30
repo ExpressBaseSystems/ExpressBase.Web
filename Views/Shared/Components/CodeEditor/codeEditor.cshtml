@@ -18,6 +18,98 @@
     <script src="~/js/SqlBuilder/Sort.js" type="text/javascript"></script>
     <script src="~/js/SqlBuilder/whereClause.js" type="text/javascript"></script>*@
 
+<style>
+    .CodeMirror {
+        z-index: 0;
+    }
+
+    .ds-cont {
+        position: relative;
+        margin: 0 auto;
+        height: calc( 100vh - 76.5px);
+        margin-top: 37px;
+        box-shadow: var(--eb-shadow);
+        border: solid rgba(54, 57, 88, 0.1);
+        border-width: 1px 1px 1px 0px;
+        border-radius: 2px 3px 3px 2px;
+        overflow: hidden;
+    }
+
+        .ds-cont .CodeMirror-gutters {
+            background-color: rgb(54, 57, 88);
+        }
+
+        .ds-cont .CodeMirror-gutter-elt {
+            color: white;
+        }
+
+        .ds-cont .ds-prop {
+            position: fixed;
+            right: 0px;
+            top: 37px;
+            width: 300px;
+            height: 100%;
+            background-color: white;
+            box-shadow: var(--eb-shadow);
+            border: 1px solid #ccc;
+            z-index: 9;
+        }
+
+        .ds-cont .CodeMirror pre {
+            z-index: 0 !important;
+        }
+
+        .ds-cont .code-window {
+            height: 100%;
+        }
+
+        .ds-cont .CodeMirror {
+            font-family: monospace;
+            height: 100%;
+            color: black;
+        }
+
+        .ds-cont .CodeMirror-selected {
+            background-color: #0083ff3b;
+        }
+
+        .ds-cont .param-div-cont {
+            position: absolute;
+            background-color: white;
+            height: calc( 100vh - 77px);
+        }
+
+        .ds-cont .param-div {
+            position: absolute;
+            left: 0px;
+            min-width: 300px;
+            height: 100%;
+            background-color: white;
+            box-shadow: var(--eb-shadow);
+            border: 1px solid #ccc;
+            z-index: 9;
+        }
+
+    .CodeMirror-gutters {
+        z-index: 0;
+    }
+
+    .CodeMirror-gutter-wrapper {
+        z-index: 2;
+    }
+
+    div.CodeMirror-cursors {
+        z-index: 2;
+    }
+
+    .CodeMirror-gutter-elt {
+        /*z-index: 3;*/
+    }
+
+    .CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+        z-index: 2;
+    }
+</style>
 <section class="ds-page ds-cont adv-dsb-cont" id="ds-page@(ViewBag.tabnum)">
     <div class='code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
         <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
@@ -164,95 +256,3 @@
         }, 500);
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataSourceWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ssurl');
 </script>
-<style>
-    .CodeMirror {
-        z-index: 0;
-    }
-
-    .ds-cont {
-        position: relative;
-        margin: 0 auto;
-        height: calc( 100vh - 76.5px);
-        margin-top: 37px;
-        box-shadow: var(--eb-shadow);
-        border: solid rgba(54, 57, 88, 0.1);
-        border-width: 1px 1px 1px 0px;
-        border-radius: 2px 3px 3px 2px;
-        overflow: hidden;
-    }
-
-        .ds-cont .CodeMirror-gutters {
-            background-color: rgb(54, 57, 88);
-        }
-
-        .ds-cont .CodeMirror-gutter-elt {
-            color: white;
-        }
-
-        .ds-cont .ds-prop {
-            position: fixed;
-            right: 0px;
-            top: 37px;
-            width: 300px;
-            height: 100%;
-            background-color: white;
-            box-shadow: var(--eb-shadow);
-            border: 1px solid #ccc;
-            z-index: 9;
-        }
-
-        .ds-cont .CodeMirror pre {
-            z-index: 0 !important;
-        }
-
-        .ds-cont .code-window {
-            height: 100%;
-        }
-
-        .ds-cont .CodeMirror {
-            font-family: monospace;
-            height: 100%;
-            color: black;
-        }
-
-        .ds-cont .CodeMirror-selected {
-            background-color: #0083ff3b;
-        }
-
-        .ds-cont .param-div-cont {
-            position: absolute;
-            background-color: white;
-            height: calc( 100vh - 77px);
-        }
-
-        .ds-cont .param-div {
-            position: absolute;
-            left: 0px;
-            min-width: 300px;
-            height: 100%;
-            background-color: white;
-            box-shadow: var(--eb-shadow);
-            border: 1px solid #ccc;
-            z-index: 9;
-        }
-
-    .CodeMirror-gutters {
-        z-index: 0;
-    }
-
-    .CodeMirror-gutter-wrapper {
-        z-index: 2;
-    }
-
-    div.CodeMirror-cursors {
-        z-index: 2;
-    }
-
-    .CodeMirror-gutter-elt {
-        /*z-index: 3;*/
-    }
-
-    .CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
-        z-index: 2;
-    }
-</style>

@@ -150,7 +150,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.RunDs.bind(this));
-        $.LoadingOverlay("hide");
+        //$.LoadingOverlay("hide");
         this.stickBtn = new EbStickButton({
             $wraper: $(".param-div"),
             $extCont: $(".param-div"),
@@ -160,9 +160,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         });
 
         if (callback)
-			this.stickBtn.minimise();
-		else
-			$('#paramdiv' + tabNum).show();
+            this.stickBtn.hide();
+        else
+            this.stickBtn.maximise();
     };
 
     this.CloseParamDiv = function () {
@@ -249,7 +249,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //}
     this.RunDs = function () {
         commonO.flagRun = true;
-        $.LoadingOverlay("show");
+        //$.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
         if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
             if (this.EbObject.VersionNumber.slice(-1) === "w") {
                 commonO.Save();
@@ -356,10 +357,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $("#sample" + commonO.tabNum).dataTable({
                 aoColumns: cols,
                 serverSide: true,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                lengthMenu: [[20, 50, 100], [20, 50, 100]],
                 scrollX: "100%",
                 scrollY: "300px",
                 processing: true,
+                dom: "liprt",
+                paging : true,
+                lengthChange : true,
                 ajax: {
                     //url: this.Ssurl + "/ds/data/" + this.Refid,
                     url: "../CE/getData",
@@ -376,7 +380,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
         }
 
-        $.LoadingOverlay("hide");
+        //$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.Load_tble_Data = function (dq) {
@@ -453,7 +458,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
         alert("Success");
         $("#close_popup").click();
-        $.LoadingOverlay("hide");
+        //$.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.CreateRelationString = function () {

@@ -1,0 +1,93 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+
+@await Component.InvokeAsync("PageHeaderCommon")
+@*<div class="container s-dash-container">
+    <div class="billing_wrap">
+        <div class="head__">
+            <h2 class="mr-t-0">Payment methods</h2>
+            <p class="u-mb-5">
+                Please enter your preferred payment method below. You can use a credit card or prepay through PayPal.
+            </p>
+            <div class="form-group">
+                <label class="col-md-12 col-lg-12 pd-0">Total Users</label>
+                <div class="col-md-3 col-sm-3 col-lg-3 pd-0">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                        </span>
+                        <input type="number" class="form-control" placeholder="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="s-dash-workplace">
+            <div class="s-dash-workplace-tabs">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item active">
+                        <a class="nav-link" data-toggle="tab" href="#creditpayment_tab" role="tab">
+                            Credit Card
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#paypalpayment_tab" role="tab"> PayPal</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="creditpayment_tab" role="tabpanel">
+                        <div class="credit_info_head">
+                            <p class="col-md-10">
+                                Card will be charged monthly for number of users. All major credit cards accepted.
+                            </p>
+                            <button class="ebbtn eb_btnblue col-md-2" onclick="$('.credit_info').toggle('fast');">Add Card</button>
+                        </div>
+                        <div class="credit_info">
+                            <form class="form-horizontal" method="post" action="/PayPal/CreditCardPayment">
+                                <div class="form-group">
+                                    <label class="pay_label">Name On Card</label>
+                                    <input type="text" class="form-control" name="CardHolder" placeholder="" value="Amal K dev">
+                                </div>
+                                <div class="form-group">
+                                    <label class="pay_label">Card Number</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="CardNumber" placeholder="" value="1234567887654321">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-credit-card" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-8 pd-0">
+                                        <label class="pay_label col-md-12 pd-0">Expiry</label>
+                                        <div class="col-md-6 pd-l-0">
+                                            <input type="text" class="form-control" name="ExpiryMonth" placeholder="MM" value="05">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="ExpiryYear" placeholder="YY" value="20">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="pay_label">CVV</label>
+                                        <input type="text" name="Cvv" class="form-control" value="613">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn paypal_btn">Subscribe</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="paypalpayment_tab" role="tabpanel">
+                        <p>
+                            Add PayPal credit to your account. This is a one-time payment and will take some time to process.
+                        </p>
+                        <div class="col-md-8 col-lg-8 col-sm-8 pd-0">
+                            <button class="btn paypal_btn">PayPal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@

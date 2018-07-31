@@ -146,10 +146,14 @@
         font-size: 11px;
         color: #3b89ce;
     }
-.Obj_title {
-    font-size: 13px;
-    font-weight: bold;
-}
+        .brd_cr_t .brd_row a{
+            color:inherit !important;
+            cursor:pointer;
+        }
+        .Obj_title {
+            font-size: 13px;
+            font-weight: bold;
+        }
 .pd-0 {
     padding: 0;
 }
@@ -457,9 +461,12 @@ li:hover {
     .img-thumbnail{
         padding: 2px;
     }
-
+.sid_sec_Common {
+    color: #528ff0;
+    font-weight: 700;
+}
 .eb_slash {
-    margin:0 3px;
+    margin: 0 3px;
 }
 .eb_context {
     color: #494e52;

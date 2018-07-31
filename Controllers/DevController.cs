@@ -32,13 +32,13 @@ using ExpressBase.Web.BaseControllers;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
-{
+{   
     public class DevController : EbBaseIntCommonController
     {
         public const string Msg = "Msg";
 
         public DevController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
-
+        
         [HttpGet("MyApplications")]
         public IActionResult DevDashboard()
         {
@@ -48,11 +48,11 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [EbBreadCrumbFilter("Applications/", "AppName")]
         [HttpGet]
         public IActionResult AppDashBoard(int Id, EbApplicationTypes Type)
         {
-            Dictionary<int, string> _dict = new Dictionary<int, string>();
-            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            Dictionary<int, string> _dict = new Dictionary<int, string>();            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
             {
                 if (objectType.IsAvailableIn(Type))
                 {
@@ -63,6 +63,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Types = JsonConvert.SerializeObject(_dict);
             ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
             ViewBag.AppInfo = _objects.AppInfo;
+            this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
             return View();
         }
 
@@ -316,9 +317,11 @@ namespace ExpressBase.Web.Controllers
             
         }
 
+        [EbBreadCrumbFilter("NewApplication")]
         [HttpGet]
         public IActionResult CreateApplication()
         {
+
             return View();
         }
 

@@ -6,6 +6,7 @@ using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -21,25 +22,13 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
 	public class SecurityController : EbBaseIntCommonController
 	{
 		public SecurityController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
-		// GET: /<controller>/
-		public IActionResult Index()
-        {
-            return View();
-        }
-
-		//public IActionResult ConnectToFb()
-		//{
-		//	return View();
-		//}
-
 		
+        [EbBreadCrumbFilter("Security/type")]
 		public IActionResult CommonList(string type, string show)
 		{
 			IServiceClient client = this.ServiceClient;
@@ -101,7 +90,7 @@ namespace ExpressBase.Web.Controllers
 		
 		
 
-	
+	    [EbBreadCrumbFilter("Security")]
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
 			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3
@@ -220,8 +209,9 @@ namespace ExpressBase.Web.Controllers
 		}
 
 
-		//--------------MANAGE ANONYMOUS USER START------------------------------------
-		public IActionResult ManageAnonymousUser(int itemid)
+        //--------------MANAGE ANONYMOUS USER START------------------------------------
+        [EbBreadCrumbFilter("Security")]
+        public IActionResult ManageAnonymousUser(int itemid)
 		{
 			
 			return View();
@@ -246,15 +236,16 @@ namespace ExpressBase.Web.Controllers
 		}
 
 
-		//----------------MANAGE USERGROUPS START----------------------------
-		//[HttpGet]
-		//public IActionResult ManageUserGroups()
-		//{
-		//	return View();
-		//}
+        //----------------MANAGE USERGROUPS START----------------------------
+        //[HttpGet]
+        //public IActionResult ManageUserGroups()
+        //{
+        //	return View();
+        //}
 
-		//[HttpPost]
-		public IActionResult ManageUserGroups(int itemid)
+        //[HttpPost]
+        [EbBreadCrumbFilter("Security")]
+        public IActionResult ManageUserGroups(int itemid)
 		{
 			//var req = this.HttpContext.Request.Form;
 			//if (itemid > 0)
@@ -309,8 +300,9 @@ namespace ExpressBase.Web.Controllers
 			return res.id;
 		}
 
-		//---------------MANAGE ROLES START----------------------------------
-		public IActionResult ManageRoles(int itemid)
+        //---------------MANAGE ROLES START----------------------------------
+        [EbBreadCrumbFilter("Security")]
+        public IActionResult ManageRoles(int itemid)
 		{
 			//var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
 			//ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);

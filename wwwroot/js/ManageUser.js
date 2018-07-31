@@ -543,7 +543,8 @@
             EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Backgorund: '#bf1e1e' });
             return;
         }    
-        if (this.txtDateOfBirth.val().length < 8) {
+        var dateRegex = /^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/;
+        if (!dateRegex.test(this.txtDateOfBirth.val().trim())) {
             this.txtDateOfBirth.val('2000/01/01');
         }
 

@@ -8,7 +8,15 @@
 <script>
     var cm = new EbHeader().setName("Developer Console");
 </script>
+@{ 
+    List<AppWrapper> appList = ViewBag.apps;
+    int appcount = 0;
+    if (appList != null)
+    {
+        appcount = appList.Count;
+    }
 
+}
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar">
         <div class="t-container">
@@ -22,7 +30,7 @@
     <div class="s-dash-workplace">
         <div class="col-md-12 pd-0 s-dash-solution-desc" style="margin-bottom: 7px;">
             <div class="col-md-10 pd-0">
-                <h3 class="mr-t-0">Applications</h3>
+                <h3 class="mr-t-0">Applications(@appcount)</h3>
             </div>
             <div class="col-md-2 pd-0">
                 <a href='@Url.Action("CreateApplication", "Dev")' class="ebbtn eb_btnblue pull-right new_sol_lk"><i class="fa fa-plus"></i> New Application</a>
@@ -48,7 +56,6 @@
             </ul>
             <div class="tab-content">
                 @{
-                    List<AppWrapper> appList = ViewBag.apps;
                     int webcount = 0; int botcount = 0; int mobcount = 0;
                     if (appList != null)
                     {

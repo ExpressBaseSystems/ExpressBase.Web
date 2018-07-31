@@ -33,6 +33,7 @@ namespace ExpressBase.Web.Controllers
 
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
+        [EbBreadCrumbFilter()]
         [HttpGet("MySolutions")]
         public IActionResult TenantDashboard()
         {
@@ -44,6 +45,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [EbBreadCrumbFilter("MySolutions/Sid")]
         [HttpGet("MySolutions/{Sid}")]
         public IActionResult SolutionDashBoard(string Sid)
         {
@@ -101,10 +103,10 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [EbBreadCrumbFilter("MySolutions/NewSolution")]
         public IActionResult CreateSolution()
         {
-            //var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
-            //ViewBag.iSid = ebids.Sid;
+            
             return View();
         }
 

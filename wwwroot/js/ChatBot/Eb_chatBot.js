@@ -126,9 +126,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.hideTypingAnim();
                 if (result === null)
                     this.authFailed();
-                this.formsDict = result[1];
-                this.bearerToken = result[0].bearerToken;
-                this.refreshToken = result[0].refreshToken;
+                this.bearerToken = result[0];
+                this.refreshToken = result[1];
+                this.formsDict = result[2];
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 this.ajaxSetup4Future();
@@ -1207,9 +1207,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.hideTypingAnim();
                 if (result === null)
                     this.authFailed();
-                this.formsDict = result[1];
-                this.bearerToken = result[0].bearerToken;
-                this.refreshToken = result[0].refreshToken;
+                this.bearerToken = result[0];
+                this.refreshToken = result[1];
+                this.formsDict = result[2];
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 this.ajaxSetup4Future();

@@ -487,3 +487,7 @@ table.dataTable tbody td.dt-body-right {
 .datecolumn-picker{
     width:213px !important;
 }
+
+.group-sum{
+    background-color:lightgray;
+}

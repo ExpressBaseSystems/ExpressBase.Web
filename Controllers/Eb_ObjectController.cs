@@ -20,6 +20,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Common.JsonConverters;
 using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
+using ExpressBase.Web.Filters;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -29,6 +30,7 @@ namespace ExpressBase.Web.Controllers
 
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
+        [EbBreadCrumbFilter("Builders/","ObjectType")]
         [HttpGet]
         [HttpPost]
         public IActionResult Index(string objid, int objtype)
@@ -37,6 +39,7 @@ namespace ExpressBase.Web.Controllers
             Context2Js _c2js = new Context2Js();
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             var type = (EbObjectType)(objtype);
+            this.HttpContext.Items["ObjectType"] = type;
             if (objid != "null")
             {
                 ViewBag.Obj_id = objid;

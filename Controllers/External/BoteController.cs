@@ -21,6 +21,9 @@ using ExpressBase.Common.Constants;
 using System.Net.Http;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Application;
+using System.Security.Cryptography;
+using System.IO;
+using ExpressBase.Common.Security;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -132,7 +135,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<List<object>> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = "tc")
+        public async Task<List<object>> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = TokenConstants.BC)
         {
             HttpClient client = new HttpClient();
             string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
@@ -178,13 +181,19 @@ namespace ExpressBase.Web.Controllers
                 //GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
                 GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
                 List<object> returnlist = new List<object>();
-                returnlist.Add(authResponse);
-                returnlist.Add(formlist.BotForms);
-                //CookieOptions options = new CookieOptions();
-                //Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
-                //Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                return returnlist;
-            }
+				
+				returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
+				returnlist.Add(authResponse.RefreshToken);
+				returnlist.Add(formlist.BotForms);
+				return returnlist;
+
+				//CookieOptions options = new CookieOptions();
+				//Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
+				//Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+				//Mymain();
+				//string ctxt = GetEncriptedString("helleo", key_iv);
+				//string ptxt = GetDecriptedString(ctxt, key_iv);
+			}
             else
             {
                 return null;
@@ -224,75 +233,80 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        //copied to boti - febin
-        //public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
-        //      {
-        //          this.ServiceClient.BearerToken = bearerToken;
-        //          this.ServiceClient.RefreshToken = refreshToken;
-        //          var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+		//copied to boti - febin
+		//public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
+		//      {
+		//          this.ServiceClient.BearerToken = bearerToken;
+		//          this.ServiceClient.RefreshToken = refreshToken;
+		//          var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
 
-        //          var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-        //          if (Obj is EbBotForm)
-        //          {
-        //              //EbBotForm obj = Obj as EbBotForm;
-        //              foreach (EbControl control in Obj.Controls)
-        //              {
-        //                  if (control is EbSimpleSelect)
-        //                  {
-        //                      (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-        //                  }
-        //                  else if (control is EbDynamicCardSet)
-        //                  {
-        //				EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
-        //				EbDynamicCards.InitFromDataBase(this.ServiceClient);
-        //				EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
-        //                  }
-        //                  //else if (control is EbImage)
-        //                  //{
-        //                  //    (control as EbCards).InitFromDataBase(this.ServiceClient);
-        //                  //}
-        //              }
-        //          }
-        //          if (Obj is EbTableVisualization)
-        //          {
-        //              EbTableVisualization Tobj = (Obj as EbTableVisualization);
-        //              string BotCols = "[";
-        //              string BotData = "[";
-        //              int i = 0;
+		//          var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+		//          if (Obj is EbBotForm)
+		//          {
+		//              //EbBotForm obj = Obj as EbBotForm;
+		//              foreach (EbControl control in Obj.Controls)
+		//              {
+		//                  if (control is EbSimpleSelect)
+		//                  {
+		//                      (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+		//                  }
+		//                  else if (control is EbDynamicCardSet)
+		//                  {
+		//				EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
+		//				EbDynamicCards.InitFromDataBase(this.ServiceClient);
+		//				EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
+		//                  }
+		//                  //else if (control is EbImage)
+		//                  //{
+		//                  //    (control as EbCards).InitFromDataBase(this.ServiceClient);
+		//                  //}
+		//              }
+		//          }
+		//          if (Obj is EbTableVisualization)
+		//          {
+		//              EbTableVisualization Tobj = (Obj as EbTableVisualization);
+		//              string BotCols = "[";
+		//              string BotData = "[";
+		//              int i = 0;
 
-        //              foreach (DVBaseColumn col in Tobj.Columns)
-        //              {
-        //                  BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
-        //              }
-        //              BotCols = BotCols.TrimEnd(',') + "]";
+		//              foreach (DVBaseColumn col in Tobj.Columns)
+		//              {
+		//                  BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
+		//              }
+		//              BotCols = BotCols.TrimEnd(',') + "]";
 
-        //              DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
-        //              var data = dresp.Data;
-        //              foreach (EbDataRow row in data)
-        //              {
-        //                  i = 0;
-        //                  BotData += "{";
-        //                  foreach (var item in row)
-        //                  {
-        //                      BotData += "\"" + i++ + "\":\"" + item + "\",";
-        //                      //BotData += "\"" + item + "\",";
-        //                  }
-        //                  BotData = BotData.TrimEnd(',') + "},";
-        //              }
-        //              BotData = BotData.TrimEnd(',') + "]";
+		//              DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
+		//              var data = dresp.Data;
+		//              foreach (EbDataRow row in data)
+		//              {
+		//                  i = 0;
+		//                  BotData += "{";
+		//                  foreach (var item in row)
+		//                  {
+		//                      BotData += "\"" + i++ + "\":\"" + item + "\",";
+		//                      //BotData += "\"" + item + "\",";
+		//                  }
+		//                  BotData = BotData.TrimEnd(',') + "},";
+		//              }
+		//              BotData = BotData.TrimEnd(',') + "]";
 
-        //              Tobj.BotCols = BotCols;
-        //              Tobj.BotData = BotData;
-        //              return EbSerializers.Json_Serialize(Tobj);
-        //          }
-        //          if (Obj is EbChartVisualization)
-        //          {
-        //              return EbSerializers.Json_Serialize(Obj);
-        //          }
-        //          //else if (Obj is EbChartVisualization)
-        //          //{
-        //          //}
-        //          return Obj;
-        //      }
-    }
+		//              Tobj.BotCols = BotCols;
+		//              Tobj.BotData = BotData;
+		//              return EbSerializers.Json_Serialize(Tobj);
+		//          }
+		//          if (Obj is EbChartVisualization)
+		//          {
+		//              return EbSerializers.Json_Serialize(Obj);
+		//          }
+		//          //else if (Obj is EbChartVisualization)
+		//          //{
+		//          //}
+		//          return Obj;
+		//      }
+
+		
+
+
+	}
+
 }

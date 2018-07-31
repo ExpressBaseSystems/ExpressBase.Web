@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.Security;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using ExpressBase.Web.Controllers;
@@ -25,6 +26,8 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbBasetIntBotController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
 
+		public int AnonUserId { get; set; }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             string host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
@@ -32,11 +35,12 @@ namespace ExpressBase.Web.BaseControllers
 
             //string path = context.HttpContext.Request.Path.Value.ToLower();
 
-
-            string sBToken = context.HttpContext.Request.Headers[RoutingConstants.BEARER_TOKEN];
+			string btoken_aid = HelperFunction.GetDecriptedString_Aes(context.HttpContext.Request.Headers[RoutingConstants.BEARER_TOKEN]);
+			string sBToken = btoken_aid.Substring(0, btoken_aid.LastIndexOf(CharConstants.DOT));
             string sRToken = context.HttpContext.Request.Headers[RoutingConstants.REFRESH_TOKEN];
+			this.AnonUserId = Convert.ToInt32(btoken_aid.Substring(btoken_aid.LastIndexOf(CharConstants.DOT) + 1));
 
-            if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
+			if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
             {
                 context.Result = new RedirectResult("/");
             }
@@ -100,7 +104,7 @@ namespace ExpressBase.Web.BaseControllers
 
             base.OnActionExecuting(context);
 
-			Response.Headers.Add(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken);
+			Response.Headers.Add(RoutingConstants.BEARER_TOKEN, HelperFunction.GetEncriptedString_Aes(this.ServiceClient.BearerToken + CharConstants.DOT + this.AnonUserId.ToString()));
         }
 
     }

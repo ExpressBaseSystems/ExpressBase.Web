@@ -28,6 +28,8 @@
         this.btnSaveAll.on('click', this.onclickbtnSaveAll.bind(this));
         this.divObjList.on('click', '.objactiveclass', this.onClickObjActiveClass);
 
+        this.divObjList.on('change', ".checkboxclass", this.onClickPermissionCheckBox.bind(this));
+
         this.txtRoleName.on('keyup', this.validateRoleName.bind(this));
 
         this.chkboxAnonymous.on('change', this.onChangeChkBoxAnonymous.bind(this));
@@ -295,9 +297,19 @@
         }
         else {
             $(this).css("width", "84%");
-            $(this).next('div').show();
+            $(this).next('div').css('display', 'inline-block');
             $(this).addClass('active123');
         }
+    }
+
+    this.onClickPermissionCheckBox = function () {
+        let crntPermission = $(event.target).attr("data-id");
+        let permIndx = this.permission.indexOf(crntPermission);
+        let chkFlag = $(event.target).prop("checked");
+        if (chkFlag && permIndx === -1) 
+            this.permission.push(crntPermission);
+        else if (!chkFlag && permIndx !== -1)
+            this.permission.splice(permIndx, 1);
     }
 
     //this.loadObjectsAndOperations = function () {
@@ -347,13 +359,13 @@
             var tblData = [];
 
             var shtml = `<div>   
-                            <a class="objactiveclass list-group-item list-group-item-action collapse in active123" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:84%; margin-top:20px; cursor: pointer;" id='a${value.Op_Name}'>${value.Op_Name}</a>
-                            <div class="form-group has-feedback" style="width:15%; display:inline-block;">
+                            <a class="objactiveclass list-group-item list-group-item-action collapse in collapsed" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:100%; margin-top:20px; cursor: pointer; background-color: #eee;" id='a${value.Op_Name}'>${value.Op_Name}</a>
+                            <div class="form-group has-feedback" style="width:15%; display:none;">
                                 <input type="text" class="form-control" id="txtSrch${value.Op_Name}" placeholder="Search" style="height: 32px; background-color: #EEE;" title="Search"/>
                                 <span id="spanSrch${value.Op_Name}" class="glyphicon glyphicon-search form-control-feedback" style="top:0px;"></span>
                                 <span id="spanRemv${value.Op_Name}" class="glyphicon glyphicon-remove form-control-feedback" style="top:0px; display:none;"></span>
                             </div>
-                            <div id='div${value.Op_Name}' class='collapsed collapse in' style='width:inherit;'>
+                            <div id='div${value.Op_Name}' class='collapsed collapse' style='width:inherit;'>
                                 <table style='width:inherit;' class="objtype table table-responsive sub-menu table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>
                             </div>
                         </div>`;
@@ -455,14 +467,16 @@
         var appId = $("#selectApp").find(":selected").attr("data-id");
         var roleDescription = $(this.txtRoleDescription).val().trim();
         var roleName = $(this.txtRoleName).val().trim();
+        
+        //$.each(this.opDict, function (i, value) {
+        //    $("#spanRemv" + value.Op_Name).trigger("click");
+        //});
+        //$('.checkboxclass:checked').each(function () {
+        //    permissionlist += $(this).attr('data-id') + ",";
+        //});
 
-        $.each(this.opDict, function (i, value) {
-            $("#spanRemv" + value.Op_Name).trigger("click");
-        });
-
-        $('.checkboxclass:checked').each(function () {
-            permissionlist += $(this).attr('data-id') + ",";
-        });
+        for (let i = 0; i < this.permission.length; i++)
+            permissionlist += this.permission[i] + ",";
         permissionlist = permissionlist.substring(0, permissionlist.length - 1);
 
         if (roleName === "" || roleDescription === "") {

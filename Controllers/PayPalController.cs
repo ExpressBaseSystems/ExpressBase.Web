@@ -95,9 +95,9 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index()
         {
             PayPalPaymentRequest req = new PayPalPaymentRequest();
-            var x = this.ServiceClient.Get<PayPalPaymentResponse>(req);
+            var PayPalRes = this.ServiceClient.Get<PayPalPaymentResponse>(req);
 
-            return Redirect(x.Test);
+            return Redirect(PayPalRes.Test);
         }
 
         [HttpGet("Billing")]

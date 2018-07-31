@@ -6,6 +6,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Controllers;
+using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -21,6 +22,8 @@ namespace ExpressBase.Web2.Controllers
     {
         public TenantUserController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
+        [EbBreadCrumbFilter()]
+        [HttpGet("UserDashBoard")]
         public IActionResult UserDashboard()
         {
             return View();
@@ -54,6 +57,7 @@ namespace ExpressBase.Web2.Controllers
             return resp.Id;
         }
 
+        [EbBreadCrumbFilter("Locations")]
         [HttpGet]
         public IActionResult EbLocations(int id)
         {

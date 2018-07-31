@@ -10,7 +10,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Filter_Params;
     this.Parameter_Count;
     this.Object_String_WithVal;
-    this.FD = false;
+    //this.FD = false;
     this.Ssurl = ssurl;
     this.delay = 300;
 
@@ -58,16 +58,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
             commonO.Current_obj = this.EbObject;
-            this.FD = false;
+           // this.FD = false;
         }
         else {
-            if (this.EbObject.FilterDialogRefId !== "")
-                this.FD = true;
-            var callback = true;
-            //var callback = function () {
-            //    this.stickBtn.minimise();
-            //}.bind(this);
-            this.GetFD(callback);
+			if (this.EbObject.FilterDialogRefId !== "") {
+			//this.FD = true;
+				var callback = true;
+				this.GetFD(callback);
+			}
         }
         this.GenerateButtons();
 
@@ -83,12 +81,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $("#obj_icons").append(`
             <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'> <i class='fa fa-play' aria-hidden='true'></i></button >
             `);
-        //if (this.FD === true) {
-        //    $("#obj_icons").append(`<button id='btnToggleFD' class='btn' data-toggle='tooltip' title='Toggle ParameterDiv'> <i class='fa fa-filter' aria-hidden='true'></i></button>`);
-        //}
         $("#run").off("click").on("click", this.RunDs.bind(this));
-
-
 
         //$(".adv-dsb-cont").hide(this.delay);
         $(".simple-dsb-cont").hide(this.delay);
@@ -114,7 +107,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //commonO.Current_obj = this.EbObject;
         if (pname === "FilterDialogRefId") {
             if (obj[pname] !== null) {
-                this.FD = true;
+                //this.FD = true;
                 this.GetFD();
                 this.GenerateButtons();
             }
@@ -159,8 +152,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             label: "Parameters",
         });
 
-        if (callback)
-            this.stickBtn.hide();
+		if (callback)
+			this.stickBtn.minimise();
         else
             this.stickBtn.maximise();
     };

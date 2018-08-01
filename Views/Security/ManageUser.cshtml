@@ -1,20 +1,31 @@
-﻿@using ExpressBase.Security.Core;
-@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-@*<meta name="google-signin-client_id" content="1097281192898-q73cm1h8faa3ksjj2o44jchdlm179m87.apps.googleusercontent.com">
-<script src="https://apis.google.com/js/platform.js" async defer></script>*@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
-<link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
-
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" />
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
-<script src="~/js/EbCropper.js" type="text/javascript" asp-append-version="true"></script>
-
-<script src="~/js/EbMsgBox.js" type="text/javascript" asp-append-version="true"></script>
+<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbCropper.js" asp-append-version=@bApnd></script>
 
 @await Component.InvokeAsync("PageHeaderCommon")
+
+@*<meta name="google-signin-client_id" content="1097281192898-q73cm1h8faa3ksjj2o44jchdlm179m87.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>*@
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
+    <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" asp-append-version=@bApnd />
+    <script type="text/javascript" src="~/js/EbMsgBox.js" asp-append-version=@bApnd></script>*@
 
 @*@using (Html.BeginForm(FormMethod.Post))
     {*@
@@ -36,96 +47,7 @@
         </div>
     </div>*@
 
-<style>
-    .outer-section-createuser {
-        height: 100vh;
-        font-family: open sans;
-        font-weight: 300;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        padding-bottom: 15px;
-    }
 
-    /*.set-form-head {
-        width: 100%;
-        background: #339bb3;
-        color: white;
-        font-size: 20px;
-        padding: 10px;
-    }*/
-
-    .center {
-        margin: auto;
-        width: 90%;
-        padding: 10px;
-    }
-
-    .searchRsulsItemsDiv:hover {
-        background-color: #eee;
-    }
-
-    .mydiv1:hover {
-        background-color: #f5f5f5;
-        border: none;
-    }
-
-    .mydiv1 {
-        border: 2px solid #f5f5f5;
-        background-color: #fdfdfd;
-        border-radius: 6px;
-        align-items: center;
-        height: 75px;
-        overflow: hidden;
-        padding: 10px 13px;
-        margin-top: 15px;
-    }
-
-    .icondiv1 {
-        display: inline-block;
-        font-size: xx-large;
-        padding-right: 10px;
-        vertical-align: top;
-    }
-
-    .textdiv1 {
-        width: 78%;
-        display: inline-block;
-        vertical-align: top;
-    }
-
-    .closediv1 {
-        display: inline-block;
-        float: right;
-        cursor: pointer;
-        vertical-align: top;
-    }
-
-    .tilediv1 {
-        border: 1px solid;
-        border-color: #ccc;
-        padding: 10px;
-        height: 500px;
-        border-radius: 6px;
-        overflow: auto;
-        margin: 0px;
-    }
-
-    .nav-tabs > li.active {
-        border-top: 3px solid #339bb3;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-    }
-
-        /*for remove flickering https://stackoverflow.com/questions/26595481/bootstrap-3-tabs-active-tab-flicker-on-hover-only-in-firefox?rq=1&utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa*/
-        .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-            border-width: 1px;
-        }
-
-    .nav-tabs > li:hover {
-        background-color: #eee;
-    }
-</style>
 @{
     @using Newtonsoft.Json;
     var RoleObj = Html.Raw(ViewBag.Roles);

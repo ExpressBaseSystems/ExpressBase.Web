@@ -1,6 +1,9 @@
 ﻿@{
-    @using ExpressBase.Objects.ServiceStack_Artifacts;
-    @using ExpressBase.Common.Objects;
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
 
     var _applicationCollection = Html.Raw(ViewBag.AppCollection);
     var _roleId = ViewBag.RoleId;
@@ -11,98 +14,14 @@
     var _usersList = Html.Raw(ViewBag.UsersList);
 }
 
-<script type="text/javascript" src="~/js/TableScroll.js"></script>
-<script src="~/js/EbMsgBox.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" />
+<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/ManageRoles.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
 
 <style>
-    .outer-section-manageroles {
-        height: 100vh;
-        font-family: open sans;
-        font-weight: 300;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        padding-bottom: 15px;
-    }
-
-    .searchRsulsItemsDiv:hover {
-        background-color: #eee;
-    }
-
-    .mydiv1:hover {
-        background-color: #f5f5f5;
-        border: none;
-    }
-
-    .mydiv1 {
-        border: 2px solid #f5f5f5;
-        background-color: #fdfdfd;
-        border-radius: 6px;
-        align-items: center;
-        height: 75px;
-        overflow: hidden;
-        padding: 10px 13px;
-        margin-top: 15px;
-    }
-
-    .icondiv1 {
-        display: inline-block;
-        font-size: xx-large;
-        padding-right: 10px;
-        vertical-align: top;
-    }
-
-    .textdiv1 {
-        width: 65%;
-        display: inline-block;
-        vertical-align: top;
-    }
-
-    .closediv1 {
-        display: inline-block;
-        float: right;
-        cursor: pointer;
-        vertical-align: top;
-    }
-
-    .tilediv1 {
-        border: 1px solid;
-        border-color: #ccc;
-        padding: 10px;
-        height: 450px;
-        border-radius: 6px;
-        overflow: auto;
-        margin: 0px;
-    }
-
-    .dataTables_scrollHead {
-        padding-bottom: 10px;
-        margin-bottom: -10px;
-    }
-
-    .dataTables_scroll {
-        height: inherit;
-    }
-
-    .dataTableColumnStyle {
-        font-size: 14px;
-    }
-
-    .active123 {
-        background-color: #eee;
-    }
-
-    .objactiveclass:hover{
-        background-color:#fff !important;
-    }
-
-    .nav-tabs > li.active {
-        border-top: 3px solid #339bb3;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-    }
-
-
 </style>
 <div class="row">
     <div class="col-md-3" style="padding-right:0px;">
@@ -137,7 +56,7 @@
                 <li><a data-toggle="tab" href="#divusers">Users</a></li>
                 <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
             </ul>
-            <div class="tab-content" style="padding: 15px 0px;">
+            <div class="tab-content" style="padding: 0px 0px;">
                 <div id="divObjList" class="row tab-pane fade in active" style="margin:0px; height: 530px; overflow-x: auto; overflow-y:auto; width: 955px;"></div>
                 <div id="divroles" class="tab-pane fade"></div>
                 <div id="divusers" class="tab-pane fade"></div>

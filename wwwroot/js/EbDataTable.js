@@ -824,7 +824,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     if (this.ebSettings.LeftFixedColumn > visCount)
                         count++;
                     else
-                        return count;
+                        return false;
                 }
                 else
                     visCount++;
@@ -1698,6 +1698,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
         $(".addedbyeb [type=checkbox]").prop('indeterminate', true);
         $(".DTFC_Blocker").remove();
+    };
+
+    this.createColspanHeader = function () {
+
     };
 
     this.addFilterEventListeners = function () {

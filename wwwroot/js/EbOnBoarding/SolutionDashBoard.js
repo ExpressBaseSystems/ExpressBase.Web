@@ -1,4 +1,4 @@
-﻿var SolutionDashBoard = function (connections,sid) {
+﻿var SolutionDashBoard = function (connections, sid) {
     this.Connections = connections;
     this.whichModal = "";
     this.Sid = sid;
@@ -9,14 +9,6 @@
         },
         text: "Testing Your Connection..."
     });
-
-    this.editConnectionRow = function (event) {
-        this.whichModal = $(event.target).closest(".btn").attr("whichmodal");
-        $("#" + this.whichModal).modal("toggle");
-        $("#" + this.whichModal + " [name='IsNew']").val(false);
-        //$(event.target).closest("td").siblings().each(this.editconnection.bind(this));
-        this.preventSubOnEnter(this.whichModal);
-    };
 
     this.preventSubOnEnter = function (modalid) {
         $("#" + modalid + " form").on('keyup keypress', function (e) {
@@ -33,14 +25,6 @@
         $("#" + this.whichModal + " [name='" + input + "']").val($(obj).text());
     }
 
-    this.addConnectionRow = function (e) {
-        this.whichModal = $(e.target).closest(".btn").attr("whichmodal");
-        $("#" + this.whichModal).modal("toggle");
-        $.each($("#" + this.whichModal).children().find("input"), function (i, obj) {
-            $(obj).val("");
-        }).bind(this);
-        $("#" + this.whichModal + " [name='IsNew']").val(true);
-    };
     this.dbconnectionsubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -49,12 +33,13 @@
             url: "../ConnectionManager/DataDb",
             data: postData,
             beforeSend: function () {
-
+                $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $(".dbConnectionEdit tbody").empty();
-            this.appendDataDb(data);
-            $("#" + this.whichModal).modal("toggle");
+            $("#dbConnection_loder").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Changed Successfully" });
+            this.appendDataDb(JSON.parse(data));
+            $("#dbConnectionEdit").modal("toggle");
         }.bind(this));
     };
 
@@ -66,12 +51,12 @@
             url: "../ConnectionManager/FilesDb",
             data: postData,
             beforeSend: function () {
-
+                $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $(".filesDbConnectionEdit tbody").empty();
+            $("#dbConnection_loder").EbLoader("hide");
             this.appendFilesDb(JSON.parse(data));
-            $("#" + this.whichModal).modal("toggle");
+            $("#filesDbConnectEdit").modal("toggle");
         }.bind(this));
     };
 
@@ -83,13 +68,12 @@
             url: "../ConnectionManager/SMTP",
             data: postData,
             beforeSend: function () {
-
+                $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $(".EmailConnectionEdit tbody").empty();
-            $(".EmailConnectionEdit .table-message").remove();
+            $("#dbConnection_loder").EbLoader("hide");
             this.appendEmailConnection(JSON.parse(data));
-            $("#" + this.whichModal).modal("toggle");
+            $("#EmailConnectionEdit").modal("toggle");
         }.bind(this));
     }
 
@@ -101,73 +85,114 @@
             url: "../ConnectionManager/SMSAccount",
             data: postData,
             beforeSend: function () {
-
+                $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $(".SmsConnectionEdit tbody").empty();
-            $(".SmsConnectionEdit .table-message").remove();
+            $("#dbConnection_loder").EbLoader("hide");
             var d = JSON.parse(data);
             d.FilesDB_url = atob(d.FilesDB_url);
             this.appendSmsConnection(d);
-            $("#" + this.whichModal).modal("toggle");
+            $("#SmsConnectionEdit").modal("toggle");
         }.bind(this));
     };
 
     this.appendDataDb = function (object) {
         var Server = "";
         var DatabaseName = "";
-        if (object.IsDefault) { Server = "xxx.xxx.xxx.xxx"; DatabaseName = "xxxxxxxxxxxxx"; }
+        let vendersrc = "";
+        if (object.IsDefault) { Server = "xxx.xxx.xxx.xxx"; DatabaseName = "Default DB"; }
         else { Server = object.Server; DatabaseName = object.DatabaseName; }
 
-        $(".dbConnectionEdit tbody").append(`<tr class="connection-row">
-                                                <td field="DatabaseType">Data</td>
-                                                <td field="DatabaseVendor">${object.DatabaseVendor}</td>
-                                                <td field="Server">${Server}:${object.Port}</td>                                               
-                                                <td field="DatabaseName">${DatabaseName}</td>
-                                                <td field="NickName">${object.NickName}</td>                                                                                              
-                                                <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
-                                            </tr>`);
+        if (object.DatabaseVendor == 0) {
+            vendersrc = `<img src="${location.protocol}//${location.host}/images/POSTGRES.png" />`;
+        }
+        else if (object.DatabaseVendor == 1) {
+            vendersrc = `<img src="${location.protocol}//${location.host}/images/mysql.png" />`;
+        }
+        else if (object.DatabaseVendor == 2) {
+            vendersrc = `<img src="${location.protocol}//${location.host}/images/sqlserver.png" />`;
+        }
+        else if (object.DatabaseVendor == 3) {
+            vendersrc = `<img src="${location.protocol}//${location.host}/images/oracle.png" />`;
+        }
+        $("#DbConnection_config .VendorImage").empty().append(vendersrc);
+        $("#DbConnection_config .DatabaseName").text(DatabaseName);
+        $("#DbConnection_config .NickName").text(object.NickName);
+        $("#DbConnection_config .Server").text(Server + ":" + object.Port);
     };
 
     this.appendFilesDb = function (object) {
-        var FilesDB_url = "";
-        if (object === null || object.IsDefault) { 
-            FilesDB_url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; }
-        else { FilesDB_url = object.FilesDB_url; }
-        if (object) {
-            $(".filesDbConnectionEdit tbody").append(`<tr class="connection-row">
-                                               <td field="">Files</td>
-                                        <td field="DatabaseVendor">${object.FilesDbVendor || "empty"}</td>
-                                        <td field="FilesDB_url" style="max-width: 337px;text-overflow:ellipsis;overflow: hidden;">${FilesDB_url || "empty"}</td>
-                                        <td field="NickName">${object.NickName || "empty"}</td>
-                                        <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="filesDbConnectEdit"><i class="fa fa-pencil"></i></button></td>
-                                            </tr>`);
+        let o = {};
+        let img = "";
+        if (object === null || object.IsDefault) {
+            o.FilesDB_url = "Default URL: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+            o.NickName = "Default";
+            img = `<img src="${location.protocol}//${location.host}/images/MongodB.png" />`;
         }
+        else {
+            o = object;
+            if (object.FilesDbVendor == 0)
+                img = `<img src="${location.protocol}//${location.host}/images/MongodB.png" />`;
+            else if (object.FilesDbVendor == 1)
+                img = `<img src="${location.protocol}//${location.host}/images/mysql.png" />`;
+            else if (object.FilesDbVendor == 2)
+                img = `<img src="${location.protocol}//${location.host}/images/sqlserver.png" />`;
+        }
+        $("#FilesConnection_config .VendorImage").empty().append(img);
+        $("#FilesConnection_config .NickName").text(o.NickName);
+        $("#FilesConnection_config .FilesUrI").text(o.FilesDB_url);
     };
+
     this.appendEmailConnection = function (object) {
-        if ($.isEmptyObject(object))
-            $(".EmailConnectionEdit").parent().append(`<div class="table-message">No email Accounts added..</div>`);
+        let o = {};
+        if ($.isEmptyObject(object)) {
+            o.ProviderName = "Not Set";
+            o.EmailAddress = "xxxxxxxxx@xxx.xxxx";
+            o.Smtp = "xxx.xxx.xxx.xxx";
+            o.Port = "0000";
+            o.NickName = "Not Set";
+        }
         else
-            $(".EmailConnectionEdit tbody").append(`<tr>
-                                        <td field="EmailVendor">${object.ProviderName}</td>
-                                        <td field="Email">${object.EmailAddress}</td>                                                                                
-                                        <td field="SMTP">${object.Smtp}</td>
-                                        <td field="Port">${object.Port}</td>
-                                        <td field="NickName">${object.NickName}</td>
-                                        <td class="edit-row"><button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
-                                    </tr>`);
+            o = object;
+
+        $("#EmailConnection_config").empty();
+        $("#EmailConnection_config").append(`<div class="eb_connection_wrapper_bdyouter">
+                                    <div class="eb_connection_wrapper_inner">
+                                        <div class="eb_connection_wrapper_bdy">
+                                            <p class="Vendor mr-0 pdt-5"> ${o.ProviderName}</p>
+                                            <p class="Server mr-0 pdt-5">${o.EmailAddress} </p>
+                                            <p class="Server mr-0 pdt-5">${o.Smtp}:${o.Port}</p>
+                                            <p class="NickName mr-0 pdt-5">${o.NickName}</p>
+                                            <button class="ebbtn eb_btnwhite configure" data-toggle="modal" data-target="#EmailConnectionEdit">Configure</button>
+                                        </div>
+                                    </div>
+                                </div>`);
+
+
     };
     this.appendSmsConnection = function (object) {
-        if ($.isEmptyObject(object))
-            $(".SmsConnectionEdit").parent().append(`<div class="table-message">No SMS Accounts added..</div>`);
+        let o = {};
+        if ($.isEmptyObject(object)) {
+            o.ProviderName = "Not Set";
+            o.UserName = "xxxxxxxxxxx";
+            o.From = "00000000000";
+            o.NickName = "Not Set";
+        }
         else
-            $(".SmsConnectionEdit tbody").append(`<tr>
-                                         <td field="ProviderName">${object.ProviderName}</td>
-                                        <td field="UserName">${object.UserName}</td>
-                                        <td field="From">${object.From}</td>
-                                        <td field="NickName">${object.NickName}</td>
-                                        <td class="edit-row"><button whichmodal="SmsConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
-                                    </tr>`);
+            o = object;
+
+        $("#SMSConnection_config").empty();
+        $("#SMSConnection_config").append(`<div class="eb_connection_wrapper_bdyouter">
+                                    <div class="eb_connection_wrapper_inner">
+                                        <div class="eb_connection_wrapper_bdy">
+                                            <p class="Vendor mr-0 pdt-5">${o.ProviderName}</p>
+                                            <p class="UserName mr-0 pdt-5">${o.UserName}</p>
+                                            <p class="SendNo mr-0 pdt-5">${o.From}</p>
+                                            <p class="NickName mr-0 pdt-5">${o.NickName}</p>
+                                            <button class="ebbtn eb_btnwhite configure" data-toggle="modal" data-target="#SmsConnectionEdit">Configure</button>
+                                        </div>
+                                    </div>
+                                </div>`);
     };
 
     this.testConnection = function (e) {
@@ -182,8 +207,10 @@
     this.validateConnection = function (form) {
         let f = true;
         for (let k in form) {
-            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken"].indexOf(k) < 0) 
-                f = (form[k].length > 0) ? true : false;
+            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken","IsNew"].indexOf(k) < 0) {
+                if (form[k].length <= 0)
+                    f = false;
+            }
             if (!f)
                 return false;
         }
@@ -206,7 +233,7 @@
                 $("#" + formid + " .testConnection").hide();
             }
             else
-                EbMessage("show", { Message: "Test Connection Failed",Background:"red" });
+                EbMessage("show", { Message: "Test Connection Failed", Background: "red" });
         }.bind(this));
     };
 
@@ -223,34 +250,6 @@
         else
             $(".advanced-tr").hide();
     };
-
-    //this.goToSolutionWindow = function (e) {
-    //    var console = $(e.target).closest(".single__sso").attr("wc");
-    //    var sid = $(e.target).closest(".single__sso").attr("sid");
-    //    var tk = getTok();
-    //    var rtk = getrToken();
-    //    var form = document.createElement("form");
-    //    form.setAttribute("method", "post");
-    //    if (console === "dc")
-    //        form.setAttribute("action", window.location.protocol + "//" + sid + "-dev." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
-    //    else if (console === "uc")
-    //        form.setAttribute("action", window.location.protocol + "//" + sid + "." + window.location.host.replace("myaccount.", "") + "/Ext/SwitchContext");
-    //    form.setAttribute("target", "_blank");
-    //    var token = document.createElement("input");
-    //    token.setAttribute("name", "Btoken");
-    //    token.setAttribute("value", tk);
-    //    form.appendChild(token);
-    //    var rtoken = document.createElement("input");
-    //    rtoken.setAttribute("name", "Rtoken");
-    //    rtoken.setAttribute("value", rtk);
-    //    form.appendChild(rtoken);
-    //    var AppType = document.createElement("input");
-    //    AppType.setAttribute("name", "WhichConsole");
-    //    AppType.setAttribute("value", console );
-    //    form.appendChild(AppType);
-    //    document.body.appendChild(form);
-    //    form.submit();
-    //};
 
     this.LogoImageUpload = function () {
         var logoCrp = new cropfy({
@@ -274,15 +273,12 @@
         this.appendFilesDb(this.Connections.FilesDbConnection);
         this.appendEmailConnection(this.Connections.SMTPConnection);
         this.appendSmsConnection(this.Connections.SMSConnection);
-        $(".s-dash-bodyComm .edit-btn").on("click", this.editConnectionRow.bind(this));
-        $(".addConnection").on("click", this.addConnectionRow.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#EmailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
         $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
-        //$(".single__sso").on("click", this.goToSolutionWindow.bind(this));
         this.LogoImageUpload();
     };
 

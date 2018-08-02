@@ -505,7 +505,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else if (whichconsole == RoutingConstants.UC)
                 {
-                    _redirectUrl = "/TenantUser/UserDashboard";
+                    _redirectUrl = RoutingConstants.USERDASHBOARD;
                 }
             }
         }

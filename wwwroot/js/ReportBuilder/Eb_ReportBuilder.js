@@ -562,17 +562,15 @@
     };
 
     this.renderOnedit = function () {
-        for (var objPropIndex in this.EditObj) {
-			if (typeof this.EditObj[objPropIndex] === "object" && objPropIndex !== "Margin" && objPropIndex !== "DataSourceRefId") {
-                if (objPropIndex === "ReportObjects")
-                    this.appendHTMLonEdit(this.EditObj[objPropIndex].$values, "ReportObjects");
-                else
-                    this.getContainerId(this.EditObj[objPropIndex].$values);
-            }
-            else if (objPropIndex === "Margin")
-                $.extend(this.EbObject.Margin, this.EditObj.Margin);
+        let p = this.RbCommon.RbObjProps;
 
+        for (let k = 0; k <p.length; k++) {
+            this.getContainerId(this.EditObj[p[k]].$values);
         }
+        this.appendHTMLonEdit(this.EditObj["ReportObjects"].$values, "ReportObjects");
+
+        $.extend(this.EbObject.Margin, this.EditObj.Margin);//copy margin
+
         if (this.EditObj.DataSourceRefId) {
             this.getDataSourceColoums(this.EditObj.DataSourceRefId);
         }

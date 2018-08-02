@@ -116,6 +116,18 @@
     border-bottom-right-radius: 1px;
 }
 
+.pgGroupRow .caret {
+    animation-duration: 1.3s;
+}
+
+.pgGroupRow[is-expanded="true"] .caret {
+    transform: rotateZ(0deg);
+}
+
+.pgGroupRow[is-expanded="false"] .caret {
+    transform: rotateZ(270deg);
+}
+
 .pg-table [is-expanded] td {
     padding-left: 0;
     padding-top: 0;

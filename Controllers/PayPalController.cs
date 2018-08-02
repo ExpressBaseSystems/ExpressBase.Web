@@ -60,6 +60,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult PayPalPayment()
         {
+            string sid = this.HttpContext.Request.Form["Sid"];
             string Env = "";
             if (ViewBag.Env == "Development")
                 Env = "https://myaccount.eb-test.info";
@@ -71,7 +72,8 @@ namespace ExpressBase.Web.Controllers
             var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
             {
                 BillingMethod = PaymentMethod.paypal,
-                Environment = Env
+                Environment = Env,
+                SolutionId = sid
             });
             if (rsp.ApprovalUrl.Length > 0)
                 return Redirect(rsp.ApprovalUrl);

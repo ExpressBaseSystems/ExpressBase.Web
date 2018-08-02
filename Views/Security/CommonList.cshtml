@@ -1,79 +1,18 @@
-﻿
-@*@{
-    if (ViewBag.isAjaxCall)
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
     {
-        Layout = null;
+        bApnd = false;
     }
-    else
-    {
-        Layout = "~/Views/Shared/_Layout1.cshtml";
-    }
-}*@
-@{ 
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
+<link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/CommonList.js" asp-append-version=@bApnd></script>
+
 @await Component.InvokeAsync("PageHeaderCommon")
-<style>
-    .outer-section-createuser {
-        height: 100%;
-        /*font-family: open sans;
-        font-weight: 300;*/
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        padding-bottom: 15px;
-    }
-
-    .dataTables_scrollHead {
-        padding-bottom: 10px;
-        margin-bottom: -10px;
-    }
-
-    .dataTables_scroll {
-        height: calc(100vh - 55px);
-    }
-
-    .dataTableColumnStyle {
-        font-size: 14px;
-    }
-
-    /*table.display tbody tr:nth-child(even):hover td {
-        background-color: red !important;
-    }
-
-    table.display tbody tr:nth-child(odd):hover td {
-        background-color: blue !important;
-    }*/
-
-    /*tbody tr:nth-child(even):hover td {
-        background-color: rgb(255,255,255) !important;
-    }*/
-
-    .editviewclass:hover {
-        color: blue;
-    }
-
-    .convertuserclass:hover {
-        color: blue;
-    }
-
-
-    tbody tr:hover td {
-        background-color: rgb(220,220,220) !important;
-    }
-
-    .dataTable td {
-        max-width: 250px;
-        min-width: 45px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .dataTables_wrapper {
-        height: 100%;
-    }
-</style>
 
 <div id="ManageAnonymUserModal" class="modal fade" role="dialog">
     <div class="modal-dialog" style="width:750px">

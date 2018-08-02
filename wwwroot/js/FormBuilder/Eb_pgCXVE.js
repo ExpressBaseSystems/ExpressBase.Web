@@ -798,8 +798,12 @@
 
     this.getMaxNumberFromItemName = function ($items) {
         let tempArr = [];
+        if ($items.length === 0)
+            tempArr.push(0);
         $.each($items, function (i, el) {
-            let lastNum = parseInt(el.id.replace(/[^0-9]/g, '')) || 0;
+            let numStr = el.id.replace(/[^0-9]/g, '');
+            numStr = numStr.substr(numStr.length - 3);
+            let lastNum = parseInt(numStr) || 0;
             tempArr.push(lastNum);
         });
         return tempArr.max();

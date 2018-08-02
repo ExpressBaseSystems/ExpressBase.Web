@@ -395,7 +395,8 @@ namespace ExpressBase.Web.Controllers
             else
             {
                 string colDef = "[";
-                var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+                //var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+                var __columns = columnresp.Columns[0];
                 foreach (EbDataColumn column in __columns)
                 {
                     colDef += "{";

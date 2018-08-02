@@ -1,0 +1,308 @@
+﻿/*----------------------------------USERS---------------------------------------*/
+.outer-section-createuser {
+	height: 100vh;
+	font-family: open sans;
+	font-weight: 300;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding-bottom: 15px;
+}
+
+/*.center {
+	margin: auto;
+	width: 90%;
+	padding: 10px;
+}*/
+
+.searchRsulsItemsDiv:hover {
+	background-color: #eee;
+}
+
+.mydiv1:hover {
+	background-color: #f5f5f5;
+	border: none;
+}
+
+.mydiv1 {
+	border: 2px solid #f5f5f5;
+	background-color: #fdfdfd;
+	border-radius: 6px;
+	align-items: center;
+	height: 75px;
+	overflow: hidden;
+	padding: 10px 13px;
+	margin-top: 15px;
+}
+
+.icondiv1 {
+	display: inline-block;
+	font-size: xx-large;
+	padding-right: 10px;
+	vertical-align: top;
+}
+
+.textdiv1 {
+	width: 65%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.closediv1 {
+	display: inline-block;
+	float: right;
+	cursor: pointer;
+	vertical-align: top;
+}
+
+.tilediv1 {
+	border: 1px solid;
+	border-color: #ccc;
+	padding: 10px;
+	height: 500px;
+	border-radius: 6px;
+	overflow: auto;
+	margin: 0px;
+}
+
+.nav-tabs > li.active {
+	border-top: 3px solid #339bb3;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+	/*for remove flickering https://stackoverflow.com/questions/26595481/bootstrap-3-tabs-active-tab-flicker-on-hover-only-in-firefox?rq=1&utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa*/
+	.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+		border-width: 1px;
+	}
+
+.nav-tabs > li:hover {
+	background-color: #eee;
+}
+
+/*----------------------------------ROLES---------------------------------------*/
+
+.outer-section-manageroles {
+	height: 100vh;
+	font-family: open sans;
+	font-weight: 300;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding-bottom: 15px;
+}
+
+.searchRsulsItemsDiv:hover {
+	background-color: #eee;
+}
+
+/*.mydiv1:hover {
+	background-color: #f5f5f5;
+	border: none;
+}
+
+.mydiv1 {
+	border: 2px solid #f5f5f5;
+	background-color: #fdfdfd;
+	border-radius: 6px;
+	align-items: center;
+	height: 75px;
+	overflow: hidden;
+	padding: 10px 13px;
+	margin-top: 15px;
+}
+
+.icondiv1 {
+	display: inline-block;
+	font-size: xx-large;
+	padding-right: 10px;
+	vertical-align: top;
+}
+
+.textdiv1 {
+	width: 65%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.closediv1 {
+	display: inline-block;
+	float: right;
+	cursor: pointer;
+	vertical-align: top;
+}*/
+
+/*.tilediv1 {
+	border: 1px solid;
+	border-color: #ccc;
+	padding: 10px;
+	height: 450px;
+	border-radius: 6px;
+	overflow: auto;
+	margin: 0px;
+}*/
+
+.dataTables_scrollHead {
+	padding-bottom: 10px;
+	margin-bottom: -10px;
+}
+
+/*.dataTables_scroll {
+	height: inherit;
+}*/
+
+.dataTableColumnStyle {
+	font-size: 14px;
+}
+
+.active123 {
+	background-color: #eee;
+}
+
+.objactiveclass:hover {
+	background-color: #fff !important;
+}
+
+.nav-tabs > li.active {
+	border-top: 3px solid #339bb3;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+
+/*----------------------------------USER GROUP---------------------------------------*/
+
+
+/*.center {
+	margin: auto;
+	width: 90%;
+	padding: 10px;
+}
+
+.outer-section-createuser {
+	height: 100vh;
+	font-family: open sans;
+	font-weight: 300;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding-bottom: 15px;
+}
+
+.searchRsulsItemsDiv:hover {
+	background-color: #eee;
+}
+
+.mydiv1:hover {
+	background-color: #f5f5f5;
+	border: none;
+}
+
+.mydiv1 {
+	border: 2px solid #f5f5f5;
+	background-color: #fdfdfd;
+	border-radius: 6px;
+	align-items: center;
+	height: 75px;
+	overflow: hidden;
+	padding: 10px 13px;
+	margin-top: 15px;
+}
+
+.icondiv1 {
+	display: inline-block;
+	font-size: xx-large;
+	padding-right: 10px;
+	vertical-align: top;
+}
+
+.textdiv1 {
+	width: 65%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.closediv1 {
+	display: inline-block;
+	float: right;
+	cursor: pointer;
+	vertical-align: top;
+}
+
+.tilediv1 {
+	border: 1px solid;
+	border-color: #ccc;
+	padding: 10px;
+	height: 450px;
+	border-radius: 6px;
+	overflow: auto;
+	margin: 0px;
+}
+
+.nav-tabs > li.active {
+	border-top: 3px solid #339bb3;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}*/
+
+/*----------------------------------COMMON LIST---------------------------------------*/
+
+/*.outer-section-createuser {
+	height: 100%;
+	/*font-family: open sans;
+        font-weight: 300;*//*
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding-bottom: 15px;
+}
+
+.dataTables_scrollHead {
+	padding-bottom: 10px;
+	margin-bottom: -10px;
+}*/
+
+#divCommonList .dataTables_scroll {
+	height: calc(100vh - 55px);
+}
+
+/*.dataTableColumnStyle {
+	font-size: 14px;
+}*/
+
+/*table.display tbody tr:nth-child(even):hover td {
+        background-color: red !important;
+    }
+
+    table.display tbody tr:nth-child(odd):hover td {
+        background-color: blue !important;
+    }*/
+
+/*tbody tr:nth-child(even):hover td {
+        background-color: rgb(255,255,255) !important;
+    }*/
+
+.editviewclass:hover {
+	color: blue;
+}
+
+.convertuserclass:hover {
+	color: blue;
+}
+
+
+tbody tr:hover td {
+	background-color: rgb(220,220,220) !important;
+}
+
+.dataTable td {
+	max-width: 250px;
+	min-width: 45px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dataTables_wrapper {
+	height: 100%;
+}

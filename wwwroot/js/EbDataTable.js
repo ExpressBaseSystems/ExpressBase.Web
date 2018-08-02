@@ -305,14 +305,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.ebSettings.LeftFixedColumn = 0;
             this.ebSettings.RightFixedColumn = 0;
             $.each(this.EbObject.rowGrouping.$values, function (i, obj) {
-            //    $.each(this.EbObject.Columns.$values, function (i, Cobj) {
-            //        if (Cobj.name === obj.name) {
-            //            Cobj.bVisible = false;
-            //            return false;
-            //        }
-            //    });
+                this.extraCol.unshift(JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "data":null, "defaultContent": ""}'));
                 this.RGIndex.push(obj.data);
             }.bind(this));
+
+            this.extraCol.unshift(JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "name":"AllGroup", "data":null, "defaultContent": ""}'));
         }
 
         //----------
@@ -827,7 +824,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     if (this.ebSettings.LeftFixedColumn > visCount)
                         count++;
                     else
-                        return count;
+                        return false;
                 }
                 else
                     visCount++;
@@ -1299,43 +1296,84 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 colobj[num] = new Array();
             }
         });
-        $.each(rowsdata, function (i, _dataArray) {
-            groupString="";
-            $.each(index, function (j, dt) {
-                var tempobj = $.grep(this.EbObject.rowGrouping.$values, function (obj) { return dt === obj.data});
-                groupString += tempobj[0].name + ":" + _dataArray[dt];
-                if (typeof index[j + 1] !== "undefined")
-                    groupString += ",";
-            }.bind(this));            
 
-            if (last !== groupString) {
-                if (last === null || Object.keys(colobj).length === 0)
-                    $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + groupString + "</td></tr>");
-                else {
-                    var rowstring = this.getSubRow(colobj, groupString, count);
-                    $(rows).eq(i).before(rowstring);
-                    $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + groupString + "</td></tr>");
+        $(rows).eq(0).before("<tr class='group-All'><td colspan=" + count + "><i class='fa fa-minus-square-o' style='cursor:pointer;'></i>  All Groups</td></tr>");
+
+        //$.each(rowsdata, function (i, _dataArray) {
+        //    groupString="";
+        //    $.each(index, function (j, dt) {
+        //        var tempobj = $.grep(this.EbObject.rowGrouping.$values, function (obj) { return dt === obj.data});
+        //        groupString += tempobj[0].name + ":" + _dataArray[dt];
+        //        if (typeof index[j + 1] !== "undefined")
+        //            groupString += ",";
+        //    }.bind(this));            
+
+        //    if (last !== groupString) {
+        //        if (last === null || Object.keys(colobj).length === 0)
+        //            $(rows).eq(i).before(this.getGroupRow(count, groupString));
+        //        else {
+        //            var rowstring = this.getSubRow(colobj, groupString, count);
+        //            $(rows).eq(i).before(rowstring);
+        //            //$(rows).eq(i).before("<tr class='group'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>");
+        //            $(rows).eq(i).before(this.getGroupRow(count, groupString));
+        //        }
+        //        last = groupString;
+        //        $.each(colobj, function (key, val) {
+        //            colobj[key] = [];
+        //            colobj[key].push(_dataArray[key]);
+        //        });
+        //    }
+        //    else {
+        //        $.each(colobj, function (key, val) {
+        //            colobj[key].push(_dataArray[key]);
+        //        });
+        //    }
+        //    lastrow = i;
+        //}.bind(this));
+
+        //this.multiplerowgrouping();
+
+        $.each(index, function (j, dt) {
+            last = null;
+            var tempobj = $.grep(this.EbObject.rowGrouping.$values, function (obj) { return dt === obj.data });
+            $.each(rowsdata, function (i, _dataArray) {
+                groupString = tempobj[0].name + ":" + _dataArray[dt];
+                if (last !== groupString) {
+                    if (last === null || Object.keys(colobj).length === 0)
+                        $(rows).eq(i).before(this.getGroupRow(count, groupString, j));
+                    else {
+                        var rowstring = this.getSubRow(colobj, groupString, count, j);
+                        $(rows).eq(i-1).after(rowstring);
+                        //$(rows).eq(i).before("<tr class='group'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>");
+                        $(rows).eq(i).before(this.getGroupRow(count, groupString, j));
+                    }
+                    last = groupString;
+                    $.each(colobj, function (key, val) {
+                        colobj[key] = [];
+                        colobj[key].push(_dataArray[key]);
+                    });
                 }
-                last = groupString;
-                $.each(colobj, function (key, val) {
-                    colobj[key] = [];
-                    colobj[key].push(_dataArray[key]);
-                });
-            }
-            else {
-                $.each(colobj, function (key, val) {
-                    colobj[key].push(_dataArray[key]);
-                });
-            }
-            lastrow = i;
+                else {
+                    $.each(colobj, function (key, val) {
+                        colobj[key].push(_dataArray[key]);
+                    });
+                }
+                lastrow = i;
+            }.bind(this));
+
+            if (Object.keys(colobj).length !== 0 && ($(rows).eq(lastrow).hasClass("odd") || $(rows).eq(lastrow).hasClass("even"))) {
+                var rowstring = this.getSubRow(colobj, groupString, count, j);
+                $(rows).eq(lastrow).after(rowstring);
+            }            
+
         }.bind(this));
 
-        if (Object.keys(colobj).length !== 0 && ( $(rows).eq(lastrow).hasClass("odd") || $(rows).eq(lastrow).hasClass("even") ) ) {
-            var rowstring = this.getSubRow(colobj, groupString, count);
-            $(rows).eq(lastrow).after(rowstring);
-        }
-
+        //if (Object.keys(colobj).length !== 0 && ( $(rows).eq(lastrow).hasClass("odd") || $(rows).eq(lastrow).hasClass("even") ) ) {
+        //    var rowstring = this.getSubRow(colobj, groupString, count);
+        //    $(rows).eq(lastrow).after(rowstring);
+        //}
         $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
+        $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
 
     };
 
@@ -1346,9 +1384,29 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     };
 
-    this.getSubRow = function (colobj, groupString, count) {
+    this.getGroupRow = function (count, groupString) {
+        var str = "<tr class='group'><td> &nbsp;</td>";
+        $.each(this.EbObject.rowGrouping.$values, function (k, obj) {           
+            str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>";
+        });
+        return str;
+    }.bind(this);
+
+    this.getGroupRow = function (count, groupString, rowgroup) {
+        var str = "<tr class='group' group='" + rowgroup +"'>";
+        for (var i = 0; i <=rowgroup; i++)
+            str += "<td> &nbsp;</td>";
+        str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>";
+        return str;
+    }.bind(this);
+
+    this.getSubRow = function (colobj, groupString, count, rowgroup) {
         var i = 0;
-        var str = "<tr class='group-sum'><td>&nbsp;</td>";
+        var str = "<tr class='group-sum' group='" + rowgroup+"'>";
+        $.each(this.extraCol, function (k, obj) {
+            if (obj.bVisible)                
+                str += "<td>&nbsp;</td>";
+        });
         $.each(this.EbObject.Columns.$values, function (k, obj) {
             if (obj.bVisible) {
                 if (Object.keys(colobj).contains(k.toString())) {
@@ -1362,17 +1420,99 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return str+"</tr>";
     };
 
-    this.collapseGroup = function (e) {
-        var $elems = $(e.target).parent().nextUntil(".group-sum");
-        if ($elems.css("display") === "none")
+    this.collapseAllGroup = function (e) {
+        var $elems = $(e.target).parents().closest(".group-All").nextAll("[role=row]");
+        var $target = $(e.target);
+        if ($target.is("td"))
+            $target = $target.children("I");
+        if ($target.hasClass("fa-plus-square-o")) {
             $elems.show();
-        else
+            this.collapseRelated($target, "show");
+            $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
+        }
+        else {
             $elems.hide();
+            this.collapseRelated($target, "hide");
+            $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
+        }
         this.Api.columns.adjust();
     }.bind(this);
 
+    this.collapseGroup = function (e) {
+        var $elems = [];
+        var group = $(e.target).parents().closest(".group").attr("group");
+        if ($(e.target).parents().closest(".group").siblings(".group-sum").length > 0)
+            $elems = $(e.target).parents().closest(".group").nextUntil("[group="+group+"]");
+        else
+            $elems = $(e.target).parents().closest(".group").nextUntil("[group=" + group + "]");
+        if ($elems.css("display") === "none") {
+            $elems.show();
+            this.collapseRelated($(e.target), "show");
+        }
+        else {
+            $elems.hide();
+            this.collapseRelated($(e.target), "hide");
+        }
+        this.Api.columns.adjust();
+    }.bind(this);
+
+    this.collapseRelated = function ($elem, type) {
+        if ($elem.is("td")) {
+            if ($elem.children().is("I"))
+                $elem = $elem.children("I");
+            else if ($elem.siblings().children().is("I"))
+                $elem = $elem.siblings().children("I");
+        }
+            
+        if (type === "show") {
+            $elem.removeClass("fa-plus-square-o");
+            $elem.addClass("fa-minus-square-o");
+        }
+        else {
+            $elem.removeClass("fa-minus-square-o");
+            $elem.addClass("fa-plus-square-o");
+        }
+
+    }
+
+    this.multiplerowgrouping = function () {
+        $.each(index, function (j, dt) {
+            var tempobj = $.grep(this.EbObject.rowGrouping.$values, function (obj) { return dt === obj.data });
+            groupString = tempobj[0].name + ":" + _dataArray[dt];
+
+            $.each(rowsdata, function (i, _dataArray) {
+            groupString = "";
+            if (last !== groupString) {
+                if (last === null || Object.keys(colobj).length === 0)
+                    $(rows).eq(i).before(this.getGroupRow(count, groupString,j));
+                else {
+                    var rowstring = this.getSubRow(colobj, groupString, count);
+                    $(rows).eq(i).before(rowstring);
+                    //$(rows).eq(i).before("<tr class='group'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>");
+                    $(rows).eq(i).before(this.getGroupRow(count, groupString, j));
+                }
+                last = groupString;
+                $.each(colobj, function (key, val) {
+                    colobj[key] = [];
+                    colobj[key].push(_dataArray[key]);
+                });
+            }
+            else {
+                $.each(colobj, function (key, val) {
+                    colobj[key].push(_dataArray[key]);
+                });
+            }
+            lastrow = i;
+            }.bind(this));
+
+        }.bind(this));
+
+    }
+
     this.doSerial = function () {
-        this.Api.column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
+        var tempobj = $.grep(this.extraCol, function (obj) {  return obj.name === "serial"});
+        var index = this.Api.columns(tempobj[0].name + ':name').indexes()[0]
+        this.Api.column(index).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
         this.Api.columns.adjust();
     };
 
@@ -1558,6 +1698,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$('thead:eq(0) tr:eq(1) [type=checkbox]').prop('indeterminate', true);
         $(".addedbyeb [type=checkbox]").prop('indeterminate', true);
         $(".DTFC_Blocker").remove();
+    };
+
+    this.createColspanHeader = function () {
+
     };
 
     this.addFilterEventListeners = function () {
@@ -2389,7 +2533,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderlink4NewTable = function (data, type, row, meta) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.ebSettings.Columns.$values[meta.col - 2].LinkRefId + "'>" + data + "</a>";
+        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + meta.settings.aoColumns[meta.col].LinkRefId + "'>" + data + "</a>";
     };
 
     this.renderlinkandDecimal = function (deci, data) {
@@ -2413,7 +2557,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         });
     };
-
 
     this.lineGraphDiv = function (data, type, row, meta) {
         if (!data)

@@ -1,16 +1,21 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 
     var _infoDict = Html.Raw(ViewBag.SelectedUserGroupInfo);
     var _userList = Html.Raw(ViewBag.UsersList);
 }
 
-@await Component.InvokeAsync("PageHeaderCommon")
+<link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
 
-<script src="~/js/EbMsgBox.js" type="text/javascript"></script>
+@await Component.InvokeAsync("PageHeaderCommon")
 
 @*@using (Html.BeginForm(FormMethod.Post, new { itemid = 9 }))
     {
@@ -52,79 +57,6 @@
     }*@
 
 
-<style>
-    .center {
-        margin: auto;
-        width: 90%;
-        padding: 10px;
-    }
-
-    .outer-section-createuser {
-        height: 100vh;
-        font-family: open sans;
-        font-weight: 300;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        padding-bottom: 15px;
-    }
-
-    .searchRsulsItemsDiv:hover {
-        background-color: #eee;
-    }
-
-    .mydiv1:hover {
-        background-color: #f5f5f5;
-        border: none;
-    }
-
-    .mydiv1 {
-        border: 2px solid #f5f5f5;
-        background-color: #fdfdfd;
-        border-radius: 6px;
-        align-items: center;
-        height: 75px;
-        overflow: hidden;
-        padding: 10px 13px;
-        margin-top: 15px;
-    }
-
-    .icondiv1 {
-        display: inline-block;
-        font-size: xx-large;
-        padding-right: 10px;
-        vertical-align: top;
-    }
-
-    .textdiv1 {
-        width: 65%;
-        display: inline-block;
-        vertical-align: top;
-    }
-
-    .closediv1 {
-        display: inline-block;
-        float: right;
-        cursor: pointer;
-        vertical-align: top;
-    }
-
-    .tilediv1 {
-        border: 1px solid;
-        border-color: #ccc;
-        padding: 10px;
-        height: 450px;
-        border-radius: 6px;
-        overflow: auto;
-        margin: 0px;
-    }
-
-    .nav-tabs > li.active {
-        border-top: 3px solid #339bb3;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-    }
-</style>
 
 <div class="" style="padding: 4% 0% 0% 1%; height: 100vh; background: white;font-family: open sans;font-weight: 300;">
     <div class="row">

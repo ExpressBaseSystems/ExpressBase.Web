@@ -221,13 +221,7 @@
             getObjByval(this.PGobj.Metas, "name", sourceProp).source = this.PGobj.CurProp;
         $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(0)").hide();
         $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1) .CE-controls-head").text((this.CurMeta.alias || this.PGobj.CurProp));
-
-        if (this.PGobj.CurProp === "Controls") {/////////////////////////need CE test and correction
-            this.CElist = this.PGobj.PropsObj.Controls.$values;
-        }
-        else {
-            this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
-        }
+        this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         //this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG", null, null, this.PGobj);
 
         this.CE_PGObj = new Eb_PropertyGrid({
@@ -246,7 +240,10 @@
 
     this.CEHelper = function (sourceProp) {
         this.Dprop = this.CurMeta.Dprop;
-        this.allCols = this.PGobj.PropsObj[sourceProp].$values;
+        this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn;
+        this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn;
+
+        this.CElistFromSrc = this.PGobj.PropsObj[sourceProp].$values;
         if (this.editor === 8) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.changeCopyToRef();
@@ -261,30 +258,31 @@
                 this.setObjTypeDD();
                 this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             }
-            this.selectedCols = this.getSelectedColsByProp(this.allCols);
+            //this.selectedCols = this.getSelectedColsByProp(this.CElistFromSrc);
+            this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;;
         }
         else
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
-        this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
+        this.set9ColTiles(this.CE_all_ctrlsContId, this.CElistFromSrc);
         this.setSelColtiles();
         //this.CE_PGObj = new Eb_PropertyGrid(this.PGobj.wraperId + "_InnerPG");
         if (this.editor !== 8) {
             this.CE_PGObj = new Eb_PropertyGrid({
                 id: this.PGobj.wraperId + "_InnerPG",
                 IsInnerCall: true,
-                dependedProp: this.CurMeta.Dprop2
+                dependedProp: this.CurMeta.Dprop
             });
         }
     };
 
-    this.getSelectedColsByProp = function (allCols) {
-        let res = [];
-        $.each(allCols, function (i, obj) {
-            if (obj[this.Dprop] === true)// hard code
-                res.push(obj);
-        }.bind(this));
-        return res;
-    };
+    //this.getSelectedColsByProp = function (allCols) {
+    //    let res = [];
+    //    $.each(allCols, function (i, obj) {
+    //        if (obj[this.Dprop] === true)// hard code
+    //            res.push(obj);
+    //    }.bind(this));
+    //    return res;
+    //};
 
     this.checkLimit = function ($e, delay) {
         if (this.CurMeta.Limit !== 0 && this.CurMeta.Limit === this.selectedCols.length) {
@@ -313,22 +311,31 @@
             else if (this.editor === 9 || this.editor === 8)
                 this.movingObj = this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1)[0];
             else if (this.editor === 24 || this.editor === 26)
-                this.movingObj = getObjByval(this.allCols, "name", el.id);
+                this.movingObj = getObjByval(this.CElistFromSrc, "name", el.id);
         }
         else {
             if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26)
-                this.movingObj = getObjByval(this.allCols, "name", el.id);
+                this.movingObj = getObjByval(this.CElistFromSrc, "name", el.id);
             else if (this.editor === 10)
-                this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
+                this.movingObj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", el.id)), 1)[0];
             else
                 this.movingObj = null;
         }
     };
 
+    this.CEOnSelectFn = function (obj) {
+        this.CurCEOnSelectFn.bind(obj)();
+    };
+
+    this.CEOnDeselectFn = function (obj) {
+        this.CurCEOndeselectFn.bind(obj)();
+    };
+
     this.onDragendFn = function (el) {
-        $(el).find('.close').css("opacity", "0.2");
-        let $sibling = $(el).next();
-        let target = $(el).parent()[0];
+        $e = $(el);
+        $e.find('.close').css("opacity", "0.2");
+        let $sibling = $e.next();
+        let target = $e.parent()[0];
         let idx = $sibling.index() - 1;
         if (target.id !== this.CE_all_ctrlsContId) {// target 2nd column
             if (this.editor === 7) {
@@ -342,24 +349,28 @@
                 else
                     this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24 || this.editor === 26) {
-                idx = this.allCols.indexOf(getObjByval(this.allCols, "name", $sibling.attr("id")));
-                this.movingObj[this.Dprop] = true;
-                this.movingObj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", el.id)), 1)[0];
+                idx = this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", $sibling.attr("id")));
+                //this.movingObj[this.Dprop] = true;
+                this.movingObj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", el.id)), 1)[0];
                 if ($sibling.length > 0)
-                    this.allCols.splice(idx, 0, this.movingObj);
+                    this.CElistFromSrc.splice(idx, 0, this.movingObj);
                 else
-                    this.allCols.push(this.movingObj);
+                    this.CElistFromSrc.push(this.movingObj);
             }
-        }
-        else if (this.editor === 10) {
-            if ($sibling.length > 0)
-                this.allCols.splice(idx, 0, this.movingObj);
-            else
-                this.allCols.push(this.movingObj);
-        }
-        else if (this.editor === 24 || this.editor === 26) {
-            this.movingObj[this.Dprop] = false;
-            this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
+            this.CEOnSelectFn(this.movingObj);
+        }// target 1st column
+        else {
+            if (this.editor === 10) {
+                if ($sibling.length > 0)
+                    this.CElistFromSrc.splice(idx, 0, this.movingObj);
+                else
+                    this.CElistFromSrc.push(this.movingObj);
+            }
+            else if (this.editor === 24 || this.editor === 26) {
+                //this.movingObj[this.Dprop] = false;
+                this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
+            }
+            this.CEOnDeselectFn(this.movingObj, el);
         }
         $(el).off("click", ".coltile-delete").off("click", ".coltile-delete").on("click", ".coltile-delete", this.colTileDel);
         $(el).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
@@ -624,14 +635,14 @@
     };
 
     this.set9ColTiles = function (containerId, values) {
-        if (this.Dprop && this.allCols.length === 0) {
+        if (this.Dprop && this.CElistFromSrc.length === 0) {
             $(this.pgCXE_Cont_Slctr + " .modal-body").html("<h4> Set datasource for this property</h4>");
             return;
         }
         $("#" + containerId).empty();
         $("#" + this.CEctrlsContId).empty();
         let idField = "name";//////////////////////
-        if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
+        if (!(Object.keys(this.CElistFromSrc[0]).includes("name")))//////////////////
             idField = "ColumnName";////////////////////////
         $.each(values, function (i, control) {
             let name = (control.Name || control.name || control.ColumnName);
@@ -658,10 +669,10 @@
         let idField = "name";//////////////////////
         let selObjs = [];
         if (this.selectedCols.length !== 0) {
-            if (!(Object.keys(this.allCols[0]).includes("name")))//////////////////
+            if (!(Object.keys(this.CElistFromSrc[0]).includes("name")))//////////////////
                 idField = "ColumnName";////////////////////////
             $.each(this.selectedCols, function (i, ctrl) {
-                selObjs.push(getObjByval(this.allCols, idField, ctrl[idField]));
+                selObjs.push(getObjByval(this.CElistFromSrc, idField, ctrl[idField]));
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
             $("#" + this.CE_all_ctrlsContId).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
@@ -703,33 +714,35 @@
         }
     };
 
+    this.colTileDel = function (e) {
+        e.stopPropagation();
+        let $tile = $(e.target).closest(".colTile").remove();
+        if (this.editor === 26) {
+            if ($tile.attr("is-customobj") === "true") {// if delete
+                let delobj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", $tile.attr("id"))), 1)[0];
+                this.updateColumnIndex(delobj);
+            }
+        }
+    }.bind(this);
+
     this.colTileRightArrow = function (e) {// not tested for editors other than 26
         let $tile = $(e.target).closest(".colTile")
         if (this.checkLimit($tile))
             return false;
         e.stopPropagation();
         $tile.remove();
-        if (this.editor === 24) {
-            getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = true;// hard code
-        }
-        else if (this.editor === 9 || this.editor === 8 || this.editor === 26) {
-            if (this.editor === 26)
-                getObjByval(this.allCols, "name", $tile.attr("id"))[this.Dprop] = true;// hard code
-            this.selectedCols.push(getObjByval(this.allCols, "name", $tile.attr("id")));
+        //if (this.editor === 24) {
+        //    getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = true;
+        //}
+        //else
+        if (this.editor === 9 || this.editor === 8 || this.editor === 26) {
+            //if (this.editor === 26)
+            //    getObjByval(this.CElistFromSrc, "name", $tile.attr("id"))[this.Dprop] = true;
+            this.selectedCols.push(getObjByval(this.CElistFromSrc, "name", $tile.attr("id")));
             $("#" + this.CEctrlsContId).append($tile);
             $tile.focus();
         }
-    }.bind(this);
-
-    this.colTileDel = function (e) {
-        e.stopPropagation();
-        let $tile = $(e.target).closest(".colTile").remove();
-        if (this.editor === 26) {
-            if ($tile.attr("is-customobj") === "true") {// if delete
-                let delobj = this.allCols.splice(this.allCols.indexOf(getObjByval(this.allCols, "name", $tile.attr("id"))), 1)[0];
-                this.updateColumnIndex(delobj);
-            }
-        }
+        this.CEOnSelectFn(getObjByval(this.selectedCols, "name", $tile.attr("id")));
     }.bind(this);
 
     this.colTileLeftArrow = function (e) {
@@ -749,18 +762,21 @@
             }
         }
         else if (this.editor === 9 || this.editor === 8) {
-            this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", $tile.attr("id"))), 1);
+            let tileObj = getObjByval(this.selectedCols, "name", $tile.attr("id"));
+            this.selectedCols.splice(this.selectedCols.indexOf(tileObj), 1);
+            //tileObj[this.Dprop] = false;
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
         else if (this.editor === 24) {
-            getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+            //getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
 
         else if (this.editor === 26) {
-            getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;// hard code
+            //getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
+        this.CEOnDeselectFn(getObjByval(this.selectedCols, "name", $tile.attr("id")));
     }.bind(this);
 
     this.colTileFocusFn = function (e) {
@@ -811,8 +827,8 @@
 
     this.updateColumnIndex = function (delobj) {
         let deletedColumnIdx = delobj.data;
-        for (let i = deletedColumnIdx; i < this.allCols.length; i++) {
-            objectToBeUpdated = getObjByval(this.allCols, "data", (i + 1));
+        for (let i = deletedColumnIdx; i < this.CElistFromSrc.length; i++) {
+            objectToBeUpdated = getObjByval(this.CElistFromSrc, "data", (i + 1));
             objectToBeUpdated.data = i;
         }
     }
@@ -838,10 +854,13 @@
             if (!obj.name)
                 obj.name = ShortName;
             obj.data = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
-            obj[this.Dprop] = true;
-            obj["IsCustomColumn"] = true;
-            this.selectedCols = this.getSelectedColsByProp(this.allCols);
-            this.set9ColTiles(this.CE_all_ctrlsContId, this.allCols);
+            //obj[this.Dprop] = true;
+            this.CEOnSelectFn(obj);
+            //obj["IsCustomColumn"] = true;
+            //this.selectedCols = this.getSelectedColsByProp(this.CElistFromSrc);
+            this.selectedCols.push(obj);
+            this.CElistFromSrc.push(obj);
+            this.set9ColTiles(this.CE_all_ctrlsContId, this.CElistFromSrc);
             this.setSelColtiles();
             $("#" + obj.name).attr("is-customobj", "true")
         }
@@ -851,7 +870,7 @@
     };
 
     this.changeCopyToRef = function () {
-        $.each(this.allCols, function (i, colObj) {
+        $.each(this.CElistFromSrc, function (i, colObj) {
             let RObj;
             if (RObj = getObjByval(this.selectedCols, "name", colObj.name)) {
                 if (RObj === colObj)/// if already reference exit

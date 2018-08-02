@@ -62,11 +62,11 @@ namespace ExpressBase.Web.Controllers
         {
             string Env = "";
             if (ViewBag.Env == "Development")
-                Env = "https://eb-test.info";
+                Env = "https://myaccount.eb-test.info";
             else if (ViewBag.Env == "Staging")
-                Env = "https://eb-test.info";
+                Env = "https://myaccount.eb-test.info";
             else if (ViewBag.Env == "Production")
-                Env = "https://expressbase.com";
+                Env = "https://myaccount.expressbase.com";
 
             var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
             {

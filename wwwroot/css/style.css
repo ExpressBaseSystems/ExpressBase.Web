@@ -51,11 +51,17 @@ body {
         transform: translateY(-2px) scale(1.01);
         box-shadow: 0 5px 16px 1px rgba(0,0,0,0.13), 0 1px 4px 0 rgba(0,0,0,0.09);
         text-decoration: none;
-        color:white;
+        color:inherit;
     }
 .eb_btnblue {
     background: #528ff0;
     color: #fff;
+}
+
+.eb_btnwhite {
+    background: white;
+    color: #528ff0;
+    border: 1px solid #528ff0;
 }
 
 .eb_btnorange {

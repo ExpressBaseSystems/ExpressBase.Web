@@ -36,94 +36,7 @@ namespace ExpressBase.Web.Controllers
             AppWrapper AppObj = appRes.AppInfo;
             AppObj.ObjCollection = new List<EbObject>();
             obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
-            //if (obj is EbFilterDialog)
-            //{                
-            //    var _o = obj as EbFilterDialog;
-            //    ObjectCollection.Add(_o);
-            //}
-            //if (obj is EbDataSource)
-            //{
-            //    var _o = obj as EbDataSource;
-            //    ObjectCollection.Add(_o);
-            //    EbFilterDialog fd;
-            //    if (!_o.FilterDialogRefId.IsEmpty())
-            //    {
-            //        fd = _o.FilterDialog;
-            //        if (fd is null)
-            //        {
-            //            var fdobj = GetObjfromDB(_o.FilterDialogRefId);
-            //            ObjectCollection.Add(fdobj);
-            //        }
-            //    }
-            //}
-            // if (obj is EbTableVisualization)
-            //{
-            //var _o = obj as EbTableVisualization;
-            //ObjectCollection.Add(_o);
-            //EbDataSource ds;
-            //if (!_o.DataSourceRefId.IsEmpty())
-            //{
-            //    ds = _o.EbDataSource;
-            //    if (ds is null)
-            //    {
-            //        var dsobj = GetObjfromDB(_o.DataSourceRefId);
-            //        ObjectCollection.Add(dsobj);
-            //    }
-            //}
-            //foreach (DVBaseColumn _col in _o.Columns)
-            //{
-            //    if (!_col.LinkRefId.IsNullOrEmpty())
-            //    {
-            //        var linkobj = GetObjfromDB(_col.LinkRefId);
-            //        ObjectCollection.Add(linkobj);
-            //    }
-            //}
-            //}
-            //if (obj is EbChartVisualization)
-            //{
-            //    var _o = obj as EbChartVisualization;
-            //    ObjectCollection.Add(_o);
-            //    EbDataSource ds;
-            //    if (_o.DataSourceRefId.IsEmpty())
-            //    {
-            //        ds = _o.EbDataSource;
-            //        if (ds is null)
-            //        {
-            //            var dsobj = GetObjfromDB(_o.DataSourceRefId);
-            //            ObjectCollection.Add(dsobj);
-            //        }
-            //    }
-            //}
-            //if (obj is EbReport)
-            //{
-            //    var _o = obj as EbReport;
-            //    ObjectCollection.Add(_o);
-            //    EbDataSource ds;
-            //    if (_o.DataSourceRefId.IsEmpty())
-            //    {
-            //        ds = _o.EbDataSource;
-            //        if (ds is null)
-            //        {
-            //            var dsobj = GetObjfromDB(_o.DataSourceRefId);
-            //            ObjectCollection.Add(dsobj);
-            //        }
-            //    }
-            //    foreach (var dt in _o.Detail)
-            //    {
-            //        foreach (var field in dt.Fields)
-            //        {
-            //            if (field is EbDataField)
-            //            {
-            //                if (!(field as EbDataField).LinkRefId.IsEmpty())
-            //                {
-            //                    var linkobj = GetObjfromDB((field as EbDataField).LinkRefId);
-            //                    ObjectCollection.Add(linkobj);
-            //                }
-            //            }
-            //        }
-            //    }
 
-            //}
             //if (obj is EbWebForm)
             //{
             //    EbWebForm _o = obj as EbWebForm;
@@ -139,7 +52,16 @@ namespace ExpressBase.Web.Controllers
             //}
             //if (obj is EbBotForm)
             //{
-
+            //    EbBotForm _o = obj as EbBotForm;
+            //    foreach (EbControl control in _o.Controls)
+            //    {
+            //        PropertyInfo[] _props = control.GetType().GetProperties();
+            //        foreach (PropertyInfo _prop in _props)
+            //        {
+            //            if (_prop.IsDefined(typeof(OSE_ObjectTypes)))
+            //                ObjectCollection.Add(GetObjfromDB(_prop.GetValue(obj, null).ToString()));
+            //        }
+            //    }
             //}
             var ObjectList= ObjDictionary.Values;
             foreach (var item in ObjectList)

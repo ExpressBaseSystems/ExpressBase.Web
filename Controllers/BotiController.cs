@@ -151,7 +151,6 @@ namespace ExpressBase.Web.Controllers
         public dynamic GetCurForm(string refid)
         {
             var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-
             var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
             if (Obj is EbBotForm)
             {
@@ -223,7 +222,7 @@ namespace ExpressBase.Web.Controllers
         {
 			try
 			{
-				var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
+				var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields, AnonUserId = this.AnonUserId });
 				return x.RowAffected;
 			}
 			catch(Exception ex)

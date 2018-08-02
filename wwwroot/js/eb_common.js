@@ -224,3 +224,33 @@ function getSum(_array) {
 function getAverage(_array) {
     return getSum(_array) / _array.length;
 }
+
+function gettypefromNumber(num) {
+    if (num == 16)
+        return "String";
+    else if (num == 6)
+        return "DateTime";
+    else if (num == 3)
+        return "Boolean";
+    else if (num == 8 || num == 7 || num == 11 || num == 12)
+        return "Numeric";
+}
+
+function gettypefromString(str) {
+    if (str == "String")
+        return "16";
+    else if (str == "DateTime")
+        return "6";
+    else if (str == "Boolean")
+        return "3";
+    else if (str == "Int32")
+        return "11";
+    else if (str == "Decimal")
+        return "7";
+    else if (str == "Double")
+        return "8";
+    else if (str == "Numeric")
+        return "12";
+    else if (str == "Date")
+        return "5";
+}

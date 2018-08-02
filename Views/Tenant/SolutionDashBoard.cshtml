@@ -1,25 +1,29 @@
 ﻿@{
+    @using System;
+    @using Newtonsoft.Json;
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-
 @await Component.InvokeAsync("PageHeaderCommon")
 
-@using System;
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script src="~/js/EbCropper.js" type="text/javascript"></script>
 <script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
-<script>
-    var EbConnections = @Html.Raw(ViewBag.Connections);
-    var protocol = window.location.protocol;
-    var host = window.location.host.indexOf("-dev") > -1 ? window.location.host.replace("-dev", "") : window.location.host;
-    var cm = new EbHeader().setName("Solution Configuration");
-</script>
 @{
+    var EbConnections = ViewBag.Connections;
     string sso_dev = ViewBag.Protocol + ViewBag.SolutionInfo.EsolutionId + "-dev." + ViewBag.Domain + "/Ext/SwitchContext";
     string sso_user = ViewBag.Protocol + ViewBag.SolutionInfo.EsolutionId + "." + ViewBag.Domain + "/Ext/SwitchContext";
+    string dbdefault = (EbConnections.DataDbConnection.IsDefault) ? "(Default)" : "";
+    string filedefault = "";
+    if (EbConnections.FilesDbConnection != null)
+    {
+        filedefault = (EbConnections.FilesDbConnection.IsDefault) ? "(Default)" : "";
+    }
 }
+<script>
+    var EbConnections = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
+    var cm = new EbHeader().setName("Solution Configuration");
+</script>
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar">
         <div class="t-container">
@@ -86,121 +90,56 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="Connections" role="tabpanel">
-                    <div class="connectons-container">
-                        <div class="s-dash-headComm form-inline">
-                            <button class="btn btn-sm table-btn"><i class="fa fa-database"></i></button>
-                            Database Connections
-                            <button class="btn btn-sm table-btn pull-right" data-toggle="collapse" data-target="#dbConnection"><i class="fa fa-chevron-down"></i></button>
-                            @*<button whichmodal="dbConnectionEdit" op="new" class="btn btn-sm table-btn pull-right addConnection"><i class="fa fa-plus"></i></button>*@
+                    <div class="eb_connection_wrapper">
+                        <div class="_sec_pan">
+                            <div class="_sec_pan_head">
+                                <span><img src="~/images/svg/data-storage.svg" /></span>
+                                <span class="Name">DataBase Connection @dbdefault</span>
+                            </div>
+                            <div class="_sec_pan_bdy">
+                                <div class="dbConnectionEdit_info" id="DbConnection_config">
+                                    <div class="col-md-1 db_vendorimg text-center VendorImage">
+                                        <!--database vendor image -->
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p class="DatabaseName mr-0 pdt-5"></p>
+                                        <p class="NickName mr-0 pdt-5"></p>
+                                        <p class="Server mr-0 pdt-5"></p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="ebbtn eb_btnwhite pull-right" data-toggle="modal" data-target="#dbConnectionEdit">Change</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="s-dash-bodyComm collapse in" id="dbConnection">
-                            <table class="table dbConnectionEdit">
-                                <thead>
-                                    <tr style="border: 1px solid #adaaaa;">
-                                        <th class="td-width15">Database Type</th>
-                                        <th class="td-width15">Database Vendor</th>
-                                        <th>Server Address</th>
-                                        <th>Database Name</th>
-                                        <th>Nick Name</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @*<tr class="connection-row">
-                                            <td field="DatabaseVendor">row.DatabaseVendor</td>
-                                            <td field="DatabaseName">row.DatabaseNam</td>
-                                            <td field="Server">row.Server</td>
-                                            <td field="Port">row.Port</td>
-                                            <td field="NickName">row.NickName</td>
-                                            <td field="UserName">rowUserName</td>
-                                            <td field="TimeOut">row.Timeout</td>
-                                            <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
-                                        </tr>*@
-                                </tbody>
-                            </table>
-                            <table class="table filesDbConnectionEdit">
-                                <thead>
-                                    <tr style="border: 1px solid #adaaaa;">
-                                        <th class="td-width15">Database Type</th>
-                                        <th class="td-width15">Database Vendor</th>
-                                        <th>Files URL</th>
-                                        <th>Nick Name</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @*<tr class="connection-row">
-                                            @*<td field="">Files</td>
-                                                <td field="DatabaseVendor">MongoDB</td>
-                                                <td field="FilesDB_url" style="width: 38%;"></td>
-                                                <td field="NickName"></td>
-                                                <td class="edit-row"><button class="btn btn-sm table-btn edit-btn" op="edit" whichmodal="dbConnectionEdit"><i class="fa fa-pencil"></i></button></td>
-                                        </tr>*@
-                                </tbody>
-                            </table>
+                        <div class="_sec_pan">
+                            <div class="_sec_pan_head"><span><img src="~/images/svg/folder.svg" /></span><span class="Name">Files Connection @filedefault</span></div>
+                            <div class="_sec_pan_bdy">
+                                <div class="dbConnectionEdit_info" id="FilesConnection_config">
+                                    <div class="col-md-1 db_vendorimg text-center VendorImage">
+                                        <!--filedb vendor image -->
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p class="NickName mr-0 pdt-5"></p>
+                                        <p class="FilesUrI mr-0 pdt-5"></p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="ebbtn eb_btnwhite pull-right" data-toggle="modal" data-target="#filesDbConnectEdit">Change</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="connectons-container">
-                        <div class="s-dash-headComm form-inline">
-                            <button class="btn btn-sm table-btn"><i class="fa fa-envelope-o" aria-hidden="true"></i></button>
-                            Email Accounts
-                            <button class="btn btn-sm table-btn pull-right" data-toggle="collapse" data-target="#smtpConnections"><i class="fa fa-chevron-down"></i></button>
-                            <button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn pull-right addConnection"><i class="fa fa-plus"></i></button>
+                        <div class="_sec_pan">
+                            <div class="_sec_pan_head"><span><img src="~/images/svg/email.svg" /></span><span class="Name">Email Accounts</span></div>
+                            <div class="_sec_pan_bdy" id="EmailConnection_config">
+                                <!--email config jq injection-->
+                            </div>
                         </div>
-                        <div class="s-dash-bodyComm collapse in" id="smtpConnections">
-                            <table class="table EmailConnectionEdit mr-b-0">
-                                <thead>
-                                    <tr>
-                                        <th class="td-width15">Email Vendor</th>
-                                        <th>Email</th>
-                                        <th>SMTP Server</th>
-                                        <th>Port</th>
-                                        <th>Nick Name</th>
-                                        <th class="edit-row"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @*<tr>
-                                            <td field="EmailVendor">Google</td>
-                                            <td field="Email">sdfds</td>
-                                            <td field="Password">sdfds</td>
-                                            <td field="SMTP">fdsfsd</td>
-                                            <td field="Port">fdsfsd</td>
-                                            <td field="NickName">dsfdsf</td>
-                                            <td class="edit-row"><button whichmodal="EmailConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
-                                        </tr>*@
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="connectons-container">
-                        <div class="s-dash-headComm form-inline">
-                            <button class="btn btn-sm table-btn"><i class="fa fa-commenting-o" aria-hidden="true"></i></button>
-                            SMS Accounts
-                            <button class="btn btn-sm table-btn pull-right" data-toggle="collapse" data-target="#smsConnections"><i class="fa fa-chevron-down"></i></button>
-                            <button whichmodal="SmsConnectionEdit" class="btn btn-sm table-btn pull-right addConnection"><i class="fa fa-plus"></i></button>
-                        </div>
-                        <div class="s-dash-bodyComm collapse in" id="smsConnections">
-                            <table class="table SmsConnectionEdit mr-b-0">
-                                <thead>
-                                    <tr>
-                                        <th class="td-width15">Provider Name</th>
-                                        <th>UserName</th>
-                                        <th>Sender Number</th>
-                                        <th>Nick Name</th>
-                                        <th class="edit-row"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @*<tr>
-                                            <td field="ProviderName">Google</td>
-                                            <td field="UserName">sdfds</td>
-                                            <td field="From">fdsfsd</td>
-                                            <td field="NickName">dsfdsf</td>
-                                            <td class="edit-row"><button whichmodal="SmsConnectionEdit" class="btn btn-sm table-btn edit-btn"><i class="fa fa-pencil"></i></button></td>
-                                        </tr>*@
-                                </tbody>
-                            </table>
+                        <div class="_sec_pan">
+                            <div class="_sec_pan_head"><span><img src="~/images/svg/text.svg" /></span><span class="Name">SMS Accounts</span></div>
+                            <div class="_sec_pan_bdy" id="SMSConnection_config">
+                                <!--sms config jq injection-->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,17 +168,17 @@
                         <div class="s-dash-workplace">
                             <div class="s-dash-workplace-tabs">
                                 <ul class="nav nav-tabs" role="tablist">
-                                    <li class="nav-item active">
+                                    @*<li class="nav-item active">
                                         <a class="nav-link" data-toggle="tab" href="#creditpayment_tab" role="tab">
                                             Credit Card
                                         </a>
-                                    </li>
+                                    </li>*@
                                     <li class="nav-item">
                                         <a class="nav-link" data-toggle="tab" href="#paypalpayment_tab" role="tab"> PayPal</a>
                                     </li>
                                 </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane active" id="creditpayment_tab" role="tabpanel">
+                                    @*<div class="tab-pane active" id="creditpayment_tab" role="tabpanel">
                                         <div class="credit_info_head">
                                             <p class="col-md-10">
                                                 Card will be charged monthly for number of users. All major credit cards accepted.
@@ -281,13 +220,16 @@
                                                 </div>
                                             </form>
                                         </div>
-                                    </div>
-                                    <div class="tab-pane" id="paypalpayment_tab" role="tabpanel">
+                                    </div>*@
+                                    <div class="tab-pane active" id="paypalpayment_tab" role="tabpanel">
                                         <p>
-                                            Add PayPal credit to your account. This is a one-time payment and will take some time to process.
+                                            Subscribe using your paypal account.
                                         </p>
-                                        <div class="col-md-8 col-lg-8 col-sm-8 pd-0">
-                                            <button class="btn paypal_btn">PayPal</button>
+                                        <div class="col-md-12 col-lg-12 col-sm-12 pd-0">
+                                            <form action="/PayPal/PayPalPayment" method="post">
+												<input type="hidden" value="@ViewBag.SolutionInfo.EsolutionId" name="Sid"/>
+                                                <button type="submit" class="btn paypal_btn">PayPal</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -301,14 +243,14 @@
 </div>
 <div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="margin-top:100px;">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" id="dbConnection_mask">
             <form action="" method="post" id="dbConnectionSubmit" data-toggle="validator">
                 <div class="modal-header relative">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">DataBase Connection</h4>
                     <div id="dbConnection_loder" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body" id="dbConnection_mask">
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -373,18 +315,21 @@
                             <div class="form-group">
                                 <label>Server Address</label>
                                 <input name="Server" type="text" pattern="^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" class="form-control" required />
+                                <div class="help-block with-errors"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Port</label>
                                 <input name="Port" pattern="^[0-9]*$" type="text" class="form-control" required />
+                                <div class="help-block with-errors"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>TimeOut</label>
                                 <input name="Timeout" pattern="^[0-9]*$" type="text" class="form-control" required />
+                                <div class="help-block with-errors"></div>
                             </div>
                         </div>
                         <input type="hidden" name="IsNew" />

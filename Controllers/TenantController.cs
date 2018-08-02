@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SolutionDashBoard(string Sid)
         {
             GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });
-            ViewBag.Connections = JsonConvert.SerializeObject(resp.EBSolutionConnections);
+            ViewBag.Connections = resp.EBSolutionConnections;
             ViewBag.SolutionInfo = resp.Data;
             ViewBag.cid = Sid;
             if(this.HttpContext.Request.IsHttps)

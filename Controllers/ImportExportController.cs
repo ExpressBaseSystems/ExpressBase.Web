@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,113 +30,122 @@ namespace ExpressBase.Web.Controllers
         public void Export(string _refid)
         {
             int app_id = 1;
-            List<EbObject> ObjectCollection = new List<EbObject>();
-            AppWrapper AppObj;
-            var obj = GetObjfromDB(_refid);
+            OrderedDictionary ObjDictionary = new OrderedDictionary();
+            EbObject obj = GetObjfromDB(_refid);
             GetApplicationResponse appRes = ServiceClient.Get(new GetApplicationRequest { Id = app_id });
-            AppObj = appRes.AppInfo;
+            AppWrapper AppObj = appRes.AppInfo;
+            AppObj.ObjCollection = new List<EbObject>();
+            obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
+            //if (obj is EbFilterDialog)
+            //{                
+            //    var _o = obj as EbFilterDialog;
+            //    ObjectCollection.Add(_o);
+            //}
+            //if (obj is EbDataSource)
+            //{
+            //    var _o = obj as EbDataSource;
+            //    ObjectCollection.Add(_o);
+            //    EbFilterDialog fd;
+            //    if (!_o.FilterDialogRefId.IsEmpty())
+            //    {
+            //        fd = _o.FilterDialog;
+            //        if (fd is null)
+            //        {
+            //            var fdobj = GetObjfromDB(_o.FilterDialogRefId);
+            //            ObjectCollection.Add(fdobj);
+            //        }
+            //    }
+            //}
+            // if (obj is EbTableVisualization)
+            //{
+            //var _o = obj as EbTableVisualization;
+            //ObjectCollection.Add(_o);
+            //EbDataSource ds;
+            //if (!_o.DataSourceRefId.IsEmpty())
+            //{
+            //    ds = _o.EbDataSource;
+            //    if (ds is null)
+            //    {
+            //        var dsobj = GetObjfromDB(_o.DataSourceRefId);
+            //        ObjectCollection.Add(dsobj);
+            //    }
+            //}
+            //foreach (DVBaseColumn _col in _o.Columns)
+            //{
+            //    if (!_col.LinkRefId.IsNullOrEmpty())
+            //    {
+            //        var linkobj = GetObjfromDB(_col.LinkRefId);
+            //        ObjectCollection.Add(linkobj);
+            //    }
+            //}
+            //}
+            //if (obj is EbChartVisualization)
+            //{
+            //    var _o = obj as EbChartVisualization;
+            //    ObjectCollection.Add(_o);
+            //    EbDataSource ds;
+            //    if (_o.DataSourceRefId.IsEmpty())
+            //    {
+            //        ds = _o.EbDataSource;
+            //        if (ds is null)
+            //        {
+            //            var dsobj = GetObjfromDB(_o.DataSourceRefId);
+            //            ObjectCollection.Add(dsobj);
+            //        }
+            //    }
+            //}
+            //if (obj is EbReport)
+            //{
+            //    var _o = obj as EbReport;
+            //    ObjectCollection.Add(_o);
+            //    EbDataSource ds;
+            //    if (_o.DataSourceRefId.IsEmpty())
+            //    {
+            //        ds = _o.EbDataSource;
+            //        if (ds is null)
+            //        {
+            //            var dsobj = GetObjfromDB(_o.DataSourceRefId);
+            //            ObjectCollection.Add(dsobj);
+            //        }
+            //    }
+            //    foreach (var dt in _o.Detail)
+            //    {
+            //        foreach (var field in dt.Fields)
+            //        {
+            //            if (field is EbDataField)
+            //            {
+            //                if (!(field as EbDataField).LinkRefId.IsEmpty())
+            //                {
+            //                    var linkobj = GetObjfromDB((field as EbDataField).LinkRefId);
+            //                    ObjectCollection.Add(linkobj);
+            //                }
+            //            }
+            //        }
+            //    }
 
-            if (obj is EbDataSource)
-            {
-                var _o = obj as EbDataSource;
-                ObjectCollection.Add(_o);
-                EbFilterDialog fd;
-                if (!_o.FilterDialogRefId.IsEmpty())
-                {
-                    fd = _o.FilterDialog;
-                    if (fd is null)
-                    {
-                        var fdobj = GetObjfromDB(_o.FilterDialogRefId);
-                        ObjectCollection.Add(fdobj);
-                    }
-                }
-            }
-            if (obj is EbTableVisualization)
-            {
-                var _o = obj as EbTableVisualization;
-                ObjectCollection.Add(_o);
-                EbDataSource ds;
-                if (!_o.DataSourceRefId.IsEmpty())
-                {
-                    ds = _o.EbDataSource;
-                    if (ds is null)
-                    {
-                        var dsobj = GetObjfromDB(_o.DataSourceRefId);
-                        ObjectCollection.Add(dsobj);
-                    }
-                }
-                foreach (DVBaseColumn _col in _o.Columns)
-                {
-                    if (!_col.LinkRefId.IsNullOrEmpty())
-                    {
-                        var linkobj = GetObjfromDB(_col.LinkRefId);
-                        ObjectCollection.Add(linkobj);
-                    }
-                }
-            }
-            if (obj is EbChartVisualization)
-            {
-                var _o = obj as EbChartVisualization;
-                ObjectCollection.Add(_o);
-                EbDataSource ds;
-                if (_o.DataSourceRefId.IsEmpty())
-                {
-                    ds = _o.EbDataSource;
-                    if (ds is null)
-                    {
-                        var dsobj = GetObjfromDB(_o.DataSourceRefId);
-                        ObjectCollection.Add(dsobj);
-                    }
-                }
-            }
-            if (obj is EbReport)
-            {
-                var _o = obj as EbReport;
-                ObjectCollection.Add(_o);
-                EbDataSource ds;
-                if (_o.DataSourceRefId.IsEmpty())
-                {
-                    ds = _o.EbDataSource;
-                    if (ds is null)
-                    {
-                        var dsobj = GetObjfromDB(_o.DataSourceRefId);
-                        ObjectCollection.Add(dsobj);
-                    }
-                }
-                foreach (var dt in _o.Detail)
-                {
-                    foreach (var field in dt.Fields)
-                    {
-                        if (field is EbDataField)
-                        {
-                            if (!(field as EbDataField).LinkRefId.IsEmpty())
-                            {
-                                var linkobj = GetObjfromDB((field as EbDataField).LinkRefId);
-                                ObjectCollection.Add(linkobj);
-                            }
-                        }
-                    }
-                }
+            //}
+            //if (obj is EbWebForm)
+            //{
+            //    EbWebForm _o = obj as EbWebForm;
+            //    foreach (EbControl control in _o.Controls)
+            //    {
+            //        PropertyInfo[] _props = control.GetType().GetProperties();
+            //        foreach (PropertyInfo _prop in _props)
+            //        {
+            //            if (_prop.IsDefined(typeof(OSE_ObjectTypes)))
+            //                ObjectCollection.Add(GetObjfromDB(_prop.GetValue(obj, null).ToString()));
+            //        }
+            //    }
+            //}
+            //if (obj is EbBotForm)
+            //{
 
-            }
-            if (obj is EbWebForm)
+            //}
+            var ObjectList= ObjDictionary.Values;
+            foreach (var item in ObjectList)
             {
-                EbWebForm _o = obj as EbWebForm;
-                foreach (EbControl control in _o.Controls)
-                {
-                    PropertyInfo[] _props = control.GetType().GetProperties();
-                    foreach (PropertyInfo _prop in _props)
-                    {
-                        if (_prop.IsDefined(typeof(OSE_ObjectTypes)))
-                            ObjectCollection.Add(GetObjfromDB(_prop.GetValue(obj, null).ToString()));
-                    }
-                }
+                AppObj.ObjCollection.Add(item as EbObject);
             }
-            if (obj is EbBotForm)
-            {
-
-            }
-            AppObj.ObjCollection = ObjectCollection;
             string stream = EbSerializers.Json_Serialize(AppObj);
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"E:\ExportFile.txt"))
             {
@@ -151,7 +161,7 @@ namespace ExpressBase.Web.Controllers
             List<EbObject> ObjectCollection = AppObj.ObjCollection;
             var appres = ServiceClient.Post(new CreateApplicationDevRequest
             {
-                AppName = AppObj.Name + "11",
+                AppName = AppObj.Name + "(7)",
                 AppType = AppObj.AppType,
                 Description = AppObj.Description,
                 AppIcon = AppObj.Icon

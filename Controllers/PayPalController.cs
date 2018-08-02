@@ -87,6 +87,8 @@ namespace ExpressBase.Web.Controllers
         //    return await flurlRequest.SendAsync(_method, new Flurl.Http.Content.CapturedJsonContent(JsonBody));
         //}
 
+
+
         public PayPalController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis)
         {
         }
@@ -95,9 +97,24 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index()
         {
             PayPalPaymentRequest req = new PayPalPaymentRequest();
-            var PayPalRes = this.ServiceClient.Get<PayPalPaymentResponse>(req);
+            var PayPalRes = this.ServiceClient.Post<PayPalPaymentResponse>(req);
 
-            return Redirect(PayPalRes.Test);
+            return Redirect(PayPalRes.ApprovalUrl);
+        }
+
+        public IActionResult ReturnSuccess(string token)
+        {
+            var Res = this.ServiceClient.Post(new PayPalSuccessReturnRequest
+            {
+                PaymentId = token
+            });
+            return View();
+        }
+
+        public IActionResult CancelAgreement(string token)
+        {
+            var Res = this.ServiceClient.Post(new PayPalFailureReturnRequest{});
+            return View();
         }
 
         [HttpGet("Billing")]
@@ -107,18 +124,14 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public void CreditCardPayment()
+        public IActionResult CreditCardPayment()
         {
             var req = this.HttpContext.Request.Form;
-            var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
+            var PayPalRsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
             {
-                BillingMethod = PaymentMethod.bank,
-                HolderName = req["CardHolder"],
-                CardNumber = req["CardNumber"],
-                ExpYear = Convert.ToInt32(req["ExpiryMonth"]),
-                ExpMonth = Convert.ToInt32(req["ExpiryYear"]),
-                Cvv = Convert.ToInt32(req["Cvv"])
+                BillingMethod = PaymentMethod.paypal,
             });
+            return Redirect(PayPalRsp.ApprovalUrl);
         }
 
         public void PayPalPayment()

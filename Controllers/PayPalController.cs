@@ -27,14 +27,14 @@ namespace ExpressBase.Web.Controllers
         {
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            PayPalPaymentRequest req = new PayPalPaymentRequest();
-            var PayPalRes = this.ServiceClient.Post<PayPalPaymentResponse>(req);
+        //[HttpGet]
+        //public IActionResult Index()
+        //{
+        //    PayPalPaymentRequest req = new PayPalPaymentRequest();
+        //    var PayPalRes = this.ServiceClient.Post<PayPalPaymentResponse>(req);
 
-            return Redirect(PayPalRes.ApprovalUrl);
-        }
+        //    return Redirect(PayPalRes.ApprovalUrl);
+        //}
 
         public IActionResult ReturnSuccess(string token)
         {

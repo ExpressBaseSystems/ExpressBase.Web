@@ -242,12 +242,9 @@
         this.Dprop = this.CurMeta.Dprop;
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn;
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn;
-        
+
         this.CElistFromSrc = this.PGobj.PropsObj[sourceProp].$values;
         if (this.editor === 8) {
-            //if (this.Dprop)
-            //    this.selectedCols = this.getSelectedColsByProp(this.CElistFromSrc);
-            //else
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.changeCopyToRef();
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
@@ -261,7 +258,8 @@
                 this.setObjTypeDD();
                 this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             }
-            this.selectedCols = this.getSelectedColsByProp(this.CElistFromSrc);
+            //this.selectedCols = this.getSelectedColsByProp(this.CElistFromSrc);
+            this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;;
         }
         else
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
@@ -277,14 +275,14 @@
         }
     };
 
-    this.getSelectedColsByProp = function (allCols) {
-        let res = [];
-        $.each(allCols, function (i, obj) {
-            if (obj[this.Dprop] === true)// hard code
-                res.push(obj);
-        }.bind(this));
-        return res;
-    };
+    //this.getSelectedColsByProp = function (allCols) {
+    //    let res = [];
+    //    $.each(allCols, function (i, obj) {
+    //        if (obj[this.Dprop] === true)// hard code
+    //            res.push(obj);
+    //    }.bind(this));
+    //    return res;
+    //};
 
     this.checkLimit = function ($e, delay) {
         if (this.CurMeta.Limit !== 0 && this.CurMeta.Limit === this.selectedCols.length) {
@@ -326,13 +324,11 @@
     };
 
     this.CEOnSelectFn = function (obj) {
-        var func = this.CurCEOnSelectFn.bind(obj);
-        func();
+        this.CurCEOnSelectFn.bind(obj)();
     };
 
     this.CEOnDeselectFn = function (obj) {
-        var func = this.CurCEOndeselectFn.bind(obj);
-        func();
+        this.CurCEOndeselectFn.bind(obj)();
     };
 
     this.onDragendFn = function (el) {
@@ -352,11 +348,9 @@
                     this.selectedCols.splice(idx, 0, this.movingObj);
                 else
                     this.selectedCols.push(this.movingObj);
-                //if (this.Dprop)
-                //    this.movingObj[this.Dprop] = true;
             } else if (this.editor === 24 || this.editor === 26) {
                 idx = this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", $sibling.attr("id")));
-                this.movingObj[this.Dprop] = true;
+                //this.movingObj[this.Dprop] = true;
                 this.movingObj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", el.id)), 1)[0];
                 if ($sibling.length > 0)
                     this.CElistFromSrc.splice(idx, 0, this.movingObj);
@@ -373,7 +367,7 @@
                     this.CElistFromSrc.push(this.movingObj);
             }
             else if (this.editor === 24 || this.editor === 26) {
-                this.movingObj[this.Dprop] = false;
+                //this.movingObj[this.Dprop] = false;
                 this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
             }
             this.CEOnDeselectFn(this.movingObj, el);
@@ -737,16 +731,18 @@
             return false;
         e.stopPropagation();
         $tile.remove();
-        if (this.editor === 24) {
-            getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = true;
-        }
-        else if (this.editor === 9 || this.editor === 8 || this.editor === 26) {
+        //if (this.editor === 24) {
+        //    getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = true;
+        //}
+        //else
+        if (this.editor === 9 || this.editor === 8 || this.editor === 26) {
             //if (this.editor === 26)
             //    getObjByval(this.CElistFromSrc, "name", $tile.attr("id"))[this.Dprop] = true;
             this.selectedCols.push(getObjByval(this.CElistFromSrc, "name", $tile.attr("id")));
             $("#" + this.CEctrlsContId).append($tile);
             $tile.focus();
         }
+        this.CEOnSelectFn(getObjByval(this.selectedCols, "name", $tile.attr("id")));
     }.bind(this);
 
     this.colTileLeftArrow = function (e) {
@@ -780,6 +776,7 @@
             //getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
+        this.CEOnDeselectFn(getObjByval(this.selectedCols, "name", $tile.attr("id")));
     }.bind(this);
 
     this.colTileFocusFn = function (e) {
@@ -857,9 +854,12 @@
             if (!obj.name)
                 obj.name = ShortName;
             obj.data = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
-            obj[this.Dprop] = true;
-            obj["IsCustomColumn"] = true;
-            this.selectedCols = this.getSelectedColsByProp(this.CElistFromSrc);
+            //obj[this.Dprop] = true;
+            this.CEOnSelectFn(obj);
+            //obj["IsCustomColumn"] = true;
+            //this.selectedCols = this.getSelectedColsByProp(this.CElistFromSrc);
+            this.selectedCols.push(obj);
+            this.CElistFromSrc.push(obj);
             this.set9ColTiles(this.CE_all_ctrlsContId, this.CElistFromSrc);
             this.setSelColtiles();
             $("#" + obj.name).attr("is-customobj", "true")

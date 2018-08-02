@@ -20,8 +20,10 @@
     };
 
     this.refreshMenu = function () {
-        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", "");
-        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login, "");
+        //store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", "");
+        //store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login, "");
+        store.clearAll()
+        $(".Eb_quick_menu .modal-body #objList").children(".objContainer_f_app").remove();
         this.showModal();
     };
     

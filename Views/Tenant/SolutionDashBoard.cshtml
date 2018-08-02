@@ -227,6 +227,7 @@
                                         </p>
                                         <div class="col-md-12 col-lg-12 col-sm-12 pd-0">
                                             <form action="/PayPal/PayPalPayment" method="post">
+												<input type="hidden" value="@ViewBag.SolutionInfo.EsolutionId" name="Sid"/>
                                                 <button type="submit" class="btn paypal_btn">PayPal</button>
                                             </form>
                                         </div>

@@ -60,18 +60,20 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult PayPalPayment()
         {
+            string sid = this.HttpContext.Request.Form["Sid"];
             string Env = "";
             if (ViewBag.Env == "Development")
-                Env = "https://eb-test.info";
+                Env = "https://myaccount.eb-test.info";
             else if (ViewBag.Env == "Staging")
-                Env = "https://eb-test.info";
+                Env = "https://myaccount.eb-test.info";
             else if (ViewBag.Env == "Production")
-                Env = "https://expressbase.com";
+                Env = "https://myaccount.expressbase.com";
 
             var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
             {
                 BillingMethod = PaymentMethod.paypal,
-                Environment = Env
+                Environment = Env,
+                SolutionId = sid
             });
             if (rsp.ApprovalUrl.Length > 0)
                 return Redirect(rsp.ApprovalUrl);

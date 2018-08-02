@@ -58,22 +58,30 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult CreditCardPayment()
+        public IActionResult PayPalPayment()
         {
-            var req = this.HttpContext.Request.Form;
-            var PayPalRsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
-            {
-                BillingMethod = PaymentMethod.paypal,
-            });
-            return Redirect(PayPalRsp.ApprovalUrl);
-        }
+            string Env = "";
+            if (ViewBag.Env == "Development")
+                Env = "https://eb-test.info";
+            else if (ViewBag.Env == "Staging")
+                Env = "https://eb-test.info";
+            else if (ViewBag.Env == "Production")
+                Env = "https://expressbase.com";
 
-        public void PayPalPayment()
-        {
             var rsp = this.ServiceClient.Post<PayPalPaymentResponse>(new PayPalPaymentRequest
             {
                 BillingMethod = PaymentMethod.paypal,
+                Environment = Env
             });
+            if (rsp.ApprovalUrl.Length > 0)
+                return Redirect(rsp.ApprovalUrl);
+            return View();
+        }
+        
+        public IActionResult GetApproval()
+        {
+
+            return View();
         }
 
     }

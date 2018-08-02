@@ -521,6 +521,10 @@
     float: right;
 }
 
+[pg-editor-type='8']  .colTile .coltile-delete {
+    display: none !important;
+}
+
 .CE-all-ctrlsCont .colTile .coltile-delete {
     float: left;
 }

@@ -451,7 +451,7 @@ namespace ExpressBase.Web.Controllers
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
 
-                        this.RouteToDashboard(authResponse.User.HasSystemRole(), whichconsole, out _redirectUrl);
+                        _redirectUrl = this.RouteToDashboard(whichconsole);
                     }
                 }
             }
@@ -490,24 +490,25 @@ namespace ExpressBase.Web.Controllers
             ViewBag.cid = cid;
         }
 
-        private void RouteToDashboard(bool hasSystemRole, string whichconsole, out string _redirectUrl)
+        private string RouteToDashboard(string whichconsole)
         {
-            _redirectUrl = RoutingConstants.EXTERROR;
+            string url = string.Empty;
             if (ViewBag.cid == CoreConstants.EXPRESSBASE)
             {
-                _redirectUrl = RoutingConstants.MYSOLUTIONS;
+                url = RoutingConstants.MYSOLUTIONS;
             }
             else
             {
-                if (hasSystemRole && whichconsole == RoutingConstants.DC)
+                if (whichconsole == RoutingConstants.DC)
                 {
-                    _redirectUrl = RoutingConstants.MYAPPLICATIONS;
+                    url = RoutingConstants.MYAPPLICATIONS;
                 }
                 else if (whichconsole == RoutingConstants.UC)
                 {
-                    _redirectUrl = RoutingConstants.USERDASHBOARD;
+                    url = RoutingConstants.USERDASHBOARD;
                 }
             }
+            return url;
         }
 
         public IActionResult errorredirect(string console)

@@ -1367,7 +1367,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (obj.bVisible) {
                 if (Object.keys(colobj).contains(k.toString())) {
                     var val = colobj[k];
-                    str += "<td class='dt-body-right'>" + getSum(val) + "," + getAverage(val).toFixed(2)+"</td>";
+                    str += "<td class='dt-body-right'>" + getSum(val)+"</td>";// + "," + getAverage(val).toFixed(2)+
                 }
                 else
                     str += "<td>&nbsp;</td>"; 
@@ -1451,8 +1451,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.each(index, function (j, dt) {
             last = null;
             var tempobj = $.grep(this.EbObject.rowGrouping.$values, function (obj) { return dt === obj.data });
-            $.each(rowsdata, function (i, _dataArray) {
-                groupString = tempobj[0].name + ":" + _dataArray[dt];
+            $.each(rowsdata, function (i, _dataArray) {     
+                var te = (_dataArray[dt].trim() === "") ? "(Blank)" : _dataArray[dt];
+                groupString = tempobj[0].name + ": " + te;
                 if (last !== groupString) {
                     if (last === null || Object.keys(colobj).length === 0)
                         $(rows).eq(i).before(this.getGroupRow(count, groupString, j));
@@ -2750,35 +2751,6 @@ function extractLast(term) {
     return splitval(term).pop();
 }
 
-function gettypefromNumber(num) {
-    if (num == 16)
-        return "String";
-    else if (num == 6)
-        return "DateTime";
-    else if (num == 3)
-        return "Boolean";
-    else if (num == 8 || num == 7 || num == 11 || num == 12)
-        return "Numeric";
-}
-
-function gettypefromString(str) {
-    if (str == "String")
-        return "16";
-    else if (str == "DateTime")
-        return "6";
-    else if (str == "Boolean")
-        return "3";
-    else if (str == "Int32")
-        return "11";
-    else if (str == "Decimal")
-        return "7";
-    else if (str == "Double")
-        return "8";
-    else if (str == "Numeric")
-        return "12";
-    else if (str == "Date")
-        return "5";
-}
 
 if (!String.prototype.splice) {
     String.prototype.splice = function (start, delCount, newSubStr) {

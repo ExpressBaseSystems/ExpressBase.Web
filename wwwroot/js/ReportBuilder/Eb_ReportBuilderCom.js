@@ -20,6 +20,8 @@
         Countrptfooter: 1
     };
 
+    this.RbObjProps = ["ReportHeaders", "ReportFooters", "PageHeaders", "PageFooters", "Detail"];
+
     this.EbObjectSections = ["ReportHeader", "PageHeader", "ReportDetail", "PageFooter", "ReportFooter"];
 
     this.msBoxSubNotation = {

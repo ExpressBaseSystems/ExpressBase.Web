@@ -120,7 +120,10 @@ namespace ExpressBase.Web.Controllers
                     Relations = "_rel_obj",
                     IsSave = false,
                     Tags = "_tags",
-                    Apps = appres.id.ToString()
+                    Apps = appres.id.ToString(),
+                    SourceSolutionId = (obj.RefId.Split("-"))[0],
+                    SourceObjId = (obj.RefId.Split("-"))[3],
+                    SourceVerID = (obj.RefId.Split("-"))[4]
                 };
                 EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                 RefidMap[obj.RefId] = res.RefId;

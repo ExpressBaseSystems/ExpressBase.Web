@@ -731,13 +731,7 @@
             return false;
         e.stopPropagation();
         $tile.remove();
-        //if (this.editor === 24) {
-        //    getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = true;
-        //}
-        //else
         if (this.editor === 9 || this.editor === 8 || this.editor === 26) {
-            //if (this.editor === 26)
-            //    getObjByval(this.CElistFromSrc, "name", $tile.attr("id"))[this.Dprop] = true;
             this.selectedCols.push(getObjByval(this.CElistFromSrc, "name", $tile.attr("id")));
             $("#" + this.CEctrlsContId).append($tile);
             $tile.focus();
@@ -762,18 +756,12 @@
                 });
             }
         }
-        else if (this.editor === 9 || this.editor === 8) {
+        else if (this.editor === 9 || this.editor === 8 || this.editor === 24) {
             this.selectedCols.splice(this.selectedCols.indexOf(tileObj), 1);
-            //tileObj[this.Dprop] = false;
-            $("#" + this.CE_all_ctrlsContId).prepend($tile);
-        }
-        else if (this.editor === 24) {
-            //getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }
 
         else if (this.editor === 26) {
-            //getObjByval(this.selectedCols, "name", $tile.attr("id"))[this.Dprop] = false;
             this.selectedCols.splice(this.selectedCols.indexOf(tileObj), 1);
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }

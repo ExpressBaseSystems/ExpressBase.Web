@@ -37,6 +37,7 @@ namespace ExpressBase.Web.Controllers
             AppObj.ObjCollection = new List<EbObject>();
             obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
 
+            #region MyRegion
             //if (obj is EbWebForm)
             //{
             //    EbWebForm _o = obj as EbWebForm;
@@ -62,7 +63,8 @@ namespace ExpressBase.Web.Controllers
             //                ObjectCollection.Add(GetObjfromDB(_prop.GetValue(obj, null).ToString()));
             //        }
             //    }
-            //}
+            //} 
+            #endregion
             var ObjectList= ObjDictionary.Values;
             foreach (var item in ObjectList)
             {
@@ -81,7 +83,7 @@ namespace ExpressBase.Web.Controllers
             string text = System.IO.File.ReadAllText(@"E:\ExportFile.txt");
             AppWrapper AppObj = (AppWrapper)EbSerializers.Json_Deserialize(text);
             List<EbObject> ObjectCollection = AppObj.ObjCollection;
-            var appres = ServiceClient.Post(new CreateApplicationDevRequest
+            CreateApplicationResponse appres = ServiceClient.Post(new CreateApplicationDevRequest
             {
                 AppName = AppObj.Name + "(7)",
                 AppType = AppObj.AppType,
@@ -109,7 +111,7 @@ namespace ExpressBase.Web.Controllers
                         (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
                 }
 
-                var ds = new EbObject_Create_New_ObjectRequest
+                EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
                 {
                     Name = obj.Name,
                     Description = obj.Description,
@@ -118,7 +120,8 @@ namespace ExpressBase.Web.Controllers
                     Relations = "_rel_obj",
                     IsSave = false,
                     Tags = "_tags",
-                    Apps = appres.id.ToString()
+                    Apps = appres.id.ToString(),
+                    SourceSolutionId = (obj.RefId.Split("-"))[0]
                 };
                 EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                 RefidMap[obj.RefId] = res.RefId;
@@ -128,7 +131,7 @@ namespace ExpressBase.Web.Controllers
 
         public EbObject GetObjfromDB(string _refid)
         {
-            var res = ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = _refid });
+            EbObjectParticularVersionResponse res = ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = _refid });
             EbObject obj = EbSerializers.Json_Deserialize(res.Data[0].Json);
             obj.RefId = _refid;
             return obj;

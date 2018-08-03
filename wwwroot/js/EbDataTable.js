@@ -76,6 +76,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     var split = new splitWindow("parent-div0", "contBox");
 
+    if (this.login === "dc") {
+        this.stickBtn = new EbStickButton({
+            $wraper: $(".filterCont"),
+            $extCont: $(".filterCont"),
+            icon: "fa-filter",
+            dir: "left",
+            label: "Parameters",
+            //$scope: $(".filterCont"),
+            //btnTop: 78,
+        });
+    }
+
     this.init = function () {
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         if (this.login == "uc") {
@@ -131,17 +143,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(".filterCont").append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
         $('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
         $(".filterCont").append(text);
-        if (this.login === "dc") {
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".filterCont"),
-                $extCont: $(".filterCont"),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                //btnTop: 78,
-            });
-        }
-
         $("#btnGo").click(this.getColumnsSuccess.bind(this));
         $(".filterCont").find("input").on("keyup", function (e) {
             if (e.which === 13)
@@ -156,7 +157,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         if ($(".filterCont #filterBox").children().not("button").length == 0) {
             this.FD = false;
-            //$(".filterCont").hide();
+            $(".filterCont").hide();
             if (this.login === "dc") {
                 this.stickBtn.hide();
             }
@@ -177,7 +178,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
-                //$(".filterCont").show();
+                $(".filterCont").show();
                 $(".filterCont").css("visibility", "visible");
                 //if (this.login === "dc") {
                 //    this.stickBtn.minimise();

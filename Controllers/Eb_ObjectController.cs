@@ -30,7 +30,7 @@ namespace ExpressBase.Web.Controllers
 
         public Eb_ObjectController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
-        [EbBreadCrumbFilter("Builders/","ObjectType")]
+        [EbBreadCrumbFilter("Builders/", "ObjectType")]
         [HttpGet]
         [HttpPost]
         public IActionResult Index(string objid, int objtype)
@@ -193,17 +193,18 @@ namespace ExpressBase.Web.Controllers
                         Relations = _rel_obj,
                         IsSave = false,
                         Tags = _tags,
-                        Apps = _apps
+                        Apps = _apps,
+                        SourceSolutionId = ViewBag.cid
                     };
-                    var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-                    if(res.ExceptionMessage!=string.Empty && res.RefId== null)
+                    EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
+                    if (res.ExceptionMessage != string.Empty && res.RefId == null)
                     {
                         return res.ExceptionMessage;
                     }
                     refid = res.RefId;
+                }
+                else return "nameisnotunique";
             }
-            else return "nameisnotunique";
-        }
             else
             {
                 var ds = new EbObject_CommitRequest
@@ -239,19 +240,20 @@ namespace ExpressBase.Web.Controllers
                 if (uniqnameresp.IsUnique)
                 {
                     var ds = new EbObject_Create_New_ObjectRequest
-                {
-                    Name = obj.Name,
-                    Description = obj.Description,
-                    Json = _json,
-                    Status = ObjectLifeCycleStatus.Dev,
-                    Relations = _rel_obj,
-                    IsSave = true,
-                    Tags = _tags,
-                    Apps = _apps
-                };
+                    {
+                        Name = obj.Name,
+                        Description = obj.Description,
+                        Json = _json,
+                        Status = ObjectLifeCycleStatus.Dev,
+                        Relations = _rel_obj,
+                        IsSave = true,
+                        Tags = _tags,
+                        Apps = _apps,
+                        SourceSolutionId = ViewBag.cid
+                    };
 
-                var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-                refid = res.RefId;
+                    var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
+                    refid = res.RefId;
                 }
                 else return "nameIsNotUnique";
             }
@@ -523,12 +525,12 @@ namespace ExpressBase.Web.Controllers
                 _apps = element.Apps;
                 _dashbord_tiles = element.Dashboard_Tiles;
             }
-            return ViewComponent("ObjectDashboard", new { refid, objname, status = status, vernum, workcopies,_tags, _apps, _dashbord_tiles });
+            return ViewComponent("ObjectDashboard", new { refid, objname, status = status, vernum, workcopies, _tags, _apps, _dashbord_tiles });
         }
 
         public bool CheckRestricted(string _sql)
         {
-            bool ContainsRestricted  = Regex.IsMatch(_sql.ToLower(), @"\b(create\s|update\s|delete\s|insert\s|alter\s|truncate\s|drop\s)");
+            bool ContainsRestricted = Regex.IsMatch(_sql.ToLower(), @"\b(create\s|update\s|delete\s|insert\s|alter\s|truncate\s|drop\s)");
             return ContainsRestricted;
         }
     }

@@ -75,6 +75,7 @@
     };
 
     this.newBuilderMenu = function () {
+        $(".Eb_quick_menu .drp_new #drp_new_wrapper").empty();
         for (t in this.objTypes) {
             $(".Eb_quick_menu .drp_new #drp_new_wrapper").append(`<li class="drp_menuitems">
                                                     <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${t}"">${this.objTypes[t]}</a></li>`);

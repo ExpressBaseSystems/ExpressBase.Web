@@ -3,6 +3,8 @@
     var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
     string readonlyval = (dsObj != null) ? dsObj.VersionNumber.Substring(dsObj.VersionNumber.Length - 1) : "w";
 }
+<link href="~/css/Eb_datatable.css" rel="stylesheet" />
+<link href="~/css/splitWindow.css" rel="stylesheet" />
 <script type="text/javascript" src="~/js/DataSource.js"></script>@*Dona
 
 @*<link href="~/css/SqlBuilder/Home.css" rel="stylesheet" />

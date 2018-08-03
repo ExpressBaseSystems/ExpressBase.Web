@@ -72,6 +72,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.orderColl = [];
     this.RGIndex = [];
     this.NumericIndex = [];
+    this.inline = false;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -137,6 +138,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 icon: "fa-filter",
                 dir: "left",
                 label: "Parameters",
+                //btnTop: 78,
             });
         }
 
@@ -175,7 +177,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
-                ////$(".filterCont").show();
+                //$(".filterCont").show();
+                $(".filterCont").css("visibility", "visible");
                 //if (this.login === "dc") {
                 //    this.stickBtn.minimise();
                 //}
@@ -242,7 +245,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-            $(".filterCont").hide();
+            $(".filterCont").css("visibility","hidden");
             this.init();
         }
         else {
@@ -2301,6 +2304,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.link2NewTable = function (e) {
+        var rows = this.Api.rows(idx).nodes();
         var cData;
         this.isContextual = true;
         if ($(e.target).closest("a").attr("data-latlong") !== undefined)
@@ -2313,20 +2317,32 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.filterValues = this.getFilterValues("link");
         if (this.login === "uc")
             dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
-        else
+        else {
             this.OpeninNewTab(idx, cData);
+            //this.inline = true;
+            //$(rows).eq(idx).after("<tr id='containerrow'><td colspan='21'><table id='tbl" + idx+"'></table></td></tr>");
+            //this.call2newTable($(rows).eq(idx),"tbl"+idx);
+        }
     };
 
 
-    this.call2newTable = function () {
+    this.call2newTable = function (e,tid) {
+        this.tabNum++;
         $.ajax({
             type: "POST",
-            url: "../DV/dvTable",
-            data: { objid: this.linkDV, objtype: 16 },
-            success: function (text) {
-                var myWindow = window.open("", "");
-                myWindow.document.write(text);
-            }
+            url: "../DV/getdv",
+            data: { refid: this.linkDV, objtype: $(e.target).attr("objtype") },
+            success: function (dvObj) {
+                var o = new Object();
+                o.containerId = "containerrow";
+                o.dsid = JSON.parse(dvObj).DsObj.DataSourceRefId;
+                o.dvObject = JSON.parse(dvObj).DsObj;
+                o.tableId = tid;
+                o.scrollHeight = "200px";
+                o.wc = "dc";
+                o.filterValues = this.filterValues;
+                this.datatable = new EbBasicDataTable(o);
+            }.bind(this),
         });
     };
 

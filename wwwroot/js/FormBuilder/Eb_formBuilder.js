@@ -93,49 +93,6 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objTy
     this.curControl = null;
     this.drake = null;
 
-    //this.$form.on("focus", function (e) { this.PGobj.setObject(this.rootContainerObj, AllMetas["Eb" + $(e.target).attr("eb-type")]); }.bind(this));
-
-
-    //this.save = function () {
-    //    if (this.rootContainerObj.Name.trim() === '') {
-    //        alert("Enter a Name");
-    //        return false;
-    //    }
-    //    if (this.PGobj)
-    //        this.saveObj();
-    //    $(".eb-loaderFixed").show();
-    //    $.post("../Eb_Object/CommitEbObject", {
-    //        "_refid": this._refid,
-    //        "_json": JSON.stringify(this.rootContainerObj),
-    //        "_rel_obj": "_rel_obj1",
-    //        "_tags": "tag1"
-    //    }, this.Save_Success.bind(this));
-    //};
-    //this.commit = function () {
-    //    if (this.rootContainerObj.Name.trim() === '') {
-    //        alert("Enter a Name");
-    //        return false;
-    //    }
-    //    if (this.PGobj)
-    //        this.saveObj();
-    //    $(".eb-loaderFixed").show();
-    //    $.post("../Eb_Object/SaveEbObject", {
-    //        "_refid": this._refid,
-    //        "_json": JSON.stringify(this.rootContainerObj),
-    //        "_rel_obj": "aaa",
-    //        "_tags": "aaaa"
-    //    }, this.Save_Success.bind(this));
-    //};
-    //this.Save_Success = function (result) {
-    //    alert("Saved");
-    //    $(".eb-loaderFixed").hide();
-    //    $('.alert').remove();
-    //    $('.help').append("<div class='alert alert-success alert-dismissable'>" +
-    //        "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-    //        "<strong>Success!</strong>" +
-    //        "</div>");
-    //};
-
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");

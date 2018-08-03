@@ -65,7 +65,7 @@ namespace ExpressBase.Web.Controllers
             //    }
             //} 
             #endregion
-            var ObjectList= ObjDictionary.Values;
+            var ObjectList = ObjDictionary.Values;
             foreach (var item in ObjectList)
             {
                 AppObj.ObjCollection.Add(item as EbObject);
@@ -94,6 +94,7 @@ namespace ExpressBase.Web.Controllers
             {
                 UniqueObjectNameCheckResponse uniqnameresp;
                 EbObject obj = ObjectCollection[i];
+
                 do
                 {
                     uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
@@ -102,6 +103,8 @@ namespace ExpressBase.Web.Controllers
                 }
                 while (!uniqnameresp.IsUnique);
 
+                obj.ReplaceRefid();
+
                 if (obj is EbDataSource)
                 {
                     string fdid = (obj as EbDataSource).FilterDialogRefId;
@@ -109,6 +112,70 @@ namespace ExpressBase.Web.Controllers
                         (obj as EbDataSource).FilterDialogRefId = RefidMap[fdid];
                     else
                         (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
+                }
+
+                if (obj is EbReport)
+                {
+                    if (!(obj as EbReport).DataSourceRefId.IsEmpty())
+                    {
+                        string dsid = (obj as EbReport).DataSourceRefId;
+                        if (RefidMap.ContainsKey(dsid))
+                            (obj as EbDataSource).FilterDialogRefId = RefidMap[dsid];
+                        else
+                            (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
+                    }
+
+                    foreach (EbReportDetail dt in (obj as EbReport).Detail)
+                    {
+                        foreach (EbReportField field in dt.Fields)
+                        {
+                            if (field is EbDataField)
+                            {
+                                if (!(field as EbDataField).LinkRefId.IsEmpty())
+                                {
+                                    if (RefidMap.ContainsKey((field as EbDataField).LinkRefId))
+                                        (obj as EbDataSource).FilterDialogRefId = RefidMap[(field as EbDataField).LinkRefId];
+                                    else
+                                        (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                if (obj is EbTableVisualization)
+                {
+                    if (!(obj as EbTableVisualization).DataSourceRefId.IsEmpty())
+                    {
+                        string dsid = (obj as EbReport).DataSourceRefId;
+                        if (RefidMap.ContainsKey(dsid))
+                            (obj as EbTableVisualization).DataSourceRefId = RefidMap[dsid];
+                        else
+                            (obj as EbTableVisualization).DataSourceRefId = "failed-to-update-";
+                    }
+                    foreach (DVBaseColumn _col in (obj as EbTableVisualization).Columns)
+                    {
+                        if (!_col.LinkRefId.IsNullOrEmpty())
+                        {
+                            if (RefidMap.ContainsKey(_col.LinkRefId))
+                                _col.LinkRefId = RefidMap[_col.LinkRefId];
+                            else
+                                _col.LinkRefId = "failed-to-update-";
+                        }
+                    }
+                }
+
+                if (obj is EbChartVisualization)
+                {
+                    if ((obj as EbChartVisualization).DataSourceRefId.IsEmpty())
+                    {
+                        string dsid = (obj as EbChartVisualization).DataSourceRefId;
+                        if (RefidMap.ContainsKey(dsid))
+                            (obj as EbChartVisualization).DataSourceRefId = RefidMap[dsid];
+                        else
+                            (obj as EbChartVisualization).DataSourceRefId = "failed-to-update-";
+                    }
                 }
 
                 EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
@@ -121,7 +188,9 @@ namespace ExpressBase.Web.Controllers
                     IsSave = false,
                     Tags = "_tags",
                     Apps = appres.id.ToString(),
-                    SourceSolutionId = (obj.RefId.Split("-"))[0]
+                    SourceSolutionId = (obj.RefId.Split("-"))[0],
+                    SourceObjId = (obj.RefId.Split("-"))[3],
+                    SourceVerID = (obj.RefId.Split("-"))[4]
                 };
                 EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                 RefidMap[obj.RefId] = res.RefId;

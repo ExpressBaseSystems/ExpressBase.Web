@@ -72,8 +72,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.orderColl = [];
     this.RGIndex = [];
     this.NumericIndex = [];
+    this.inline = false;
 
     var split = new splitWindow("parent-div0", "contBox");
+
+    if (this.login === "dc") {
+        this.stickBtn = new EbStickButton({
+            $wraper: $(".filterCont"),
+            $extCont: $(".filterCont"),
+            icon: "fa-filter",
+            dir: "left",
+            label: "Parameters",
+            //$scope: $(".filterCont"),
+            //btnTop: 78,
+        });
+    }
 
     this.init = function () {
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
@@ -130,16 +143,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(".filterCont").append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
         $('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
         $(".filterCont").append(text);
-        if (this.login === "dc") {
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".filterCont"),
-                $extCont: $(".filterCont"),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-            });
-        }
-
         $("#btnGo").click(this.getColumnsSuccess.bind(this));
         $(".filterCont").find("input").on("keyup", function (e) {
             if (e.which === 13)
@@ -154,7 +157,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         if ($(".filterCont #filterBox").children().not("button").length == 0) {
             this.FD = false;
-            //$(".filterCont").hide();
+            $(".filterCont").hide();
             if (this.login === "dc") {
                 this.stickBtn.hide();
             }
@@ -175,7 +178,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
-                ////$(".filterCont").show();
+                $(".filterCont").show();
+                $(".filterCont").css("visibility", "visible");
                 //if (this.login === "dc") {
                 //    this.stickBtn.minimise();
                 //}
@@ -242,7 +246,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-            $(".filterCont").hide();
+            $(".filterCont").css("visibility","hidden");
             this.init();
         }
         else {
@@ -2301,6 +2305,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.link2NewTable = function (e) {
+        var rows = this.Api.rows(idx).nodes();
         var cData;
         this.isContextual = true;
         if ($(e.target).closest("a").attr("data-latlong") !== undefined)
@@ -2313,20 +2318,32 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.filterValues = this.getFilterValues("link");
         if (this.login === "uc")
             dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
-        else
+        else {
             this.OpeninNewTab(idx, cData);
+            //this.inline = true;
+            //$(rows).eq(idx).after("<tr id='containerrow'><td colspan='21'><table id='tbl" + idx+"'></table></td></tr>");
+            //this.call2newTable($(rows).eq(idx),"tbl"+idx);
+        }
     };
 
 
-    this.call2newTable = function () {
+    this.call2newTable = function (e,tid) {
+        this.tabNum++;
         $.ajax({
             type: "POST",
-            url: "../DV/dvTable",
-            data: { objid: this.linkDV, objtype: 16 },
-            success: function (text) {
-                var myWindow = window.open("", "");
-                myWindow.document.write(text);
-            }
+            url: "../DV/getdv",
+            data: { refid: this.linkDV, objtype: $(e.target).attr("objtype") },
+            success: function (dvObj) {
+                var o = new Object();
+                o.containerId = "containerrow";
+                o.dsid = JSON.parse(dvObj).DsObj.DataSourceRefId;
+                o.dvObject = JSON.parse(dvObj).DsObj;
+                o.tableId = tid;
+                o.scrollHeight = "200px";
+                o.wc = "dc";
+                o.filterValues = this.filterValues;
+                this.datatable = new EbBasicDataTable(o);
+            }.bind(this),
         });
     };
 

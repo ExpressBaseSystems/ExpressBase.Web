@@ -194,7 +194,9 @@ namespace ExpressBase.Web.Controllers
                         IsSave = false,
                         Tags = _tags,
                         Apps = _apps,
-                        SourceSolutionId = ViewBag.cid
+                        SourceSolutionId = ViewBag.cid,
+                        SourceObjId = "0",
+                        SourceVerID = "0"
                     };
                     EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                     if (res.ExceptionMessage != string.Empty && res.RefId == null)
@@ -249,7 +251,9 @@ namespace ExpressBase.Web.Controllers
                         IsSave = true,
                         Tags = _tags,
                         Apps = _apps,
-                        SourceSolutionId = ViewBag.cid
+                        SourceSolutionId = ViewBag.cid,
+                        SourceObjId = "0",
+                        SourceVerID = "0"
                     };
 
                     var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);

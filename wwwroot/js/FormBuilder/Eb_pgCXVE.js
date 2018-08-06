@@ -238,12 +238,24 @@
         this.setObjTypeDD();
     };
 
+    this.getCElistFromSrc = function (sourceProp) {
+        let CurlevelObj = this.PGobj;
+        let hierarchyLevel = (sourceProp.match(/Parent./g) || []).length;
+        if (hierarchyLevel > 0) {
+            for (var i = 0; i < hierarchyLevel; i++) {
+                CurlevelObj = CurlevelObj.ParentPG
+            }
+        }
+        let _CElistFromSrc = CurlevelObj.PropsObj[sourceProp.replace(/Parent./g, "")].$values;
+        return _CElistFromSrc;
+    }
+
     this.CEHelper = function (sourceProp) {
         this.Dprop = this.CurMeta.Dprop;
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn;
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn;
 
-        this.CElistFromSrc = this.PGobj.PropsObj[sourceProp].$values;
+        this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
         if (this.editor === 8) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.changeCopyToRef();
@@ -663,6 +675,7 @@
         }.bind(this));
         $(this.pgCXE_Cont_Slctr + " .editTbl").off("click", ".coltile-delete").on("click", ".coltile-delete", this.colTileDel);
         $("#" + this.CEctrlsContId).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
+        $("#" + this.CE_all_ctrlsContId).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
     };
 
     this.setSelColtiles = function () {
@@ -675,7 +688,6 @@
                 selObjs.push(getObjByval(this.CElistFromSrc, idField, ctrl[idField]));
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
-            $("#" + this.CE_all_ctrlsContId).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
         }
     };
 

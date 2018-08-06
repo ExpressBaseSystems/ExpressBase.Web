@@ -32,7 +32,7 @@ namespace ExpressBase.Web.Components
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;
             ViewBag.Refid = refid;
-            ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
+            //ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
             ViewBag.ssurl = ssurl;
             //ViewBag.TableSchema = GetTableSchemaRequest();
             return View("codeEditor");

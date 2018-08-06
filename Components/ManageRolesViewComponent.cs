@@ -49,6 +49,7 @@ namespace ExpressBase.Web.Components
 			ViewBag.RoleList = EbSerializers.Json_Serialize(fr.RoleList);
 			ViewBag.Role2RoleList = EbSerializers.Json_Serialize(fr.Role2RoleList);
 			ViewBag.UsersList = EbSerializers.Json_Serialize(fr.UsersList);
+			ViewBag.LocationList = EbSerializers.Json_Serialize(fr.LocationList);
 			return View();
 		}
 		private string GetPermissionOperationsAsJs()

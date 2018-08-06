@@ -15,6 +15,8 @@
 	padding: 10px;
 }*/
 
+
+
 .searchRsulsItemsDiv:hover {
 	background-color: #eee;
 }
@@ -96,6 +98,63 @@
 	background-color: #eee;
 }
 
+.loc-all-select {
+	width: 100px;
+	text-align: center;
+	cursor: pointer;
+	background-color: #489ae0;
+	color: white;
+	padding: 3px 10px;
+	transition: 0.3s;
+	border-radius: 3px;
+	display: inline-block;
+}
+
+	.loc-all-select:hover {
+		transform: translateZ(-3px);
+		zoom: 1.005;
+		box-shadow: -1px 2px 3px 0px rgba(84, 84, 84, 0.55);
+	}
+
+	.loc-all-select:focus {
+		background-color: #4286bf;
+	}
+
+#divLocation {
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	overflow: hidden;
+	animation: comein 0.2s ease forwards;
+}
+
+@keyframes comein {
+	0% {
+		opacity: 0;
+		transform: translate(0,-20px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translate(0, 0);
+	}
+}
+
+.locListHead-wraper {
+	background-color: #e6e6e6;
+	box-shadow: 0 2px 3px 0 #0000003b;
+	padding: 2px;
+}
+
+#divLocationList label {
+	padding-left: 5px;
+}
+
+.locListHead {
+	width: calc(100% - 110px);
+	display: inline-block;
+	padding: 3px;
+	font-weight: bold;
+}
 /*.mydiv1:hover {
 	background-color: #f5f5f5;
 	border: none;
@@ -250,7 +309,7 @@
 /*.outer-section-createuser {
 	height: 100%;
 	/*font-family: open sans;
-        font-weight: 300;*//*
+        font-weight: 300;*/ /*
 	background: white;
 	border: 1px solid #ccc;
 	border-radius: 4px;

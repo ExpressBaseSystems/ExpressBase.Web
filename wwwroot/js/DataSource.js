@@ -153,7 +153,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         });
 
 		if (callback)
-			this.stickBtn.minimise();
+            this.stickBtn.minimise();
         else
             this.stickBtn.maximise();
     };
@@ -354,9 +354,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 scrollX: "100%",
                 scrollY: "300px",
                 processing: true,
-                dom: "liprt",
+                dom: "<lip>rt",
                 paging : true,
-                lengthChange : true,
+                lengthChange: true,
                 ajax: {
                     //url: this.Ssurl + "/ds/data/" + this.Refid,
                     url: "../CE/getData",

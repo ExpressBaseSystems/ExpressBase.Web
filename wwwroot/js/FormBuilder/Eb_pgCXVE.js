@@ -823,7 +823,7 @@
             let lastNum = parseInt(numStr) || 0;
             tempArr.push(lastNum);
         });
-        return tempArr.max();
+        return Math.max.apply(null, tempArr);
     };
 
     this.updateColumnIndex = function (delobj) {
@@ -834,8 +834,8 @@
         }
     }
 
-    this.CE_AddFn = function () {
-        let $DD = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected");
+    this.CE_AddFn = function (e) {
+        let $DD = $(e.target).closest(".sub-controls-DD-cont").find("option:selected");
         let SelType = $DD.val();
         let obj = {};
         //let lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));

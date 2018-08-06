@@ -68,7 +68,8 @@
             this.chkboxAnonymous.bootstrapToggle('disable');
             this.findDominantRoles(this.roleId);
 
-            this.selectedLocations = this.roleInfo["LocationIds"].split(",");
+            if (this.roleInfo["LocationIds"] !== "")
+                this.selectedLocations = this.roleInfo["LocationIds"].split(",");
             if (this.selectedLocations.indexOf('-1') === -1) {
                 this.chkboxLocations.bootstrapToggle('on');
                 $.each(this.selectedLocations, function (i, id) {

@@ -1,4 +1,4 @@
-﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList) {
+﻿var ManageRolesJs = function (appCollection, roleId, roleInfo, permission, _dict, roleList, r2rList, usersList, locationList) {
     this.menuBarObj = $("#layout_div").data("EbHeader");
     this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.appCollection = appCollection._acol.$values;
@@ -9,6 +9,7 @@
     this.roleList = roleList.$values;
     this.r2rList = r2rList.$values;
     this.usersList = usersList.$values;
+    this.locationList = locationList.$values;
     this.dependentList = [];
     this.dominantList = [];
     this.selectApp = $("#selectApp");
@@ -18,6 +19,10 @@
     this.btnSaveAll = $("#btnSaveAll");
     this.loader = $("#loader1");
     this.chkboxAnonymous = $("#chkboxAnonymous");
+    this.selectedLocations = ['-1'];//init as global loaction access
+    this.chkboxLocations = $("#chkboxLocations");
+    this.divLocationOverlay = $("#divLocationOverlay");
+    this.divLocationList = $("#divLocationList");
 
     this.subRolesTile = null;
     this.usersTile = null;
@@ -27,13 +32,13 @@
         //this.loadObjectsAndOperations.bind(this)();
         this.btnSaveAll.on('click', this.onclickbtnSaveAll.bind(this));
         this.divObjList.on('click', '.objactiveclass', this.onClickObjActiveClass);
-
         this.divObjList.on('change', ".checkboxclass", this.onClickPermissionCheckBox.bind(this));
-
         this.txtRoleName.on('keyup', this.validateRoleName.bind(this));
-
         this.chkboxAnonymous.on('change', this.onChangeChkBoxAnonymous.bind(this));
-        
+        this.chkboxLocations.on('change', this.onChangechkboxLocations.bind(this));
+        this.divLocationList.on('change', 'input:checkbox[name=cboxGrpLoc]', this.onClickLocationChkbxGrp.bind(this));
+
+        this.loadLocationsToDom();
         //INIT FORM
         if (this.roleId > 0) {
             $(this.txtRoleName).val(roleInfo["RoleName"]);
@@ -60,9 +65,16 @@
                 $('.nav-tabs a[href="#divObjList"]').tab('show');
             }
                     
-            this.chkboxAnonymous.bootstrapToggle('disable');       
-
+            this.chkboxAnonymous.bootstrapToggle('disable');
             this.findDominantRoles(this.roleId);
+
+            this.selectedLocations = this.roleInfo["LocationIds"].split(",");
+            if (this.selectedLocations.indexOf('-1') === -1) {
+                this.chkboxLocations.bootstrapToggle('on');
+                $.each(this.selectedLocations, function (i, id) {
+                    $('#divLocationList input:checkbox[name=cboxGrpLoc][value=' + id + ']').prop('checked', true);
+                }.bind(this));
+            }            
         }
         else {
             this.menuBarObj.setName("New Role");
@@ -97,6 +109,36 @@
             }
                 
         //}
+    }
+
+    this.onChangechkboxLocations = function (evt) {
+        if ($(evt.target).is(":checked")) {
+            this.divLocationOverlay.hide();
+            if (this.selectedLocations.indexOf('-1') !== -1)
+                this.selectedLocations.splice(this.selectedLocations.indexOf('-1'), 1);
+        }
+        else {
+            this.divLocationOverlay.show();
+            if (this.selectedLocations.indexOf('-1') === -1)
+                this.selectedLocations.push('-1');
+        }
+    }
+
+    this.loadLocationsToDom = function () { 
+        this.divLocationList.children().remove();
+        $.each(this.locationList, function (i, obj) {
+            this.divLocationList.append(`<label style="font-family: open sans; font-weight: 300; cursor: pointer;"><input type="checkbox" name="cboxGrpLoc" value="${obj.Id}">${obj.LongName}</label><br>`);
+        }.bind(this));
+    }
+
+    this.onClickLocationChkbxGrp = function (evt) {
+        let tempid = $(evt.target).val();
+        let indx = this.selectedLocations.indexOf(tempid);
+        let chkFlag = $(evt.target).is(":checked");
+        if (chkFlag && indx)
+            this.selectedLocations.push(tempid);
+        else if (!chkFlag && indx !== -1)
+            this.selectedLocations.splice(indx, 1);
     }
 
     this.validateRoleName = function (e) {
@@ -467,6 +509,7 @@
         var appId = $("#selectApp").find(":selected").attr("data-id");
         var roleDescription = $(this.txtRoleDescription).val().trim();
         var roleName = $(this.txtRoleName).val().trim();
+        var strSelectedLocs = "";
         
         //$.each(this.opDict, function (i, value) {
         //    $("#spanRemv" + value.Op_Name).trigger("click");
@@ -479,6 +522,11 @@
             permissionlist += this.permission[i] + ",";
         permissionlist = permissionlist.substring(0, permissionlist.length - 1);
 
+        for (let i = 0; i < this.selectedLocations.length; i++)
+            strSelectedLocs += this.selectedLocations[i] + ",";
+        strSelectedLocs = strSelectedLocs.substring(0, strSelectedLocs.length - 1);
+        strSelectedLocs = (this.selectedLocations.indexOf('-1') === -1) ? strSelectedLocs : "-1";
+
         if (roleName === "" || roleDescription === "") {
             EbMessage("show", { Message: 'Fill Role Name/Description', AutoHide: true, Backgorund: '#bf1e1e'});
             return false;
@@ -487,7 +535,7 @@
         $.ajax({
             type: "POST",
             url: "../Security/SaveRole",
-            data: { _roleId: rid, _roleName: roleName, _roleDesc: roleDescription, _isAnonymous: isAnonymous, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist},
+            data: { _roleId: rid, _roleName: roleName, _roleDesc: roleDescription, _isAnonymous: isAnonymous, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist, _locations: strSelectedLocs},
             success: this.saveRoleSuccess.bind(this)
         });
     }

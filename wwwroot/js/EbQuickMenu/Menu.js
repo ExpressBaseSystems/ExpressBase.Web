@@ -20,8 +20,10 @@
     };
 
     this.refreshMenu = function () {
-        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", "");
-        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login, "");
+        //store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", "");
+        //store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login, "");
+        store.clearAll()
+        $(".Eb_quick_menu .modal-body #objList").children(".objContainer_f_app").remove();
         this.showModal();
     };
     
@@ -73,6 +75,7 @@
     };
 
     this.newBuilderMenu = function () {
+        $(".Eb_quick_menu .drp_new #drp_new_wrapper").empty();
         for (t in this.objTypes) {
             $(".Eb_quick_menu .drp_new #drp_new_wrapper").append(`<li class="drp_menuitems">
                                                     <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${t}"">${this.objTypes[t]}</a></li>`);

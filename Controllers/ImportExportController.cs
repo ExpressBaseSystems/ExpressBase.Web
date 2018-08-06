@@ -37,6 +37,7 @@ namespace ExpressBase.Web.Controllers
             AppObj.ObjCollection = new List<EbObject>();
             obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
 
+            #region MyRegion
             //if (obj is EbWebForm)
             //{
             //    EbWebForm _o = obj as EbWebForm;
@@ -62,8 +63,9 @@ namespace ExpressBase.Web.Controllers
             //                ObjectCollection.Add(GetObjfromDB(_prop.GetValue(obj, null).ToString()));
             //        }
             //    }
-            //}
-            var ObjectList= ObjDictionary.Values;
+            //} 
+            #endregion
+            var ObjectList = ObjDictionary.Values;
             foreach (var item in ObjectList)
             {
                 AppObj.ObjCollection.Add(item as EbObject);
@@ -81,7 +83,7 @@ namespace ExpressBase.Web.Controllers
             string text = System.IO.File.ReadAllText(@"E:\ExportFile.txt");
             AppWrapper AppObj = (AppWrapper)EbSerializers.Json_Deserialize(text);
             List<EbObject> ObjectCollection = AppObj.ObjCollection;
-            var appres = ServiceClient.Post(new CreateApplicationDevRequest
+            CreateApplicationResponse appres = ServiceClient.Post(new CreateApplicationDevRequest
             {
                 AppName = AppObj.Name + "(7)",
                 AppType = AppObj.AppType,
@@ -92,6 +94,7 @@ namespace ExpressBase.Web.Controllers
             {
                 UniqueObjectNameCheckResponse uniqnameresp;
                 EbObject obj = ObjectCollection[i];
+
                 do
                 {
                     uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
@@ -99,6 +102,8 @@ namespace ExpressBase.Web.Controllers
                         obj.Name = obj.Name + "(1)";
                 }
                 while (!uniqnameresp.IsUnique);
+
+                obj.ReplaceRefid();
 
                 if (obj is EbDataSource)
                 {
@@ -109,7 +114,71 @@ namespace ExpressBase.Web.Controllers
                         (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
                 }
 
-                var ds = new EbObject_Create_New_ObjectRequest
+                if (obj is EbReport)
+                {
+                    if (!(obj as EbReport).DataSourceRefId.IsEmpty())
+                    {
+                        string dsid = (obj as EbReport).DataSourceRefId;
+                        if (RefidMap.ContainsKey(dsid))
+                            (obj as EbDataSource).FilterDialogRefId = RefidMap[dsid];
+                        else
+                            (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
+                    }
+
+                    foreach (EbReportDetail dt in (obj as EbReport).Detail)
+                    {
+                        foreach (EbReportField field in dt.Fields)
+                        {
+                            if (field is EbDataField)
+                            {
+                                if (!(field as EbDataField).LinkRefId.IsEmpty())
+                                {
+                                    if (RefidMap.ContainsKey((field as EbDataField).LinkRefId))
+                                        (obj as EbDataSource).FilterDialogRefId = RefidMap[(field as EbDataField).LinkRefId];
+                                    else
+                                        (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                if (obj is EbTableVisualization)
+                {
+                    if (!(obj as EbTableVisualization).DataSourceRefId.IsEmpty())
+                    {
+                        string dsid = (obj as EbReport).DataSourceRefId;
+                        if (RefidMap.ContainsKey(dsid))
+                            (obj as EbTableVisualization).DataSourceRefId = RefidMap[dsid];
+                        else
+                            (obj as EbTableVisualization).DataSourceRefId = "failed-to-update-";
+                    }
+                    foreach (DVBaseColumn _col in (obj as EbTableVisualization).Columns)
+                    {
+                        if (!_col.LinkRefId.IsNullOrEmpty())
+                        {
+                            if (RefidMap.ContainsKey(_col.LinkRefId))
+                                _col.LinkRefId = RefidMap[_col.LinkRefId];
+                            else
+                                _col.LinkRefId = "failed-to-update-";
+                        }
+                    }
+                }
+
+                if (obj is EbChartVisualization)
+                {
+                    if ((obj as EbChartVisualization).DataSourceRefId.IsEmpty())
+                    {
+                        string dsid = (obj as EbChartVisualization).DataSourceRefId;
+                        if (RefidMap.ContainsKey(dsid))
+                            (obj as EbChartVisualization).DataSourceRefId = RefidMap[dsid];
+                        else
+                            (obj as EbChartVisualization).DataSourceRefId = "failed-to-update-";
+                    }
+                }
+
+                EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
                 {
                     Name = obj.Name,
                     Description = obj.Description,
@@ -118,7 +187,10 @@ namespace ExpressBase.Web.Controllers
                     Relations = "_rel_obj",
                     IsSave = false,
                     Tags = "_tags",
-                    Apps = appres.id.ToString()
+                    Apps = appres.id.ToString(),
+                    SourceSolutionId = (obj.RefId.Split("-"))[0],
+                    SourceObjId = (obj.RefId.Split("-"))[3],
+                    SourceVerID = (obj.RefId.Split("-"))[4]
                 };
                 EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                 RefidMap[obj.RefId] = res.RefId;
@@ -128,7 +200,7 @@ namespace ExpressBase.Web.Controllers
 
         public EbObject GetObjfromDB(string _refid)
         {
-            var res = ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = _refid });
+            EbObjectParticularVersionResponse res = ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = _refid });
             EbObject obj = EbSerializers.Json_Deserialize(res.Data[0].Json);
             obj.RefId = _refid;
             return obj;

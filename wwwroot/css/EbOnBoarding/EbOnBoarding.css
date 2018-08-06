@@ -7,33 +7,6 @@ body {
     --eb-grey2: #fafafa;
     --on-boarding-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
 }
-
-.btn-orange {
-    background: #f37e1a;
-    color: white;
-    border: 2px #f37e1a;
-    margin: 0px 5px 0px 5px;
-}
-
-    .btn-orange:hover {
-        background: #f37e1a;
-        color: white;
-    }
-
-.btn-blue {
-    background: #4aade3;
-    color: white;
-    border: 2px #f37e1a;
-    margin: 0px 5px 0px 5px;
-}
-
-    .btn-blue:hover {
-        background: #4aade3;
-        color: white;
-    }
-.btn-normal {
-
-}
 .c-blue {
     color: #4aade3;
 }
@@ -302,33 +275,6 @@ body {
         width: 100%;
     }
 
-.s-dash-container .connectons-container {
-    width: 100%;
-    margin-bottom: 10px;
-    float:left;
-}
-
-.s-dash-headComm {
-    width: 100%;
-    padding: 5px;
-    background: #336699;
-    color: white;
-}
-
-.s-dash-bodyComm {
-    width: 100%;
-    float:left;
-}
-
-    .s-dash-bodyComm thead {
-        background: #efefef;
-    }
-
-    .s-dash-bodyComm td {
-        border: 1px solid #adaaaa;
-        padding: 0 !important;
-    }
-
 .table-form {
     margin-bottom: 0;
 }
@@ -349,27 +295,8 @@ body {
         text-align: center;
     }
 
-.s-dash-bodyComm .table > thead > tr > th {
-    vertical-align: bottom;
-    border-bottom: none;
-    text-align: center;
-    font-weight: 400;
-    border: 1px solid #adaaaa;
-}
-
-.s-dash-bodyComm .table > tbody > tr > td {
-    vertical-align: middle;
-    font-size: 14px;
-    text-align: center;
-}
-
 .table-btn {
     background-color: transparent;
-}
-
-.s-dash-bodyComm .edit-row {
-    width: 100px;
-    text-align: center;
 }
 
 .s-dash-modal .modal-dialog {
@@ -378,11 +305,6 @@ body {
 
 .s-dash-modal label {
     font-weight: 400;
-}
-
-.dbConnectionEdit {
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 
 .table-message {
@@ -1083,3 +1005,78 @@ body {
 .f16{
     font-size:16px;
 }
+/*Connection manager new*/
+.eb_connection_wrapper {
+    float: left;
+    width: 100%;
+}
+.eb_connection_wrapper_bdyouter {
+    width: 50%;
+    padding: 5px;
+    float:left;
+}
+.eb_connection_wrapper_inner {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    background: white;
+    padding: 5px 15px;
+}
+.eb_connection_wrapper_bdy {
+    position: relative;
+    width: 100%;
+}
+.pdt-5 {
+    padding-top: 5px;
+}
+.configure {
+    position: absolute;
+    top: 0;
+    right: -10px;
+    font-size: 11px;
+    padding: 4px 10px;
+}
+._sec_pan_head img {
+    height: 30px;
+    margin-top: -15px;
+}
+._sec_pan_head .Name {
+    font-size: 21px;
+    font-weight: 500;
+    margin-left: 20px;
+}
+._sec_pan_head {
+    border-bottom: 1px solid #e4e4e4;
+}
+._sec_pan_bdy {
+    float: left;
+    width: 100%;
+    padding: 10px 20px;
+}
+._sec_pan {
+    margin-bottom: 2em;
+    float: left;
+    width: 100%;
+    padding: 10px;
+    /*background: #f1f1f1;*/
+    border-radius: 4px;
+}
+.db_vendorimg img {
+    width: 100%;
+}
+.db_vendorimg {
+    display: flex;
+    align-items: center;
+}
+.dbConnectionEdit_info {
+    float: left;
+    width: 100%;
+    display: flex;
+}
+    .dbConnectionEdit_info p, .eb_connection_wrapper_inner p{
+        color: #333;
+        font-weight: 400;
+    }
+/*Connection manager new end*/

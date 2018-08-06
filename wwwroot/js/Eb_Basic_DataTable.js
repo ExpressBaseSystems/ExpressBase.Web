@@ -17,7 +17,7 @@ var EbBasicDataTable = function (Option) {
     this.order_info = new Object();
     this.order_info.col = '';
     this.order_info.dir = 0;
-    this.EbObject = null;
+    this.EbObject = Option.dvObject || null;
     this.ebSettings = null;
     this.login = "dc";
     this.FD = false;
@@ -27,7 +27,7 @@ var EbBasicDataTable = function (Option) {
     this.eb_filter_controls_4sb = [];
     this.linkDV = null;
     this.filterFlag = false;
-    this.filterValues = [];
+    this.filterValues = Option.filterValues || [];
     this.FlagPresentId = false;
     this.columnSearch = Option.columnSearch || [];
 
@@ -40,7 +40,8 @@ var EbBasicDataTable = function (Option) {
     this.orderColl = [];
 
     this.init = function () {
-        this.EbObject = new EbTableVisualization(this.tableId);
+        if(this.EbObject === null)
+            this.EbObject = new EbTableVisualization(this.tableId);
         this.EbObject.IsPaging = Option.IsPaging || false;
         this.$dtLoaderCont = $("<div id='dtloadercont' class='dt-loader-cont'></div>");
         this.$dtLoaderCont.insertBefore($("#" + this.contId));
@@ -70,19 +71,11 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.ajaxSucc = function (text) {
-        $("#" + this.contId).append(text);////////////////
+        $("#" + this.contId).append(text);////////////////        
         this.EbObject = dvGlobal.Current_obj;
         this.getColumnsSuccess();
     }.bind(this);
 
-    //if (this.EbObject === null) {
-    //    this.EbObject = new EbTableVisualization("Container_" + Date.now());
-    //    this.call2FD();
-    //}
-    //else {
-    //    this.init();
-    //    this.call2FD();
-    //};
 
     this.getColumnsSuccess = function () {
         this.showLoader();
@@ -256,7 +249,8 @@ var EbBasicDataTable = function (Option) {
         dq.RefId = this.EbObject.DataSourceRefId;
         this.columnSearch = this.repopulate_filter_arr();
         dq.TFilters = this.columnSearch;
-        this.filterValues = this.getFilterValues("filter");
+        if (this.filterValues.length === 0)
+            this.filterValues = this.getFilterValues("filter");
         dq.Params = this.filterValues;
         dq.rowData = this.rowData;
         if (this.orderColl.length > 0)

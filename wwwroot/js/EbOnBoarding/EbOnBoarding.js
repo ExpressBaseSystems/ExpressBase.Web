@@ -117,8 +117,7 @@
             }).done(function (data) {
                 $("#loader_product-info").EbLoader("hide");
                 if (_context) {
-                    window.history.back();
-                    window.location.reload();
+                    window.location.replace("/MySolutions");
                 }
                 else {
                     $('#eb-mesageBox').show().text("Solution Created");

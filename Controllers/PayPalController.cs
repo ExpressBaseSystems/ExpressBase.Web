@@ -40,8 +40,10 @@ namespace ExpressBase.Web.Controllers
         {
             var Res = this.ServiceClient.Post(new PayPalSuccessReturnRequest
             {
-                PaymentId = token
+                PaymentId = token,
+                SolutionId = this.HttpContext.Items["Sid"].ToString()
             });
+            Console.WriteLine("LOG : this.HttpContext.Items[\"Sid\"] : " + this.HttpContext.Items["Sid"].ToString());
             return View();
         }
 
@@ -61,6 +63,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult PayPalPayment()
         {
             string sid = this.HttpContext.Request.Form["Sid"];
+            this.HttpContext.Items["Sid"] = sid;
             string Env = "";
             if (ViewBag.Env == "Development")
                 Env = "https://myaccount.eb-test.info";

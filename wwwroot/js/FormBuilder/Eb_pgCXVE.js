@@ -252,8 +252,8 @@
 
     this.CEHelper = function (sourceProp) {
         this.Dprop = this.CurMeta.Dprop;
-        this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn;
-        this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn;
+        this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
+        this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };
 
         this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
         if (this.editor === 8) {
@@ -336,17 +336,17 @@
     };
 
     this.CEOnSelectFn = function (obj) {
-        this.CurCEOnSelectFn.bind(obj)();
+        this.CurCEOnSelectFn.bind(obj, this.PGobj.PropsObj)();
     };
 
     this.CEOnDeselectFn = function (obj) {
-        this.CurCEOndeselectFn.bind(obj)();
+        this.CurCEOndeselectFn.bind(obj, this.PGobj.PropsObj)();
     };
 
     this.onDragendFn = function (el) {
         $e = $(el);
         $e.find('.close').css("opacity", "0.2");
-        let $sibling = $e.next();
+        let $sibling = $e.next(); 
         let target = $e.parent()[0];
         let idx = $sibling.index() - 1;
         if (target.id !== this.CE_all_ctrlsContId) {// target 2nd column

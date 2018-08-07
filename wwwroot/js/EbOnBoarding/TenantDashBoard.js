@@ -7,25 +7,28 @@
     this.drawSolutionTiles = function () {
         for (var item = 0; item < this.EbSolutionColl.length; item++) {
             $(".tdash-box-body").prepend(`<div class="solution_container">
-                <div class="solution_container_pd">
-                    <div class="col-md-8">
-                        <h4>${this.EbSolutionColl[item].SolutionName}</h4>
-                        <p>${this.EbSolutionColl[item].Description || 'no description'}</p>
-                        <p class="small">${this.EbSolutionColl[item].DateCreated }</p>   
+                    <div class="solution_container_pd w-100">
+                        <div class="w-100 s_info_img text-center">
+                            <img class="img-responsive" src="/images/your_company_logo.png" />
+                        </div>
+                        <div class="s_info w-100">
+                                <h4>${this.EbSolutionColl[item].SolutionName}</h4>
+                                <p class="small mr-0">${this.EbSolutionColl[item].Description || 'no description'}</p>
+                                <p class="small mr-0">${this.EbSolutionColl[item].DateCreated}</p>
+                        </div>
+                        <div class="sso_head text-center">
+                            <a sid="${this.EbSolutionColl[item].IsolutionId}" wc="uc" target="_blank" class="btn tdash_btn c-blue single__sso">
+                                <i class="fa fa-user-o" aria-hidden="true"></i>
+                            </a>
+                            <a sid="${this.EbSolutionColl[item].IsolutionId}" wc="dc" target="_blank" class="btn tdash_btn c-orange single__sso">
+                                <i class="fa fa-wrench" aria-hidden="true"></i>
+                            </a>
+                            <a href="MySolutions/${this.EbSolutionColl[item].IsolutionId}" target="_blank" class="btn c-normal tdash_btn">
+                                <i class="fa fa-cog" aria-hidden="true"></i>
+                            </a>
+                        </div>
                     </div>
-                    <div class="col-md-4 pd-0 flex-center_rowwise">
-                        <a sid="${this.EbSolutionColl[item].IsolutionId}" wc="uc" target="_blank" class="btn tdash_btn c-blue single__sso">
-                            <i class="fa fa-user-o" aria-hidden="true"></i>
-                        </a>
-                        <a sid="${this.EbSolutionColl[item].IsolutionId}" wc="dc" target="_blank" class="btn tdash_btn c-orange single__sso">
-                            <i class="fa fa-wrench" aria-hidden="true"></i>
-                        </a>
-                        <a href="MySolutions/${this.EbSolutionColl[item].IsolutionId}" target="_blank" class="btn c-normal tdash_btn">
-                           <i class="fa fa-cog" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>`);
+                </div>`);
         }
         $("body").off("click").on("click",".single__sso", this.goToSolutionWindow.bind(this));
     };
@@ -60,7 +63,6 @@
     };
     
     this.init = function () {
-        $(".apps_count").text("(" + this.EbSolutionColl.length + ")");
         this.drawSolutionTiles();
     };
   

@@ -3,12 +3,10 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-
-@await Component.InvokeAsync("PageHeaderCommon")
 <script>
     var cm = new EbHeader().setName("Developer Console");
 </script>
-@{ 
+@{
     List<AppWrapper> appList = ViewBag.apps;
     int appcount = 0;
     if (appList != null)
@@ -18,39 +16,60 @@
 
 }
 <div class="row s-dash-container">
-    <div class="pd-0 tdasboard-sidebar">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
-                <li class="list-group-item outer_li">Solutions<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
-                <li class="list-group-item outer_li">Billing<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
-                <li class="list-group-item outer_li">Support<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
+                <li class="list-group-item outer_li text-center pd-l-0 pd-r-0">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">apps</span>
+                        <span class="t__sidebar_text">Applications</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">store</span>
+                        <span class="t__sidebar_text">App Store</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
-    <div class="s-dash-workplace">
-        <div class="col-md-12 pd-0 s-dash-solution-desc" style="margin-bottom: 7px;">
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-10 pd-0">
-                <h3 class="mr-t-0">Applications(@appcount)</h3>
+                <h4 class="mr-t-0 mr-b-0">Applications (@appcount)</h4>
             </div>
             <div class="col-md-2 pd-0">
-                <a href='@Url.Action("CreateApplication", "Dev")' class="ebbtn eb_btnblue pull-right new_sol_lk"><i class="fa fa-plus"></i> New Application</a>
+                <a href='@Url.Action("CreateApplication", "Dev")' class="ebbtn eb_btngreen eb_btn-sm pull-right new_sol_lk">New Application</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <ul class="nav nav-tabs">
-                <li class="nav-item active devdshtab" style="width:33.3%">
+                <li class="nav-item active devdshtab">
                     <a class="nav-link devdshtab" data-toggle="tab" href="#webapps_tab" role="tab">
-                        <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Web Applications <span class="apps_count webcount"></span>
+                        <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Web <span class="apps_count webcount"></span>
                     </a>
                 </li>
-                <li class="nav-item" style="width:33.3%">
+                <li class="nav-item">
                     <a class="nav-link devdshtab" data-toggle="tab" href="#mobapps_tab" role="tab">
-                        <img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Mobile Applications <span class="apps_count mobcount"></span>
+                        <img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Mobile <span class="apps_count mobcount"></span>
                     </a>
                 </li>
-                <li class="nav-item" style="width:33.3%">
+                <li class="nav-item">
                     <a class="nav-link devdshtab" data-toggle="tab" href="#botapps_tab" role="tab">
-                        <img class="apptype_icon_devd" src="/images/svg/chat1.svg" /> Bot Applications <span class="apps_count botcount"></span>
+                        <img class="apptype_icon_devd" src="/images/svg/chat1.svg" /> Bot <span class="apps_count botcount"></span>
                     </a>
                 </li>
             </ul>
@@ -68,20 +87,20 @@
                                 if (aw.AppType == 1)
                                 {
                                     webcount = webcount + 1;
-                                    <div class="solution_container">
-                                        <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                            <div class="col-md-1 appIconContainer">
+                                    <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
+                                        <a class="appcontainer_inner" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                            <div class="col-md-2 pd-l-0 flex-center">
                                                 <span class="fa @aw.Icon"></span>
                                             </div>
-                                            <div class="col-md-11">
-                                                <h5 class="f16">@aw.Name</h5>
-                                                <p>@desc</p>
-                                                <p class="small"><span>@apptype</span> Application</p>
+                                            <div class="col-md-10 pd-0">
+                                                <h5 class="txtdecor_none">@aw.Name</h5>
+                                                <p class="small txtdecor_none">@desc</p>
+                                                @*<label class="label-success"><span>@apptype</span> Application</label>*@
                                             </div>
                                         </a>
                                     </div>
                                 }
-                    }
+                            }
                         </div>
                         <div class="tab-pane" id="mobapps_tab" role="tabpanel">
                             @foreach (AppWrapper aw in appList)
@@ -92,15 +111,15 @@
                                 if (aw.AppType == 2)
                                 {
                                     mobcount = mobcount + 1;
-                                    <div class="solution_container">
-                                        <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                            <div class="col-md-1 appIconContainer">
-                                                <span class="@aw.Icon"></span>
+                                    <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
+                                        <a class="appcontainer_inner" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                            <div class="col-md-2 pd-l-0 flex-center">
+                                                <span class="fa @aw.Icon"></span>
                                             </div>
-                                            <div class="col-md-11">
-                                                <h5 class="f16">@aw.Name</h5>
-                                                <p>@desc</p>
-                                                <p class="small"><span>@apptype</span> Application</p>
+                                            <div class="col-md-10 pd-0">
+                                                <h5 class="txtdecor_none">@aw.Name</h5>
+                                                <p class="small txtdecor_none">@desc</p>
+                                                @*<label class="label-success"><span>@apptype</span> Application</label>*@
                                             </div>
                                         </a>
                                     </div>
@@ -116,15 +135,15 @@
                                 if (aw.AppType == 3)
                                 {
                                     botcount = botcount + 1;
-                                    <div class="solution_container">
-                                        <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                            <div class="col-md-1 appIconContainer">
-                                                <span class="@aw.Icon"></span>
+                                    <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
+                                        <a class="appcontainer_inner" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                            <div class="col-md-2 pd-l-0 flex-center">
+                                                <span class="fa @aw.Icon"></span>
                                             </div>
-                                            <div class="col-md-11">
-                                                <h5 class="f16">@aw.Name</h5>
-                                                <p>@desc</p>
-                                                <p class="small"><span>@apptype</span> Application</p>
+                                            <div class="col-md-10 pd-0">
+                                                <h5 class="txtdecor_none">@aw.Name</h5>
+                                                <p class="small txtdecor_none">@desc</p>
+                                                @*<label class="label-success"><span>@apptype</span> Application</label>*@
                                             </div>
                                         </a>
                                     </div>
@@ -134,92 +153,6 @@
                     }
                 }
             </div>
-            @*<div class="tdash-box-body">
-                    @{
-                        List<AppWrapper> appList = ViewBag.apps;
-                        if (appList != null)
-                        {
-                            <div class="application_t_wrapper">
-                                <h4><img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Web Applications <span class="apps_count"></span></h4>
-                                <div class="application_t_wrapper_body">
-                                    @foreach (AppWrapper aw in appList)
-                                    {
-                                        var apptype = (EbApplicationTypes)aw.AppType;
-
-                                        string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                                        if (aw.AppType == 1)
-                                        {
-                                            <div class="solution_container">
-                                                <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                                    <div class="col-md-1 appIconContainer">
-                                                        <span class="fa @aw.Icon"></span>
-                                                    </div>
-                                                    <div class="col-md-11">
-                                                        <h5 class="f16">@aw.Name</h5>
-                                                        <p>@desc</p>
-                                                        <p class="small"><span>@apptype</span> Application</p>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        }
-                                    }
-                                </div>
-                            </div>
-                            <div class="application_t_wrapper">
-                                <h4><img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Mobile Applications <span class="apps_count"></span></h4>
-                                <div class="application_t_wrapper_body">
-                                    @foreach (AppWrapper aw in appList)
-                                    {
-                                        var apptype = (EbApplicationTypes)aw.AppType;
-
-                                        string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                                        if (aw.AppType == 2)
-                                        {
-                                            <div class="solution_container">
-                                                <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                                    <div class="col-md-1 appIconContainer">
-                                                        <span class="@aw.Icon"></span>
-                                                    </div>
-                                                    <div class="col-md-11">
-                                                        <h5 class="f16">@aw.Name</h5>
-                                                        <p>@desc</p>
-                                                        <p class="small"><span>@apptype</span> Application</p>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        }
-                                    }
-                                </div>
-                            </div>
-                            <div class="application_t_wrapper">
-                                <h4><img class="apptype_icon_devd" src="/images/svg/chat1.svg" /> Bot Applications <span class="apps_count"></span></h4>
-                                <div class="application_t_wrapper_body">
-                                    @foreach (AppWrapper aw in appList)
-                                    {
-                                        var apptype = (EbApplicationTypes)aw.AppType;
-
-                                        string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                                        if (aw.AppType == 3)
-                                        {
-                                            <div class="solution_container">
-                                                <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                                    <div class="col-md-1 appIconContainer">
-                                                        <span class="@aw.Icon"></span>
-                                                    </div>
-                                                    <div class="col-md-11">
-                                                        <h5 class="f16">@aw.Name</h5>
-                                                        <p>@desc</p>
-                                                        <p class="small"><span>@apptype</span> Application</p>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        }
-                                    }
-                                </div>
-                            </div>
-                        }
-                    }
-                </div>*@
         </div>
     </div>
 </div>

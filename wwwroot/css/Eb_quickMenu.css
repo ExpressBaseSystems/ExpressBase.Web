@@ -257,8 +257,6 @@
     width: 100%;
     float: left;
     box-shadow: none;
-    border-radius: 2px;
-    border: 1px solid #eee;
 }
 .appdash_obj_container .obj_count, .Eb_quick_menu .obj_count {
     margin-left: 0.4em;
@@ -268,3 +266,32 @@
     width:100%;
     color:white;
 }
+.appdash_obj_container .objContainer2 .obType_wrapper_head {
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    border-radius: 2px;
+    border: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+}
+.appdash_obj_container .btn_container {
+    margin-left: auto;
+}
+.appdash_obj_container .collapse_headBG {
+    box-shadow:none !important;
+    border-radius:0 !important;
+}
+.objContainer2 .btn_container .form-control {
+    height: 28px !important;
+}
+.appdash_obj_container .objitems .object_container {
+    width: 100%;
+    height: 100%;
+    float: left;
+    background-color: #f2f2f2;
+    padding: 6px;
+    border-radius: 2px;
+    border: 1px solid #e8e6e6;
+}
+    .appdash_obj_container .objitems .object_container:hover {
+        background-color: #f3f8ff;
+    }

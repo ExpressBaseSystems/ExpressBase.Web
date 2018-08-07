@@ -110,24 +110,24 @@
 <script>
         $(document).ready(function () {
             var mnuBarObj = $("#layout_div").data("EbHeader");
-            if ("@ViewBag.ListType" === "Users") {
+            if ("@ViewBag.ListType" === "users") {
                 mnuBarObj.setName("Users");
                 //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
                 var _metadata = ["7", "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Status", "_user", "_profPic" ];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
             }
-            else if ("@ViewBag.ListType" === "AnonymousUsers") {
+            else if ("@ViewBag.ListType" === "anonymoususers") {
                 mnuBarObj.setName("Anonymous Users");
                 var _metadata = ["8", "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic" ];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
             }
-            else if ("@ViewBag.ListType" === "UserGroups") {
+            else if ("@ViewBag.ListType" === "usergroups") {
                 mnuBarObj.setName("User Groups");
                 var _metadata = ["3", "Id", "Name", "Description", "_userGroup"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
 
             }
-            else if ("@ViewBag.ListType" === "Roles") {
+            else if ("@ViewBag.ListType" === "roles") {
                 mnuBarObj.setName("Roles");
                 //mnuBarObj.BuildMenu(`<button class='btn' title='New' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i></button>`);
                 var _metadata = ["7", "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];

@@ -3,8 +3,6 @@
     @using Newtonsoft.Json;
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-@await Component.InvokeAsync("PageHeaderCommon")
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script src="~/js/EbCropper.js" type="text/javascript"></script>
@@ -25,21 +23,48 @@
     var cm = new EbHeader().setName("Solution Configuration");
 </script>
 <div class="row s-dash-container">
-    <div class="pd-0 tdasboard-sidebar">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
-                <li class="list-group-item outer_li">Solutions<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
-                <li class="list-group-item outer_li">Billing<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
-                <li class="list-group-item outer_li">Support<i class="fa fa-chevron-right tdash-icon pull-right"></i></li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">highlight</span>
+                        <span class="t__sidebar_text">Solutions</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">attach_money</span>
+                        <span class="t__sidebar_text">Billing</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">store</span>
+                        <span class="t__sidebar_text">App Store</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
-    <div class="s-dash-workplace">
-        <div class="col-md-12 pd-0 s-dash-solution-desc">
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-9 pd-0">
-                <h3 class="mr-t-0">@ViewBag.SolutionInfo.SolutionName</h3>
-                <p class="small">@ViewBag.SolutionInfo.EsolutionId Created on @ViewBag.SolutionInfo.DateCreated</p>
-                <p>
+                <h4 class="mr-t-0 mr-0">@ViewBag.SolutionInfo.SolutionName</h4>
+                <p class="small mr-0">@ViewBag.SolutionInfo.EsolutionId Created on @ViewBag.SolutionInfo.DateCreated</p>
+                <p class="small mr-0">
                     @ViewBag.SolutionInfo.Description
                 </p>
             </div>
@@ -48,16 +73,16 @@
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="dc" />
-                    <button class="ebbtn eb_btnorange pull-right btn_s_fr" type="submit" sid="@ViewBag.SolutionInfo.EsolutionId" wc="dc">
-                        <i class="fa fa-wrench"></i> Dev
+                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.SolutionInfo.EsolutionId" wc="dc">
+                        <i class="fa fa-wrench"></i> Dev Home
                     </button>
                 </form>
                 <form method="post" action="@sso_user.Replace("myaccount.","")" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="uc" />
-                    <button class="ebbtn eb_btnblue pull-right" sid="@ViewBag.SolutionInfo.EsolutionId" wc="uc">
-                        <i class="fa fa-user-o" aria-hidden="true"></i> User
+                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right" sid="@ViewBag.SolutionInfo.EsolutionId" wc="uc">
+                        <i class="fa fa-user-o" aria-hidden="true"></i> User Home
                     </button>
                 </form>
             </div>
@@ -91,56 +116,128 @@
                 </div>
                 <div class="tab-pane" id="Connections" role="tabpanel">
                     <div class="eb_connection_wrapper">
-                        <div class="_sec_pan">
-                            <div class="_sec_pan_head">
-                                <span><img src="~/images/svg/data-storage.svg" /></span>
-                                <span class="Name">DataBase Connection @dbdefault</span>
-                            </div>
-                            <div class="_sec_pan_bdy">
-                                <div class="dbConnectionEdit_info" id="DbConnection_config">
-                                    <div class="col-md-1 db_vendorimg text-center VendorImage">
-                                        <!--database vendor image -->
+                        <div class="col-md-6 connection_wrap_outer">
+                            <div class="connection_wrap w-100">
+                                <div class="connection_wrap_header w-100" id="DbConnection_config">
+                                    <div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        @*<img class="img-responsive" src="~/images/POSTGRES.png" />*@
                                     </div>
-                                    <div class="col-md-8">
-                                        <p class="DatabaseName mr-0 pdt-5"></p>
+                                    <div class="col-md-10">
+                                        <h4 class="DatabaseName mr-0 pdt-5"> </h4>
                                         <p class="NickName mr-0 pdt-5"></p>
                                         <p class="Server mr-0 pdt-5"></p>
                                     </div>
-                                    <div class="col-md-3">
-                                        <button class="ebbtn eb_btnwhite pull-right" data-toggle="modal" data-target="#dbConnectionEdit">Change</button>
-                                    </div>
+                                </div>
+                                <div class="connection_wrap_footer">
+                                    <label>DataBase Connection</label>
+                                    <a class="pull-right" data-toggle="modal" data-target="#dbConnectionEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
                                 </div>
                             </div>
                         </div>
-                        <div class="_sec_pan">
-                            <div class="_sec_pan_head"><span><img src="~/images/svg/folder.svg" /></span><span class="Name">Files Connection @filedefault</span></div>
-                            <div class="_sec_pan_bdy">
-                                <div class="dbConnectionEdit_info" id="FilesConnection_config">
-                                    <div class="col-md-1 db_vendorimg text-center VendorImage">
-                                        <!--filedb vendor image -->
+                        <div class="col-md-6 connection_wrap_outer">
+                            <div class="connection_wrap w-100">
+                                <div class="connection_wrap_header w-100" id="FilesConnection_config">
+                                    <div class="col-md-2 db_vendorimg text-center VendorImage">
+                                       @* <img class="img-responsive" src="~/images/MongodB.png" />*@
                                     </div>
-                                    <div class="col-md-8">
-                                        <p class="NickName mr-0 pdt-5"></p>
+                                    <div class="col-md-10">
+                                        <p class="NickName mr-0 pdt-5"> </p>
                                         <p class="FilesUrI mr-0 pdt-5"></p>
                                     </div>
-                                    <div class="col-md-3">
-                                        <button class="ebbtn eb_btnwhite pull-right" data-toggle="modal" data-target="#filesDbConnectEdit">Change</button>
-                                    </div>
+                                </div> 
+                                <div class="connection_wrap_footer">
+                                    <label>Files Connection</label>
+                                    <a class="pull-right" data-toggle="modal" data-target="#filesDbConnectEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
                                 </div>
                             </div>
                         </div>
-                        <div class="_sec_pan">
-                            <div class="_sec_pan_head"><span><img src="~/images/svg/email.svg" /></span><span class="Name">Email Accounts</span></div>
-                            <div class="_sec_pan_bdy" id="EmailConnection_config">
-                                <!--email config jq injection-->
+                        <div class="col-md-6 connection_wrap_outer">
+                            <div class="connection_wrap w-100 grayscale">
+                                <div class="connection_wrap_header w-100" id="EmailConnection_config">
+                                    @*<div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        <img class="img-responsive" src="~/images/svg/email.svg" />
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p class="Server mr-0 pdt-5">000.000.000.000</p>
+                                        <p class="EmailAddress mr-0 pdt-5">--@@----------.-----</p>
+                                        <p class="NickName mr-0 pdt-5">----------------------</p>
+                                    </div>*@
+                                </div>
+                                <div class="connection_wrap_footer">
+                                    <label>Email Connection</label>
+                                    <a class="pull-right" data-toggle="modal" data-target="#EmailConnectionEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
+                                </div>
                             </div>
                         </div>
-                        <div class="_sec_pan">
-                            <div class="_sec_pan_head"><span><img src="~/images/svg/text.svg" /></span><span class="Name">SMS Accounts</span></div>
-                            <div class="_sec_pan_bdy" id="SMSConnection_config">
-                                <!--sms config jq injection-->
+                        <div class="col-md-6 connection_wrap_outer">
+                            <div class="connection_wrap w-100 grayscale">
+                                <div class="connection_wrap_header w-100" id="SMSConnection_config">
+                                    @*<div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        <img class="img-responsive" src="~/images/svg/text.svg" />
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p class="UserName mr-0 pdt-5">-------</p>
+                                        <p class="SendNo mr-0 pdt-5">0000000000</p>
+                                        <p class="NickName mr-0 pdt-5">-------</p>
+                                    </div>*@
+                                </div>
+                                <div class="connection_wrap_footer">
+                                    <label>SMS Connection</label>
+                                    <a class="pull-right" data-toggle="modal" data-target="#SmsConnectionEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
+                                </div>
                             </div>
                         </div>
+
+                        @*<div class="_sec_pan">
+            <div class="_sec_pan_head">
+                <span><img src="~/images/svg/data-storage.svg" /></span>
+                <span class="Name">DataBase Connection @dbdefault</span>
+            </div>
+            <div class="_sec_pan_bdy">
+                <div class="dbConnectionEdit_info" id="DbConnection_config">
+                    <div class="col-md-1 db_vendorimg text-center VendorImage">
+                        <!--database vendor image -->
+                    </div>
+                    <div class="col-md-8">
+                        <p class="DatabaseName mr-0 pdt-5"></p>
+                        <p class="NickName mr-0 pdt-5"></p>
+                        <p class="Server mr-0 pdt-5"></p>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="ebbtn eb_btnwhite pull-right" data-toggle="modal" data-target="#dbConnectionEdit">Change</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="_sec_pan">
+            <div class="_sec_pan_head"><span><img src="~/images/svg/folder.svg" /></span><span class="Name">Files Connection @filedefault</span></div>
+            <div class="_sec_pan_bdy">
+                <div class="dbConnectionEdit_info" id="FilesConnection_config">
+                    <div class="col-md-1 db_vendorimg text-center VendorImage">
+                        <!--filedb vendor image -->
+                    </div>
+                    <div class="col-md-8">
+                        <p class="NickName mr-0 pdt-5"></p>
+                        <p class="FilesUrI mr-0 pdt-5"></p>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="ebbtn eb_btnwhite pull-right" data-toggle="modal" data-target="#filesDbConnectEdit">Change</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="_sec_pan">
+            <div class="_sec_pan_head"><span><img src="~/images/svg/email.svg" /></span><span class="Name">Email Accounts</span></div>
+            <div class="_sec_pan_bdy" id="EmailConnection_config">
+                <!--email config jq injection-->
+            </div>
+        </div>
+        <div class="_sec_pan">
+            <div class="_sec_pan_head"><span><img src="~/images/svg/text.svg" /></span><span class="Name">SMS Accounts</span></div>
+            <div class="_sec_pan_bdy" id="SMSConnection_config">
+                <!--sms config jq injection-->
+            </div>
+        </div>*@
                     </div>
                 </div>
                 <div class="tab-pane" id="team" role="tabpanel">
@@ -169,65 +266,65 @@
                             <div class="s-dash-workplace-tabs">
                                 <ul class="nav nav-tabs" role="tablist">
                                     @*<li class="nav-item active">
-                                        <a class="nav-link" data-toggle="tab" href="#creditpayment_tab" role="tab">
-                                            Credit Card
-                                        </a>
-                                    </li>*@
+                                            <a class="nav-link" data-toggle="tab" href="#creditpayment_tab" role="tab">
+                                                Credit Card
+                                            </a>
+                                        </li>*@
                                     <li class="nav-item">
                                         <a class="nav-link" data-toggle="tab" href="#paypalpayment_tab" role="tab"> PayPal</a>
                                     </li>
                                 </ul>
                                 <div class="tab-content">
                                     @*<div class="tab-pane active" id="creditpayment_tab" role="tabpanel">
-                                        <div class="credit_info_head">
-                                            <p class="col-md-10">
-                                                Card will be charged monthly for number of users. All major credit cards accepted.
-                                            </p>
-                                            <button class="ebbtn eb_btnblue col-md-2" onclick="$('.credit_info').toggle('fast');">Add Card</button>
-                                        </div>
-                                        <div class="credit_info">
-                                            <form class="form-horizontal" method="post" action="/PayPal/CreditCardPayment">
-                                                <div class="form-group">
-                                                    <label class="pay_label">Name On Card</label>
-                                                    <input type="text" class="form-control" name="CardHolder" placeholder="" value="Amal K dev">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="pay_label">Card Number</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" name="CardNumber" placeholder="" value="1234567887654321">
-                                                        <span class="input-group-addon">
-                                                            <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                                        </span>
+                                            <div class="credit_info_head">
+                                                <p class="col-md-10">
+                                                    Card will be charged monthly for number of users. All major credit cards accepted.
+                                                </p>
+                                                <button class="ebbtn eb_btnblue col-md-2" onclick="$('.credit_info').toggle('fast');">Add Card</button>
+                                            </div>
+                                            <div class="credit_info">
+                                                <form class="form-horizontal" method="post" action="/PayPal/CreditCardPayment">
+                                                    <div class="form-group">
+                                                        <label class="pay_label">Name On Card</label>
+                                                        <input type="text" class="form-control" name="CardHolder" placeholder="" value="Amal K dev">
                                                     </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <div class="col-md-8 pd-0">
-                                                        <label class="pay_label col-md-12 pd-0">Expiry</label>
-                                                        <div class="col-md-6 pd-l-0">
-                                                            <input type="text" class="form-control" name="ExpiryMonth" placeholder="MM" value="05">
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <input type="text" class="form-control" name="ExpiryYear" placeholder="YY" value="20">
+                                                    <div class="form-group">
+                                                        <label class="pay_label">Card Number</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" name="CardNumber" placeholder="" value="1234567887654321">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-credit-card" aria-hidden="true"></i>
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <label class="pay_label">CVV</label>
-                                                        <input type="text" name="Cvv" class="form-control" value="613">
+                                                    <div class="form-group">
+                                                        <div class="col-md-8 pd-0">
+                                                            <label class="pay_label col-md-12 pd-0">Expiry</label>
+                                                            <div class="col-md-6 pd-l-0">
+                                                                <input type="text" class="form-control" name="ExpiryMonth" placeholder="MM" value="05">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <input type="text" class="form-control" name="ExpiryYear" placeholder="YY" value="20">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="pay_label">CVV</label>
+                                                            <input type="text" name="Cvv" class="form-control" value="613">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn paypal_btn">Subscribe</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>*@
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn paypal_btn">Subscribe</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>*@
                                     <div class="tab-pane active" id="paypalpayment_tab" role="tabpanel">
                                         <p>
                                             Subscribe using your paypal account.
                                         </p>
                                         <div class="col-md-12 col-lg-12 col-sm-12 pd-0">
                                             <form action="/PayPal/PayPalPayment" method="post">
-												<input type="hidden" value="@ViewBag.SolutionInfo.EsolutionId" name="Sid"/>
+                                                <input type="hidden" value="@ViewBag.SolutionInfo.EsolutionId" name="Sid" />
                                                 <button type="submit" class="btn paypal_btn">PayPal</button>
                                             </form>
                                         </div>

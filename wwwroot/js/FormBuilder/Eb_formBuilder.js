@@ -1,26 +1,25 @@
-﻿
-var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
-    this.wc = wc;
-    this.cid = cid;
-    this.Name = formid;
-    this.toolBoxid = toolBoxid;
+﻿var formBuilder = function (options) {
+    this.wc = options.wc;
+    this.cid = options.cid;
+    this.formId = options.formId;
+    this.Name = this.formId;
+    this.toolBoxid = options.toolBoxId;
     this.rootContainerObj = null;
-    this.formid = formid;
-    this.$propGrid = $("#" + propGridId);
-    this.$form = $("#" + formid);
-    this.EbObject = dsobj;
+    this.$propGrid = $("#" + options.PGId);
+    this.$form = $("#" + this.formId);
+    this.EbObject = options.objInEditMode;
     commonO.Current_obj = this.EbObject;
 
 
-   
+
     this.controlCounters = CtrlCounters;//Global
     this.currentProperty = null;
     this.CurRowCount = 2;
     this.CurColCount = 2;
     this.movingObj = {};
-    
+
     this.controlOnFocus = function (e) {
-        if (e.target.id ==="form-buider-form") {
+        if (e.target.id === this.formId) {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
             return;
@@ -57,31 +56,14 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objTy
     };
 
     //Edit mode
-    if (this.EbObject){
+    if (this.EbObject) {
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
-        if (builderType === 0)
-            this.rootContainerObj = new EbObjects.EbWebForm(formid);
-        else if (builderType === 12)
-            this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
+        this.rootContainerObj = new EbObjects.EbWebForm(this.formId);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
-    }
-    //if (builderType === 1)
-    //    this.rootContainerObj = new EbObjects.DisplayBlockObj(formid);
-    if (builderType === 0)
-        this.rootContainerObj = new EbObjects.EbWebForm(formid);
-    //else if (builderType === 12)
-    //    this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
-    //else if (builderType === 13)
-    //    this.rootContainerObj = new EbObjects.MobileFormObj(formid);
-    //else if (builderType === 14)
-    //    this.rootContainerObj = new EbObjects.UserControlObj(formid);
-    //else if (builderType === 3)
-    //    this.rootContainerObj = new EbObjects.ReportObj(formid);
-
-    //this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
+    };
 
     this.PGobj = new Eb_PropertyGrid({
         id: "pgWraper",
@@ -317,10 +299,10 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objTy
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-	this.CreateRelationString = function () { };
+    this.CreateRelationString = function () { };
 
     this.Init = function () {
-        this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
+        this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formId)], {
             removeOnSpill: false,
             copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
             copySortSource: true,
@@ -341,6 +323,7 @@ var formBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objTy
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
         }.bind(this);
+        this.$form.click();
     };
 
     this.del = function (ce) {

@@ -41,7 +41,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.IsSSO = TempData["SSO"];
             ViewBag.Msg = TempData[Msg];
             var result = this.ServiceClient.Get<GetSolutionResponse>(new GetSolutionRequest());
-            ViewBag.Solutions = JsonConvert.SerializeObject(result.Data);
+            ViewBag.Solutions = result.Data;
             return View();
         }
 
@@ -53,10 +53,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Connections = resp.EBSolutionConnections;
             ViewBag.SolutionInfo = resp.Data;
             ViewBag.cid = Sid;
-            if(this.HttpContext.Request.IsHttps)
-                ViewBag.Protocol = "https://";
-            else
-                ViewBag.Protocol = "http://";
+            ViewBag.Protocol = (this.HttpContext.Request.IsHttps) ? Constants.HTTPS : Constants.HTTP;
             ViewBag.Domain = this.HttpContext.Request.Host;
             ViewBag.rToken = Request.Cookies["rToken"];
             ViewBag.bToken = Request.Cookies["bToken"];

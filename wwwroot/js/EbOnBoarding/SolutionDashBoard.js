@@ -101,7 +101,7 @@
         var DatabaseName = "";
         let vendersrc = "";
         if (object.IsDefault) { Server = "xxx.xxx.xxx.xxx"; DatabaseName = "Default DB"; }
-        else { Server = object.Server; DatabaseName = object.DatabaseName; }
+        else { Server = object.Server; DatabaseName = object.DatabaseName; object.NickName = "not_set" }
 
         if (object.DatabaseVendor == 0) {
             vendersrc = `<img src="${location.protocol}//${location.host}/images/POSTGRES.png" />`;
@@ -156,17 +156,14 @@
             o = object;
 
         $("#EmailConnection_config").empty();
-        $("#EmailConnection_config").append(`<div class="eb_connection_wrapper_bdyouter">
-                                    <div class="eb_connection_wrapper_inner">
-                                        <div class="eb_connection_wrapper_bdy">
-                                            <p class="Vendor mr-0 pdt-5"> ${o.ProviderName}</p>
-                                            <p class="Server mr-0 pdt-5">${o.EmailAddress} </p>
-                                            <p class="Server mr-0 pdt-5">${o.Smtp}:${o.Port}</p>
-                                            <p class="NickName mr-0 pdt-5">${o.NickName}</p>
-                                            <button class="ebbtn eb_btnwhite configure" data-toggle="modal" data-target="#EmailConnectionEdit">Configure</button>
-                                        </div>
+        $("#EmailConnection_config").append(`<div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        <img class="img-responsive" src="${location.protocol}//${location.host}/images/svg/email.svg" />
                                     </div>
-                                </div>`);
+                                    <div class="col-md-10">
+                                        <p class="Server mr-0 pdt-5">${o.Smtp}:${o.Port}</p>
+                                        <p class="EmailAddress mr-0 pdt-5">${o.EmailAddress}</p>
+                                        <p class="NickName mr-0 pdt-5">${o.NickName}</p>
+                                    </div>`);
 
 
     };
@@ -182,17 +179,14 @@
             o = object;
 
         $("#SMSConnection_config").empty();
-        $("#SMSConnection_config").append(`<div class="eb_connection_wrapper_bdyouter">
-                                    <div class="eb_connection_wrapper_inner">
-                                        <div class="eb_connection_wrapper_bdy">
-                                            <p class="Vendor mr-0 pdt-5">${o.ProviderName}</p>
-                                            <p class="UserName mr-0 pdt-5">${o.UserName}</p>
-                                            <p class="SendNo mr-0 pdt-5">${o.From}</p>
-                                            <p class="NickName mr-0 pdt-5">${o.NickName}</p>
-                                            <button class="ebbtn eb_btnwhite configure" data-toggle="modal" data-target="#SmsConnectionEdit">Configure</button>
-                                        </div>
+        $("#SMSConnection_config").append(`<div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        <img class="img-responsive" src="${location.protocol}//${location.host}/images/svg/text.svg" />
                                     </div>
-                                </div>`);
+                                    <div class="col-md-10">
+                                        <p class="UserName mr-0 pdt-5">${o.UserName}</p>
+                                        <p class="SendNo mr-0 pdt-5">${o.From}</p>
+                                        <p class="NickName mr-0 pdt-5">${o.NickName}</p>
+                                    </div>`);
     };
 
     this.testConnection = function (e) {

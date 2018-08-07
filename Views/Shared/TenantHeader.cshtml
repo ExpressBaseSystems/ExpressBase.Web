@@ -3,58 +3,22 @@
 @{
     string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
     string DpUrl = "/static/dp/dp_" + ViewBag.UId + ".png";
-    string ml = "0px";
 }
-<div class="row" id="">
+<div class="row">
     <div class="toolbar objectDashB-toolbar">
-        <div class="col-md-7 pd-0">
-            @{
-                if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-                {
-                    <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
-                }
-                else
-                {
-                    ml = "10px";
-                }
-            }
-            <div class="solution_logo_cont pull-left" style="margin-left:@ml">
-                @{
-                    if (ViewBag.wc == "tc")
-                    {
-                        <img src="~/images/EB_Logo.png" class="solution_logo" />
-                    }
-                    else
-                    {
-                        <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
-                    }
-                }
-
+        <div class="col-md-5 pd-0">
+            <div class="solution_logo_cont pull-left" style="margin-left:10px;">
+                <img src="~/images/EB_Logo.png" class="solution_logo" />
             </div>
             <div class="brd_cr_t EbHeadTitle">
                 <div class="brd_row">
-                    @{
-                        if (ViewBag.wc == "tc")
-                        {
-                            <span class="eb_context"><a href="/MySolutions"><i class="fa fa-home"></i></a></span>
-                        }
-                        else if (ViewBag.wc == "dc")
-                        {
-                            <span class="sid_sec_Common">@ViewBag.cid</span><span class='eb_slash'>/</span>
-                            <span class="eb_context"><a href="/MyApplications">Dev <i class="fa fa-home"></i></a></span>
-                        }
-                        else if (ViewBag.wc == "uc")
-                        {
-                            <span class="sid_sec_Common">@ViewBag.cid</span><span class='eb_slash'>/</span>
-                            <span class="eb_context"><a href="/UserDashBoard">User <i class="fa fa-home"></i></a></span>
-                        }
-                    }
+                    <span class="eb_context"><a href="/MySolutions"><i class="fa fa-home"></i></a></span>
                     @Html.Raw(HttpUtility.HtmlDecode(ViewBag.BreadCrumb))
                 </div>
                 <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>
             </div>
         </div>
-        <div class="col-md-5 pd-0 comon_header_dy">
+        <div class="col-md-7 pd-0 comon_header_dy">
             <div class='toolicons form-inline pull-right'>
                 <div id="obj_icons" style="display:inline"></div>
                 <div class='form-group'>
@@ -62,7 +26,7 @@
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
                     </button>
                     <div class="dropdown obj_dash_proimage_drp">
-                        <img src="~/images/proimg.jpg" data-src=@DpUrl data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image" />
+                        <img src="~/images/proimg.jpg" data-src=@DpUrl data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image img-circle" />
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <ul class="drp_ul">
                                 <li class="drp_item border_b" style="height:50px;">
@@ -77,18 +41,14 @@
                             </ul>
                         </div>
                     </div>
-                    <button class='btn' style="display:none;" id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                 </div>
             </div>
         </div>
         <div class="eb_common_loader" id="eb_common_loader"></div>
     </div>
 </div>
-
 <script>
-
     var MenuBarCommon = new EbHeader();
-
     function LoadMyProfile() {
         event.preventDefault();
         //window.open("../Security/ManageUser?itemid=" + $("#hiddenTxtUserId").val(), "_blank");

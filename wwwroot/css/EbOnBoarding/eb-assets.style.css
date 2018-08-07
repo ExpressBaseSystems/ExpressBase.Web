@@ -121,3 +121,126 @@
         .billing_wrap .credit_info .form-horizontal {
             padding: 0 15px;
         }
+/*Tenant header css*/
+.tenant_sidebar {
+    width: 100px;
+}
+.tenant_workpane {
+    width: calc(100% - 100px);
+}
+.tenant_sidebar .t-container {
+    padding-top: 0 !important;
+}
+.t_a {
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    line-height: 2.2em;
+}
+    .t_a:hover, .t_a:focus {
+        text-decoration:none;
+    }
+.t__sidebar_icon {
+    color: #fdfbfb;
+    font-size: 30px;
+}
+.t__sidebar_text {
+    color: #d2d0d0;
+    font-size: 15px;
+}
+/*solution dash*/
+.eb_connection_wrapper {
+    float: left;
+    width: 100%;
+}
+
+.pdt-5 {
+    padding-top: 5px;
+}
+
+.db_vendorimg img {
+    width: 100%;
+}
+
+.db_vendorimg {
+    display: flex;
+    align-items: center;
+}
+.connection_wrap_outer {
+    padding:5px;
+}
+.connection_wrap {
+    width: 100%;
+    display: flex;
+    width: 100%;
+    display: flex;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    border-radius: 2px;
+    border: 1px solid #e8e8e8;
+    background-color: #f2f2f2;
+flex-direction:column;
+}
+    .connection_wrap .connection_wrap_header {
+        padding: 10px 0px;
+        display:flex;
+    }
+.connection_wrap_footer {
+    padding: 10px 15px;
+    border-top: 1px solid #e8dfdf;
+}
+    .connection_wrap_footer a {
+        color: #6d6d6d;
+        font-weight: 400;
+        cursor:pointer;
+    }
+    .connection_wrap_footer label {
+        border-radius: 2px;
+        color: white;
+        background-color: #47af08;
+        font-weight: 400;
+        font-size: 12px;
+        padding: 2px;
+    }
+.grayscale {
+    -webkit-filter:grayscale(100%);
+    filter: grayscale(100%);
+}
+    .grayscale:hover::after {
+        display: flex;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        content: "coming soon";
+        justify-content: center;
+        align-items: center;
+        background-color: #3c3c3c;
+        font-size: 20px;
+        font-weight: 400;
+        opacity: 0.4;
+        color: white;
+    }
+    /*appdash*/
+    .appcontainer{
+        float:left;
+        padding:5px;
+    }
+.appcontainer_inner {
+    display: flex;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    border-radius: 2px;
+    border: 1px solid #e8e8e8;
+    background-color: #f2f2f2;
+    color: #4a4747;
+    text-decoration: none !important;
+    padding: 10px 5px;
+}
+.appcontainer_inner .flex-center{
+    font-size:27px;
+}
+.txtdecor_none{
+    text-decoration:none;
+}
+.appcontainer_inner:hover {
+    background-color: #f3f8ff;
+}

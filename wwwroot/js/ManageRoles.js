@@ -128,7 +128,7 @@
     this.loadLocationsToDom = function () { 
         this.divLocationList.children().remove();
         $.each(this.locationList, function (i, obj) {
-            this.divLocationList.append(`<label style="font-family: open sans; font-weight: 300; cursor: pointer;"><input type="checkbox" name="cboxGrpLoc" value="${obj.Id}">${obj.LongName}</label><br>`);
+            this.divLocationList.append(`<label style="font-family: open sans; font-weight: 300; cursor: pointer;"><input type="checkbox" name="cboxGrpLoc" value="${obj.Id}">${obj.ShortName} - ${obj.LongName}</label><br>`);
         }.bind(this));
     }
 

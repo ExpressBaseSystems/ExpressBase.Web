@@ -71,6 +71,12 @@ namespace ExpressBase.Web.Controllers
                 AppObj.ObjCollection.Add(item as EbObject);
             }
             string stream = EbSerializers.Json_Serialize(AppObj);
+            SaveToAppStoreResponse x = ServiceClient.Post(new SaveToAppStoreRequest {
+            AppName= AppObj.Name,
+            Cost=1000,
+            Currency="USD",
+            Json=stream,
+            Status=1});
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"E:\ExportFile.txt"))
             {
                 file.WriteLine(stream);

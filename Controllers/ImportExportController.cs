@@ -31,7 +31,7 @@ namespace ExpressBase.Web.Controllers
         public void Export(string _refids)
         {
             int app_id = 1;
-            OrderedDictionary ObjDictionary = new OrderedDictionary();           
+            OrderedDictionary ObjDictionary = new OrderedDictionary();
             GetApplicationResponse appRes = ServiceClient.Get(new GetApplicationRequest { Id = app_id });
             AppWrapper AppObj = appRes.AppInfo;
             AppObj.ObjCollection = new List<EbObject>();
@@ -47,12 +47,17 @@ namespace ExpressBase.Web.Controllers
                 AppObj.ObjCollection.Add(item as EbObject);
             }
             string stream = EbSerializers.Json_Serialize(AppObj);
-            SaveToAppStoreResponse x = ServiceClient.Post(new SaveToAppStoreRequest {
-            AppName= AppObj.Name,
-            Cost=1000,
-            Currency="USD",
-            Json=stream,
-            Status=1});
+            SaveToAppStoreResponse x = ServiceClient.Post(new SaveToAppStoreRequest
+            {
+                Store = new AppStore
+                {
+                    AppName = AppObj.Name,
+                    Cost = 1000,
+                    Currency = "USD",
+                    Json = stream,
+                    Status = 1
+                }
+            });
         }
 
         public void Import()
@@ -102,6 +107,8 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult AppStore()
         {
+            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreRequest { });
+            ViewBag.StoreApps = resp.Apps;
             return View();
         }
         public EbObject GetObjfromDB(string _refid)

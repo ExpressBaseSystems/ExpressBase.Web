@@ -58,7 +58,7 @@ namespace ExpressBase.Web.Controllers
         public void Import()
         {
             Dictionary<string, string> RefidMap = new Dictionary<string, string>();
-            GetFromAppstoreResponse resp = ServiceClient.Get(new GetFromAppStoreRequest { Id = 6 });
+            GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = 6 });
             AppWrapper AppObj = resp.Wrapper;
             List<EbObject> ObjectCollection = AppObj.ObjCollection;
             CreateApplicationResponse appres = ServiceClient.Post(new CreateApplicationDevRequest

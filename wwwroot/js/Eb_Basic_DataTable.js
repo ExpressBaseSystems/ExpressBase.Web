@@ -40,7 +40,7 @@ var EbBasicDataTable = function (Option) {
     this.orderColl = [];
 
     this.init = function () {
-        if(this.EbObject !== null)
+        if(this.EbObject === null)
             this.EbObject = new EbTableVisualization(this.tableId);
         this.EbObject.IsPaging = Option.IsPaging || false;
         this.$dtLoaderCont = $("<div id='dtloadercont' class='dt-loader-cont'></div>");

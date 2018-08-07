@@ -12,6 +12,7 @@
     var _roleList = Html.Raw(ViewBag.RoleList);
     var _role2RoleList = Html.Raw(ViewBag.Role2RoleList);
     var _usersList = Html.Raw(ViewBag.UsersList);
+    var _locationList = Html.Raw(ViewBag.LocationList);
 }
 
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
@@ -45,7 +46,21 @@
                 <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Type</label>
                 <input id="chkboxAnonymous" type="checkbox" data-toggle="toggle" data-on="Anonymous" data-off="Normal">
             </div>
-            <input type="submit" id="hiddenSubmitRole" style="display:none;" />
+            <div class="form-group">
+                <label style="font-family: open sans; font-weight: 300; display:inline-block">Role Locations</label>
+                <input id="chkboxLocations" type="checkbox" data-toggle="toggle" data-on="Limited Access" data-off="Global Access">
+            </div>
+            <div class="form-group" id="divLocation" style="position: relative;">
+                <div id="divLocationOverlay" style="position: absolute; z-index: 10; height:100%; width:100%; opacity: 0.2; background-color: gray;"></div>
+                <div class="locListHead-wraper">
+                    <div class="locListHead">Select Locations</div>
+                    <div class="loc-all-select" tabindex="1" onclick="if ($(event.target).text() === 'Select All') { $('#divLocationList input:checkbox[name=cboxGrpLoc]').prop('checked', true); $(event.target).text('Deselect All'); } else { $('#divLocationList input:checkbox[name=cboxGrpLoc]').prop('checked', false); $(event.target).text('Select All'); }">Select All</div>
+                </div>
+                <div id="divLocationList" style="height: 150px; overflow: auto;">
+                    @*<label style="font-family: open sans; font-weight: 300;"><input type="checkbox" name="cboxGrpLoc" value="value">Text</label><br>*@
+                </div>                
+            </div>
+            @*<input type="submit" id="hiddenSubmitRole" style="display:none;" />*@
         </form>
     </div>
     <div class="col-md-9">
@@ -78,6 +93,6 @@
 
         var _dict = @Html.Raw(TempData.Peek("_dict"));
 
-        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList, @_usersList);
+        var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList, @_usersList, @_locationList);
     });
 </script>

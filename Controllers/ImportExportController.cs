@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -27,65 +28,47 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-        public void Export(string _refid)
+        public void Export(string _refids)
         {
             int app_id = 1;
             OrderedDictionary ObjDictionary = new OrderedDictionary();
-            EbObject obj = GetObjfromDB(_refid);
             GetApplicationResponse appRes = ServiceClient.Get(new GetApplicationRequest { Id = app_id });
             AppWrapper AppObj = appRes.AppInfo;
             AppObj.ObjCollection = new List<EbObject>();
-            obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
-
-            #region MyRegion
-            //if (obj is EbWebForm)
-            //{
-            //    EbWebForm _o = obj as EbWebForm;
-            //    foreach (EbControl control in _o.Controls)
-            //    {
-            //        PropertyInfo[] _props = control.GetType().GetProperties();
-            //        foreach (PropertyInfo _prop in _props)
-            //        {
-            //            if (_prop.IsDefined(typeof(OSE_ObjectTypes)))
-            //                ObjectCollection.Add(GetObjfromDB(_prop.GetValue(obj, null).ToString()));
-            //        }
-            //    }
-            //}
-            //if (obj is EbBotForm)
-            //{
-            //    EbBotForm _o = obj as EbBotForm;
-            //    foreach (EbControl control in _o.Controls)
-            //    {
-            //        PropertyInfo[] _props = control.GetType().GetProperties();
-            //        foreach (PropertyInfo _prop in _props)
-            //        {
-            //            if (_prop.IsDefined(typeof(OSE_ObjectTypes)))
-            //                ObjectCollection.Add(GetObjfromDB(_prop.GetValue(obj, null).ToString()));
-            //        }
-            //    }
-            //} 
-            #endregion
-            var ObjectList = ObjDictionary.Values;
-            foreach (var item in ObjectList)
+            string[] refs = _refids.Split(",");
+            foreach (string _refid in refs)
+            {
+                EbObject obj = GetObjfromDB(_refid);
+                obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
+            }
+            ICollection ObjectList = ObjDictionary.Values;
+            foreach (object item in ObjectList)
             {
                 AppObj.ObjCollection.Add(item as EbObject);
             }
             string stream = EbSerializers.Json_Serialize(AppObj);
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"E:\ExportFile.txt"))
+            SaveToAppStoreResponse x = ServiceClient.Post(new SaveToAppStoreRequest
             {
-                file.WriteLine(stream);
-            }
+                Store = new AppStore
+                {
+                    AppName = AppObj.Name,
+                    Cost = 1000,
+                    Currency = "USD",
+                    Json = stream,
+                    Status = 1
+                }
+            });
         }
 
         public void Import()
         {
             Dictionary<string, string> RefidMap = new Dictionary<string, string>();
-            string text = System.IO.File.ReadAllText(@"E:\ExportFile.txt");
-            AppWrapper AppObj = (AppWrapper)EbSerializers.Json_Deserialize(text);
+            GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = 6 });
+            AppWrapper AppObj = resp.Wrapper;
             List<EbObject> ObjectCollection = AppObj.ObjCollection;
             CreateApplicationResponse appres = ServiceClient.Post(new CreateApplicationDevRequest
             {
-                AppName = AppObj.Name + "(7)",
+                AppName = AppObj.Name + "(roby103)",
                 AppType = AppObj.AppType,
                 Description = AppObj.Description,
                 AppIcon = AppObj.Icon
@@ -103,81 +86,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 while (!uniqnameresp.IsUnique);
 
-                obj.ReplaceRefid();
-
-                if (obj is EbDataSource)
-                {
-                    string fdid = (obj as EbDataSource).FilterDialogRefId;
-                    if (RefidMap.ContainsKey(fdid))
-                        (obj as EbDataSource).FilterDialogRefId = RefidMap[fdid];
-                    else
-                        (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
-                }
-
-                if (obj is EbReport)
-                {
-                    if (!(obj as EbReport).DataSourceRefId.IsEmpty())
-                    {
-                        string dsid = (obj as EbReport).DataSourceRefId;
-                        if (RefidMap.ContainsKey(dsid))
-                            (obj as EbDataSource).FilterDialogRefId = RefidMap[dsid];
-                        else
-                            (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
-                    }
-
-                    foreach (EbReportDetail dt in (obj as EbReport).Detail)
-                    {
-                        foreach (EbReportField field in dt.Fields)
-                        {
-                            if (field is EbDataField)
-                            {
-                                if (!(field as EbDataField).LinkRefId.IsEmpty())
-                                {
-                                    if (RefidMap.ContainsKey((field as EbDataField).LinkRefId))
-                                        (obj as EbDataSource).FilterDialogRefId = RefidMap[(field as EbDataField).LinkRefId];
-                                    else
-                                        (obj as EbDataSource).FilterDialogRefId = "failed-to-update-";
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-                if (obj is EbTableVisualization)
-                {
-                    if (!(obj as EbTableVisualization).DataSourceRefId.IsEmpty())
-                    {
-                        string dsid = (obj as EbReport).DataSourceRefId;
-                        if (RefidMap.ContainsKey(dsid))
-                            (obj as EbTableVisualization).DataSourceRefId = RefidMap[dsid];
-                        else
-                            (obj as EbTableVisualization).DataSourceRefId = "failed-to-update-";
-                    }
-                    foreach (DVBaseColumn _col in (obj as EbTableVisualization).Columns)
-                    {
-                        if (!_col.LinkRefId.IsNullOrEmpty())
-                        {
-                            if (RefidMap.ContainsKey(_col.LinkRefId))
-                                _col.LinkRefId = RefidMap[_col.LinkRefId];
-                            else
-                                _col.LinkRefId = "failed-to-update-";
-                        }
-                    }
-                }
-
-                if (obj is EbChartVisualization)
-                {
-                    if ((obj as EbChartVisualization).DataSourceRefId.IsEmpty())
-                    {
-                        string dsid = (obj as EbChartVisualization).DataSourceRefId;
-                        if (RefidMap.ContainsKey(dsid))
-                            (obj as EbChartVisualization).DataSourceRefId = RefidMap[dsid];
-                        else
-                            (obj as EbChartVisualization).DataSourceRefId = "failed-to-update-";
-                    }
-                }
-
+                obj.ReplaceRefid(RefidMap);
                 EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
                 {
                     Name = obj.Name,
@@ -195,9 +104,13 @@ namespace ExpressBase.Web.Controllers
                 EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                 RefidMap[obj.RefId] = res.RefId;
             }
-
         }
-
+        public IActionResult AppStore()
+        {
+            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreRequest { });
+            ViewBag.StoreApps = resp.Apps;
+            return View();
+        }
         public EbObject GetObjfromDB(string _refid)
         {
             EbObjectParticularVersionResponse res = ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = _refid });

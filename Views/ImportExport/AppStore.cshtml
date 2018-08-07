@@ -1,0 +1,118 @@
+﻿@*@{ 
+    List<AppStore> _appList = ViewBag.StoreApps;
+    int _appcount = 0;
+    if (_appList != null)
+    {
+        _appcount = _appList.Count;
+    }
+}
+
+<div class="s-dash-workplace">
+    <div class="col-md-12 pd-0 s-dash-solution-desc" style="margin-bottom: 7px;">
+        <div class="col-md-10 pd-0">
+            <h3 class="mr-t-0">Applications(@_appcount)</h3>
+        </div>
+        <div class="col-md-2 pd-0">
+            <a href='@Url.Action("CreateApplication", "Dev")' class="ebbtn eb_btnblue pull-right new_sol_lk"><i class="fa fa-plus"></i> New Application</a>
+        </div>
+    </div>
+    <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+        <ul class="nav nav-tabs">
+            <li class="nav-item active devdshtab" style="width:33.3%">
+                <a class="nav-link devdshtab" data-toggle="tab" href="#webapps_tab" role="tab">
+                    <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Web Applications <span class="apps_count webcount"></span>
+                </a>
+            </li>
+            <li class="nav-item" style="width:33.3%">
+                <a class="nav-link devdshtab" data-toggle="tab" href="#mobapps_tab" role="tab">
+                    <img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Mobile Applications <span class="apps_count mobcount"></span>
+                </a>
+            </li>
+            <li class="nav-item" style="width:33.3%">
+                <a class="nav-link devdshtab" data-toggle="tab" href="#botapps_tab" role="tab">
+                    <img class="apptype_icon_devd" src="/images/svg/chat1.svg" /> Bot Applications <span class="apps_count botcount"></span>
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            @{
+                int webcount = 0; int botcount = 0; int mobcount = 0;
+                if (appList != null)
+                {
+                    <div class="tab-pane active" id="webapps_tab" role="tabpanel">
+                        @foreach (AppWrapper aw in appList)
+                        {
+                            var apptype = (EbApplicationTypes)aw.AppType;
+
+                            string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                            if (aw.AppType == 1)
+                            {
+                                webcount = webcount + 1;
+                                <div class="solution_container">
+                                    <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                        <div class="col-md-1 appIconContainer">
+                                            <span class="fa @aw.Icon"></span>
+                                        </div>
+                                        <div class="col-md-11">
+                                            <h5 class="f16">@aw.Name</h5>
+                                            <p>@desc</p>
+                                            <p class="small"><span>@apptype</span> Application</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="tab-pane" id="mobapps_tab" role="tabpanel">
+                        @foreach (AppWrapper aw in appList)
+                        {
+                            var apptype = (EbApplicationTypes)aw.AppType;
+
+                            string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                            if (aw.AppType == 2)
+                            {
+                                mobcount = mobcount + 1;
+                                <div class="solution_container">
+                                    <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                        <div class="col-md-1 appIconContainer">
+                                            <span class="@aw.Icon"></span>
+                                        </div>
+                                        <div class="col-md-11">
+                                            <h5 class="f16">@aw.Name</h5>
+                                            <p>@desc</p>
+                                            <p class="small"><span>@apptype</span> Application</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="tab-pane" id="botapps_tab" role="tabpanel">
+                        @foreach (AppWrapper aw in appList)
+                        {
+                            var apptype = (EbApplicationTypes)aw.AppType;
+
+                            string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                            if (aw.AppType == 3)
+                            {
+                                botcount = botcount + 1;
+                                <div class="solution_container">
+                                    <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                        <div class="col-md-1 appIconContainer">
+                                            <span class="@aw.Icon"></span>
+                                        </div>
+                                        <div class="col-md-11">
+                                            <h5 class="f16">@aw.Name</h5>
+                                            <p>@desc</p>
+                                            <p class="small"><span>@apptype</span> Application</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>*@

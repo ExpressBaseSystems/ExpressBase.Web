@@ -238,12 +238,24 @@
         this.setObjTypeDD();
     };
 
+    this.getCElistFromSrc = function (sourceProp) {
+        let CurlevelObj = this.PGobj;
+        let hierarchyLevel = (sourceProp.match(/Parent./g) || []).length;
+        if (hierarchyLevel > 0) {
+            for (var i = 0; i < hierarchyLevel; i++) {
+                CurlevelObj = CurlevelObj.ParentPG
+            }
+        }
+        let _CElistFromSrc = CurlevelObj.PropsObj[sourceProp.replace(/Parent./g, "")].$values;
+        return _CElistFromSrc;
+    }
+
     this.CEHelper = function (sourceProp) {
         this.Dprop = this.CurMeta.Dprop;
-        this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn;
-        this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn;
+        this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
+        this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };
 
-        this.CElistFromSrc = this.PGobj.PropsObj[sourceProp].$values;
+        this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
         if (this.editor === 8) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.changeCopyToRef();
@@ -324,17 +336,17 @@
     };
 
     this.CEOnSelectFn = function (obj) {
-        this.CurCEOnSelectFn.bind(obj)();
+        this.CurCEOnSelectFn.bind(obj, this.PGobj.PropsObj)();
     };
 
     this.CEOnDeselectFn = function (obj) {
-        this.CurCEOndeselectFn.bind(obj)();
+        this.CurCEOndeselectFn.bind(obj, this.PGobj.PropsObj)();
     };
 
     this.onDragendFn = function (el) {
         $e = $(el);
         $e.find('.close').css("opacity", "0.2");
-        let $sibling = $e.next();
+        let $sibling = $e.next(); 
         let target = $e.parent()[0];
         let idx = $sibling.index() - 1;
         if (target.id !== this.CE_all_ctrlsContId) {// target 2nd column
@@ -663,6 +675,7 @@
         }.bind(this));
         $(this.pgCXE_Cont_Slctr + " .editTbl").off("click", ".coltile-delete").on("click", ".coltile-delete", this.colTileDel);
         $("#" + this.CEctrlsContId).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
+        $("#" + this.CE_all_ctrlsContId).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
     };
 
     this.setSelColtiles = function () {
@@ -675,7 +688,6 @@
                 selObjs.push(getObjByval(this.CElistFromSrc, idField, ctrl[idField]));
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
-            $("#" + this.CE_all_ctrlsContId).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
         }
     };
 
@@ -811,7 +823,7 @@
             let lastNum = parseInt(numStr) || 0;
             tempArr.push(lastNum);
         });
-        return tempArr.max();
+        return Math.max.apply(null, tempArr);
     };
 
     this.updateColumnIndex = function (delobj) {
@@ -822,8 +834,8 @@
         }
     }
 
-    this.CE_AddFn = function () {
-        let $DD = $(this.pgCXE_Cont_Slctr + " .modal-footer .sub-controls-DD-cont").find("option:selected");
+    this.CE_AddFn = function (e) {
+        let $DD = $(e.target).closest(".sub-controls-DD-cont").find("option:selected");
         let SelType = $DD.val();
         let obj = {};
         //let lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));

@@ -57,7 +57,14 @@ body {
     background: #528ff0;
     color: #fff;
 }
-
+.eb_btngreen {
+    background: #47af08;
+    color: #fff;
+}
+.eb_btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
 .eb_btnwhite {
     background: white;
     color: #528ff0;
@@ -70,6 +77,12 @@ body {
 }
 .btn_s_fr{
     margin-left:10px;
+}
+
+.eb_btnplain {
+    font-weight: 400;
+    color: #717171;
+    font-size: 15px;
 }
 
 .mb {

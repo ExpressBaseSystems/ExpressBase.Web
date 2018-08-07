@@ -1,7 +1,6 @@
 ﻿var Eb_PropertyGrid = function (options, parentPG) {
     this.wc = options.wc;
     this.cid = options.cid;
-    this.ParentPG = parentPG;
     this.IsInnerCall = options.IsInnerCall || false;
     this.wraperId = options.id;
     this.$scope = options.$scope || $(document.body)
@@ -681,6 +680,7 @@
         }
         this.Metas = metas;
         this.PropsObj = props;
+        this.ParentPG = parentPG;
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         this.ImgSlctrs = {};
         this.FontSlctrs = {};

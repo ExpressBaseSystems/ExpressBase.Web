@@ -1800,6 +1800,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
             this.addFilterEventListeners();
         }
+        $("#obj_icons").append(`<div class="dropdown" id="rowgroupDD_${this.tableId}" style="display:inline-block;">
+                <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
+                    <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                </ul>
+            </div>`);
+        $(`#rowgroupDD_${this.tableId}`).hide();
+        $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {            
+            if (obj.RowGroupingNew.$values.length > 0) {
+                $(`#rowgroupDD_${this.tableId} ul`).append(`<li role="presentation">${obj.Name}</li>`);
+                $(`#rowgroupDD_${this.tableId}`).show();
+            }
+        }.bind(this));
     };
 
     this.setFilterboxValue = function (i, obj) {

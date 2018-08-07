@@ -32,23 +32,24 @@ namespace ExpressBase.Web.Controllers
 		public IActionResult CommonList(string type, string show)
 		{
 			IServiceClient client = this.ServiceClient;
+			type = type.ToLower();
 			ViewBag.ListType = type;
-			if (type == "Users")
+			if (type == "users")
 			{
 				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1() { Show = show });
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
-			else if (type == "Roles")
+			else if (type == "roles")
 			{
 				var fr = this.ServiceClient.Get<GetRolesResponse1>(new GetRolesRequest1());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
-			else if (type == "UserGroups")
+			else if (type == "usergroups")
 			{
 				var fr = this.ServiceClient.Get<GetUserGroupResponse1>(new GetUserGroupRequest1());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
 			}
-			else if (type == "AnonymousUsers")
+			else if (type == "anonymoususers")
 			{
 				var fr = this.ServiceClient.Get<GetAnonymousUserResponse>(new GetAnonymousUserRequest());
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);

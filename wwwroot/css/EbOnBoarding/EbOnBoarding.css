@@ -131,25 +131,51 @@ body {
 /*ProfileSetup end*/
 /*tdashboard*/
 .solution_container {
-    width:50%;
-    float:left;
-    padding:5px;
+    width: 25%;
+    float: left;
+    padding: 5px;
 }
 .solution_container_pd {
-    width: 100%;
     float: left;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 2px;
     display: flex;
-    color: inherit;
-    text-decoration: none;
+    flex-direction: column;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    background-color: white;
 }
     .solution_container_pd:hover, .solution_container_pd:focus {
         color: inherit;
         text-decoration: none;
-        background-color: #f5f5f5;
+        transform: translateY(-2px) scale(1.01);
     }
-
+.sso_head {
+    border-top: 1px solid #ebeff6;
+    display: flex;
+    justify-content: center;
+}
+.solution_container_pd .s_info {
+    padding: 5px 15px;
+    line-height: 1.3em;
+}
+    .s_info p {
+        color: #979797;
+    }
+.solution_container_pd .s_info_img {
+    justify-content: center;
+    display: flex;
+    WIDTH: AUTO;
+    padding: 10px 10px 2px 10px;
+}
+    .solution_container_pd .s_info_img img{
+        height:40px;
+        width:auto;
+    }
+.s_info h4 {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #737373;
+    font-weight: bold;
+}
 .tdasboard-sidebar {
     height: 100%;
     position: fixed;
@@ -168,14 +194,13 @@ body {
 }
 
 .tdash-box-body {
-    padding: 20px;
+    padding: 0 12px;
     float: left;
     width: 100%;
 }
 
 .solutionhead {
     width: 100%;
-    /* height: 100px; */
     background: #339bb3;
     padding: 10px;
     color: white;
@@ -187,80 +212,45 @@ body {
 /*tdashboard end*/
 /*solution dashboard */
 .s-dash-solution-desc {
-    margin-bottom: 20px;
+    padding: 15px 15px;
+    line-height: 1.5em;
+    display: flex;
+    align-items: center;
+    background-color: #f2f2f2;
 }
 
 .s-dash-container {
     min-height: 100vh;
-    padding-top: 35px;
+    padding-top: 37px;
+    background-color: white;
 }
 
 .s-dash-workplace {
     font-family: open sans;
     font-weight: 300;
-    padding: 30px 30px 15px 30px;
     width: 82%;
     float: right;
 }
-
-    .s-dash-workplace .s-dash-workplace-tabs {
-        background: white;
-        min-height: 80vh;
-        border-radius: 4px;
-        border: 0 solid #e7e7e7;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+.s-dash-workplace-tabs .nav-tabs {
+    background-color: #f2f2f2;
+}
+.bgf2f2 {
+    background-color: #f2f2f2 !important;
+}
+.s-dash-workplace .nav > li > a {
+    font-size: 14px;
+    color: #5d5c5c;
+    font-weight: 400;
+}
+    .s-dash-workplace .nav-tabs > li.active > a {
+        font-weight: bold;
+        color: #528ff0;
     }
-
-    .s-dash-workplace .nav-tabs {
-        border-bottom: 2px solid #DDD;
-    }
-
-        .s-dash-workplace .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
-            border-width: 0;
-        }
-
-    .s-dash-workplace .nav > li {
-        width: 25%;
-        font-weight: 400;
-    }
-
-        .s-dash-workplace .nav > li > a {
-            padding: 15px 15px;
-            font-size: 14px;
-            text-align: center;
-            border: none;
-            color: #666;
-        }
-
-    .s-dash-workplace .nav-tabs > li.active > a, .nav-tabs > li > a:hover {
-        border: none;
-        color: #4285F4 !important;
-        background: transparent;
-    }
-
-    .s-dash-workplace .nav-tabs > li > a::after {
-        content: "";
-        background: #4285F4;
-        height: 2px;
-        position: absolute;
-        width: 100%;
-        left: 0px;
-        bottom: -1px;
-        transition: all 250ms ease 0s;
-        transform: scale(0);
-    }
-
-    .s-dash-workplace .nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after {
-        transform: scale(1);
-    }
-
-    .s-dash-workplace .tab-nav > li > a::after {
-        background: #21527d none repeat scroll 0% 0%;
-        color: #fff;
-    }
-
     .s-dash-workplace .tab-content {
-        padding: 10px;
+        padding: 12px;
+        float: left;
+        width: 100%;
+        background: white;
     }
 
     .s-dash-workplace .solution-logo {
@@ -270,7 +260,6 @@ body {
     }
 
     .s-dash-workplace .tab-pane {
-        padding: 10px;
         float: left;
         width: 100%;
     }
@@ -694,7 +683,7 @@ body {
     font-family: open sans;
 }
 .tdash_btn {
-    font-size:16px;
+    font-size:18px;
 }
 .small-desc-last {
     height: calc(100% - 75px);
@@ -961,33 +950,8 @@ body {
     border: 1px solid #e1e0e0 !important;
 }
 /*DevDash*/
-.appIconContainer {
-    padding: 3px 0;
-    font-size: 25px;
-    color: #989c9e;
-    text-align:center;
-}
-.s-dash-workplace-tabs .devdshtab {
-    font-size: 16px !important;
-}
-/*.application_t_wrapper {
-    width:100%;
-    float:left;
-}
-    .application_t_wrapper .appname {
-        color: #0090bb;
-    }
-    .application_t_wrapper .appname .apps_count {
-        color: #908787;
-        margin-left: .3em;
-    }
-.application_t_wrapper_body {
-    width: 100%;
-    float: left;
-    padding: 15px 0px 25px 0px;
-}*/
 .apptype_icon_devd {
-    height: 20px;
+    height: 18px;
     width: auto;
     margin-top: -8px;
     margin-right: .3em;
@@ -1005,78 +969,3 @@ body {
 .f16{
     font-size:16px;
 }
-/*Connection manager new*/
-.eb_connection_wrapper {
-    float: left;
-    width: 100%;
-}
-.eb_connection_wrapper_bdyouter {
-    width: 50%;
-    padding: 5px;
-    float:left;
-}
-.eb_connection_wrapper_inner {
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: row;
-    background: white;
-    padding: 5px 15px;
-}
-.eb_connection_wrapper_bdy {
-    position: relative;
-    width: 100%;
-}
-.pdt-5 {
-    padding-top: 5px;
-}
-.configure {
-    position: absolute;
-    top: 0;
-    right: -10px;
-    font-size: 11px;
-    padding: 4px 10px;
-}
-._sec_pan_head img {
-    height: 30px;
-    margin-top: -15px;
-}
-._sec_pan_head .Name {
-    font-size: 21px;
-    font-weight: 500;
-    margin-left: 20px;
-}
-._sec_pan_head {
-    border-bottom: 1px solid #e4e4e4;
-}
-._sec_pan_bdy {
-    float: left;
-    width: 100%;
-    padding: 10px 20px;
-}
-._sec_pan {
-    margin-bottom: 2em;
-    float: left;
-    width: 100%;
-    padding: 10px;
-    /*background: #f1f1f1;*/
-    border-radius: 4px;
-}
-.db_vendorimg img {
-    width: 100%;
-}
-.db_vendorimg {
-    display: flex;
-    align-items: center;
-}
-.dbConnectionEdit_info {
-    float: left;
-    width: 100%;
-    display: flex;
-}
-    .dbConnectionEdit_info p, .eb_connection_wrapper_inner p{
-        color: #333;
-        font-weight: 400;
-    }
-/*Connection manager new end*/

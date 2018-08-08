@@ -1,17 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ExpressBase.Common;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Filters
 {
     public class EbBreadCrumbFilter : ActionFilterAttribute, IActionFilter
     {
-        private string Param = "";
-        private string Key = "";
-        private string ParamTemp = "";
+        private string Param = string.Empty;
+        private string Key = string.Empty;
+        private string ParamTemp = string.Empty;
 
         public EbBreadCrumbFilter() { }
 
@@ -28,17 +30,19 @@ namespace ExpressBase.Web.Filters
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            string brd = "";
+            var _context = context.HttpContext;
+            string brd = string.Empty;
             var controller = context.Controller as Controller;
 
-            if (context.HttpContext.Items[this.Key] != null)
+            if (_context.Items[this.Key] != null)
             {
-                brd = this.Param + context.HttpContext.Items[this.Key];
+                brd = this.Param + _context.Items[this.Key];
             }
             else
                 brd = this.ParamTemp;
 
-            controller.ViewBag.BrdPath = brd;
+            //controller.ViewBag.BrdPath = brd;
+            controller.ViewBag.BreadCrumb = GetBrdCrumb(_context.Request.Host.ToString(), brd,controller.ViewBag.wc).ToString();
             base.OnActionExecuted(context);
         }
 
@@ -56,6 +60,41 @@ namespace ExpressBase.Web.Filters
                 this.ParamTemp = this.Param;
 
             base.OnActionExecuting(context);
+        }
+
+        public StringBuilder GetBrdCrumb(string host, string path, string wc)
+        {
+            string[] patharray;
+            StringBuilder brd = new StringBuilder();
+            if (path != null)
+                patharray = path.Split("/");
+            else
+                patharray = new string[] { };
+
+            if (wc == RoutingConstants.TC)
+            {
+                for (int i = 0; i < patharray.Length; i++)
+                {
+                    brd.Append(@"<span class='eb_slash'>/</span><span class='eb_context'><a href=''>" + patharray[i] + "</a></span>");
+                }
+            }
+            else if (wc == RoutingConstants.DC)
+            {
+                string[] hostparts = host.Split(".");
+                for (int i = 0; i < patharray.Length; i++)
+                {
+                    brd.Append(@"<span class='eb_slash'>/</span><span class='eb_context'><a href=''>" + patharray[i] + "</a></span>");
+                }
+            }
+            else if (wc == RoutingConstants.UC)
+            {
+                string[] hostparts = host.Split(".");
+                for (int i = 0; i < patharray.Length; i++)
+                {
+                    brd.Append(@"<span class='eb_slash'>/</span><span class='eb_context'><a href=''>" + patharray[i] + "</a></span>");
+                }
+            }
+            return brd;
         }
     }
 }

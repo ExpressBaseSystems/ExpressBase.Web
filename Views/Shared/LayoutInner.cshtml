@@ -41,6 +41,7 @@
     <script src="~/js/EbServerEvents/eventsource.min.js" type="text/javascript" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/store.legacy.min.js"></script>@*amal*@
     <script src="~/js/validator.js" type="text/javascript"></script>@*amal*@
+    <script src="~/js/Eb_CommonHeader.js" type="text/javascript"></script>@*amal*@
 
     @* EB JS *@
     <script src="~/js/EbLoader.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
@@ -53,9 +54,10 @@
     <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="~/js/EbQuickMenu/Menu.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/Eb_CommonHeader.js" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/Eb_CommonHeader.js" type="text/javascript"></script>@*amal*@
 </head>
 <body>
-    <div id="tenatDtls" class="container-fluid">
+    <div id="Eb_com_menu">
         @{
             if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
             {
@@ -64,6 +66,8 @@
         }
     </div>
     <div id="layout_div" class="container-fluid main-cont">
+        @await Component.InvokeAsync("PageHeaderCommon")
+
         @RenderBody()
         @RenderSection("EbHead", false)
     </div>

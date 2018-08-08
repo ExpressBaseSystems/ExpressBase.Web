@@ -39,8 +39,8 @@
         if (!$.isEmptyObject(this.ObjCollection[otype])){
             for (var i = 0; i < this.ObjCollection[otype].Objects.length; i++) {
                 var _obj = this.ObjCollection[otype].Objects[i];
-                $listContaner.append(`<div class='col-md-6 objitems' name='objBox'>
-                    <div class="object_container">
+                $listContaner.append(`<div class='col-md-4 col-lg-4 col-sm-4 objitems' name='objBox'>
+                    <a class="object_container" href='../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}'>
                         <div class='col-md-11 col-lg-11 col-sm-11 pd-0'>
                             <h4 class='head4'>${_obj.ObjName}</h4>
                             <p class='text-justify'>${_obj.Description || 'no description'}</p>
@@ -48,9 +48,6 @@
                                 <span name="Version" class="label">V.${_obj.VersionNumber}</span>
                                 <span class="label">${_obj.EbType}</span>
                             </div>
-                        </div>
-                        <div class='col-md-1 pd-0 objbox-footer'>
-                            <a href='../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}' class='btn'><i class="fa fa-pencil" aria-hidden="true"></i></a>
                         </div>
                     </div>
                 </div>`);

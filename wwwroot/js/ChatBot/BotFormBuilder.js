@@ -25,7 +25,7 @@
     this.controlOnFocus = function (e) {
         window.scrollTo(0, 0);
         document.body.scrollTop = 0;
-        if (e.target.id === "form-buider-form") {
+        if (e.target.id === this.formid) {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
             return;
@@ -112,7 +112,7 @@
 
     this.acceptFn = function (el, target, source, sibling) {
         var toolBoxId = "form-buider-toolBox";
-        var formId = "form-buider-form";
+        var formId = this.formid;
         if (source.id === toolBoxId && target.id === toolBoxId) {
             return false;
         }
@@ -393,7 +393,7 @@
     }.bind(this);
 
     this.PGobj.nameChanged = function (propsObj) {
-        if (propsObj.EbSid === "form-buider-form")
+        if (propsObj.EbSid === this.formid)
             this.validateTableName(this.rootContainerObj.Name);
     }.bind(this);
 
@@ -421,7 +421,7 @@
             removeOnSpill: false,
             copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
             copySortSource: true,
-            //mirrorContainer: document.getElementById('form-buider-form'),
+            //mirrorContainer: document.getElementById(this.formid),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });

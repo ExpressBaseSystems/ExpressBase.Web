@@ -405,10 +405,13 @@
         this.getvaluesFromPG();
         if (e) {
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);
-            this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
         }
         //var res = this.getvaluesFromPG();
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
+        this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
+        let NS1 = this.CurMeta.UIChangefn.split(".")[0];
+        let NS2 = this.CurMeta.UIChangefn.split(".")[1];
+        EbOnChangeUIfns[NS1][NS2](this.PropsObj.EbSid, this.PropsObj);
         this.PropertyChanged(this.PropsObj, this.CurProp);
     };
 

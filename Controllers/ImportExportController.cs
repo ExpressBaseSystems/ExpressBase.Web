@@ -51,60 +51,74 @@ namespace ExpressBase.Web.Controllers
             {
                 Store = new AppStore
                 {
-                    AppName = AppObj.Name,
+                    Name = AppObj.Name,
                     Cost = 1000,
                     Currency = "USD",
                     Json = stream,
-                    Status = 1
+                    Status = 1,
+                    AppType = 1,
+                    Description = AppObj.Description,
+                    Icon = AppObj.Icon
                 }
             });
         }
 
-        public void Import()
+        public string Import(int Id)
         {
             Dictionary<string, string> RefidMap = new Dictionary<string, string>();
-            GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = 6 });
-            AppWrapper AppObj = resp.Wrapper;
-            List<EbObject> ObjectCollection = AppObj.ObjCollection;
-            CreateApplicationResponse appres = ServiceClient.Post(new CreateApplicationDevRequest
+            try
             {
-                AppName = AppObj.Name + "(roby103)",
-                AppType = AppObj.AppType,
-                Description = AppObj.Description,
-                AppIcon = AppObj.Icon
-            });
-            for (int i = ObjectCollection.Count - 1; i >= 0; i--)
-            {
-                UniqueObjectNameCheckResponse uniqnameresp;
-                EbObject obj = ObjectCollection[i];
-
-                do
+                GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = Id });
+                AppWrapper AppObj = resp.Wrapper;
+                List<EbObject> ObjectCollection = AppObj.ObjCollection;
+                CreateApplicationResponse appres = ServiceClient.Post(new CreateApplicationDevRequest
                 {
-                    uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
-                    if (!uniqnameresp.IsUnique)
-                        obj.Name = obj.Name + "(1)";
+                    AppName = AppObj.Name + "(install 7)",
+                    AppType = AppObj.AppType,
+                    Description = AppObj.Description,
+                    AppIcon = AppObj.Icon
+                });
+                for (int i = ObjectCollection.Count - 1; i >= 0; i--)
+                {
+                    UniqueObjectNameCheckResponse uniqnameresp;
+                    EbObject obj = ObjectCollection[i];
+
+                    do
+                    {
+                        uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
+                        if (!uniqnameresp.IsUnique)
+                            obj.Name = obj.Name + "(1)";
+                    }
+                    while (!uniqnameresp.IsUnique);
+
+                    obj.ReplaceRefid(RefidMap);
+                    EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
+                    {
+                        Name = obj.Name,
+                        Description = obj.Description,
+                        Json = EbSerializers.Json_Serialize(obj),
+                        Status = ObjectLifeCycleStatus.Dev,
+                        Relations = "_rel_obj",
+                        IsSave = false,
+                        Tags = "_tags",
+                        Apps = appres.id.ToString(),
+                        SourceSolutionId = (obj.RefId.Split("-"))[0],
+                        SourceObjId = (obj.RefId.Split("-"))[3],
+                        SourceVerID = (obj.RefId.Split("-"))[4]
+                    };
+                    EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
+                    RefidMap[obj.RefId] = res.RefId;
                 }
-                while (!uniqnameresp.IsUnique);
-
-                obj.ReplaceRefid(RefidMap);
-                EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
-                {
-                    Name = obj.Name,
-                    Description = obj.Description,
-                    Json = EbSerializers.Json_Serialize(obj),
-                    Status = ObjectLifeCycleStatus.Dev,
-                    Relations = "_rel_obj",
-                    IsSave = false,
-                    Tags = "_tags",
-                    Apps = appres.id.ToString(),
-                    SourceSolutionId = (obj.RefId.Split("-"))[0],
-                    SourceObjId = (obj.RefId.Split("-"))[3],
-                    SourceVerID = (obj.RefId.Split("-"))[4]
-                };
-                EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
-                RefidMap[obj.RefId] = res.RefId;
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return "Failed";
+            }
+            return "Success";
         }
+
+        [HttpGet("AppStore")]
         public IActionResult AppStore()
         {
             GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreRequest { });
@@ -117,6 +131,12 @@ namespace ExpressBase.Web.Controllers
             EbObject obj = EbSerializers.Json_Deserialize(res.Data[0].Json);
             obj.RefId = _refid;
             return obj;
+        }
+        [HttpPost]
+        public void ShareToPublic()
+        {
+            var req = HttpContext.Request.Form;
+            var y = req;
         }
     }
 }

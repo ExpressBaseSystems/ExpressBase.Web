@@ -51,11 +51,14 @@ namespace ExpressBase.Web.Controllers
             {
                 Store = new AppStore
                 {
-                    AppName = AppObj.Name,
+                    Name = AppObj.Name,
                     Cost = 1000,
                     Currency = "USD",
                     Json = stream,
-                    Status = 1
+                    Status = 1,
+                    AppType = 1,
+                    Description = AppObj.Description,
+                    Icon = AppObj.Icon
                 }
             });
         }

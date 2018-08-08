@@ -842,7 +842,7 @@
         //let lastItemCount = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
         let lastItemCount = this.getMaxNumberFromItemName($(this.pgCXE_Cont_Slctr + " .CE-body .colTile"));
         let ShortName = $DD.text() + (lastItemCount + 1);
-        let EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
+        let EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName.replace(/ /g, "");
         if (this.PGobj.CurProp === "Controls") {////////////// need CE test and correction
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
         }

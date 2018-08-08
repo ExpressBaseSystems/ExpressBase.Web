@@ -1,4 +1,10 @@
-﻿@*@{ 
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts
+@using ExpressBase.Common
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<script src="~/js/EbDashBoards/AppDashBoard.js" type="text/javascript"></script>
+@{
     List<AppStore> _appList = ViewBag.StoreApps;
     int _appcount = 0;
     if (_appList != null)
@@ -12,35 +18,49 @@
         <div class="col-md-10 pd-0">
             <h3 class="mr-t-0">Applications(@_appcount)</h3>
         </div>
-        <div class="col-md-2 pd-0">
-            <a href='@Url.Action("CreateApplication", "Dev")' class="ebbtn eb_btnblue pull-right new_sol_lk"><i class="fa fa-plus"></i> New Application</a>
-        </div>
     </div>
     <div class="col-md-12 pd-0 s-dash-workplace-tabs">
         <ul class="nav nav-tabs">
-            <li class="nav-item active devdshtab" style="width:33.3%">
-                <a class="nav-link devdshtab" data-toggle="tab" href="#webapps_tab" role="tab">
-                    <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Web Applications <span class="apps_count webcount"></span>
+            <li class="nav-item active devdshtab" style="width:50%">
+                <a class="nav-link devdshtab" data-toggle="tab" href="#private" role="tab">
+                    <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Private <span class="apps_count webcount"></span>
+
                 </a>
             </li>
-            <li class="nav-item" style="width:33.3%">
-                <a class="nav-link devdshtab" data-toggle="tab" href="#mobapps_tab" role="tab">
-                    <img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Mobile Applications <span class="apps_count mobcount"></span>
+            <li class="nav-item active devdshtab" style="width:50%">
+                <a class="nav-link devdshtab" data-toggle="tab" href="#private" role="tab">
+                    <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Public <span class="apps_count webcount"></span>
+
                 </a>
             </li>
-            <li class="nav-item" style="width:33.3%">
-                <a class="nav-link devdshtab" data-toggle="tab" href="#botapps_tab" role="tab">
-                    <img class="apptype_icon_devd" src="/images/svg/chat1.svg" /> Bot Applications <span class="apps_count botcount"></span>
-                </a>
-            </li>
+
         </ul>
+        <div id="private">
+            <ul class="nav nav-tabs">
+                <li class="nav-item active devdshtab" style="width:33.3%">
+                    <a class="nav-link devdshtab" data-toggle="tab" href="#webapps_tab" role="tab">
+                        <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Web Applications <span class="apps_count webcount"></span>
+                    </a>
+                </li>
+                <li class="nav-item" style="width:33.3%">
+                    <a class="nav-link devdshtab" data-toggle="tab" href="#mobapps_tab" role="tab">
+                        <img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Mobile Applications <span class="apps_count mobcount"></span>
+                    </a>
+                </li>
+                <li class="nav-item" style="width:33.3%">
+                    <a class="nav-link devdshtab" data-toggle="tab" href="#botapps_tab" role="tab">
+                        <img class="apptype_icon_devd" src="/images/svg/chat1.svg" /> Bot Applications <span class="apps_count botcount"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
         <div class="tab-content">
             @{
                 int webcount = 0; int botcount = 0; int mobcount = 0;
-                if (appList != null)
+                if (_appList != null)
                 {
                     <div class="tab-pane active" id="webapps_tab" role="tabpanel">
-                        @foreach (AppWrapper aw in appList)
+                        @foreach (AppStore aw in _appList)
                         {
                             var apptype = (EbApplicationTypes)aw.AppType;
 
@@ -51,7 +71,7 @@
                                 <div class="solution_container">
                                     <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
                                         <div class="col-md-1 appIconContainer">
-                                            <span class="fa @aw.Icon"></span>
+                                            @*<span class="fa @aw.Icon"></span>*@
                                         </div>
                                         <div class="col-md-11">
                                             <h5 class="f16">@aw.Name</h5>
@@ -64,7 +84,7 @@
                         }
                     </div>
                     <div class="tab-pane" id="mobapps_tab" role="tabpanel">
-                        @foreach (AppWrapper aw in appList)
+                        @foreach (AppStore aw in _appList)
                         {
                             var apptype = (EbApplicationTypes)aw.AppType;
 
@@ -75,7 +95,7 @@
                                 <div class="solution_container">
                                     <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
                                         <div class="col-md-1 appIconContainer">
-                                            <span class="@aw.Icon"></span>
+                                            @*<span class="@aw.Icon"></span>*@
                                         </div>
                                         <div class="col-md-11">
                                             <h5 class="f16">@aw.Name</h5>
@@ -88,7 +108,7 @@
                         }
                     </div>
                     <div class="tab-pane" id="botapps_tab" role="tabpanel">
-                        @foreach (AppWrapper aw in appList)
+                        @foreach (AppStore aw in _appList)
                         {
                             var apptype = (EbApplicationTypes)aw.AppType;
 
@@ -99,7 +119,7 @@
                                 <div class="solution_container">
                                     <a class="solution_container_pd" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
                                         <div class="col-md-1 appIconContainer">
-                                            <span class="@aw.Icon"></span>
+                                            @*<span class="@aw.Icon"></span>*@
                                         </div>
                                         <div class="col-md-11">
                                             <h5 class="f16">@aw.Name</h5>
@@ -115,4 +135,4 @@
             }
         </div>
     </div>
-</div>*@
+</div>

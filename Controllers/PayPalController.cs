@@ -18,6 +18,11 @@ using ServiceStack.Redis;
 using Microsoft.AspNetCore.Mvc;
 using ExpressBase.Common.ServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
+using System.Net;
+using System.IO;
+using System.Net.Http;
+using System.Web;
+
 
 namespace ExpressBase.Web.Controllers
 {
@@ -35,15 +40,27 @@ namespace ExpressBase.Web.Controllers
 
         //    return Redirect(PayPalRes.ApprovalUrl);
         //}
+        [HttpPost]
+        public void PayPalWebHook(string action, string environment = "sandbox")
+        {
+            var BodyStream = this.HttpContext.Request.Body;
+            string content = string.Empty;
+            using (var reader = new StreamReader(BodyStream))
+                content = reader.ReadToEnd();
+            var Response = this.ServiceClient.Post(new PayPalWebHookHandler
+            {
+                JsonBody = content,
+                Action = action
+            });
+        }
 
-        public IActionResult ReturnSuccess(string token)
+        public IActionResult ReturnSuccess(string sid, string token)
         {
             var Res = this.ServiceClient.Post(new PayPalSuccessReturnRequest
             {
                 PaymentId = token,
-                SolutionId = this.HttpContext.Items["Sid"].ToString()
+                SolutionId = sid
             });
-            Console.WriteLine("LOG : this.HttpContext.Items[\"Sid\"] : " + this.HttpContext.Items["Sid"].ToString());
             return View();
         }
 
@@ -63,7 +80,6 @@ namespace ExpressBase.Web.Controllers
         public IActionResult PayPalPayment()
         {
             string sid = this.HttpContext.Request.Form["Sid"];
-            this.HttpContext.Items["Sid"] = sid;
             string Env = "";
             if (ViewBag.Env == "Development")
                 Env = "https://myaccount.eb-test.info";

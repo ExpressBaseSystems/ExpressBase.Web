@@ -1,0 +1,326 @@
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<link href="~/css/LeadManagement.css" rel="stylesheet" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
+
+@await Component.InvokeAsync("PageHeaderCommon")
+
+
+<div class="row">
+    <div class="lm-form-body">
+        <div class="row form-cont" style="margin: 0px;">
+            <div class="col-md-8">
+                <div class="lm-form-inline">
+                    <div class="col-md-10">
+                        <div class="lm-form-inline">
+                            <div class="lm-form-sec-heading">
+                                Basic Details
+                            </div>
+                        </div>
+                        <div class="lm-form-inline">
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>Cost Center</label>
+                                    <select class="form-control">
+                                        <option>HOC Kochi</option>
+                                        <option>HOC Kozikode</option>
+                                        <option>HOC Trivandrum</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>EN Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>Mobile</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>ID</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lm-form-inline">                            
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>Name</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>DOB</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>Age</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>Sex</label>
+                                    <select class="form-control">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lm-form-inline">
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>Phone</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>Profession</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>Email</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="lm-form-group">
+                                    <label>NRI</label>
+                                    <select class="form-control">
+                                        <option>No</option>
+                                        <option>Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 lm-img-cont">
+                    </div>
+                </div>
+                <div class="lm-form-inline lm-bottom-form">
+                    <div class="col-md-6 ">
+                        <div class="lm-form-sec-heading">
+                            Current Location Details
+                        </div>
+                        <div class="lm-form-inline">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>City</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Country</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lm-form-inline">
+                            <div class="lm-form-sec-heading">
+                                Home Town Details
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>City</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>District</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="border-left: 1px solid #ccc;">
+                        <div class="lm-form-inline">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Service</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Lead Owner</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lm-form-inline">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Source Category</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Sub Category</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lm-form-inline">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Consultation</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Pictures Recevied</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>                           
+                        </div>
+                    </div>                   
+                </div>
+                <div>
+                    <div class="lm-form-sec-heading">
+                        Followup Details
+                    </div>
+                    <div class="lm-form-inline">
+                        <div class="col-md-6">
+                            <div class="lm-form-inline">
+                                <div class="col-md-6">
+                                    <div class="lm-form-group">
+                                        <label>Date</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lm-form-inline">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Lead Status</label>
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="lm-form-group">
+                                        <label>Follow up Date</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="lm-form-group">
+                                <label>Comment</label>
+                                <textarea class="form-control" style="height: 80px !important; resize:none;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4" style="border-left: 1px solid #cfced0; height : calc(100vh - 65px);">
+                <div class="lm-form-sec-heading">
+                    Graft Details
+                </div>
+                <div class="lm-form-inline">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>No of Grafts</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Total Rate</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>No of PRP</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Consulted Date</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Fee Paid</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Consulting Doctor</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Probable Month</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Closing</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Nature of Patient</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+    var leadObject = new LeadManagementObj();    
+</script>

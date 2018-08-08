@@ -54,6 +54,7 @@ namespace ExpressBase.Web.Controllers
             });
         }
 
+        [HttpGet("PayPal/ReturnSuccess/{sid}")]
         public IActionResult ReturnSuccess(string sid, string token)
         {
             var Res = this.ServiceClient.Post(new PayPalSuccessReturnRequest
@@ -64,9 +65,13 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult CancelAgreement(string token)
+        [HttpGet("PayPal/CancelAgreement/{sid}")]
+        public IActionResult CancelAgreement(string sid, string token)
         {
-            var Res = this.ServiceClient.Post(new PayPalFailureReturnRequest{});
+            var Res = this.ServiceClient.Post(new PayPalFailureReturnRequest{
+                PaymentId=token,
+                SolutionId=sid
+            });
             return View();
         }
 

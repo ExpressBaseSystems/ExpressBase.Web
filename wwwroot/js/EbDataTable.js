@@ -517,7 +517,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.filter = true;
         //o.select = true;
         //o.retrieve = true;
-        o.keys = true;
+        //o.keys = true;
         //this.filterValues = this.getFilterValues();
         filterChanged = false;
         if (!this.isTagged)

@@ -409,9 +409,11 @@
         //var res = this.getvaluesFromPG();
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
         this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
-        let NS1 = this.CurMeta.UIChangefn.split(".")[0];
-        let NS2 = this.CurMeta.UIChangefn.split(".")[1];
-        EbOnChangeUIfns[NS1][NS2](this.PropsObj.EbSid, this.PropsObj);
+        if (typeof EbOnChangeUIfns != "undefined" && this.CurMeta.UIChangefn) {
+            let NS1 = this.CurMeta.UIChangefn.split(".")[0];
+            let NS2 = this.CurMeta.UIChangefn.split(".")[1];
+            EbOnChangeUIfns[NS1][NS2](this.PropsObj.EbSid, this.PropsObj);
+        }
         this.PropertyChanged(this.PropsObj, this.CurProp);
     };
 

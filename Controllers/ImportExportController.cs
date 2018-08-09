@@ -28,39 +28,48 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-        public void Export(string _refids)
+        public string Export(string _refids)
         {
             int app_id = 1;
             OrderedDictionary ObjDictionary = new OrderedDictionary();
-            GetApplicationResponse appRes = ServiceClient.Get(new GetApplicationRequest { Id = app_id });
-            AppWrapper AppObj = appRes.AppInfo;
-            AppObj.ObjCollection = new List<EbObject>();
-            string[] refs = _refids.Split(",");
-            foreach (string _refid in refs)
+            try
             {
-                EbObject obj = GetObjfromDB(_refid);
-                obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
-            }
-            ICollection ObjectList = ObjDictionary.Values;
-            foreach (object item in ObjectList)
-            {
-                AppObj.ObjCollection.Add(item as EbObject);
-            }
-            string stream = EbSerializers.Json_Serialize(AppObj);
-            SaveToAppStoreResponse x = ServiceClient.Post(new SaveToAppStoreRequest
-            {
-                Store = new AppStore
+                GetApplicationResponse appRes = ServiceClient.Get(new GetApplicationRequest { Id = app_id });
+                AppWrapper AppObj = appRes.AppInfo;
+                AppObj.ObjCollection = new List<EbObject>();
+                string[] refs = _refids.Split(",");
+                foreach (string _refid in refs)
                 {
-                    Name = AppObj.Name,
-                    Cost = 1000,
-                    Currency = "USD",
-                    Json = stream,
-                    Status = 1,
-                    AppType = 1,
-                    Description = AppObj.Description,
-                    Icon = AppObj.Icon
+                    EbObject obj = GetObjfromDB(_refid);
+                    //obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
                 }
-            });
+                ICollection ObjectList = ObjDictionary.Values;
+                foreach (object item in ObjectList)
+                {
+                    AppObj.ObjCollection.Add(item as EbObject);
+                }
+                string stream = EbSerializers.Json_Serialize(AppObj);
+                SaveToAppStoreResponse x = ServiceClient.Post(new SaveToAppStoreRequest
+                {
+                    Store = new AppStore
+                    {
+                        Name = AppObj.Name,
+                        Cost = 1000,
+                        Currency = "USD",
+                        Json = stream,
+                        Status = 1,
+                        AppType = 1,
+                        Description = AppObj.Description,
+                        Icon = AppObj.Icon
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return "Failed";
+            }
+            return "Success";
         }
 
         public string Import(int Id)
@@ -69,6 +78,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = Id });
+
                 AppWrapper AppObj = resp.Wrapper;
                 List<EbObject> ObjectCollection = AppObj.ObjCollection;
                 CreateApplicationResponse appres = ServiceClient.Post(new CreateApplicationDevRequest
@@ -78,6 +88,7 @@ namespace ExpressBase.Web.Controllers
                     Description = AppObj.Description,
                     AppIcon = AppObj.Icon
                 });
+
                 for (int i = ObjectCollection.Count - 1; i >= 0; i--)
                 {
                     UniqueObjectNameCheckResponse uniqnameresp;
@@ -137,6 +148,16 @@ namespace ExpressBase.Web.Controllers
         {
             var req = HttpContext.Request.Form;
             var y = req;
+        }
+
+        public void Export2(string refids)
+        {
+            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationRequest { Refids = refids });
+        }
+
+        public void Import2(int Id)
+        {
+            ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationRequest { Id = Id });
         }
     }
 }

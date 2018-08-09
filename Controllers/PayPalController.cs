@@ -54,8 +54,13 @@ namespace ExpressBase.Web.Controllers
             });
         }
 
-        public IActionResult ReturnSuccess(string sid, string token)
+        [HttpGet("PayPal/ReturnSuccess/{sid}")]
+        public IActionResult ReturnSuccess(string token)
         {
+            string reqpath = HttpContext.Request.Path;
+            reqpath = reqpath.Trim();
+            string[] urlParts = reqpath.Split('/');
+            string sid = urlParts[urlParts.Length - 1];
             var Res = this.ServiceClient.Post(new PayPalSuccessReturnRequest
             {
                 PaymentId = token,
@@ -64,9 +69,13 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public IActionResult CancelAgreement(string token)
+        [HttpGet("PayPal/CancelAgreement/{sid}")]
+        public IActionResult CancelAgreement(string sid, string token)
         {
-            var Res = this.ServiceClient.Post(new PayPalFailureReturnRequest{});
+            var Res = this.ServiceClient.Post(new PayPalFailureReturnRequest{
+                PaymentId=token,
+                SolutionId=sid
+            });
             return View();
         }
 
@@ -79,6 +88,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult PayPalPayment()
         {
+            int usercount = Convert.ToInt32(this.HttpContext.Request.Form["UserCount"]);
             string sid = this.HttpContext.Request.Form["Sid"];
             string Env = "";
             if (ViewBag.Env == "Development")
@@ -92,7 +102,8 @@ namespace ExpressBase.Web.Controllers
             {
                 BillingMethod = PaymentMethod.paypal,
                 Environment = Env,
-                SolutionId = sid
+                SolutionId = sid,
+                UserCount = usercount
             });
             if (rsp.ApprovalUrl.Length > 0)
                 return Redirect(rsp.ApprovalUrl);

@@ -57,10 +57,10 @@
 
 
         <div class="dev-chat-cont">
-            <div class="eb-chat-head" onclick="getElementById('form-buider-form').focus()">
+            <div class="eb-chat-head" onclick="getElementById('"WebForm1').focus()">
                 <div class="bot-head">&nbsp; Hotel</div><div class="chatclose" id="closediv13" style="visibility: hidden;">✖</div>
             </div>
-            <div id="form-buider-form" eb-type="@_builderType" tabindex="1" class="eb-chatBox-dev">
+            <div id="WebForm1" eb-type="@_builderType" tabindex="1" class="eb-chatBox-dev">
                 @Html.Raw(@ViewBag.html)
                 @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
                 @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
@@ -81,10 +81,11 @@
     @Html.Raw(_toolBox.AllMetas);
     @Html.Raw(_toolBox.JsonToJsObjectFuncs);
     @Html.Raw(_toolBox.TypeRegister);
+    @Html.Raw(_toolBox.EbOnChangeUIfns);
 
     var formBuilderObj = null;
     var objid =$("#objid").val();
-    var FBid = "form-buider-form";
+    var FBid = "WebForm1";
     var editModeFormObj = null;
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";

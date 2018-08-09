@@ -336,17 +336,19 @@
     };
 
     this.CEOnSelectFn = function (obj) {
-        this.CurCEOnSelectFn.bind(obj, this.PGobj.PropsObj)();
+        if (this.CurCEOnSelectFn)
+            this.CurCEOnSelectFn.bind(obj, this.PGobj.PropsObj)();
     };
 
     this.CEOnDeselectFn = function (obj) {
+        if (this.CurCEOndeselectFn)
         this.CurCEOndeselectFn.bind(obj, this.PGobj.PropsObj)();
     };
 
     this.onDragendFn = function (el) {
         $e = $(el);
         $e.find('.close').css("opacity", "0.2");
-        let $sibling = $e.next(); 
+        let $sibling = $e.next();
         let target = $e.parent()[0];
         let idx = $sibling.index() - 1;
         if (target.id !== this.CE_all_ctrlsContId) {// target 2nd column
@@ -697,11 +699,11 @@
         if (SubTypes) {
             $.each(this.CElist, function (i, control) {
                 let type = control.$type.split(",")[0].split(".")[2];
-                let label = control.Name;
-                if (!control.Name)
-                    label = control.EbSid;
-                let $tile = $('<div class="colTile" id="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
-                    + '<span>' + label + '</span>'
+                let _name = control.Name;
+                if (!_name)
+                    _name = control.EbSid;
+                let $tile = $('<div class="colTile" id="' + _name + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
+                    + '<span>' + _name + '</span>'
                     + '<button type="button" title="Remove" class="close"><i class="fa fa-minus-circle"></i></button>'
                     + '</div>');
                 $("#" + this.CEctrlsContId).append($tile);
@@ -796,7 +798,7 @@
             if (this.PGobj.CurProp === "Controls")///////////////////////need CE test and correction
                 obj = this.PropsObj.Controls.GetByName(id);
             else
-                obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { return obj.EbSid === $e.attr("id"); })[0];/////////// optimize
+                obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { obj.EbSid = obj.EbSid || obj.Name; return obj.EbSid === $e.attr("id"); })[0];/////////// optimize
         }
         else if (this.editor === 9 || this.editor === 10 || this.editor === 24 || this.editor === 26) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
@@ -841,7 +843,7 @@
         //let lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
         //let lastItemCount = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
         let lastItemCount = this.getMaxNumberFromItemName($(this.pgCXE_Cont_Slctr + " .CE-body .colTile"));
-        let ShortName = $DD.text() + (lastItemCount + 1);
+        let ShortName = ($DD.text() + (lastItemCount + 1)).replace(/ /g, "");
         let EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
         if (this.PGobj.CurProp === "Controls") {////////////// need CE test and correction
             this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));

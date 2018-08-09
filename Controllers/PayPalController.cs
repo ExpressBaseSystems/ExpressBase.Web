@@ -84,6 +84,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult PayPalPayment()
         {
+            int usercount = Convert.ToInt32(this.HttpContext.Request.Form["UserCount"]);
             string sid = this.HttpContext.Request.Form["Sid"];
             string Env = "";
             if (ViewBag.Env == "Development")
@@ -97,7 +98,8 @@ namespace ExpressBase.Web.Controllers
             {
                 BillingMethod = PaymentMethod.paypal,
                 Environment = Env,
-                SolutionId = sid
+                SolutionId = sid,
+                UserCount = usercount
             });
             if (rsp.ApprovalUrl.Length > 0)
                 return Redirect(rsp.ApprovalUrl);

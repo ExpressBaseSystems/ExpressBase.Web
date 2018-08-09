@@ -257,7 +257,7 @@
                                         <span class="input-group-addon">
                                             <i class="fa fa-user" aria-hidden="true"></i>
                                         </span>
-                                        <input type="number" class="form-control" placeholder="">
+                                        <input type="number" class="form-control" id="no_user" placeholder="">
                                     </div>
                                 </div>
                             </div>
@@ -324,6 +324,7 @@
                                         </p>
                                         <div class="col-md-12 col-lg-12 col-sm-12 pd-0">
                                             <form action="/PayPal/PayPalPayment" method="post">
+												<input type="hidden" name="UserCount" id="user_countForm"/>
                                                 <input type="hidden" value="@ViewBag.SolutionInfo.EsolutionId" name="Sid" />
                                                 <button type="submit" class="btn paypal_btn">PayPal</button>
                                             </form>
@@ -581,5 +582,9 @@
 </div>
 <div class="eb-cropie" id="cropsection"></div>
 <script>
-    var sdb = new SolutionDashBoard(EbConnections,'@ViewBag.SolutionInfo.EsolutionId');
+	var sdb = new SolutionDashBoard(EbConnections, '@ViewBag.SolutionInfo.EsolutionId');
+	$("#no_user").change(function (e) {
+		$("#user_countForm").val(e.target.value);
+
+	});
 </script>

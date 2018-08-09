@@ -44,40 +44,41 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Obj_id = objid;
                 var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
-                var rlist = resultlist.Data;
-                foreach (var element in rlist)
-                {
-                    ViewBag.IsNew = "false";
-                    ViewBag.ObjectName = element.Name;
-                    ViewBag.ObjectDesc = element.Description;
-                    ViewBag.Status = element.Status;
-                    ViewBag.VersionNumber = element.VersionNumber;
-                    ViewBag.ObjType = objtype;
-                    ViewBag.Refid = element.RefId;
-                    ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
-                    ViewBag.Tags = element.Tags;
-                    ViewBag.AppId = element.Apps;
-                    ViewBag.DashboardTiles = element.Dashboard_Tiles;
+                List<EbObjectWrapper> rlist = resultlist.Data;
+                if (rlist.Count > 0)
+                    foreach (var element in rlist)
+                    {
+                        ViewBag.IsNew = "false";
+                        ViewBag.ObjectName = element.Name;
+                        ViewBag.ObjectDesc = element.Description;
+                        ViewBag.Status = element.Status;
+                        ViewBag.VersionNumber = element.VersionNumber;
+                        ViewBag.ObjType = objtype;
+                        ViewBag.Refid = element.RefId;
+                        ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                        ViewBag.Tags = element.Tags;
+                        ViewBag.AppId = element.Apps;
+                        ViewBag.DashboardTiles = element.Dashboard_Tiles;
 
-                    if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-                    {
-                        ViewBag.ReadOnly = true;
-                        dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
-                        ViewBag.dsObj = dsobj;
-                        dsobj.Status = element.Status;
-                        dsobj.VersionNumber = element.VersionNumber;
-                        ViewBag.Workingcopy = element.Wc_All;
+                        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
+                        {
+                            ViewBag.ReadOnly = true;
+                            dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
+                            ViewBag.dsObj = dsobj;
+                            dsobj.Status = element.Status;
+                            dsobj.VersionNumber = element.VersionNumber;
+                            ViewBag.Workingcopy = element.Wc_All;
+                        }
+                        else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
+                        {
+                            ViewBag.ReadOnly = false;
+                            dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
+                            ViewBag.dsObj = dsobj;
+                            dsobj.Status = element.Status;
+                            dsobj.VersionNumber = element.VersionNumber;
+                            ViewBag.Workingcopy = element.Wc_All;
+                        }
                     }
-                    else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
-                    {
-                        ViewBag.ReadOnly = false;
-                        dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
-                        ViewBag.dsObj = dsobj;
-                        dsobj.Status = element.Status;
-                        dsobj.VersionNumber = element.VersionNumber;
-                        ViewBag.Workingcopy = element.Wc_All;
-                    }
-                }
             }
             else
             {

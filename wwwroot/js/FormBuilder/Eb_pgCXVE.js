@@ -797,8 +797,12 @@
         if (this.editor === 7) {
             if (this.PGobj.CurProp === "Controls")///////////////////////need CE test and correction
                 obj = this.PropsObj.Controls.GetByName(id);
-            else
-                obj = this.PGobj.PropsObj[this.PGobj.CurProp].$values.filter(function (obj) { obj.EbSid = obj.EbSid || obj.Name; return obj.EbSid === $e.attr("id"); })[0];/////////// optimize
+            else {
+                obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", id);
+                if (!obj)
+                    obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
+
+            }
         }
         else if (this.editor === 9 || this.editor === 10 || this.editor === 24 || this.editor === 26) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
@@ -806,7 +810,8 @@
         else if (this.editor === 22) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", id);
         }
-
+        if (!obj)
+            console.error("Object " + obj);
         this.CE_PGObj.setObject(obj, AllMetas[type]);
     };
 

@@ -55,8 +55,12 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("PayPal/ReturnSuccess/{sid}")]
-        public IActionResult ReturnSuccess(string sid, string token)
+        public IActionResult ReturnSuccess(string token)
         {
+            string reqpath = HttpContext.Request.Path;
+            reqpath = reqpath.Trim();
+            string[] urlParts = reqpath.Split('/');
+            string sid = urlParts[urlParts.Length - 1];
             var Res = this.ServiceClient.Post(new PayPalSuccessReturnRequest
             {
                 PaymentId = token,

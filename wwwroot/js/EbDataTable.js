@@ -1309,7 +1309,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             visibleChanges = false;
             $.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (i, rgobj) {
                 if (colobj.name === rgobj.name) {
-                    rgobj.bVisible = false;
+                    colobj.bVisible = false;
                     visibleChanges = true;
                 }
             }.bind(this));

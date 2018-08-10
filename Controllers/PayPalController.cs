@@ -41,7 +41,7 @@ namespace ExpressBase.Web.Controllers
         //    return Redirect(PayPalRes.ApprovalUrl);
         //}
         [HttpPost]
-        public void PayPalWebHook(string action, string environment = "sandbox")
+        public void PayPalWebHook(string action)
         {
             var BodyStream = this.HttpContext.Request.Body;
             string content = string.Empty;

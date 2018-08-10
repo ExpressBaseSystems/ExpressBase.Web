@@ -1,6 +1,7 @@
-﻿var LeadManagementObj = function (MC_Mode, C_Info, Center_Info) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
+    this.AccId = AccId;
     this.Mode = MC_Mode;
     this.CustomerInfo = C_Info;
     this.CostCenterInfo = Center_Info;
@@ -27,6 +28,13 @@
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
     this.$PicReceived = $("#selPicReceived");
+    //FOLLOUP
+    this.$MdlFeedBack = $("#mdlFeedBack");
+    this.$FlUpDate = $("#txtFlUpDate");
+    this.$FlUpStatus = $("#txtFlUpStatus");
+    this.$FlUpFolDate = $("#txtFlUpFolDate");
+    this.$FlUpComnt = $("#txaFlUpComnt");
+    this.$FlUpSave = $("#btnFlUpSave");
     //DECLARED DATA
     this.OutDataList = [];
 
@@ -51,10 +59,44 @@
         this.$EnDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$Dob.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
+        //FEEDBACK
+        this.$FlUpDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
+        this.$FlUpFolDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
+
+
         this.$CostCenter.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {            
             this.$CostCenter.append(`<option value='${key}'">${val}</option>`);
         }.bind(this));
+
+        if (this.Mode === 1) {            
+            this.fillCustomerData();
+        }
+    }
+    
+    this.fillCustomerData = function () {
+        this.$CostCenter.val(this.CustomerInfo["firmcode"]);
+        this.$EnDate.val(this.CustomerInfo["trdate"]);
+        this.$Mobile.val(this.CustomerInfo["genurl"]);
+        //this.$Id.val(this.CustomerInfo[""]);
+        this.$Name.val(this.CustomerInfo["name"]);
+        this.$Dob.val(this.CustomerInfo["dob"]);
+        this.$Age.val(this.CustomerInfo["age"]);
+        //this.$Sex.val(this.CustomerInfo[""]);
+        this.$Phone.val(this.CustomerInfo["genphoffice"]);
+        this.$Profession.val(this.CustomerInfo["profession"]);
+        this.$Email.val(this.CustomerInfo["genemail"]);
+        this.$Nri.val(this.CustomerInfo["customertype"]);
+        this.$CrntCity.val(this.CustomerInfo["clcity"]);
+        this.$CrntCountry.val(this.CustomerInfo["clcountry"]);
+        this.$HomeCity.val(this.CustomerInfo["city"]);
+        //this.$HomeDistrict.val(this.CustomerInfo[""]);
+        this.$Service.val(this.CustomerInfo["typeofcustomer"]);
+        //this.$LeadOwner.val(this.CustomerInfo[""]);
+        this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
+        this.$SubCategory.val(this.CustomerInfo["subcategory"]);
+        this.$Consultation.val(this.CustomerInfo["consultation"]);
+        this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
     }
 
     this.onClickBtnSave = function () {

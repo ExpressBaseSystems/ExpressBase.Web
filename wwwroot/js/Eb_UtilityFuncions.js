@@ -1,30 +1,37 @@
 ﻿function slideRight(leftDiv, rightDiv) {
+    let delay = 300;
+    let dur = delay / 1000;
     $stickBtn = $("<div id='stickBtnR' class='stickBtn' onclick=\"slideRight('" + leftDiv + "', '" + rightDiv + "')\">PropertyBox</div>");
-    slide("right", leftDiv, rightDiv, $stickBtn);
+    let $leftDiv = $(leftDiv).css("animation-duration", dur + "s");
+    let $rightDiv = $(rightDiv).css("animation-duration", dur + "s");
+    slide("right", $leftDiv, $rightDiv, $stickBtn, delay);
 };
 
 function slideLeft(leftDiv, rightDiv) {
+    let delay = 300;
+    let dur = delay / 1000;
     $stickBtn = $("<div id='stickBtnL' class='stickBtn' onclick=\"slideLeft('" + leftDiv + "', '" + rightDiv + "')\">ToolBox</div>");
-    slide("left", leftDiv, rightDiv, $stickBtn);
+    let $leftDiv = $(leftDiv).css("animation-duration", dur + "s");
+    let $rightDiv = $(rightDiv).css("animation-duration", dur + "s");
+    slide("left", $leftDiv, $rightDiv, $stickBtn, delay);
 };
 
-function slide(dir, leftDiv, rightDiv, $stickBtn) {
-    var $leftDiv = $(leftDiv);
-    var $rightDiv = $(rightDiv);
-
-    var lW = parseFloat($leftDiv.css("width"));
-    var rW = parseFloat($rightDiv.css("width"));
+function slide(dir, $leftDiv, $rightDiv, $stickBtn, delay) {
+    let lW = $leftDiv.width() / $leftDiv.parent().width() * 100;
+    let rW = $rightDiv.width() / $rightDiv.parent().width() * 100;
 
     if ($rightDiv.css("display") !== "none") {
         $rightDiv.data("width", rW);
-        $rightDiv.animate({ width: 0, opacity: 0 }, 300);
-        $leftDiv.animate({ width: lW + rW + "px" }, 300);
+        $rightDiv.css("margin-left", "-20px");
+        $rightDiv.animate({ opacity: 0, marginLeft: "-" + rW + "%" }, delay);
+
+        $leftDiv.animate({ width: lW + rW + "%" }, delay);
 
         setTimeout(function () {
             $(document.body).append($stickBtn.show());
             $stickBtn.css("top", (198 + ($stickBtn.width() / 2)) + "px").css(dir, (0 - ($stickBtn.width() / 2)) + "px");
             $rightDiv.hide();
-        }, 301);
+        }, delay + 1);
     }
     else {
         rW = $rightDiv.data("width");
@@ -34,8 +41,9 @@ function slide(dir, leftDiv, rightDiv, $stickBtn) {
             $("#stickBtnL").remove();
 
         $rightDiv.show();
-        $rightDiv.animate({ width: rW + "px", opacity: 1}, 300);
-        $leftDiv.animate({ width: (lW - rW) + "px" }, 300);
+        $leftDiv.css("margin-left", "-20px");
+        $leftDiv.animate({ width: (lW - rW) + "%", marginLeft: 0}, delay);
+        $rightDiv.animate({ opacity: 1, marginLeft: 0, marginLeft: 0 }, delay);
     }
 };
 

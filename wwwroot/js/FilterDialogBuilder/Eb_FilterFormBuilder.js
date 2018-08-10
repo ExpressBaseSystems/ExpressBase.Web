@@ -31,7 +31,7 @@
     this.movingObj = {};
 
     this.controlOnFocus = function (e) {
-        if (e.target.id === "form-buider-form") {
+        if (e.target.id === this.formid) {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
             return;
@@ -361,7 +361,7 @@
             removeOnSpill: false,
             copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
             copySortSource: true,
-            //mirrorContainer: document.getElementById('form-buider-form'),
+            //mirrorContainer: document.getElementById(this.formid),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });

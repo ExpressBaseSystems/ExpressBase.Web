@@ -7,10 +7,9 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <link href="~/css/LeadManagement.css" rel="stylesheet" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
-
-@await Component.InvokeAsync("PageHeaderCommon")
-
 
 <div class="row">
     <div class="lm-form-body">
@@ -27,10 +26,10 @@
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>Cost Center</label>
-                                    <select class="form-control">
-                                        <option>HOC Kochi</option>
-                                        <option>HOC Kozikode</option>
-                                        <option>HOC Trivandrum</option>
+                                    <select id="selCostCenter" class="form-control">
+                                        <option value="0">HOC Kochi</option>
+                                        <option value="1">HOC Kozikode</option>
+                                        <option value="2">HOC Trivandrum</option>
                                     </select>
                                 </div>
                             </div>
@@ -38,51 +37,51 @@
                                 <div class="lm-form-group">
                                     <label>EN Date</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input id="txtEnDate" type="text" class="form-control">
+                                        <span class="input-group-addon" onclick="$('#txtEnDate').focusin();"><i class="fa fa-calendar"></i></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>Mobile</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtMobile" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>ID</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtId" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="lm-form-inline">                            
+                        <div class="lm-form-inline">
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>Name</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtName" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>DOB</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input id="txtDob" type="text" class="form-control">
+                                        <span class="input-group-addon" onclick="$('#txtDob').focusin();"><i class="fa fa-calendar"></i></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>Age</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtAge" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>Sex</label>
-                                    <select class="form-control">
+                                    <select id="selSex" class="form-control">
                                         <option>Male</option>
                                         <option>Female</option>
                                         <option>Other</option>
@@ -95,27 +94,27 @@
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtPhone" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>Profession</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtProfession" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>Email</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtEmail" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="lm-form-group">
                                     <label>NRI</label>
-                                    <select class="form-control">
-                                        <option>No</option>
-                                        <option>Yes</option>
+                                    <select id="selNri" class="form-control">
+                                        <option value="0">No</option>
+                                        <option value="1">Yes</option>
                                     </select>
                                 </div>
                             </div>
@@ -133,13 +132,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>City</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtCrntCity" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Country</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtCrntCountry" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -150,13 +149,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>City</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtHomeCity" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>District</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtHomeDistrict" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -166,13 +165,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Service</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtService" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Lead Owner</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtLeadOwner" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -180,31 +179,33 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Source Category</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtSourceCategory" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Sub Category</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtSubCategory" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
                         <div class="lm-form-inline">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Consultation</label>
-                                    <input type="text" class="form-control">
-                                </div>
+                                <label>Consultation</label>
+                                <select id="selConsultation" class="form-control">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Pictures Recevied</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>                           
+                                <label>Pictures Recevied</label>
+                                <select id="selPicReceived" class="form-control">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>                   
+                    </div>
                 </div>
                 <div>
                     <div class="lm-form-sec-heading">
@@ -318,9 +319,12 @@
 </div>
 
 
-
-
+@{
+    @using Newtonsoft.Json;
+    var CInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CustomerData));
+    var CenterInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CostCenter));    
+}
 
 <script>
-    var leadObject = new LeadManagementObj();    
+    var leadObject = new LeadManagementObj(@ViewBag.MC_Mode, @CInfo, @CenterInfo);
 </script>

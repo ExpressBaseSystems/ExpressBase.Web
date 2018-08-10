@@ -74,6 +74,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.NumericIndex = [];
     this.inline = false;
     this.rowgroupCols = []
+    this.rowgroupFilter = [];
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -1362,6 +1363,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var colobj = {};
         var groupString = "";
         var groupArray = [];
+        this.rowgroupFilter = [];
         $.each(this.NumericIndex, function (k, num) {
             if (!(num in colobj)) {
                 colobj[num] = new Array();
@@ -1416,12 +1418,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.each(this.RGIndex, function (j, dt) {
             var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });
             var type = tempobj[0].Type;
-            if (type === 5 || type === 6)
+            if (type === 5 || type === 6) {
                 groupArray[j] = this.renderDateformat(groupArray[j], "/");
+            }
             if (tempobj[0].LinkRefId !== null)
-                tempstr += tempobj[0].sTitle + `: <b><a href="#" oncontextmenu="return false" class="tablelink_${this.tableId}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
+                tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'><a href="#" oncontextmenu="return false" class="tablelink_${this.tableId}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
             else
-                tempstr += tempobj[0].sTitle + `: <b>${groupArray[j]}</b>`;
+                tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'>${groupArray[j]}</b>`;
 
             if (typeof this.RGIndex[j + 1] !== "undefined")
                 tempstr += ",";
@@ -1440,12 +1443,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });
         var type = tempobj[0].Type;
-        if (type === 5 || type === 6)
-            groupString = this.renderDateformat(groupString, "/");
+        if (type === 5 || type === 6) {
+            groupArray[j] = this.renderDateformat(groupArray[j], "/");
+        }
         if (tempobj[0].LinkRefId !== null)
-            var tempstr = tempobj[0].sTitle + `: <b><a href="#" oncontextmenu="return false" class="tablelink_${this.tableId}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
+            var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink_${this.tableId}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
         else
-            var tempstr = tempobj[0].sTitle + `: <b>${groupString}</b>`;
+            var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
             str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
         return str;
     }.bind(this);
@@ -1548,7 +1552,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var colobj = {};
         var groupString = "";
         var groupcount = 0;
-
+        this.rowgroupFilter = [];
         $.each(this.NumericIndex, function (k, num) {
             if (!(num in colobj)) {
                 colobj[num] = new Array();
@@ -2446,6 +2450,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.link2NewTable = function (e) {
+        this.rowgroupFilter = [];
         var rows = this.Api.rows(idx).nodes();
         var cData;
         this.isContextual = true;
@@ -2455,8 +2460,32 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             cData = $(e.target).text();
         this.linkDV = $(e.target).closest("a").attr("data-link");
         var idx = this.Api.row($(e.target).parent().parent()).index();
-        this.rowData = this.Api.row(idx).data();
+        if (typeof (idx) !== "undefined")
+            this.rowData = this.Api.row(idx).data();
+        else
+            this.rowData = null;
+
         this.filterValues = this.getFilterValues("link");
+
+        if ($(e.target).parent("b").attr("data-colname") !== undefined) {
+
+            this.getRowGroupFilter($(e.target).parent("b"));
+            if (this.EbObject.tempRowgrouping.$type.indexOf("SingleLevelRowGroup") !== -1) {
+                $.each($(e.target).parent("b").siblings("b"), function (i, elem) {
+                    this.getRowGroupFilter($(elem));
+                }.bind(this));
+            }
+            else {
+                var $elem = $(e.target).parents().closest(".group");
+                let count = $elem.attr("group");
+                for (var i = count-1; i >= 0; i--) {
+                    $elem = $(e.target).parents().closest(".group").prevAll().closest(".group[group=" + i + "]").last();
+                    this.getRowGroupFilter($elem.children().find("b"));
+                }
+            }
+
+            this.filterValues = this.filterValues.concat(this.rowgroupFilter);
+        }
         if (this.login === "uc")
             dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
         else {
@@ -2467,6 +2496,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     };
 
+    this.getRowGroupFilter = function ($elem) {
+        let name = $elem.attr("data-colname");
+        let type = parseInt($elem.attr("data-coltype"));
+        let val = $elem.attr("data-data");
+        if (type === 5 || type === 6)
+            val = val.split("/").join('-');
+        this.rowgroupFilter.push(new fltr_obj(type, name, val));  
+
+
+    }
 
     this.call2newTable = function (e,tid) {
         this.tabNum++;

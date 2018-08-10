@@ -43,8 +43,10 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public void PayPalWebHook(string action)
         {
+            Console.WriteLine("WEBHOOK HANDLER: Received Webhook Request Successfully");
             var BodyStream = this.HttpContext.Request.Body;
             string content = string.Empty;
+            Console.WriteLine("WEBHOOK HANDLER: Webhook Request Body: \n\n" + content);
             using (var reader = new StreamReader(BodyStream))
                 content = reader.ReadToEnd();
             var Response = this.ServiceClient.Post(new PayPalWebHookHandler

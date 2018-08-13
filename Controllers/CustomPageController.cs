@@ -33,6 +33,7 @@ namespace ExpressBase.Web.Controllers
 		//	ViewBag.AccId = ac;
 		//	ViewBag.CustomerData = fr.CustomerDataDict;
 		//	ViewBag.CostCenter = fr.CostCenterDict;
+		//	ViewBag.FeedbackList = fr.FeedbackList;
 
 		//	return View();
 		//}
@@ -42,5 +43,7 @@ namespace ExpressBase.Web.Controllers
 		//	SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode });
 		//	return res.Status;
 		//}
+
+
 	}
 }

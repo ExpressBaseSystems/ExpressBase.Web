@@ -10,7 +10,8 @@
 <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
-
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 
 <div class="form-cont">
     <div class="container" style="padding: 60px 0px 10px 0px;">
@@ -213,14 +214,13 @@
             </div>
             <div id="menu1" class="tab-pane fade" style="padding-top: 25px;">
                 <div style="text-align:right;">
-                    <button id="btnNewFeedBack" data-toggle="modal" data-target="#mdlFeedBack">New</button>
-                </div>
-                <h3>Follow-up Details</h3>
-                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <button id="btnNewFeedBack" class="btn btn-primary" data-toggle="modal" data-target="#mdlFeedBack">New</button>
+                </div>                
+                <div id="divFdbk"></div>
             </div>
             <div id="menu2" class="tab-pane fade" style="padding-top: 25px;">
                 <div style="text-align:right;">
-                    <button id="btnNewGraft" data-toggle="modal" data-target="#mdlGraft">New</button>
+                    <button id="btnNewGraft" class="btn btn-primary" data-toggle="modal" data-target="#mdlGraft">New</button>
                 </div>
                 <h3>Graft Details</h3>
                 <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
@@ -243,7 +243,7 @@
 
 
 <!-- Add Followup Details Modal -->
-<div class="modal fade" id="mdlFeedBack" role="dialog">
+<div class="modal fade" id="mdlFeedBack" role="dialog" data-id="">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -384,8 +384,11 @@
     @using Newtonsoft.Json;
     var CInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CustomerData));
     var CenterInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CostCenter));
+
+    var FeedbackList = Html.Raw(JsonConvert.SerializeObject(ViewBag.FeedbackList));
+
 }
 
 <script>
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo);
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @FeedbackList);
 </script>

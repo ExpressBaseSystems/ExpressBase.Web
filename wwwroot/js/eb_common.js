@@ -254,3 +254,13 @@ function gettypefromString(str) {
     else if (str == "Date")
         return "5";
 }
+
+//Object.defineProperty(window, "store", {
+//    get: function () {
+//        let t = fromConsole();
+//        return true;
+//    },
+//    set: function (val) {
+//        _z = val;
+//    }
+//});

@@ -10,7 +10,7 @@
         var parentId = $("#" + _name + ".Eb-ctrlContainer").parent().attr("id");
         var ele = this.GetByName(_name);
         console.log("parentId" + parentId);
-        if (parentId === "WebForm1") {
+        if ($(`#${parentId}`).attr("eb-form")) {
             var idx = this.$values.indexOf(ele);
             if (idx === -1) {
                 console.error("element not found in collection");
@@ -28,11 +28,11 @@
         var parentId = $("#" + newObject.EbSid).parent().attr("id");
         if (parentId === undefined)
             this.$values.push(newObject);
-        else if (parentId !== "WebForm1") {
+        else if (!$(`#${parentId}`).attr("eb-form")) {
             var parent = this.GetByName(parentId);
             parent.Controls.$values.push(newObject);
         }
-        else //parentId === "WebForm1"
+        else //parentId is root form id
             this.$values.push(newObject);
     };
 
@@ -42,7 +42,7 @@
 
     this.InsertAt = function (index, newObject) {
         var parentId = $("#" + newObject.EbSid).parent().attr("id");
-        if (parentId === "WebForm1") {
+        if ($(`#${parentId}`).attr("eb-form")) {
             this.$values.splice(index, 0, newObject);
             return this.$values.length;
         }

@@ -18,6 +18,11 @@ using ServiceStack.Redis;
 using Microsoft.AspNetCore.Mvc;
 using ExpressBase.Common.ServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
+using System.Net;
+using System.IO;
+using System.Net.Http;
+using System.Web;
+
 
 namespace ExpressBase.Web.Controllers
 {
@@ -35,21 +40,44 @@ namespace ExpressBase.Web.Controllers
 
         //    return Redirect(PayPalRes.ApprovalUrl);
         //}
+        [HttpPost]
+        public void PayPalWebHook(string action)
+        {
+            Console.WriteLine("WEBHOOK HANDLER: Received Webhook Request Successfully");
+            var BodyStream = this.HttpContext.Request.Body;
+            string content = string.Empty;
+            Console.WriteLine("WEBHOOK HANDLER: Webhook Request Body: \n\n" + content);
+            using (var reader = new StreamReader(BodyStream))
+                content = reader.ReadToEnd();
+            var Response = this.ServiceClient.Post(new PayPalWebHookHandler
+            {
+                JsonBody = content,
+                Action = action
+            });
+        }
 
+        [HttpGet("PayPal/ReturnSuccess/{sid}")]
         public IActionResult ReturnSuccess(string token)
         {
+            string reqpath = HttpContext.Request.Path;
+            reqpath = reqpath.Trim();
+            string[] urlParts = reqpath.Split('/');
+            string sid = urlParts[urlParts.Length - 1];
             var Res = this.ServiceClient.Post(new PayPalSuccessReturnRequest
             {
                 PaymentId = token,
-                SolutionId = this.HttpContext.Items["Sid"].ToString()
+                SolutionId = sid
             });
-            Console.WriteLine("LOG : this.HttpContext.Items[\"Sid\"] : " + this.HttpContext.Items["Sid"].ToString());
             return View();
         }
 
-        public IActionResult CancelAgreement(string token)
+        [HttpGet("PayPal/CancelAgreement/{sid}")]
+        public IActionResult CancelAgreement(string sid, string token)
         {
-            var Res = this.ServiceClient.Post(new PayPalFailureReturnRequest{});
+            var Res = this.ServiceClient.Post(new PayPalFailureReturnRequest{
+                PaymentId=token,
+                SolutionId=sid
+            });
             return View();
         }
 
@@ -62,8 +90,8 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult PayPalPayment()
         {
+            int usercount = Convert.ToInt32(this.HttpContext.Request.Form["UserCount"]);
             string sid = this.HttpContext.Request.Form["Sid"];
-            this.HttpContext.Items["Sid"] = sid;
             string Env = "";
             if (ViewBag.Env == "Development")
                 Env = "https://myaccount.eb-test.info";
@@ -76,7 +104,8 @@ namespace ExpressBase.Web.Controllers
             {
                 BillingMethod = PaymentMethod.paypal,
                 Environment = Env,
-                SolutionId = sid
+                SolutionId = sid,
+                UserCount = usercount
             });
             if (rsp.ApprovalUrl.Length > 0)
                 return Redirect(rsp.ApprovalUrl);

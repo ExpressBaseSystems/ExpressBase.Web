@@ -292,6 +292,9 @@ div.dataTables_wrapper div.dataTables_processing {
 .even:hover {
     background-color: #f3f3f3 !important;
 }
+table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
+    background-color: unset !important;
+}
 
 .objlist {
     width: 150px;
@@ -490,4 +493,7 @@ table.dataTable tbody td.dt-body-right {
 
 .group-sum{
     background-color:lightgray;
+}
+table.dataTable tr.group td {
+    font-weight: unset !important;
 }

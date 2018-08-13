@@ -74,6 +74,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.NumericIndex = [];
     this.inline = false;
     this.rowgroupCols = []
+    this.rowgroupFilter = [];
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -158,8 +159,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
 
         this.EbObject.tempRowgrouping = {};
-        if (this.EbObject.RowGroupCollection.$values.length > 0)
-            this.EbObject.tempRowgrouping = this.EbObject.RowGroupCollection.$values[0];
 
         if ($(".filterCont #filterBox").children().not("button").length == 0) {
             this.FD = false;
@@ -232,6 +231,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else if (Pname === "RowGroupCollection") {
             this.EbObject.tempRowgrouping = {};
+            this.rowgroupCols = [];
         }
     }.bind(this);
 
@@ -310,10 +310,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //hard coding
         this.orderColl = [];
         if (jQuery.isEmptyObject(this.EbObject.tempRowgrouping)) {
-            if (this.EbObject.RowGroupCollection.$values.length > 0) {
-                this.EbObject.tempRowgrouping = this.EbObject.RowGroupCollection.$values[0];
-                this.visibilityCheck();
-            }
+            $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+                if (obj.RowGrouping.$values.length > 0) {
+                    this.EbObject.tempRowgrouping = obj;
+                    this.visibilityCheck();
+                    return false;
+                }
+            }.bind(this));
         }
         else
             this.visibilityCheck();
@@ -852,6 +855,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.getFooterFromSettingsTbl = function () {
         var ftr_part = "";
+        $.each(this.rowgroupCols, function (i, col) {
+            if (col.bVisible)
+                ftr_part += "<th></th>";
+            else
+                ftr_part += "<th style=\"display:none;\"></th>";
+        });
         $.each(this.extraCol, function (i, col) {
             if (col.bVisible)
                 ftr_part += "<th></th>";
@@ -1274,7 +1283,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.rowGroupHandler = function (e) {
-        let name = $(e.target).text().trim();
+        let name = $(e.target).val().trim();
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             if (obj.Name === name) {
                 this.EbObject.tempRowgrouping = obj;
@@ -1301,7 +1310,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             visibleChanges = false;
             $.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (i, rgobj) {
                 if (colobj.name === rgobj.name) {
-                    rgobj.bVisible = false;
+                    colobj.bVisible = false;
                     visibleChanges = true;
                 }
             }.bind(this));
@@ -1322,19 +1331,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.doRowgrouping = function () {
         var rows = this.Api.rows().nodes();
         var count = this.Api.columns()[0].length;
-        $(rows).eq(0).before( `<tr class='group-All_${this.tableId}'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td></tr>`);
-        $(`.group-All_${this.tableId}`).append(`<td  colspan="${count}"><div class="dropdown" id="rowgroupDD_${this.tableId}" style="display:inline-block;">
-                <button class="btn btn-primary dropdown-toggle" id="rowgroupDDbtn_${this.tableId}" type="button" data-toggle="dropdown"><span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="rowgroupDDbtn_${this.tableId}"></ul>
-            </div> All Groups</td>`);
+        $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td></tr>`);
+        $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" style="display:inline-block;"> </select></td>`);
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             if (obj.RowGrouping.$values.length > 0) {
-                $(`#rowgroupDD_${this.tableId} ul`).append(`<li role="presentation">${obj.Name.trim()}</li>`);
+                $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.Name.trim()}</option>`);
             }
         }.bind(this));
 
-        $(`#rowgroupDD_${this.tableId} ul li`).off("click").on("click", this.rowGroupHandler.bind(this));
-        $(`#rowgroupDDbtn_${this.tableId}`).text(this.EbObject.tempRowgrouping.Name.trim());
+        $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
+        $(`#rowgroupDD_${this.tableId} [value=${this.EbObject.tempRowgrouping.Name.trim()}]`).attr("selected", "selected");
 
         if (this.EbObject.tempRowgrouping.$type.indexOf("MultipleLevelRowGroup") !== -1)
             this.multiplelevelRowgrouping();
@@ -1356,6 +1362,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var last = null;
         var colobj = {};
         var groupString = "";
+        var groupArray = [];
+        this.rowgroupFilter = [];
         $.each(this.NumericIndex, function (k, num) {
             if (!(num in colobj)) {
                 colobj[num] = new Array();
@@ -1364,21 +1372,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $.each(rowsdata, function (i, _dataArray) {
             groupString = "";
+            groupArray = []
             $.each(index, function (j, dt) {
-                var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });
-                groupString += tempobj[0].name + ":" + _dataArray[dt];
+                groupArray.push((_dataArray[dt].trim() === "") ? "(Blank)" : _dataArray[dt].trim());
+                groupString += (_dataArray[dt].trim() === "") ? "(Blank)" : _dataArray[dt].trim();
                 if (typeof index[j + 1] !== "undefined")
                     groupString += ",";
             }.bind(this));
 
             if (last !== groupString) {
                 if (last === null || Object.keys(colobj).length === 0)
-                    $(rows).eq(i).before(this.getGroupRow(count, groupString,0));
+                    $(rows).eq(i).before(this.getGroupRowSingle(count, groupArray));
                 else {
                     var rowstring = this.getSubRow(colobj, groupString, count);
                     $(rows).eq(i).before(rowstring);
-                    //$(rows).eq(i).before("<tr class='group'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>");
-                    $(rows).eq(i).before(this.getGroupRow(count, groupString,0));
+                    $(rows).eq(i).before(this.getGroupRowSingle(count, groupArray));
                 }
                 last = groupString;
                 $.each(colobj, function (key, val) {
@@ -1398,21 +1406,51 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var rowstring = this.getSubRow(colobj, groupString, count);
             $(rows).eq(lastrow).after(rowstring);
         }
+
+        var ct = $(".group[group=0]").length;
+        $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);
+        this.getRowsCount(count, "single");
     }
 
-    this.getGroupRow = function (count, groupString) {
-        var str = "<tr class='group'><td> &nbsp;</td>";
-        $.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (k, obj) {           
-            str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>";
-        });
+    this.getGroupRowSingle = function (count, groupArray) {
+        var str = "<tr class='group' group='0'><td> &nbsp;</td>";
+        var tempstr = "";
+        $.each(this.RGIndex, function (j, dt) {
+            var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });
+            var type = tempobj[0].Type;
+            if (type === 5 || type === 6) {
+                groupArray[j] = this.renderDateformat(groupArray[j], "/");
+            }
+            if (tempobj[0].LinkRefId !== null)
+                tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'><a href="#" oncontextmenu="return false" class="tablelink_${this.tableId}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
+            else
+                tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'>${groupArray[j]}</b>`;
+
+            if (typeof this.RGIndex[j + 1] !== "undefined")
+                tempstr += ",";
+        }.bind(this));
+
+        //$.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (k, obj) {           
+        str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
+        //});
         return str;
     }.bind(this);
 
-    this.getGroupRow = function (count, groupString, rowgroup) {
+    this.getGroupRow = function (count, groupString, rowgroup, dt) {
         var str = "<tr class='group' group='" + rowgroup +"'>";
         for (var i = 0; i <=rowgroup; i++)
             str += "<td> &nbsp;</td>";
-        str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>";
+
+        var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });
+        var type = tempobj[0].Type;
+        if (type === 5 || type === 6) {
+            groupArray[j] = this.renderDateformat(groupArray[j], "/");
+        }
+        if (tempobj[0].LinkRefId !== null)
+            var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink_${this.tableId}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
+        else
+            var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
+            str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
         return str;
     }.bind(this);
 
@@ -1429,9 +1467,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
         $.each(this.EbObject.Columns.$values, function (k, obj) {
             if (obj.bVisible) {
-                if (Object.keys(colobj).contains(k.toString())) {
+                if (Object.keys(colobj).contains(k.toString()) && obj.Aggregate) {
                     var val = colobj[k];
-                    str += "<td class='dt-body-right'>" + getSum(val)+"</td>";// + "," + getAverage(val).toFixed(2)+
+                    if (val.length === 1)
+                        val.push("0");
+                    str += "<td class='dt-body-right'>" + getSum(val).toFixed(obj.DecimalPlaces)+"</td>";// + "," + getAverage(val).toFixed(2)+
                 }
                 else
                     str += "<td>&nbsp;</td>"; 
@@ -1441,21 +1481,28 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.collapseAllGroup = function (e) {
-        var $elems = $(e.target).parents().closest(".group-All").nextAll("[role=row]");
-        var $target = $(e.target);
-        if ($target.is("td"))
-            $target = $target.children("I");
-        if ($target.hasClass("fa-plus-square-o")) {
-            $elems.show();
-            this.collapseRelated($target, "show");
-            $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
+        if (!$(e.target).is("select")) {
+            var $elems = $(e.target).parents().closest(".group-All").nextAll("[role=row]");
+            var $target = $(e.target);
+            if ($target.is("td")) {
+                //$target = $target.children("I");
+                if ($target.children().is("I"))
+                    $target = $target.children("I");
+                else if ($target.siblings().children().is("I"))
+                    $target = $target.siblings().children("I");
+            }
+            if ($target.hasClass("fa-plus-square-o")) {
+                $elems.show();
+                this.collapseRelated($target, "show");
+                $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
+            }
+            else {
+                $elems.hide();
+                this.collapseRelated($target, "hide");
+                $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
+            }
+            this.Api.columns.adjust();
         }
-        else {
-            $elems.hide();
-            this.collapseRelated($target, "hide");
-            $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
-        }
-        this.Api.columns.adjust();
     }.bind(this);
 
     this.collapseGroup = function (e) {
@@ -1504,6 +1551,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var last = null;
         var colobj = {};
         var groupString = "";
+        var groupcount = 0;
+        this.rowgroupFilter = [];
         $.each(this.NumericIndex, function (k, num) {
             if (!(num in colobj)) {
                 colobj[num] = new Array();
@@ -1511,19 +1560,27 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
         
         $.each(index, function (j, dt) {
-            last = null;
-            var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });
-            $.each(rowsdata, function (i, _dataArray) {     
-                var te = (_dataArray[dt].trim() === "") ? "(Blank)" : _dataArray[dt];
-                groupString = tempobj[0].name + ": " + te;
+            var last = null;
+            var $parent = null;
+            var $count = 0;
+            //var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });//tempobj[0].sTitle + " : " +
+            $.each(rowsdata, function (i, _dataArray) {
+                
+                var te = (_dataArray[dt].trim() === "") ? "(Blank)" : _dataArray[dt].trim();
+                groupString =  te;
+
                 if (last !== groupString) {
-                    if (last === null || Object.keys(colobj).length === 0)
-                        $(rows).eq(i).before(this.getGroupRow(count, groupString, j));
+                    if (last === null || Object.keys(colobj).length === 0) {
+                        var groupstr = this.getGroupRow(count, groupString, j, dt);
+                        $(rows).eq(i).before(groupstr);
+                        $count++;
+                        $parent = $(groupstr);
+                    }
                     else {
+                        $parent
                         var rowstring = this.getSubRow(colobj, groupString, count, j);
                         $(rows).eq(i-1).after(rowstring);
-                        //$(rows).eq(i).before("<tr class='group'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + groupString + "</td></tr>");
-                        $(rows).eq(i).before(this.getGroupRow(count, groupString, j));
+                        $(rows).eq(i).before(this.getGroupRow(count, groupString, j, dt));
                     }
                     last = groupString;
                     $.each(colobj, function (key, val) {
@@ -1535,6 +1592,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     $.each(colobj, function (key, val) {
                         colobj[key].push(_dataArray[key]);
                     });
+                    $count++;
                 }
                 lastrow = i;
             }.bind(this));
@@ -1545,8 +1603,36 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }            
 
         }.bind(this));
+
+        var ct = $(".group[group=0]").length;
+        $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(`All Groups (${ct}) - `);
+        this.getRowsCount(count, "multiple");
     }
 
+    this.getRowsCount = function (count, type) {
+        let rows = $("#" + this.tableId + " tbody tr.group[group=0]");
+        var j = 0;
+        this.recursiveRowCount(rows, j, count,type);
+    }
+
+    this.recursiveRowCount = function (rows, j, count, type) {
+        $.each(rows, function (i, elem) {
+            if (typeof (this.RGIndex[j + 1]) === "undefined")
+                $(elem).children("td[colspan=" + count + "]").children("b").last().append( " (" + $(elem).nextUntil("[group=" + j + "]").length + ")");
+            else {
+                if (type === "single")
+                    $(elem).children("td[colspan=" + count + "]").children("b").last().append( " (" + $(elem).nextUntil("[group=" + j + "]").length + ")");
+                else
+                    $(elem).children("td[colspan=" + count + "]").children("b").last().append( " (" + $(elem).nextUntil(".group[group=" + (j) + "]").filter(".group").length + ")");
+                
+            }
+        }.bind(this));
+        if (typeof (this.RGIndex[j + 1]) !== "undefined" && type !== "single") {
+            var rowsarray = $("#" + this.tableId + " tbody tr.group[group=" + (j + 1) + "]");
+            this.recursiveRowCount(rowsarray, (j + 1), count, type);
+        }       
+    }
+        
     this.doSerial = function () {
         var tempobj = $.grep(this.extraCol, function (obj) {  return obj.name === "serial"});
         var index = this.Api.columns(tempobj[0].name + ':name').indexes()[0]
@@ -2364,6 +2450,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.link2NewTable = function (e) {
+        this.rowgroupFilter = [];
         var rows = this.Api.rows(idx).nodes();
         var cData;
         this.isContextual = true;
@@ -2373,8 +2460,32 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             cData = $(e.target).text();
         this.linkDV = $(e.target).closest("a").attr("data-link");
         var idx = this.Api.row($(e.target).parent().parent()).index();
-        this.rowData = this.Api.row(idx).data();
+        if (typeof (idx) !== "undefined")
+            this.rowData = this.Api.row(idx).data();
+        else
+            this.rowData = null;
+
         this.filterValues = this.getFilterValues("link");
+
+        if ($(e.target).parent("b").attr("data-colname") !== undefined) {
+
+            this.getRowGroupFilter($(e.target).parent("b"));
+            if (this.EbObject.tempRowgrouping.$type.indexOf("SingleLevelRowGroup") !== -1) {
+                $.each($(e.target).parent("b").siblings("b"), function (i, elem) {
+                    this.getRowGroupFilter($(elem));
+                }.bind(this));
+            }
+            else {
+                var $elem = $(e.target).parents().closest(".group");
+                let count = $elem.attr("group");
+                for (var i = count-1; i >= 0; i--) {
+                    $elem = $(e.target).parents().closest(".group").prevAll().closest(".group[group=" + i + "]").last();
+                    this.getRowGroupFilter($elem.children().find("b"));
+                }
+            }
+
+            this.filterValues = this.filterValues.concat(this.rowgroupFilter);
+        }
         if (this.login === "uc")
             dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
         else {
@@ -2385,6 +2496,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     };
 
+    this.getRowGroupFilter = function ($elem) {
+        let name = $elem.attr("data-colname");
+        let type = parseInt($elem.attr("data-coltype"));
+        let val = $elem.attr("data-data");
+        if (type === 5 || type === 6)
+            val = val.split("/").join('-');
+        this.rowgroupFilter.push(new fltr_obj(type, name, val));  
+
+
+    }
 
     this.call2newTable = function (e,tid) {
         this.tabNum++;

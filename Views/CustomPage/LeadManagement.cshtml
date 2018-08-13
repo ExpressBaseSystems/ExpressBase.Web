@@ -7,125 +7,127 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <link href="~/css/LeadManagement.css" rel="stylesheet" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
 
-@await Component.InvokeAsync("PageHeaderCommon")
 
-
-<div class="row">
-    <div class="lm-form-body">
-        <div class="row form-cont" style="margin: 0px;">
-            <div class="col-md-8">
+<div class="form-cont">
+    <div class="container" style="padding: 60px 0px 10px 0px;">
+        <div class="lm-form-inline">
+            <div class="col-md-10" style="padding-left:0px;">
                 <div class="lm-form-inline">
-                    <div class="col-md-10">
-                        <div class="lm-form-inline">
-                            <div class="lm-form-sec-heading">
-                                Basic Details
-                            </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>Cost Center</label>
+                            <select id="selCostCenter" class="form-control"></select>
                         </div>
-                        <div class="lm-form-inline">
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>Cost Center</label>
-                                    <select class="form-control">
-                                        <option>HOC Kochi</option>
-                                        <option>HOC Kozikode</option>
-                                        <option>HOC Trivandrum</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>EN Date</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>Mobile</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>ID</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="lm-form-inline">                            
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>Name</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>DOB</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control">
-                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>Age</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>Sex</label>
-                                    <select class="form-control">
-                                        <option>Male</option>
-                                        <option>Female</option>
-                                        <option>Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="lm-form-inline">
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>Phone</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>Profession</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>Email</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="lm-form-group">
-                                    <label>NRI</label>
-                                    <select class="form-control">
-                                        <option>No</option>
-                                        <option>Yes</option>
-                                    </select>
-                                </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>EN Date</label>
+                            <div class="input-group">
+                                <input id="txtEnDate" type="text" class="form-control">
+                                <span class="input-group-addon" onclick="$('#txtEnDate').focusin();"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2 lm-img-cont">
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>Mobile</label>
+                            <input id="txtMobile" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>ID</label>
+                            <input id="txtId" type="text" class="form-control">
+                        </div>
                     </div>
                 </div>
-                <div class="lm-form-inline lm-bottom-form">
-                    <div class="col-md-6 ">
+
+                <div class="lm-form-inline">
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>Name</label>
+                            <input id="txtName" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>DOB</label>
+                            <div class="input-group">
+                                <input id="txtDob" type="text" class="form-control">
+                                <span class="input-group-addon" onclick="$('#txtDob').focusin();"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>Age</label>
+                            <input id="txtAge" type="number" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>Sex</label>
+                            <select id="selSex" class="form-control">
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lm-form-inline">
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>Phone</label>
+                            <input id="txtPhone" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>Profession</label>
+                            <input id="txtProfession" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>Email</label>
+                            <input id="txtEmail" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="lm-form-group">
+                            <label>NRI</label>
+                            <select id="selNri" class="form-control">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 lm-img-cont"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#home">Basic Details</a></li>
+            <li><a data-toggle="tab" href="#menu1">Follow-up Details</a></li>
+            <li><a data-toggle="tab" href="#menu2">Graft Details</a></li>
+            <li><a data-toggle="tab" href="#menu3">Billing</a></li>
+            <li><a data-toggle="tab" href="#menu4">Surgery Details</a></li>
+            <li><a data-toggle="tab" href="#menu5">Attach</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="home" class="tab-pane fade in active" style="padding-top: 25px;">
+                <div class="lm-form-inline">
+                    <div class="col-md-6" style="padding:0px;">
                         <div class="lm-form-sec-heading">
                             Current Location Details
                         </div>
@@ -133,13 +135,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>City</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtCrntCity" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Country</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtCrntCountry" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -150,29 +152,29 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>City</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtHomeCity" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>District</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtHomeDistrict" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6" style="border-left: 1px solid #ccc;">
+                    <div class="col-md-6" style="border-left: 1px solid #ccc; padding: 0px;">
                         <div class="lm-form-inline">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Service</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtService" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Lead Owner</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtLeadOwner" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -180,81 +182,131 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Source Category</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtSourceCategory" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Sub Category</label>
-                                    <input type="text" class="form-control">
+                                    <input id="txtSubCategory" type="text" class="form-control">
                                 </div>
                             </div>
                         </div>
                         <div class="lm-form-inline">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Consultation</label>
-                                    <input type="text" class="form-control">
-                                </div>
+                                <label>Consultation</label>
+                                <select id="selConsultation" class="form-control">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Pictures Recevied</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>                           
-                        </div>
-                    </div>                   
-                </div>
-                <div>
-                    <div class="lm-form-sec-heading">
-                        Followup Details
-                    </div>
-                    <div class="lm-form-inline">
-                        <div class="col-md-6">
-                            <div class="lm-form-inline">
-                                <div class="col-md-6">
-                                    <div class="lm-form-group">
-                                        <label>Date</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control">
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lm-form-inline">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Lead Status</label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="lm-form-group">
-                                        <label>Follow up Date</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control">
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="lm-form-group">
-                                <label>Comment</label>
-                                <textarea class="form-control" style="height: 80px !important; resize:none;"></textarea>
+                                <label>Pictures Recevied</label>
+                                <select id="selPicReceived" class="form-control">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-4" style="border-left: 1px solid #cfced0; height : calc(100vh - 65px);">
-                <div class="lm-form-sec-heading">
-                    Graft Details
+            <div id="menu1" class="tab-pane fade" style="padding-top: 25px;">
+                <div style="text-align:right;">
+                    <button id="btnNewFeedBack" data-toggle="modal" data-target="#mdlFeedBack">New</button>
                 </div>
+                <h3>Follow-up Details</h3>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            </div>
+            <div id="menu2" class="tab-pane fade" style="padding-top: 25px;">
+                <div style="text-align:right;">
+                    <button id="btnNewGraft" data-toggle="modal" data-target="#mdlGraft">New</button>
+                </div>
+                <h3>Graft Details</h3>
+                <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+            </div>
+            <div id="menu3" class="tab-pane fade">
+                <h3>Billing</h3>
+                <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+            </div>
+            <div id="menu4" class="tab-pane fade">
+                <h3>Surgery Details</h3>
+                <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+            </div>
+            <div id="menu5" class="tab-pane fade">
+                <h3>Attach</h3>
+                <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Followup Details Modal -->
+<div class="modal fade" id="mdlFeedBack" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Feedback Details</h4>
+            </div>
+            <div class="modal-body form-cont" style="height: 270px;">
+                <div class="lm-form-inline">
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label>Date</label>
+                            <div class="input-group">
+                                <input id="txtFlUpDate" type="text" class="form-control">
+                                <span class="input-group-addon" onclick="$('#txtFlUpDate').focusin();"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lm-form-inline">
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label>Lead Status</label>
+                            <input id="txtFlUpStatus" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label>Follow up Date</label>
+                            <div class="input-group">
+                                <input id="txtFlUpFolDate" type="text" class="form-control">
+                                <span class="input-group-addon" onclick="$('#txtFlUpFolDate').focusin();"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lm-form-inline">
+                    <div class="col-md-12">
+                        <div class="lm-form-group">
+                            <label>Comment</label>
+                            <textarea id="txaFlUpComnt" class="form-control" style="height: 100px !important; resize:none;"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="btnFlUpSave" class="btn btn-default" type="button">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Graft Details Modal -->
+<div class="modal fade" id="mdlGraft" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Graft Details</h4>
+            </div>
+            <div class="modal-body form-cont" style="height: 270px;">
+
+
                 <div class="lm-form-inline">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -312,6 +364,11 @@
                     </div>
                 </div>
 
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="btnGraftSave" class="btn btn-default" type="button">Save</button>
             </div>
         </div>
     </div>
@@ -321,6 +378,14 @@
 
 
 
+
+
+@{
+    @using Newtonsoft.Json;
+    var CInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CustomerData));
+    var CenterInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CostCenter));
+}
+
 <script>
-    var leadObject = new LeadManagementObj();    
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo);
 </script>

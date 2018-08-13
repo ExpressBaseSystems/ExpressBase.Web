@@ -2,6 +2,7 @@
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
+using ExpressBase.Security;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -116,6 +117,8 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
                     controller.ViewBag.StaticFileServerUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STATICFILESERVER_EXT_URL);
                     controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
+
+                    this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
                 }
                 catch (System.ArgumentNullException ane)
                 {
@@ -126,6 +129,7 @@ namespace ExpressBase.Web.BaseControllers
                     }
                 }
             }
+
             base.OnActionExecuting(context);
         }
 

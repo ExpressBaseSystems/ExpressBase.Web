@@ -1,0 +1,112 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+<div class="container">
+    <div class="app_profile col-md-12">
+        <h3>Application Profile</h3>
+        <form action="/ImportExport/ShareToPublic" method="post">
+
+            <div class="form-group  col-md-6">
+                <label>Title:</label>
+                <input type="text" class="form-control" name="title">
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Price:</label>
+                <div class="input-group ">
+                    <span class="input-group-addon"> $ </span>
+                    <input type="text" class="form-control" name="price">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Short Description:</label>
+                <textarea class="form-control" rows="2" name="short_description"></textarea>
+            </div>
+            <div id="exTab1" class="container">
+                <ul class="nav nav-pills">
+                    <li class="active">
+                        <a href="#desc_tab" data-toggle="tab">Detailed description</a>
+                    </li>
+                    <li>
+                        <a href="#media" data-toggle="tab">Media</a>
+                    </li>
+                    <li>
+                        <a href="#tag" data-toggle="tab">Tags</a>
+                    </li>
+                    <li>
+                        <a href="#faq" data-toggle="tab"> FAQ </a>
+                    </li>
+                    <li>
+                        <a href="#issue" data-toggle="tab">Issues</a>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content clearfix">
+                    <div class="tab-pane active" id="desc_tab">
+                        <div class="form-group" id="">
+                            <label>Detailed Description:</label>
+                            <textarea id="summernote" name="detailed_description"></textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="media">
+                        <div class="form-group vdeo_lnks_main">
+                            <label>Video Links:</label>
+                            <input type="text" class="form-control col-md-12 video_tgs primary" value=" https://youtu.be/H-58OZREz-g , https://youtu.be/b46KRZt_NIU, https://youtu.be/imw2uGDSZlY" data-role="tagsinput" name="video_links" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Images:</label>
+                            <textarea class="form-control" rows="1" name="images"></textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tag">
+                        <div class="form-group tags_main">
+                            <label>Tags:</label>
+                            <input type="text" class="form-control col-md-12 app_tags" value="jQuery, plugin, providing ,a ,Twitter, Bootstrap, user, tags, input, select, form " data-role="tagsinput" />
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="faq">
+                    </div>
+                    <div class="tab-pane" id="issue">
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="">
+                <button type="submit" class="btn btn-default pull-right" id="share">Share</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#summernote').summernote();
+    });
+</script>
+<style>
+    .app_profile {
+        margin-top: 50px;
+    }
+
+    .bootstrap-tagsinput {
+        width: 100%;
+    }
+
+    .vdeo_lnks_main .label-info {
+        background-color: #676a8e;
+    }
+
+    .tags_main .label-info {
+        background-color: #676a8e;
+    }
+</style>

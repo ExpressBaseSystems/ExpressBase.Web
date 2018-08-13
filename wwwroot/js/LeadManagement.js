@@ -1,9 +1,11 @@
-﻿var LeadManagementObj = function (MC_Mode, C_Info, Center_Info) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, F_List) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
+    this.AccId = AccId;
     this.Mode = MC_Mode;
     this.CustomerInfo = C_Info;
     this.CostCenterInfo = Center_Info;
+    this.FeedbackList = F_List;
     //DOM ELEMENTS
     this.$CostCenter = $("#selCostCenter");
     this.$EnDate = $("#txtEnDate");
@@ -27,6 +29,14 @@
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
     this.$PicReceived = $("#selPicReceived");
+    //FOLLOUP
+    this.divFeedback = "divFdbk";
+    this.$MdlFeedBack = $("#mdlFeedBack");
+    this.$FlUpDate = $("#txtFlUpDate");
+    this.$FlUpStatus = $("#txtFlUpStatus");
+    this.$FlUpFolDate = $("#txtFlUpFolDate");
+    this.$FlUpComnt = $("#txaFlUpComnt");
+    this.$FlUpSave = $("#btnFlUpSave");
     //DECLARED DATA
     this.OutDataList = [];
 
@@ -51,10 +61,65 @@
         this.$EnDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$Dob.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
+        //FEEDBACK
+        this.initFeedBackModal();
+
         this.$CostCenter.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {            
             this.$CostCenter.append(`<option value='${key}'">${val}</option>`);
         }.bind(this));
+
+        if (this.Mode === 1) {            
+            this.fillCustomerData();
+        }
+    }
+
+    this.initFeedBackModal = function () {
+        this.$FlUpDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
+        this.$FlUpFolDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
+        this.$FlUpSave.on("click", function () {
+            alert(this.$MdlFeedBack.attr("data-id"));
+        }.bind(this));
+        new ListViewCustom(this.divFeedback, this.FeedbackList, function (id) {
+            this.$MdlFeedBack.attr("data-id", id);
+            this.$MdlFeedBack.modal('show');
+        }.bind(this));
+        this.$MdlFeedBack.on('shown.bs.modal', function (e) {
+            if (this.$MdlFeedBack.attr("data-id") === "") {
+                this.$FlUpDate.val("");
+                this.$FlUpStatus.val("");
+                this.$FlUpFolDate.val("");
+                this.$FlUpComnt.val("");
+            }
+        }.bind(this));
+        this.$MdlFeedBack.on('hidden.bs.modal', function (e) {
+            this.$MdlFeedBack.attr("data-id", "");
+        }.bind(this));
+    }
+    
+    this.fillCustomerData = function () {
+        this.$CostCenter.val(this.CustomerInfo["firmcode"]);
+        this.$EnDate.val(this.CustomerInfo["trdate"]);
+        this.$Mobile.val(this.CustomerInfo["genurl"]);
+        //this.$Id.val(this.CustomerInfo[""]);
+        this.$Name.val(this.CustomerInfo["name"]);
+        this.$Dob.val(this.CustomerInfo["dob"]);
+        this.$Age.val(this.CustomerInfo["age"]);
+        //this.$Sex.val(this.CustomerInfo[""]);
+        this.$Phone.val(this.CustomerInfo["genphoffice"]);
+        this.$Profession.val(this.CustomerInfo["profession"]);
+        this.$Email.val(this.CustomerInfo["genemail"]);
+        this.$Nri.val(this.CustomerInfo["customertype"]);
+        this.$CrntCity.val(this.CustomerInfo["clcity"]);
+        this.$CrntCountry.val(this.CustomerInfo["clcountry"]);
+        this.$HomeCity.val(this.CustomerInfo["city"]);
+        //this.$HomeDistrict.val(this.CustomerInfo[""]);
+        this.$Service.val(this.CustomerInfo["typeofcustomer"]);
+        //this.$LeadOwner.val(this.CustomerInfo[""]);
+        this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
+        this.$SubCategory.val(this.CustomerInfo["subcategory"]);
+        this.$Consultation.val(this.CustomerInfo["consultation"]);
+        this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
     }
 
     this.onClickBtnSave = function () {
@@ -109,6 +174,73 @@
         if (_val !== "")
             this.OutDataList.push({ Key: _key, Value: _val });
     }
+
+    
+    this.init();
+}
+
+
+
+var ListViewCustom = function (parentDiv, itemList, editFunc) {
+    this.ParentDivId = parentDiv;
+    this.TableId = "tbl" + this.ParentDivId;
+    this.itemList = itemList;
+    this.editFunction = editFunc;
+    this.metadata = [];
+
+    this.init = function () {
+        if (this.ParentDivId === "divFdbk") {
+            this.metadata = ["4", "Id", "Date", "Status", "Followup_Date", "Comments", "_feedback"];
+        }
+        this.setTable();
+
+        $("#"+this.ParentDivId).on("click", ".editclass" + this.ParentDivId, this.onClickEdit.bind(this));
+    }
+
+    this.setTable = function () {
+        $("#" + this.ParentDivId).append(`<table id="${this.TableId}" class="table-striped" style="width: 100%;"></table>`);
+        var tblcols = [];
+        var tbldata = [];
+
+        tblcols.push({ data: null, title: "Serial No", searchable: false, orderable: false, className: "text-center" });
+        tblcols.push({ data: 1, title: this.metadata[1], visible: false });//for id
+        for (var i = 2; i <= parseInt(this.metadata[0]); i++)
+            tblcols.push({ data: i, title: this.metadata[i].replace("_", " "), orderable: true});
+        tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
+
+        if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
+            for (i = 0; i < this.itemList.length; i++)
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]] });
+        }
+
+        this.table = $("#" + this.TableId).DataTable({
+            //scrollY: "96%",
+            //scrollX: true,
+            paging: false,
+            autoWidth: false,
+            //dom: 'frt',
+            dom: 't',
+            ordering: true,
+            columns: tblcols,
+            data: tbldata
+        });
+        this.table.on('order.dt search.dt', function () {
+            this.table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }.bind(this)).draw();
+        
+    }
+
+    this.tblEditColumnRender = function (data, type, row, meta) {
+        return `<i class="fa fa-pencil fa-2x editclass${this.ParentDivId}" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]}></i>`;
+    }.bind(this)
+
+    this.onClickEdit = function (e) {
+        var id = $(e.target).attr("data-id");
+        this.editFunction(id);
+    }
+
 
     this.init();
 }

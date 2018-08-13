@@ -1,5 +1,6 @@
 ﻿.form-cont {
 	background-color: white;
+	height: 100vh;
 }
 
 .lm-form-body {
@@ -35,7 +36,7 @@
 .lm-img-cont {
 	height: 138px;
 	width: 132px;
-	margin-top: 60px;
+	margin-top: 20px;
 	border: 1px solid #cfced0;
 }
 .input-group-addon {
@@ -52,7 +53,6 @@
 .lm-form-sec-heading {
 	font-size: 18px;
 	color: #aaa;
-	margin-bottom: 8px;
 }
 
 .form-cont .input-group-addon {

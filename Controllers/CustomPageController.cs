@@ -22,20 +22,28 @@ namespace ExpressBase.Web.Controllers
 		//{
 		//	//mode=0 -> new customer
 		//	int mode = 0;
+		//	if (!ac.IsNullOrEmpty())
+		//		mode = 1;
+		//	else
+		//		ac = "null";
 
 		//	var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = ac, RequestMode = mode, TenantAccountId = ViewBag.cid });
-			
+
 		//	ViewBag.MC_Mode = mode;
+		//	ViewBag.AccId = ac;
 		//	ViewBag.CustomerData = fr.CustomerDataDict;
 		//	ViewBag.CostCenter = fr.CostCenterDict;
+		//	ViewBag.FeedbackList = fr.FeedbackList;
 
 		//	return View();
 		//}
 
 		//public int SaveCustomer(int Mode, string CustomerInfo)
-		//{						
-		//	SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode});
+		//{
+		//	SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode });
 		//	return res.Status;
 		//}
+
+
 	}
 }

@@ -254,3 +254,28 @@ function gettypefromString(str) {
     else if (str == "Date")
         return "5";
 }
+//JQuery extends
+(function ($) {
+    $.fn.closestInner = function (filter) {
+        var $found = $(),
+            $currentSet = this; // Current place
+        while ($currentSet.length) {
+            $found = $currentSet.filter(filter);
+            if ($found.length) break;  // At least one match: break loop
+            // Get all children of the current set
+            $currentSet = $currentSet.children();
+        }
+        return $found.first(); // Return first match of the collection
+    }
+})(jQuery);
+//JQuery extends ends
+
+//Object.defineProperty(window, "store", {
+//    get: function () {
+//        let t = fromConsole();
+//        return true;
+//    },
+//    set: function (val) {
+//        _z = val;
+//    }
+//});

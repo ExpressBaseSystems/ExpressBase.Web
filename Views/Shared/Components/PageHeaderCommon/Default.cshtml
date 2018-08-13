@@ -17,6 +17,14 @@
                 {
                     ml = "10px";
                 }
+
+                if (ViewBag.wc == "uc")
+                {
+                    <button class="btn loc_switchbtn pull-left" id="switch_loc">
+                        <i class="fa fa-code-fork fa-rotate-180" aria-hidden="true"></i>
+                        <i class="fa fa-code-fork fa-rotate-180 fa-flip-vertical _neg_icon-left" aria-hidden="true"></i>
+                    </button>
+                }
             }
             <div class="solution_logo_cont pull-left" style="margin-left:@ml">
                 @{

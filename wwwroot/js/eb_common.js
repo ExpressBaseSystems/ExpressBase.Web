@@ -269,3 +269,13 @@ function gettypefromString(str) {
     }
 })(jQuery);
 //JQuery extends ends
+
+//Object.defineProperty(window, "store", {
+//    get: function () {
+//        let t = fromConsole();
+//        return true;
+//    },
+//    set: function (val) {
+//        _z = val;
+//    }
+//});

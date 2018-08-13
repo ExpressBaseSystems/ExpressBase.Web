@@ -1,11 +1,4 @@
-﻿.Locations_container{
-    float:left;
-    width:100%;
-    padding:15px;
-}
-.locpage {
-    margin-top: 100px;
-}
+﻿/*new location*/
 .new_location_bdy {
     float: left;
     width: 100%;
@@ -16,7 +9,6 @@
 }
 .create_loc_mod{
     font-family:open sans;
-
 }
 .location_conf .btn_container {
     margin-bottom: 15px;
@@ -24,10 +16,6 @@
 }
 .location_conf .btn_container .btn{
     margin-left: 15px;
-}
-.hoveron_block:hover{
-    background-color:#fafafa;
-    cursor:pointer;
 }
 #textspace table thead {
     background-color: #055d9c;
@@ -39,18 +27,15 @@
 .fa-green{
     color:darkgreen;
 }
-.btn_color_bl {
-    color: #fff;
-    background-color: #055d9c;
-    border-color: #055d9c;
-}
-    .btn_color_bl:hover {
-        color: #fff;
-        background-color: #1f71ad;
-        border-color: #1f71ad;
-    }
 #locspace .logo_img_cont {
     height: 34px !important;
+}
+.locsImage img{
+    width:100%;
+}
+.loc_tile{
+    background-color:white !important;
+    cursor:pointer;
 }
 /*solution-dash_loaders*/
 .dbConnection_loder {
@@ -242,5 +227,92 @@ flex-direction:column;
     text-decoration:none;
 }
 .appcontainer_inner:hover {
-    background-color: #f3f8ff;
+    background-color: #f3f8ff !important;
+}
+/*locswitch*/
+.loc_switchModal {
+    display: none;
+    font-family: open sans;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+.loc_switchbtn {
+    color: #336699;
+    padding: 3px 12px;
+    font-size: 18px;
+    background-color: transparent;
+    margin-right: 5px;
+}
+._neg_icon-left {
+    margin-left: -9px;
+}
+.display-flex{
+    display:flex;
+}
+.loc_switchModal_box {
+    background: white;
+    box-shadow: var(--eb-shadow);
+    min-width: 500px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+}
+.loc_switchModal_outer{
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;align-items:center;
+}
+.md-radio_wrapr {
+    width: 34px;
+    float: left;
+    color: #4d86d6;
+    -webkit-transition: all .5s;
+    transition: all .5s;
+}
+.locationwrapper {
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee;
+    padding: 5px 0;
+}
+.locationwrapper:hover {
+    background: #fafafa; 
+    cursor:pointer;
+}
+    .locationwrapper .loc_info {
+        flex-direction: column;
+        line-height: 2em;
+    }
+.md-radio_wrapr .checked {
+    display: none;
+}
+.loc_switchModal_box .locs_head {
+    flex: 0 1 auto;
+}
+.loc_switchModal_box .locs_bdy {
+    flex: 1 1 auto;
+}
+.loc_switchModal_box .locs_foot {
+    flex: 0 1 auto;
+    padding: 8px 0;
+}
+.loc_switchModal_fade {
+    display:none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background-color: #000;
+    opacity: .5;
+}
+.no_loc_config {
+    display:none;
+    position: absolute;
+    align-self: center;
+    top: 47%;
 }

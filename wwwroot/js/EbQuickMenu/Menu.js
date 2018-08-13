@@ -20,9 +20,8 @@
     };
 
     this.refreshMenu = function () {
-        //store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", "");
-        //store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login, "");
-        store.clearAll()
+        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", "");
+        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login, "");
         $(".Eb_quick_menu .modal-body #objList").children(".objContainer_f_app").remove();
         this.showModal();
     };
@@ -48,18 +47,28 @@
 
     this.showModal = function () {
         let o = store.get("EbMenuObjects_" + this.Tid + this.Uid + this.login) || {};
+        let locId = store.get("Eb_Loc-" + this.Tid + this.Uid) || null;
+
         if ($.isEmptyObject(o)) {
             $("#ObjModal").modal('show');
-            $("#quick_menu_load").EbLoader("show");
-            $.get("../TenantUser/getSidebarMenu", function (result) {
+            $.ajax({
+                url: "../TenantUser/getSidebarMenu",
+                type: "GET",
+                data: {
+                    LocId: locId
+                },beforeSend: function () {
+                    $("#quick_menu_load").EbLoader("show");
+                }
+            }).done(function (result) {
                 store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", result);
                 $("#EbsideBar").empty();
+                $(".Eb_quick_menu .modal-body #objList").children(".objContainer_f_app").remove();
                 $("#EbsideBar").append(result);
                 $("#quick_menu_load").EbLoader("hide");
                 $(".Obj_link").off("click").on("click", this.appendObType.bind(this));
                 $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
                 this.login === "dc" ? this.newBuilderMenu() : null;
-            }.bind(this));
+                }.bind(this));
         }
         else {
             $("#ObjModal").modal('show');

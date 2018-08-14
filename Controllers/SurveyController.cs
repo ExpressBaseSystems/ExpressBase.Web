@@ -26,7 +26,6 @@ namespace ExpressBase.Web.Controllers
             SurveyQuesResponse resp = this.ServiceClient.Post(o);
             return resp.Status;
         }
-    }
 
 		public IActionResult ManageSurvey()
 		{
@@ -34,4 +33,5 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 	}
+			
 }

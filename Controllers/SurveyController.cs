@@ -19,5 +19,11 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-    }
+
+		public IActionResult ManageSurvey()
+		{
+
+			return View();
+		}
+	}
 }

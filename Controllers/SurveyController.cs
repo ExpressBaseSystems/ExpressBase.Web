@@ -2,23 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
     public class SurveyController : EbBaseIntCommonController
     {
         public SurveyController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
-        // GET: /<controller>/
+
         public IActionResult CreateSurvey()
         {
             return View();
         }
+
+        public bool SaveQues(string survey)
+        {
+            var o = JsonConvert.DeserializeObject<SurveyQuesRequest>(survey);
+            SurveyQuesResponse resp = this.ServiceClient.Post(o);
+            return resp.Status;
+        }
+    }
 
 		public IActionResult ManageSurvey()
 		{

@@ -27,9 +27,11 @@ namespace ExpressBase.Web.Controllers
             return resp.Status;
         }
 
-		public IActionResult ManageSurvey()
+		public IActionResult ManageSurvey(int id)
 		{
-
+			ManageSurveyResponse resp = this.ServiceClient.Post<ManageSurveyResponse>(new ManageSurveyRequest { Id = id });
+			ViewBag.QuestionList = JsonConvert.SerializeObject(resp.AllQuestions);
+			ViewBag.SurveyData = JsonConvert.SerializeObject(resp.Obj);
 			return View();
 		}
 	}

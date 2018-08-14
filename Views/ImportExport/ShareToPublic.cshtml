@@ -109,8 +109,8 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <button>save</button>
-                                            <button>delete</button>
+                                            <button type="button">save</button>
+                                            <button id="delete" type="button">delete</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -144,6 +144,9 @@
         else if (this.value === '2') {
             $("#price").removeAttr("disabled");
         }
+    });
+    $('#delete').on('click', function () {
+        alert("delete");
     });
 </script>
 <style>

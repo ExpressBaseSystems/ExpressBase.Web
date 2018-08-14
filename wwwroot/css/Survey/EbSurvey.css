@@ -162,32 +162,25 @@
     font-size: 15px;
 }
 .qst-text-cont {
-    /*width: 100%;
-    border-bottom: 1px solid;*/
+    
 }
 .qst-opt-cont {
-    /*border: 1px solid;*/
-    overflow: auto;
-    height: calc(100% - 110px);
-    /*margin-top: 10px;*/
-    padding: 10px 15px;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 .q-opt-cont-inner {
     padding-left:0px!important;
 }
 .qst-text-opt-cont {
-    /*height: calc(100% - 30px);*/
     height: 100%;
+    padding: 10px;
 }
 .qst-text {
-    border: none;
     background-color: white;
-    height: 100px!important; 
+    min-height: 65px;
     padding: 10px;
     width: 100%;
     resize: none;
-    margin-top:2px;
+    border-left: none;
 }
 
 .qst-text-cont:empty:not(:focus):before {
@@ -242,10 +235,12 @@
 }
 
 .q-opt-new-choice-btn {
-    border: 1px dashed #c89cd0;
+    border: 1px solid #245804;
     text-align: center;
     cursor: pointer;
-    width: 43%;
+    background-color: white;
+    border-radius: 2px;
+    margin-top: 15px;
 }
 .q-label{
     border-right:1px solid #ccc!important;
@@ -260,4 +255,16 @@
 .q-opt-radio {
     width: 20px;
     height: 16px;
+}
+/*survey 14/08/18 edits by amal*/
+.open-sans {
+    font-family: open sans;
+}
+.survey_menu_load {
+    bottom: -1px;
+    left: 0;
+}
+.survey_container{
+    padding:15px;
+    float:left;
 }

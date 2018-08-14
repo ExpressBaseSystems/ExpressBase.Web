@@ -8,27 +8,36 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <div class="container">
     <div class="app_profile col-md-12">
-        <h3>Application Profile</h3>
-        <form action="/ImportExport/ShareToPublic" method="post">
-
-            <div class="form-group  col-md-6">
+        <h4>Application Profile</h4>
+        @using (Html.BeginForm("ShareToPublic", "ImportExport", FormMethod.Post))
+        {
+            <div class="form-group  col-md-4">
                 <label>Title:</label>
                 <input type="text" class="form-control" name="title">
             </div>
-
             <div class="form-group col-md-6">
+                <label>Short Description:</label>
+                <textarea class="form-control" rows="1" name="short_description"></textarea>
+            </div>
+            <div class="form-group col-md-2">
                 <label>Price:</label>
+                <label class="radio-inline">
+                    <input type="radio" name="price_option" value="1" checked>Free
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="price_option" value="2">Paid
+                </label>
                 <div class="input-group ">
                     <span class="input-group-addon"> $ </span>
-                    <input type="text" class="form-control" name="price">
+                    <input type="text" class="form-control" name="price" id="price" value="0.00" disabled>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Short Description:</label>
-                <textarea class="form-control" rows="2" name="short_description"></textarea>
+            <div class="form-group tags_main col-md-12">
+                <label>Tags:</label>
+                <input type="text" class="form-control app_tags" value="jQuery, plugin, providing ,a ,Twitter, Bootstrap, user, tags, input, select, form " data-role="tagsinput" name="tags" />
             </div>
-            <div id="exTab1" class="container">
+            <div id="store_nav" class="container">
                 <ul class="nav nav-pills">
                     <li class="active">
                         <a href="#desc_tab" data-toggle="tab">Detailed description</a>
@@ -37,7 +46,7 @@
                         <a href="#media" data-toggle="tab">Media</a>
                     </li>
                     <li>
-                        <a href="#tag" data-toggle="tab">Tags</a>
+                        <a href="#pricing" data-toggle="tab">Pricing</a>
                     </li>
                     <li>
                         <a href="#faq" data-toggle="tab"> FAQ </a>
@@ -45,17 +54,23 @@
                     <li>
                         <a href="#issue" data-toggle="tab">Issues</a>
                     </li>
-
+                    <li>
+                        <a href="#forum" data-toggle="tab">Forum(in rendering side)</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content clearfix">
                     <div class="tab-pane active" id="desc_tab">
                         <div class="form-group" id="">
                             <label>Detailed Description:</label>
-                            <textarea id="summernote" name="detailed_description"></textarea>
+                            <textarea id="det_desc_note" name="detailed_description"></textarea>
                         </div>
                     </div>
                     <div class="tab-pane" id="media">
+                        <div class="form-group">
+                            <label>Demo link:</label>
+                            <input type="text" class="form-control" name="demo_link" />
+                        </div>
                         <div class="form-group vdeo_lnks_main">
                             <label>Video Links:</label>
                             <input type="text" class="form-control col-md-12 video_tgs primary" value=" https://youtu.be/H-58OZREz-g , https://youtu.be/b46KRZt_NIU, https://youtu.be/imw2uGDSZlY" data-role="tagsinput" name="video_links" />
@@ -66,31 +81,72 @@
                             <textarea class="form-control" rows="1" name="images"></textarea>
                         </div>
                     </div>
-                    <div class="tab-pane" id="tag">
-                        <div class="form-group tags_main">
-                            <label>Tags:</label>
-                            <input type="text" class="form-control col-md-12 app_tags" value="jQuery, plugin, providing ,a ,Twitter, Bootstrap, user, tags, input, select, form " data-role="tagsinput" />
+                    <div class="tab-pane" id="pricing">
+                        <div class="form-group" id="">
+                            <label>Pricing Description:</label>
+                            <textarea id="price_desc_note" name="pricing_description"></textarea>
                         </div>
                     </div>
                     <div class="tab-pane" id="faq">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-highlight">
+                                <thead>
+                                <th>Sl. No</th>
+                                <th>Question</th>
+                                <th>Answer</th>
+                                <th>Show / Hide</th>
+                                <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><label class="form-control">1</label></td>
+                                        <td><textarea class="form-control" value="">How many clients are currently using the offered solution?</textarea></td>
+                                        <td><textarea class="form-control" value="">10 clients.</textarea></td>
+                                        <td>
+                                            <select class="form-control">
+                                                <option>Show</option>
+                                                <option>Hide</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type="button">save</button>
+                                            <button id="delete" type="button">delete</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="tab-pane" id="issue">
                     </div>
+                    <div class="tab-pane" id="forum">
+                    </div>
                 </div>
             </div>
+            <input type="submit" class="pull-right" id="share" name="share" value="Share" />
+            @*<div class="">
+                    <button type="submit" form="share_form" class="btn btn-default pull-right" id="share">Share</button>
+                </div>*@
+        }
 
-
-
-
-            <div class="">
-                <button type="submit" class="btn btn-default pull-right" id="share">Share</button>
-            </div>
-        </form>
     </div>
 </div>
 <script>
     $(document).ready(function () {
-        $('#summernote').summernote();
+        $('#det_desc_note').summernote();
+        $('#price_desc_note').summernote();
+    });
+    $('input[type=radio][name=price_option]').change(function () {
+        if (this.value === '1') {
+            $('#price').val("0.00");
+            $('#price').attr("disabled", "disabled");
+        }
+        else if (this.value === '2') {
+            $("#price").removeAttr("disabled");
+        }
+    });
+    $('#delete').on('click', function () {
+        alert("delete");
     });
 </script>
 <style>
@@ -108,5 +164,22 @@
 
     .tags_main .label-info {
         background-color: #676a8e;
+    }
+
+    #store_nav .nav > li > a {
+        padding: 5px 15px;
+    }
+
+    #store_nav {
+        padding-top: 30px;
+        margin-top: 19px;
+    }
+
+    .note-editable {
+        height: 255px;
+    }
+
+    table tr td {
+        border: 1px solid #ccc;
     }
 </style>

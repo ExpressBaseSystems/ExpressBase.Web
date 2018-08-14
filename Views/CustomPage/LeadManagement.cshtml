@@ -212,8 +212,8 @@
                     </div>
                 </div>
             </div>
-            <div id="menu1" class="tab-pane fade" style="padding-top: 25px;">
-                <div style="text-align:right;">
+            <div id="menu1" class="tab-pane fade">
+                <div style="text-align:right; padding: 15px 0px;">
                     <button id="btnNewFeedBack" class="btn btn-primary" data-toggle="modal" data-target="#mdlFeedBack">New</button>
                 </div>                
                 <div id="divFdbk"></div>
@@ -250,7 +250,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Feedback Details</h4>
             </div>
-            <div class="modal-body form-cont" style="height: 270px;">
+            <div class="modal-body" style="height: 270px;">
                 <div class="lm-form-inline">
                     <div class="col-md-6">
                         <div class="lm-form-group">
@@ -290,7 +290,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button id="btnFlUpSave" class="btn btn-default" type="button">Save</button>
+                <button id="btnFlUpSave" class="btn btn-default" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
             </div>
         </div>
     </div>
@@ -375,7 +375,14 @@
 </div>
 
 
-
+<style>
+    .MyTempColStyle {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+</style>
 
 
 
@@ -385,7 +392,7 @@
     var CInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CustomerData));
     var CenterInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CostCenter));
 
-    var FeedbackList = Html.Raw(JsonConvert.SerializeObject(ViewBag.FeedbackList));
+    var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
 
 }
 

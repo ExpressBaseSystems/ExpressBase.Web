@@ -43,8 +43,15 @@ namespace ExpressBase.Web.Controllers
             obj.RefId = _refid;
             return obj;
         }
+
+        [HttpGet]
+        public IActionResult ShareToPublic()
+        {
+            return View();
+        }
+
         [HttpPost]
-        public void ShareToPublic()
+        public void ShareToPublic(int i)
         {
             var req = HttpContext.Request.Form;
             var y = req;

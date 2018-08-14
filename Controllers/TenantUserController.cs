@@ -9,6 +9,7 @@ using ExpressBase.Web.Controllers;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -22,22 +23,44 @@ namespace ExpressBase.Web2.Controllers
     {
         public TenantUserController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
+        public string GetAccessLoc()
+        {
+            string _json = string.Empty;
+            List<EbLocation> list = new List<EbLocation>();
+            var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
+            var user = this.LoggedInUser;
+
+            if (this.LoggedInUser.LocationIds.Contains(-1))
+                list = resp.Locations.Values.ToList<EbLocation>();
+            else
+            {
+                foreach (int id in this.LoggedInUser.LocationIds)
+                {
+                    list.Add(resp.Locations[id]);
+                }
+            }
+
+            _json = JsonConvert.SerializeObject(list);
+            return _json;
+        }
+
         [EbBreadCrumbFilter()]
         [HttpGet("UserDashBoard")]
         public IActionResult UserDashboard()
         {
+            ViewBag.Locations = GetAccessLoc();
             return View();
         }
 
         [HttpGet]
-        public IActionResult getSidebarMenu()
+        public IActionResult getSidebarMenu(int LocId)
         {
             if (ViewBag.wc == "tc")
                 return View("_SidebarMenu");
             else if (ViewBag.wc == "dc")
                 return ViewComponent("SidebarmenuDev", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
             else
-                return ViewComponent("_SidebarmenuTUser", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
+                return ViewComponent("_SidebarmenuTUser", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc, locid = LocId });
         }
 
         public IActionResult Logout()
@@ -63,7 +86,8 @@ namespace ExpressBase.Web2.Controllers
         {
             var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
             ViewBag.Config = JsonConvert.SerializeObject(resp.Config);
-            ViewBag.Locations = resp.Locations;
+            ViewBag.LocList = resp.Locations;
+            ViewBag.Locations = GetAccessLoc();
             return View();
         }
 
@@ -78,7 +102,7 @@ namespace ExpressBase.Web2.Controllers
 
         public int DeletelocConf(int id)
         {
-            var resp = ServiceClient.Post<DeleteLocResponse>(new DeleteLocRequest { Id = id});
+            var resp = ServiceClient.Post<DeleteLocResponse>(new DeleteLocRequest { Id = id });
             return resp.id;
         }
     }

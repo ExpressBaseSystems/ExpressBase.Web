@@ -59,7 +59,7 @@
                                             <p class="small txtdecor_none">@aw.CreatedAt</p>
                                             <p class="small txtdecor_none ">$ @aw.Cost @aw.Currency</p>
                                             <button class="small txtdecor_none pull-right button" onclick="location.href='../ImportExport/Import?Id=@aw.Id'">Install</button>
-                                            <button class="small txtdecor_none pull-right button" data-toggle="modal" data-target="#myModal">Share to Public</button>
+                                            <button class="small txtdecor_none pull-right button  btn-success" onclick="location.href='../ImportExport/ShareToPublic'">Share to Public</button>
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +87,8 @@
                                             <p class="small txtdecor_none">@aw.TenantName</p>
                                             <p class="small txtdecor_none">@aw.CreatedAt</p>
                                             <p class="small txtdecor_none ">$ @aw.Cost @aw.Currency</p>
-                                            <button class="small txtdecor_none pull-right">Buy</button>
+                                            <button class="small txtdecor_none pull-right btn-success">Buy</button>
+                                            <button class="small txtdecor_none pull-right">Add to wishlist</button>
                                         </div>
                                     </div>
                                 </div>
@@ -100,29 +101,6 @@
     </div>
 </div>
 
-<div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Public Repo Info</h4>
-            </div>
-            <div class="modal-body">
-                <form action="/ImportExport/ShareToPublic" method="post">
-                    <div class="form-group">
-                        <label for="pwd">Description:</label>
-                        <textarea class="form-control" rows="5" id="desc" name="description"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default" id="share">Share</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 <style>
     .s-dash-workplace {
         margin-top: 60px;

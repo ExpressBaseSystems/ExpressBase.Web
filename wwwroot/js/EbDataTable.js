@@ -1,4 +1,5 @@
-﻿//refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
+﻿
+//refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url, cellData, PGobj) {
     this.propGrid = PGobj;
     this.isSecondTime = false;
@@ -1840,6 +1841,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
@@ -2456,6 +2458,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.isContextual = true;
         if ($(e.target).closest("a").attr("data-latlong") !== undefined)
             cData = $(e.target).closest("a").attr("data-latlong");
+        else if ($(e.target).closest("a").attr("data-inline") !== undefined) {
+            cData = $(e.target).closest("a").attr("data-data");
+            this.inline = true;
+        }
         else
             cData = $(e.target).text();
         this.linkDV = $(e.target).closest("a").attr("data-link");
@@ -2486,13 +2492,49 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             this.filterValues = this.filterValues.concat(this.rowgroupFilter);
         }
-        if (this.login === "uc")
-            dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
+        if (this.login === "uc") {
+            if (this.inline) {
+                if ($(rows).eq(idx).next().attr("class") !== "containerrow") {
+                    $(rows).eq(idx).after("<tr class='containerrow'><td colspan='21'><table id='tbl" + idx + "'></table></td></tr>");
+                    this.call2newTable($(rows).eq(idx), "tbl" + idx);
+                    this.inline = false;
+                    $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
+                }
+                else {
+                    if ($(e.target).closest("I").hasClass("fa-minus")) {
+                        $(e.target).closest("I").removeClass("fa-minus").addClass("fa-plus");
+                        $(rows).eq(idx).next().hide();
+                    }
+                    else {
+                        $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
+                        $(rows).eq(idx).next().show();
+                    }
+                }
+            }
+            else
+                dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
+        }
         else {
-            this.OpeninNewTab(idx, cData);
-            //this.inline = true;
-            //$(rows).eq(idx).after("<tr id='containerrow'><td colspan='21'><table id='tbl" + idx+"'></table></td></tr>");
-            //this.call2newTable($(rows).eq(idx),"tbl"+idx);
+            if (this.inline) {
+                if ($(rows).eq(idx).next().attr("class") !== "containerrow") {
+                    $(rows).eq(idx).after("<tr class='containerrow'><td colspan='21'><table id='tbl" + idx + "'></table></td></tr>");
+                    this.call2newTable($(rows).eq(idx), "tbl" + idx);
+                    this.inline = false;
+                    $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
+                }
+                else {
+                    if ($(e.target).closest("I").hasClass("fa-minus")) {
+                        $(e.target).closest("I").removeClass("fa-minus").addClass("fa-plus");
+                        $(rows).eq(idx).next().hide();
+                    }
+                    else {
+                        $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
+                        $(rows).eq(idx).next().show();
+                    }
+                }
+            }
+            else
+                this.OpeninNewTab(idx, cData);
         }
     };
 
@@ -2508,24 +2550,48 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.call2newTable = function (e,tid) {
-        this.tabNum++;
         $.ajax({
             type: "POST",
             url: "../DV/getdv",
             data: { refid: this.linkDV, objtype: $(e.target).attr("objtype") },
-            success: function (dvObj) {
-                var o = new Object();
-                o.containerId = "containerrow";
-                o.dsid = JSON.parse(dvObj).DsObj.DataSourceRefId;
-                o.dvObject = JSON.parse(dvObj).DsObj;
-                o.tableId = tid;
-                o.scrollHeight = "200px";
-                o.wc = "dc";
-                o.filterValues = this.filterValues;
-                this.datatable = new EbBasicDataTable(o);
-            }.bind(this),
+            success: this.GetData4InlineDataTable.bind(this, tid)
         });
     };
+
+    this.GetData4InlineDataTable = function (tid, result) {
+        var Dvobj = JSON.parse(result).DsObj;
+        var param = this.Params4InlineTable(Dvobj.DataSourceRefId);
+        $.ajax({
+            type: "POST",
+            url: "../DV/getData4Inline",
+            data: param,
+            success: this.LoadInlineDataTable.bind(this, tid, Dvobj)
+        });
+    }
+
+    this.LoadInlineDataTable = function (tid, Dvobj, result) {
+        $("#" + tid).DataTable({
+            columns: Dvobj.Columns.$values,
+            serverSide: false,
+            scrollY: "150px",
+            //scrollX: "100%",
+            //scrollCollapse : true,
+            processing: true,
+            paging:false,
+            dom: "rt",
+            data: result.data
+        });
+    }
+
+    this.Params4InlineTable = function (dsid) {
+        var dq = new Object();
+        dq.RefId = dsid;
+        dq.TFilters = [];
+        dq.Params = this.filterValues;
+        dq.Start = 0;
+        dq.Length = 500;
+        return dq;
+    }
 
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");
@@ -2706,7 +2772,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderlink4NewTable = function (data, type, row, meta) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + meta.settings.aoColumns[meta.col].LinkRefId + "'>" + data + "</a>";
+        if (meta.settings.aoColumns[meta.col].LinkType.toString() === EbEnums.LinkTypeEnum.Popout)
+            return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + meta.settings.aoColumns[meta.col].LinkRefId + "'>" + data + "</a>";
+        else if (meta.settings.aoColumns[meta.col].LinkType.toString() === EbEnums.LinkTypeEnum.Inline)
+            return data + `<a href='#' oncontextmenu='return false' class ='tablelink_${this.tableId}' data-link='${meta.settings.aoColumns[meta.col].LinkRefId}' data-inline="true" data-data='${data}'> <i class="fa fa-plus"></i></a>`;
+        else
+            return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + meta.settings.aoColumns[meta.col].LinkRefId + "'>" + data + "</a>" + ` &nbsp; <a href='#' oncontextmenu='return false' class ='tablelink_${this.tableId}' data-link='${meta.settings.aoColumns[meta.col].LinkRefId}' data-inline="true" data-data='${data}'> <i class="fa fa-plus"></i></a>`;
     };
 
     this.renderlinkandDecimal = function (deci, data) {

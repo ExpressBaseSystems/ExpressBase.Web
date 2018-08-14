@@ -2,6 +2,7 @@
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
+using ExpressBase.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack;
@@ -24,6 +25,8 @@ namespace ExpressBase.Web.BaseControllers
         protected EbStaticFileClient FileClient { get; set; }
 
         public CustomUserSession Session { get; set; }
+
+        protected User LoggedInUser { get; set; }
 
         public EbBaseController(IServiceClient _ssclient)
         {

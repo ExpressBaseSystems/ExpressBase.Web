@@ -1,93 +1,36 @@
-﻿(function ($) {
-    if ($.fn.style) {
-        return;
-    }
-
-    // Escape regex chars with \
-    var escape = function (text) {
-        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+﻿var SurveyObj = function (abc) {
+    let _chiceCount = 0;
+    this.Survey = {
+        Question: "",
+        QuesType: null,
+        Choices: [],
     };
-
-    // For those who need them (< IE 9), add support for CSS functions
-    var isStyleFuncSupported = !!CSSStyleDeclaration.prototype.getPropertyValue;
-    if (!isStyleFuncSupported) {
-        CSSStyleDeclaration.prototype.getPropertyValue = function (a) {
-            return this.getAttribute(a);
-        };
-        CSSStyleDeclaration.prototype.setProperty = function (styleName, value, priority) {
-            this.setAttribute(styleName, value);
-            var priority = typeof priority != 'undefined' ? priority : '';
-            if (priority != '') {
-                // Add priority manually
-                var rule = new RegExp(escape(styleName) + '\\s*:\\s*' + escape(value) +
-                    '(\\s*;)?', 'gmi');
-                this.cssText =
-                    this.cssText.replace(rule, styleName + ': ' + value + ' !' + priority + ';');
-            }
-        };
-        CSSStyleDeclaration.prototype.removeProperty = function (a) {
-            return this.removeAttribute(a);
-        };
-        CSSStyleDeclaration.prototype.getPropertyPriority = function (styleName) {
-            var rule = new RegExp(escape(styleName) + '\\s*:\\s*[^\\s]*\\s*!important(\\s*;)?',
-                'gmi');
-            return rule.test(this.cssText) ? 'important' : '';
-        }
-    }
-
-    // The style function
-    $.fn.style = function (styleName, value, priority) {
-        // DOM node
-        var node = this.get(0);
-        // Ensure we have a DOM node
-        if (typeof node == 'undefined') {
-            return this;
-        }
-        // CSSStyleDeclaration
-        var style = this.get(0).style;
-        // Getter/Setter
-        if (typeof styleName != 'undefined') {
-            if (typeof value != 'undefined') {
-                // Set style property
-                priority = typeof priority != 'undefined' ? priority : '';
-                style.setProperty(styleName, value, priority);
-                return this;
-            } else {
-                // Get style property
-                return style.getPropertyValue(styleName);
-            }
-        } else {
-            // Get CSSStyleDeclaration
-            return style;
-        }
-    };
-})(jQuery);
-
-var SurveyObj = function (abc) {
 
     this.init = function () {
-        $(".question-new").off("click").on("click", this.openNewQuestion.bind(this));
-    };
-
-    this.openNewQuestion = function () {
-        $("#questionModal").modal("show");
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
+
         $("#userInputType").off("change").on("change", this.getUserInputOption.bind(this));
         $("#requiredCheck").off("change").on("change", this.requiredCheckboxChanged.bind(this));
         $("#scoreCheck").off("change").on("change", this.scoreCheckboxChanged.bind(this));
+        $('#survvey_form-modal').on("submit", this.newQuesSubmit.bind(this));
         this.scoreCheckbox = $("#scoreCheck").prop("checked");
+
+        $(`textarea[name="Question"]`).on("change", function (e) { this.Survey.Question = e.target.value; }.bind(this));
+        $("#submit_question").off("click").on("click", this.newQuesSubmit.bind(this));
     };
 
-    this.changeQuestionType = function () {
-        this.qstType = $(event.target).text().trim();
+    this.changeQuestionType = function (e) {
+        this.qstType = parseInt($(e.target).closest('.qst-type').attr("qtype"));
+        this.Survey.QuesType = this.qstType;
+
         $(".qst-opt-cont").empty();
-        if (this.qstType === "Multiple choice(Single-Select)" || this.qstType === "Multiple choice(Multiple-Select)") {
+        if (this.qstType === 1 || this.qstType === 2) {
             $(".q-opt-control-cont").empty();
             this.appendChoice();
             $("#userInputType").closest(".q-set-item").hide();
             $("#scoreCheck").closest(".q-set-item").show();
         }
-        else if (this.qstType === "User Input") {
+        else if (this.qstType === 3) {
             $("#userInputType").closest(".q-set-item").show();
             this.userinputoption = $("#userInputType option:selected").text().trim();
             this.appendUserInputOption();
@@ -97,13 +40,12 @@ var SurveyObj = function (abc) {
             $("#scoreCheck").closest(".q-set-item").hide();
             $("#userInputType").closest(".q-set-item").hide();
         }
-        
     };
 
     this.appendChoice = function () {
-        $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-cont-inner"><div class="q-opt-control-cont"></div>
+        $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-cont-inner"><div class="q-opt-control-cont float-left"></div>
             <div class='input-group choice'>
-                <input type="text" placeholder="New choice" class="qst-choice-text form-control"/>
+                <input type="text" name="Choices" placeholder="New choice" class="qst-choice-text form-control"/>
                 <input type="number" class="qst-choice-number form-control" min="0" placeholder="Score"/>
                 <span class="choice-action input-group-addon btn delete"><i class="fa fa-close" style="color:#c73434;"></i></span>
             </div>
@@ -182,19 +124,41 @@ var SurveyObj = function (abc) {
     };
 
     this.appendRadioOrCheckbox = function () {
-        if (this.qstType === "Multiple choice(Single-Select)") {
+        if (this.qstType === 1) {
             $.each($(".q-opt-control-cont"), function (i, obj) { 
                 if ($(obj).children().length === 0)
                     $(obj).append(`<div class="col-md-1 q-opt-input-cont"><input type="radio" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
             });
         }
-        else if (this.qstType === "Multiple choice(Multiple-Select)") {
+        else if (this.qstType === 2) {
             $.each($(".q-opt-control-cont"), function (i, obj) {
                 if ($(obj).children().length === 0)
                     $(obj).append(`<div class="col-md-1 q-opt-input-cont"><input type="checkbox" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
             });
         }
     }
+
+    this.newQuesSubmit = function (e) {
+        this.Survey.Choices.length = 0;
+        $(".qst-opt-cont").find(`input[name='Choices']`).each(function (i, o) {
+            this.Survey.Choices.push(o.value);
+        }.bind(this));
+
+        $.ajax({
+            url: "../Survey/SaveQues",
+            type: "POST",
+            data: { survey: JSON.stringify(this.Survey) },
+            beforeSend: function () {
+                $("#survey_menu_load").EbLoader("show");
+            }
+        }).done(function (result) {
+            if (result) {
+                $("#survey_menu_load").EbLoader("show");
+                $("#questionModal").modal("toggle");
+                $("#survey_menu_load").EbLoader("hide");
+            }
+        }.bind(this));
+    };
     
     this.init();
 

@@ -17,13 +17,17 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult CreateSurvey()
         {
+            GetSurveyQueriesResponse resp = this.ServiceClient.Get(new GetSurveyQueriesRequest());
+            ViewBag.Queries = resp.Data;
             return View();
         }
 
         public bool SaveQues(string survey)
         {
-            var o = JsonConvert.DeserializeObject<SurveyQuesRequest>(survey);
-            SurveyQuesResponse resp = this.ServiceClient.Post(o);
+            var o = JsonConvert.DeserializeObject<EbSurveyQuery>(survey);
+            SurveyQuesResponse resp = this.ServiceClient.Post(new SurveyQuesRequest {
+                Query = o
+            });
             return resp.Status;
         }
     }

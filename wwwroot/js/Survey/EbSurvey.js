@@ -1,13 +1,15 @@
-﻿var SurveyObj = function (abc) {
+﻿var SurveyObj = function (abc,ques) {
     let _chiceCount = 0;
     this.Survey = {
         Question: "",
         QuesType: null,
         Choices: [],
     };
+    this.Queries = JSON.parse(ques) || null;
 
     this.init = function () {
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
+        $('.query_tile').off("click").on("click", this.quesEdit.bind(this));
 
         $("#userInputType").off("change").on("change", this.getUserInputOption.bind(this));
         $("#requiredCheck").off("change").on("change", this.requiredCheckboxChanged.bind(this));
@@ -17,6 +19,19 @@
 
         $(`textarea[name="Question"]`).on("change", function (e) { this.Survey.Question = e.target.value; }.bind(this));
         $("#submit_question").off("click").on("click", this.newQuesSubmit.bind(this));
+    };
+
+    this.quesEdit = function (e) {
+        $(".qst-opt-cont").empty();
+        let quesid = $(e.target).closest(".query_tile").attr("queryid");
+        this.qstType = this.Queries[quesid].QuesType;
+        $("#questionModal").modal("show");
+        $(`textarea[name="Question"]`).val(this.Queries[quesid].Question);
+        for (let i = 0; i < this.Queries[quesid].Choices.length; i++) {
+            this.appendChoice(this.Queries[quesid].Choices[i]);
+        }
+        $("#userInputType").closest(".q-set-item").hide();
+        $("#scoreCheck").closest(".q-set-item").show();
     };
 
     this.changeQuestionType = function (e) {
@@ -42,10 +57,11 @@
         }
     };
 
-    this.appendChoice = function () {
+    this.appendChoice = function (val) {
+        let v = val || "";
         $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-cont-inner"><div class="q-opt-control-cont float-left"></div>
             <div class='input-group choice'>
-                <input type="text" name="Choices" placeholder="New choice" class="qst-choice-text form-control"/>
+                <input type="text" name="Choices" placeholder="New choice" value="${v}" class="qst-choice-text form-control"/>
                 <input type="number" class="qst-choice-number form-control" min="0" placeholder="Score"/>
                 <span class="choice-action input-group-addon btn delete"><i class="fa fa-close" style="color:#c73434;"></i></span>
             </div>
@@ -94,8 +110,8 @@
 
     this.addNewChoiceButton = function () {
         $(".q-opt-new-choice-btn").remove();
-        $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-new-choice-btn">
-            <div class="btn"> <i class="fa fa-plus"></i> ADD CHOICE</div>
+        $(".qst-opt-cont").append(`<div class="col-md-12 pd-0 q-opt-new-choice-btn">
+            <div class="btn"> <i class="fa fa-plus"></i> Add Choice</div>
         </div>`);
         $(".q-opt-new-choice-btn").off("click").on("click", this.appendChoice.bind(this));
     };
@@ -127,13 +143,13 @@
         if (this.qstType === 1) {
             $.each($(".q-opt-control-cont"), function (i, obj) { 
                 if ($(obj).children().length === 0)
-                    $(obj).append(`<div class="col-md-1 q-opt-input-cont"><input type="radio" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
+                    $(obj).append(`<div class="col-md-1 pd-0 q-opt-input-cont"><input type="radio" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
             });
         }
         else if (this.qstType === 2) {
             $.each($(".q-opt-control-cont"), function (i, obj) {
                 if ($(obj).children().length === 0)
-                    $(obj).append(`<div class="col-md-1 q-opt-input-cont"><input type="checkbox" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
+                    $(obj).append(`<div class="col-md-1 pd-0 q-opt-input-cont"><input type="checkbox" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
             });
         }
     }

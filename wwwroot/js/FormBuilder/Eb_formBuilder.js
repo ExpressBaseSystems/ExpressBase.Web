@@ -1,4 +1,4 @@
-﻿var formBuilder = function (options) {
+﻿const formBuilder = function (options) {
     this.wc = options.wc;
     this.cid = options.cid;
     this.formId = options.formId;
@@ -77,6 +77,7 @@
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
+        console.log(control);
         this.$propGrid.css("visibility", "visible");
         this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
         $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));////////

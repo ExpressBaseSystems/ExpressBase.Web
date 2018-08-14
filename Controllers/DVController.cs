@@ -266,6 +266,20 @@ namespace ExpressBase.Web.Controllers
             return resultlist1;
         }
 
+        public DataSourceDataResponse getData4Inline(InlineTableDataRequest request)
+        {
+            DataSourceDataResponse resultlist1 = null;
+            try
+            {
+                resultlist1 = this.ServiceClient.Get(request);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.ToString());
+            }
+            return resultlist1;
+        }
+
         public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(int type)
         {
             var resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = type });

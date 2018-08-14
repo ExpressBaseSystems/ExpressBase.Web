@@ -20,7 +20,7 @@
         }
 
         var parent = this.GetByName(parentId);
-        return parent.Controls.$values.pop(parent.Controls.$values.indexOf(ele));
+        return parent.Controls.PopByIndex(parent.Controls.$values.indexOf(ele));
     };
 
     this.Append = function (newObject) {
@@ -28,7 +28,7 @@
         var parentId = $("#" + newObject.EbSid).parent().attr("id");
         if (parentId === undefined)
             this.$values.push(newObject);
-        else if (!$(`#${parentId}`).attr("eb-form")) {
+        else if (!$(`#${parentId}`).attr("eb-form")) { // need correction
             var parent = this.GetByName(parentId);
             parent.Controls.$values.push(newObject);
         }
@@ -57,6 +57,10 @@
 
     this.GetByIndex = function (_index) {
         return this.$values[_index];
+    };
+
+    this.PopByIndex = function (idx) {
+        return this.$values.splice(idx, 1)[0];
     };
 
     this.Pop = function (_name) {

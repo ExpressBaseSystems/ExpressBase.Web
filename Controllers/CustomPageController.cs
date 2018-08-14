@@ -33,7 +33,10 @@ namespace ExpressBase.Web.Controllers
 		//	ViewBag.AccId = ac;
 		//	ViewBag.CustomerData = fr.CustomerDataDict;
 		//	ViewBag.CostCenter = fr.CostCenterDict;
-		//	ViewBag.FeedbackList = fr.FeedbackList;
+		//	if(mode == 1)
+		//	{
+		//		ViewBag.FeedbackList = JsonConvert.SerializeObject(fr.FeedbackList);
+		//	}		
 
 		//	return View();
 		//}
@@ -41,6 +44,12 @@ namespace ExpressBase.Web.Controllers
 		//public int SaveCustomer(int Mode, string CustomerInfo)
 		//{
 		//	SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode });
+		//	return res.Status;
+		//}
+
+		//public int SaveFollowup(string FollowupInfo)
+		//{
+		//	SaveCustomerFollowupResponse res = this.ServiceClient.Post<SaveCustomerFollowupResponse>(new SaveCustomerFollowupRequest { Data = FollowupInfo, UserName = this.LoggedInUser.FullName });
 		//	return res.Status;
 		//}
 

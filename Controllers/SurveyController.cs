@@ -34,6 +34,12 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.SurveyData = JsonConvert.SerializeObject(resp.Obj);
 			return View();
 		}
+
+		public bool SaveSurvey(string SurveyInfo)
+		{
+			SaveSurveyResponse resp = this.ServiceClient.Post<SaveSurveyResponse>(new SaveSurveyRequest { Data = SurveyInfo});
+			return resp.Status;
+		}
 	}
 			
 }

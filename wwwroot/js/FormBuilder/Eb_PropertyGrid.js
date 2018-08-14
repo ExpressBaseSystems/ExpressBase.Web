@@ -1,4 +1,4 @@
-﻿var Eb_PropertyGrid = function (options, parentPG) {
+﻿const Eb_PropertyGrid = function (options, parentPG) {
     this.wc = options.wc;
     this.cid = options.cid;
     this.IsInnerCall = options.IsInnerCall || false;

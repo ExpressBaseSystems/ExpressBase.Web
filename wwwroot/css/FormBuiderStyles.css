@@ -322,7 +322,7 @@
 
 .form-buider-form .Eb-ctrlContainer:focus {
     outline: none;
-    border: 1px solid #ccc;
+    border: dashed 1px #9699a5;
     margin: 1px;
 }
 
@@ -343,9 +343,17 @@
     min-height: 28.18px;
 }
 
+.eb-ctrl-label {
+    font-weight: bold;
+    padding: 1px;
+}
 
+.helpText {
+    font-size: 11px;
+    color: rgba(37, 37, 37, 0.8);
+    vertical-align: top;
+}
 /*overridding*/
-
 .form-buider-form .btn {
     /*padding: 3px 12px !important;
         width: 100%;*/

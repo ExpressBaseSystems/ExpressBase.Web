@@ -176,10 +176,11 @@
 }
 .qst-text {
     background-color: white;
-    min-height: 90px;
+    min-height: 65px;
     padding: 10px;
     width: 100%;
     resize: none;
+    border-left: none;
 }
 
 .qst-text-cont:empty:not(:focus):before {
@@ -234,10 +235,12 @@
 }
 
 .q-opt-new-choice-btn {
-    border: 1px dashed #c89cd0;
+    border: 1px solid #245804;
     text-align: center;
     cursor: pointer;
-    width: 43%;
+    background-color: white;
+    border-radius: 2px;
+    margin-top: 15px;
 }
 .q-label{
     border-right:1px solid #ccc!important;
@@ -260,4 +263,8 @@
 .survey_menu_load {
     bottom: -1px;
     left: 0;
+}
+.survey_container{
+    padding:15px;
+    float:left;
 }

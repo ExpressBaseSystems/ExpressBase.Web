@@ -215,6 +215,9 @@
             }
             else if (_obj.EbType == "Report") {
                 _url = "../ReportRender/Index?refid=" + _obj.Refid;
+            }
+            else if (_obj.EbType == "WebForm") {
+                _url = "../WebForm/Index?refid=" + _obj.Refid;
             }            
         }
         return _url;

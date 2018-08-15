@@ -39,7 +39,7 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 
-		public bool SaveSurvey(string SurveyInfo)
+		public int SaveSurvey(string SurveyInfo)
 		{
 			SaveSurveyResponse resp = this.ServiceClient.Post<SaveSurveyResponse>(new SaveSurveyRequest { Data = SurveyInfo});
 			return resp.Status;

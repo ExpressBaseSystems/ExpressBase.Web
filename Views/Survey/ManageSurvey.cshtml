@@ -117,7 +117,7 @@
 
         this.init = function () {
             this.initForm();
-            this.menuBarObj.setName("Manage Survey");
+            
             this.menuBarObj.insertButton(`<button id="btnSave" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
             this.drake = new dragula([document.getElementById("divQuesAll"), document.getElementById("divQuesSelected")], {
                 accepts: function (el, target, source, sibling) {
@@ -175,8 +175,14 @@
                     this.$divSelected.append(`<div class="questionDiv" data-id='${result[0].Id}'>${result[0].Question}</div>`);
 
                 }.bind(this));
+                this.menuBarObj.setName("Manage Survey - " + this.SurveyData.Name);
+                this.menuBarObj.insertButton(`<button id="btnNew" class='btn' title='New'><i class="fa fa-plus" aria-hidden="true"></i></button>`);
+                $("#btnNew").on("click", function () { 
+                    window.location.search = '';
+                }.bind(this));
             }
             else {
+                this.menuBarObj.setName("Manage Survey - Untitled");
                 this.SurveyData.QuesIds = [];
             }
 
@@ -211,6 +217,8 @@
                 success: function (result) {
                     if (result) {
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#1ebf1e' });
+                        if (this.SurveyData.Id === 0)
+                            window.location.search = '?id=' + result;
                     }
                     else {
                         EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e' });

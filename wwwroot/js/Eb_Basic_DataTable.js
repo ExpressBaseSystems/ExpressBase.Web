@@ -30,6 +30,8 @@ var EbBasicDataTable = function (Option) {
     this.filterValues = Option.filterValues || [];
     this.FlagPresentId = false;
     this.columnSearch = Option.columnSearch || [];
+    this.data = Option.data || null;
+
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -45,7 +47,10 @@ var EbBasicDataTable = function (Option) {
         this.EbObject.IsPaging = Option.IsPaging || false;
         this.$dtLoaderCont = $("<div id='dtloadercont' class='dt-loader-cont'></div>");
         this.$dtLoaderCont.insertBefore($("#" + this.contId));
-        this.call2FD();
+        if (this.data === null)
+            this.call2FD();
+        else
+            this.getColumnsSuccess();
     }
 
     this.showLoader = function () {
@@ -93,8 +98,6 @@ var EbBasicDataTable = function (Option) {
 
         this.addSerialAndCheckboxColumns();
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
-            //$("#content_" + this.tableId).empty();
-            //$("#content_" + this.tableId).append("<div style='width:auto;height:inherit;' id='" + this.tableId + "divcont'><table id='" + this.tableId + "' class='table table-striped table-bordered pageResize'></table></div>");
             this.Init();
         }
         var temp = [];
@@ -105,7 +108,7 @@ var EbBasicDataTable = function (Option) {
 
     this.Init = function () {
         $.event.props.push('dataTransfer');
-        //this.updateRenderFunc();
+        this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
 
         this.eb_agginfo = this.getAgginfo();
@@ -220,8 +223,8 @@ var EbBasicDataTable = function (Option) {
         o.scrollX = "100%";
         o.bAutoWidth = false;
         o.autowidth = false;
-        o.serverSide = true;
-        o.processing = true;
+        o.serverSide = (this.data === null) ? true : false;
+        o.processing = (this.data === null) ? true : false;
         o.language = {
             processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>",
         };
@@ -231,13 +234,17 @@ var EbBasicDataTable = function (Option) {
         o.paging = this.EbObject.IsPaging;
         //o.lengthChange = false;
         o.select = true;
-        o.keys = true,
+        o.keys = true;
+        if (this.data === null) {
             o.ajax = {
                 url: (Option.wc === 'bc' ? "../boti/getData" : "../dv/getData"),
                 type: 'POST',
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
             };
+        }
+        else
+            o.data = this.data;
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
@@ -626,14 +633,15 @@ var EbBasicDataTable = function (Option) {
     }
 
     this.drawCallBackFunc = function (settings) {
-        if (this.ebSettings.rowGrouping.$values.length > 0)
-            this.doRowgrouping();
+        //if (this.ebSettings.rowGrouping.$values.length > 0)
+        //    this.doRowgrouping();
         this.summarize2();
-        this.Api.columns.adjust();
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
         this.filterDisplay();
+        if(this.Api !== null)
+            this.Api.columns.adjust();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -785,8 +793,8 @@ var EbBasicDataTable = function (Option) {
         var scrollY = this.ebSettings.scrollY;
         var p;
         var ftrtxt;
-        $.each(this.Api.settings().init().aoColumns, function (index, agginfo) {
-            if (agginfo.Aggregate) {
+        $.each(this.eb_agginfo, function (index, agginfo) {
+            if (agginfo.colname) {
                 p = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.name + '_ftr_sel0').text().trim();
                 ftrtxt = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.name + '_ftr_txt0';
                 var col = api.column(agginfo.name + ':name');
@@ -856,22 +864,21 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.addFilterEventListeners = function () {
-        $('#' + this.tableId + '_wrapper thead tr:eq(0)').off('click').on('click', 'th', this.orderingEvent.bind(this));
+        if (this.Api !== null) {
+            $('#' + this.tableId + '_wrapper thead tr:eq(0)').off('click').on('click', 'th', this.orderingEvent.bind(this));
+            $.each($(this.Api.columns().header()).parent().siblings().children().toArray(), this.setFilterboxValue.bind(this));
+            this.Api.on('key-focus', function (e, datatable, cell) {
+                datatable.rows().deselect();
+                datatable.row(cell.index().row).select();
+            });
+        }
         $(".eb_fsel" + this.tableId).off("click").on("click", this.setLiValue.bind(this));
         $(".eb_ftsel" + this.tableId).off("click").on("click", this.fselect_func.bind(this));
-        $.each($(this.Api.columns().header()).parent().siblings().children().toArray(), this.setFilterboxValue.bind(this));
         $(".eb_fbool" + this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
         $(".eb_selall" + this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
-
-
-        this.Api.on('key-focus', function (e, datatable, cell) {
-            datatable.rows().deselect();
-            datatable.row(cell.index().row).select();
-        });
-
         $("#clearfilterbtn_" + this.tableId).off("click").on("click", this.clearFilter.bind(this));
         $("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
         $(".columnMarker_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
@@ -882,49 +889,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.GenerateButtons = function () {
-        $(".toolicons").show();
-        $("#objname").text(this.dvName);
-        $("#obj_icons").empty();
-        $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
-        if ($("#" + this.tableId).children().length > 0) {
-            $("#obj_icons").append("<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +
-                "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
-                "<div class='btn-group'>" +
-                "<div class='btn-group'>" +
-                " <button id='btnPrint" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
-                " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
-                "   <span class='caret'></span>  <!-- caret --></div>" +
-                "   <ul class='dropdown-menu' role='menu'>" +
-                "      <li><a href = '#' id='btnprintAll" + this.tableId + "'> Print All</a></li>" +
-                "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
-                "</ul>" +
-                "</div>" +
-                "<button id='btnExcel" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
-                "<button id='btnPdf" + this.tableId + "' class='btn'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
-                "<button id='btnCsv" + this.tableId + "' class='btn'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
-                "<button id='btnCopy" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
-                "</div>" +
-                "</div>" +
-                "</div>");
-            if (this.FD) {
-                $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
-            }
-            $("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class='material-icons'>settings</i></button>");
-            //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
-            if (this.login == "uc") {
-                //if (!this.isContextual)
-                dvcontainerObj.appendRelatedDv(this.tableId);
-                dvcontainerObj.modifyNavigation();
-                $("#btnTogglePPGrid" + this.tableId).hide();
-                //if (!$("#sub_window_" + this.tableId).find(".dataTables_scroll").children().hasClass("filter_Display"))
-                //    $("#sub_window_" + this.tableId).find(".dataTables_scroll").append(`<div class='filter_Display'></div>`);
-            }
-
-            $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
-            this.addFilterEventListeners();
-
-        }
+        this.addFilterEventListeners();
     };
 
     this.setFilterboxValue = function (i, obj) {
@@ -1399,7 +1364,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
-        if (col.type == parseInt(gettypefromString("Int32")) || col.type == parseInt(gettypefromString("Decimal")) || col.type == parseInt(gettypefromString("Int64"))) {
+        if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.ProgressBar) {
                 this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
                 this.ebSettings.Columns.$values[i].mRender = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
@@ -1425,7 +1390,7 @@ var EbBasicDataTable = function (Option) {
             }
             this.ebSettings.Columns.$values[i].sClass = this.ebSettings.Columns.$values[i].className;
         }
-        if (col.type == parseInt(gettypefromString("Boolean"))) {
+        if (col.Type == parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
@@ -1445,7 +1410,7 @@ var EbBasicDataTable = function (Option) {
                 }
             }
         }
-        if (col.type == parseInt(gettypefromString("String")) || col.type == parseInt(gettypefromString("Double"))) {
+        if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
                 //this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
                 this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
@@ -1468,6 +1433,18 @@ var EbBasicDataTable = function (Option) {
             else {
                 this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) { return data; };
                 this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
+            }
+        }
+
+        if (col.Type == parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
+            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
+                this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
+                this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
+                this.ebSettings.Columns.$values[i].mRender = this.renderlink4NewTable.bind(this);
+            }
+            else {
+                this.ebSettings.Columns.$values[i].render = this.renderDateformat.bind(this);
+                this.ebSettings.Columns.$values[i].mRender = this.renderDateformat.bind(this);
             }
         }
         //if (col.fontfamily !== 0) {
@@ -1628,6 +1605,20 @@ var EbBasicDataTable = function (Option) {
 
     this.renderDataAsLabel = function (data) {
         return `<label class='labeldata'>${data}</label>`;
+    };
+
+    this.renderDateformat = function (data, sym) {
+        if (typeof data !== "object" && typeof data !== "undefined") {
+            var date = new Date(parseInt(data.substr(6)));
+            var month = date.getMonth() + 1;
+            var dt = date.getDate();
+            if (sym === "-")
+                return (dt.toString().length > 1 ? dt : "0" + dt) + "-" + (month.toString().length > 1 ? month : "0" + month) + "-" + date.getFullYear();
+            else
+                return (dt.toString().length > 1 ? dt : "0" + dt) + "/" + (month.toString().length > 1 ? month : "0" + month) + "/" + date.getFullYear();
+        }
+        else
+            return "";
     };
 
     this.init();

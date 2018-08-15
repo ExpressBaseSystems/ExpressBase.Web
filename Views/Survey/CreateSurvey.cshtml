@@ -1,5 +1,6 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
 @using Newtonsoft.Json;
+@using ExpressBase.Common;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
@@ -56,15 +57,15 @@
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <div class="survey_container w-100">
+            <div class="survey_container w-100" id="surveyques_wrapper">
                 @{
                     foreach (KeyValuePair<int, EbSurveyQuery> qry in Queries)
                     {
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                            <a class="appcontainer_inner query_tile" queryid="@qry.Value.QuesId">
-                                <div class="col-md-6 pd-0">
+                            <a class="appcontainer_inner query_tile" questype="@qry.Value.QuesType" queryid="@qry.Value.QuesId">
+                                <div class="col-md-12 pd-0">
                                     <h5 class="txtdecor_none">@qry.Value.Question</h5>
-                                    <p class="small txtdecor_none">@qry.Value.QuesType</p>
+                                    <p class="small txtdecor_none">@((SurveyQTypes)qry.Value.QuesType)</p>
                                 </div>
                             </a>
                         </div>

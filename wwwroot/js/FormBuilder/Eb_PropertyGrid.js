@@ -1,4 +1,4 @@
-﻿var Eb_PropertyGrid = function (options, parentPG) {
+﻿const Eb_PropertyGrid = function (options, parentPG) {
     this.wc = options.wc;
     this.cid = options.cid;
     this.IsInnerCall = options.IsInnerCall || false;
@@ -656,8 +656,9 @@
         var name = e.target.value;
         $("#M_SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
         $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
-        if ($(e.target).closest("tr").attr("tr-for") !== "23")
-            $("#" + this.PropsObj.EbSid + ' span').text(name);
+        // commented to prevent one error
+        //if ($(e.target).closest("tr").attr("tr-for") !== "23")
+        //    $("#" + this.PropsObj.EbSid + ' span').text(name);
 
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
         this.nameChanged(this.PropsObj);

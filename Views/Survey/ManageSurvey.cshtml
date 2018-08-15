@@ -1,0 +1,237 @@
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<link href="~/css/LeadManagement.css" rel="stylesheet" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
+
+<script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
+
+
+<div class="container" style="background-color: white;">
+    <div class="row" style="padding-top: 50px;">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>Survey Name</label>
+                <input id="txtName" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>Start Date</label>
+                <div class="input-group">
+                    <input id="txtStart" type="text" class="form-control">
+                    <span class="input-group-addon" onclick="$('#txtStart').focusin();"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>End Date</label>
+                <div class="input-group">
+                    <input id="txtEnd" type="text" class="form-control">
+                    <span class="input-group-addon" onclick="$('#txtEnd').focusin();"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label>State</label>
+                <select id="selState" class="form-control">
+                    <option value="0">Active</option>
+                    <option value="1">Suspend</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="padding-top: 10px;border-top: 1px solid #ccc;">
+        <div class="col-md-6"><div style="display: inline-block;"><label>All Questions</label></div>
+            <div class="form-group has-feedback" style="display:inline-block; float:right;width: 150px;">
+                <input type="text" class="form-control" id="txtSrchList" placeholder="Search" style="height: 28px;" title="Search">
+                <span id="spanSrchList" class="glyphicon glyphicon-search form-control-feedback" style="top: -2px; display: block;"></span>
+                <span id="spanRemvList" class="glyphicon glyphicon-remove form-control-feedback" style="top: -2px; display: none;"></span>
+            </div>
+        </div>
+        <div class="col-md-6"><label>Selected Questions</label></div>
+    </div>
+    <div class="row">
+        <div class="col-md-6" id="divQuesAll">
+            @*<div class="questionDiv"></div>
+            <div class="questionDiv"> </div>
+            <div class="questionDiv"> </div>*@
+        </div>
+        <div class="col-md-6" id="divQuesSelected"></div>
+    </div>
+</div>
+
+<style>
+    #divQuesAll, #divQuesSelected {
+        height: calc(102vh - 200px);
+        overflow: auto;
+    }
+    .questionDiv {
+        border: 2px solid #f5f5f5;
+        background-color: #fdfdfd;
+        border-radius: 6px;
+        align-items: center;
+        height: 75px;
+        overflow: hidden;
+        padding: 10px 13px;
+        margin-top: 15px;
+    }
+        .questionDiv:hover {
+            background-color: #f5f5f5;            
+            border: none;
+        }
+</style>
+
+@{ 
+    var QuestionList = Html.Raw(ViewBag.QuestionList);
+    var SurveyData = Html.Raw(ViewBag.SurveyData);
+}
+
+<script>
+    var ManageSurveyObj = function (SurveyData, QuestionList) {
+        this.SurveyData = SurveyData;
+        this.QuestionList = QuestionList;
+        this.menuBarObj = $("#layout_div").data("EbHeader");
+        this.drake;
+
+        this.$Name = $("#txtName");
+        this.$Start = $("#txtStart");
+        this.$End = $("#txtEnd");
+        this.$State = $("#selState");
+        this.$divAll = $("#divQuesAll");
+        this.$divSelected = $("#divQuesSelected");
+
+        this.$btnSave = $("#btnSave");
+
+        this.init = function () {
+            this.initForm();
+            
+            this.menuBarObj.insertButton(`<button id="btnSave" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
+            this.drake = new dragula([document.getElementById("divQuesAll"), document.getElementById("divQuesSelected")], {
+                accepts: function (el, target, source, sibling) {
+                    var qid = parseInt($(el).attr('data-id'));
+                    if ($(source)[0].id === this.$divAll[0].id && $(target)[0].id === this.$divSelected[0].id) {                        
+                        if (this.SurveyData.QuesIds.indexOf(qid) === -1) {
+                            this.SurveyData.QuesIds.push(qid);
+                        }
+                        else {
+                            return false;
+                        }                           
+                    }
+                    else if ($(source)[0].id === this.$divSelected[0].id && $(target)[0].id ===  this.$divAll[0].id) { 
+                        if (this.SurveyData.QuesIds.indexOf(qid) > -1) {
+                            this.SurveyData.QuesIds.splice(this.SurveyData.QuesIds.indexOf(qid), 1);
+                        } 
+                    }
+                    return true;// elements can be dropped in any of the `containers` by default
+                }.bind(this)
+            });
+            this.$Start.datetimepicker({ timepicker: true, format: "d-m-Y H:i" });
+            this.$End.datetimepicker({ timepicker: true, format: "d-m-Y H:i" });
+
+            $("#btnSave").on("click", this.onClickSave.bind(this));
+
+            $('#txtSrchList').on('keyup', function (e) {
+                if ($(e.target).val() === "") {
+                    $("#spanRemvList").hide();
+                    $("#spanSrchList").show();
+                }
+                else {
+                    $("#spanSrchList").hide();
+                    $("#spanRemvList").show();
+                }
+                this.redrawAllQues($(e.target).val());
+            }.bind(this));
+            $("#spanRemvList").on('click', function () {
+                $('#txtSrchList').val("");
+                $("#spanRemvList").hide();
+                $("#spanSrchList").show();
+                this.redrawAllQues("");
+            }.bind(this));
+
+        }
+        this.initForm = function () {
+            if (this.SurveyData.Id > 0) {
+                this.$Name.val(this.SurveyData.Name);
+                this.$Start.val(this.SurveyData.Start);
+                this.$End.val(this.SurveyData.End);
+                this.$State.val(this.SurveyData.Status);
+                $.each(this.SurveyData.QuesIds, function (i, did) { 
+                    var result = this.QuestionList.filter(obj => {
+                        return obj.Id === did
+                    });
+                    this.$divSelected.append(`<div class="questionDiv" data-id='${result[0].Id}'>${result[0].Question}</div>`);
+
+                }.bind(this));
+                this.menuBarObj.setName("Manage Survey - " + this.SurveyData.Name);
+                this.menuBarObj.insertButton(`<button id="btnNew" class='btn' title='New'><i class="fa fa-plus" aria-hidden="true"></i></button>`);
+                $("#btnNew").on("click", function () { 
+                    window.location.search = '';
+                }.bind(this));
+            }
+            else {
+                this.menuBarObj.setName("Manage Survey - Untitled");
+                this.SurveyData.QuesIds = [];
+            }
+
+            $.each(this.QuestionList, function (i, obj) {
+                if (this.SurveyData.QuesIds.indexOf(obj.Id) === -1)
+                    this.$divAll.append(`<div class="questionDiv" data-id='${obj.Id}'>${obj.Question}</div>`);                    
+            }.bind(this));
+        }
+
+        this.redrawAllQues = function (key) {
+            key = key.toLowerCase();
+            this.$divAll.children().remove();
+            $.each(this.QuestionList, function (i, obj) {
+                if (this.SurveyData.QuesIds.indexOf(obj.Id) === -1) {
+                    let temp = obj.Question.toLowerCase();
+                    if (temp.indexOf(key) !== -1)
+                        this.$divAll.append(`<div class="questionDiv" data-id='${obj.Id}'>${obj.Question}</div>`);
+                }                    
+            }.bind(this));
+        }
+
+        this.onClickSave = function () {
+            var selectedQids = [];
+            $.each(this.$divSelected.children(), function (i, divO) { 
+                selectedQids.push(parseInt($(divO).attr('data-id')));
+            }.bind(this));
+            var sObj = { Id: this.SurveyData.Id, Name: this.$Name.val(), Start: this.$Start.val(), End: this.$End.val(), Status: this.$State.val(), QuesIds: selectedQids};
+            $.ajax({
+                type: "POST",
+                url: "../Survey/SaveSurvey",
+                data: { SurveyInfo: JSON.stringify(sObj) },
+                success: function (result) {
+                    if (result) {
+                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#1ebf1e' });
+                        if (this.SurveyData.Id === 0)
+                            window.location.search = '?id=' + result;
+                    }
+                    else {
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e' });
+                    }
+                }.bind(this)
+            });
+        }
+
+        this.init();
+    }
+
+
+    var SurveyData = @SurveyData;
+    var QuestionList = @QuestionList;
+    new ManageSurveyObj(SurveyData, QuestionList);
+</script>

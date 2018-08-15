@@ -23,12 +23,19 @@
         </div>
     </div>
     <div class="web-form-wraper">
-        <div class="form-head"><div class="formhead-text">WebForm1</div></div>
-        <div id="WebForm1" eb-form="true" ui-inp eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form">
-            @Html.Raw(ViewBag.Html)
-            @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
-            @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
-        </div>
+        @{
+            if (ViewBag.Html != null)
+            {
+                @Html.Raw(ViewBag.Html)
+            }
+            else
+            {
+                <div id="WebForm1" eb-form="true" ui-inp eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form"></div>
+            }
+
+        }
+        @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
+        @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
     </div>
     <input type="hidden" id="objtype" value="@type" />
     <input type="hidden" id="objid" value="@ViewBag.Refid" />
@@ -45,12 +52,13 @@
     @Html.Raw(_toolBox.TypeRegister);
     @Html.Raw(_toolBox.EbOnChangeUIfns);
 
-    var formBuilderObj = null;
-    var objid =$("#objid").val();
-    var FBid = "WebForm1";
-    var editModeFormObj = null;
-    var ToolBoxId = "form-buider-toolBox";
-    var PGid = "form-buider-propGrid";
+    let formBuilderObj = null;
+    let objid =$("#objid").val();
+    let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
+    let FBid = editModeFormObj ? editModeFormObj.Name : "WebForm1";
+    let ToolBoxId = "form-buider-toolBox";
+    let PGid = "form-buider-propGrid";
+    let PGformId = "form-buider-propGrid";
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder({
         toolBoxId: ToolBoxId,
         formId: FBid,
@@ -59,5 +67,5 @@
         Eb_objType: @typeInt,
         wc: "@ViewBag.wc",
         cid: "@ViewBag.cid",
-        objInEditMode : @Html.Raw(ViewBag.dsObj)});
+        objInEditMode : editModeFormObj});
 </script>

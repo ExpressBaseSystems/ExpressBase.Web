@@ -1,4 +1,4 @@
-﻿var formBuilder = function (options) {
+﻿const formBuilder = function (options) {
     this.wc = options.wc;
     this.cid = options.cid;
     this.formId = options.formId;
@@ -8,6 +8,7 @@
     this.$propGrid = $("#" + options.PGId);
     this.$form = $("#" + this.formId);
     this.EbObject = options.objInEditMode;
+    this.tempArr = [];
     commonO.Current_obj = this.EbObject;
 
 
@@ -28,7 +29,6 @@
             this.curControl = $(e.target).closest(".Eb-ctrlContainer");
         var id = this.curControl.attr("id");
         e.stopPropagation();
-        this.curControl.children('.ctrlHead').show();
         this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
         //  this.PGobj.ReadOnly();
@@ -36,24 +36,47 @@
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
+        //setTimeout(function () {
+        Proc(editModeObj, this.rootContainerObj);
+        //}.bind(this), 1000);
         $(".Eb-ctrlContainer").each(function (i, el) {
             this.initCtrl(el);
         }.bind(this));
         $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
-        setTimeout(function () {
-            Proc(editModeObj, this.rootContainerObj);
-        }.bind(this), 1000);
     };
 
     this.initCtrl = function (el) {
-        var $el = $(el);
-        var type = $el.attr("ctype").trim();
-        var id = type + (this.controlCounters[type + "Counter"])++;
+        this.tempArr.push(el);
+        let $el = $(el);
+        let type = $el.attr("ctype").trim();
+        let id = type + (this.controlCounters[type + "Counter"])++;// inc counter
+        id = $el.attr("ebsid") || id;
         $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
         $el.attr("eb-type", type).attr("id", id);
+        this.updateControlUI(id);
     };
+
+    this.updateControlUI = function (id, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(id);
+        let _type = obj.ObjType
+        $.each(obj, function (propName, propVal) {
+            let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
+            if (meta && meta.IsUIproperty)
+                this.updateUIProp(propName, id, _type);
+        }.bind(this));
+    }
+
+    this.updateUIProp = function (propName, id, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(id);
+        let NSS = getObjByval(AllMetas["Eb" + type], "name", propName).UIChangefn;
+        if (NSS) {
+            let NS1 = NSS.split(".")[0];
+            let NS2 = NSS.split(".")[1];
+            EbOnChangeUIfns[NS1][NS2](id, obj);
+        }
+    }
 
     //Edit mode
     if (this.EbObject) {
@@ -77,6 +100,7 @@
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
+        console.log(control);
         this.$propGrid.css("visibility", "visible");
         this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
         $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));////////
@@ -128,9 +152,10 @@
 
     this.onDragFn = function (el, source) {
         //if drag start within the form
+        id = $(el).closest(".Eb-ctrlContainer").attr("id");
         if ($(source).attr("id") !== "form-buider-toolBox") {
             console.log("el poped");
-            this.movingObj = this.rootContainerObj.Controls.PopByName($(el).attr("id"));
+            this.movingObj = this.rootContainerObj.Controls.PopByName(id);
         }
         else
             this.movingObj = null;
@@ -215,10 +240,10 @@
                 $ctrl.contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
                 ctrlObj.Label = id;
                 ctrlObj.HelpText = "";
+                this.updateControlUI(id);
             }
             else
                 console.log("ondrop else : removed");
-            this.saveObj();
         }
     };
 
@@ -319,7 +344,6 @@
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" +r $(this).find("option:selected").val()).focus(); });
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-            //RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
         }.bind(this);

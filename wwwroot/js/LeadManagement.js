@@ -5,7 +5,7 @@
     this.Mode = MC_Mode;
     this.CustomerInfo = C_Info;
     this.CostCenterInfo = Center_Info;
-    this.FeedbackList = F_List;
+    this.FeedbackList = F_List || [];
     //DOM ELEMENTS
     this.$CostCenter = $("#selCostCenter");
     this.$EnDate = $("#txtEnDate");
@@ -29,7 +29,7 @@
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
     this.$PicReceived = $("#selPicReceived");
-    //FOLLOUP
+    //FOLLOWUP
     this.divFeedback = "divFdbk";
     this.$MdlFeedBack = $("#mdlFeedBack");
     this.$FlUpDate = $("#txtFlUpDate");
@@ -77,13 +77,40 @@
     this.initFeedBackModal = function () {
         this.$FlUpDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$FlUpFolDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
-        this.$FlUpSave.on("click", function () {
-            alert(this.$MdlFeedBack.attr("data-id"));
+
+        this.$FlUpSave.on("click", function () {            
+            var id = 0;
+            this.$FlUpSave.children().show();
+            if (this.$MdlFeedBack.attr("data-id") !== '')
+                id = parseInt(this.$MdlFeedBack.attr("data-id"));
+            var fdbkObj = { Id: id, Date: this.$FlUpDate.val(), Status: this.$FlUpStatus.val(), Followup_Date: this.$FlUpFolDate.val(), Comments: this.$FlUpComnt.val(), Account_Code: this.AccId };
+            $.ajax({
+                type: "POST",
+                url: "../CustomPage/SaveFollowup",
+                data: { FollowupInfo: JSON.stringify(fdbkObj) },
+                success: function (result) {
+                    this.$FlUpSave.children().hide();
+                    if (result) {
+                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#1ebf1e' });
+                        this.$MdlFeedBack.modal('hide');
+                    }
+                    else {
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e' });
+                    }
+                }.bind(this)
+            });
         }.bind(this));
-        new ListViewCustom(this.divFeedback, this.FeedbackList, function (id) {
+
+        new ListViewCustom(this.divFeedback, this.FeedbackList, function (id, data) {
             this.$MdlFeedBack.attr("data-id", id);
+            var tempObj = JSON.parse(window.atob(data));
+            this.$FlUpDate.val(tempObj[2]);
+            this.$FlUpStatus.val(tempObj[3]);
+            this.$FlUpFolDate.val(tempObj[4]);
+            this.$FlUpComnt.val(tempObj[5]);
             this.$MdlFeedBack.modal('show');
         }.bind(this));
+
         this.$MdlFeedBack.on('shown.bs.modal', function (e) {
             if (this.$MdlFeedBack.attr("data-id") === "") {
                 this.$FlUpDate.val("");
@@ -92,6 +119,7 @@
                 this.$FlUpComnt.val("");
             }
         }.bind(this));
+
         this.$MdlFeedBack.on('hidden.bs.modal', function (e) {
             this.$MdlFeedBack.attr("data-id", "");
         }.bind(this));
@@ -190,7 +218,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
     this.init = function () {
         if (this.ParentDivId === "divFdbk") {
-            this.metadata = ["4", "Id", "Date", "Status", "Followup_Date", "Comments", "_feedback"];
+            this.metadata = ["5", "Id", "Date", "Status", "Followup_Date", "Comments", "_feedback"];
         }
         this.setTable();
 
@@ -205,12 +233,12 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         tblcols.push({ data: null, title: "Serial No", searchable: false, orderable: false, className: "text-center" });
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });//for id
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
-            tblcols.push({ data: i, title: this.metadata[i].replace("_", " "), orderable: true});
+            tblcols.push({ data: i, title: this.metadata[i].replace("_", " "), orderable: true, className: "MyTempColStyle"});
         tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]] });
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]] });
         }
 
         this.table = $("#" + this.TableId).DataTable({
@@ -233,12 +261,13 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
     }
 
     this.tblEditColumnRender = function (data, type, row, meta) {
-        return `<i class="fa fa-pencil fa-2x editclass${this.ParentDivId}" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]}></i>`;
+        return `<i class="fa fa-pencil fa-2x editclass${this.ParentDivId}" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]} data-json=${window.btoa(JSON.stringify(data))}></i>`;
     }.bind(this)
 
     this.onClickEdit = function (e) {
         var id = $(e.target).attr("data-id");
-        this.editFunction(id);
+        var data = $(e.target).attr("data-json");
+        this.editFunction(id, data);
     }
 
 

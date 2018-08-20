@@ -209,7 +209,7 @@
 
                 this.RefreshControl(ctrlObj);
 
-                this.InitSurveyControl(ctrlObj);//////////////////////fbnc
+                
             }
             else
                 console.log("ondrop else : removed");
@@ -496,6 +496,9 @@
             this.RefreshCardControl(obj);
             return;
         }
+        else if (obj.EbSid.substring(0, 6) === 'Survey') {
+            this.InitSurveyControl(obj);//////////////////////fbnc
+        }
         var NewHtml = obj.$WrapedCtrl4Bot.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
         $.each(metas, function (i, meta) {
@@ -604,6 +607,8 @@
 
     this.InitSurveyControl = function (ctrlObj) {
         var id = ctrlObj.EbSid;
+        if ($(`body #S_Modal${id}`).length > 0)
+            return;
         var modalHTML = `
         <div id="S_Modal${id}" class="modal fade" role="dialog" style='text-align: left;'>
             <div class="modal-dialog" style="width:400px">

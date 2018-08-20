@@ -78,6 +78,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
         $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
+        $("body").on("click", ".survey-final-btn .btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.initConnectionCheck();
         this.showDate();
@@ -652,6 +653,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
             inpVal = this.getCardsetValue(this.curCtrl);
         }
+        else if (this.curCtrl.objType === "Survey") {
+            inpVal = this.curCtrl.resultantJson;
+        }
         else
             inpVal = $input.val();
         //return inpVal.trim();
@@ -709,6 +713,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.formValues[id] = this.curVal;
                 this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             }
+            this.callGetControl(this.nxtCtrlIdx);
+        }
+        else if (this.curCtrl.objType === "Survey" ) {
+            this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.formValues[id] = this.curVal;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.nxtCtrlIdx);
         }
         else {

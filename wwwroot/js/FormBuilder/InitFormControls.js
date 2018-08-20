@@ -135,6 +135,10 @@
         if (this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.selectedRows = EbCombo.getSelectedRow;
     };
+
+    this.Survey = function (ctrl) {
+        new EbSurveyRender($('#' + ctrl.name), this.Bot);
+    }
         
     this.StaticCardSet = function (ctrl) {
         this.initCards($('#' + ctrl.name));

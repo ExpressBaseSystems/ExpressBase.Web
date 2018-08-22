@@ -44,6 +44,12 @@ namespace ExpressBase.Web.Controllers
 			SaveSurveyResponse resp = this.ServiceClient.Post<SaveSurveyResponse>(new SaveSurveyRequest { Data = SurveyInfo});
 			return resp.Status;
 		}
+
+		public Dictionary<int, string> GetSurveyNames()
+		{
+			GetSurveyListResponse resp = this.ServiceClient.Post<GetSurveyListResponse>(new GetSurveyListRequest { });
+			return resp.SurveyDict;
+		}
 	}
 			
 }

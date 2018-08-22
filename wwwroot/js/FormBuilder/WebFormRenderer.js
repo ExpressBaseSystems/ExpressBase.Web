@@ -1,16 +1,17 @@
 ﻿const WebFormRender = function (option) {
     this.FormObj = option.formObj;
     this.$saveBtn = option.$saveBtn;
-    this.flatControls = [];
+    this.flatControls = option.flatControls;
 
     this.init = function () {
         this.$saveBtn.on("click", this.saveForm.bind(this));
-        this.flatControls = this.getFlatControls();
+        //this.flatControls = this.getFlatControls();
     };
 
     this.getFlatControls = function () {
         let coll = [];
-        this.ProcRecur(this.FormObj, coll);        return coll;
+        this.ProcRecur(this.FormObj, coll);
+        return coll;
     };
 
     this.ProcRecur = function (src_obj, dest_coll) {

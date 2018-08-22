@@ -46,11 +46,13 @@
 </div>
 
 <script>
+    let _flatControls = @Html.Raw(ViewBag.FlatControls);
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _$saveBtn = $("#webformsave");
     const renderer = new WebFormRender({
         formObj: _formObj,
-        $saveBtn: _$saveBtn
+        $saveBtn: _$saveBtn,
+        flatControls : _flatControls.$values
     });
 </script>
 <style>

@@ -45,15 +45,30 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult ShareToPublic()
+        public IActionResult ShareToPublic(int id)
         {
+            ViewBag.appid = id;
             return View();
         }
 
         [HttpPost]
-        public void ShareToPublic(int i)
+        public void ShareToPublic()
         {
-            var req = HttpContext.Request.Form;
+            var form = HttpContext.Request.Form;
+            ShareToPublicRequest req = new ShareToPublicRequest {
+                AppStoreId = Convert.ToInt32(form["appid"]),
+                Title = form["title"],
+                IsFree = form["price_option"],
+                ShortDesc = form["short_description"],
+                Tags = form["tags"],
+                DetailedDesc = form["detailed_description"],
+                DemoLinks = form["demo_link"],
+                VideoLinks = form["video_links"],
+                Images = form["images"],
+                PricingDesc = form["pricing_description"],
+                Cost = Convert.ToInt32(form["price"])
+            };
+            ShareToPublicResponse resp = ServiceClient.Post(req);
             var y = req;
         }
 

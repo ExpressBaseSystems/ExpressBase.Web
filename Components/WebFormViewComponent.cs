@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -50,6 +51,7 @@ namespace ExpressBase.Web.Components
                 var serializerSettings = new JsonSerializerSettings();
                 serializerSettings.TypeNameHandling = TypeNameHandling.All;
                 serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                ViewBag.FlatControls = JsonConvert.SerializeObject(WebForm.Controls.FlattenEbControls(), serializerSettings);
                 ViewBag.WebFormObj = JsonConvert.SerializeObject(WebForm, serializerSettings);
             }
 

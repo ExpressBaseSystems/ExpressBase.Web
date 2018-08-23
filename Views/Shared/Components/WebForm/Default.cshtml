@@ -32,6 +32,7 @@
 <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>@*jith*@
 
 @section EbHead {
     <script>
@@ -39,23 +40,11 @@
     </script>
 
 }
-
-<div id='WebForm-cont' class="webform-cont">
-    @Html.Raw(ViewBag.WebFormHtml)
-    <button class="webform-save" id="webformsave">Save <i class="fa fa-save" aria-hidden="true"></i></button>
-</div>
-
-<script>
-    let _formObj = @Html.Raw(ViewBag.WebFormObj);
-    let _$saveBtn = $("#webformsave");
-    const renderer = new WebFormRender({
-        formObj: _formObj,
-        $saveBtn: _$saveBtn
-    });
-</script>
 <style>
-
     .webform-cont {
+    }
+
+    .save-cont {
         text-align: center;
     }
 
@@ -68,3 +57,22 @@
         border-radius: 2px;
     }
 </style>
+
+<div id='WebForm-cont' class="webform-cont">
+    @Html.Raw(ViewBag.WebFormHtml)
+    <div class="save-cont"><button class="webform-save" id="webformsave">Save <i class="fa fa-save" aria-hidden="true"></i></button></div>
+</div>
+
+<script>
+    Vue.component('v-select', VueSelect.VueSelect);
+    Vue.config.devtools = true;
+
+    let _flatControls = @Html.Raw(ViewBag.FlatControls);
+    let _formObj = @Html.Raw(ViewBag.WebFormObj);
+    let _$saveBtn = $("#webformsave");
+    const renderer = new WebFormRender({
+        formObj: _formObj,
+        $saveBtn: _$saveBtn,
+        flatControls : _flatControls.$values
+    });
+</script>

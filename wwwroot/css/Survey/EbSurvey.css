@@ -268,3 +268,16 @@
     padding:15px;
     float:left;
 }
+.rating_star_control span {
+    color: #dad5d5;
+}
+.rating_star_control .R_checked {
+    color: #528ff0;
+}
+.rating_star_control {
+    background-color: white;
+    width: max-content;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding: 6px 12px;
+}

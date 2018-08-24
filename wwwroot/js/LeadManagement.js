@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, F_List, B_List) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, F_List, B_List, S_List) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -7,6 +7,7 @@
     this.CostCenterInfo = Center_Info;
     this.FeedbackList = F_List || [];
     this.BillingList = B_List || [];
+    this.SurgeryList = S_List || [];
     //DOM ELEMENTS
     this.$CostCenter = $("#selCostCenter");
     this.$EnDate = $("#txtEnDate");
@@ -53,6 +54,15 @@
     this.$BlngClrDate = $("#txtBlngClrDate");
     this.$BlngNarr = $("#txtBlngNarr");
     this.$BlngSave = $("#btnBlngSave");
+    //SURGERY
+    this.divSrgy = "divSrgy";
+    this.$btnNewSurgeryDtls = $("#btnNewSurgeryDtls");
+    this.$MdlSurgery = $("#mdlSurgery");
+    this.$SrgyDate = $("#txtSrgyDate");
+    this.$SrgyBranch = $("#txtSrgyBranch");
+    this.$SrgySave = $("#btnSrgySave");   
+     
+    
     //DECLARED DATA
     this.OutDataList = [];
 
@@ -81,10 +91,10 @@
         this.$EnDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$Dob.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
-        //FEEDBACK
+        //FEEDBACK  BILLING  SURGERY
         this.initFeedBackModal();
-        //BILLING
         this.initBillingModal();
+        this.initSurgeryModal();
 
         this.$CostCenter.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {            
@@ -249,6 +259,65 @@
         }.bind(this));
     }
 
+    this.initSurgeryModal = function () {
+        this.$btnNewSurgeryDtls.on("click", function () {
+            if (this.AccId === null) {
+                EbMessage("show", { Message: 'Save Customer Information then try to add Surgery Details', AutoHide: true, Backgorund: '#a40000' });
+            }
+            else {
+                this.$MdlSurgery.modal('show');
+            }
+        }.bind(this));
+
+        this.$SrgyDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
+
+        this.$SrgySave.on("click", function () {
+            var id = 0;
+            this.$SrgySave.children().show();
+            this.$SrgySave.prop("disabled", true);
+            if (this.$MdlSurgery.attr("data-id") !== '')
+                id = parseInt(this.$MdlSurgery.attr("data-id"));
+            var SrgyObj = { Id: id, Date: this.$SrgyDate.val(), Branch: this.$SrgyBranch.val(), Account_Code: this.AccId };
+            $.ajax({
+                type: "POST",
+                url: "../CustomPage/SaveSurgeryDtls",
+                data: { SurgeryInfo: JSON.stringify(SrgyObj) },
+                success: function (result) {
+                    this.$SrgySave.prop("disabled", false);
+                    this.$SrgySave.children().hide();
+                    if (result) {
+                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#0b851a' });
+                        this.$MdlSurgery.modal('hide');
+                    }
+                    else {
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#a40000' });
+                    }
+                }.bind(this)
+            });
+        }.bind(this));
+
+        new ListViewCustom(this.divSrgy, this.SurgeryList, function (id, data) {
+            this.$MdlSurgery.attr("data-id", id);
+            var tempObj = JSON.parse(window.atob(data));
+            this.$SrgyDate.val(tempObj.Date);
+            this.$SrgyBranch.val(tempObj.Branch);
+            this.$MdlSurgery.modal('show');
+        }.bind(this));
+
+        this.$MdlSurgery.on('shown.bs.modal', function (e) {
+            if (this.$MdlSurgery.attr("data-id") === "") {
+                this.$SrgyDate.val("");
+                this.$SrgyBranch.val("");
+                this.$SrgySave.children().hide();
+                this.$SrgySave.prop("disabled", false);
+            }
+        }.bind(this));
+
+        this.$MdlSurgery.on('hidden.bs.modal', function (e) {
+            this.$MdlSurgery.attr("data-id", "");
+        }.bind(this));
+    }
+
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["firmcode"]);
         this.$EnDate.val(this.CustomerInfo["trdate"]);
@@ -348,6 +417,9 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         else if (this.ParentDivId === "divBilling") {
             this.metadata = ["7", "Id", "Date", "Amount_Received", "Balance_Amount", "Cash_Paid", "Narration", "Created_By", "_billing"];
         }
+        else if (this.ParentDivId === "divSrgy") {
+            this.metadata = ["5", "Id", "Date", "Branch", "Created_By", "Created_Date", "_surgery"];
+        }
         this.setTable();
 
         $("#"+this.ParentDivId).on("click", ".editclass" + this.ParentDivId, this.onClickEdit.bind(this));
@@ -371,6 +443,10 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         else if (this.metadata.indexOf("_billing") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]]  });
+        }
+        else if (this.metadata.indexOf("_surgery") !== -1) {
+            for (i = 0; i < this.itemList.length; i++)
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]]});
         }
 
         this.table = $("#" + this.TableId).DataTable({

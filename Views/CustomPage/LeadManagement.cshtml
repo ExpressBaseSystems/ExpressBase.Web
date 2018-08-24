@@ -281,7 +281,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-4" style="border-left: 1px solid #ccc; padding: 0px; height: 300px;">
                         <div class="lm-form-inline">
                             <div class="col-md-12">
@@ -336,9 +335,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
             </div>
             <div id="menu3" class="tab-pane fade">
                 <div style="text-align:right; padding: 15px 0px;">
@@ -347,8 +343,10 @@
                 <div id="divBilling" style="max-height: 300px; overflow: auto;"></div>
             </div>
             <div id="menu4" class="tab-pane fade">
-                <h3>Surgery Details</h3>
-                <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                <div style="text-align:right; padding: 15px 0px;">
+                    <button id="btnNewSurgeryDtls" class="btn btn-primary">New</button>
+                </div>
+                <div id="divSrgy" style="max-height: 300px; overflow: auto;"></div>
             </div>
             <div id="menu5" class="tab-pane fade">
                 <h3>Attach</h3>
@@ -452,7 +450,7 @@
                                 <span class="input-group-addon" onclick="$('#txtBlngDate').focusin();"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="lm-form-inline">
                     <div class="col-md-3">
@@ -520,6 +518,42 @@
     </div>
 </div>
 
+
+<!-- Surgery Details Modal -->
+<div class="modal fade" id="mdlSurgery" role="dialog" data-id="">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Surgery Details</h4>
+            </div>
+            <div class="modal-body" style="height: 270px;">
+                <div class="lm-form-inline">
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label>Date</label>
+                            <div class="input-group">
+                                <input id="txtSrgyDate" type="text" class="form-control" autocomplete="off">
+                                <span class="input-group-addon" onclick="$('#txtSrgyDate').focusin();"><i class="fa fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label>Branch</label>
+                            <input id="txtSrgyBranch" type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>                
+            </div>
+            <div class="modal-footer">
+                <button id="btnSrgySave" class="btn btn-default" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .MyTempColStyle {
         white-space: nowrap;
@@ -539,8 +573,9 @@
 
     var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
     var BillingList = (Html.Raw(ViewBag.BillingList).ToString() == "") ? "null" : Html.Raw(ViewBag.BillingList);
+    var SurgeryList = (Html.Raw(ViewBag.SurgeryList).ToString() == "") ? "null" : Html.Raw(ViewBag.SurgeryList);
 }
 
 <script>
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @FeedbackList, @BillingList);
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @FeedbackList, @BillingList, @SurgeryList);
 </script>

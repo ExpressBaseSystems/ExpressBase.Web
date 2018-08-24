@@ -10,7 +10,7 @@
     <div class="app_profile col-md-12">
         <h4>Application Profile</h4>
         @using (Html.BeginForm("ShareToPublic", "ImportExport", FormMethod.Post))
-        {
+        {<input type="hidden" name="appid" value="@ViewBag.appid"/>
             <div class="form-group  col-md-4">
                 <label>Title:</label>
                 <input type="text" class="form-control" name="title">

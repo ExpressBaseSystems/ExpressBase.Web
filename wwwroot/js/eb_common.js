@@ -218,7 +218,16 @@ var EbStickButton = function (option) {
 };
 
 function getSum(_array) {
-    return _array.reduce(function (a, b) { return parseInt(a) + parseInt(b); });
+    return _array.reduce(function (a, b) {
+        if (typeof a === 'string') {
+            a = a.replace(/[^\d.-]/g, '') * 1;
+        }
+        if (typeof b === 'string') {
+            b = b.replace(/[^\d.-]/g, '') * 1;
+        }
+
+        return parseInt(a) + parseInt(b);
+    });
 }
 
 function getAverage(_array) {

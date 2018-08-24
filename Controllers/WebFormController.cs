@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
@@ -16,6 +17,20 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index(string refId )
         {
             return ViewComponent("WebForm", refId);
+        }
+
+        public int InsertBotDetails(string TableName, List<BotInsert> Fields)
+        {
+            try
+            {
+                var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
+                return x.RowAffected;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in InsertBotDetails. Message: " + ex.Message);
+                return 0;
+            }
         }
     }
 }

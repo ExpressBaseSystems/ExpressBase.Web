@@ -169,6 +169,11 @@ namespace ExpressBase.Web.Controllers
                         EbDynamicCards.InitFromDataBase(this.ServiceClient);
                         EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
                     }
+					else if(control is EbSurvey)
+					{
+						(control as EbSurvey).InitFromDataBase(this.ServiceClient);
+						(control as EbSurvey).BareControlHtml = (control as EbSurvey).GetBareHtml();
+					}
                     //else if (control is EbImage)
                     //{
                     //    (control as EbCards).InitFromDataBase(this.ServiceClient);

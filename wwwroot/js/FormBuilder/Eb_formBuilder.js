@@ -346,6 +346,24 @@
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
+
+
+            if (CurProp === 'DataSourceId') {
+                $.LoadingOverlay('show');
+                $.ajax({
+                    type: "POST",
+                    url: "../DS/GetColumns",
+                    data: { DataSourceRefId: PropsObj.DataSourceId },
+                    success: function (Columns) {
+                        PropsObj.Columns = JSON.parse(Columns);
+                        this.PGobj.refresh();
+                        if (PropsObj.constructor.name === "EbDynamicCardSet")
+                            this.setAllChildObjColumns(PropsObj);
+                        $.LoadingOverlay('hide');
+                    }.bind(this)
+                });
+            }
+
         }.bind(this);
         this.$form.click();
     };

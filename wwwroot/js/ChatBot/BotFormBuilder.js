@@ -41,11 +41,11 @@
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
-        setTimeout(function () {
+        //setTimeout(function () {
             Proc(editModeObj, this.rootContainerObj);
             this.renderCtrls();
 
-        }.bind(this), 1000);
+        //}.bind(this), 1000);
     };
 
     this.initCtrl = function (ctrl) {

@@ -295,3 +295,25 @@
     .appdash_obj_container .objitems .object_container:hover {
         background-color: #f3f8ff;
     }
+
+    /*marker for export*/
+.ExportMark {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    border-radius: 0;
+    margin:0;
+    display:none;
+}
+.appdash_obj_container .objitems .object_container:hover .ExportMark {
+    display: block;
+}
+.appdash_obj_container .objitems .object_container .ExportMark:checked {
+    display: block;
+}
+.appdash_obj_container .raw {
+    width: 100%;
+    float: left;
+    padding-bottom: 10px;
+    padding-right: 5px;
+}

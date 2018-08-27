@@ -1,4 +1,5 @@
-﻿@{
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts
+@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
@@ -6,18 +7,24 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+@{
+    AppStore appstore = ViewBag.appstore;
+}
+
 <div class="container">
     <div class="app_profile col-md-12">
         <h4>Application Profile</h4>
         @using (Html.BeginForm("ShareToPublic", "ImportExport", FormMethod.Post))
-        {<input type="hidden" name="appid" value="@ViewBag.appid"/>
+        {
+            <input type="hidden" name="appid" value="@ViewBag.appid" />
+            <input type="hidden" name="detailid" value="@appstore.DetailId" />
             <div class="form-group  col-md-4">
                 <label>Title:</label>
-                <input type="text" class="form-control" name="title">
+                <input type="text" class="form-control" name="title" value="@appstore.Title">
             </div>
             <div class="form-group col-md-6">
                 <label>Short Description:</label>
-                <textarea class="form-control" rows="1" name="short_description"></textarea>
+                <textarea class="form-control" rows="1" name="short_description">@appstore.ShortDesc</textarea>
             </div>
             <div class="form-group col-md-2">
                 <label>Price:</label>
@@ -29,13 +36,13 @@
                 </label>
                 <div class="input-group ">
                     <span class="input-group-addon"> $ </span>
-                    <input type="text" class="form-control" name="price" id="price" value="0.00" disabled>
+                    <input type="text" class="form-control" name="price" id="price" value="@appstore.Cost" disabled>
                 </div>
             </div>
 
             <div class="form-group tags_main col-md-12">
                 <label>Tags:</label>
-                <input type="text" class="form-control app_tags" value="jQuery, plugin, providing ,a ,Twitter, Bootstrap, user, tags, input, select, form " data-role="tagsinput" name="tags" />
+                <input type="text" class="form-control app_tags" value="@appstore.Tags" data-role="tagsinput" name="tags" />
             </div>
             <div id="store_nav" class="container">
                 <ul class="nav nav-pills">
@@ -63,28 +70,28 @@
                     <div class="tab-pane active" id="desc_tab">
                         <div class="form-group" id="">
                             <label>Detailed Description:</label>
-                            <textarea id="det_desc_note" name="detailed_description"></textarea>
+                            <textarea id="det_desc_note" name="detailed_description">@appstore.DetailedDesc</textarea>
                         </div>
                     </div>
                     <div class="tab-pane" id="media">
                         <div class="form-group">
                             <label>Demo link:</label>
-                            <input type="text" class="form-control" name="demo_link" />
+                            <input type="text" class="form-control" name="demo_link" value="@appstore.DemoLinks" />
                         </div>
                         <div class="form-group vdeo_lnks_main">
                             <label>Video Links:</label>
-                            <input type="text" class="form-control col-md-12 video_tgs primary" value=" https://youtu.be/H-58OZREz-g , https://youtu.be/b46KRZt_NIU, https://youtu.be/imw2uGDSZlY" data-role="tagsinput" name="video_links" />
+                            <input type="text" class="form-control col-md-12 video_tgs primary" value="@appstore.VideoLinks" data-role="tagsinput" name="video_links" />
                         </div>
 
                         <div class="form-group">
                             <label>Images:</label>
-                            <textarea class="form-control" rows="1" name="images"></textarea>
+                            <textarea class="form-control" rows="1" name="images">@appstore.Images</textarea>
                         </div>
                     </div>
                     <div class="tab-pane" id="pricing">
                         <div class="form-group" id="">
                             <label>Pricing Description:</label>
-                            <textarea id="price_desc_note" name="pricing_description"></textarea>
+                            <textarea id="price_desc_note" name="pricing_description">@appstore.PricingDesc</textarea>
                         </div>
                     </div>
                     <div class="tab-pane" id="faq">
@@ -132,6 +139,13 @@
     $(document).ready(function () {
         $('#det_desc_note').summernote();
         $('#price_desc_note').summernote();
+        $("input[name='price_option'][value='" + @appstore.IsFree + "']").prop('checked', true);
+        if ( @appstore.IsFree  === 1) {
+            $('#price').val("0.00");
+            $('#price').attr("disabled", "disabled");
+        }
+        else
+            $("#price").removeAttr("disabled");
     });
     $('input[type=radio][name=price_option]').change(function () {
         if (this.value === '1') {

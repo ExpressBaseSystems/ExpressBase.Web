@@ -19,10 +19,20 @@
         });
     };
 
+    this.makeReqFm = function (control) {
+        var $ctrl = $("#" + control.Name);
+        if ($ctrl.length !== 0 && control.Required && $ctrl.val().trim() === "")
+            EbMakeInvalid(`#cont_${control.Name}`, `.${control.Name}Wraper`);
+    };
+
+    this.removeReqFm = function (control) {
+        EbMakeValid(`#cont_${control.Name}`, `.${control.Name}Wraper`);
+    };
+
     this.initFormCtrl = function (control) {
             if (this.initControls[control.ObjType] !== undefined)
                 this.initControls[control.ObjType](control);
-            //$("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
+            $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
     }.bind(this);
 
     this.init = function () {

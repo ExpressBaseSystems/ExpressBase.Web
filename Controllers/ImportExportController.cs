@@ -47,16 +47,32 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult ShareToPublic(int id)
         {
+            GetAppDetailsResponse resp = ServiceClient.Get(new GetAppDetailsRequest { Id = id });
             ViewBag.appid = id;
+            if (resp.StoreCollection.Count > 0)
+            {
+                AppStore appstore = resp.StoreCollection[0];
+                ViewBag.appstore = appstore;
+            }
+            else
+            {
+                ViewBag.appstore = new AppStore
+                {
+                    IsFree = "1",
+                    Cost = 00.00m,
+                    DetailId = 0
+                };
+            }
             return View();
         }
 
         [HttpPost]
-        public void ShareToPublic()
+        public IActionResult ShareToPublic()
         {
             var form = HttpContext.Request.Form;
-            ShareToPublicRequest req = new ShareToPublicRequest {
-                AppStoreId = Convert.ToInt32(form["appid"]),
+            AppStore store = new AppStore
+            {
+                Id = Convert.ToInt32(form["appid"]),
                 Title = form["title"],
                 IsFree = form["price_option"],
                 ShortDesc = form["short_description"],
@@ -66,20 +82,26 @@ namespace ExpressBase.Web.Controllers
                 VideoLinks = form["video_links"],
                 Images = form["images"],
                 PricingDesc = form["pricing_description"],
-                Cost = Convert.ToInt32(form["price"])
+                Cost = Convert.ToDecimal(form["price"]),
+                DetailId = Convert.ToInt32(form["detailid"])
             };
-            ShareToPublicResponse resp = ServiceClient.Post(req);
-            var y = req;
+            ShareToPublicResponse resp = ServiceClient.Post(new ShareToPublicRequest { Store = store });
+            return RedirectToAction("AppStore");
         }
 
-        public void Export2(string refids)
+        public void Export(string refids)
         {
             ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationRequest { Refids = refids });
         }
 
-        public void Import2(int Id)
+        public void Import(int Id)
         {
             ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationRequest { Id = Id });
+        }
+
+        public IActionResult ExportOSE(string ids)
+        {
+            return View();
         }
     }
 }

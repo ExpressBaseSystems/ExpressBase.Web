@@ -6,6 +6,35 @@
     this.init = function () {
         this.$saveBtn.on("click", this.saveForm.bind(this));
         //this.flatControls = this.getFlatControls();
+
+        $.each(this.flatControls, function (k, cObj) {
+            if (cObj.objType === 'Date') {
+                var $input = $("[name=" + cObj.name + "]");
+                if (cObj.showDateAs_ === 1) {
+                    $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
+                    $input.MonthPicker('option', 'ShowOn', 'both');
+                    $input.MonthPicker('option', 'UseInputMask', true);
+                }
+                else {
+                    //$input.mask("0000-00-00");
+                    $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
+                    $input.next().children('i').off('click').on('click', function () { $input.datetimepicker('show'); });
+                }
+            }
+            //else if (cObj.objType === 'Numeric') {
+            //    var $input = $("[name=" + cObj.name + "]");
+            //}
+            else if (cObj.objType === 'ComboBox') {
+                var $input = $("[name=" + cObj.name + "]");
+
+                Vue.component('v-select', VueSelect.VueSelect);
+                Vue.config.devtools = true;
+
+                $(`#${cObj.name}_loading-image`).hide();
+                //MakeCaps(cObj);
+                var EbCombo = new EbSelect(cObj);
+            }  
+        }.bind(this));
     };
 
     this.getFlatControls = function () {

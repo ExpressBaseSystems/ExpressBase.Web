@@ -1,4 +1,4 @@
-﻿var SurveyObj = function (abc,ques) {
+﻿var SurveyObj = function (abc, ques) {
     let _chiceCount = 0;
     this.Survey = {
         QuesId: 0,
@@ -6,25 +6,27 @@
         QuesType: null,
         Choices: [],
     };
+    this.RatingC = 1;
+    this.UIType = "Text";
 
     this.Queries = JSON.parse(ques) || null;
 
     this.init = function () {
         $("#questionModal").on('show.bs.modal', function () {
-            $(".qst-opt-cont").empty();
+            $(`textarea[name="Question"]`).val("");
+            //$(".qst-opt-cont").empty();
         });
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
-        $('body').off("click").on("click",".query_tile", this.quesEdit.bind(this));
+        $('body').off("click").on("click", ".query_tile", this.quesEdit.bind(this));
 
-        $("#userInputType").off("change").on("change", this.getUserInputOption.bind(this));
-        $("#requiredCheck").off("change").on("change", this.requiredCheckboxChanged.bind(this));
         $("#scoreCheck").off("change").on("change", this.scoreCheckboxChanged.bind(this));
-        $('#survvey_form-modal').on("submit", this.newQuesSubmit.bind(this));
+
         this.scoreCheckbox = $("#scoreCheck").prop("checked");
 
         $(`textarea[name="Question"]`).on("change", function (e) { this.Survey.Question = e.target.value; }.bind(this));
         $("#submit_question").off("click").on("click", this.newQuesSubmit.bind(this));
-        $(`body`).off("change").on("change",".qst-choice-number", this.ScoreChanged.bind(this));
+        $(`body`).off("change").on("change", ".qst-choice-number", this.ScoreChanged.bind(this));
+        $("#userInputType").off("change").on("change", this.changeUIType.bind(this));
     };
 
     this.ScoreChanged = function (e) {
@@ -42,11 +44,20 @@
         $(".qst-opt-cont").empty();
         $("#questionModal").modal("show");
         $(`textarea[name="Question"]`).val(this.Survey.Question);
-        for (let i = 0; i < this.Survey.Choices.length; i++) {
-            this.appendChoice("", this.Survey.Choices[i].Choice, this.Survey.Choices[i].ChoiceId, this.Survey.Choices[i].Score);
+        if (this.qstType === 1 || this.qstType === 2) {
+            for (let i = 0; i < this.Survey.Choices.length; i++) {
+                this.appendChoice("", this.Survey.Choices[i].Choice, this.Survey.Choices[i].ChoiceId, this.Survey.Choices[i].Score, false);
+            }
+            $("#userInputType").closest(".q-set-item").hide();
+            $("#scoreCheck").closest(".q-set-item").show();
         }
-        $("#userInputType").closest(".q-set-item").hide();
-        $("#scoreCheck").closest(".q-set-item").show();
+        else if (this.qstType === 3) {
+            this.appendRatingCtrl({ value: eval(this.Survey.Choices[0].Choice), isEdit: true, choiceId: this.Survey.Choices[0].ChoiceId});
+        }
+        else if (this.qstType === 4) {
+            this.UIType = this.Survey.Choices[0].Choice;
+            this.appendUserInput(this.Survey.Choices[0].ChoiceId);
+        }
     };
 
     this.changeQuestionType = function (e) {
@@ -61,28 +72,30 @@
             $("#scoreCheck").closest(".q-set-item").show();
         }
         else if (this.qstType === 3) {
-            $("#userInputType").closest(".q-set-item").show();
-            this.userinputoption = $("#userInputType option:selected").text().trim();
-            this.appendUserInputOption();
+            this.appendRatingCtrl({ value: 1, isEdit: false, choiceId: 0 });
+            $("#userInputType").closest(".q-set-item").hide();
             $("#scoreCheck").closest(".q-set-item").hide();
         }
-        else {
+        else if (this.qstType === 4) {
+            this.appendUserInput();
             $("#scoreCheck").closest(".q-set-item").hide();
-            $("#userInputType").closest(".q-set-item").hide();
+            $("#userInputType").closest(".q-set-item").show();
         }
     };
 
-    this.appendChoice = function (temp,val,choice,score) {
+    this.appendChoice = function (temp, val, choice, score, isn) {
         let v = val || "";
         let c = choice || 0;
         let s = score || 0;
+        let isnew = (isn === false) ? false : true;
+
         $(".qst-opt-cont").append(`<div class="col-md-6 q-opt-cont-inner"><div class="q-opt-control-cont float-left"></div>
             <div class='input-group choice'>
-                <input type="text" IsNew="true" name="Choices" Score="${s}" placeholder="New choice" ebdel="false" choiceid="${c}" value="${v}" class="qst-choice-text form-control"/>
+                <input type="text" isnew="${isnew}" name="Choices" Score="${s}" placeholder="New choice" ebdel="false" choiceid="${c}" value="${v}" class="qst-choice-text form-control"/>
                 <input type="number" class="qst-choice-number form-control" name="Score" min="0" value="${s}" placeholder="Score"/>
                 <span class="choice-action input-group-addon btn delete"><i class="fa fa-close" style="color:#c73434;"></i></span>
             </div>
-        </div>`);    
+        </div>`);
 
         this.appendRadioOrCheckbox();
 
@@ -102,21 +115,74 @@
         }
     };
 
-    this.appendUserInputOption = function () {
-        $(".qst-opt-cont").empty();
-        if (this.userinputoption === "Text") {
-            $(".qst-opt-cont").append(`<div class="choice"><input type="text" placeholder="Text Input" class="q-user-choice-text form-control"/></div>`);
+    this.appendRatingCtrl = function (o) {
+        let val = o.value;
+        let cid = o.choiceId; 
+        $(".qst-opt-cont").html(`<div class="rating_input">
+                                        <div class="col-md-6 pd-l-0 display-flex">
+                                            <label class="col-md-3 pd-l-0 flex-center">Rating</label>
+                                            <div class="col-md-9 pd-l-0">
+                                                <input type="number" name="RatingCount" min="1" value="${val}" choiceid="${cid}" class="Rating_control form-control" /> 
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pd-l-0">
+                                            <div class="rating_star_control">
+                                                <span class="fa fa-star"></span>
+                                            </div>
+                                        </div>
+                                    </div>`);
+        if (o.isEdit) {
+            this.ratingCountOnchange({ target: document.getElementsByClassName("Rating_control")[0] });
         }
-        else if (this.userinputoption === "Multi Text") {
-            $(".qst-opt-cont").append(`<div class="choice"><textarea placeholder="Text Input" class="q-user-choice-textarea form-control"></textarea></div>`);
-        }
+        $(`.rating_input input[name="RatingCount"]`).off("click").on("click", this.ratingCountOnchange.bind(this));
+        $(`.rating_star_control span`).off("click").on("click", function (e) { $(e.target).toggleClass("R_checked") });
     };
 
-    this.getUserInputOption = function () {
-        this.userinputoption = $("#userInputType option:selected").text().trim();
-        this.appendUserInputOption();
+    this.ratingCountOnchange = function (e) {
+        let c = e.target.value - this.RatingC;
+        for (i = 0; i < Math.abs(c); i++) {
+            if (c > 0)
+                $(e.target).closest(".rating_input").find(".rating_star_control").append(`<span class="fa fa-star"></span>`);
+            else
+                $(e.target).closest(".rating_input").find(".rating_star_control span:last-child").remove();
+        }
+        this.RatingC = e.target.value;
     };
-    
+
+    this.appendUserInput = function (chid) {
+        var html = new String();
+        var name = new String();
+        var cid = chid || 0;
+
+        if (this.UIType === "Text" || this.UIType === "Time") {
+            html = `<input type="text" class="form-control" />`;
+            name = "Single Line Text";
+        }
+        else if (this.UIType === "MultiText") {
+            html = `<textarea class="form-control"></textarea>`;
+            name = "MultiLine Text";
+        }
+        else if (this.UIType === "Date") {
+            html = `<input type="date" class="form-control"/>`;
+            name = "Date";
+        }
+        else {
+            return null;
+        }
+
+        $(".qst-opt-cont").html(`<div class="user-input-cont" choiceid="${cid}">
+                                        <label>${name}</label>
+                                        <div class="form-group">
+                                            ${html}
+                                        </div>
+                                    </div>`);
+    };
+
+    this.changeUIType = function (e) {
+        this.UIType = e.target.value;
+        this.appendUserInput();
+    };
+
     this.deleteChoiceClick = function (e) {
         $(e.target).closest(".delete").siblings(`input[name="Choices"]`).attr("ebdel", true);
         $(e.target).closest(".q-opt-cont-inner").hide();
@@ -125,17 +191,9 @@
     this.addNewChoiceButton = function () {
         $(".q-opt-new-choice-btn").remove();
         $(".qst-opt-cont").append(`<div class="col-md-12 pd-0 q-opt-new-choice-btn">
-            <div class="btn"> <i class="fa fa-plus"></i> Add Choice</div>
+            <div class="btn eb_btn-sm eb_btngreen"> <i class="fa fa-plus"></i> Add Choice</div>
         </div>`);
         $(".q-opt-new-choice-btn").off("click").on("click", this.appendChoice.bind(this));
-    };
-
-    this.requiredCheckboxChanged = function () {
-        if ($(event.target).prop("checked") === true)
-            $(".q-label-requird").show();
-        else
-            $(".q-label-requird").hide();
-
     };
 
     this.scoreCheckboxChanged = function (e) {
@@ -155,7 +213,7 @@
 
     this.appendRadioOrCheckbox = function () {
         if (this.qstType === 1) {
-            $.each($(".q-opt-control-cont"), function (i, obj) { 
+            $.each($(".q-opt-control-cont"), function (i, obj) {
                 if ($(obj).children().length === 0)
                     $(obj).append(`<div class="col-md-1 pd-0 q-opt-input-cont"><input type="radio" class="q-opt-radio"/></div><div class="col-md-1"></div>`);
             });
@@ -170,15 +228,40 @@
 
     this.newQuesSubmit = function (e) {
         this.Survey.Choices.length = 0;
-        $(".qst-opt-cont").find(`input[name='Choices']`).each(function (i, ob) {
+        if (this.qstType === 1 || this.qstType === 2) {
+            $(".qst-opt-cont").find(`input[name='Choices']`).each(function (i, ob) {
+                var o = new Object();
+                o.EbDel = eval($(ob).attr("ebdel"));
+                o.ChoiceId = $(ob).attr("choiceid");
+                o.Choice = ob.value;
+                o.Score = $(ob).attr("Score");
+                o.IsNew = eval($(ob).attr("isnew"));
+                this.Survey.Choices.push(o);
+            }.bind(this));
+        }
+        else if (this.qstType === 3) {
+            let rating = $(".qst-opt-cont .rating_input").find(`input[name='RatingCount']`);
             var o = new Object();
-            o.EbDel = eval($(ob).attr("ebdel"));
-            o.ChoiceId = $(ob).attr("choiceid");
-            o.Choice = ob.value;
-            o.Score = $(ob).attr("Score");
+            o.ChoiceId = eval(rating.attr("choiceid"));
+            o.Choice = rating.val();
+            o.Score = 0;
+            o.IsNew = true;
             this.Survey.Choices.push(o);
-        }.bind(this));
+        }
+        else if (this.qstType === 4) {
+            let Ui = $(".qst-opt-cont .user-input-cont");
+            var o = new Object();
+            o.ChoiceId = eval(Ui.attr("choiceid"));
+            o.Choice = this.UIType;
+            o.Score = 0;
+            o.IsNew = true;
+            this.Survey.Choices.push(o);
+        }
 
+        this.send();
+    };
+
+    this.send = function () {
         $.ajax({
             url: "../Survey/SaveQues",
             type: "POST",
@@ -194,7 +277,7 @@
             }
         }.bind(this));
     };
-    
+
     this.init();
 
 };

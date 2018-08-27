@@ -18,6 +18,7 @@
 <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
 <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css">
 <link href="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
 
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -26,6 +27,7 @@
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 <script src="~/js/Eb_Basic_DataTable.js"></script>
 <script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
 <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
@@ -33,6 +35,10 @@
 <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
+
+<script src="~/js/EbLoader.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
 
 @section EbHead {
     <script>
@@ -55,6 +61,24 @@
         color: white;
         box-shadow: -2px 2px 3px 0 #00000059;
         border-radius: 2px;
+    }
+
+    .form-render-table td {
+        border: none !important;
+    }
+
+    .form-buider-form .Eb-ctrlContainer {
+        min-height: 20px;
+        padding: 0px 3px;
+    }
+
+    .radiog-cont {
+        border: none;
+        border-radius: 5px;
+    }
+    .form-buider-form .Eb-ctrlContainer table td {
+        background: #fff;
+        padding: 0px 2px;
     }
 </style>
 

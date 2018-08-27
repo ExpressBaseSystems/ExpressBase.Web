@@ -13,7 +13,7 @@
     int typeInt = Convert.ToInt32(ViewBag.ObjType);
 
     var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
-    var _toolBox = new EbToolbox(_builderType);
+    EbToolbox _toolBox = new EbToolbox(_builderType);
 }
 <div id="con" class="web-form-buider-cont">
     <div id="toolbox_cont" class='formB-box toolbox-cont'>

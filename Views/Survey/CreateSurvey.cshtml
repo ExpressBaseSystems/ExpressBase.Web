@@ -115,16 +115,12 @@
                                     <div class="qst-type" qtype="2"><i class="fa fa-check-square-o"></i> Multiple choice(Multiple-Select)</div>
                                     <div class="qst-type" qtype="3"><i class="fa fa-star-o"></i>Rating</div>
                                     <div class="qst-type" qtype="4"><i class="fa fa-toggle-down"></i>User Input</div>
-                                    @*<div class="qst-type"><i class="fa fa-calendar"></i>Date</div>
-                                    <div class="qst-type"><i class="fa fa-clock-o"></i>Time</div>
-                                    <div class="qst-type">Single Text</div>
-                                    <div class="qst-type">Multiple Text</div>*@
                                 </div>
                             </div>
                             <div class="qst-set-label-cont">
                                 <div class="question-label">Settings</div>
                                 <div class="qst-set-cont pd-5">
-                                    <div class="q-set-item">
+                                    <div class="q-set-item" setup="required">
                                         <div class="q-set-input">
                                             <input type="checkbox" id="requiredCheck"/>
                                         </div>
@@ -132,7 +128,7 @@
                                             Required
                                         </div>
                                     </div>
-                                    <div class="q-set-item">
+                                    <div class="q-set-item" setup="Randomize">
                                         <div class="q-set-input">
                                             <input type="checkbox" id="randomizeCheck"/>
                                         </div>
@@ -140,7 +136,7 @@
                                             Randomize
                                         </div>
                                     </div>
-                                    <div class="q-set-item">
+                                    <div class="q-set-item" setup="Score" style="display:none">
                                         <div class="q-set-input">
                                             <input type="checkbox" id="scoreCheck"/>
                                         </div>
@@ -148,28 +144,18 @@
                                             Score
                                         </div>
                                     </div>
-                                    @*<div class="q-set-item" style="display:none;">
-                                        <div class="q-set-text">
-                                            Max Choice :
-                                        </div>
-                                        <div class="q-set-input">
-                                            <input type="number" class="qst-set-number form-control" value="4" min="0" id="maxchoice"/>
-                                        </div>
-
-                                    </div>*@
-                                    <div class="q-set-item" style="display:none;">
+                                    <div class="q-set-item" setup="InputType" style="display:none">
                                         <div class="q-set-text">
                                             Type :
                                         </div>
                                         <div class="q-set-input">
                                             <select class="q-set-select form-control" id="userInputType">
-                                                <option>Text</option>
-                                                <option>Multi Text</option>
-                                                <option>Date</option>
-                                                <option>Time</option>
+                                                <option value="Text">Text</option>
+                                                <option value="MultiText">Multi Text</option>
+                                                <option value="Date">Date</option>
+                                                <option value="Time">Time</option>
                                             </select>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -185,43 +171,11 @@
                                     </div>
                                 </div>
                                 <div class="qst-opt-cont col-md-12 pd-0">
-                                    @*<div class="rating_input">
-                                        <div class="col-md-6 pd-l-0 display-flex">
-                                            <label class="col-md-3 pd-l-0 flex-center">Rating</label>
-                                            <div class="col-md-9 pd-l-0">
-                                                <input type="number" min="1" value="1" class="form-control" /> 
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 pd-l-0">
-                                            <div class="rating_star_control">
-                                                <span class="fa fa-star R_checked"></span>
-                                                <span class="fa fa-star R_checked"></span>
-                                                <span class="fa fa-star R_checked"></span>
-                                                <span class="fa fa-star R_checked"></span>
-                                                <span class="fa fa-star"></span>
-                                                <span class="fa fa-star"></span>
-                                            </div>
-                                        </div>
-                                    </div>*@
+                                    
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @*<div class="col-md-3 col-sm-3 col-lg-3 col-xs-12 qust-cont-r-col-3 pd-l-0">
-                        <div class="q-set-container">
-                            <div class="question-label">Settings</div>
-                            <div class="qst-set-cont pd-5">
-                                <div class="q-set-item">
-                                    <div class="q-set-input">
-                                        <input type="checkbox" />
-                                    </div>
-                                    <div class="q-set-text">
-                                        Required
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>*@
                 </div>
             </div>
             <div class="modal-footer pd-5">

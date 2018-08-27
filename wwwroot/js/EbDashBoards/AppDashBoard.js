@@ -1,14 +1,15 @@
-﻿var AppDashBoard = function (obtypes,objcoll) {
+﻿var AppDashBoard = function (obtypes, objcoll) {
     this.ObjTypes = obtypes;
     this.ObjCollection = objcoll;
     this.objectTab = $("#Objects");
     this.objTypesImages = getEbObjectTypes();
+    this.ExportCollection = [];
 
     for (type in this.ObjTypes) {
         $("#object_types_drd").append(`<li class="drp_menuitems">
                        <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${type}"">${this.ObjTypes[type]}</a></li>`);
     }
-    
+
     this.apndObTypeClpsCont = function () {
         for (var otype in this.ObjCollection) {
             this.objectTab.append(`<div class="objContainer_f_app" style="width:50%;">
@@ -36,7 +37,7 @@
     };
 
     this.appendObjectList = function ($listContaner, otype) {
-        if (!$.isEmptyObject(this.ObjCollection[otype])){
+        if (!$.isEmptyObject(this.ObjCollection[otype])) {
             for (var i = 0; i < this.ObjCollection[otype].Objects.length; i++) {
                 var _obj = this.ObjCollection[otype].Objects[i];
                 $listContaner.append(`<div class='col-md-4 col-lg-4 col-sm-4 objitems' name='objBox'>
@@ -49,10 +50,11 @@
                                 <span class="label">${_obj.EbType}</span>
                             </div>
                         </div>
+                        <input type="checkbox" objid="${_obj.Id}" name="ExportMark" class="ExportMark"/>
                     </div>
                 </div>`);
             }
-        }    
+        }
     };
 
     this.actionCollapse = function (e) {
@@ -96,6 +98,30 @@
             $(".appdash_obj_container #" + srchBody + " .not-found").hide().text("");
     };
 
+    this.export = function (e) {
+        this.ExportCollection.length = 0;
+        this.objectTab.find(`input[name="ExportMark"]`).each(function (i, o) {
+            if ($(o).is(":checked")) {
+                this.ExportCollection.push($(o).attr("objid"));
+            }
+        }.bind(this));
+        if (this.ExportCollection.length > 0)
+            this.startExp();
+    };
+
+    this.startExp = function () {
+        var form = document.createElement("form");
+        form.style.display = "none";
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "../ImportExport/ExportOSE");
+        var ids = document.createElement("input");
+        ids.setAttribute("name", "ids");
+        ids.setAttribute("value", this.ExportCollection.join());
+        form.appendChild(ids);
+        document.body.appendChild(form);
+        form.submit();
+    };
+
     this.start_exe = function () {
         if (!$.isEmptyObject(this.ObjCollection)) {
             $(".appdash_obj_container .not-found").hide();
@@ -103,9 +129,10 @@
         }
         else
             $(".appdash_obj_container .not-found").show();
-        
+
         $(".appdash_obj_container").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
         $(".appdash_obj_container").off("click").on("click", ".new_btn", function (e) { e.stopPropagation(); });
+        $("#ExportBtn").off("click").on("click", this.export.bind(this));
     }
 
     this.start_exe();

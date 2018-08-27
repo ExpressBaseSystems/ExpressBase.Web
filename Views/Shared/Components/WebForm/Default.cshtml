@@ -1,4 +1,6 @@
-﻿@{
+﻿
+@using ExpressBase.Objects;
+@{
     var bApnd = true;
     if (ViewBag.Env == "Development")
     {
@@ -40,6 +42,16 @@
 
 <script src="~/js/EbLoader.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
 
+@{
+
+    EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.WebForm);
+    //ivide
+    <script>
+    @Html.Raw(_toolBox.EbOnChangeUIfns);
+    @Html.Raw(_toolBox.AllMetas);
+    </script>
+}
+
 @section EbHead {
     <script>
     @Html.Raw(ViewBag.HtmlHead);
@@ -76,6 +88,7 @@
         border: none;
         border-radius: 5px;
     }
+
     .form-buider-form .Eb-ctrlContainer table td {
         background: #fff;
         padding: 0px 2px;
@@ -97,6 +110,6 @@
     const renderer = new WebFormRender({
         formObj: _formObj,
         $saveBtn: _$saveBtn,
-        flatControls : _flatControls.$values
+        flatControls : _flatControls
     });
 </script>

@@ -115,7 +115,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
-                uploadImageRequest.ImageInfo = new FileMeta();
+                uploadImageRequest.ImageInfo = new ImageMeta();
                 myFileContent = System.Convert.FromBase64String(base64);
                 uploadImageRequest.ImageByte = myFileContent;
                 uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;

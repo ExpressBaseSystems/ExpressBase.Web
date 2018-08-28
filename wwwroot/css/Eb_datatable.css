@@ -311,18 +311,10 @@ table.dataTable tbody td.dt-body-right {
 
 .sub-windows .dataTables_scroll {
     height: calc(100vh - 100px) !important;
-    height: calc(100% - 14px);
     z-index: 1;
-    /*height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    position: absolute !important;
-    padding-top: 40px !important;*/
 }
 
-/*/////////*/
-.dataTables_wrapper {
+.sub-windows .dataTables_wrapper {
     height: 100%;
 }
 
@@ -330,16 +322,22 @@ table.dataTable tbody td.dt-body-right {
     margin-bottom: 0px !important;
 }
 
-.dataTables_scrollBody {
+.sub-windows .dataTables_scrollBody {
     height: calc(100% - 100px) !important;
-    /*overflow-y: scroll !important;*/
 }
 
+.containerrow .dataTables_scroll {
+    height: 100% !important;
+}
+.containerrow .dataTables_scrollBody {
+    height: calc(100% - 18px) !important;
+}
 
-    .dataTables_scrollBody tabl tr td:hover{
-        background-color:aqua !important;
-    }
-    /*///////////*/
+.containerrow .dataTables_wrapper {
+    height: 250px;
+    padding: 10px 10px 10px 10px;
+}
+
 .dataTable tbody tr td {
     height: 15px; /* or whatever height you need to make them all consistent */
     white-space: nowrap;
@@ -385,9 +383,6 @@ table.dataTable tbody td.dt-body-right {
     padding: 0 10px !important;
 }
 
-[eb-type=EbTableVisualization] .noPadding {
-    // display: none;
-}
 .addedbyeb .input-group {
     width: 100% !important;
 }

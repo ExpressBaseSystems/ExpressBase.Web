@@ -18,24 +18,53 @@ namespace ExpressBase.Web.Controllers
 	{
 		public CustomPageController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-		//public IActionResult LeadManagement(string ac)
-		//{
-		//	//mode=0 -> new customer
-		//	int mode = 0;
+		public IActionResult LeadManagement(string ac)
+		{
+			//mode=0 -> new customer
+			int mode = 0;
+			if (!ac.IsNullOrEmpty())
+				mode = 1;
+			else
+				ac = "null";
 
-		//	var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = ac, RequestMode = mode, TenantAccountId = ViewBag.cid });
-			
-		//	ViewBag.MC_Mode = mode;
-		//	ViewBag.CustomerData = fr.CustomerDataDict;
-		//	ViewBag.CostCenter = fr.CostCenterDict;
+			var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = ac, RequestMode = mode, TenantAccountId = ViewBag.cid });
 
-		//	return View();
-		//}
+			ViewBag.MC_Mode = mode;
+			ViewBag.AccId = ac;
+			ViewBag.CustomerData = fr.CustomerDataDict;
+			ViewBag.CostCenter = fr.CostCenterDict;
+			if (mode == 1)
+			{
+				ViewBag.FeedbackList = JsonConvert.SerializeObject(fr.FeedbackList);
+				ViewBag.BillingList = JsonConvert.SerializeObject(fr.BillingList);
+				ViewBag.SurgeryList = JsonConvert.SerializeObject(fr.SurgeryList);
+			}
 
-		//public int SaveCustomer(int Mode, string CustomerInfo)
-		//{						
-		//	SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode});
-		//	return res.Status;
-		//}
+			return View();
+		}
+
+		public int SaveCustomer(int Mode, string CustomerInfo)
+		{
+			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode });
+			return res.Status;
+		}
+
+		public int SaveFollowup(string FollowupInfo)
+		{
+			SaveCustomerFollowupResponse res = this.ServiceClient.Post<SaveCustomerFollowupResponse>(new SaveCustomerFollowupRequest { Data = FollowupInfo, UserName = this.LoggedInUser.FullName });
+			return res.Status;
+		}
+		public int SaveBilling(string BillingInfo)
+		{
+			SaveCustomerPaymentResponse res = this.ServiceClient.Post<SaveCustomerPaymentResponse>(new SaveCustomerPaymentRequest { Data = BillingInfo, UserName = this.LoggedInUser.FullName });
+			return res.Status;
+		}
+		public int SaveSurgeryDtls(string SurgeryInfo)
+		{
+			SaveSurgeryDetailsResponse res = this.ServiceClient.Post<SaveSurgeryDetailsResponse>(new SaveSurgeryDetailsRequest { Data = SurgeryInfo, UserName = this.LoggedInUser.FullName });
+			return res.Status;
+		}
+		
+
 	}
 }

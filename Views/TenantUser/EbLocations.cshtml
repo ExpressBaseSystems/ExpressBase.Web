@@ -16,60 +16,88 @@
 <script>
     var cm = new EbHeader().setName("Configure Locations");
 </script>
-
+@{ 
+    var locations = ViewBag.LocList;
+}
 <div class="row s-dash-container">
-    <div class="pd-0 tdasboard-sidebar">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
-                <li class="list-group-item outer_li"></li>
-                <li class="list-group-item outer_li"></li>
-                <li class="list-group-item outer_li"></li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">highlight</span>
+                        <span class="t__sidebar_text">Solutions</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">attach_money</span>
+                        <span class="t__sidebar_text">Billing</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">store</span>
+                        <span class="t__sidebar_text">App Store</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
-    <div class="s-dash-workplace">
-        <div class="col-md-12 pd-0 s-dash-solution-desc" style="margin-bottom:5px;">
-            <div class="col-md-10" style="padding-left: 3px;">
-                <h3 class="mr-t-0">Locations <span class="apps_count"></span></h3>
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+            <div class="col-md-10 pd-0">
+                <h4 class="mr-t-0 mr-b-0">Locations <span class="apps_count">(@locations.Count)</span></h4>
             </div>
             <div class="col-md-2 pd-0">
-                <a class="ebbtn eb_btnblue pull-right" data-toggle="modal" data-target="#create_loc_mod">
-                    <i class="fa fa-plus"></i> New Location
-                </a>
+                <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btngreen pull-right eb_btn-sm new_sol_lk"> <i class="fa fa-plus"></i> New Location</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item active" style="width:50%;">
+                <li class="nav-item active">
                     <a class="nav-link" data-toggle="tab" href="#locations_tab" role="tab">
                         <i class="fa fa-list" aria-hidden="true"></i> Locations
                     </a>
                 </li>
-                <li class="nav-item" style="width:50%;">
+                <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#location_conf" role="tab"><i class="fa fa-cogs" aria-hidden="true"></i> Customize</a>
                 </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="locations_tab" role="tabpanel">
-                    @foreach (KeyValuePair<int, EbLocation> loc in ViewBag.Locations)
+                    @foreach (KeyValuePair<int, EbLocation> loc in locations)
                     {
-                        <div class="solution_container" locid=@ViewBag.Locations[loc.Key].LocId>
-                            <div class="solution_container_pd hoveron_block">
-                                <div class='col-md-1 pd-0'>
-                                    @*<img src="../static/@ViewBag.Locations[loc.Key].Img .JPG" />*@
+                        <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
+                            <a class="appcontainer_inner loc_tile" locid=@locations[loc.Key].LocId>
+                                <div class="col-md-4 pd-l-0 flex-center locsImage">
+                                    <img src="~/images/EB_Logo.png"/>
                                 </div>
-                                <div class="col-md-11">
-                                    <h4 class='head4'>@ViewBag.Locations[loc.Key].LongName</h4>
-                                    <p class='text-justify'>@ViewBag.Locations[loc.Key].ShortName</p>
+                                <div class="col-md-6 pd-0">
+                                    <h5 class="txtdecor_none">@locations[loc.Key].LongName</h5>
+                                    <p class="small txtdecor_none">@locations[loc.Key].ShortName</p>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     }
                 </div>
                 <div class="tab-pane location_conf" id="location_conf" role="tabpanel">
                     <div class="form-inline btn_container">
-                        <button class="btn btn-default pull-right" data-toggle="modal" data-target="#add_new_key" id="addkey">
-                        <i class="fa fa-plus"></i> Custom Field</button>
+                        <button class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#add_new_key" id="addkey">
+                            <i class="fa fa-plus"></i> Custom Field
+                        </button>
                     </div>
                     <form class="form-horizontal conf_container" id="textspace" method="post">
                         <table class="table table-bordered">
@@ -102,24 +130,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                        @*<div class="form-group">
-                                <label class="col-md-1 index">Key 1</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="Enter Name" name="keyname" value="Name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-1 index">Key 2</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="Enter Short Name" name="keyname" value="Short Name">
-                                </div>
-                            </div>*@
                     </form>
                 </div>
             </div>
-            @*<div class="Locations_container">
-
-                </div>*@
         </div>
     </div>
 </div>
@@ -207,7 +220,7 @@
 </div>
 <script>
    @{
-       var locs = JsonConvert.SerializeObject(ViewBag.Locations);
+       var locs = JsonConvert.SerializeObject(ViewBag.LocList);
    }
       var Loc_ = new Eb_locationMeta(@Html.Raw(ViewBag.Config),@Html.Raw(locs),'@ViewBag.cid');
 </script>

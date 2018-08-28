@@ -1,0 +1,57 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Dictionary<string, List<EbObjectWrapper>> ObjList = ViewBag.objlist;
+}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css" />
+
+<div class="container list_cont col-md-7 col-md-offset-2">
+    <div class="page-header"><h3>Export Objects</h3>Please select versions of each objects to be exported.</div>
+    @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in ObjList)
+    {
+        <div class="list-group-item objContainer_f_app">
+            <span class="col-md-2 objkey"> @obj.Key</span>
+
+            <select class="selectpicker show-tick version_dd pull-right col-md-2">
+                @foreach (EbObjectWrapper ver in obj.Value)
+                {
+                    <option value="@ver.RefId">@ver.VersionNumber</option>
+                }
+            </select>
+
+        </div>
+    }
+    <input type="button" value="Back to App Store" id="goto_store" class="pull-left" onclick="location.href='../AppStore'"/>
+    <input type="button" value="Export" id="commit_export" class="pull-right" />
+</div>
+
+<script>
+    $('#commit_export').on('click', function () {
+        var refids = [];
+        $('.list_cont').find('.selectpicker').each(function (i, o) {
+            refids.push($(this).find("option:selected").val());
+        });
+        $.post('../ImportExport/Export', { refids: refids.toString(), appid: @ViewBag.appid }, function () {
+            EbMessage("show", { Message: "Exported Successfully. Go to App Store to view the package.", Background: "#00AD6E", AutoHide: false});
+            $('#goto_store').trigger("click");
+          }
+        );
+    });
+    
+</script>
+
+<style>
+    .list_cont {
+        margin-top: 80px;
+    }
+
+    .version_dd {
+        width: 280px;
+    }
+
+    .objkey {
+        width: 25%;
+        padding-top: 7px;
+    }
+</style>

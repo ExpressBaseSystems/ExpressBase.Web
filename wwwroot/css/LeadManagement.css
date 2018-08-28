@@ -1,5 +1,6 @@
 ﻿.form-cont {
 	background-color: white;
+	min-height: 100vh;
 }
 
 .lm-form-body {
@@ -35,7 +36,7 @@
 .lm-img-cont {
 	height: 138px;
 	width: 132px;
-	margin-top: 60px;
+	margin-top: 20px;
 	border: 1px solid #cfced0;
 }
 .input-group-addon {
@@ -52,7 +53,6 @@
 .lm-form-sec-heading {
 	font-size: 18px;
 	color: #aaa;
-	margin-bottom: 8px;
 }
 
 .form-cont .input-group-addon {
@@ -75,3 +75,8 @@
 		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
 		box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
 	}
+
+.dataTables_empty {
+	text-align: center;
+	font-size: 14px;
+}

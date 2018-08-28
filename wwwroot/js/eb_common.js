@@ -218,7 +218,16 @@ var EbStickButton = function (option) {
 };
 
 function getSum(_array) {
-    return _array.reduce(function (a, b) { return parseInt(a) + parseInt(b); });
+    return _array.reduce(function (a, b) {
+        if (typeof a === 'string') {
+            a = a.replace(/[^\d.-]/g, '') * 1;
+        }
+        if (typeof b === 'string') {
+            b = b.replace(/[^\d.-]/g, '') * 1;
+        }
+
+        return parseInt(a) + parseInt(b);
+    });
 }
 
 function getAverage(_array) {
@@ -254,3 +263,28 @@ function gettypefromString(str) {
     else if (str == "Date")
         return "5";
 }
+//JQuery extends
+(function ($) {
+    $.fn.closestInner = function (filter) {
+        var $found = $(),
+            $currentSet = this; // Current place
+        while ($currentSet.length) {
+            $found = $currentSet.filter(filter);
+            if ($found.length) break;  // At least one match: break loop
+            // Get all children of the current set
+            $currentSet = $currentSet.children();
+        }
+        return $found.first(); // Return first match of the collection
+    }
+})(jQuery);
+//JQuery extends ends
+
+//Object.defineProperty(window, "store", {
+//    get: function () {
+//        let t = fromConsole();
+//        return true;
+//    },
+//    set: function (val) {
+//        _z = val;
+//    }
+//});

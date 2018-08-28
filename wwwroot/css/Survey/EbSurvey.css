@@ -91,7 +91,6 @@
 .qst-types-cont {
     overflow: auto;
     height: calc( 100% - 30px);
-    border-bottom: 1px solid #596093;
 }
 .qst-set-cont {
     overflow: auto;
@@ -109,20 +108,19 @@
     padding-left: 0px;
 }
 .qust-cont-l-col-3 {
-    background-color: #2e3353;    
+    background-color: #fafafa;
+    border-right: 1px solid #ccc;
 }
 .qust-cont-col-6 {
-    background-color:ghostwhite;
+    background-color:#eeeeee;
 }
 .q-type-container, .q-container {
     height: 100%;
     /*border: 1px solid #ccc;*/
 }
 .question-label {
-    /*background: var(--ebbg);*/
-    color: white;
     padding: 5px;
-    background-color:cadetblue;
+    background-color: #e2e2e2;
 }
 .pd-5{
     padding:5px;
@@ -145,49 +143,43 @@
     margin-top: -4px;
 }
 .qst-type {
-    /*border: 1px dashed #efb6b6;
-    background-color: cornsilk;*/
     padding: 5px;
     cursor: pointer;
     margin-bottom: 6px;
-    font-size: 11px;
-    color:white;
+    font-size: 12px;
+    background-color: #fafafa;
+    color: rgba(0,0,0,0.54);
+    vertical-align: middle;
+    font-weight: 600;
 }
-.qst-type:hover {
-    background-color: #596093;
-}
+    .qst-type:hover {
+        background-color: #e2e2e2;
+    }
 
 .qst-type i {
     margin-right: 10px;
     font-size: 15px;
 }
 .qst-text-cont {
-    /*width: 100%;
-    border-bottom: 1px solid;*/
+    
 }
 .qst-opt-cont {
-    /*border: 1px solid;*/
-    overflow: auto;
-    height: calc(100% - 110px);
-    /*margin-top: 10px;*/
-    padding: 10px 15px;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 .q-opt-cont-inner {
     padding-left:0px!important;
 }
 .qst-text-opt-cont {
-    /*height: calc(100% - 30px);*/
     height: 100%;
+    padding: 10px;
 }
 .qst-text {
-    border: none;
     background-color: white;
-    height: 100px!important; 
+    min-height: 65px;
     padding: 10px;
     width: 100%;
     resize: none;
-    margin-top:2px;
+    border-left: none;
 }
 
 .qst-text-cont:empty:not(:focus):before {
@@ -205,9 +197,10 @@
     margin-left: 5px;
 }
 .q-set-item {
-    color: white;
-    font-size: 11px;
+    color: rgba(0,0,0,0.54);
+    font-size: 12px;
     padding: 4px;
+    font-weight: 600;
 }
 .qst-type-label-cont, .qst-set-label-cont{
     height:50%;
@@ -242,10 +235,10 @@
 }
 
 .q-opt-new-choice-btn {
-    border: 1px dashed #c89cd0;
     text-align: center;
     cursor: pointer;
-    width: 43%;
+    border-radius: 2px;
+    margin-top: 15px;
 }
 .q-label{
     border-right:1px solid #ccc!important;
@@ -260,4 +253,29 @@
 .q-opt-radio {
     width: 20px;
     height: 16px;
+}
+/*survey 14/08/18 edits by amal*/
+.open-sans {
+    font-family: open sans;
+}
+.survey_menu_load {
+    bottom: -1px;
+    left: 0;
+}
+.survey_container{
+    padding:15px;
+    float:left;
+}
+.rating_star_control span {
+    color: #dad5d5;
+}
+.rating_star_control .R_checked {
+    color: #528ff0;
+}
+.rating_star_control {
+    background-color: white;
+    width: max-content;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding: 6px 12px;
 }

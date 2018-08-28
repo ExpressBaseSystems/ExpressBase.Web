@@ -89,9 +89,10 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("AppStore");
         }
 
-        public void Export(string refids)
+        public IActionResult Export(string refids, int appid)
         {
-            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationRequest { Refids = refids });
+            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationRequest { Refids = refids, AppId= appid });
+            return RedirectToAction("AppStore");
         }
 
         public void Import(int Id)
@@ -99,16 +100,13 @@ namespace ExpressBase.Web.Controllers
             ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationRequest { Id = Id });
         }
 
-        public IActionResult ExportOSE(string ids)
+        public IActionResult ExportOSE(string ids,int AppId)
         {
+            EbObjectObjListAllVerResponse resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbAllObjNVerRequest { ObjectIds =ids});
+            Dictionary<string, List<EbObjectWrapper>> ObjList = resultlist.Data;
+            ViewBag.objlist = ObjList;
+            ViewBag.appid = AppId;
             return View();
-        }
-        public Dictionary<string, List<EbObjectWrapper>> FetchObjectsAndVersions()
-        {
-            var resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = -1 });
-            var ObjDVListAll = resultlist.Data;
-
-            return ObjDVListAll;
         }
     }
 }

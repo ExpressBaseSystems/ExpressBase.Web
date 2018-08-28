@@ -103,5 +103,12 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+        public Dictionary<string, List<EbObjectWrapper>> FetchObjectsAndVersions()
+        {
+            var resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbObjectObjLisAllVerRequest { EbObjectType = -1 });
+            var ObjDVListAll = resultlist.Data;
+
+            return ObjDVListAll;
+        }
     }
 }

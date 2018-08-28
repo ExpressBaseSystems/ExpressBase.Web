@@ -12,7 +12,7 @@
         $('#add_key_btn').on('click', this.AddNewKey.bind(this));//new key
         $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
 
-        $(".solution_container").off("click").on("click", this.locationEdit.bind(this));
+        $(".loc_tile").off("click").on("click", this.locationEdit.bind(this));
         this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo",FileName:"" },false);
         $(`body`).off("click").on("click", ".delete_field", this.deleteConfig.bind(this));
         $("#locspace input[name='longname']").on("change", this.setLocNameToImg.bind(this));
@@ -153,7 +153,7 @@
     };
 
     this.locationEdit = function (e) {
-        var locid = $(e.target).closest(".solution_container").attr("locid");
+        var locid = $(e.target).closest(".loc_tile").attr("locid");
         var obj = this.Locations[parseInt(locid)];
         $('#create_loc_mod').modal("toggle");
         $("#create_loc_mod input[name='LocId']").val(obj.LocId);

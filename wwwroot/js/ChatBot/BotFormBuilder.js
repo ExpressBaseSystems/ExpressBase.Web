@@ -41,11 +41,11 @@
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
-        setTimeout(function () {
+        //setTimeout(function () {
             Proc(editModeObj, this.rootContainerObj);
             this.renderCtrls();
 
-        }.bind(this), 1000);
+        //}.bind(this), 1000);
     };
 
     this.initCtrl = function (ctrl) {
@@ -208,13 +208,15 @@
                 ctrlObj.HelpText = "";
 
                 this.RefreshControl(ctrlObj);
+
+                
             }
             else
                 console.log("ondrop else : removed");
             this.saveObj();
         }
     };
-
+    
     this.del = function (ce) {
         var $e = $(ce.trigger.context);
         var id = $e.attr("id");
@@ -494,6 +496,9 @@
             this.RefreshCardControl(obj);
             return;
         }
+        else if (obj.EbSid.substring(0, 6) === 'Survey') {
+            this.InitSurveyControl(obj);//////////////////////fbnc
+        }
         var NewHtml = obj.$WrapedCtrl4Bot.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
         $.each(metas, function (i, meta) {
@@ -597,5 +602,69 @@
         title: 'Remove this control',
         fun: this.del
     }];
+
+
+
+    this.InitSurveyControl = function (ctrlObj) {
+        var id = ctrlObj.EbSid;
+        if ($(`body #S_Modal${id}`).length > 0)
+            return;
+        var modalHTML = `
+        <div id="S_Modal${id}" class="modal fade" role="dialog" style='text-align: left;'>
+            <div class="modal-dialog" style="width:400px">
+                <div class="modal-content">
+                    <div class="modal-header" style="">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <div>
+                            <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Survey</h4> </div>
+                        </div>
+                    </div>
+                    <div class="modal-body" style="height:120px">
+                        <div id="loader${id}" style="text-align: center;"> <i class="fa fa-spinner fa-pulse fa-2x" aria-hidden="true"></i></div>
+                        <div id="selFGrp${id}" class="form-group" style='display: none;'>
+                            <label style="font-family: open sans; font-weight: 300;">Select Survey :</label>
+                            <select id="selSurvey${id}" class="form-control" style=''>
+                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="">
+                        <button id="btnOk${id}" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>OK</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        $("body").append(modalHTML);
+
+        $("#" + ctrlObj.Name).on("click", ".btnselectsurvey", function (event) {
+            $("#S_Modal" + id).modal("show");
+        }.bind(id));
+
+        $("#S_Modal" + id).on('shown.bs.modal', function (evt) {
+            if ($("#selSurvey" + id).children().length === 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "../Survey/GetSurveyNames",
+                    data: {},
+                    success: function (result) {
+                        for (var property in result) {
+                            $("#selSurvey" + id).append(`<option value="${property}">${result[property]}</option>`);
+                        }
+                        $("#loader" + id).hide();
+                        $("#selFGrp" + id).show();
+                    }
+                });
+            }           
+        }.bind(id));
+
+        $("#btnOk" + id).on("click", function () {
+            ctrlObj.SurveyId = parseInt($("#selSurvey" + id).val());
+            $($("#" + id).children().find(".Eb-ctrlContainer").children()[0]).text($("#selSurvey" + id + " option:selected").html());
+            $("#S_Modal" + id).modal("hide");
+        }.bind(id, ctrlObj));
+
+    }
+
     this.Init();
 };

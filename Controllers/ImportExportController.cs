@@ -28,106 +28,6 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-        public string Export(string _refids)
-        {
-            int app_id = 1;
-            OrderedDictionary ObjDictionary = new OrderedDictionary();
-            try
-            {
-                GetApplicationResponse appRes = ServiceClient.Get(new GetApplicationRequest { Id = app_id });
-                AppWrapper AppObj = appRes.AppInfo;
-                AppObj.ObjCollection = new List<EbObject>();
-                string[] refs = _refids.Split(",");
-                foreach (string _refid in refs)
-                {
-                    EbObject obj = GetObjfromDB(_refid);
-                    //obj.DiscoverRelatedObjects(ServiceClient, ObjDictionary);
-                }
-                ICollection ObjectList = ObjDictionary.Values;
-                foreach (object item in ObjectList)
-                {
-                    AppObj.ObjCollection.Add(item as EbObject);
-                }
-                string stream = EbSerializers.Json_Serialize(AppObj);
-                SaveToAppStoreResponse x = ServiceClient.Post(new SaveToAppStoreRequest
-                {
-                    Store = new AppStore
-                    {
-                        Name = AppObj.Name,
-                        Cost = 1000,
-                        Currency = "USD",
-                        Json = stream,
-                        Status = 1,
-                        AppType = 1,
-                        Description = AppObj.Description,
-                        Icon = AppObj.Icon
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return "Failed";
-            }
-            return "Success";
-        }
-
-        public string Import(int Id)
-        {
-            Dictionary<string, string> RefidMap = new Dictionary<string, string>();
-            try
-            {
-                GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = Id });
-
-                AppWrapper AppObj = resp.Wrapper;
-                List<EbObject> ObjectCollection = AppObj.ObjCollection;
-                CreateApplicationResponse appres = ServiceClient.Post(new CreateApplicationDevRequest
-                {
-                    AppName = AppObj.Name + "(install 7)",
-                    AppType = AppObj.AppType,
-                    Description = AppObj.Description,
-                    AppIcon = AppObj.Icon
-                });
-
-                for (int i = ObjectCollection.Count - 1; i >= 0; i--)
-                {
-                    UniqueObjectNameCheckResponse uniqnameresp;
-                    EbObject obj = ObjectCollection[i];
-
-                    do
-                    {
-                        uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
-                        if (!uniqnameresp.IsUnique)
-                            obj.Name = obj.Name + "(1)";
-                    }
-                    while (!uniqnameresp.IsUnique);
-
-                    obj.ReplaceRefid(RefidMap);
-                    EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
-                    {
-                        Name = obj.Name,
-                        Description = obj.Description,
-                        Json = EbSerializers.Json_Serialize(obj),
-                        Status = ObjectLifeCycleStatus.Dev,
-                        Relations = "_rel_obj",
-                        IsSave = false,
-                        Tags = "_tags",
-                        Apps = appres.id.ToString(),
-                        SourceSolutionId = (obj.RefId.Split("-"))[0],
-                        SourceObjId = (obj.RefId.Split("-"))[3],
-                        SourceVerID = (obj.RefId.Split("-"))[4]
-                    };
-                    EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
-                    RefidMap[obj.RefId] = res.RefId;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return "Failed";
-            }
-            return "Success";
-        }
 
         [HttpGet("AppStore")]
         public IActionResult AppStore()
@@ -143,21 +43,70 @@ namespace ExpressBase.Web.Controllers
             obj.RefId = _refid;
             return obj;
         }
+
+        [HttpGet]
+        public IActionResult ShareToPublic(int id)
+        {
+            GetAppDetailsResponse resp = ServiceClient.Get(new GetAppDetailsRequest { Id = id });
+            ViewBag.appid = id;
+            if (resp.StoreCollection.Count > 0)
+            {
+                AppStore appstore = resp.StoreCollection[0];
+                ViewBag.appstore = appstore;
+            }
+            else
+            {
+                ViewBag.appstore = new AppStore
+                {
+                    IsFree = "1",
+                    Cost = 00.00m,
+                    DetailId = 0
+                };
+            }
+            return View();
+        }
+
         [HttpPost]
-        public void ShareToPublic()
+        public IActionResult ShareToPublic()
         {
-            var req = HttpContext.Request.Form;
-            var y = req;
+            var form = HttpContext.Request.Form;
+            AppStore store = new AppStore
+            {
+                Id = Convert.ToInt32(form["appid"]),
+                Title = form["title"],
+                IsFree = form["price_option"],
+                ShortDesc = form["short_description"],
+                Tags = form["tags"],
+                DetailedDesc = form["detailed_description"],
+                DemoLinks = form["demo_link"],
+                VideoLinks = form["video_links"],
+                Images = form["images"],
+                PricingDesc = form["pricing_description"],
+                Cost = Convert.ToDecimal(form["price"]),
+                DetailId = Convert.ToInt32(form["detailid"])
+            };
+            ShareToPublicResponse resp = ServiceClient.Post(new ShareToPublicRequest { Store = store });
+            return RedirectToAction("AppStore");
         }
 
-        public void Export2(string refids)
+        public IActionResult Export(string refids, int appid)
         {
-            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationRequest { Refids = refids });
+            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationRequest { Refids = refids, AppId= appid });
+            return RedirectToAction("AppStore");
         }
 
-        public void Import2(int Id)
+        public void Import(int Id)
         {
             ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationRequest { Id = Id });
+        }
+
+        public IActionResult ExportOSE(string ids,int AppId)
+        {
+            EbObjectObjListAllVerResponse resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbAllObjNVerRequest { ObjectIds =ids});
+            Dictionary<string, List<EbObjectWrapper>> ObjList = resultlist.Data;
+            ViewBag.objlist = ObjList;
+            ViewBag.appid = AppId;
+            return View();
         }
     }
 }

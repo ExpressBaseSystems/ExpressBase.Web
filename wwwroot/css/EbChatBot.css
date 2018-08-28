@@ -651,12 +651,23 @@
     /*text-align: center;*/
 }
 
+.survey-qry-cont{
+
+}
+.survey-opt-cont {
+	padding-left: 10%;
+	padding-bottom: 15px;
+	font-size: 13px;
+}
+.survey-btn-cont {
+	text-align: right;
+}
 
 .contct-cont {
-    padding: .5em;
-    text-align: center;
-    border-radius: 0.4em;
-    background-color: #1e6c7d;
+	padding: .5em;
+	text-align: center;
+	border-radius: 0.4em;
+	background-color: #1e6c7d;
 }
 
 .contact-inp-wrap {

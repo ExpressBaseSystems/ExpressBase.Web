@@ -1,6 +1,6 @@
 ﻿.form-cont {
 	background-color: white;
-	height: 100vh;
+	min-height: 100vh;
 }
 
 .lm-form-body {

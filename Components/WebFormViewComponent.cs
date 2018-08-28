@@ -51,7 +51,7 @@ namespace ExpressBase.Web.Components
                 var serializerSettings = new JsonSerializerSettings();
                 serializerSettings.TypeNameHandling = TypeNameHandling.All;
                 serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                ViewBag.FlatControls = JsonConvert.SerializeObject(WebForm.Controls.FlattenEbControls(), serializerSettings);
+                ViewBag.FlatControls = JsonConvert.SerializeObject(WebForm.Controls.FlattenEbControls());
                 ViewBag.WebFormObj = JsonConvert.SerializeObject(WebForm, serializerSettings);
             }
 

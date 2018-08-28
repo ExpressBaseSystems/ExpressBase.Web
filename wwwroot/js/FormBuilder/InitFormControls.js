@@ -6,11 +6,11 @@
             ctrl = { name: ctrl, ebDateType: 5 }
         var settings = { timepicker: false };
 
-        if (ctrl.ebDateType === 5) {
+        if (ctrl.EbDateType === 5) {
             settings.timepicker = false;
             settings.format = "Y/m/d";
         }
-        else if (ctrl.ebDateType === 17) {
+        else if (ctrl.EbDateType === 17) {
             settings.datepicker = false;
             settings.format = "H:i";
         }
@@ -20,15 +20,15 @@
             settings.format = "Y/m/d H:i";
         }
 
-        //settings.minDate = ctrl.min;
-        //settings.maxDate = ctrl.max;
+        //settings.minDate = ctrl.Min;
+        //settings.maxDate = ctrl.Max;
 
-        $('#' + ctrl.name).datetimepicker(settings);
-        $('#' + ctrl.name).mask(ctrl.maskPattern || '00/00/0000');
+        $('#' + ctrl.Name).datetimepicker(settings);
+        $('#' + ctrl.Name).mask(ctrl.MaskPattern || '00/00/0000');
     };
 
     this.SimpleSelect = function (ctrl) {
-        //$('#' + ctrl.name).selectpicker();
+        //$('#' + ctrl.Name).selectpicker();
     };
 
     this.InputGeoLocation = function (ctrl) {
@@ -41,7 +41,7 @@
 
     this.InitMap4inpG = function (ctrl) {
 
-        var name = ctrl.name;
+        var name = ctrl.Name;
         $('#' + name).locationpicker({
             location: {
                 latitude: this.Bot.userLoc.lat,
@@ -72,7 +72,7 @@
                 var loc = $optBtn.attr("for");
                 var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.name === loc; });
                 var ctrl = ctrlArr[0];
-                var $locDiv = $(`#${ctrl.name}`);
+                var $locDiv = $(`#${ctrl.Name}`);
                 $(`#${name} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
                 $optBtn.css("border-bottom", "solid 2px #31d031").css("font-weight", "bold").css("color", "#333");
                 if ($locDiv.closest(".location-box").css("display") === "none") {
@@ -90,9 +90,9 @@
         else {
             $(`#${name} .loc-opt-DD`).off("change").on("change", function (e) {
                 var loc = $(e.target).children().filter(":selected").val();
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.name === loc; });
+                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.Name === loc; });
                 var ctrl = ctrlArr[0];
-                var $locDiv = $(`#${ctrl.name}`);
+                var $locDiv = $(`#${ctrl.Name}`);
                 if ($locDiv.closest(".location-box").css("display") === "none") {
                     $(`#${name} .location-box`).hide(10);
                     $locDiv.closest(".location-box").show(10,
@@ -111,8 +111,8 @@
     };
 
     this.initMap = function (ctrl) {
-        var uluru = { lat: ctrl.position.latitude, lng: ctrl.position.longitude };
-        var map = new google.maps.Map(document.getElementById(ctrl.name), {
+        var uluru = { lat: ctrl.Position.latitude, lng: ctrl.Position.longitude };
+        var map = new google.maps.Map(document.getElementById(ctrl.Name), {
             zoom: 15,
             center: uluru
         });
@@ -127,25 +127,25 @@
         Vue.component('v-select', VueSelect.VueSelect);
         Vue.config.devtools = true;
 
-        $(`#${ctrl.name}_loading-image`).hide();
-        //var EbCombo = new EbSelect(ctrl.name, ctrl.DataSourceId, ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000], ctrl);
+        $(`#${ctrl.Name}_loading-image`).hide();
+        //var EbCombo = new EbSelect(ctrl.Name, ctrl.DataSourceId, ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000], ctrl);
         var o = new Object();
         o.wc = 'bc';
         var EbCombo = new EbSelect(ctrl, o);
         if (this.Bot.curCtrl !== undefined)
-            this.Bot.curCtrl.selectedRows = EbCombo.getSelectedRow;
+            this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
     };
 
     this.Survey = function (ctrl) {
-        new EbSurveyRender($('#' + ctrl.name), this.Bot);
+        new EbSurveyRender($('#' + ctrl.Name), this.Bot);
     }
         
     this.StaticCardSet = function (ctrl) {
-        this.initCards($('#' + ctrl.name));
+        this.initCards($('#' + ctrl.Name));
     };
     
     this.DynamicCardSet = function (ctrl) {
-        this.initCards($('#' + ctrl.name));
+        this.initCards($('#' + ctrl.Name));
     };
     
     this.initCards = function ($Ctrl) {
@@ -160,7 +160,7 @@
         $Ctrl.find(".card-head-cardno").text((noOfCard === 0 ? "0": "1") + " of " + noOfCard);
         
         //getting the sum fields to display total
-        $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
+        $.each(this.Bot.curCtrl.CardFields, function (k, obj) {
             if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
                 this.sumFieldsName.push(obj.name);
             }
@@ -173,9 +173,9 @@
             var $e = $(evt.target).closest(".btn");
             var $card = $e.closest('.card-cont');
             
-            if (!this.Bot.curCtrl.multiSelect) {
+            if (!this.Bot.curCtrl.MultiSelect) {
                 this.SelectedCards = [];
-                this.resetSelectedCardDisplay($('#' + this.Bot.curCtrl.name));
+                this.resetSelectedCardDisplay($('#' + this.Bot.curCtrl.Name));
             }
 
             var itempresent = $.grep(this.SelectedCards, function (a) {
@@ -295,12 +295,12 @@
     this.processSelectedCard = function ($card, evt) {
         var sObj = {};
         sObj["cardid"] = $card.attr('card-id');
-        $.each(this.Bot.curCtrl.cardFields, function (k, obj) {
+        $.each(this.Bot.curCtrl.CardFields, function (k, obj) {
             if (obj.summarize) {
                 var propval = "";
                 if (obj.hasOwnProperty('valueExpression') && obj.valueExpression !== "") {
                     var strFunc = window.atob(obj.valueExpression);
-                    $.each(this.Bot.curCtrl.cardFields, function (l, obj1) {
+                    $.each(this.Bot.curCtrl.CardFields, function (l, obj1) {
                         var str2 = "parseFloat(" + this.getValueInDiv($card.find('.data-' + obj1.name)) + ")";
                         if (!(obj1.objType === 'CardNumericField'))
                             str2.replace("parseFloat", "");
@@ -320,7 +320,7 @@
             }
         }.bind(this));
         this.SelectedCards.push(sObj);
-        this.Bot.curCtrl.selectedCards.push(parseInt($card.attr('card-id')));
+        this.Bot.curCtrl.SelectedCards.push(parseInt($card.attr('card-id')));
         this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find('.table tbody'));
         this.setCardFieldValues($card);
     }
@@ -361,8 +361,8 @@
         $('.remove-cart-item').off('click').on('click', function (evt) {
             var cardid = $(evt.target).closest('tr').attr('card-id');
             this.spliceCardArray(cardid);
-            $('#' + this.Bot.curCtrl.name).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
-            $($('#' + this.Bot.curCtrl.name).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
+            $('#' + this.Bot.curCtrl.Name).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
+            $($('#' + this.Bot.curCtrl.Name).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
             this.drawSummaryTable($(evt.target).closest('tbody'));
         }.bind(this));
     };
@@ -373,9 +373,9 @@
                 break;
             }
         }
-        for (var i = 0; i < this.Bot.curCtrl.selectedCards.length; i++) {
-            if (this.Bot.curCtrl.selectedCards[i] == cardid) {
-                this.Bot.curCtrl.selectedCards.splice(i, 1);
+        for (var i = 0; i < this.Bot.curCtrl.SelectedCards.length; i++) {
+            if (this.Bot.curCtrl.SelectedCards[i] == cardid) {
+                this.Bot.curCtrl.SelectedCards.splice(i, 1);
                 break;
             }
         }
@@ -398,7 +398,7 @@
         var card = this.getCardReference(cardId);
         if (card === null)
             return;
-        $.each(this.Bot.curCtrl.cardFields, function (k, fObj) {
+        $.each(this.Bot.curCtrl.CardFields, function (k, fObj) {
             if (!fObj.doNotPersist) {
                 var fVal = this.getValueInDiv($card.find('.data-' + fObj.name));
                 //fObj.ebDbType always returns 16 <string>!!! if ebDbType return correct value then this checking can be avoided
@@ -411,7 +411,7 @@
     }
     this.getCardReference = function(cardid){
         var card = null;
-        $.each(this.Bot.curCtrl.cardCollection, function (k, cardObj) {
+        $.each(this.Bot.curCtrl.CardCollection, function (k, cardObj) {
             if (cardObj.cardId === cardid) {
                 card = cardObj;
                 return;
@@ -421,7 +421,7 @@
     }
     this.resetSelectedCardDisplay = function ($Ctrl) {
         //reset cardset for reopening
-        this.Bot.curCtrl.selectedCards = [];
+        this.Bot.curCtrl.SelectedCards = [];
         $.each($Ctrl.find(".card-btn-cont .btn"), function (h, elemt) {
             $(elemt).html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
             $($(elemt).parent().siblings('.card-title-cont').children()[0]).hide();
@@ -431,21 +431,21 @@
 
 
     this.ImageUploader = function (ctrl) {
-        $('#' + ctrl.name).off("change").on("change", function (input) {
+        $('#' + ctrl.Name).off("change").on("change", function (input) {
             $(input.target).closest(".ctrl-wraper").next("[name=ctrlsend]").click();
         }.bind(this));
     };
 
     this.RadioGroup = function (ctrl) {
-        $('#' + ctrl.name).find("input").on("change", function (e) {
+        $('#' + ctrl.Name).find("input").on("change", function (e) {
             var val = $('#' + this.id + 'Lbl').text().trim();
-            $('#' + ctrl.name).val(val);
+            $('#' + ctrl.Name).val(val);
         });
     };
 
     this.CheckBoxGroup = function (ctrl) {
-        $('#' + ctrl.name).find("input").on("change", function (e) {
-            var $ctrlDiv = $('#' + ctrl.name); var values = "";
+        $('#' + ctrl.Name).find("input").on("change", function (e) {
+            var $ctrlDiv = $('#' + ctrl.Name); var values = "";
             $ctrlDiv.find("input").each(function (i, el) {
                 if (el.checked) {
                     val = $('#' + el.id + 'Lbl').text().trim();
@@ -457,11 +457,11 @@
     };
 
     this.Numeric = function (ctrl) {
-        var id = ctrl.name;
+        var id = ctrl.Name;
         $('#' + id).focusout(function () {
             var val = $(this).val().toString();
             var l = 'SZZZZZZZZZZZ'.length - 1;
-            var ndp = ctrl.decimalPlaces;
+            var ndp = ctrl.DecimalPlaces;
             if (val == 0 || val === '' || val === '.')
                 $(this).val('');
             else {
@@ -501,34 +501,34 @@
                 setTimeout(function () {
                     var pi = val.indexOf('.');
                     //prevents exceeding decimal part length when containes '.'
-                    if ((val.length - pi) === (ctrl.decimalPlaces + 1) && (e.which >= 48) && (e.which <= 57) && ce > pi)
+                    if ((val.length - pi) === (ctrl.DecimalPlaces + 1) && (e.which >= 48) && (e.which <= 57) && ce > pi)
                         $('#' + id).val(val);
                     //prevents exceeding integer part length when containes '.'
-                    if (pi === (ctrl.maxLength - ctrl.decimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
+                    if (pi === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
                         $('#' + id).val(val);
                 }, 1);
             }
             //prevents exceeding integer-part length when no '.'
-            if (!(val.includes('.')) && val.length === (ctrl.maxLength - ctrl.decimalPlaces) && (e.which >= 48) && (e.which <= 57)) {
+            if (!(val.includes('.')) && val.length === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57)) {
                 setTimeout(function () {
                     $('#' + id).val(val + '.' + String.fromCharCode(e.which));
 
                 }, 1);
             }
             //prevents del before '.'if it leads to exceed integerpart limit
-            if (val.includes('.') && (val.length - 1) > (ctrl.maxLength - ctrl.decimalPlaces) && cs === val.indexOf('.') && e.which === 0) {
+            if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === val.indexOf('.') && e.which === 0) {
                 setTimeout(function () {
                     $('#' + id).val(val);
                 }, 1);
             }
             //prevents <- after '.' if it leads to exceed integerpart limit
-            if (val.includes('.') && (val.length - 1) > (ctrl.maxLength - ctrl.decimalPlaces) && cs === (val.indexOf('.') + 1) && e.which === 8) {
+            if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === (val.indexOf('.') + 1) && e.which === 8) {
                 setTimeout(function () {
                     $('#' + id).val(val);
                 }, 1);
             }
             //prevents deletion of selection when containes '.' if it leads to exceed integerpart limit
-            if ((val.includes('.') && val.length - (ce - cs)) > (ctrl.maxLength - ctrl.decimalPlaces) && cs <= val.indexOf('.') && ce > val.indexOf('.')) {
+            if ((val.includes('.') && val.length - (ce - cs)) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs <= val.indexOf('.') && ce > val.indexOf('.')) {
                 setTimeout(function () {
                     $('#' + id).val(val);
                 }, 1);

@@ -161,7 +161,7 @@
                 this.$FlUpFolDate.val("");
                 this.$FlUpComnt.val("");
                 this.$FlUpSave.children().hide();
-                this.$FlupSave.prop("disabled", false);
+                this.$FlUpSave.prop("disabled", false);
             }
         }.bind(this));
 
@@ -434,7 +434,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });//for id
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
             tblcols.push({ data: i, title: this.metadata[i].replace("_", " "), orderable: true, className: "MyTempColStyle"});
-        tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
+        //tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)

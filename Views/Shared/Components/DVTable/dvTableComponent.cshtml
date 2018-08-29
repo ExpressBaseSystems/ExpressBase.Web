@@ -1,7 +1,11 @@
 ﻿
 @{
+    @using Newtonsoft.Json;
     @using ExpressBase.Common;
+    @using System.Globalization;
     var dvobj = EbSerializers.Json_Serialize(ViewBag.dsObj);
+    var _user_culture = CultureInfo.GetCultureInfo(ViewBag.currentUser.Preference.Locale);
+    var datePattern = (_user_culture as CultureInfo).DateTimeFormat.ShortDatePattern;
 }
 
 <style>
@@ -27,6 +31,6 @@
         var commonO = $("#layout_div").data("commonObj");
     }
 
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EbDataTable('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl', '@ViewBag.wc', @ViewBag.counter, null, null, null, '@ViewBag.url');
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EbDataTable('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl', '@ViewBag.wc', @ViewBag.counter, null, null, null, '@ViewBag.url', null, null, '@datePattern');
 
 </script>

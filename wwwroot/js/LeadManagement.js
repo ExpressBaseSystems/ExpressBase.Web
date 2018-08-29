@@ -1,10 +1,12 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, F_List, B_List, S_List) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
     this.Mode = MC_Mode;
     this.CustomerInfo = C_Info;
     this.CostCenterInfo = Center_Info;
+    this.DoctorInfo = Doc_Info;
+    this.StaffInfo = Staff_Info;
     this.FeedbackList = F_List || [];
     this.BillingList = B_List || [];
     this.SurgeryList = S_List || [];
@@ -31,6 +33,17 @@
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
     this.$PicReceived = $("#selPicReceived");
+
+    this.$ConsultedDate = $("#txtConsultedDate");
+    this.$Doctor = $("#selDoctor");
+    this.$ProbableMonth = $("#txtProbableMonth");
+    this.$TotalGrafts = $("#txtTotalGrafts");
+    this.$TotalRate = $("#txtTotalRate");
+    this.$NoOfPRP = $("#txtNoOfPRP");
+    this.$FeePaid = $("#txtFeePaid");
+    this.$Closing = $("#selClosing");
+    this.$Nature = $("#txtNature");
+    
     //FOLLOWUP
     this.divFeedback = "divFdbk";
     this.$btnNewFeedBack = $("#btnNewFeedBack");
@@ -60,8 +73,12 @@
     this.$MdlSurgery = $("#mdlSurgery");
     this.$SrgyDate = $("#txtSrgyDate");
     this.$SrgyBranch = $("#txtSrgyBranch");
-    this.$SrgySave = $("#btnSrgySave");   
-     
+    this.$SrgyZone = $("#txtSrgyZone");
+    this.$SrgyGrafts = $("#txtSrgyGrafts");
+    this.$SrgyDensity = $("#txtSrgyDensity");
+    this.$PatientInstr = $("#txaPatientInstr");
+    this.$DoctorInstr = $("#txaDoctorInstr");
+    this.$SrgySave = $("#btnSrgySave");        
     
     //DECLARED DATA
     this.OutDataList = [];
@@ -91,6 +108,17 @@
         this.$EnDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$Dob.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
+        this.$Dob.on("change", function (evt) {
+            this.$Age.val(parseInt(moment.duration(moment().diff(moment($(evt.target).val(), "DD-MM-YYYY"))).asYears()));
+        }.bind(this));
+
+        this.$Age.on("focusout", function (evt) {
+            if (parseInt(moment.duration(moment().diff(moment(this.$Dob.val(), "DD-MM-YYYY"))).asYears()) !== parseInt(this.$Age.val()))
+                this.$Dob.val("01-01-" + (moment().year() - parseInt(this.$Age.val())));
+        }.bind(this));
+
+        this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
+
         //FEEDBACK  BILLING  SURGERY
         this.initFeedBackModal();
         this.initBillingModal();
@@ -99,6 +127,16 @@
         this.$CostCenter.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {            
             this.$CostCenter.append(`<option value='${key}'">${val}</option>`);
+        }.bind(this));
+
+        this.$Doctor.children().remove();
+        $.each(this.DoctorInfo, function (key, val) {
+            this.$Doctor.append(`<option value='${val}'">${key}</option>`);
+        }.bind(this));
+
+        this.$Closing.children().remove();
+        $.each(this.StaffInfo, function (key, val) {
+            this.$Closing.append(`<option value='${val}'">${key}</option>`);
         }.bind(this));
 
         if (this.Mode === 1) {            
@@ -325,7 +363,8 @@
         //this.$Id.val(this.CustomerInfo[""]);
         this.$Name.val(this.CustomerInfo["name"]);
         this.$Dob.val(this.CustomerInfo["dob"]);
-        this.$Age.val(this.CustomerInfo["age"]);
+        this.$Dob.trigger("change");
+        //this.$Age.val(this.CustomerInfo["age"]);
         //this.$Sex.val(this.CustomerInfo[""]);
         this.$Phone.val(this.CustomerInfo["genphoffice"]);
         this.$Profession.val(this.CustomerInfo["profession"]);
@@ -341,6 +380,16 @@
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
         this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
+
+        this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
+        this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);
+        //this.$ProbableMonth.val(this.CustomerInfo[""]);
+        this.$TotalGrafts.val(this.CustomerInfo["noofgrafts"]);
+        this.$TotalRate.val(this.CustomerInfo["totalrate"]);
+        this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
+        this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
+        this.$Closing.val(this.CustomerInfo["closing"]);
+        this.$Nature.val(this.CustomerInfo["nature"]);
     }
 
     this.onClickBtnSave = function () {
@@ -371,7 +420,7 @@
         //this.pushToList("", this.$Id.val());
         this.pushToList("name", this.$Name.val());
         this.pushToList("dob", this.$Dob.val());
-        this.pushToList("age", this.$Age.val());
+        //this.pushToList("age", this.$Age.val());
         //this.pushToList("", this.$Sex.val());
         this.pushToList("genphoffice", this.$Phone.val());
         this.pushToList("profession", this.$Profession.val());
@@ -388,6 +437,16 @@
         this.pushToList("consultation", this.$Consultation.val());
         this.pushToList("picsrcvd", this.$PicReceived.val());
 
+        this.pushToList("consdate", this.$ConsultedDate);
+        this.pushToList("consultingdoctor", this.$Doctor.val());
+        //this.pushToList("", this.$ProbableMonth.val());
+        this.pushToList("noofgrafts", this.$TotalGrafts.val());
+        this.pushToList("totalrate", this.$TotalRate.val());
+        this.pushToList("prpsessions", this.$NoOfPRP.val());
+        this.pushToList("consultingfeepaid", this.$FeePaid.val());
+        this.pushToList("closing", this.$Closing.val());
+        this.pushToList("nature", this.$Nature.val());
+        
         return true;
     }
 

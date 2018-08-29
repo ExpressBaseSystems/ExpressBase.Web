@@ -13,18 +13,22 @@
 <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 
+<link href="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.css" rel="stylesheet" type="text/css" />
+<script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+
 <div class="form-cont">
     <div class="container" style="padding: 60px 0px 10px 0px;">
         <div class="lm-form-inline">
             <div class="col-md-10" style="padding-left:0px;width: 88%;">
                 <div class="lm-form-inline">
-                    <div class="col-md-3" style="width: 21%;">
+                    <div class="col-md-2" style="min-width: 21%;">
                         <div class="lm-form-group">
                             <label>Cost Center</label>
                             <select id="selCostCenter" class="form-control"></select>
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 16%;">
+                    <div class="col-md-1" style="min-width: 16%;">
                         <div class="lm-form-group">
                             <label>EN Date</label>
                             <div class="input-group">
@@ -33,25 +37,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4" style="width: 31%;">
+                    <div class="col-md-3" style="min-width: 31%;">
                         <div class="lm-form-group">
                             <label>Name</label>
                             <input id="txtName" type="text" class="form-control" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 16%;">
+                    <div class="col-md-1" style="min-width: 16%;">
                         <div class="lm-form-group">
                             <label>Mobile</label>
                             <input id="txtMobile" type="text" class="form-control" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 16%;">
+                    <div class="col-md-1" style="min-width: 16%;">
                         <div class="lm-form-group">
                             <label>Phone</label>
                             <input id="txtPhone" type="text" class="form-control" autocomplete="off">
                         </div>
                     </div>
-
                 </div>
 
                 <div class="lm-form-inline">
@@ -67,7 +70,7 @@
                             <input id="txtEmail" type="text" class="form-control" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 16%;">
+                    <div class="col-md-1" style="min-width: 16%;">
                         <div class="lm-form-group">
                             <label>DOB</label>
                             <div class="input-group">
@@ -76,13 +79,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 10%;">
+                    <div class="col-md-1" style="min-width: 10%;">
                         <div class="lm-form-group">
                             <label>Age</label>
                             <input id="txtAge" type="number" class="form-control" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 14%;">
+                    <div class="col-md-1" style="min-width: 14%;">
                         <div class="lm-form-group">
                             <label>Sex</label>
                             <select id="selSex" class="form-control">
@@ -92,7 +95,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 10%;">
+                    <div class="col-md-1" style="min-width: 10%;">
                         <div class="lm-form-group">
                             <label>NRI</label>
                             <select id="selNri" class="form-control">
@@ -158,78 +161,78 @@
                             <input id="txtSubCategory" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 10%;">
+                    <div class="col-md-1" style="min-width: 10%;">
                         <label>Consultation</label>
                         <select id="selConsultation" class="form-control">
-                            <option value="No">No</option>
-                            <option value="Yes">Yes</option>
+                            <option value="False">No</option>
+                            <option value="True">Yes</option>
                         </select>
                     </div>
-                    <div class="col-md-2" style="width: 12%;">
+                    <div class="col-md-1" style="min-width: 12%;">
                         <label>Pictures Recevied</label>
                         <select id="selPicReceived" class="form-control">
-                            <option value="No">No</option>
-                            <option value="Yes">Yes</option>
+                            <option value="False">No</option>
+                            <option value="True">Yes</option>
                         </select>
                     </div>
-                    <div class="col-md-2" style="width: 14%;">
+                    <div class="col-md-1" style="min-width: 14%;">
                         <div class="form-group">
                             <label>Consulted Date</label>
                             <div class="input-group">
-                                <input id="" type="text" class="form-control" autocomplete="off">
-                                <span class="input-group-addon" onclick="$('#').focusin();"><i class="fa fa-calendar"></i></span>
+                                <input id="txtConsultedDate" type="text" class="form-control" autocomplete="off">
+                                <span class="input-group-addon" onclick="$('#txtConsultedDate').focusin();"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2" style="width: 30.5%;">
+                    <div class="col-md-2" style="min-width: 30.5%;">
                         <div class="form-group">
                             <label>Consulting Doctor</label>
-                            <input type="text" class="form-control">
+                            <select id="selDoctor" class="form-control"></select>
                         </div>
                     </div>
                 </div>
                 <div class="lm-form-inline">
-                    <div class="col-md-2" style="width: 14%;">
+                    <div class="col-md-1" style="min-width: 14%;">
                         <div class="form-group">
                             <label>Probable Month</label>
-                            <input type="text" class="form-control">
+                            <input id="txtProbableMonth" type="text" class="form-control" maxlength="7">
                         </div>
                     </div>
-                    <div class="col-md-1" style="width: 10%;">
+                    <div class="col-md-1" style="min-width: 12%;">
                         <div class="form-group">
                             <label>No of Grafts</label>
-                            <input type="number" class="form-control">
+                            <input id="txtTotalGrafts" type="number" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-1" style="width: 10%;">
+                    <div class="col-md-1" style="min-width: 12%;">
                         <div class="form-group">
                             <label>Total Rate</label>
-                            <input type="number" class="form-control">
+                            <input id="txtTotalRate" type="number" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-1" style="width: 10%;">
+                    <div class="col-md-1" style="min-width: 11%;">
                         <div class="form-group">
                             <label>No of PRP</label>
-                            <input type="number" class="form-control">
+                            <input id="txtNoOfPRP" type="number" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-1" style="width: 10%;">
+                    <div class="col-md-1" style="min-width: 12%;">
                         <div class="form-group">
                             <label>Fee Paid</label>
-                            <input type="number" class="form-control">
+                            <input id="txtFeePaid" type="number" class="form-control">
                         </div>
                     </div>
 
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>Closing</label>
-                            <input type="text" class="form-control">
+                            <select id="selClosing" class="form-control"></select>
                         </div>
                     </div>
-                    <div class="col-md-3" style="width: 29%;">
+                    <div class="col-md-2" style="min-width: 22%;">
                         <div class="form-group">
                             <label>Nature of Patient</label>
-                            <input type="text" class="form-control">
+                            <input id="txtNature" type="text" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -248,48 +251,48 @@
             </div>
             <div id="menu1" class="tab-pane fade">
                 @*<div style="text-align:right; padding: 15px 0px;">
-                    <button id="btnNewFeedBack" class="btn btn-primary">Save</button>
-                </div>*@
+                        <button id="btnNewFeedBack" class="btn btn-primary">Save</button>
+                    </div>*@
 
 
                 @*<div class="modal-body" style="height: 250px; padding: 0% 25% 0% 25%;">
-                    <div class="lm-form-inline">
-                        <div class="col-md-6">
-                            <div class="lm-form-group">
-                                <label>Date</label>
-                                <div class="input-group">
-                                    <input id="txtFlUpDate" type="text" class="form-control" autocomplete="off">
-                                    <span class="input-group-addon" onclick="$('#txtFlUpDate').focusin();"><i class="fa fa-calendar"></i></span>
+                        <div class="lm-form-inline">
+                            <div class="col-md-6">
+                                <div class="lm-form-group">
+                                    <label>Date</label>
+                                    <div class="input-group">
+                                        <input id="txtFlUpDate" type="text" class="form-control" autocomplete="off">
+                                        <span class="input-group-addon" onclick="$('#txtFlUpDate').focusin();"><i class="fa fa-calendar"></i></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="lm-form-inline">
-                        <div class="col-md-6">
-                            <div class="lm-form-group">
-                                <label>Lead Status</label>
-                                <input id="txtFlUpStatus" type="text" class="form-control">
+                        <div class="lm-form-inline">
+                            <div class="col-md-6">
+                                <div class="lm-form-group">
+                                    <label>Lead Status</label>
+                                    <input id="txtFlUpStatus" type="text" class="form-control">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="lm-form-group">
-                                <label>Follow up Date</label>
-                                <div class="input-group">
-                                    <input id="txtFlUpFolDate" type="text" class="form-control" autocomplete="off">
-                                    <span class="input-group-addon" onclick="$('#txtFlUpFolDate').focusin();"><i class="fa fa-calendar"></i></span>
+                            <div class="col-md-6">
+                                <div class="lm-form-group">
+                                    <label>Follow up Date</label>
+                                    <div class="input-group">
+                                        <input id="txtFlUpFolDate" type="text" class="form-control" autocomplete="off">
+                                        <span class="input-group-addon" onclick="$('#txtFlUpFolDate').focusin();"><i class="fa fa-calendar"></i></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="lm-form-inline">
-                        <div class="col-md-12">
-                            <div class="lm-form-group">
-                                <label>Comment</label>
-                                <textarea id="txaFlUpComnt" class="form-control" style="height: 100px !important; resize:none;"></textarea>
+                        <div class="lm-form-inline">
+                            <div class="col-md-12">
+                                <div class="lm-form-group">
+                                    <label>Comment</label>
+                                    <textarea id="txaFlUpComnt" class="form-control" style="height: 100px !important; resize:none;"></textarea>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>*@
+                    </div>*@
 
 
 
@@ -301,7 +304,7 @@
                     </div>
                     <div class="col-md-4" style="border-left: 1px solid #ccc; padding: 0px; height: 300px;">
                         <div class="lm-form-inline">
-                            
+
                         </div>
                     </div>
                     <div class="col-md-4" style="border-left: 1px solid #ccc; height: 300px;padding-top: 19px;">
@@ -351,70 +354,70 @@
             </div>
             <div id="menu4" class="tab-pane fade">
                 <div style="text-align:right; padding: 15px 0px;">
-                    <button id="btnNewSurgeryDtls" class="btn btn-primary">Save</button>
+                    <button id="btnNewSurgeryDtls" class="btn btn-primary">New</button>
                 </div>
 
-                <div class="lm-form-inline">
-                    <div class="col-md-4" style="padding: 0px;">
-                        <div class="lm-form-inline">
-                            <div class="col-md-6">
-                                <div class="lm-form-group">
-                                    <label>Date</label>
-                                    <div class="input-group">
-                                        <input id="txtSrgyDate" type="text" class="form-control" autocomplete="off">
-                                        <span class="input-group-addon" onclick="$('#txtSrgyDate').focusin();"><i class="fa fa-calendar"></i></span>
+                @*<div class="lm-form-inline">
+                        <div class="col-md-4" style="padding: 0px;">
+                            <div class="lm-form-inline">
+                                <div class="col-md-6">
+                                    <div class="lm-form-group">
+                                        <label>Date</label>
+                                        <div class="input-group">
+                                            <input id="txtSrgyDate" type="text" class="form-control" autocomplete="off">
+                                            <span class="input-group-addon" onclick="$('#txtSrgyDate').focusin();"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="lm-form-group">
+                                        <label>Branch</label>
+                                        <input id="txtSrgyBranch" type="text" class="form-control">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="lm-form-group">
-                                    <label>Branch</label>
-                                    <input id="txtSrgyBranch" type="text" class="form-control">
+                            <div class="lm-form-inline">
+                                <div class="col-md-4">
+                                    <div class="lm-form-group">
+                                        <label>Zone</label>
+                                        <input id="txtSrgyBranch" type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="lm-form-group">
+                                        <label>Grafts</label>
+                                        <input id="txtSrgyBranch" type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="lm-form-group">
+                                        <label>Density</label>
+                                        <input id="txtSrgyBranch" type="text" class="form-control">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="lm-form-inline">
-                            <div class="col-md-4">
-                                <div class="lm-form-group">
-                                    <label>Zone</label>
-                                    <input id="txtSrgyBranch" type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="lm-form-group">
-                                    <label>Grafts</label>
-                                    <input id="txtSrgyBranch" type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="lm-form-group">
-                                    <label>Density</label>
-                                    <input id="txtSrgyBranch" type="text" class="form-control">
-                                </div>
+                        <div class="col-md-4">
+                            <div class="lm-form-group">
+                                <label>Patients Instructions</label>
+                                <textarea id="" class="form-control" style="height: 100px !important; resize:none;"></textarea>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="lm-form-group">
-                            <label>Patients Instructions</label>
-                            <textarea id="" class="form-control" style="height: 100px !important; resize:none;"></textarea>
+                        <div class="col-md-4">
+                            <div class="lm-form-group">
+                                <label>Doctors Instructions</label>
+                                <textarea id="" class="form-control" style="height: 100px !important; resize:none;"></textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="lm-form-group">
-                            <label>Doctors Instructions</label>
-                            <textarea id="" class="form-control" style="height: 100px !important; resize:none;"></textarea>
-                        </div>
-                    </div>
 
-                    
-                </div>
+
+                    </div>*@
 
 
                 <div class="lm-form-inline">
-                    <div class="lm-form-sec-heading" style="padding-bottom: 12px;">
-                        Surgery Details
-                    </div>
+                    @*<div class="lm-form-sec-heading" style="padding-bottom: 12px;">
+                            Surgery Details
+                        </div>*@
                     <div id="divSrgy" style="max-height: 300px; overflow: auto;"></div>
                 </div>
             </div>
@@ -514,6 +517,34 @@
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
+                            <label>Total Amount</label>
+                            <input id="txtBlngTotal" type="number" class="form-control" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label>Amount Received</label>
+                            <input id="txtBlngRcvd" type="number" class="form-control" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label>Balance Amount</label>
+                            <input id="txtBlngBal" type="number" class="form-control" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="lm-form-inline"></div>
+                <div class="lm-form-inline">
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label>Cash Paid</label>
+                            <input id="txtBlngPaid" type="number" class="form-control" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
                             <label>Date</label>
                             <div class="input-group">
                                 <input id="txtBlngDate" type="text" class="form-control" autocomplete="off">
@@ -523,39 +554,18 @@
                     </div>
                 </div>
                 <div class="lm-form-inline">
-                    <div class="col-md-3">
-                        <div class="lm-form-group">
-                            <label>Total Amount</label>
-                            <input id="txtBlngTotal" type="number" class="form-control" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="lm-form-group">
-                            <label>Amount Received</label>
-                            <input id="txtBlngRcvd" type="number" class="form-control" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="lm-form-group">
-                            <label>Balance Amount</label>
-                            <input id="txtBlngBal" type="number" class="form-control" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="lm-form-group">
-                            <label>Cash Paid</label>
-                            <input id="txtBlngPaid" type="number" class="form-control" autocomplete="off">
-                        </div>
-                    </div>
-                </div>
-                <div class="lm-form-inline">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="lm-form-group">
                             <label>Payment Mode</label>
-                            <input id="txtBlngMode" type="text" class="form-control">
+                            <select id="selBlngMode" class="form-control">
+                                <option>Cash</option>
+                                <option>Cheque</option>
+                                <option>Credit Card</option>
+                                <option>RTGS</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <div class="lm-form-group">
                             <label>Bank</label>
                             <input id="txtBlngBank" type="text" class="form-control">
@@ -575,7 +585,7 @@
                     <div class="col-md-8">
                         <div class="lm-form-group">
                             <label>Narration</label>
-                            <input id="txtBlngNarr" type="text" class="form-control">
+                            <input id="txtBlngNarr" type="text" class="form-control" maxlength="30">
                         </div>
                     </div>
                 </div>
@@ -599,7 +609,7 @@
             </div>
             <div class="modal-body" style="height: 270px;">
                 <div class="lm-form-inline">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="lm-form-group">
                             <label>Date</label>
                             <div class="input-group">
@@ -608,22 +618,45 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
                         <div class="lm-form-group">
                             <label>Branch</label>
                             <input id="txtSrgyBranch" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-12">
+                </div>
+                <div class="lm-form-inline">
+                    <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label>Patients Instructions</label>
-                            <textarea id="" class="form-control" style="height: 100px !important; resize:none;"></textarea>
+                            <label>Zone</label>
+                            <input id="txtSrgyZone" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="lm-form-group" style="padding-top:18px;">
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label>Grafts</label>
+                            <input id="txtSrgyGrafts" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label>Density</label>
+                            <input id="txtSrgyDensity" type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="lm-form-inline">
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label>Patients Instructions</label>
+                            <textarea id="txaPatientInstr" class="form-control" style="height: 100px !important; resize:none;"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
                             <label>Doctors Instructions</label>
-                            <textarea id="" class="form-control" style="height: 100px !important; resize:none;"></textarea>
+                            <textarea id="txaDoctorInstr" class="form-control" style="height: 100px !important; resize:none;"></textarea>
                         </div>
                     </div>
                 </div>
@@ -644,9 +677,9 @@
         white-space: normal !important;
         /*text-overflow: ellipsis;*/
         max-width: 200px;
-        min-height: 30px !important;
+        height: 30px !important;
     }
-        /*.MyTempColStyle:hover {
+    /*.MyTempColStyle:hover {
             overflow: visible;
             white-space: normal;
         }*/
@@ -659,6 +692,8 @@
     @using Newtonsoft.Json;
     var CInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CustomerData));
     var CenterInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CostCenter));
+    var DocInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.DocDict));
+    var StaffInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.StaffDict));
 
     var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
     var BillingList = (Html.Raw(ViewBag.BillingList).ToString() == "") ? "null" : Html.Raw(ViewBag.BillingList);
@@ -666,7 +701,7 @@
 }
 
 <script>
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @FeedbackList, @BillingList, @SurgeryList);
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList);
 </script>
 
 @*<div class="col-md-6" style="padding:0px;">
@@ -702,14 +737,14 @@
     </div>*@
 
 @*<div class="col-md-3">
-    <div class="form-group">
-        <label>Home District</label>
-        <input id="txtHomeDistrict" type="text" class="form-control">
-    </div>
-</div>*@
+        <div class="form-group">
+            <label>Home District</label>
+            <input id="txtHomeDistrict" type="text" class="form-control">
+        </div>
+    </div>*@
 @*<div class="col-md-2">
-    <div class="form-group">
-        <label>Lead Owner</label>
-        <input id="txtLeadOwner" type="text" class="form-control">
-    </div>
-</div>*@
+        <div class="form-group">
+            <label>Lead Owner</label>
+            <input id="txtLeadOwner" type="text" class="form-control">
+        </div>
+    </div>*@

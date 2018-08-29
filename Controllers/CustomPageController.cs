@@ -27,12 +27,14 @@ namespace ExpressBase.Web.Controllers
 			else
 				ac = "null";
 
-			var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = ac, RequestMode = mode, TenantAccountId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = Convert.ToInt32(ac), RequestMode = mode, TenantAccountId = ViewBag.cid });
 
 			ViewBag.MC_Mode = mode;
 			ViewBag.AccId = ac;
 			ViewBag.CustomerData = fr.CustomerDataDict;
 			ViewBag.CostCenter = fr.CostCenterDict;
+			ViewBag.DocDict = fr.DoctorDict;
+			ViewBag.StaffDict = fr.StaffDict;
 			if (mode == 1)
 			{
 				ViewBag.FeedbackList = JsonConvert.SerializeObject(fr.FeedbackList);

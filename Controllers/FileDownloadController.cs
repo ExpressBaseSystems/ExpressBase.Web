@@ -1,12 +1,27 @@
-﻿using ExpressBase.Common.ServiceStack.ReqNRes;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
+using System.Globalization;
+using RestSharp;
+using System.Net;
+using RestSharp.Authenticators;
+using Newtonsoft.Json;
+using System.Collections.ObjectModel;
+using Flurl.Http;
 using ExpressBase.Web.BaseControllers;
-using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using ExpressBase.Common.ServiceStack.ReqNRes;
+using ExpressBase.Common.Enums;
+using System.Net;
+using System.IO;
+using System.Net.Http;
+using System.Web;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -20,7 +35,7 @@ namespace ExpressBase.Web.Controllers
         public void Download()
         {
             FileDownloadRequestObject req = new FileDownloadRequestObject();
-            var DownloadRes = this.ServiceClient.Post<FileDownloadResponseObject>(req);
+            this.ServiceClient.Post(req);
         }
     }
 }

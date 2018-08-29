@@ -1,9 +1,10 @@
-﻿var AppDashBoard = function (obtypes, objcoll) {
+﻿var AppDashBoard = function (obtypes, objcoll,appid) {
     this.ObjTypes = obtypes;
     this.ObjCollection = objcoll;
     this.objectTab = $("#Objects");
     this.objTypesImages = getEbObjectTypes();
     this.ExportCollection = [];
+	this.AppId = appid;
 
     for (type in this.ObjTypes) {
         $("#object_types_drd").append(`<li class="drp_menuitems">
@@ -117,7 +118,11 @@
         var ids = document.createElement("input");
         ids.setAttribute("name", "ids");
         ids.setAttribute("value", this.ExportCollection.join());
-        form.appendChild(ids);
+		form.appendChild(ids);
+		var appid = document.createElement("input");
+		appid.setAttribute("name", "AppId");
+		appid.setAttribute("value", this.AppId);
+		form.appendChild(appid);
         document.body.appendChild(form);
         form.submit();
     };

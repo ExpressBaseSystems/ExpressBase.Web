@@ -35,39 +35,28 @@
             $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
     }.bind(this);
 
+    this.getFlatContControls = function () {
+        let coll = [];
+        this.ProcRecur(this.FormObj, coll);
+        return coll;
+    };
+
+     this.ProcRecur = function (src_obj, dest_coll) {
+        $.each(src_obj.Controls, function (i, obj) {
+            if (obj.IsContainer) {
+                dest_coll.push(obj);
+                this.ProcRecur(obj, dest_coll);
+            }
+        }.bind(this));
+    };
+
     this.init = function () {
         this.$saveBtn.on("click", this.saveForm.bind(this));
-        //this.flatControls = this.getFlatControls();
+        let allFlatControls = this.getFlatContControls().concat(this.flatControls);
 
-        $.each(this.flatControls, function (k, cObj) {
+        $.each(allFlatControls, function (k, cObj) {
             this.updateCtrlUI(cObj);
             this.initFormCtrl(cObj);
-            //if (cObj.ObjType === 'Date') {
-            //    var $input = $("[name=" + cObj.name + "]");
-            //    if (cObj.showDateAs_ === 1) {
-            //        $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
-            //        $input.MonthPicker('option', 'ShowOn', 'both');
-            //        $input.MonthPicker('option', 'UseInputMask', true);
-            //    }
-            //    else {
-            //        //$input.mask("0000-00-00");
-            //        $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
-            //        $input.next().children('i').off('click').on('click', function () { $input.datetimepicker('show'); });
-            //    }
-            //}
-            ////else if (cObj.ObjType === 'Numeric') {
-            ////    var $input = $("[name=" + cObj.name + "]");
-            ////}
-            //else if (cObj.ObjType === 'ComboBox') {
-            //    var $input = $("[name=" + cObj.name + "]");
-
-            //    Vue.component('v-select', VueSelect.VueSelect);
-            //    Vue.config.devtools = true;
-
-            //    $(`#${cObj.name}_loading-image`).hide();
-            //    //MakeCaps(cObj);
-            //    var EbCombo = new EbSelect(cObj);
-            //}
         }.bind(this));
     };
 

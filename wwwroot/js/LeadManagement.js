@@ -95,7 +95,7 @@
             menuBarObj.setName("Lead Management - New Customer");
         menuBarObj.insertButton(`
             <button id="btnSave" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-            <button id="btnNew" class='btn' title='New'><i class="fa fa-plus" aria-hidden="true"></i></button>`);
+            <button id="btnNew" class='btn' title='New'><i class="fa fa-user-plus" aria-hidden="true"></i></button>`);
 
         $("#btnSave").on("click", this.onClickBtnSave.bind(this));
         $("#btnNew").on("click", function () {

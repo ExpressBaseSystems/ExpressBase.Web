@@ -24,7 +24,6 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("static/logo/{filename}")]
         public IActionResult GetLogo(string filename)
         {
-
             filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
 
             DownloadFileResponse dfs = null;
@@ -48,13 +47,11 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
                 }
-
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
-
             return resp;
         }
     }
@@ -96,7 +93,6 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.Message.ToString());
                 resp = new EmptyResult();
             }
-
             return resp;
         }
 
@@ -131,14 +127,12 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT)[1]]);
                 }
-
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
                 resp = new EmptyResult();
             }
-
             return resp;
         }
 
@@ -154,7 +148,7 @@ namespace ExpressBase.Web.Controllers
                 dfs = this.FileClient.Get<DownloadFileResponse>
                         (new DownloadFileByIdRequest
                         {
-                            FileDetails = new FileMeta { ObjectId = new EbFileId(filename.Split(CharConstants.DOT)[0]), FileCategory = EbFileCategory.File }
+                            FileDetails = new FileMeta { FileStoreId = filename.Split(CharConstants.DOT)[0], FileCategory = EbFileCategory.File }
                         });
                 if (dfs.StreamWrapper != null)
                 {
@@ -180,7 +174,7 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                dfq.ImageInfo = new ImageMeta { ObjectId = new EbFileId(filename.Split(CharConstants.DOT)[0]), FileCategory = EbFileCategory.Images, ImageQuality = ImageQuality.original };
+                dfq.ImageInfo = new ImageMeta { FileStoreId = filename.Split(CharConstants.DOT)[0], FileCategory = EbFileCategory.Images, ImageQuality = ImageQuality.original };
 
                 dfs = this.FileClient.Get<DownloadFileResponse>(dfq);
 
@@ -196,7 +190,6 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
             return resp;
-
         }
 
         [HttpGet("images/{qlty}/{filename}")]
@@ -274,6 +267,7 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
                         uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
+                        uploadFileRequest.FileDetails.FileRefId = 1;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
                     }
@@ -332,7 +326,7 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
-
+                        uploadImageRequest.ImageInfo.FileRefId = 1;
 
                         res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
                         resp = new JsonResult(new UploadFileMqResponse

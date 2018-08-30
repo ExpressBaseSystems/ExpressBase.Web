@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.Data;
 using ExpressBase.Common.Objects;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
@@ -13,6 +14,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -132,6 +134,18 @@ namespace ExpressBase.Web.Controllers
                 request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
             request.DataVizObjString = null;
             request.UserInfo = this.LoggedInUser;
+            if (request.TFilters != null)
+            {
+                foreach (TFilters para in request.TFilters)
+                {
+
+                    if (para.Type == "date")
+                    {
+                        para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                    }
+                    //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
+                }
+            }
             DataSourceDataResponse resultlist1 = null;
             try
             {

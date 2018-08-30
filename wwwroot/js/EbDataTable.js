@@ -1914,8 +1914,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(".toolicons").show();
         $("#objname").text(this.dvName);
         $("#obj_icons").empty();
-        //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+
+        if (window.location.href.indexOf("hairocraft_stagging") !== -1 && this.login === "uc")
+            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/custompage/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
+
         $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
         if ($("#" + this.tableId).children().length > 0) {
             $("#obj_icons").append("<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +

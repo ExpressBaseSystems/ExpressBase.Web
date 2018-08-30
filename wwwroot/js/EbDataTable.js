@@ -137,7 +137,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else
             this.isTagged = true;
 
-        this.PcFlag = "False";
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
@@ -160,7 +159,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.EbObject = dvcontainerObj.currentObj;
         }
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-
+        if (this.PcFlag === "True")
+            this.compareAndModifyRowGroup();
         this.EbObject.tempRowgrouping = {};
 
         if ($(".filterCont #filterBox").children().not("button").length == 0) {
@@ -198,7 +198,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#eb_common_loader").EbLoader("hide");
         }
         $(subDivId).focus();
-        
+
+        this.PcFlag = "False";
     }.bind(this);
 
     this.CloseParamDiv = function () {
@@ -216,7 +217,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
                 this.call2FD();
-                this.EbObject.rowGrouping.$values = [];
+                //this.EbObject.rowGrouping.$values = [];
                 this.isContextual = false;
                 this.isPipped = false;
                 this.rowData = null;
@@ -237,6 +238,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.rowgroupCols = [];
         }
     }.bind(this);
+
+    this.compareAndModifyRowGroup = function () {
+        $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+            $.each(obj.RowGrouping.$values, function (j, col) {
+                var tempcol = $.grep(this.EbObject.Columns.$values, function (column) { return column.name === col.name && column.Type === col.Type });
+                if (tempcol.length === 1)
+                    obj.RowGrouping.$values[j] = tempcol[0];
+            }.bind(this));
+        }.bind(this));
+    }
 
     //Initialisation
     this.start = function () {
@@ -310,16 +321,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dvcontainerObj.stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
-
-        this.EbObject.NonVisibleColumns = {};
-        this.EbObject.NonVisibleColumns.$type = "";
-        this.EbObject.NonVisibleColumns.$values = [];
-
-        $.each(this.EbObject.Columns.$values, function (i, col) {
-            if (!col.bVisible)
-                this.EbObject.NonVisibleColumns.$values.push(col.name);
-        }.bind(this));
-
+        
         //hard coding
         this.orderColl = [];
         if (jQuery.isEmptyObject(this.EbObject.tempRowgrouping)) {
@@ -1341,8 +1343,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }.bind(this));
 
-            $.each(this.EbObject.NonVisibleColumns.$values, function (i, nonvis) {
-                if (colobj.name === nonvis) {
+            $.each(this.EbObject.NotVisibleColumns.$values, function (i, nonvis) {
+                if (colobj.name === nonvis.name) {
                     colobj.bVisible = false;
                     visibleChanges = true;
                 }

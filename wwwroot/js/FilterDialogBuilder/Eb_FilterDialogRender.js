@@ -6,7 +6,7 @@
 
     this.init = function () {
         this.initFilterDialogCtrls();
-        this.initFormObject();
+        this.initFormObject2();
         this.bindFuncsToDom();
     }
 
@@ -41,9 +41,22 @@
         }.bind(this));
     };
 
+    this.initFormObject2 = function () {
+        $.each(this.filterObj.controls.$values, function (k, cObj) {
+            this.formObject[cObj.name] = cObj;
+
+            Object.defineProperty(this.formObject, cObj.name, {
+                get: function () {
+                    return $('#' + cObj.name);
+                }.bind(this),
+            });
+        }.bind(this));
+    };
+
     this.initFormObject = function () {
         $.each(this.filterObj.controls.$values, function (k, cObj) {
             this.formObject[cObj.name] = cObj;
+
             Object.defineProperty(this.formObject, cObj.name, {
                 get: function () {
                     return this.getValue(this.filterObj.controls.$values[k]);

@@ -22,7 +22,7 @@ namespace ExpressBase.Web.Controllers
     {
         public StaticFileExtController(IEbStaticFileClient _sfc) : base(_sfc) { }
 
-        [HttpGet("static/logo/{filename}")]
+        [HttpGet("images/logo/{filename}")]
         public IActionResult GetLogo(string filename)
         {
             filename = filename.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
@@ -97,7 +97,7 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet("static/loc/{filename}")]
+        [HttpGet("files/loc/{filename}")]
         public IActionResult GetLocFiles(string filename)
         {
             filename = filename.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
@@ -137,7 +137,7 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet("static/{filename}")]
+        [HttpGet("files/{filename}")]
         public IActionResult GetFile(string filename)
         {
             DownloadFileResponse dfs = null;
@@ -160,6 +160,37 @@ namespace ExpressBase.Web.Controllers
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+            return resp;
+        }
+
+        [HttpGet("files/ref/{filename}")]
+        public IActionResult GetFileByRefId(string filename)
+        {
+            DownloadFileResponse dfs = null;
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ActionResult resp = new EmptyResult();
+            int irefid = 0;
+            Int32.TryParse(filename.SplitOnLast(CharConstants.DOT).First(), out irefid);
+            if (irefid != 0)
+            {
+                try
+                {
+                    dfs = this.FileClient.Get<DownloadFileResponse>
+                            (new DownloadFileByRefIdRequest
+                            {
+                                FileDetails = new FileMeta { FileRefId = irefid, FileType = filename.SplitOnLast(CharConstants.DOT).Last(), FileCategory = EbFileCategory.File }
+                            });
+                    if (dfs.StreamWrapper != null)
+                    {
+                        dfs.StreamWrapper.Memorystream.Position = 0;
+                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.Message.ToString());
+                }
             }
             return resp;
         }

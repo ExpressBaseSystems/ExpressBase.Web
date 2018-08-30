@@ -27,7 +27,7 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(string refid, string objname, string status, string vernum, string[] workcopies, string _tags, string _apps, EbObjectWrapper_Dashboard _dashbord_tiles)
+        public async Task<IViewComponentResult> InvokeAsync(string refid, string objname, string status, string vernum, string[] workcopies, string _tags, string _apps, EbObj_Dashboard _dashbord_tiles)
         {
             ViewBag.Refid = refid;
             ViewBag.ObjName = objname;
@@ -45,7 +45,7 @@ namespace ExpressBase.Web.Components
             else
             {
                 User u = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
-                ViewBag.tile = new EbObjectWrapper_Dashboard { OwnerUid = ViewBag.Uid, OwnerName = u.FullName, OwnerTs = DateTime.UtcNow };
+                ViewBag.tile = new EbObj_Dashboard { OwnerUid = ViewBag.Uid, OwnerName = u.FullName, OwnerTs = DateTime.UtcNow };
             }
 
             return View();

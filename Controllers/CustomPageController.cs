@@ -25,7 +25,7 @@ namespace ExpressBase.Web.Controllers
 			if (!ac.IsNullOrEmpty())
 				mode = 1;
 			else
-				ac = "null";
+				ac = "0";
 
 			var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = Convert.ToInt32(ac), RequestMode = mode, TenantAccountId = ViewBag.cid });
 

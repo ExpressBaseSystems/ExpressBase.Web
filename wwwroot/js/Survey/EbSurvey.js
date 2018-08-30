@@ -302,9 +302,21 @@
                                                 <h5 class="txtdecor_none">${this.Survey.Question}</h5>
                                                 <p class="small txtdecor_none">${this.getChoiceType(this.Survey.QuesType)}</p>
                                             </div>
+                                        <span onclick="$(this).closest('.appcontainer').remove();" class="fa fa-close cls_ques"></span>
                                         </a>
                                     </div>`);
+
+        $("#divQuesAll").append(`<div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${qid}" qname="${this.Survey.Question}">
+                            <a class="appcontainer_inner" queryid="${qid}">
+                                <div class="col-md-12 pd-0">
+                                    <h5 class="txtdecor_none ellipsis-text">${this.Survey.Question}</h5>
+                                    <p class="small txtdecor_none">${this.getChoiceType(this.Survey.QuesType)}</p>
+                                </div>
+                                <input type="checkbox" quesid="${qid}" name="MarkQues" class="MarkQues" />
+                            </a>
+                        </div>`);
         $(".selection_pane").addClass("hide_pseudo");
+        $("#divQuesAll").find(`input[quesid='${qid}']`).prop("checked", true);
     };
 
     this.init();

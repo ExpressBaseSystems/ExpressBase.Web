@@ -76,16 +76,18 @@
                     return obj.Id === did
                 });
 
-                this.$divSelected.append(` <div class="col-md-12 col-lg-12 col-sm-12 appcontainer" data-id="${result[0].Id}" qname="${result[0].Question}">
+                this.$divSelected.append(` <div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${result[0].Id}" qname="${result[0].Question}">
                                         <a class="appcontainer_inner query_tile" queryid="${result[0].Id}">
                                             <div class="col-md-12 pd-0">
                                                 <h5 class="txtdecor_none">${result[0].Question}</h5>
                                                 <p class="small txtdecor_none">${this.getChoiceType(result[0])}</p>
                                             </div>
+                                            <span class="fa fa-close cls_ques"></span>
                                         </a>
                                     </div>`);
+                $(".cls_ques").off("click").on("click", this.rmMarked.bind(this));
+                $("#divQuesAll").find(`input[quesid='${result[0].Id}']`).prop("checked", true);
 
-                this.$divAll.find(`div[data-id='${result[0].Id}']`).remove();
             }.bind(this));
 
             this.menuBarObj.setName("Manage Survey - " + this.SurveyData.Name);

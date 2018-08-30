@@ -41,8 +41,7 @@ namespace ExpressBase.Web.Controllers
             ReportRenderResponse Res = null;
             try
             {
-                var pclient = new ProtoBufServiceClient(this.ServiceClient);
-                var x = string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc);
+                ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);
                 User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
                 Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, Fullname = user.FullName, Params = Params });
                 Res.StreamWrapper.Memorystream.Position = 0;

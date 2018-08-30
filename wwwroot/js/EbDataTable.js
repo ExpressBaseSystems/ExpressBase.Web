@@ -2,7 +2,7 @@
 const arrayColumn = (arr, n) => arr.map(x => x[n]);
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url, cellData, PGobj) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url, cellData, PGobj, datePattern) {
     this.propGrid = PGobj;
     this.isSecondTime = false;
     this.Api = null;
@@ -310,6 +310,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dvcontainerObj.stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
+
+        this.EbObject.NonVisibleColumns = {};
+        this.EbObject.NonVisibleColumns.$type = "";
+        this.EbObject.NonVisibleColumns.$values = [];
+
+        $.each(this.EbObject.Columns.$values, function (i, col) {
+            if (!col.bVisible)
+                this.EbObject.NonVisibleColumns.$values.push(col.name);
+        }.bind(this));
+
         //hard coding
         this.orderColl = [];
         if (jQuery.isEmptyObject(this.EbObject.tempRowgrouping)) {
@@ -918,8 +928,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                                             filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), "number"));
                                         }
                                         else if (type === 'date') {
-                                            val1 = this.changeDateOrder(val1);
-                                            val2 = this.changeDateOrder(val2);
+                                            //val1 = this.changeDateOrder(val1);
+                                            //val2 = this.changeDateOrder(val2);
                                             if (val2 > val1) {
                                                 filter_obj_arr.push(new filter_obj(colum, ">=", val1, "date"));
                                                 filter_obj_arr.push(new filter_obj(colum, "<=", val2, "date"));
@@ -933,8 +943,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                                 }
                                 else {
                                     var data = $(textid).val();
-                                    if (type === "date")
-                                        data = this.changeDateOrder(data);
+                                    //if (type === "date")
+                                    //    data = this.changeDateOrder(data);
                                     filter_obj_arr.push(new filter_obj(colum, oper, data, type));
                                 }
                             }
@@ -982,7 +992,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.contextMenu = function () {
         $.contextMenu({
-            selector: ".tablelink_" + this.tableId,
+            selector: ".tablelink",
             items: {
                 "OpenNewTab": { name: "Open in New Tab", icon: "fa-external-link-square", callback: this.OpeninNewTab.bind(this) }
             }
@@ -1155,21 +1165,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     if (this.Api.columns(i).visible()[0]) {
                         if (colObj[0].Operator !== '' && colObj[0].Value !== '') {
                             if (colObj.length === 2) {
-                                $('#' + this.tableId + '_' + colum + '_hdr_sel').text("B");
-                                if (type === "date")
-                                    $(textid).val(this.retainDateOrder(colObj[0].Value));
-                                else
+                                //$('#' + this.tableId + '_' + colum + '_hdr_sel').text("B");
+                                //if (type === "date")
+                                //    $(textid).val(this.retainDateOrder(colObj[0].Value));
+                                //else
                                     $(textid).val(colObj[0].Value);
                                 $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
-                                if (type === "date")
-                                    $(textid).siblings('input').val(this.retainDateOrder(colObj[1].Value));
-                                else
+                                //if (type === "date")
+                                //    $(textid).siblings('input').val(this.retainDateOrder(colObj[1].Value));
+                                //else
                                     $(textid).siblings('input').val(colObj[1].Value);
                             }
                             else {
-                                if (type === "date")
-                                    $(textid).val(this.retainDateOrder(colObj[0].Value));
-                                else
+                                //if (type === "date")
+                                //    $(textid).val(this.retainDateOrder(colObj[0].Value));
+                                //else
                                     $(textid).val(colObj[0].Value);
                                 $('#' + this.tableId + '_' + colum + '_hdr_sel').text(colObj[0].Operator);
                             }
@@ -1438,7 +1448,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
             //}
             if (tempobj[0].LinkRefId !== null)
-                tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'><a href="#" oncontextmenu="return false" class="tablelink_${this.tableId}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
+                tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'><a href="#" oncontextmenu="return false" class="tablelink" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
             else
                 tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'>${groupArray[j]}</b>`;
 
@@ -1463,7 +1473,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
         //}
         if (tempobj[0].LinkRefId !== null)
-            var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink_${this.tableId}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
+            var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
         else
             var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
             str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
@@ -1855,7 +1865,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(".eb_selall" + this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
-        $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".tablelink").off("click").on("click", this.link2NewTable.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
@@ -1884,7 +1894,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
 
         $("[data-coltyp=date]").datepicker({
-            dateFormat: "dd/mm/yy",
+            dateFormat: datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
             beforeShow: function (elem, obj) {
                 $(".ui-datepicker").addClass("datecolumn-picker");
             }
@@ -2200,7 +2210,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='text' placeholder='dd/mm/yyyy' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' placeholder='" + datePattern+"' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -2273,9 +2283,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (selText.trim() === 'B') {
             if ($(e.target).parents('.input-group').find("input").length == 1) {
                 if (ctype === "date") {
-                    $(e.target).parents('.input-group').append("<input type='text' placeholder='dd/mm/yyyy' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                    $(e.target).parents('.input-group').append("<input type='text' placeholder='" + datePattern+"' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
-                        dateFormat: "dd/mm/yy",
+                        dateFormat: datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
                         beforeShow: function (elem, obj) {
                             $(".ui-datepicker").addClass("datecolumn-picker");
                         }
@@ -2371,8 +2381,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.changeDateOrder = function (data) {
         var dt = data.split("/");
+        var dtp = datePattern.split("/");
         if (dt.length === 1)
             dt = data.split("-");
+        if (dtp.length === 1)
+            dtp = datePattern.split("-");
+
         if (dt[0].length <= 2)
             return [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("-");
         else
@@ -2809,15 +2823,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.renderlink4NewTable = function (data, type, row, meta) {
         if (meta.settings.aoColumns[meta.col].LinkType.toString() === EbEnums.LinkTypeEnum.Popout)
-            return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + meta.settings.aoColumns[meta.col].LinkRefId + "'>" + data + "</a>";
+            return "<a href='#' oncontextmenu='return false' class ='tablelink' data-link='" + meta.settings.aoColumns[meta.col].LinkRefId + "'>" + data + "</a>";
         else if (meta.settings.aoColumns[meta.col].LinkType.toString() === EbEnums.LinkTypeEnum.Inline)
-            return data + `<a href='#' oncontextmenu='return false' class ='tablelink_${this.tableId}' data-link='${meta.settings.aoColumns[meta.col].LinkRefId}' data-inline="true" data-data='${data}'> <i class="fa fa-plus"></i></a>`;
+            return data + `<a href='#' oncontextmenu='return false' class ='tablelink' data-link='${meta.settings.aoColumns[meta.col].LinkRefId}' data-inline="true" data-data='${data}'> <i class="fa fa-plus"></i></a>`;
         else
-            return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + meta.settings.aoColumns[meta.col].LinkRefId + "'>" + data + "</a>" + ` &nbsp; <a href='#' oncontextmenu='return false' class ='tablelink_${this.tableId}' data-link='${meta.settings.aoColumns[meta.col].LinkRefId}' data-inline="true" data-data='${data}'> <i class="fa fa-plus"></i></a>`;
+            return "<a href='#' oncontextmenu='return false' class ='tablelink' data-link='" + meta.settings.aoColumns[meta.col].LinkRefId + "'>" + data + "</a>" + ` &nbsp; <a href='#' oncontextmenu='return false' class ='tablelink' data-link='${meta.settings.aoColumns[meta.col].LinkRefId}' data-inline="true" data-data='${data}'> <i class="fa fa-plus"></i></a>`;
     };
 
     this.renderlinkandDecimal = function (deci, data) {
-        return "<a href='#' oncontextmenu='return false' class ='tablelink_" + this.tableId + "' data-link='" + this.linkDV + "'>" + parseFloat(data).toFixed(deci) + "</a>";
+        return "<a href='#' oncontextmenu='return false' class ='tablelink' data-link='" + this.linkDV + "'>" + parseFloat(data).toFixed(deci) + "</a>";
     };
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {

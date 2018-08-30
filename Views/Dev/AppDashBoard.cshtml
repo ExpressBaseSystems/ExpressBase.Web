@@ -86,12 +86,6 @@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#Objects" role="tab">Objects</a>
                 </li>
-                @if (appinfo.AppType == 3)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#Surveys" role="tab">Surveys</a>
-                    </li>
-                }
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#Appearance" role="tab">Appearance</a>
                 </li>
@@ -175,16 +169,10 @@
                 </div>
                 <div class="tab-pane appdash_obj_container" id="Objects" role="tabpanel">
                     <div class="raw">
-                        <button class="ebbtn eb_btn-sm eb_btnblue pull-right" id="ExportBtn">Export</button> 
+                        <button class="ebbtn eb_btn-sm eb_btnblue pull-right" id="ExportBtn">Export</button>
                     </div>
                     <div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>
                 </div>
-                @if (appinfo.AppType == 3)
-                {
-                    <div class="tab-pane" id="Surveys" role="tabpanel">
-
-                    </div>
-                }
                 <div class="tab-pane" id="Appearance" role="tabpanel">
 
                 </div>

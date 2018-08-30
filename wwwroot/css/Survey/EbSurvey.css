@@ -279,3 +279,70 @@
     border-radius: 4px;
     padding: 6px 12px;
 }
+.selection_pane {
+    border: 1px solid #ccc;
+    min-height: 400px;
+    padding: 10px;
+}
+        .selection_pane::after {
+            position: absolute;
+            content: "No Question Selected.";
+            top: 45%;
+            left: 40%;
+            font-size: 18px;
+            font-weight: 500;
+            color: #8e8a8a;
+        }
+.hide_pseudo::after {
+    content: "" !important;
+    display:none !important;
+}
+.mr-r-10px{
+    margin-right:10px;
+}
+.flex_row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+#AddFromBank .modal-body {
+    max-height: 500px;
+    overflow: auto;
+    min-height: 500px;
+}
+.ellipsis-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.MarkQues {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    border-radius: 0;
+    margin: 0;
+}
+
+.appcontainer_inner:hover .MarkQues {
+    display: block;
+}
+.appcontainer_inner .MarkQues:checked {
+    display: block;
+}
+.search_input_survey {
+    position: absolute;
+    top: 9px;
+    margin: 0;
+    width: 150px;
+    right: 40px;
+}
+.eb_modalheader {
+    padding: 10px 15px;
+}
+.cls_ques {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #b13109;
+    cursor: pointer;
+}

@@ -1,11 +1,13 @@
 ﻿@{
     @using System.Web;
-
+    @using ExpressBase.Objects.ServiceStack_Artifacts;
     var appdata = Html.Raw(ViewBag.Apps);
 
     string Logourl = "/static/logo/logo_" + ViewBag.cid + ".png";
 
     string DpUrl = "/static/dp/dp_" + ViewBag.UId + ".png";
+
+    EbObj_Dashboard tile = ViewBag.tile;
 }
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>@*dona*@
 <div class="row" id="">
@@ -47,9 +49,9 @@
                     @{
                         if (ViewBag.Refid.Length > 0)
                         {
-                            var vNumMajor = ("v." + (ViewBag._major + 1) + "." + ViewBag._minor + "." + ViewBag._patch + ".w");
-                            var vNumMinor = ("v." + ViewBag._major + "." + (ViewBag._minor + 1) + "." + ViewBag._patch + ".w");
-                            var vNumPatch = ("v." + ViewBag._major + "." + ViewBag._minor + "." + (ViewBag._patch + 1) + ".w");
+                            var vNumMajor = ("v." + (tile.MajorVersionNumber + 1) + "." + tile.MinorVersionNumber + "." + tile.PatchVersionNumber + ".w");
+                            var vNumMinor = ("v." + tile.MajorVersionNumber + "." + (tile.MinorVersionNumber + 1) + "." + tile.PatchVersionNumber + ".w");
+                            var vNumPatch = ("v." + tile.MajorVersionNumber + "." + tile.MinorVersionNumber + "." + (tile.PatchVersionNumber + 1) + ".w");
                             <div class="dropdown" style="display:inline" id="create_button">
                                 <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
@@ -100,11 +102,11 @@
                     <h6 class="smallfont">Owner/Assignee</h6>
                     <div style="display:block">
                         <div class="userimg">
-                            <img src="../static/dp/dp_@(ViewBag.Owner_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle"/>
+                            <img src="../static/dp/dp_@(tile.Owner_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle"/>
                         </div>
                         <div class="profileInfo">
-                            <h6 class="xtrasmall">@ViewBag.Owner_Name</h6>
-                            <h6 class="xtrasmall">@ViewBag.Owner_Ts</h6>
+                            <h6 class="xtrasmall">@tile.Owner_Name</h6>
+                            <h6 class="xtrasmall">@tile.Owner_Ts</h6>
                         </div>
                     </div>
                 </div>
@@ -160,21 +162,21 @@
                         </div>
                         <div class="card_body">
                             @{
-                                if (ViewBag.LastCommitedVersionRefid != "")
+                                if (tile.LastCommitedVersionRefid != "")
                                 {
                                     <div class="card1-mid">
                                         <div class="count text-right">
-                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@ViewBag.LastCommitedVersionRefid" data-verNum="@ViewBag.LastCommitedVersionNumber">@ViewBag.LastCommitedVersionNumber</a>
-                                            @ViewBag.LastCommitedVersion_Status
+                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LastCommitedVersionRefid" data-verNum="@tile.LastCommitedVersionNumber">@tile.LastCommitedVersionNumber</a>
+                                            @tile.LastCommitedVersion_Status
                                         </div>
                                     </div>
                                     <div class="card1-botm" style="display:block">
                                         <div class="userimg">
-                                            @*<img src="../static/dp/dp_@(ViewBag.LastCommitedby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                            @*<img src="../static/dp/dp_@(tile.LastCommitedby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
                                         </div>
                                         <div class="profileInfo">
-                                            <h6 class="xtrasmall">@ViewBag.LastCommitedby_Name</h6>
-                                            <h6 class="xtrasmall"> @ViewBag.LastCommitedVersionCommit_ts</h6>
+                                            <h6 class="xtrasmall">@tile.LastCommitedby_Name</h6>
+                                            <h6 class="xtrasmall"> @tile.LastCommitedVersionCommit_ts</h6>
                                         </div>
                                     </div>
                                 }
@@ -191,21 +193,21 @@
                         </div>
                         <div class="card_body">
                             @{
-                                if (ViewBag.LiveVersionRefid != "")
+                                if (tile.LiveVersionRefid != "")
                                 {
                                     <div class="card1-mid">
                                         <div class="count text-right">
-                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@ViewBag.LiveVersionRefid" data-verNum="@ViewBag.LiveVersionNumber">@ViewBag.LiveVersionNumber</a>
-                                            @ViewBag.LiveVersion_Status
+                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LiveVersionRefid" data-verNum="@tile.LiveVersionNumber">@tile.LiveVersionNumber</a>
+                                            @tile.LiveVersion_Status
                                         </div>
                                     </div>
                                     <div class="card1-botm" style="display:block">
                                         <div class="userimg">
-                                            @*<img src="../static/dp/dp_@(ViewBag.LiveVersionCommitby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                            @*<img src="../static/dp/dp_@(tile.LiveVersionCommitby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
                                         </div>
                                         <div class="profileInfo">
-                                            <h6 class="xtrasmall">@ViewBag.LiveVersionCommitby_Name</h6>
-                                            <h6 class="xtrasmall">@ViewBag.LiveVersionCommit_ts</h6>
+                                            <h6 class="xtrasmall">@tile.LiveVersionCommitby_Name</h6>
+                                            <h6 class="xtrasmall">@tile.LiveVersionCommit_ts</h6>
                                         </div>
                                     </div>
                                 }

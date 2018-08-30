@@ -95,9 +95,10 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("AppStore");
         }
 
-        public void Import(int Id)
+        public IActionResult Import(int Id)
         {
             ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationRequest { Id = Id });
+            return RedirectToAction("DevDashboard","Dev");
         }
 
         public IActionResult ExportOSE(string ids,int AppId)

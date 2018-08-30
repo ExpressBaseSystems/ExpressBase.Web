@@ -38,6 +38,7 @@ namespace ExpressBase.Web.Controllers
             dynamic dsobj = null;
             Context2Js _c2js = new Context2Js();
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            ViewBag.currentUser = this.LoggedInUser;
             var type = (EbObjectType)(objtype);
             this.HttpContext.Items["ObjectType"] = type;
             if (objid != "null")

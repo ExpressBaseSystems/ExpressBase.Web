@@ -48,11 +48,11 @@ namespace ExpressBase.Web.Components
 
                 ViewBag.WebFormObj = Common.EbSerializers.Json_Serialize(WebForm);
 
-                var serializerSettings = new JsonSerializerSettings();
-                serializerSettings.TypeNameHandling = TypeNameHandling.All;
-                serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                //var serializerSettings = new JsonSerializerSettings();
+                //serializerSettings.TypeNameHandling = TypeNameHandling.All;
+                //serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 ViewBag.FlatControls = JsonConvert.SerializeObject(WebForm.Controls.FlattenEbControls());
-                ViewBag.WebFormObj = JsonConvert.SerializeObject(WebForm, serializerSettings);
+                ViewBag.WebFormObj = JsonConvert.SerializeObject(WebForm);
             }
 
             return View();

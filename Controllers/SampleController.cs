@@ -26,7 +26,19 @@ namespace ExpressBase.Web2.Controllers
         {
             return View();
         }
-        
+
+        [HttpGet]
+        public IActionResult FileUpload()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ImageUpload()
+        {
+            return View();
+        }
+
         public IActionResult dragNdrop()
         {
             return View();

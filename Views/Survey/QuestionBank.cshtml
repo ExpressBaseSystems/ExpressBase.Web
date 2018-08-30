@@ -6,7 +6,7 @@
 }
 <link href="~/css/Survey/EbSurvey.css" rel="stylesheet" />
 <script src="~/js/Survey/EbSurvey.js" type="text/javascript"></script>
-<script>var cm = new EbHeader().setName("Survey");</script>
+<script>var cm = new EbHeader().setName("Question Bank");</script>
 @{
     var Queries = ViewBag.Queries;
 }
@@ -50,7 +50,7 @@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-10 pd-0">
-                <h4 class="mr-t-0 mr-b-0">Survey <span class="apps_count"></span></h4>
+                <h4 class="mr-t-0 mr-b-0">Question <span class="apps_count">(@Queries.Count)</span></h4>
             </div>
             <div class="col-md-2 pd-0">
                 <a data-toggle="modal" data-target="#questionModal" class="ebbtn eb_btngreen pull-right eb_btn-sm"> <i class="fa fa-plus"></i> New Question</a>
@@ -77,29 +77,11 @@
     </div>
 </div>
 
-@*<div class="survey_Outercontainer">
-    <div class="col-md-3 survey_left_sidebar">
-        <textarea placeholder="Enter Survey Name"></textarea>
-    </div>
-    <div class="col-md-6 survey_center_div">
-        <div class="survey_Innercontainer row">
-            <div class="question-menubar">
-                <div class="question-new pull-left btn-primary"><div style="padding: 5px 14px 1px 6px;"><i class="fa fa-plus"></i>&nbsp;ADD NEW</div></div>
-            </div>
-            <div class="question-cont"></div>
-        </div>
-    </div>
-    <div class="col-md-3 survey_right_sidebar"></div>
-</div>*@
-
-
-
-
 <!-- Modal -->
 <div class="modal fade open-sans" id="questionModal" role="dialog">
     <div class="modal-dialog modal-lg" style="width:70%">
         <div class="modal-content">
-            <div class="modal-header pd-5 relative">
+            <div class="modal-header eb_modalheader relative">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">New Question</h4>
                 <div class="survey_menu_load" id="survey_menu_load"></div>
@@ -122,7 +104,7 @@
                                 <div class="qst-set-cont pd-5">
                                     <div class="q-set-item" setup="required">
                                         <div class="q-set-input">
-                                            <input type="checkbox" id="requiredCheck"/>
+                                            <input type="checkbox" id="requiredCheck" />
                                         </div>
                                         <div class="q-set-text">
                                             Required
@@ -130,7 +112,7 @@
                                     </div>
                                     <div class="q-set-item" setup="Randomize">
                                         <div class="q-set-input">
-                                            <input type="checkbox" id="randomizeCheck"/>
+                                            <input type="checkbox" id="randomizeCheck" />
                                         </div>
                                         <div class="q-set-text">
                                             Randomize
@@ -138,7 +120,7 @@
                                     </div>
                                     <div class="q-set-item" setup="Score" style="display:none">
                                         <div class="q-set-input">
-                                            <input type="checkbox" id="scoreCheck"/>
+                                            <input type="checkbox" id="scoreCheck" />
                                         </div>
                                         <div class="q-set-text">
                                             Score
@@ -171,7 +153,7 @@
                                     </div>
                                 </div>
                                 <div class="qst-opt-cont col-md-12 pd-0">
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -186,5 +168,5 @@
 </div>
 
 <script>
-    var survey = new SurveyObj("abc",'@Html.Raw(JsonConvert.SerializeObject(Queries))');
+    var survey = new SurveyObj('@Html.Raw(JsonConvert.SerializeObject(Queries))',"QuestionBank");
 </script>

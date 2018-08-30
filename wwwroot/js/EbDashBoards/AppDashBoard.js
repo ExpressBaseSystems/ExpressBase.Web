@@ -51,7 +51,7 @@
                             </div>
                         </div>
                         <input type="checkbox" objid="${_obj.Id}" name="ExportMark" class="ExportMark"/>
-                    </div>
+                    </a>
                 </div>`);
             }
         }

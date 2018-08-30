@@ -1,4 +1,4 @@
-﻿var SurveyObj = function (abc, ques) {
+﻿var SurveyObj = function (ques,context) {
     let _chiceCount = 0;
     this.Survey = {
         QuesId: 0,
@@ -138,6 +138,19 @@
         $(`.rating_star_control span`).off("click").on("click", function (e) { $(e.target).toggleClass("R_checked") });
     };
 
+    this.getChoiceType = function (t) {
+        let type = new String();
+        if (t === 1)
+            type = "SingleSelect";
+        else if (t === 2)
+            type = "MultiSelect";
+        else if (t === 3)
+            type = "Rating";
+        else if (t === 4)
+            type = "UserInput";
+        return type;
+    };
+
     this.ratingCountOnchange = function (e) {
         let c = e.target.value - this.RatingC;
         for (i = 0; i < Math.abs(c); i++) {
@@ -270,12 +283,28 @@
                 $("#survey_menu_load").EbLoader("show");
             }
         }).done(function (result) {
-            if (result) {
+            if (result.status) {
                 $("#survey_menu_load").EbLoader("hide");
-                location.reload();
+                if (context === "QuestionBank")
+                    location.reload();
+                else
+                    this.appendQues(result.quesid);
+
                 $("#questionModal").modal("toggle");
             }
         }.bind(this));
+    };
+
+    this.appendQues = function (qid) {
+        $("#divQuesSelected").append(`<div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${qid}" qname="${this.Survey.Question}}">
+                                        <a class="appcontainer_inner" queryid="${qid}">
+                                            <div class="col-md-12 pd-0">
+                                                <h5 class="txtdecor_none">${this.Survey.Question}</h5>
+                                                <p class="small txtdecor_none">${this.getChoiceType(this.Survey.QuesType)}</p>
+                                            </div>
+                                        </a>
+                                    </div>`);
+        $(".selection_pane").addClass("hide_pseudo");
     };
 
     this.init();

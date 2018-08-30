@@ -1,0 +1,82 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts
+@using ExpressBase.Common
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<link href="~/css/Survey/EbSurvey.css" rel="stylesheet" />
+<script>
+    var cm = new EbHeader().setName("Surveys");
+</script>
+<div class="row s-dash-container">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+        <div class="t-container">
+            <ul class="list-group menuwrapper_ul_outer">
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">highlight</span>
+                        <span class="t__sidebar_text">Solutions</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">attach_money</span>
+                        <span class="t__sidebar_text">Billing</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">store</span>
+                        <span class="t__sidebar_text">App Store</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 s-dash-solution-desc">
+            <div class="col-md-10 pd-0">
+                <h4 class="mr-t-0 mr-b-0">Surveys</h4>
+            </div>
+            <div class="col-md-2 pd-0">
+                <a href="/Survey/ManageSurvey" class="ebbtn eb_btn-sm eb_btngreen pull-right" id="NewSurvey">New Survey</a>
+            </div>
+        </div>
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+            <div class="appdash_obj_container survey_container w-100" id="surveyques_wrapper">
+                @{
+                    var SurveyList = ViewBag.Surveys;
+                    string status = string.Empty;
+
+                    foreach (Eb_Survey sv in SurveyList)
+                    {
+                        status = (sv.Status == 0) ? "Active" : "Suspended";
+                        <div class='col-md-4 col-lg-4 col-sm-4 objitems' name='objBox'>
+                            <a class="object_container" href='/Survey/ManageSurvey?id=@sv.Id'>
+                                <div class='col-md-11 col-lg-11 col-sm-11 pd-0'>
+                                    <h4 class='head4'>@sv.Name</h4>
+                                    <p class='text-justify'>@sv.Start to @sv.End</p>
+                                    <div class="label_container">
+                                        <span class="label">@status</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

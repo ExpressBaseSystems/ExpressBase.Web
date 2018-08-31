@@ -1,10 +1,12 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Objects;
 using ExpressBase.Common.Structures;
 using ExpressBase.Data;
 using ExpressBase.Objects;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Security;
 using ExpressBase.Web.Filters;
 using ExpressBase.Web.Models;
 using ExpressBase.Web2;
@@ -33,11 +35,13 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag)
+        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag, User _user, Eb_Solution _sol)
         {
             var dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.serviceclient = this.ServiceClient;
+            ViewBag.currentUser = _user;
+            ViewBag.solution = _sol;
             if (dvobj != null)
             {
                 dvobj.AfterRedisGet(this.Redis, this.ServiceClient);

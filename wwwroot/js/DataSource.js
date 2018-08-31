@@ -131,7 +131,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#paramdiv' + tabNum).remove();
         $('#ds-page' + tabNum).prepend(`
                 <div id='paramdiv-Cont${tabNum}' class='param-div-cont'>
-                <div id='paramdiv${tabNum}' class='param-div'>
+                <div id='paramdiv${tabNum}' class='param-div fd'>
                     <div class='pgHead'>
                         <h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6>
                         <div class="icon-cont  pull-right" id='close_paramdiv${tabNum}'><i class="fa fa-times" aria-hidden="true"></i></div>

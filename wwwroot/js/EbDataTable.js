@@ -632,6 +632,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (dq.length === -1)
             dq.length = this.RowCount;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
+        dq.RGIndex =this.RGIndex;
         //return dq;
     };
 

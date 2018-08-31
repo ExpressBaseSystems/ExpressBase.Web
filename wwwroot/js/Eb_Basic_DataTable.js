@@ -256,7 +256,7 @@ var EbBasicDataTable = function (Option) {
         dq.RefId = this.EbObject.DataSourceRefId;
         this.columnSearch = this.repopulate_filter_arr();
         dq.TFilters = this.columnSearch;
-        if (this.filterValues.length === 0)
+        //if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues("filter");
         dq.Params = this.filterValues;
         dq.rowData = this.rowData;
@@ -276,7 +276,7 @@ var EbBasicDataTable = function (Option) {
     this.getFilterValues = function (from) {
         this.filterChanged = false;
         var fltr_collection = [];
-        var FdCont = "#sub_windows_sidediv_" + this.tableId;
+        var FdCont = ".fd";
         var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         if (paramstxt != undefined) {
             var params = paramstxt.split(',');

@@ -21,6 +21,7 @@ using System.Reflection;
 using ExpressBase.Common.Structures;
 using ExpressBase.Common.Data;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Common.LocationNSolution;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -123,17 +124,18 @@ namespace ExpressBase.Web.Controllers
         {
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
             dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            if (dsObject.FilterDialog != null)
-            {
-                foreach (EbControl control in dsObject.FilterDialog.Controls)
-                {
-                    if (control is EbSimpleSelect)
-                    {
-                        (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-                    }
-                }
-            }
-            return ViewComponent("ParameterDiv", new { paramDiv = dsObject.FilterDialog });
+            //if (dsObject.FilterDialog != null)
+            //{
+            //    foreach (EbControl control in dsObject.FilterDialog.Controls)
+            //    {
+            //        if (control is EbSimpleSelect)
+            //        {
+            //            (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+            //        }
+            //    }
+            //}
+            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            return ViewComponent("ParameterDiv", new { paramDiv = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu });
         }
 
         public List<EbObjectWrapper> GetStatusHistory(string _refid)

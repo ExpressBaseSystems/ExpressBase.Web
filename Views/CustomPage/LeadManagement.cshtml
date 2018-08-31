@@ -219,7 +219,11 @@
                     <div class="col-md-1" style="min-width: 12%;">
                         <div class="form-group">
                             <label>Fee Paid</label>
-                            <input id="txtFeePaid" type="number" class="form-control">
+                            <select id="selFeePaid" class="form-control">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                            @*<input id="txtFeePaid" type="number" class="form-control">*@
                         </div>
                     </div>
 
@@ -539,7 +543,7 @@
                     <div class="col-md-4">
                         <div class="lm-form-group">
                             <label>Cash Paid</label>
-                            <input id="txtBlngPaid" type="number" class="form-control" autocomplete="off">
+                            <input id="txtBlngPaid" type="number" class="form-control" autocomplete="off" >
                         </div>
                     </div>
                     <div class="col-md-4"></div>
@@ -568,7 +572,7 @@
                     <div class="col-md-8">
                         <div class="lm-form-group">
                             <label>Bank</label>
-                            <input id="txtBlngBank" type="text" class="form-control">
+                            <input id="txtBlngBank" type="text" class="form-control" disabled>
                         </div>
                     </div>
                 </div>
@@ -622,7 +626,13 @@
                     <div class="col-md-4">
                         <div class="lm-form-group">
                             <label>Branch</label>
-                            <input id="txtSrgyBranch" type="text" class="form-control">
+                            <select id="selSrgyBranch" class="form-control">
+                                <option>Kochi</option>
+                                <option>Kozhikode</option>
+                                <option>Trivandrum</option>
+                                <option>Coimbatore</option>
+                            </select>
+                            @*<input id="txtSrgyBranch" type="text" class="form-control">*@
                         </div>
                     </div>
                 </div>

@@ -100,7 +100,8 @@ var DvContainerObj = function (settings) {
                 filterValues = this.filterValues,
                 url = this.url,
                 cellData = this.cellData,
-                PGobj = this.PGobj
+                PGobj = this.PGobj,
+                datePattern = settings.datePattern
             );
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {

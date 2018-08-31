@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Controllers
 
             User _user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
             ViewBag.user = _user;
-
+            ViewBag.currentUser = LoggedInUser;
             var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
 

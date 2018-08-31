@@ -1,6 +1,7 @@
 ﻿@using ServiceStack;
 @using ExpressBase.Objects;
 @using ExpressBase.Common;
+@using System.Globalization;
 @using Newtonsoft.Json;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 @using ExpressBase.Common.Objects;
@@ -26,10 +27,10 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/canvas2image@1.0.5/canvas2image.min.js"></script>
 <script type="text/javascript" src="~/js/EbDataTable.js"></script>
-    <script type="text/javascript" src="~/js/Eb_chart.js"></script>
-    <script type="text/javascript" src="~/js/dvContainer.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.js"></script>
-    <script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
+<script type="text/javascript" src="~/js/Eb_chart.js"></script>
+<script type="text/javascript" src="~/js/dvContainer.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.js"></script>
+<script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
 
 @await Component.InvokeAsync("PageHeaderCommon")
 
@@ -38,6 +39,9 @@
     string html = string.Empty;
 
     var dvobj = EbSerializers.Json_Serialize(ViewBag.dvObject);
+
+    var _user_culture = CultureInfo.GetCultureInfo(ViewBag.currentUser.Preference.Locale);
+    var datePattern = (_user_culture as CultureInfo).DateTimeFormat.ShortDatePattern;
 }
 <script>
     $.fn.extend({
@@ -159,7 +163,8 @@
             tabnum: @ViewBag.tabNum,
             DvList:@Html.Raw(ViewBag.DvList),
             DvTagList:@Html.Raw(ViewBag.DvTaggedList),
-            url:'@ViewBag.BrowserURLContext'
+            url: '@ViewBag.BrowserURLContext',
+            datePattern:'@datePattern'
         });
 
         $(document).ready(function () {

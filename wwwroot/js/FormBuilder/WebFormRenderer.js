@@ -13,7 +13,10 @@
                 if (NSS) {
                     let NS1 = NSS.split(".")[0];
                     let NS2 = NSS.split(".")[1];
-                    EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);
+                    if (cObj.ObjType === "TableLayout")
+                        EbOnChangeUIfns[NS1][NS2](cObj.Name, cObj);
+                    else
+                        EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);
                 }
             }
         });
@@ -30,9 +33,9 @@
     };
 
     this.initFormCtrl = function (control) {
-            if (this.initControls[control.ObjType] !== undefined)
-                this.initControls[control.ObjType](control);
-            $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
+        if (this.initControls[control.ObjType] !== undefined)
+            this.initControls[control.ObjType](control);
+        $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
     }.bind(this);
 
     this.getFlatContControls = function () {
@@ -41,7 +44,7 @@
         return coll;
     };
 
-     this.ProcRecur = function (src_obj, dest_coll) {
+    this.ProcRecur = function (src_obj, dest_coll) {
         $.each(src_obj.Controls, function (i, obj) {
             if (obj.IsContainer) {
                 dest_coll.push(obj);

@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SourceCategoryList, SubCategoryList) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -7,6 +7,12 @@
     this.CostCenterInfo = Center_Info;
     this.DoctorInfo = Doc_Info;
     this.StaffInfo = Staff_Info;
+    this.CCityList = CCityList || [];
+    this.CCountryList = CCountryList || [];
+    this.CityList = CityList || [];
+    this.SourceCategoryList = SourceCategoryList || [];
+    this.SubCategoryList = SubCategoryList || [];
+
     this.FeedbackList = F_List || [];
     this.BillingList = B_List || [];
     this.SurgeryList = S_List || [];
@@ -27,7 +33,7 @@
     this.$CrntCountry = $("#txtCrntCountry");
     this.$HomeCity = $("#txtHomeCity");
     this.$HomeDistrict = $("#txtHomeDistrict");
-    this.$Service = $("#txtService");
+    this.$Service = $("#selService");
     this.$LeadOwner = $("#txtLeadOwner");
     this.$SourceCategory = $("#txtSourceCategory");
     this.$SubCategory = $("#txtSubCategory");
@@ -42,7 +48,7 @@
     this.$NoOfPRP = $("#txtNoOfPRP");
     this.$FeePaid = $("#selFeePaid");
     this.$Closing = $("#selClosing");
-    this.$Nature = $("#txtNature");
+    this.$Nature = $("#selNature");
     
     //FOLLOWUP
     this.divFeedback = "divFdbk";
@@ -86,7 +92,16 @@
     this.init = function () {
         this.initMenuBarObj();
         this.initForm();
+
+        this.$CrntCity.autocomplete({ source: this.CCityList });
+        this.$CrntCountry.autocomplete({ source: this.CCountryList });
+        this.$HomeCity.autocomplete({ source: this.CityList });
+        this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
+        this.$SubCategory.autocomplete({ source: this.SubCategoryList });
     }
+
+   
+        
 
     this.initMenuBarObj = function () {
         var menuBarObj = $("#layout_div").data("EbHeader");

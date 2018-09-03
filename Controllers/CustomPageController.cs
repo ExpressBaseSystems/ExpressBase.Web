@@ -38,6 +38,11 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.CostCenter = fr.CostCenterDict;
 			ViewBag.DocDict = fr.DoctorDict;
 			ViewBag.StaffDict = fr.StaffDict;
+			ViewBag.CrntCityList = fr.CrntCityList;
+			ViewBag.CrntCountryList = fr.CrntCountryList;
+			ViewBag.CityList = fr.CityList;
+			ViewBag.SourceCategoryList = fr.SourceCategoryList;
+			ViewBag.SubCategoryList = fr.SubCategoryList;
 			if (mode == 1)
 			{
 				ViewBag.FeedbackList = JsonConvert.SerializeObject(fr.FeedbackList);

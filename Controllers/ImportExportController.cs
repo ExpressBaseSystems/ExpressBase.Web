@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 using ExpressBase.Common;
 using ExpressBase.Common.Objects;
 using ExpressBase.Common.Objects.Attributes;
+using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ReportRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
-using ProtoBuf;
 using ServiceStack;
 using ServiceStack.Redis;
 
@@ -23,7 +23,8 @@ namespace ExpressBase.Web.Controllers
 {
     public class ImportExportController : EbBaseIntCommonController
     {
-        public ImportExportController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+        public ImportExportController(IServiceClient sclient, IRedisClient redis, IEbMqClient _mqc) : base(sclient, redis,_mqc) { }
+
         public IActionResult Index()
         {
             return View();
@@ -91,21 +92,20 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Export(string refids, int appid)
         {
-            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationRequest { Refids = refids, AppId= appid });
+            ExportApplicationResponse res = MqClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest { Refids = refids, AppId= appid });
             return RedirectToAction("AppStore");
         }
 
         public IActionResult Import(int Id)
         {
-            ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationRequest { Id = Id });
+            ImportApplicationResponse res = MqClient.Get<ImportApplicationResponse>(new ImportApplicationMqRequest { Id = Id });
             return RedirectToAction("DevDashboard","Dev");
         }
 
         public IActionResult ExportOSE(string ids,int AppId)
         {
-            EbObjectObjListAllVerResponse resultlist = this.ServiceClient.Get<EbObjectObjListAllVerResponse>(new EbAllObjNVerRequest { ObjectIds =ids});
-            Dictionary<string, List<EbObjectWrapper>> ObjList = resultlist.Data;
-            ViewBag.objlist = ObjList;
+            EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds =ids});
+            ViewBag.objlist = resultlist.Data;
             ViewBag.appid = AppId;
             return View();
         }

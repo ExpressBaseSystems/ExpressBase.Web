@@ -130,7 +130,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
             this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
-        else if (this.rowData !== null) {
+        else if (this.rowData !== null && rowData !== "" && rowData[0] !== "") {
             //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
             this.isContextual = true;
         }
@@ -632,6 +632,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (dq.length === -1)
             dq.length = this.RowCount;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
+        dq.RGIndex =this.RGIndex;
         //return dq;
     };
 

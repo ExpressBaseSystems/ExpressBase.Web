@@ -127,7 +127,19 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Service</label>
-                            <input id="txtService" type="text" class="form-control">
+                            <select id="selService" class="form-control">
+                                <option>BMT</option>
+                                <option>EBT</option>
+                                <option>Hair Extension</option>
+                                <option>Hair Fixing</option>
+                                <option>Hair Fixing (Wig)</option>
+                                <option>Hair Treatment</option>
+                                <option>Hair Transplant</option>
+                                <option>Patch</option>
+                                <option>PRP</option>
+                                <option>SMP</option>
+                            </select>
+                            @*<input id="txtService" type="text" class="form-control">*@
                         </div>
                     </div>
                 </div>
@@ -164,15 +176,15 @@
                     <div class="col-md-1" style="min-width: 10%;">
                         <label>Consultation</label>
                         <select id="selConsultation" class="form-control">
-                            <option value="False">No</option>
-                            <option value="True">Yes</option>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
                         </select>
                     </div>
                     <div class="col-md-1" style="min-width: 12%;">
                         <label>Pictures Recevied</label>
                         <select id="selPicReceived" class="form-control">
-                            <option value="False">No</option>
-                            <option value="True">Yes</option>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
                         </select>
                     </div>
                     <div class="col-md-1" style="min-width: 14%;">
@@ -236,7 +248,12 @@
                     <div class="col-md-2" style="min-width: 22%;">
                         <div class="form-group">
                             <label>Nature of Patient</label>
-                            <input id="txtNature" type="text" class="form-control">
+                            <select id="selNature" class="form-control">
+                                <option>Easy</option>
+                                <option>Moderate</option>
+                                <option>Difficult</option>
+                            </select>
+                            @*<input id="txtNature" type="text" class="form-control">*@
                         </div>
                     </div>
                 </div>
@@ -426,8 +443,7 @@
                 </div>
             </div>
             <div id="menu5" class="tab-pane fade">
-                <h3>Attach</h3>
-                <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                <div style="text-align: center; padding-top: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>
             </div>
         </div>
     </div>
@@ -705,13 +721,19 @@
     var DocInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.DocDict));
     var StaffInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.StaffDict));
 
+    var CCityList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CrntCityList));
+    var CCountryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CrntCountryList));
+    var CityList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CityList));
+    var SourceCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SourceCategoryList));
+    var SubCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SubCategoryList));
+
     var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
     var BillingList = (Html.Raw(ViewBag.BillingList).ToString() == "") ? "null" : Html.Raw(ViewBag.BillingList);
     var SurgeryList = (Html.Raw(ViewBag.SurgeryList).ToString() == "") ? "null" : Html.Raw(ViewBag.SurgeryList);
 }
 
 <script>
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList);
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SourceCategoryList, @SubCategoryList );
 </script>
 
 @*<div class="col-md-6" style="padding:0px;">

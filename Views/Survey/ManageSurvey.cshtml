@@ -72,6 +72,9 @@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#ques" role="tab">Questions</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#survey_resp" role="tab">Responses</a>
+                </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
@@ -115,6 +118,9 @@
                     <div class="col-md-12 pd-0 selection_pane" id="divQuesSelected">
                         @*selected questions*@
                     </div>
+                </div>
+                <div class="tab-pane appdash_obj_container display-flex" id="survey_resp" role="tabpanel">
+                    
                 </div>
             </div>
         </div>
@@ -179,7 +185,7 @@
                                                 <option value="Text">Text</option>
                                                 <option value="MultiText">Multi Text</option>
                                                 <option value="Date">Date</option>
-                                                <option value="Time">Time</option>
+                                                @*<option value="Time">Time</option>*@
                                             </select>
                                         </div>
                                     </div>
@@ -265,6 +271,6 @@
 </div>
 
 <script>
-    new ManageSurveyObj('@Html.Raw(ViewBag.SurveyData)', '@Html.Raw(JsonConvert.SerializeObject(ViewBag.QuestionList))');
+    new ManageSurveyObj(`@Html.Raw(ViewBag.SurveyData)`, `@Html.Raw(JsonConvert.SerializeObject(ViewBag.QuestionList))`);
     new SurveyObj('{}',"Manager");
 </script>

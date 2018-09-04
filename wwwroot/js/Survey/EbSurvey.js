@@ -14,7 +14,8 @@
     this.init = function () {
         $("#questionModal").on('show.bs.modal', function () {
             $(`textarea[name="Question"]`).val("");
-            //$(".qst-opt-cont").empty();
+            $(".qst-opt-cont").empty();
+            $(".qst-types-cont div[qtype='1']").click();
         });
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
         $('body').off("click").on("click", ".query_tile", this.quesEdit.bind(this));
@@ -27,6 +28,7 @@
         $("#submit_question").off("click").on("click", this.newQuesSubmit.bind(this));
         $(`body`).off("change").on("change", ".qst-choice-number", this.ScoreChanged.bind(this));
         $("#userInputType").off("change").on("change", this.changeUIType.bind(this));
+        $(".qst-types-cont div[qtype='1']").click();
     };
 
     this.ScoreChanged = function (e) {

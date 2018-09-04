@@ -64,7 +64,7 @@
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
                             <a class="appcontainer_inner query_tile" questype="@qry.Value.QuesType" queryid="@qry.Value.QuesId">
                                 <div class="col-md-12 pd-0">
-                                    <h5 class="txtdecor_none">@qry.Value.Question</h5>
+                                    <h5 class="txtdecor_none ellipsis-text">@qry.Value.Question</h5>
                                     <p class="small txtdecor_none">@((SurveyQTypes)qry.Value.QuesType)</p>
                                 </div>
                             </a>
@@ -135,7 +135,7 @@
                                                 <option value="Text">Text</option>
                                                 <option value="MultiText">Multi Text</option>
                                                 <option value="Date">Date</option>
-                                                <option value="Time">Time</option>
+                                                @*<option value="Time">Time</option>*@
                                             </select>
                                         </div>
                                     </div>
@@ -168,5 +168,5 @@
 </div>
 
 <script>
-    var survey = new SurveyObj('@Html.Raw(JsonConvert.SerializeObject(Queries))',"QuestionBank");
+    var survey = new SurveyObj(`@Html.Raw(JsonConvert.SerializeObject(Queries))`,"QuestionBank");
 </script>

@@ -441,7 +441,7 @@
         this.$CrntCountry.val(this.CustomerInfo["clcountry"]);
         this.$HomeCity.val(this.CustomerInfo["city"]);
         //this.$HomeDistrict.val(this.CustomerInfo[""]);
-        this.$Service.val(this.CustomerInfo["typeofcustomer"]);
+        this.$Service.val(this.CustomerInfo["typeofcustomer"].trim().toLowerCase());
         //this.$LeadOwner.val(this.CustomerInfo[""]);
         this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
@@ -456,7 +456,7 @@
         this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
         this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
         this.$Closing.val(this.CustomerInfo["closing"]);
-        this.$Nature.val(this.CustomerInfo["nature"]);
+        this.$Nature.val(this.CustomerInfo["nature"].trim().toLowerCase());
 
         this.$CostCenter.prop("disabled", true);
         this.$EnDate.prop("disabled", true);
@@ -511,7 +511,7 @@
         this.pushToList("clcountry", this.$CrntCountry.val());
         this.pushToList("city", this.$HomeCity.val());
         //this.pushToList("", this.$HomeDistrict.val());
-        this.pushToList("typeofcustomer", this.$Service.val());
+        this.pushToList("typeofcustomer", $("#selService option:selected").text());
         //this.pushToList("", this.$LeadOwner.val());
         this.pushToList("sourcecategory", this.$SourceCategory.val());
         this.pushToList("subcategory", this.$SubCategory.val());
@@ -526,7 +526,7 @@
         this.pushToList("prpsessions", this.$NoOfPRP.val());
         this.pushToList("consultingfeepaid", (this.$FeePaid.val() || "False"));
         this.pushToList("closing", (this.$Closing.val() || "0"));
-        this.pushToList("nature", this.$Nature.val());
+        this.pushToList("nature", $("#selNature option:selected").text());
         
         return true;
     }

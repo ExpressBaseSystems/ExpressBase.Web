@@ -50,16 +50,16 @@
     getChoice(o) {
         let html = new Array();
         for (let i = 0; i < o.Choices.length; i++) {
-            html.push(this.getChoiceHtml(o.QuesType, o.Choices[i]));
+            html.push(this.getChoiceHtml(o.QuesType, o.Choices[i],o.QuesId));
         }
         this.CheckCount = 0;
         return html.join("");
     }
 
-    getChoiceHtml(t, choice) {
+    getChoiceHtml(t, choice,quesid) {
         if (t === 1) {
             return `<div class="col-md-6 pd-l-0 ssel_container display-flex" cid="${choice.ChoiceId}">
-                    <span class="mr-r-10px"><input type="radio" chid_resp="${choice.ChoiceId}" name="Radio_${choice.ChoiceId}" /></span>
+                    <span class="mr-r-10px"><input type="radio" chid_resp="${choice.ChoiceId}" name="Radio_${quesid}" /></span>
                     <span>${choice.Choice}</span>
                     </div>`;
         }

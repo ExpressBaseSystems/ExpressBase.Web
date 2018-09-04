@@ -92,7 +92,7 @@
                 this.$divSelected.append(` <div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${result[0].QuesId}" qname="${result[0].Question}">
                                         <a class="appcontainer_inner query_tile" queryid="${result[0].QuesId}">
                                             <div class="col-md-12 pd-0">
-                                                <h5 class="txtdecor_none">${result[0].Question}</h5>
+                                                <h5 class="txtdecor_none ellipsis-text">${result[0].Question}</h5>
                                                 <p class="small txtdecor_none">${this.getChoiceType(result[0])}</p>
                                             </div>
                                             <span class="fa fa-close cls_ques"></span>
@@ -151,7 +151,7 @@
                 this.$divSelected.append(`<div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${o.QuesId}" qname="${o.Question}">
                                         <a class="appcontainer_inner" queryid="${o.QuesId}">
                                             <div class="col-md-12 pd-0">
-                                                <h5 class="txtdecor_none">${o.Question}</h5>
+                                                <h5 class="txtdecor_none ellipsis-text">${o.Question}</h5>
                                                 <p class="small txtdecor_none">${this.getChoiceType(o)}</p>
                                             </div>
                                             <span class="fa fa-close cls_ques"></span>

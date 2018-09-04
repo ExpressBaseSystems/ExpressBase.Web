@@ -41,12 +41,6 @@
                     </a>
                 </li>
                 <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Survey/SurveyHome">
-                        <span class="material-icons t__sidebar_icon">store</span>
-                        <span class="t__sidebar_text">Survey</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
                     <a class="t_a">
                         <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
                         <span class="t__sidebar_text">Wiki</span>
@@ -67,7 +61,7 @@
                 <h4 class="mr-t-0 mr-b-0">New Survey</h4>
             </div>
             <div class="col-md-2 pd-0">
-
+                <button sid="@ViewBag.SurveyId" class="ebbtn eb_btn-sm eb_btngreen pull-right" id="getPUrl">Public URL</button> 
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
@@ -222,7 +216,7 @@
         <div class="modal-content">
             <div class="modal-header eb_modalheader relative">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Add Question</h4>
+                <h4 class="modal-title">Add Question (@ViewBag.QuestionList.Count)</h4>
                 <div class="survey_menu_load" id="AddFromBank_load"></div>
                 <div class="form-group has-feedback search_input_survey">
                     <input type="text" class="form-control" id="txtSrchList" placeholder="Search" style="height: 28px;" title="Search">
@@ -233,15 +227,15 @@
             <div class="modal-body" id="divQuesAll">
                 @{
                     var ques = ViewBag.QuestionList;
-                    foreach (Eb_SurveyQuestion quest in ques)
+                    foreach (EbSurveyQuery quest in ques)
                     {
-                        <div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="@quest.Id" qname="@quest.Question">
-                            <a class="appcontainer_inner" queryid="@quest.Id">
+                        <div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="@quest.QuesId" qname="@quest.Question">
+                            <a class="appcontainer_inner" queryid="@quest.QuesId">
                                 <div class="col-md-12 pd-0">
                                     <h5 class="txtdecor_none ellipsis-text">@quest.Question</h5>
-                                    <p class="small txtdecor_none">@((SurveyQTypes)quest.ChoiceType)</p>
+                                    <p class="small txtdecor_none">@((SurveyQTypes)quest.QuesType)</p>
                                 </div>
-                                <input type="checkbox" quesid="@quest.Id" name="MarkQues" class="MarkQues" />
+                                <input type="checkbox" quesid="@quest.QuesId" name="MarkQues" class="MarkQues" />
                             </a>
                         </div>
                     }
@@ -249,6 +243,22 @@
             </div>
             <div class="modal-footer pd-5">
                 <button type="button" id="addfromBank_ok" class="ebbtn eb_btnblue eb_btn-sm">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="urlwindow" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Copy URL</h5>
+                <button type="button" class="close" data-dismiss="modal" style="position: absolute;top: 15px;right: 10px;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="w-100" style="border:none;font-size:15px;" id="url_tag"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cpy_puburl" class="ebbtn eb_btn-sm eb_btngreen">Copy</button>
             </div>
         </div>
     </div>

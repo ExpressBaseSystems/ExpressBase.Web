@@ -52,7 +52,20 @@
             this.redrawAllQues("");
         }.bind(this));
         $("#addfromBank_ok").off("click").on("click", this.MarkAsSelected.bind(this));
+        $("#getPUrl").off("click").on("click", this.getUrl.bind(this));
     }
+
+    this.getUrl = function (e) {
+        let id = $(e.target).closest("button").attr("sid");
+        let url = location.protocol + "//" + location.host.replace("-dev", "") + "/Ext/QuestionNaire?id=" + id;
+        $("#urlwindow .modal-body #url_tag").val(url);
+        $("#urlwindow").modal("toggle");
+        $("#urlwindow #cpy_puburl").off("click").on("click", function () {
+            document.getElementById("url_tag").select();
+            document.execCommand("copy");
+            $("#urlwindow").modal("hide");
+        });
+    };
 
     this.rmMarked = function (e) {
         var $div = $(e.target).closest(".appcontainer");
@@ -73,11 +86,11 @@
 
             $.each(this.SurveyData.QuesIds, function (i, did) {
                 var result = this.QuestionList.filter(obj => {
-                    return obj.Id === did
+                    return obj.QuesId === did
                 });
 
-                this.$divSelected.append(` <div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${result[0].Id}" qname="${result[0].Question}">
-                                        <a class="appcontainer_inner query_tile" queryid="${result[0].Id}">
+                this.$divSelected.append(` <div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${result[0].QuesId}" qname="${result[0].Question}">
+                                        <a class="appcontainer_inner query_tile" queryid="${result[0].QuesId}">
                                             <div class="col-md-12 pd-0">
                                                 <h5 class="txtdecor_none">${result[0].Question}</h5>
                                                 <p class="small txtdecor_none">${this.getChoiceType(result[0])}</p>
@@ -86,7 +99,7 @@
                                         </a>
                                     </div>`);
                 $(".cls_ques").off("click").on("click", this.rmMarked.bind(this));
-                $("#divQuesAll").find(`input[quesid='${result[0].Id}']`).prop("checked", true);
+                $("#divQuesAll").find(`input[quesid='${result[0].QuesId}']`).prop("checked", true);
 
             }.bind(this));
 
@@ -135,8 +148,8 @@
         for (let i = 0; i < this.Marked.length; i++) {
             o = this.getQuesObj(eval(this.Marked[i]));
             if (this.$divSelected.find(`div[data-id='${this.Marked[i]}']`).length === 0) {
-                this.$divSelected.append(`<div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${o.Id}" qname="${o.Question}">
-                                        <a class="appcontainer_inner" queryid="${o.Id}">
+                this.$divSelected.append(`<div class="col-md-4 col-lg-4 col-sm-4 appcontainer" data-id="${o.QuesId}" qname="${o.Question}">
+                                        <a class="appcontainer_inner" queryid="${o.QuesId}">
                                             <div class="col-md-12 pd-0">
                                                 <h5 class="txtdecor_none">${o.Question}</h5>
                                                 <p class="small txtdecor_none">${this.getChoiceType(o)}</p>
@@ -154,7 +167,7 @@
     this.getQuesObj = function (id) {
         let qobj = new Object();
         for (let i = 0; i < this.QuestionList.length; i++) {
-            if (this.QuestionList[i].Id === parseInt(id))
+            if (this.QuestionList[i].QuesId === parseInt(id))
                 qobj = this.QuestionList[i];
         }
         return qobj;
@@ -162,13 +175,13 @@
 
     this.getChoiceType = function (o) {
         let type = new String();
-        if (o.ChoiceType === 1)
+        if (o.QuesType === 1)
             type = "SingleSelect";
-        else if (o.ChoiceType === 2)
+        else if (o.QuesType === 2)
             type = "MultiSelect";
-        else if (o.ChoiceType === 3)
+        else if (o.QuesType === 3)
             type = "Rating";
-        else if (o.ChoiceType === 4)
+        else if (o.QuesType === 4)
             type = "UserInput";
         return type;
     };

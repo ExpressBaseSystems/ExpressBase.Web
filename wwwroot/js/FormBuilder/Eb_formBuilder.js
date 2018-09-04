@@ -9,6 +9,7 @@
     this.$form = $("#" + this.formId);
     this.EbObject = options.objInEditMode;
     this.tempArr = [];
+    this.isEditMode = false;
     commonO.Current_obj = this.EbObject;
 
 
@@ -76,6 +77,33 @@
         //  this.PGobj.ReadOnly();
     };
 
+    this.MakeContDropable = function (type) {
+        if (type === "TableLayout")
+            this.makeTdsDropable();
+        else if (type === "TabControl")
+            this.makeTabsDropable();
+    }
+
+    this.makeTabsDropable = function () {
+        $.each($(".tab-pane"), function (i) {
+            if (this.drake) {
+                if (!this.drake.containers.contains(document.getElementsByClassName("tab-pane")[i])) {
+                    this.drake.containers.push(document.getElementsByClassName("tab-pane")[i]);
+                }
+            }
+        }.bind(this));
+    };
+
+    this.makeTdsDropable = function () {
+        $.each($(".tdDropable"), function (i) {
+            if (this.drake) {
+                if (!this.drake.containers.contains(document.getElementsByClassName("tdDropable")[i])) {
+                    this.drake.containers.push(document.getElementsByClassName("tdDropable")[i]);
+                }
+            }
+        }.bind(this));
+    };
+
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
         //setTimeout(function () {
@@ -122,6 +150,7 @@
 
     //Edit mode
     if (this.EbObject) {
+        this.isEditMode = true;
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
@@ -158,7 +187,6 @@
     };
 
     this.movesfn = function (el, source, handle, sibling) {
-        this.makeTdsDropable();
         return true;
     };
 
@@ -178,18 +206,6 @@
             return true;
         }
 
-    };
-
-    this.makeTdsDropable = function () {
-        $.each($(".tdDropable"), this.tdIterFn.bind(this));
-    };
-
-    this.tdIterFn = function (i) {
-        if (this.drake) {
-            if (!this.drake.containers.contains(document.getElementsByClassName("tdDropable")[i])) {
-                this.drake.containers.push(document.getElementsByClassName("tdDropable")[i]);
-            }
-        }
     };
 
     this.onDragFn = function (el, source) {
@@ -282,6 +298,8 @@
                 $ctrl.contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
                 ctrlObj.Label = id;
                 ctrlObj.HelpText = "";
+                if (ctrlObj.IsContainer)
+                    this.MakeContDropable(type);
                 this.updateControlUI(id);
             }
             else
@@ -408,6 +426,10 @@
 
         }.bind(this);
         this.$form.click();
+        if (this.isEditMode) {
+            this.makeTdsDropable();
+            this.makeTabsDropable();
+        }
     };
     this.Init();
 };

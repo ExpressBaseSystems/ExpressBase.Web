@@ -19,7 +19,7 @@
         //        (control as EbSimpleSelect).InitFromDataBase(ViewBag.serviceclient as JsonServiceClient);
         //    }
         //}
-        @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog });
+        @await Component.InvokeAsync("ParameterDiv", new { paramDiv = ViewBag.data.EbDataSource.FilterDialog, _user = ViewBag.currentUser, _sol = ViewBag.solution });
 
     }
 }

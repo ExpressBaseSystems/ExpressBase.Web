@@ -25,16 +25,24 @@ namespace ExpressBase.Web.Controllers
 			if (!ac.IsNullOrEmpty())
 				mode = 1;
 			else
-				ac = "null";
+				ac = "0";
 
 			var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = Convert.ToInt32(ac), RequestMode = mode, TenantAccountId = ViewBag.cid });
 
-			ViewBag.MC_Mode = mode;
-			ViewBag.AccId = ac;
+			if(fr.RespMode == 0)
+				ViewBag.AccId = "0";
+			else
+				ViewBag.AccId = ac;
+			ViewBag.MC_Mode = fr.RespMode;
 			ViewBag.CustomerData = fr.CustomerDataDict;
 			ViewBag.CostCenter = fr.CostCenterDict;
 			ViewBag.DocDict = fr.DoctorDict;
 			ViewBag.StaffDict = fr.StaffDict;
+			ViewBag.CrntCityList = fr.CrntCityList;
+			ViewBag.CrntCountryList = fr.CrntCountryList;
+			ViewBag.CityList = fr.CityList;
+			ViewBag.SourceCategoryList = fr.SourceCategoryList;
+			ViewBag.SubCategoryList = fr.SubCategoryList;
 			if (mode == 1)
 			{
 				ViewBag.FeedbackList = JsonConvert.SerializeObject(fr.FeedbackList);

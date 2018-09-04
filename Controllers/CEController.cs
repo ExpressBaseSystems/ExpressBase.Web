@@ -21,6 +21,7 @@ using System.Reflection;
 using ExpressBase.Common.Structures;
 using ExpressBase.Common.Data;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Common.LocationNSolution;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,88 +36,6 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-
-        //[HttpGet]
-        //public IActionResult code_editor()
-        //{
-        //    ViewBag.Header = "New Datasource";
-        //    ViewBag.VersionNumber = 1;
-        //    ViewBag.Obj_id = null;
-        //    ViewBag.IsNew = "true";
-        //    ViewBag.EditorHint = "CodeMirror.hint.sql";
-        //    ViewBag.EditorMode = "text/x-sql";
-        //    ViewBag.Icon = "fa fa-database";
-        //    ViewBag.ObjType = (int)EbObjectType.DataSource;
-        //    ViewBag.ObjectName = "*Untitled";
-        //    ViewBag.FilterDialogId = "null";
-        //    ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
-
-        //    var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-        //    var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-        //    ViewBag.Meta = _jsResult.Meta;
-        //    ViewBag.JsObjects = _jsResult.JsObjects;
-        //    ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public IActionResult code_editor(int i)
-        //{
-        //    ViewBag.Header = "Edit Datasource";
-        //    var req = this.HttpContext.Request.Form;
-        //    int obj_id = Convert.ToInt32(req["objid"]);
-
-        //    ViewBag.Obj_id = obj_id;
-        //    var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
-        //    var rlist = resultlist.Data;
-        //    foreach (var element in rlist)
-        //    {
-        //        ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
-        //        List<ObjectLifeCycleStatus> lifeCycle = new List<ObjectLifeCycleStatus>(array);
-        //        ViewBag.LifeCycle = lifeCycle;
-        //        ViewBag.IsNew = "false";
-        //        ViewBag.ObjectName = element.Name;
-        //        ViewBag.ObjectDesc = element.Description;
-        //        ViewBag.Status = element.Status;
-        //        ViewBag.VersionNumber = element.VersionNumber;
-        //        ViewBag.EditorHint = "CodeMirror.hint.sql";
-        //        ViewBag.EditorMode = "text/x-pgsql";
-        //        ViewBag.Icon = "fa fa-database";
-        //        ViewBag.ObjType = (int)EbObjectType.DataSource;
-        //        ViewBag.Refid = element.RefId;
-        //        //ViewBag.Majorv = element.MajorVersionNumber;
-        //        //ViewBag.Minorv = element.MinorVersionNumber;
-        //        //ViewBag.Patchv = element.PatchVersionNumber;
-        //        ViewBag.Tags = element.Tags;
-
-        //        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-        //        {
-        //            ViewBag.ReadOnly = true;
-        //            var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_lc);
-        //            ViewBag.Code = dsobj.Sql;
-        //            ViewBag.dsObj = dsobj;
-        //            ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
-        //            ViewBag.Workingcopy = element.Wc_All;
-        //        }
-        //        else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
-        //        {
-        //            ViewBag.ReadOnly = false;
-        //            var dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json_wc);
-        //            ViewBag.Code = dsobj.Sql;
-        //            ViewBag.dsObj = dsobj;
-        //            ViewBag.FilterDialogId = dsobj.FilterDialogRefId;
-        //            ViewBag.Workingcopy = element.Wc_All;
-        //        }
-        //    }
-        //    var typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-        //    var _jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-        //    ViewBag.Meta = _jsResult.Meta;
-        //    ViewBag.JsObjects = _jsResult.JsObjects;
-        //    ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-        //    ViewBag.SqlFns = Getsqlfns((int)EbObjectType.SqlFunction);
-        //    return View();
-        //}
-
         
         //[HttpGet]
         //public IActionResult SqlFunction_Editor()
@@ -201,158 +120,22 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
 
-        //public string CommitEbDataSource()
-        //{
-        //    var req = this.HttpContext.Request.Form;
-        //    string refid;
-        //    EbDataSource obj;
-        //    if (string.IsNullOrEmpty(req["id"]))
-        //    {
-        //        var ds = new EbObject_Create_New_ObjectRequest();
-        //        ds.EbObjectType = (int)EbObjectType.DataSource;
-        //        obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-        //        ds.Name = obj.Name;
-        //        ds.Description = obj.Description;
-        //        ds.Json = req["json"];
-        //        ds.Status = ObjectLifeCycleStatus.Dev;
-        //        ds.Relations = req["rel_obj"];
-        //        ds.IsSave = false;
-        //        ds.Tags = req["tags"];
-
-        //        var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-        //        refid = res.RefId;
-
-        //    }
-        //    else
-        //    {
-        //        var ds = new EbObject_CommitRequest();
-        //        ds.EbObjectType = (int)EbObjectType.DataSource;
-        //        obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-        //        ds.Name = obj.Name;
-        //        ds.Description = obj.Description;
-        //        ds.Json = req["json"];
-        //        ds.Relations = req["rel_obj"];
-        //        ds.RefId = req["id"];
-        //        ds.ChangeLog = req["changeLog"];
-        //        ds.Tags = req["tags"];
-        //        var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
-        //        refid = res.RefId;
-        //    }
-
-        //    return refid;
-        //}
-
-        //public string SaveEbDataSource()
-        //{
-        //    var req = this.HttpContext.Request.Form;
-        //    string refid;
-        //    EbDataSource obj;
-        //    if (string.IsNullOrEmpty(req["id"]))
-        //    {
-        //        var ds = new EbObject_Create_New_ObjectRequest();
-        //        ds.EbObjectType = (int)EbObjectType.DataSource;
-        //        obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-        //        ds.Name = obj.Name;
-        //        ds.Description = obj.Description;
-        //        ds.Json = req["json"];
-        //        ds.Status = ObjectLifeCycleStatus.Dev;
-        //        ds.Relations = req["rel_obj"];
-        //        ds.IsSave = true;
-        //        ds.Tags = req["tags"];
-
-        //        var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
-        //        refid = res.RefId;
-        //    }
-        //    else
-        //    {
-
-        //        var ds = new EbObject_SaveRequest();
-        //        var _EbObjectType = (EbObjectType)Convert.ToInt32(req["ObjectType"]);
-        //        ds.RefId = req["Id"];
-        //        obj = EbSerializers.Json_Deserialize<EbDataSource>(req["json"]);
-        //        ds.Name = obj.Name;
-        //        ds.Description = obj.Description;
-        //        ds.EbObjectType = Convert.ToInt32(req["ObjectType"]);
-        //        ds.Json = req["json"];
-        //        //if (_EbObjectType == EbObjectType.SqlFunction)
-        //        //{
-        //        //    ds.NeedRun = Convert.ToBoolean(req["NeedRun"]);
-        //        //}
-        //        ds.Relations = req["rel_obj"];
-        //        ds.Tags = req["tags"];
-        //        ViewBag.IsNew = "false";
-        //        var res = this.ServiceClient.Post<EbObject_SaveResponse>(ds);
-        //        refid = res.RefId;
-        //    }
-        //    return refid;
-        //}
-
-        //public string Create_Major_Version(string _refId, int _type)
-        //{
-        //    var ds = new EbObject_Create_Major_VersionRequest();
-        //    ds.RefId = _refId;
-        //    ds.EbObjectType = _type;
-        //    ds.Relations = null;
-        //    var res = this.ServiceClient.Post<EbObject_Create_Major_VersionResponse>(ds);
-        //    return res.RefId;
-        //}
-
-        //public string Create_Minor_Version(string _refId, int _type)
-        //{
-        //    var ds = new EbObject_Create_Minor_VersionRequest();
-        //    ds.RefId = _refId;
-        //    ds.EbObjectType = _type;
-        //    ds.Relations = null;
-        //    var res = this.ServiceClient.Post<EbObject_Create_Minor_VersionResponse>(ds);
-        //    return res.RefId;
-        //}
-
-        //public string Create_Patch_Version(string _refId, int _type)
-        //{
-        //    var ds = new EbObject_Create_Patch_VersionRequest();
-        //    ds.RefId = _refId;
-        //    ds.EbObjectType = _type;
-        //    ds.Relations = null;
-        //    var res = this.ServiceClient.Post<EbObject_Create_Patch_VersionResponse>(ds);
-        //    return res.RefId;
-        //}
-
-        //[HttpPost]
-        //public EbDataSource VersionCodes(string objid, int objtype)
-        //{
-        //    EbDataSource dsobj = null;
-        //    var _EbObjectType = (EbObjectType)objtype;
-        //    var resultlist = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = objid });
-        //    var rlist = resultlist.Data;
-        //    foreach (var element in rlist)
-        //    {
-        //        if (_EbObjectType == EbObjectType.DataSource)
-        //        {
-        //            var obj = new EbObjectWrapper();
-        //            dsobj = EbSerializers.Json_Deserialize<EbDataSource>(element.Json);
-        //            ViewBag.Code = dsobj.Sql;
-        //            dsobj.Status = element.Status;
-        //            dsobj.VersionNumber = element.VersionNumber;
-        //        }
-        //    }
-        //    return dsobj;
-        //}
-
         public IActionResult GetFilterBody(string dvobj)
         {
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
             dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            if (dsObject.FilterDialog != null)
-            {
-                foreach (EbControl control in dsObject.FilterDialog.Controls)
-                {
-                    if (control is EbSimpleSelect)
-                    {
-                        (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-                    }
-                }
-            }
-            return ViewComponent("ParameterDiv", new { paramDiv = dsObject.FilterDialog });
+            //if (dsObject.FilterDialog != null)
+            //{
+            //    foreach (EbControl control in dsObject.FilterDialog.Controls)
+            //    {
+            //        if (control is EbSimpleSelect)
+            //        {
+            //            (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+            //        }
+            //    }
+            //}
+            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            return ViewComponent("ParameterDiv", new { paramDiv = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu });
         }
 
         public List<EbObjectWrapper> GetStatusHistory(string _refid)
@@ -364,29 +147,9 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public string GetColumns4Trial(string ds_refid, List<Param> parameter)
         {
-            var redis = this.Redis;
-            var sscli = this.ServiceClient;
+            RedisClient redis = Redis;
+            JsonServiceClient sscli = ServiceClient;
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
-            //var paramsList = new List<Param>();
-            //if (parameter == null)
-            //{
-            //    paramsList = null;
-            //}
-            //else
-            //{
-            //    Newtonsoft.Json.Linq.JArray ja = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(parameter);
-            //    foreach (Newtonsoft.Json.Linq.JToken jt in ja)
-            //    {
-            //        var _dict = new Param();
-            //        foreach (Newtonsoft.Json.Linq.JProperty jp in jt.Children())
-            //        {
-            //            _dict.Name = jp.Name;
-            //            _dict.Value = jp.Value.ToString();
-            //        }
-            //        paramsList.Add(_dict);
-            //    }
-
-            //}
             DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
             if (columnresp.Columns == null || columnresp.Columns.Count == 0)
             {
@@ -395,7 +158,6 @@ namespace ExpressBase.Web.Controllers
             else
             {
                 string colDef = "[";
-                //var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
                 var __columns = columnresp.Columns[0];
                 foreach (EbDataColumn column in __columns)
                 {
@@ -421,68 +183,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.ToString());
             }
             return resultlist1;
-        }
-
-        //public List<string> GetDiffer(string OldText, string NewText)
-        //{
-        //    List<string> Diff = new List<string>();
-        //    var inlineBuilder = new SideBySideDiffBuilder(new Differ());
-
-        //    var diffmodel = inlineBuilder.BuildDiffModel(OldText, NewText);
-        //    Diff.Add(Differ(diffmodel.OldText));
-        //    Diff.Add(Differ(diffmodel.NewText));
-
-        //    return Diff;
-        //}
-
-        //private string Differ(DiffPaneModel text)
-        //{
-        //    string spaceValue = "\u00B7";
-        //    string tabValue = "\u00B7\u00B7";
-        //    string html = "<div class=" + "'diffpane'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
-
-        //    foreach (var diffLine in text.Lines)
-        //    {
-        //        html += "<tr>";
-        //        html += "<td class='lineNumber'>";
-        //        html += diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;";
-        //        html += "</td>";
-        //        html += "<td class='line " + diffLine.Type.ToString() + "Line'>";
-        //        html += "<span class='lineText'>";
-
-        //        if (diffLine.Type == ChangeType.Deleted || diffLine.Type == ChangeType.Inserted || diffLine.Type == ChangeType.Unchanged)
-        //        {
-        //            html += diffLine.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
-        //        }
-        //        else if (diffLine.Type == ChangeType.Modified)
-        //        {
-        //            foreach (var character in diffLine.SubPieces)
-        //            {
-        //                if (character.Type == ChangeType.Imaginary) continue;
-        //                else
-        //                {
-        //                    html += "<span class='" + character.Type.ToString() + "Character'>";
-        //                    html += character.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
-        //                    html += "</span>";
-        //                }
-        //            }
-        //        }
-
-        //        html += "</span>";
-        //        html += "</td>";
-        //        html += "</tr>";
-        //    }
-
-        //    html += "</table></div>";
-
-        //    return html;
-        //}
-
-        //public ActionResult Diff()
-        //{
-        //    return View();
-        //}
-
+        }        
 
     }
 }

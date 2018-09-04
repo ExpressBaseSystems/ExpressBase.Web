@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Data;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Objects;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
@@ -33,7 +34,7 @@ namespace ExpressBase.Web.Controllers
 
             User _user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
             ViewBag.user = _user;
-
+            ViewBag.currentUser = this.LoggedInUser;
             var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
 
@@ -59,20 +60,8 @@ namespace ExpressBase.Web.Controllers
         {
             var dvObject = EbSerializers.Json_Deserialize(dvobj);
             dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
-
-            //if (!string.IsNullOrEmpty(dvobj) && !string.IsNullOrEmpty(dvRefId) && !flag && dvObject.EbDataSource.FilterDialogRefId != null && dvObject.EbDataSource.FilterDialogRefId != "")
-            //{
-            //    foreach (EbControl control in dvObject.EbDataSource.FilterDialog.Controls)
-            //    {
-            //        if (control is EbSimpleSelect)
-            //        {
-            //            (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-            //        }
-            //    }
-            //    return ViewComponent("ParameterDiv", new { paramDiv = dvObject.EbDataSource.FilterDialog });
-            //}
-            //else
-                return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag});
+            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = solu });
         }
 
        

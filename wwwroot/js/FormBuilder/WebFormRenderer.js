@@ -13,7 +13,10 @@
                 if (NSS) {
                     let NS1 = NSS.split(".")[0];
                     let NS2 = NSS.split(".")[1];
-                    EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);
+                    if (cObj.ObjType === "TableLayout")
+                        EbOnChangeUIfns[NS1][NS2](cObj.Name, cObj);
+                    else
+                        EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);
                 }
             }
         });
@@ -30,9 +33,9 @@
     };
 
     this.initFormCtrl = function (control) {
-            if (this.initControls[control.ObjType] !== undefined)
-                this.initControls[control.ObjType](control);
-            $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
+        if (this.initControls[control.ObjType] !== undefined)
+            this.initControls[control.ObjType](control);
+        $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
     }.bind(this);
 
     this.getFlatContControls = function () {
@@ -41,7 +44,7 @@
         return coll;
     };
 
-     this.ProcRecur = function (src_obj, dest_coll) {
+    this.ProcRecur = function (src_obj, dest_coll) {
         $.each(src_obj.Controls, function (i, obj) {
             if (obj.IsContainer) {
                 dest_coll.push(obj);
@@ -65,10 +68,10 @@
         var FVWTcoll = [];
         let _val = null;
         $.each(this.flatControls, function (idx, obj) {
-            var _name = obj.name;
-            var _type = obj.ebDbType;
-            var _val = (_type === 7) ? parseInt($("#" + obj.name).val()) : $("#" + obj.name).val();
-            var _autoic = obj.autoIncrement;
+            var _name = obj.Name;
+            var _type = obj.EbDbType;
+            var _val = (_type === 7) ? parseInt($("#" + obj.Name).val()) : $("#" + obj.Name).val();
+            var _autoic = obj.AutoIncrement || false;
             FVWTcoll.push({ Name: _name, Value: _val, Type: _type, AutoIncrement: _autoic });
         }.bind(this));
         return FVWTcoll;
@@ -78,16 +81,18 @@
         // hide loader
         if (rowAffected > 0) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
-            var msg = `Your ${this.FormObj.name} form submitted successfully`;
+            var msg = `Your ${this.FormObj.Name} form submitted successfully`;
         }
         else {
             EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
-            var msg = `Your ${this.FormObj.name} form submission failed`;
+            var msg = `Your ${this.FormObj.Name} form submission failed`;
         }
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 
     this.saveForm = function () {
+        if (!this.submitReqCheck())
+            return;
         alert();
         // show loader
         $.ajax({
@@ -95,7 +100,7 @@
             //url: this.ssurl + "/bots",
             url: "../WebForm/InsertBotDetails",
             data: {
-                TableName: this.FormObj.tableName, Fields: this.getFormValuesWithTypeColl()
+                TableName: this.FormObj.TableName, Fields: this.getFormValuesWithTypeColl()
             },
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
@@ -103,6 +108,25 @@
             success: this.ajaxsuccess.bind(this),
         });
 
+    };
+
+    this.submitReqCheck = function () {
+        var $firstCtrl = null;
+        $.each(this.flatControls, function (i, control) {
+            var $ctrl = $("#" + control.Name);
+            if ($ctrl.length !== 0 && control.Required && $ctrl.val().trim() === "") {
+                if (!$firstCtrl)
+                    $firstCtrl = $ctrl;
+                this.makeReqFm(control);
+            }
+        }.bind(this));
+
+        if ($firstCtrl) {
+            $firstCtrl.select();
+            return false
+        }
+        else
+            return true;
     };
 
     this.init();

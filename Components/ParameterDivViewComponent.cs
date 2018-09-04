@@ -1,5 +1,8 @@
-﻿using ExpressBase.Common.Objects;
+﻿using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
+using ExpressBase.Objects.Objects;
+using ExpressBase.Security;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -7,6 +10,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,7 +27,7 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog paramDiv)
+        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog paramDiv, User _user, Eb_Solution _sol)
         {
             if (paramDiv != null)
             {              
@@ -33,6 +37,10 @@ namespace ExpressBase.Web.Components
                     if (control is EbSimpleSelect)
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+                    }
+                    else if (control is EbUserLocation)
+                    {
+                        (control as EbUserLocation).InitFromDataBase(this.ServiceClient, _user, _sol);
                     }
                 }
                 ViewBag.HtmlHead = paramDiv.GetHead();

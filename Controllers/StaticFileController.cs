@@ -12,6 +12,7 @@ using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -21,10 +22,10 @@ namespace ExpressBase.Web.Controllers
     {
         public StaticFileExtController(IEbStaticFileClient _sfc) : base(_sfc) { }
 
-        [HttpGet("static/logo/{filename}")]
+        [HttpGet("images/logo/{filename}")]
         public IActionResult GetLogo(string filename)
         {
-            filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
+            filename = filename.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
 
             DownloadFileResponse dfs = null;
 
@@ -45,7 +46,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
                 }
             }
             catch (Exception e)
@@ -67,7 +68,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("images/dp/{filename}")]
         public IActionResult GetDP(string filename)
         {
-            filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
+            filename = filename.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
 
             DownloadFileResponse dfs = null;
             ActionResult resp = new EmptyResult();
@@ -78,14 +79,14 @@ namespace ExpressBase.Web.Controllers
                     dfs = this.FileClient.Get<DownloadFileResponse>
                             (new DownloadFileRequest
                             {
-                                FileDetails = new FileMeta { FileName = filename, FileType = filename.Split(CharConstants.DOT)[1].ToLower(), FileCategory = EbFileCategory.Dp }
+                                FileDetails = new FileMeta { FileName = filename, FileType = StaticFileConstants.PNG, FileCategory = EbFileCategory.Dp }
                             });
 
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT)[1]]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
                 }
             }
             catch (Exception e)
@@ -96,10 +97,10 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet("static/loc/{filename}")]
+        [HttpGet("files/loc/{filename}")]
         public IActionResult GetLocFiles(string filename)
         {
-            filename = filename.Split(CharConstants.DOT)[0] + StaticFileConstants.DOTPNG;
+            filename = filename.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
 
             DownloadFileResponse dfs = null;
             ActionResult resp = new EmptyResult();
@@ -116,7 +117,7 @@ namespace ExpressBase.Web.Controllers
                                 FileDetails = new FileMeta
                                 {
                                     FileName = filename,
-                                    FileType = filename.Split(CharConstants.DOT)[1].ToLower(),
+                                    FileType = StaticFileConstants.PNG,
                                     FileCategory = EbFileCategory.LocationFile
                                 }
                             });
@@ -125,7 +126,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT)[1]]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
                 }
             }
             catch (Exception e)
@@ -136,7 +137,7 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet("static/{filename}")]
+        [HttpGet("files/{filename}")]
         public IActionResult GetFile(string filename)
         {
             DownloadFileResponse dfs = null;
@@ -148,17 +149,48 @@ namespace ExpressBase.Web.Controllers
                 dfs = this.FileClient.Get<DownloadFileResponse>
                         (new DownloadFileByIdRequest
                         {
-                            FileDetails = new FileMeta { FileStoreId = filename.Split(CharConstants.DOT)[0], FileCategory = EbFileCategory.File }
+                            FileDetails = new FileMeta { FileStoreId = filename.SplitOnLast(CharConstants.DOT).First(), FileType = filename.SplitOnLast(CharConstants.DOT).Last(), FileCategory = EbFileCategory.File }
                         });
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT)[1]]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+            return resp;
+        }
+
+        [HttpGet("files/ref/{filename}")]
+        public IActionResult GetFileByRefId(string filename)
+        {
+            DownloadFileResponse dfs = null;
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ActionResult resp = new EmptyResult();
+            int irefid = 0;
+            Int32.TryParse(filename.SplitOnLast(CharConstants.DOT).First(), out irefid);
+            if (irefid != 0)
+            {
+                try
+                {
+                    dfs = this.FileClient.Get<DownloadFileResponse>
+                            (new DownloadFileByRefIdRequest
+                            {
+                                FileDetails = new FileMeta { FileRefId = irefid, FileType = filename.SplitOnLast(CharConstants.DOT).Last(), FileCategory = EbFileCategory.File }
+                            });
+                    if (dfs.StreamWrapper != null)
+                    {
+                        dfs.StreamWrapper.Memorystream.Position = 0;
+                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.Message.ToString());
+                }
             }
             return resp;
         }
@@ -174,14 +206,14 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                dfq.ImageInfo = new ImageMeta { FileStoreId = filename.Split(CharConstants.DOT)[0], FileCategory = EbFileCategory.Images, ImageQuality = ImageQuality.original };
+                dfq.ImageInfo = new ImageMeta { FileStoreId = filename.SplitOnLast(CharConstants.DOT).First(), FileType = filename.SplitOnLast(CharConstants.DOT).Last(), FileCategory = EbFileCategory.Images, ImageQuality = ImageQuality.original };
 
                 dfs = this.FileClient.Get<DownloadFileResponse>(dfq);
 
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT)[1]]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
                 }
 
             }
@@ -199,19 +231,19 @@ namespace ExpressBase.Web.Controllers
             HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
             ActionResult resp = new EmptyResult();
 
-            string fname = String.Format("{0}_{1}.{2}", filename.Split(CharConstants.DOT)[0], qlty, filename.Split(CharConstants.DOT)[1]);
+            string fname = String.Format("{0}_{1}.{2}", filename.SplitOnLast(CharConstants.DOT).First(), qlty, filename.SplitOnLast(CharConstants.DOT).Last());
             DownloadImageByNameRequest dfq = new DownloadImageByNameRequest();
 
             try
             {
-                dfq.ImageInfo = new ImageMeta { FileName =fname, FileCategory =EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(qlty) };
+                dfq.ImageInfo = new ImageMeta { FileName = fname, FileCategory = EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(qlty) };
 
                 dfs = this.FileClient.Get<DownloadFileResponse>(dfq);
 
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[dfs.FileDetails.FileType]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
                 }
 
             }
@@ -264,7 +296,7 @@ namespace ExpressBase.Web.Controllers
                         }
 
                         uploadFileRequest.FileDetails.FileName = formFile.FileName;
-                        uploadFileRequest.FileDetails.FileType = formFile.FileName.Split(CharConstants.DOT)[1];
+                        uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last();
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
                         uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
                         uploadFileRequest.FileDetails.FileRefId = 1;
@@ -302,7 +334,7 @@ namespace ExpressBase.Web.Controllers
 
                 foreach (var formFile in req.Files)
                 {
-                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.Split(CharConstants.DOT)[1].ToLower()))
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
                     {
                         string fname = regEx.Replace(formFile.FileName, UnderScore);
 
@@ -322,7 +354,7 @@ namespace ExpressBase.Web.Controllers
                             uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tagDict[fname]);
                         }
                         uploadImageRequest.ImageInfo.FileName = fname;
-                        uploadImageRequest.ImageInfo.FileType = fname.Split(CharConstants.DOT)[1];
+                        uploadImageRequest.ImageInfo.FileType = fname.SplitOnLast(CharConstants.DOT).Last();
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;

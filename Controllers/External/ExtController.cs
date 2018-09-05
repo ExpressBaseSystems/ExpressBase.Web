@@ -9,6 +9,7 @@ using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Auth;
 using ServiceStack.Redis;
@@ -53,10 +54,19 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
+        public IActionResult QuestionNaire(int id)
+        {
+            ViewBag.Sid = id;
+            return View();
+        }
+
+        [HttpGet]
         public IActionResult ForgotPassword()
+
         {
             ViewBag.message = TempData["Message"];
             return View();
+
         }
 
         [HttpPost]

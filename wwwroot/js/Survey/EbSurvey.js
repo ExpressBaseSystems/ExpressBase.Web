@@ -1,4 +1,4 @@
-﻿var SurveyObj = function (ques,context) {
+﻿var SurveyObj = function (ques, context) {
     let _chiceCount = 0;
     this.Survey = {
         QuesId: 0,
@@ -14,7 +14,7 @@
     this.init = function () {
         $("#questionModal").on('show.bs.modal', function () {
             $(`textarea[name="Question"]`).val("");
-            //$(".qst-opt-cont").empty();
+            $(".qst-opt-cont").empty();
         });
         $(".qst-type").off("click").on("click", this.changeQuestionType.bind(this));
         $('body').off("click").on("click", ".query_tile", this.quesEdit.bind(this));
@@ -27,6 +27,7 @@
         $("#submit_question").off("click").on("click", this.newQuesSubmit.bind(this));
         $(`body`).off("change").on("change", ".qst-choice-number", this.ScoreChanged.bind(this));
         $("#userInputType").off("change").on("change", this.changeUIType.bind(this));
+        $(".qst-types-cont div[qtype='1']").click();
     };
 
     this.ScoreChanged = function (e) {
@@ -40,10 +41,9 @@
 
         if (this.Survey.Choices[0].Score > 0)
             this.scoreCheckbox = true;
-
-        $(".qst-opt-cont").empty();
         $("#questionModal").modal("show");
         $(`textarea[name="Question"]`).val(this.Survey.Question);
+        $(".qst-opt-cont").empty();
         if (this.qstType === 1 || this.qstType === 2) {
             for (let i = 0; i < this.Survey.Choices.length; i++) {
                 this.appendChoice("", this.Survey.Choices[i].Choice, this.Survey.Choices[i].ChoiceId, this.Survey.Choices[i].Score, false);
@@ -52,7 +52,7 @@
             $("#scoreCheck").closest(".q-set-item").show();
         }
         else if (this.qstType === 3) {
-            this.appendRatingCtrl({ value: eval(this.Survey.Choices[0].Choice), isEdit: true, choiceId: this.Survey.Choices[0].ChoiceId});
+            this.appendRatingCtrl({ value: eval(this.Survey.Choices[0].Choice), isEdit: true, choiceId: this.Survey.Choices[0].ChoiceId });
         }
         else if (this.qstType === 4) {
             this.UIType = this.Survey.Choices[0].Choice;
@@ -117,12 +117,13 @@
 
     this.appendRatingCtrl = function (o) {
         let val = o.value;
-        let cid = o.choiceId; 
+        let cid = o.choiceId;
+        let isnew = (o.isEdit) ? false : true;
         $(".qst-opt-cont").html(`<div class="rating_input">
                                         <div class="col-md-6 pd-l-0 display-flex">
                                             <label class="col-md-3 pd-l-0 flex-center">Rating</label>
                                             <div class="col-md-9 pd-l-0">
-                                                <input type="number" name="RatingCount" min="1" value="${val}" choiceid="${cid}" class="Rating_control form-control" /> 
+                                                <input type="number" name="RatingCount" isnew="${isnew}" min="1" value="${val}" choiceid="${cid}" class="Rating_control form-control" /> 
                                             </div>
                                         </div>
                                         <div class="col-md-6 pd-l-0">
@@ -258,7 +259,7 @@
             o.ChoiceId = eval(rating.attr("choiceid"));
             o.Choice = rating.val();
             o.Score = 0;
-            o.IsNew = true;
+            o.IsNew = eval(rating.attr("isnew"));
             this.Survey.Choices.push(o);
         }
         else if (this.qstType === 4) {
@@ -274,25 +275,43 @@
         this.send();
     };
 
-    this.send = function () {
-        $.ajax({
-            url: "../Survey/SaveQues",
-            type: "POST",
-            data: { survey: JSON.stringify(this.Survey) },
-            beforeSend: function () {
-                $("#survey_menu_load").EbLoader("show");
+    this.ValidateQues = function () {
+        let f = true;
+        if (this.Survey.Choices.length > 0) {
+            for (let k = 0; k < this.Survey.Choices.length; k++) {
+                if (this.Survey.Choices[k].Choice.length <= 0 || this.Survey.Choices[k].Choice === "") {
+                    f = false;
+                    break;
+                }
             }
-        }).done(function (result) {
-            if (result.status) {
-                $("#survey_menu_load").EbLoader("hide");
-                if (context === "QuestionBank")
-                    location.reload();
-                else
-                    this.appendQues(result.quesid);
+        }
+        else
+            f = false;
+        
+        return f;
+    };
 
-                $("#questionModal").modal("toggle");
-            }
-        }.bind(this));
+    this.send = function () {
+        if (this.ValidateQues()) {
+            $.ajax({
+                url: "../Survey/SaveQues",
+                type: "POST",
+                data: { survey: JSON.stringify(this.Survey) },
+                beforeSend: function () {
+                    $("#survey_menu_load").EbLoader("show");
+                }
+            }).done(function (result) {
+                if (result.status) {
+                    $("#survey_menu_load").EbLoader("hide");
+                    if (context === "QuestionBank")
+                        location.reload();
+                    else
+                        this.appendQues(result.quesid);
+
+                    $("#questionModal").modal("toggle");
+                }
+            }.bind(this));
+        }
     };
 
     this.appendQues = function (qid) {

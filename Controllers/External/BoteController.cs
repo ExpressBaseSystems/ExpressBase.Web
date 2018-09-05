@@ -181,19 +181,19 @@ namespace ExpressBase.Web.Controllers
                 //GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
                 GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
                 List<object> returnlist = new List<object>();
-				
-				returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
-				returnlist.Add(authResponse.RefreshToken);
-				returnlist.Add(formlist.BotForms);
-				return returnlist;
 
-				//CookieOptions options = new CookieOptions();
-				//Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
-				//Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-				//Mymain();
-				//string ctxt = GetEncriptedString("helleo", key_iv);
-				//string ptxt = GetDecriptedString(ctxt, key_iv);
-			}
+                returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
+                returnlist.Add(authResponse.RefreshToken);
+                returnlist.Add(formlist.BotForms);
+                return returnlist;
+
+                //CookieOptions options = new CookieOptions();
+                //Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
+                //Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                //Mymain();
+                //string ctxt = GetEncriptedString("helleo", key_iv);
+                //string ptxt = GetDecriptedString(ctxt, key_iv);
+            }
             else
             {
                 return null;
@@ -233,80 +233,122 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-		//copied to boti - febin
-		//public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
-		//      {
-		//          this.ServiceClient.BearerToken = bearerToken;
-		//          this.ServiceClient.RefreshToken = refreshToken;
-		//          var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+        //copied to boti - febin
+        //public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
+        //      {
+        //          this.ServiceClient.BearerToken = bearerToken;
+        //          this.ServiceClient.RefreshToken = refreshToken;
+        //          var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
 
-		//          var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-		//          if (Obj is EbBotForm)
-		//          {
-		//              //EbBotForm obj = Obj as EbBotForm;
-		//              foreach (EbControl control in Obj.Controls)
-		//              {
-		//                  if (control is EbSimpleSelect)
-		//                  {
-		//                      (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-		//                  }
-		//                  else if (control is EbDynamicCardSet)
-		//                  {
-		//				EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
-		//				EbDynamicCards.InitFromDataBase(this.ServiceClient);
-		//				EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
-		//                  }
-		//                  //else if (control is EbImage)
-		//                  //{
-		//                  //    (control as EbCards).InitFromDataBase(this.ServiceClient);
-		//                  //}
-		//              }
-		//          }
-		//          if (Obj is EbTableVisualization)
-		//          {
-		//              EbTableVisualization Tobj = (Obj as EbTableVisualization);
-		//              string BotCols = "[";
-		//              string BotData = "[";
-		//              int i = 0;
+        //          var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+        //          if (Obj is EbBotForm)
+        //          {
+        //              //EbBotForm obj = Obj as EbBotForm;
+        //              foreach (EbControl control in Obj.Controls)
+        //              {
+        //                  if (control is EbSimpleSelect)
+        //                  {
+        //                      (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+        //                  }
+        //                  else if (control is EbDynamicCardSet)
+        //                  {
+        //				EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
+        //				EbDynamicCards.InitFromDataBase(this.ServiceClient);
+        //				EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
+        //                  }
+        //                  //else if (control is EbImage)
+        //                  //{
+        //                  //    (control as EbCards).InitFromDataBase(this.ServiceClient);
+        //                  //}
+        //              }
+        //          }
+        //          if (Obj is EbTableVisualization)
+        //          {
+        //              EbTableVisualization Tobj = (Obj as EbTableVisualization);
+        //              string BotCols = "[";
+        //              string BotData = "[";
+        //              int i = 0;
 
-		//              foreach (DVBaseColumn col in Tobj.Columns)
-		//              {
-		//                  BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
-		//              }
-		//              BotCols = BotCols.TrimEnd(',') + "]";
+        //              foreach (DVBaseColumn col in Tobj.Columns)
+        //              {
+        //                  BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
+        //              }
+        //              BotCols = BotCols.TrimEnd(',') + "]";
 
-		//              DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
-		//              var data = dresp.Data;
-		//              foreach (EbDataRow row in data)
-		//              {
-		//                  i = 0;
-		//                  BotData += "{";
-		//                  foreach (var item in row)
-		//                  {
-		//                      BotData += "\"" + i++ + "\":\"" + item + "\",";
-		//                      //BotData += "\"" + item + "\",";
-		//                  }
-		//                  BotData = BotData.TrimEnd(',') + "},";
-		//              }
-		//              BotData = BotData.TrimEnd(',') + "]";
+        //              DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
+        //              var data = dresp.Data;
+        //              foreach (EbDataRow row in data)
+        //              {
+        //                  i = 0;
+        //                  BotData += "{";
+        //                  foreach (var item in row)
+        //                  {
+        //                      BotData += "\"" + i++ + "\":\"" + item + "\",";
+        //                      //BotData += "\"" + item + "\",";
+        //                  }
+        //                  BotData = BotData.TrimEnd(',') + "},";
+        //              }
+        //              BotData = BotData.TrimEnd(',') + "]";
 
-		//              Tobj.BotCols = BotCols;
-		//              Tobj.BotData = BotData;
-		//              return EbSerializers.Json_Serialize(Tobj);
-		//          }
-		//          if (Obj is EbChartVisualization)
-		//          {
-		//              return EbSerializers.Json_Serialize(Obj);
-		//          }
-		//          //else if (Obj is EbChartVisualization)
-		//          //{
-		//          //}
-		//          return Obj;
-		//      }
-
-		
+        //              Tobj.BotCols = BotCols;
+        //              Tobj.BotData = BotData;
+        //              return EbSerializers.Json_Serialize(Tobj);
+        //          }
+        //          if (Obj is EbChartVisualization)
+        //          {
+        //              return EbSerializers.Json_Serialize(Obj);
+        //          }
+        //          //else if (Obj is EbChartVisualization)
+        //          //{
+        //          //}
+        //          return Obj;
+        //      }
 
 
-	}
+        public IActionResult SurveyAuth(int SurveyId, string FbId, string Name, string Email, string Cid)
+        {
+            Dictionary<string, string> _Meta = new Dictionary<string, string> {
+                    { TokenConstants.WC, "bc" },
+                    { TokenConstants.CID, Cid },
+                    { TokenConstants.SOCIALID, FbId },
+                    { "emailId", Email },
+                    { "anonymous", "true" },
+                    { "user_name", Name }
+            };
+
+            MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
+            {
+                provider = CredentialsAuthProvider.Name,
+                UserName = "NIL",
+                Password = "NIL",
+                Meta = _Meta,
+            });
+            if (authResponse != null)
+            {
+                this.ServiceClient.BearerToken = authResponse.BearerToken;
+                this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+
+                SurveyMasterResponse resp = this.ServiceClient.Post(new SurveyMasterRequest
+                {
+                    SurveyId = SurveyId,
+                    AnonId = authResponse.AnonId,
+                    UserId = authResponse.User.UserId
+                });
+
+                return ViewComponent("EbQuestionNaire", new
+                {
+                    sid = SurveyId,
+                    bToken = HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()),
+                    rToken = authResponse.RefreshToken,
+                    masterid = resp.Id
+                });
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+    }
 
 }

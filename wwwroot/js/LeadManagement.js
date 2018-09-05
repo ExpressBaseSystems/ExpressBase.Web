@@ -170,7 +170,7 @@
     this.initFeedBackModal = function () {
         this.$btnNewFeedBack.on("click", function () {
             if (this.AccId === 0) {
-                EbMessage("show", { Message: 'Save Customer Information then try to add Followup', AutoHide: true, Backgorund: '#a40000' });
+                EbMessage("show", { Message: 'Save Customer Information then try to add Followup', AutoHide: true, Background: 'red' });
             }
             else {
                 this.$MdlFeedBack.modal('show');
@@ -182,7 +182,7 @@
 
         this.$FlUpSave.on("click", function () {    
             if (this.$FlUpDate.val() === "" || this.$FlUpStatus.val() === "" || this.$FlUpFolDate.val() === "" || this.$FlUpComnt.val() === "") {
-                EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Backgorund: '#a40000' });
+                EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: 'red' });
                 return;
             }
 
@@ -200,12 +200,12 @@
                     this.$FlUpSave.prop("disabled", false);
                     this.$FlUpSave.children().hide();
                     if (result) {
-                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#0b851a' });
+                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: 'green' });
                         this.$MdlFeedBack.modal('hide');
                         location.reload();
                     }
                     else {
-                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#a40000' });
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: 'red' });
                     }
                 }.bind(this)
             });
@@ -242,7 +242,7 @@
     this.initBillingModal = function () {
         this.$btnNewBilling.on("click", function () {
             if (this.AccId === 0) {
-                EbMessage("show", { Message: 'Save Customer Information then try to add Billing Details', AutoHide: true, Backgorund: '#a40000' });
+                EbMessage("show", { Message: 'Save Customer Information then try to add Billing Details', AutoHide: true, Background: 'red' });
             }
             else {
                 this.$MdlBilling.modal('show');
@@ -264,7 +264,7 @@
 
         this.$BlngSave.on("click", function () {
             if (this.$BlngDate.val() === "" || this.$BlngTotal.val() === "" || this.$BlngRcvd.val() === "" || this.$BlngBal.val() === "" || this.$BlngPaid.val() === "" || this.$BlngMode.val() === "" || this.$BlngClrDate.val() === "" || this.$BlngNarr.val() === "") {
-                EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Backgorund: '#a40000' });
+                EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: 'red' });
                 return;
             }
 
@@ -292,16 +292,16 @@
                 url: "../CustomPage/SaveBilling",
                 data: { BillingInfo: JSON.stringify(billingObj) },
                 success: function (result) {
-                    this.$BlngSave.prop("disabled", true);
+                    this.$BlngSave.prop("disabled", false);
                     this.$BlngSave.children().hide();
                     if (result) {
-                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#0b851a' });
-                        this.$BlngSave.prop("disabled", false);
+                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: 'green' });
+                        //this.$BlngSave.prop("disabled", false);
                         this.$MdlFeedBack.modal('hide');
                         location.reload();////////
                     }
                     else {
-                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#a40000' });
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: 'red' });
                     }
                 }.bind(this)
             });
@@ -441,7 +441,7 @@
         this.$CrntCountry.val(this.CustomerInfo["clcountry"]);
         this.$HomeCity.val(this.CustomerInfo["city"]);
         //this.$HomeDistrict.val(this.CustomerInfo[""]);
-        this.$Service.val(this.CustomerInfo["typeofcustomer"]);
+        this.$Service.val(this.CustomerInfo["typeofcustomer"].trim().toLowerCase());
         //this.$LeadOwner.val(this.CustomerInfo[""]);
         this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
@@ -456,7 +456,7 @@
         this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
         this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
         this.$Closing.val(this.CustomerInfo["closing"]);
-        this.$Nature.val(this.CustomerInfo["nature"]);
+        this.$Nature.val(this.CustomerInfo["nature"].trim().toLowerCase());
 
         this.$CostCenter.prop("disabled", true);
         this.$EnDate.prop("disabled", true);
@@ -473,18 +473,19 @@
                 data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList) },
                 success: function (result) {
                     if (result) {
-                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#1ebf1e' });
+                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: 'greeen' });
                         if (this.Mode === 0)
                             window.location.search = 'ac=' + result;
                     }
                     else {
-                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e' });
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: 'red' });
                     }
+                    $("#btnSave").prop("disabled", false);
                 }.bind(this)
             });
         }
         else {
-            EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Backgorund: '#a40000' });
+            EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: 'red' });
         }
     }
 
@@ -511,7 +512,7 @@
         this.pushToList("clcountry", this.$CrntCountry.val());
         this.pushToList("city", this.$HomeCity.val());
         //this.pushToList("", this.$HomeDistrict.val());
-        this.pushToList("typeofcustomer", this.$Service.val());
+        this.pushToList("typeofcustomer", $("#selService option:selected").text());
         //this.pushToList("", this.$LeadOwner.val());
         this.pushToList("sourcecategory", this.$SourceCategory.val());
         this.pushToList("subcategory", this.$SubCategory.val());
@@ -526,7 +527,7 @@
         this.pushToList("prpsessions", this.$NoOfPRP.val());
         this.pushToList("consultingfeepaid", (this.$FeePaid.val() || "False"));
         this.pushToList("closing", (this.$Closing.val() || "0"));
-        this.pushToList("nature", this.$Nature.val());
+        this.pushToList("nature", $("#selNature option:selected").text());
         
         return true;
     }

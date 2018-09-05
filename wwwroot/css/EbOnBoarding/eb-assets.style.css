@@ -316,3 +316,18 @@ flex-direction:column;
     align-self: center;
     top: 47%;
 }
+/*app store*/
+.exp_apps {
+    flex-direction: column;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+.ftr_exp_apps {
+    background: white;
+    border-top: 1px solid #e8e8e8;
+    padding: 5px;
+}
+.l-h1_2{
+    line-height:1.2rem;
+}

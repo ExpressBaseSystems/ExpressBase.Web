@@ -80,11 +80,21 @@ body {
 }
 
 .eb_btnplain {
-    font-weight: 400;
+    font-weight: 600;
     color: #717171;
-    font-size: 15px;
+    box-shadow: none;
+    background: transparent;
 }
-
+    .eb_btnplain:hover {
+        box-shadow: none;
+        color: #d49011;
+    }
+.cb {
+    color: #1497cc;
+}
+.cg {
+    color: #47af08;
+}
 .mb {
     padding-bottom: 5em;
 }

@@ -292,11 +292,11 @@
                 url: "../CustomPage/SaveBilling",
                 data: { BillingInfo: JSON.stringify(billingObj) },
                 success: function (result) {
-                    this.$BlngSave.prop("disabled", true);
+                    this.$BlngSave.prop("disabled", false);
                     this.$BlngSave.children().hide();
                     if (result) {
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#0b851a' });
-                        this.$BlngSave.prop("disabled", false);
+                        //this.$BlngSave.prop("disabled", false);
                         this.$MdlFeedBack.modal('hide');
                         location.reload();////////
                     }
@@ -480,6 +480,7 @@
                     else {
                         EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e' });
                     }
+                    $("#btnSave").prop("disabled", false);
                 }.bind(this)
             });
         }

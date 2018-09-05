@@ -6,6 +6,8 @@
     this.CE_all_ctrlsContId = this.PGobj.wraperId + "_CE_all_ctrlsCont";
     this.OnCXE_OK = function (obj) { };
     this.OSE_curTypeObj = null;
+    this.onAddToCE = function () { };
+    this.onRemoveFromCE = function () { };
     this.CElist = [];
     this.editor = null;
 
@@ -661,7 +663,7 @@
         $.each(values, function (i, control) {
             let name = (control.Name || control.name || control.ColumnName);
             let type = control.$type.split(",")[0].split(".").pop();
-            let tileHTML = `<div class="colTile" onclick="$(this).focus()" is-customobj="${control["IsCustomColumn"] || false}" tabindex="1" id="` + name + '" eb-type="' + type + '" setSelColtiles>'
+            let tileHTML = `<div class="colTile" onclick="$(this).focus()"  ebsid="${control.EbSid}" is-customobj="${control["IsCustomColumn"] || false}" tabindex="1" id="` + name + '" eb-type="' + type + '" setSelColtiles>'
                 + '<button type="button" tabindex="-1" title="Deselect" class="coltile-left-arrow close"><i class="fa fa-arrow-circle-left"></i></button>'
                 + name
                 + '<button type="button" tabindex="-1" title="Remove" class="coltile-delete close"><i class="fa ' + (control["IsCustomColumn"] ? 'fa fa-minus-circle' : '') + '"></i></button>'
@@ -702,7 +704,7 @@
                 let _name = control.Name;
                 if (!_name)
                     _name = control.EbSid;
-                let $tile = $('<div class="colTile" id="' + _name + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
+                let $tile = $('<div class="colTile" id="' + _name + '" ebsid="' + control.EbSid + '" tabindex="1" eb-type="' + type + '" onclick="$(this).focus()"><i class="fa fa-arrows" aria-hidden="true" style="padding-right: 5px; font-size:10px;"></i>'
                     + '<span>' + _name + '</span>'
                     + '<button type="button" title="Remove" class="close"><i class="fa fa-minus-circle"></i></button>'
                     + '</div>');
@@ -756,10 +758,12 @@
     this.colTileLeftArrow = function (e) {
         e.stopPropagation();
         let $tile = $(e.target).closest(".colTile").remove();
-        let tileObj = getObjByval(this.selectedCols, "name", $tile.attr("id"));
+        if (this.selectedCols)// temp condition
+            var tileObj = getObjByval(this.selectedCols, "name", $tile.attr("id"));
         if (this.editor === 7) {
             this.PGobj.removeFromDD.bind(this.PGobj)($tile.attr("id"));
-            let DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("id"))), 1)[0];
+            let DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("ebsid"))), 1)[0];
+            this.onRemoveFromCE(this.PGobj.CurProp, this.PGobj.PropsObj[this.PGobj.CurProp].$values, DelObj);
             let sourceProp = this.CurMeta.source;
             if (sourceProp) {
                 $.each(this.PGobj.PropsObj[sourceProp].$values, function (i, obj) {
@@ -862,6 +866,7 @@
         }
         else
             this.setColTiles();
+        this.onAddToCE(this.PGobj.CurProp, this.PGobj.PropsObj[this.PGobj.CurProp].$values, obj);
         $("#" + obj.name).focus();
     };
 

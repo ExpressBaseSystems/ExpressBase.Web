@@ -65,9 +65,17 @@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-10 pd-0">
-                <h4 class="mr-t-0 mr-b-0">New Survey</h4>
+                @if (ViewBag.SurveyId <=0)
+                {
+                    <h4 class="mr-t-0 mr-b-0">New Survey</h4>
+                }
+                else
+                {
+                    <h4 class="mr-t-0 mr-b-0">Edit Survey</h4>
+                }
             </div>
-            <div class="col-md-2 pd-0">
+    
+                <div class="col-md-2 pd-0">
                 <button sid="@ViewBag.SurveyId" class="ebbtn eb_btn-sm eb_btngreen pull-right" id="getPUrl">Public URL</button> 
             </div>
         </div>

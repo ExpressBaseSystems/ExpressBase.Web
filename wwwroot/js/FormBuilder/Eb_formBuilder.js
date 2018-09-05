@@ -173,6 +173,7 @@
         console.log("CreatePG called for:" + control.Name);
         console.log(control);
         this.$propGrid.css("visibility", "visible");
+        this.SelectedCtrl = control;
         this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
         $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));////////
     };
@@ -403,6 +404,42 @@
         //$("#commit").on("click", this.commit.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" +r $(this).find("option:selected").val()).focus(); });
+
+        this.addTabPane = function (SelectedCtrl, prop, val, addedObj) {
+            let id = SelectedCtrl.EbSid;
+            let $ctrl = $("#" + id);
+            let $tabMenu = $(`<li li-of="${addedObj.Name}"><a data-toggle="tab" href="#${addedObj.Name}">${addedObj.Name}</a></li>`);
+            let $tabPane = $(`<div id="${addedObj.Name}" class="tab-pane fade "></div>`);
+            $ctrl.find(".nav-tabs").append($tabMenu);
+            $ctrl.find(".tab-content").append($tabPane);
+        };
+
+        this.RemoveTabPane = function (SelectedCtrl, prop, val, delobj) {
+            let id = SelectedCtrl.EbSid;
+            let $ctrl = $("#" + id);
+            let $tabMenu = $ctrl.find(`[li-of=${delobj.Name}]`).remove();
+            let $tabPane = $(`#${delobj.Name}`).remove();
+        };
+
+        this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
+            console.log(prop);
+            console.log(val);
+            if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
+                alert();
+            else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls")
+                this.addTabPane(this.SelectedCtrl, prop, val, addedObj);
+        }.bind(this);
+
+        this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
+            console.log(prop);
+            console.log(val);
+            console.log(delobj);
+            if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
+                alert();
+            else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls")
+                this.RemoveTabPane(this.SelectedCtrl, prop, val, delobj);
+        }.bind(this);
+
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);

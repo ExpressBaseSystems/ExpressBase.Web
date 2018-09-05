@@ -342,7 +342,7 @@
 
     this.CEOnDeselectFn = function (obj) {
         if (this.CurCEOndeselectFn)
-        this.CurCEOndeselectFn.bind(obj, this.PGobj.PropsObj)();
+            this.CurCEOndeselectFn.bind(obj, this.PGobj.PropsObj)();
     };
 
     this.onDragendFn = function (el) {
@@ -795,14 +795,9 @@
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
         $e.css("background-color", "#b1bfc1").css("color", "#222");
         if (this.editor === 7) {
-            if (this.PGobj.CurProp === "Controls")///////////////////////need CE test and correction
-                obj = this.PropsObj.Controls.GetByName(id);
-            else {
-                obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", id);
-                if (!obj)
-                    obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
-
-            }
+            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", id);
+            if (!obj)
+                obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
         }
         else if (this.editor === 9 || this.editor === 10 || this.editor === 24 || this.editor === 26) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
@@ -850,14 +845,9 @@
         let lastItemCount = this.getMaxNumberFromItemName($(this.pgCXE_Cont_Slctr + " .CE-body .colTile"));
         let ShortName = ($DD.text() + (lastItemCount + 1)).replace(/ /g, "");
         let EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
-        if (this.PGobj.CurProp === "Controls") {////////////// need CE test and correction
-            this.PGobj.PropsObj.Controls.$values.push(new EbObjects[SelType](EbSid));
-        }
-        else {
-            obj = new EbObjects[SelType](EbSid);
-            obj.Name = ShortName;
-            this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
-        }
+        obj = new EbObjects[SelType](EbSid);
+        obj.Name = ShortName;
+        this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
         if (this.editor === 26) {
             if (!obj.name)
                 obj.name = ShortName;

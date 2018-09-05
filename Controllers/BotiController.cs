@@ -282,5 +282,20 @@ namespace ExpressBase.Web.Controllers
                 return false;
             }
         }
+
+        [HttpPost]
+        public bool SendSurveyResponse(string json)
+        {
+            var o = JsonConvert.DeserializeObject<SurveyLine>(json);
+            SurveyLinesResponse resp = this.ServiceClient.Post(new SurveyLinesRequest
+            {
+                MasterId = o.MasterId,
+                QuesId = o.QuesId,
+                ChoiceIds = o.ChoiceIds,
+                Answer = o.Answer,
+                QuesType = o.QuesType
+            });
+            return resp.Status;
+        }
     }
 }

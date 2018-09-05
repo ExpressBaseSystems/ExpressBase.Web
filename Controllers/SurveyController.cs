@@ -46,6 +46,7 @@ namespace ExpressBase.Web.Controllers
 			ManageSurveyResponse resp = this.ServiceClient.Post<ManageSurveyResponse>(new ManageSurveyRequest { Id = id });
 			ViewBag.QuestionList = resp.AllQuestions;
 			ViewBag.SurveyData = JsonConvert.SerializeObject(resp.Obj);
+            ViewBag.SurveyId = id;
 			return View();
 		}
 

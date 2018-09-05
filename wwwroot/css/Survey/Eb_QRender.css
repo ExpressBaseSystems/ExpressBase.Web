@@ -1,0 +1,109 @@
+﻿.area {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-flow: column wrap;
+    font-family: Montserrat;
+    background-color: #eeeeee;
+}
+.survey_pgh {
+    background-color: white;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 15px;
+    border-bottom: 1px solid #e6e6e6;
+}
+.ques_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Montserrat;
+    flex: 1;
+}
+    .ques_container .qstxtc_t {
+        width: 100%;
+        font-size: 17px;
+        font-weight: 500;
+        color: #525151;
+    }
+.pd-10 {
+    padding: 10px;
+}
+.pd-1015{
+    padding: 10px 20px;
+}
+.pd-0{
+    padding:0;
+}
+.q_box {
+    width: 100%;
+    /* border: 1px solid #ccc; */
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: var(--eb-shadow2);
+}
+.float-l{
+    float:left;
+}
+.ssel_container {
+    margin: 5px 0;
+    font-weight: 400;
+    color: #545353;
+}
+.display-flex{
+    display:flex;
+}
+.mr-r-10px{
+    margin-right:10px;
+}
+.rating_container {
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #a7a2a2;
+}
+    .rating_container span {
+        margin: 0 3px;
+        cursor:pointer;
+    }
+.star_checked {
+    color: #ffca00 !important;
+}
+.user_in_container{
+
+}
+.survey_cmsgbox {
+    position: absolute;
+    background-color: #47af08;
+    color: white;
+    top: 40%;
+    left: 48%;
+    padding: 15px;
+    font-family: Montserrat;
+    font-size: 18px;
+    display: none;
+}
+.totalques{
+
+}
+.survey_pgh_footer{
+    width:100%;
+}
+.fb_auth_wrapper .eb_logo {
+    height: 50px;
+    margin-bottom: 40px;
+}
+.fb_auth_wrapper .fb_auth {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    align-items: center;
+    padding: 50px 30px;
+    box-shadow: var(--eb-shadow2);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 0 auto;
+    margin-top: 18%;
+    position: relative;
+}

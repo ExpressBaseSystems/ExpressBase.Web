@@ -1,0 +1,53 @@
+﻿<div class="area">
+    <div class="survey_pgh">
+        <div class="container">
+            <h3 class="SurveyHead text-center" jstag="SurveyName">Survey Name</h3>
+            <p class="w-100 text-center totalques" jstag="CurrentQues">Question 0/0</p>
+            <div class="survey_pgh_footer">
+                @*<span class="current_time" jstag="CurrentTime">14:32:00</span>*@
+                @*<span class="curent_ques pull-right" jstag="CurrentQues">Question 2/21</span>*@
+            </div>
+        </div>
+    </div>
+    <div class="container ques_container" id="ques_container">
+        @*<div class="q_box" q_id=>
+                <div class="qstxtc_t pd-10 float-l">
+                    cxzcxzczczxvfhf sgfdgdfgfd dfgfdgfdgf fgfdg gf ggfdgfg  gdfgfdgf g gg fg fdg fg dg d gdsgdsg  ds?
+                </div>
+                <div class="qschoice_mid w-100 pd-10 float-l">
+                    <div class="col-md-6 pd-l-0 ssel_container display-flex">
+                        <span class="mr-r-10px"><input type="radio" name="rad" /></span>
+                        <span>Choice gfdkgn.</span>
+                    </div>
+                    <div class="col-md-12 rating_container display-flex">
+                        <div class="star_container">
+                            <span class="fa fa-star star_checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-12 user_in_container display-flex">
+                        <div class="col-md-4">
+                            <input type="text" name="" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="qscfooter_sub w-100 pd-10 float-l">
+                    <a class="ebbtn eb_btn-sm eb_btngreen pull-right" job="submit">Submit</a>
+                </div>
+            </div>*@
+    </div>
+</div>
+<div class="survey_cmsgbox">
+    <p>Completed</p>
+</div>
+<script>
+    new QRender({
+        Survey: '@Html.Raw(ViewBag.Survey)',
+        Rtoken: '@ViewBag.Rtok',
+        Btoken: '@Html.Raw(ViewBag.Btok)',
+        MasterId:'@ViewBag.MasterId'
+    });
+</script>

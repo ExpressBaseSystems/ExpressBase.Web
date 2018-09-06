@@ -304,6 +304,8 @@
         this.dropLoc.append(this.col.css({ left: l1, top: top }));
         obj1.Top = this.col.position().top;
         obj1.Left = this.col.position().left;
+        obj1.Width = this.col.innerWidth();
+        obj1.Height = this.col.innerHeight();
         obj1.ParentName = this.dropLoc.attr("eb-type");
     };
 

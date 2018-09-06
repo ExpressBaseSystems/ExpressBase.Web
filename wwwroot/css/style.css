@@ -127,7 +127,11 @@ body {
     color: #828181;
     font-family: Montserrat;
 }
-
+.ellipsis-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
 .nopadding {
     padding: 0;
 }

@@ -273,6 +273,8 @@
                 else {
                     this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
                     this.RbObj.objCollection[$(ebctrl).attr("id")].Top = $(ebctrl).position().top + $td.position().top + parseFloat(this._table.Top);
+                    this.RbObj.objCollection[$(ebctrl).attr("id")].Width = $(ebctrl).innerWidth();
+                    this.RbObj.objCollection[$(ebctrl).attr("id")].Height = $(ebctrl).innerHeight();
                     eb_obj.ControlCollection.$values.push(this.RbObj.objCollection[$(ebctrl).attr("id")]);
                     this.RbObj.pushToSections($(ebctrl), this.sectionIndex, this.eb_typeCntl);
                 }

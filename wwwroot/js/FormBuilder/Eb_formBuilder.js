@@ -85,10 +85,10 @@
     }
 
     this.makeTabsDropable = function () {
-        $.each($(".tab-pane"), function (i) {
+        $.each($("#" + this.formId + " .tab-pane"), function (i, el) {
             if (this.drake) {
-                if (!this.drake.containers.contains(document.getElementsByClassName("tab-pane")[i])) {
-                    this.drake.containers.push(document.getElementsByClassName("tab-pane")[i]);
+                if (!this.drake.containers.contains(el)) {
+                    this.drake.containers.push(el);
                 }
             }
         }.bind(this));

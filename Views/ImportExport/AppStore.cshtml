@@ -3,7 +3,6 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<script src="~/js/EbDashBoards/AppDashBoard.js" type="text/javascript"></script>
 @{
     List<AppStore> _appList = ViewBag.StoreApps;
     int _appcount = 0;
@@ -12,105 +11,142 @@
         _appcount = _appList.Count;
     }
 }
-
-<div class="s-dash-workplace">
-    <div class="col-md-12 pd-0 s-dash-solution-desc" style="margin-bottom: 7px;">
-        <div class="col-md-10 pd-0">
-            <h3 class="mr-t-0">App Store(@_appcount)</h3>
+<script> new EbHeader().setName("AppStore");</script>
+<div class="row s-dash-container">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+        <div class="t-container">
+            <ul class="list-group menuwrapper_ul_outer">
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">store</span>
+                        <span class="t__sidebar_text">App Store</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Survey/SurveyHome">
+                        <span class="material-icons t__sidebar_icon">question_answer</span>
+                        <span class="t__sidebar_text">Survey</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
-    <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-        <ul class="nav nav-tabs">
-            <li class="nav-item active devdshtab">
-                <a class="nav-link devdshtab" data-toggle="tab" href="#privapps_tab" role="tab">
-                    <img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Private <span class="apps_count privcount"></span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link devdshtab" data-toggle="tab" href="#pubapps_tab" role="tab">
-                    <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Public <span class="apps_count pubcount"></span>
-                </a>
-            </li>
-        </ul>
-        <div class="tab-content">
-            @{
-                int privcount = 0; int pubcount = 0;
-                if (_appList != null)
-                {
-                    <div class="tab-pane active" id="privapps_tab" role="tabpanel">
-                        @foreach (AppStore aw in _appList)
-                        {
-                            var apptype = (EbApplicationTypes)aw.AppType;
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+            <div class="col-md-10 pd-0">
+                <h4 class="mr-t-0 mr-b-0">App Store (@_appcount) </h4>
+            </div>
+            <div class="col-md-2 pd-0">
 
-                            string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                            if (aw.Status == 1)
+            </div>
+        </div>
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+            <ul class="nav nav-tabs">
+                <li class="nav-item active devdshtab">
+                    <a class="nav-link devdshtab" data-toggle="tab" href="#privapps_tab" role="tab">
+                        Private <span class="apps_count privcount"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link devdshtab" data-toggle="tab" href="#pubapps_tab" role="tab">
+                        Public <span class="apps_count pubcount"></span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                @{
+                    int privcount = 0; int pubcount = 0;
+                    if (_appList != null)
+                    {
+                        <div class="tab-pane active" id="privapps_tab" role="tabpanel">
+                            @foreach (AppStore aw in _appList)
                             {
-                                privcount = privcount + 1;
-                                <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                                    <div class="appcontainer_inner" href="@Url.Action("AppDashBoard", "Dev", new { Id = aw.Id, Type = aw.AppType })">
-                                        <div class="col-md-2 pd-l-0 flex-center">
-                                            <span class="fa @aw.Icon"></span>
-                                        </div>
-                                        <div class="col-md-10 pd-0">
-                                            <h5 class="txtdecor_none">@aw.Name</h5>
-                                            <p class="small txtdecor_none">@desc</p>
-                                            <p class="small txtdecor_none pull-right"><span>@apptype</span> Application</p>
-                                            <p class="small txtdecor_none">@aw.TenantName</p>
-                                            <p class="small txtdecor_none">@aw.CreatedAt</p>
-                                            <p class="small txtdecor_none ">$ @aw.Cost @aw.Currency</p>
-                                            <button class="small txtdecor_none pull-right button" onclick="location.href='../ImportExport/Import?Id=@aw.Id'">Install</button>
-                                            <button class="small txtdecor_none pull-right button  btn-success" onclick="location.href='../ImportExport/ShareToPublic?id=@aw.Id'">Share to Public</button>
+                                var apptype = (EbApplicationTypes)aw.AppType;
+
+                                string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                if (aw.Status == 1)
+                                {
+                                    privcount = privcount + 1;
+                                    <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
+                                        <div class="appcontainer_inner exp_apps" href="@Url.Action("AppDashBoard", "Dev", new { Id = aw.Id, Type = aw.AppType })">
+                                            <div class="display-flex">
+                                                <div class="col-md-2 pd-l-0 flex-center">
+                                                    <span class="fa @aw.Icon"></span>
+                                                </div>
+                                                <div class="col-md-10 pd-l-0 l-h1_2">
+                                                    <h5 class="txtdecor_none">@aw.Name</h5>
+                                                    <p class="small txtdecor_none">@desc</p>
+                                                    <p class="small txtdecor_none pull-right"><span>@apptype</span> Application</p>
+                                                    <p class="small txtdecor_none">@aw.TenantName</p>
+                                                    <p class="small txtdecor_none">@aw.CreatedAt</p>
+                                                    <p class="small txtdecor_none ">$ @aw.Cost @aw.Currency</p>
+                                                </div>
+                                            </div>
+                                            <div class="ftr_exp_apps col-md-12 w-100 float-l">
+                                                <button class="ebbtn eb_btnplain eb_btn-sm cg" onclick="location.href='../ImportExport/Import?Id=@aw.Id'">Install</button>
+                                                <button class="ebbtn eb_btnplain eb_btn-sm pull-right mr-10 cb" onclick="location.href='../ImportExport/ShareToPublic?id=@aw.Id'">Share to Public</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                             }
-                        }
-                    </div>
-                    <div class="tab-pane" id="pubapps_tab" role="tabpanel">
-                        @foreach (AppStore aw in _appList)
-                        {
-                            var apptype = (EbApplicationTypes)aw.AppType;
-
-                            string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                            if (aw.Status == 2)
+                        </div>
+                        <div class="tab-pane" id="pubapps_tab" role="tabpanel">
+                            @foreach (AppStore aw in _appList)
                             {
-                                pubcount = pubcount + 1;
-                                <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                                    <div class="appcontainer_inner" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                        <div class="col-md-2 pd-l-0 flex-center">
-                                            <span class="fa @aw.Icon"></span>
-                                        </div>
-                                        <div class="col-md-10 pd-0">
-                                            <h5 class="txtdecor_none">@aw.Name</h5>
-                                            <p class="small txtdecor_none">@desc</p>
-                                            <p class="small txtdecor_none pull-right"><span>@apptype</span> Application</p>
-                                            <p class="small txtdecor_none">@aw.TenantName</p>
-                                            <p class="small txtdecor_none">@aw.CreatedAt</p>
-                                            <p class="small txtdecor_none ">$ @aw.Cost @aw.Currency</p>
-                                            <button class="small txtdecor_none  button" onclick="location.href='../ImportExport/Import?Id=@aw.Id'">Install</button>
-                                            <button class="small txtdecor_none  btn-success">Buy</button>
-                                            <button class="small txtdecor_none pull-right">Add to wishlist</button>
-                                            @if(@aw.SolutionId == @ViewBag.cid){
-                                            <button class="small txtdecor_none pull-right btn-primary" type="button" onclick="location.href='../ImportExport/ShareToPublic?id=@aw.Id'">Edit details</button>
-                                            }
+                                var apptype = (EbApplicationTypes)aw.AppType;
+
+                                string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                if (aw.Status == 2)
+                                {
+                                    pubcount = pubcount + 1;
+                                    <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
+                                        <div class="appcontainer_inner exp_apps" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                            <div class="display-flex">
+                                                <div class="col-md-2 pd-l-0 flex-center">
+                                                    <span class="fa @aw.Icon"></span>
+                                                </div>
+                                                <div class="col-md-10 pd-l-0 l-h1_2">
+                                                    <h5 class="txtdecor_none">@aw.Name</h5>
+                                                    <p class="small txtdecor_none">@desc</p>
+                                                    <p class="small txtdecor_none pull-right"><span>@apptype</span> Application</p>
+                                                    <p class="small txtdecor_none">@aw.TenantName</p>
+                                                    <p class="small txtdecor_none">@aw.CreatedAt</p>
+                                                    <p class="small txtdecor_none ">$ @aw.Cost @aw.Currency</p>
+                                                </div>
+                                            </div>
+                                            <div class="ftr_exp_apps col-md-12 w-100 float-l">
+                                                <button class="ebbtn eb_btnplain eb_btn-sm cg" onclick="location.href='../ImportExport/Import?Id=@aw.Id'">Install</button>
+                                                <button class="ebbtn eb_btngreen eb_btn-sm">Buy</button>
+                                                <button class="ebbtn eb_btnplain eb_btn-sm pull-right">Add to wishlist</button>
+                                                @if (@aw.SolutionId == @ViewBag.cid)
+                                                {
+                                                    <button class="ebbtn eb_btnplain eb_btn-sm pull-right cb" type="button" onclick="location.href='../ImportExport/ShareToPublic?id=@aw.Id'">Edit details</button>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                             }
-                        }
-                    </div>
+                        </div>
+                    }
                 }
-            }
+            </div>
         </div>
     </div>
 </div>
-
-<style>
-    .s-dash-workplace {
-        margin-top: 60px;
-        width: 90%;
-    }
-</style>
 <script>
      if ('@ViewBag.Msg') {
         EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });

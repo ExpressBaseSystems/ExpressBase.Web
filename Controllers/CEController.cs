@@ -184,6 +184,9 @@ namespace ExpressBase.Web.Controllers
             }
             return resultlist1;
         }        
-
+        public int Email()
+        { this.ServiceClient.Post(new EmailServicesMqRequest{ Refid = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2153-2885-2153-2885",
+           To = "donaullattil93@gmail.com" });
+            return 0; }
     }
 }

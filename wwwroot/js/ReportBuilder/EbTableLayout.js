@@ -13,11 +13,11 @@
     this.createTable = function () {
         let id = this.Report.Objtype + (this.Report.idCounter[this.Report.Objtype + "Counter"])++;
         this.EbCtrl = new EbObjects["EbTableLayout"](id);
+        this.ColCount = this.EbCtrl.ColoumCount;
+        this.RowCount = this.EbCtrl.RowCount;
         this.Report.dropLoc.append(this.getHtml(id));
         this.Report.objCollection[id] = this.EbCtrl;
         this.Table = $(`#${id}`);
-        this.ColCount = this.EbCtrl.ColoumCount;
-        this.RowCount = this.EbCtrl.RowCount;
         this.setPosition(id);
         this.draggableT(id);
         this.makeResizable(id);
@@ -117,16 +117,22 @@
                          <table class="table table-bordered">
                             <tbody>
                               <tr class="T_layout_tr">
-                                <td class="T_layout_td" eb-type="TableLayout"></td>
-                                <td class="T_layout_td" eb-type="TableLayout"></td>
-                                <td class="T_layout_td" eb-type="TableLayout"></td>
+                                ${this.getTdHtml()}
                               </tr>
                             </tbody>
                           </table>
                     <div class='eb_draggbale_table_handle' onclick='$(this).parent().focus();'><i class='fa fa-arrows'></i></div>
                     </div>`;
         return html;
-    }
+    };
+
+    this.getTdHtml = function () {
+        let ar = [];
+        for (i = 0; i < this.ColCount; i++) {
+            ar.push("<td class='T_layout_td' eb-type='TableLayout'></td>");
+        }
+        return ar.join("");
+    };
 
 
     this.makeTLayoutDroppable = function (id) {

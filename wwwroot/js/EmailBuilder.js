@@ -63,10 +63,10 @@
         obj.Title = "{{" + tbl + this.col.text() + "}}";
         this.ObjCollect[id] = obj;
         this.RefreshControl(obj);
-        if (dsobj !=null)
+       // if (dsobj !=null)
             this.EbObject.DsColumnsCollection.$values.push(obj);
-        else
-            this.EbObject.DsColumnsCollection.push(obj);
+      //  else
+        //    this.EbObject.DsColumnsCollection.push(obj);
         this.placeCaretAtEnd(document.getElementById(id));
         $('#' + id).attr('contenteditable', 'false');
     };
@@ -290,6 +290,7 @@
         });
     }
 
+	this.CreateRelationString = function () { }
     this.Init();
 }
 

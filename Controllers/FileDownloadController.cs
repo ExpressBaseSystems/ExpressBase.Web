@@ -1,27 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.Serialization.Json;
-using System.Runtime.Serialization;
-using System.Globalization;
-using RestSharp;
-using System.Net;
-using RestSharp.Authenticators;
-using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using Flurl.Http;
+﻿using CloudinaryDotNet;
+using ExpressBase.Common.ServiceStack.ReqNRes;
 using ExpressBase.Web.BaseControllers;
+using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
-using Microsoft.AspNetCore.Mvc;
-using ExpressBase.Common.ServiceStack.ReqNRes;
-using ExpressBase.Common.Enums;
-using System.Net;
-using System.IO;
-using System.Net.Http;
-using System.Web;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -30,12 +12,14 @@ namespace ExpressBase.Web.Controllers
         public FileDownloadController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis)
         {
         }
-        
+
         [HttpGet]
-        public void Download()
+        public void Download(string cloud, string apiKey, string apiSecret)
         {
-            FileDownloadRequestObject req = new FileDownloadRequestObject();
-            this.ServiceClient.Post(req);
+            this.ServiceClient.Post(new FileDownloadRequestObject()
+            {
+                Account = new Account(cloud, apiKey, apiSecret)
+            });
         }
     }
 }

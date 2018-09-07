@@ -50,11 +50,18 @@
         //  this.PGobj.ReadOnly();
     };
 
-    this.MakeContDropable = function (type) {
-        if (type === "TableLayout")
+    this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
+        if (ctrlObj.ObjType === "TableLayout")
             this.makeTdsDropable();
-        else if (type === "TabControl")
+        else if (ctrlObj.ObjType === "TabControl") {
+            let tapPanes = $ctrl.find(".tab-pane");
+            let tapBtns = $ctrl.find("ul.nav-tabs a");
+            $.each(ctrlObj.Controls.$values, function (i, pane) {
+                $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
+                $(tapBtns[0]).attr("href", "#" + pane.EbSid);
+            });
             this.makeTabsDropable();
+        }
     }
 
     this.makeTabsDropable = function () {
@@ -266,7 +273,7 @@
 
                 $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
                 $ctrl.on("focus", this.controlOnFocus.bind(this));
-                $ctrl.attr("id", id);
+                $ctrl.attr("id", id).attr("ebsid", id);
                 $ctrl.attr("eb-type", type);
                 var ctrlObj = new EbObjects["Eb" + type](id);
                 this.rootContainerObj.Controls.Append(ctrlObj);
@@ -275,7 +282,7 @@
                 ctrlObj.Label = id;
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
-                    this.MakeContDropable(type);
+                    this.InitContCtrl(ctrlObj, $ctrl);
                 this.updateControlUI(id);
             }
             else
@@ -402,7 +409,7 @@
             let id = SelectedCtrl.EbSid;
             let $ctrl = $("#" + id);
             let $tabMenu = $(`<li li-of="${addedObj.Name}"><a data-toggle="tab" href="#${addedObj.Name}">${addedObj.Name}</a></li>`);
-            let $tabPane = $(`<div id="${addedObj.Name}" class="tab-pane fade "></div>`);
+            let $tabPane = $(`<div id="${addedObj.Name}" ebsid="${addedObj.Name}" class="tab-pane fade "></div>`);
             $ctrl.find(".nav-tabs").append($tabMenu);
             $ctrl.find(".tab-content").append($tabPane);
         };
@@ -437,21 +444,9 @@
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
 
-
+            
             if (CurProp === 'DataSourceId') {
-                $.LoadingOverlay('show');
-                $.ajax({
-                    type: "POST",
-                    url: "../DS/GetColumns",
-                    data: { DataSourceRefId: PropsObj.DataSourceId },
-                    success: function (Columns) {
-                        PropsObj.Columns = JSON.parse(Columns);
-                        this.PGobj.refresh();
-                        if (PropsObj.constructor.name === "EbDynamicCardSet")
-                            this.setAllChildObjColumns(PropsObj);
-                        $.LoadingOverlay('hide');
-                    }.bind(this)
-                });
+                this.PGobj.PGHelper.dataSourceInit(this.DSchangeCallBack);
             }
 
         }.bind(this);

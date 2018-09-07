@@ -24,7 +24,7 @@
         RadioGroupCounter: 0,
         SimpleSelectCounter: 0,
         CheckBoxGroupCounter: 0,
-        UserLocationCounter:0
+        UserLocationCounter: 0
     };
     this.currentProperty = null;
     this.CurRowCount = 2;
@@ -374,23 +374,17 @@
         //$("#commit").on("click", this.commit.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
+
+        this.DSchangeCallBack = function (PropsObj) {
+        }.bind(this);
+
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             //RefreshControl(PropsObj);
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
 
             if (CurProp === 'DataSourceId') {
-                $.LoadingOverlay('show');
-                $.ajax({
-                    type: "POST",
-                    url: "../DS/GetColumns",
-                    data: { DataSourceRefId: PropsObj.DataSourceId },
-                    success: function (Columns) {
-                        PropsObj.Columns = JSON.parse(Columns);
-                        this.PGobj.refresh();
-                        $.LoadingOverlay('hide');
-                    }.bind(this)
-                });
+                this.PGobj.PGHelper.dataSourceInit(this.DSchangeCallBack);
             }
 
 
@@ -421,7 +415,7 @@
         fun: this.del
     }];
 
-	this.CreateRelationString = function () { };
+    this.CreateRelationString = function () { };
 
     this.Init();
 };

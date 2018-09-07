@@ -458,21 +458,14 @@
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
 
+        this.DSchangeCallBack = function (PropsObj) {
+            if (PropsObj.constructor.name === "EbDynamicCardSet")
+                this.setAllChildObjColumns(PropsObj);
+        }.bind(this);
+
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             if (CurProp === 'DataSourceId') {
-                $.LoadingOverlay('show');
-                $.ajax({
-                    type: "POST",
-                    url: "../DS/GetColumns",
-                    data: { DataSourceRefId: PropsObj.DataSourceId },
-                    success: function (Columns) {
-                        PropsObj.Columns = JSON.parse(Columns);
-                        this.PGobj.refresh();
-                        if (PropsObj.constructor.name === "EbDynamicCardSet")
-                            this.setAllChildObjColumns(PropsObj);
-                        $.LoadingOverlay('hide');
-                    }.bind(this)
-                });
+                Eb_dataSourceInit(this.DSchangeCallBack);
             }
             if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm") {
                 this.RefreshControl(PropsObj);

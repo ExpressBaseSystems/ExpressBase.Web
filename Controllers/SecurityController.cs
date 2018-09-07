@@ -116,7 +116,7 @@ namespace ExpressBase.Web.Controllers
 			//	Sysroles.Add(new EbRole() { Name = role.ToString(), Description = "SystemRole_" + role, Id = (int)role });
 			//}
 			//ViewBag.SystemRoles = JsonConvert.SerializeObject(Sysroles);
-			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, RqstMode = Mode, TenantAccountId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, RqstMode = Mode, SolnId = ViewBag.cid });
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
 			{
 				fr.Roles.Add(new EbRole() {
@@ -276,7 +276,7 @@ namespace ExpressBase.Web.Controllers
 			//	GetManageUserGroupResponse res = this.ServiceClient.Post<GetManageUserGroupResponse>(new GetManageUserGroupRequest { Colvalues = Colval, id = itemid });
 			//}
 
-			var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, TenantAccountId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, SolnId = ViewBag.cid });
 			ViewBag.SelectedUserGroupInfo = JsonConvert.SerializeObject(fr.SelectedUserGroupInfo);
 			ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
 			return View();
@@ -353,7 +353,7 @@ namespace ExpressBase.Web.Controllers
 
 		public object GetUserDetails(string srchTxt)
 	{
-			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText=srchTxt, TenantAccountId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText=srchTxt, SolnId = ViewBag.cid });
 			return fr.UserList;
 		}
 

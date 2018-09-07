@@ -14,12 +14,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
-        public void Download(string cloud, string apiKey, string apiSecret)
+        public void Download()
         {
-            this.ServiceClient.Post(new FileDownloadRequestObject()
-            {
-                Account = new Account(cloud, apiKey, apiSecret)
-            });
+            this.ServiceClient.Post(new FileDownloadRequestObject());
         }
     }
 }

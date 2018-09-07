@@ -138,13 +138,13 @@
                             <div class="connection_wrap w-100">
                                 <div class="connection_wrap_header w-100" id="FilesConnection_config">
                                     <div class="col-md-2 db_vendorimg text-center VendorImage">
-                                       @* <img class="img-responsive" src="~/images/MongodB.png" />*@
+                                        <img class="img-responsive" src="~/images/cloudnary.png" />
                                     </div>
                                     <div class="col-md-10">
                                         <p class="NickName mr-0 pdt-5"> </p>
                                         <p class="FilesUrI mr-0 pdt-5"></p>
                                     </div>
-                                </div> 
+                                </div>
                                 <div class="connection_wrap_footer">
                                     <label>Files Connection</label>
                                     <a class="pull-right" data-toggle="modal" data-target="#filesDbConnectEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
@@ -152,16 +152,52 @@
                             </div>
                         </div>
                         <div class="col-md-6 connection_wrap_outer">
+                            <div class="connection_wrap w-100">
+                                <div class="connection_wrap_header w-100" id="Cloudnary_Connection_config">
+                                    <div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        @* <img class="img-responsive" src="~/images/MongodB.png" />*@
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p class="Cloud mr-0 pdt-5"> </p>
+                                        <p class="ApiKey mr-0 pdt-5"></p>
+                                        <p class="SecretKey mr-0 pdt-5"></p>
+                                    </div>
+                                </div>
+                                <div class="connection_wrap_footer">
+                                    <label>Files Connection</label>
+                                    <a class="pull-right" data-toggle="modal" data-target="#cldnry_conEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 connection_wrap_outer">
+                            <div class="connection_wrap w-100">
+                                <div class="connection_wrap_header w-100" id="Ftp_Connection_config">
+                                    <div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        @* <img class="img-responsive" src="~/images/MongodB.png" />*@
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p class="UserName mr-0 pdt-5"> </p>
+                                        <p class="Password mr-0 pdt-5"></p>
+                                        <p class="IpAddress mr-0 pdt-5"></p>
+                                    </div>
+                                </div>
+                                <div class="connection_wrap_footer">
+                                    <label>Files Connection</label>
+                                    <a class="pull-right" data-toggle="modal" data-target="#ftp_connectionEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 connection_wrap_outer">
                             <div class="connection_wrap w-100 grayscale">
                                 <div class="connection_wrap_header w-100" id="EmailConnection_config">
                                     @*<div class="col-md-2 db_vendorimg text-center VendorImage">
-                                        <img class="img-responsive" src="~/images/svg/email.svg" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <p class="Server mr-0 pdt-5">000.000.000.000</p>
-                                        <p class="EmailAddress mr-0 pdt-5">--@@----------.-----</p>
-                                        <p class="NickName mr-0 pdt-5">----------------------</p>
-                                    </div>*@
+                        <img class="img-responsive" src="~/images/svg/email.svg" />
+                    </div>
+                    <div class="col-md-10">
+                        <p class="Server mr-0 pdt-5">000.000.000.000</p>
+                        <p class="EmailAddress mr-0 pdt-5">--@@----------.-----</p>
+                        <p class="NickName mr-0 pdt-5">----------------------</p>
+                    </div>*@
                                 </div>
                                 <div class="connection_wrap_footer">
                                     <label>Email Connection</label>
@@ -173,13 +209,13 @@
                             <div class="connection_wrap w-100 grayscale">
                                 <div class="connection_wrap_header w-100" id="SMSConnection_config">
                                     @*<div class="col-md-2 db_vendorimg text-center VendorImage">
-                                        <img class="img-responsive" src="~/images/svg/text.svg" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <p class="UserName mr-0 pdt-5">-------</p>
-                                        <p class="SendNo mr-0 pdt-5">0000000000</p>
-                                        <p class="NickName mr-0 pdt-5">-------</p>
-                                    </div>*@
+                        <img class="img-responsive" src="~/images/svg/text.svg" />
+                    </div>
+                    <div class="col-md-10">
+                        <p class="UserName mr-0 pdt-5">-------</p>
+                        <p class="SendNo mr-0 pdt-5">0000000000</p>
+                        <p class="NickName mr-0 pdt-5">-------</p>
+                    </div>*@
                                 </div>
                                 <div class="connection_wrap_footer">
                                     <label>SMS Connection</label>
@@ -187,57 +223,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        @*<div class="_sec_pan">
-            <div class="_sec_pan_head">
-                <span><img src="~/images/svg/data-storage.svg" /></span>
-                <span class="Name">DataBase Connection @dbdefault</span>
-            </div>
-            <div class="_sec_pan_bdy">
-                <div class="dbConnectionEdit_info" id="DbConnection_config">
-                    <div class="col-md-1 db_vendorimg text-center VendorImage">
-                        <!--database vendor image -->
-                    </div>
-                    <div class="col-md-8">
-                        <p class="DatabaseName mr-0 pdt-5"></p>
-                        <p class="NickName mr-0 pdt-5"></p>
-                        <p class="Server mr-0 pdt-5"></p>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="ebbtn eb_btnwhite pull-right" data-toggle="modal" data-target="#dbConnectionEdit">Change</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="_sec_pan">
-            <div class="_sec_pan_head"><span><img src="~/images/svg/folder.svg" /></span><span class="Name">Files Connection @filedefault</span></div>
-            <div class="_sec_pan_bdy">
-                <div class="dbConnectionEdit_info" id="FilesConnection_config">
-                    <div class="col-md-1 db_vendorimg text-center VendorImage">
-                        <!--filedb vendor image -->
-                    </div>
-                    <div class="col-md-8">
-                        <p class="NickName mr-0 pdt-5"></p>
-                        <p class="FilesUrI mr-0 pdt-5"></p>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="ebbtn eb_btnwhite pull-right" data-toggle="modal" data-target="#filesDbConnectEdit">Change</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="_sec_pan">
-            <div class="_sec_pan_head"><span><img src="~/images/svg/email.svg" /></span><span class="Name">Email Accounts</span></div>
-            <div class="_sec_pan_bdy" id="EmailConnection_config">
-                <!--email config jq injection-->
-            </div>
-        </div>
-        <div class="_sec_pan">
-            <div class="_sec_pan_head"><span><img src="~/images/svg/text.svg" /></span><span class="Name">SMS Accounts</span></div>
-            <div class="_sec_pan_bdy" id="SMSConnection_config">
-                <!--sms config jq injection-->
-            </div>
-        </div>*@
                     </div>
                 </div>
                 <div class="tab-pane" id="team" role="tabpanel">
@@ -575,6 +560,82 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="cldnry_conEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" id="cloudnary_mask">
+            <form action="" method="post" id="CloudnaryConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Cloudnary Connection</h4>
+                    <div id="cloudnary_loader" class="dbConnection_loder"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Vendor</label>
+                        <select name="Vendor" class="form-control">
+                            <option value="Cloudinary">Cloudinary</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cloud</label>
+                        <input type="text" name="Cloud" class="form-control" value="" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Api Key</label>
+                        <input type="text" name="ApiKey" class="form-control" value="" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Api Secret</label>
+                        <input type="text" name="ApiSecret" class="form-control" value="" required />
+                    </div>
+                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="ftp_connectionEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" id="ftp_mask">
+            <form action="" method="post" id="FtpConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">FTP Connection</h4>
+                    <div id="ftp_loader" class="dbConnection_loder"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>User Name</label>
+                        <input type="text" name="Username" class="form-control" value="" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" name="Password" class="form-control" value="" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Host</label>
+                        <input type="text" name="Host" class="form-control" value="" required />
+                    </div>
+                    <div class="form-group">
+                        <label>NickName</label>
+                        <input type="text" name="NickName" class="form-control" value="" required />
+                    </div>
+                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
                 </div>
             </form>
         </div>

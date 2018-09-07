@@ -27,7 +27,7 @@ namespace ExpressBase.Web.Controllers
 			else
 				ac = "0";
 
-			var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = Convert.ToInt32(ac), RequestMode = mode, TenantAccountId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetManageLeadResponse>(new GetManageLeadRequest { AccId = Convert.ToInt32(ac), RequestMode = mode, SolnId = ViewBag.cid });
 
 			if(fr.RespMode == 0)
 				ViewBag.AccId = "0";

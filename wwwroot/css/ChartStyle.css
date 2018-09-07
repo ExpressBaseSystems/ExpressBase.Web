@@ -35,3 +35,32 @@
 .tool-box-items span {
     margin-right: 5px;
 }
+.columnDrag {
+    display: inline-block;
+    padding: 4px 4.5px;
+    background-color: #c8d4ef;
+    border-radius: 25px;
+    font-size: 11px;
+    cursor: move;
+    color: #111;
+    user-select: none;
+    transition-duration: 0.3s;
+}
+.columnDrag .close {
+    font-size: 15px;
+    margin: -2px 0 0 4px;
+    color: black !important;
+}
+.containerrow canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+.containerrow .Obj_title {
+    font-size: 12px;
+    font-weight: bold;
+}
+.containerrow .close {
+    margin-top: -5px;
+    float: left;
+    padding-right: 12px;
+}

@@ -76,8 +76,7 @@ namespace ExpressBase.Web.Controllers
             UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = Email });
             if (!result.isUniq)
             {
-                this.ServiceClient.Post(new EmailServicesMqRequest() { Refid = "expressbase-expressbase-15-26-26", TenantAccountId = CoreConstants.EXPRESSBASE, 
-                     UserId = 0 });
+                this.ServiceClient.Post(new EmailServicesMqRequest() { Refid = "expressbase-expressbase-15-26-26", SolnId = CoreConstants.EXPRESSBASE});
                 TempData["Message"] = string.Format("we've sent a password reset link to {0}", Email);
                 return RedirectToAction(RoutingConstants.INDEX);
             }

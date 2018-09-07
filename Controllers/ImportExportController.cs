@@ -15,6 +15,7 @@ using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ReportRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -30,6 +31,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [EbBreadCrumbFilter("Appstore")]
         [HttpGet("AppStore")]
         public IActionResult AppStore()
         {
@@ -45,6 +47,7 @@ namespace ExpressBase.Web.Controllers
             return obj;
         }
 
+        [EbBreadCrumbFilter("Appstore/ShareToPublic", new string[] { "/Appstore" })]
         [HttpGet]
         public IActionResult ShareToPublic(int id)
         {

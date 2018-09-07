@@ -254,11 +254,12 @@ flex-direction:column;
 .loc_switchModal_box {
     background: white;
     box-shadow: var(--eb-shadow);
-    min-width: 500px;
+    min-width: 600px;
     min-height: 300px;
     display: flex;
     flex-direction: column;
     padding: 0 10px;
+    max-height: 434px;
 }
 .loc_switchModal_outer{
     width:100%;
@@ -294,6 +295,7 @@ flex-direction:column;
 }
 .loc_switchModal_box .locs_bdy {
     flex: 1 1 auto;
+    overflow: auto;
 }
 .loc_switchModal_box .locs_foot {
     flex: 0 1 auto;
@@ -315,4 +317,72 @@ flex-direction:column;
     position: absolute;
     align-self: center;
     top: 47%;
+}
+/*app store*/
+.exp_apps {
+    flex-direction: column;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+.ftr_exp_apps {
+    background: white;
+    border-top: 1px solid #e8e8e8;
+    padding: 5px;
+}
+.l-h1_2{
+    line-height:1.2rem;
+}
+.share_to_pub_info {
+    padding: 15px 15px;
+    background-color: #f2f2f2;
+}
+.share_to_pub_info label{
+    font-weight:400;
+}
+.share_to_publicWraper .app_profile {
+    margin-top: 50px;
+}
+
+.share_to_publicWraper .bootstrap-tagsinput {
+    width: 100%;
+}
+
+.share_to_publicWraper .vdeo_lnks_main .label-info {
+    background-color: #676a8e;
+}
+
+.share_to_publicWraper .tags_main .label-info {
+    background-color: #676a8e;
+}
+
+.share_to_publicWraper #store_nav .nav > li > a {
+    padding: 5px 15px;
+}
+
+.share_to_publicWraper #store_nav {
+    padding-top: 30px;
+    margin-top: 19px;
+}
+
+.share_to_publicWraper .note-editable {
+    height: 255px;
+}
+
+.share_to_publicWraper table tr td {
+    border: 1px solid #ccc;
+    padding: 0;
+    vertical-align: middle;
+}
+.mr-r-10{
+    margin-right:10px;
+}
+.border-none{
+    border:none;
+}
+.h-100{
+    height:100%;
+}
+pd-10{
+    padding:5px !important;
 }

@@ -125,7 +125,7 @@ var EbSelect = function (ctrl, options) {
                 return;
             var searchBy = " = ";
             if (mapedFieldType === "string")
-                searchBy = "*x*";
+                searchBy = "x*";
             var filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
             this.InitDT();

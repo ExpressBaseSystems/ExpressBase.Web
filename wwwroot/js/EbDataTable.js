@@ -188,12 +188,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 $(".filterCont").show();
                 $(".filterCont").css("visibility", "visible");
-                //if (this.login === "dc") {
-                //    this.stickBtn.minimise();
-                //}
-                //else {
-                //    dvcontainerObj.stickBtn.minimise();
-                //}
             }
             $("#eb_common_loader").EbLoader("hide");
         }
@@ -1451,9 +1445,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
             //}
             if (tempobj[0].LinkRefId !== null)
-                tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'><a href="#" oncontextmenu="return false" class="tablelink" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
+                tempstr += tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'><a href="#" oncontextmenu="return false" class="tablelink" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
             else
-                tempstr += tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'>${groupArray[j]}</b>`;
+                tempstr += tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'>${groupArray[j]}</b>`;
 
             if (typeof this.RGIndex[j + 1] !== "undefined")
                 tempstr += ",";
@@ -1476,9 +1470,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
         //}
         if (tempobj[0].LinkRefId !== null)
-            var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
+            var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
         else
-            var tempstr = tempobj[0].sTitle + `: <b data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
+            var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
             str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
         return str;
     }.bind(this);
@@ -2501,6 +2495,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else if ($(e.target).closest("a").attr("data-inline") !== undefined) {
             cData = $(e.target).closest("a").attr("data-data");
             this.inline = true;
+            var colindex =parseInt( $(e.target).closest("a").attr("data-colindex"));
         }
         else
             cData = $(e.target).text();
@@ -2514,7 +2509,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.filterValues = this.getFilterValues("link");
 
-        if ($(e.target).parent("b").attr("data-colname") !== undefined) {
+        if ($(e.target).parent("b").attr("data-rowgroup") !== undefined) {
 
             this.getRowGroupFilter($(e.target).parent("b"));
             if (this.EbObject.tempRowgrouping.$type.indexOf("SingleLevelRowGroup") !== -1) {
@@ -2533,55 +2528,41 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             this.filterValues = this.filterValues.concat(this.rowgroupFilter);
         }
-        if (this.login === "uc") {
-            if (this.inline) {
-                this.inline = false;
-                if ($(rows).eq(idx).next().attr("class") !== "containerrow") {
-                    $("#eb_common_loader").EbLoader("show");
-                    $(rows).eq(idx).after("<tr class='containerrow'><td colspan='21'><table id='tbl" + idx + "'></table></td></tr>");
-                    this.call2newTable($(rows).eq(idx), "tbl" + idx);
-                    $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
-                    $("#eb_common_loader").EbLoader("hide");
-                }
-                else {
-                    if ($(e.target).closest("I").hasClass("fa-minus")) {
-                        $(e.target).closest("I").removeClass("fa-minus").addClass("fa-plus");
-                        $(rows).eq(idx).next().hide();
-                    }
-                    else {
-                        $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
-                        $(rows).eq(idx).next().show();
-                    }
-                }
+        
+        if (this.inline) {
+            this.inline = false;
+            if ($(rows).eq(idx).next().attr("id") !== "containerrow"+colindex) {
+                this.drawInlinedv(rows, e, idx, colindex);
             }
-            else
-                dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
+            else {
+                this.OpenInlineDv(rows, e, idx, colindex);
+            }
         }
         else {
-            if (this.inline) {
-                this.inline = false;
-                if ($(rows).eq(idx).next().attr("class") !== "containerrow") {
-                    $("#eb_common_loader").EbLoader("show");
-                    $(rows).eq(idx).after("<tr class='containerrow'><td colspan='21'><table id='tbl" + idx + "'></table></td></tr>");
-                    this.call2newTable($(rows).eq(idx), "tbl" + idx);
-                    $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
-                    $("#eb_common_loader").EbLoader("show");
-                }
-                else {
-                    if ($(e.target).closest("I").hasClass("fa-minus")) {
-                        $(e.target).closest("I").removeClass("fa-minus").addClass("fa-plus");
-                        $(rows).eq(idx).next().hide();
-                    }
-                    else {
-                        $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
-                        $(rows).eq(idx).next().show();
-                    }
-                }
-            }
+            if (this.login === "uc") 
+                dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
             else
                 this.OpeninNewTab(idx, cData);
         }
     };
+
+    this.drawInlinedv = function (rows, e, idx, colindex) {
+        $("#eb_common_loader").EbLoader("show");
+        $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-minus").addClass("fa-plus");
+        this.call2newDv(rows, idx, colindex);
+        $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
+        $("#eb_common_loader").EbLoader("hide");
+    };
+    this.OpenInlineDv = function (rows, e, idx, colindex) {
+        if ($(e.target).closest("I").hasClass("fa-minus")) {
+            $(e.target).closest("I").removeClass("fa-minus").addClass("fa-plus");
+            $(rows).eq(idx).next().hide();
+        }
+        else {
+            $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
+            $(rows).eq(idx).next().show();
+        }
+    }
 
     this.getRowGroupFilter = function ($elem) {
         let name = $elem.attr("data-colname");
@@ -2590,53 +2571,51 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (type === 5 || type === 6)
             val = val.split("/").join('-');
         this.rowgroupFilter.push(new fltr_obj(type, name, val));  
-
-
     }
 
-    this.call2newTable = function (e,tid) {
+    this.call2newDv = function (rows, idx, colindex) {
         $.ajax({
             type: "POST",
             url: "../DV/getdv",
-            data: { refid: this.linkDV, objtype: $(e.target).attr("objtype") },
-            success: this.GetData4InlineDataTable.bind(this, tid)
+            data: { refid: this.linkDV },
+            success: this.GetData4InlineDv.bind(this, rows, idx, colindex)
         });
     };
 
-    this.GetData4InlineDataTable = function (tid, result) {
+    this.GetData4InlineDv = function (rows, idx, colindex, result) {
         var Dvobj = JSON.parse(result).DsObj;
         var param = this.Params4InlineTable(Dvobj.DataSourceRefId);
         $.ajax({
             type: "POST",
             url: "../DV/getData4Inline",
             data: param,
-            success: this.LoadInlineDataTable.bind(this, tid, Dvobj)
+            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex)
         });
     }
 
-    this.LoadInlineDataTable = function (tid, Dvobj, result) {
-        //$("#" + tid).DataTable({
-        //    columns: Dvobj.Columns.$values,
-        //    serverSide: false,
-        //    scrollY: "100px",
-        //    //scrollX: "100%",
-        //    //scrollCollapse : true,
-        //    processing: true,
-        //    paging:false,
-        //    dom: "rt",
-        //    data: result.data,
-        //    autoWidth: true,
-        //});
-
-        var o = new Object();
-        o.tableId = tid;
-        o.showFilterRow = false;
-        o.showSerialColumn = false;
-        o.showCheckboxColumn = false;
-        o.scrollHeight = "200px";
-        o.dvObject = Dvobj;
-        o.data = result.data;
-        this.datatable = new EbBasicDataTable(o);
+    this.LoadInlineDv = function (rows, idx, Dvobj, colindex, result) {
+        $(rows).eq(idx).next(".containerrow").remove();
+        if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name +"</div><table id='tbl" + idx + "'></table></td></tr>");
+            var o = new Object();
+            o.tableId = "tbl" + idx;
+            o.showFilterRow = false;
+            o.showSerialColumn = false;
+            o.showCheckboxColumn = false;
+            o.scrollHeight = "200px";
+            o.dvObject = Dvobj;
+            o.data = result.data;
+            this.datatable = new EbBasicDataTable(o);
+        }
+        else {
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name+"</div><div id='canvasDivchart" + idx + "' ></div></td></tr>");
+            var o = new Object();
+            o.tableId = "chart" + idx;
+            o.dvObject = Dvobj;
+            o.data = result.data;
+            this.chartApi = new EbBasicChart(o);
+            $("#canvasDivchart" + idx).css("width", $(window).width()-100);
+        }
     }
 
     this.Params4InlineTable = function (dsid) {

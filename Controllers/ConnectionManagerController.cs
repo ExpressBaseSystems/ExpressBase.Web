@@ -289,20 +289,50 @@ namespace ExpressBase.Web.Controllers
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbImageManipulation });
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.Cloudinary });
                 var req = this.HttpContext.Request.Form;
-                ImageManipulateConnection con = new ImageManipulateConnection()
+                EbCloudinaryConnection con = new EbCloudinaryConnection()
                 {
-                    Cloud = req["Cloud"],
-                    ApiKey = req["ApiKey"],
-                    ApiSecret = req["ApiSecret"],
+                    Account = new CloudinaryDotNet.Account(req["Cloud"], req["ApiKey"], req["ApiSecret"]),
                     IsDefault = false
                 };
 
-                if (String.IsNullOrEmpty(con.Cloud) && con.Cloud == solutionConnections.EBSolutionConnections.ImageManipulateConnection.Cloud && con.ApiKey == solutionConnections.EBSolutionConnections.ImageManipulateConnection.ApiKey)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeImageManipulationConnectionRequest { ImageManipulateConnection = con, IsNew = false });
+                if (String.IsNullOrEmpty(con.Account.Cloud) && 
+                    con.Account.Cloud == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.Cloud && 
+                    con.Account.ApiKey == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.ApiKey)
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = false });
                 else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeImageManipulationConnectionRequest { ImageManipulateConnection = con, IsNew = true });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = true });
+                return JsonConvert.SerializeObject(con);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+
+
+        [HttpPost]
+        public string FTP(int i)
+        {
+            ChangeConnectionResponse res = new ChangeConnectionResponse();
+            try
+            {
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.FTP });
+                var req = this.HttpContext.Request.Form;
+                EbCloudinaryConnection con = new EbCloudinaryConnection()
+                {
+                    Account = new CloudinaryDotNet.Account(req["Cloud"], req["ApiKey"], req["ApiSecret"]),
+                    IsDefault = false
+                };
+
+                if (String.IsNullOrEmpty(con.Account.Cloud) &&
+                    con.Account.Cloud == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.Cloud &&
+                    con.Account.ApiKey == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.ApiKey)
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = false });
+                else
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = true });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)

@@ -38,7 +38,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception:" + e.Message.ToString()+"\nResponse: "+ res.ResponseStatus.Message);
+                Console.WriteLine("Exception:" + e.Message.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
             return View();
         }
@@ -217,7 +217,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: "+e.Message +"\nResponse: "+ res.ResponseStatus.Message);
+                Console.WriteLine("Exception: " + e.Message + "\nResponse: " + res.ResponseStatus.Message);
             }
             return Redirect("/ConnectionManager");
         }
@@ -297,12 +297,12 @@ namespace ExpressBase.Web.Controllers
                     IsDefault = false
                 };
 
-                if (String.IsNullOrEmpty(con.Account.Cloud) && 
-                    con.Account.Cloud == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.Cloud && 
+                if (String.IsNullOrEmpty(con.Account.Cloud) &&
+                    con.Account.Cloud == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.Cloud &&
                     con.Account.ApiKey == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.ApiKey)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = false });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = false, SolutionId = req["SolutionId"] });
                 else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = true });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)
@@ -321,18 +321,21 @@ namespace ExpressBase.Web.Controllers
             {
                 GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.FTP });
                 var req = this.HttpContext.Request.Form;
-                EbCloudinaryConnection con = new EbCloudinaryConnection()
+                EbFTPConnection con = new EbFTPConnection()
                 {
-                    Account = new CloudinaryDotNet.Account(req["Cloud"], req["ApiKey"], req["ApiSecret"]),
+                    Host = req["Host"],
+                    Username = req["Username"],
+                    Password = req["Password"],
+                    NickName = req["NickName"],
                     IsDefault = false
                 };
 
-                if (String.IsNullOrEmpty(con.Account.Cloud) &&
-                    con.Account.Cloud == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.Cloud &&
-                    con.Account.ApiKey == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.ApiKey)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = false });
+                if (String.IsNullOrEmpty(con.Host) &&
+                    con.Host == solutionConnections.EBSolutionConnections.FTPConnection.Host &&
+                    con.Username == solutionConnections.EBSolutionConnections.FTPConnection.Username)
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFTPConnectionRequest { FTPConnection = con, IsNew = false, SolutionId = req["SolutionId"] });
                 else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = true });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFTPConnectionRequest { FTPConnection = con, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)

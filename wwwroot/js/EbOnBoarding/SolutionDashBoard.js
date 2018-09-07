@@ -96,6 +96,42 @@
         }.bind(this));
     };
 
+    this.ImageManConSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/Cloudinary",
+            data: postData,
+            beforeSend: function () {
+                $("#cloudnary_loader").EbLoader("show", { maskItem: { Id: "#cloudnary_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            $("#cloudnary_loader").EbLoader("hide");
+            var d = JSON.parse(data);
+            this.appendImgManConnection(d);
+            $("#cldnry_conEdit").modal("toggle");
+        }.bind(this));
+    };
+
+    this.ftpOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/FTP",
+            data: postData,
+            beforeSend: function () {
+                $("#ftp_loader").EbLoader("show", { maskItem: { Id: "#ftp_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            $("#ftp_loader").EbLoader("hide");
+            var d = JSON.parse(data);
+            this.appendFtpConnection(d);
+            $("#ftp_connectionEdit").modal("toggle");
+        }.bind(this));
+    };
+
     this.appendDataDb = function (object) {
         var Server = "";
         var DatabaseName = "";
@@ -189,6 +225,42 @@
                                     </div>`);
     };
 
+    this.appendImgManConnection = function (object) {
+        let o = {};
+        let img = "";
+        if (object === null || object === undefined) {
+            o.Cloud = "xxxxxxx";
+            o.ApiKey = "xxxxxxx";
+            o.ApiSecret = "xxxxxx";
+            img = `<img src="${location.protocol}//${location.host}/images/cloudnary.png" />`;
+        }
+        else {
+            o = object;
+        }
+        $("#Cloudnary_Connection_config .VendorImage").empty().append(img);
+        $("#Cloudnary_Connection_config .Cloud").text(o.Cloud);
+        $("#Cloudnary_Connection_config .ApiKey").text(o.ApiKey);
+        $("#Cloudnary_Connection_config .SecretKey").text(o.ApiSecret);
+    };
+
+    this.appendFtpConnection = function (object) {
+        let o = {};
+        let img = "";
+        if (object === null) {
+            o.UserName = "xxxxxxx";
+            o.Password = "xxxxxxx";
+            o.Ip = "xxxxxx";
+            img = `<span style="font-size:20px;width:100%;font-weight:bold;">FTP</span>`;
+        }
+        else {
+            o = object;
+        }
+        $("#Ftp_Connection_config .VendorImage").empty().append(img);
+        $("#Ftp_Connection_config .UserName").text(o.UserName);
+        $("#Ftp_Connection_config .Password").text(o.Password);
+        $("#Ftp_Connection_config .IpAddress").text(o.Ip);
+    };
+
     this.testConnection = function (e) {
         var form = this.objectifyForm($("#" + $(e.target).attr("whichform")).serializeArray());
         var url = $(e.target).attr("url");
@@ -267,10 +339,14 @@
         this.appendFilesDb(this.Connections.FilesDbConnection);
         this.appendEmailConnection(this.Connections.SMTPConnection);
         this.appendSmsConnection(this.Connections.SMSConnection);
+        this.appendImgManConnection(this.Connections.ImageManipulateConnection);
+        this.appendFtpConnection(null);
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#EmailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
         $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
+        $("#CloudnaryConnectionSubmit").on("submit", this.ImageManConSubmit.bind(this));
+        $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();

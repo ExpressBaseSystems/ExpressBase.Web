@@ -59,3 +59,8 @@
     font-size: 12px;
     font-weight: bold;
 }
+.containerrow .close {
+    margin-top: -5px;
+    float: left;
+    padding-right: 12px;
+}

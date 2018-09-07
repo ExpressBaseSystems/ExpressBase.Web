@@ -504,7 +504,8 @@ var EbBasicDataTable = function (Option) {
         }
 
         this.filterDisplay();
-        this.Api.columns.adjust();
+        if(this.Api !== null)
+            this.Api.columns.adjust();
 
         this.$dtLoaderCont.EbLoader("hide");
 

@@ -716,6 +716,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     o.value = $(ctrl).find("input").attr("display-members");
                 else if (ctype === "Date")
                     o.value = $(ctrl).find("input").val();
+                else if (ctype === "RadioGroup")
+                    o.value = $(ctrl).children().find("[type=radio]:checked").val();
+                else if (ctype === "SimpleSelect" || ctype === "UserLocation")
+                    o.value = $(ctrl).children().find("option:selected").text();
                 else
                     o.value = $($(ctrl).children()[1]).val();
 
@@ -723,7 +727,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     o.logicOp = "AND";
                 else
                     o.logicOp = "";
-                filterdialog.push(o);
+                if(o.value !== undefined)
+                    filterdialog.push(o);
             });
         }
 
@@ -1508,7 +1513,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var $elems = $(e.target).parents().closest(".group-All").nextAll("[role=row]");
             var $target = $(e.target);
             if ($target.is("td")) {
-                //$target = $target.children("I");
                 if ($target.children().is("I"))
                     $target = $target.children("I");
                 else if ($target.siblings().children().is("I"))
@@ -1526,6 +1530,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             this.Api.columns.adjust();
         }
+
+        $(".containerrow").hide();
+        $(".containerrow").prev().children().find("I").removeClass("fa-minus").addClass("fa-plus");
     }.bind(this);
 
     this.collapseGroup = function (e) {
@@ -1543,6 +1550,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $elems.hide();
             this.collapseRelated($(e.target), "hide");
         }
+
+        $(".containerrow").hide();
+        $(".containerrow").prev().children().find("I").removeClass("fa-minus").addClass("fa-plus");
         this.Api.columns.adjust();
     }.bind(this);
 
@@ -2596,7 +2606,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.LoadInlineDv = function (rows, idx, Dvobj, colindex, result) {
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name +"</div><table id='tbl" + idx + "'></table></td></tr>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name +"</div><table id='tbl" + idx + "'></table></td></tr>");
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -2608,7 +2618,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.datatable = new EbBasicDataTable(o);
         }
         else {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name+"</div><div id='canvasDivchart" + idx + "' ></div></td></tr>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name+"</div><div id='canvasDivchart" + idx + "' ></div></td></tr>");
             var o = new Object();
             o.tableId = "chart" + idx;
             o.dvObject = Dvobj;
@@ -2616,6 +2626,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.chartApi = new EbBasicChart(o);
             $("#canvasDivchart" + idx).css("width", $(window).width()-100);
         }
+        $(".containerrow .close").off("click").on("click", function () {
+            $(this).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-minus").addClass("fa-plus");
+            $(this).parents().closest(".containerrow").remove();
+
+        });
     }
 
     this.Params4InlineTable = function (dsid) {

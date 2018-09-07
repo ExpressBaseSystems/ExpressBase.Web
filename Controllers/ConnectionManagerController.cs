@@ -300,9 +300,9 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 if (String.IsNullOrEmpty(con.Cloud) && con.Cloud == solutionConnections.EBSolutionConnections.ImageManipulateConnection.Cloud && con.ApiKey == solutionConnections.EBSolutionConnections.ImageManipulateConnection.ApiKey)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeImageManipulationConnectionRequest { ImageManipulateConnection = con, IsNew = false });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeImageManipulationConnectionRequest { ImageManipulateConnection = con, IsNew = false, SolutionId = req["SolutionId"] });
                 else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeImageManipulationConnectionRequest { ImageManipulateConnection = con, IsNew = true });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeImageManipulationConnectionRequest { ImageManipulateConnection = con, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)

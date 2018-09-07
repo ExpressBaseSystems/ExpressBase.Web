@@ -44,23 +44,26 @@ namespace ExpressBase.Web.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
-        {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = 0 });
-            if ((solutionConnections.EBSolutionConnections.FilesDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.FilesDbConnection = new EbFilesDbConnection();
-            if ((solutionConnections.EBSolutionConnections.DataDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.DataDbConnection = new EbDataDbConnection();
-            if ((solutionConnections.EBSolutionConnections.SMTPConnection == null))
-                solutionConnections.EBSolutionConnections.SMTPConnection = new SMTPConnection();
-            if (solutionConnections.EBSolutionConnections == null)
-                solutionConnections.EBSolutionConnections.SMSConnection = new SMSConnection();
-            if ((solutionConnections.EBSolutionConnections.ObjectsDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.ObjectsDbConnection = new EbObjectsDbConnection();
 
-            ViewBag.Connections = solutionConnections.EBSolutionConnections;
-            return View();
-        }
+        //public IActionResult Index()
+        //{
+        //    GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = 0 });
+        //    if ((solutionConnections.EBSolutionConnections.FilesDbConnection.IsDefault == true))
+        //        solutionConnections.EBSolutionConnections.FilesDbConnection = new EbFilesDbConnection();
+        //    if ((solutionConnections.EBSolutionConnections.DataDbConnection.IsDefault == true))
+        //        solutionConnections.EBSolutionConnections.DataDbConnection = new EbDataDbConnection();
+        //    if ((solutionConnections.EBSolutionConnections.SMTPConnection == null))
+        //        solutionConnections.EBSolutionConnections.SMTPConnection = new SMTPConnection();
+        //    if (solutionConnections.EBSolutionConnections == null)
+        //        solutionConnections.EBSolutionConnections.SMSConnection = new SMSConnection();
+        //    if ((solutionConnections.EBSolutionConnections.ObjectsDbConnection.IsDefault == true))
+        //        solutionConnections.EBSolutionConnections.ObjectsDbConnection = new EbObjectsDbConnection();
+
+        //    ViewBag.Connections = solutionConnections.EBSolutionConnections;
+        //    return View();
+        //}
+
+
         [HttpGet]
         public IActionResult DataDb()
         {
@@ -117,8 +120,9 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public string DataDb(int i)
         {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
             var req = this.HttpContext.Request.Form;
+
+            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA, SolutionId = req["SolutionId"] });
             string solutionid = this.HttpContext.Request.Query["Sid"];
 
             EbDataDbConnection dbcon = new EbDataDbConnection()
@@ -193,8 +197,9 @@ namespace ExpressBase.Web.Controllers
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbOBJECTS });
                 var req = this.HttpContext.Request.Form;
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbOBJECTS, SolutionId = req["SolutionId"] });
+
                 EbObjectsDbConnection dbcon = new EbObjectsDbConnection();
                 dbcon.NickName = req["nickname"];
                 dbcon.Server = req["server"];
@@ -228,8 +233,9 @@ namespace ExpressBase.Web.Controllers
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbFILES });
                 var req = this.HttpContext.Request.Form;
+
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbFILES, SolutionId = req["SolutionId"] });
                 EbFilesDbConnection dbcon = new EbFilesDbConnection()
                 {
                     FilesDbVendor = Enum.Parse<FilesDbVendors>(req["DatabaseVendor"].ToString()),
@@ -258,8 +264,9 @@ namespace ExpressBase.Web.Controllers
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS });
                 var req = this.HttpContext.Request.Form;
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS, SolutionId = req["SolutionId"] });
+
                 SMSConnection smscon = new SMSConnection()
                 {
                     ProviderName = req["ProviderName"],
@@ -289,8 +296,9 @@ namespace ExpressBase.Web.Controllers
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.Cloudinary });
                 var req = this.HttpContext.Request.Form;
+
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.Cloudinary, SolutionId = req["SolutionId"] });
                 EbCloudinaryConnection con = new EbCloudinaryConnection()
                 {
                     Account = new CloudinaryDotNet.Account(req["Cloud"], req["ApiKey"], req["ApiSecret"]),
@@ -319,8 +327,9 @@ namespace ExpressBase.Web.Controllers
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.FTP });
                 var req = this.HttpContext.Request.Form;
+
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.FTP, SolutionId = req["SolutionId"] });
                 EbFTPConnection con = new EbFTPConnection()
                 {
                     Host = req["Host"],
@@ -351,8 +360,9 @@ namespace ExpressBase.Web.Controllers
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP });
                 var req = this.HttpContext.Request.Form;
+
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP, SolutionId = req["SolutionId"] });
                 SMTPConnection smtpcon = new SMTPConnection()
                 {
                     ProviderName = req["Emailvendor"],

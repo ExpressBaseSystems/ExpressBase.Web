@@ -93,6 +93,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
+    if (this.login === "dc") {
+        this.stickBtn = new EbStickButton({
+            $wraper: $(".filterCont"),
+            $extCont: $(".filterCont"),
+            icon: "fa-filter",
+            dir: "left",
+            label: "Parameters"
+        });
+    }
 
     split.windowOnFocus = function (ev) {
         $("#Relateddiv").hide();
@@ -146,7 +155,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#content_dv" + obj.EbSid + "_" + this.tabNum + "_" + counter).empty();
         this.filterHtml = text;
         $(".filterCont").empty();
-        $(".filterCont").append("<div class='pgHead'> Param window <div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>");
+        $(".filterCont").append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
+        $('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
         $(".filterCont").append(text);
         $("#btnGo").click(this.init.bind(this));
         if (typeof commonO !== "undefined")
@@ -157,6 +167,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if ($(".filterCont #filterBox").children().not("button").length == 0) {
             this.FD = false;
             $(".filterCont").hide();
+            if (this.login === "dc") {
+                this.stickBtn.hide();
+            }
+            else {
+                dvcontainerObj.stickBtn.hide();
+            }
             $("#btnGo" + this.tabNum).trigger("click");
             $.LoadingOverlay("hide");
         }
@@ -172,8 +188,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             else {
                 $(".filterCont").show();
-                $.LoadingOverlay("hide");
+                $(".filterCont").css("visibility", "visible");
             }
+            $.LoadingOverlay("hide");
         }
         $(subDivId).focus();
 
@@ -281,8 +298,20 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.login === "uc") {
                 this.collapseGraph();
             }
-            $(".pgpin").click();
-            $(".filterCont").hide();
+            this.propGrid.ClosePG();
+            //$(".pgpin").click();
+            if (this.login === "dc") {
+                if (this.FD)
+                    this.stickBtn.minimise();
+                else
+                    this.stickBtn.hide();
+            }
+            else {
+                if (this.FD)
+                    dvcontainerObj.stickBtn.minimise();
+                else
+                    dvcontainerObj.stickBtn.hide();
+            }
             filterChanged = false;
             if (!this.isTagged)
                 f = this.compareFilterValues();
@@ -313,6 +342,15 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         this.GenerateButtons();
 
+    };
+
+    this.CloseParamDiv = function () {
+        if (this.login === "dc") {
+            this.stickBtn.minimise();
+        }
+        else {
+            dvcontainerObj.stickBtn.minimise();
+        }
     };
 
     this.createChartDivs = function () {
@@ -416,10 +454,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             <i class="fa fa-cogs" aria-hidden="true"></i>
             </button>`);
         //}
-        if (this.FD) {
-            $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
-        }
-        //$("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class= 'fa fa-cog' aria - hidden='true'></i ></button>")
 
         if (this.EbObject !== null && this.EbObject.Type !== "") {
             if (this.EbObject.Type !== "line")
@@ -539,11 +573,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#X_col_name" + tid).empty();
             $("#Y_col_name" + tid).empty();
             $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
-                $("#X_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: -2px 2px 0px 4px;' >x</button></li>");
+                $("#X_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button'>x</button></li>");
                 //this.Xindx.push(obj.data);
             });
             $.each(this.columnInfo.Yaxis.$values, function (i, obj) {
-                $("#Y_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button' style='font-size: 15px;margin: -2px 2px 0px 4px;' >x</button></li>");
+                $("#Y_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "'>" + obj.name + "<button class='close' type='button'>x</button></li>");
                 //this.Yindx.push(obj.data);
             });
         }
@@ -583,16 +617,17 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $.each(params, function (i, id) {
                 var v = null;
                 var dtype = $(FdCont + ' #' + id).attr('data-ebtype');
-                //if (dtype === '6')
-                //    v = $(FdCont + ' #' + id).val().substring(0, 10);
-                //else
-                //    v = $(FdCont + ' #' + id).val();
-                if (dtype === "3")
-                    v = $(FdCont).children().find("[name=" + id + "]:checked").val();
-                else
-                    v = $(FdCont + ' #' + id).val();
                 if (dtype === '6')
                     v = $(FdCont + ' #' + id).val().substring(0, 10);
+                else if (dtype === '3')
+                    v = $(FdCont).children().find("[name=" + id + "]:checked").val();
+                else {
+                    v = $(FdCont + ' #' + id).val();
+                    if (dtype === '16' && !(isNaN(v))) {
+                        v = parseInt(v);
+                        dtype = 8;
+                    }
+                }
 
                 if (v !== "")
                     fltr_collection.push(new fltr_obj(dtype, id, v));
@@ -982,7 +1017,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             var temp;
             $(el).css("display", "inline-block");
             var name = $(el).text();
-            $(el).append("<button class='close' type='button' style='font-size: 15px;margin: 0px 0 0 4px;color: black !important;' >x</button>");
+            $(el).append("<button class='close' type='button'>x</button>");
             if ($(target).attr("id") == "X_col_name" + this.tableId) {
                 //this.columnInfo.Xaxis.$values.push(new axis($(el).attr("data-id"), name));
                 temp = $.grep(this.columnInfo.Columns.$values, function (obj) { return obj.name === name });

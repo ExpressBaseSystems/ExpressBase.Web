@@ -1,6 +1,7 @@
 ﻿
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbBasicDataTable = function (Option) {
+    console.log(1);
     this.contId = Option.containerId;
     this.dsid = Option.dsid;
     this.tableId = Option.tableId;
@@ -296,7 +297,7 @@ var EbBasicDataTable = function (Option) {
                         }
                     }
 
-                    if (v !== "")
+                    if (v !== "" || v !== null)
                         fltr_collection.push(new fltr_obj(dtype, id, v));
                 });
             }

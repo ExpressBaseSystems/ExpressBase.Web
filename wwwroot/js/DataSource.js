@@ -309,10 +309,10 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                         }
 
 
-                    //if (type === '16' && !(isNaN(value))) {
-                    //    value = parseInt(value);
-                    //    type = 8;
-                    //}
+                    if (type === '16' && !(isNaN(value))) {
+                        value = parseInt(value);
+                        type = 8;
+                    }
                     ParamsArray.push(new fltr_obj(type, name, value));
                 }
             }

@@ -7,10 +7,10 @@
     };
 
     this.PopByName = function (_name) {
-        var parentId = $("#" + _name + ".Eb-ctrlContainer").parent().attr("id");
+        var parentId = $("#" + _name + ".Eb-ctrlContainer").parent().attr("ebsid");
         var ele = this.GetByName(_name);
         console.log("parentId" + parentId);
-        if ($(`#${parentId}`).attr("eb-form")) {
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form")) {
             var idx = this.$values.indexOf(ele);
             if (idx === -1) {
                 console.error("element not found in collection");
@@ -25,10 +25,10 @@
 
     this.Append = function (newObject) {
         //var parentId = $("#" + newObject.Name).closest(".controlTile").closest(".controlTile").attr("id");
-        var parentId = $("#" + newObject.EbSid).parent().attr("id");
+        var parentId = $("#" + newObject.EbSid).parent().attr("ebsid");
         if (parentId === undefined)
             this.$values.push(newObject);
-        else if (!$(`#${parentId}`).attr("eb-form")) { // need correction
+        else if (!$(`[ebsid ="${parentId}"]`).attr("eb-form")) { // need correction
             var parent = this.GetByName(parentId);
             parent.Controls.$values.push(newObject);
         }
@@ -41,8 +41,8 @@
     };
 
     this.InsertAt = function (index, newObject) {
-        var parentId = $("#" + newObject.EbSid).parent().attr("id");
-        if ($(`#${parentId}`).attr("eb-form")) {
+        var parentId = $("#" + newObject.EbSid).parent().attr("ebsid");
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form")) {
             this.$values.splice(index, 0, newObject);
             return this.$values.length;
         }

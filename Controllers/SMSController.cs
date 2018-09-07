@@ -32,7 +32,7 @@ namespace ExpressBase.Web.Controllers
             sMSSentRequest.From = req["from"];
             sMSSentRequest.Body = req["body"];
             string[] subdomain = this.HttpContext.Request.Host.Host.Split('.');
-            sMSSentRequest.TenantAccountId = subdomain[0];
+            sMSSentRequest.SolnId = subdomain[0];
 
             var client = new JsonServiceClient(this.ServiceClient.BaseUri)
             {
@@ -53,7 +53,7 @@ namespace ExpressBase.Web.Controllers
             sMSSentRequest.To = "+919961596200";
             sMSSentRequest.Body = "SMS Id: "+smsSid.ToString()+"/nMessageStatus:" + messageStatus.ToString() +"/nFull Message:" + stsbody.ToString();
             string[] subdomain = this.HttpContext.Request.Host.Host.Split('.');
-            sMSSentRequest.TenantAccountId = subdomain[0];
+            sMSSentRequest.SolnId = subdomain[0];
 
             var client = new JsonServiceClient(this.ServiceClient.BaseUri)
             {

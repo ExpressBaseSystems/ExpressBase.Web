@@ -284,6 +284,35 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
+        public string Cloudinary(int i)
+        {
+            ChangeConnectionResponse res = new ChangeConnectionResponse();
+            try
+            {
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbImageManipulation });
+                var req = this.HttpContext.Request.Form;
+                ImageManipulateConnection con = new ImageManipulateConnection()
+                {
+                    Cloud = req["Cloud"],
+                    ApiKey = req["ApiKey"],
+                    ApiSecret = req["ApiSecret"],
+                    IsDefault = false
+                };
+
+                if (String.IsNullOrEmpty(con.Cloud) && con.Cloud == solutionConnections.EBSolutionConnections.ImageManipulateConnection.Cloud && con.ApiKey == solutionConnections.EBSolutionConnections.ImageManipulateConnection.ApiKey)
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeImageManipulationConnectionRequest { ImageManipulateConnection = con, IsNew = false });
+                else
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeImageManipulationConnectionRequest { ImageManipulateConnection = con, IsNew = true });
+                return JsonConvert.SerializeObject(con);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+
+        [HttpPost]
         public string SMTP(int i)
         {
             ChangeConnectionResponse res = new ChangeConnectionResponse();

@@ -431,7 +431,7 @@
             <tbody>
             <tr>
             <td style="padding: 0px;">
-            <div class="OSE-DD-cont" > 
+            <div class="OSE-DD-cont" >
             <select class="selectpicker">
             </select>
             </div>
@@ -499,7 +499,7 @@
         if ($(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").length === 0) {
             $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(`
                 <div  class='input-group' style='width: 50%;'>
-                        <span class='input-group-addon'><i class='fa fa-search aria-hidden='true' class='input-group-addon'></i></span> 
+                        <span class='input-group-addon'><i class='fa fa-search aria-hidden='true' class='input-group-addon'></i></span>
                         <input class="searchinp" placeholder="Search object..." type="text"/>
                 </div>`);
 
@@ -700,7 +700,8 @@
         let SubTypes = this.CurMeta.options;
         if (SubTypes) {
             $.each(this.CElist, function (i, control) {
-                let type = control.$type.split(",")[0].split(".")[2];
+                let NS1 = control.$type.split(",")[0].split(".");
+                let type = NS1[NS1.length - 1];
                 let _name = control.Name;
                 if (!_name)
                     _name = control.EbSid;

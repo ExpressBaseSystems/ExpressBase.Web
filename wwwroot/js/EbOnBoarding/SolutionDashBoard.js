@@ -119,7 +119,7 @@
         var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
-            url: "../ConnectionManager/Ftp",
+            url: "../ConnectionManager/FTP",
             data: postData,
             beforeSend: function () {
                 $("#ftp_loader").EbLoader("show", { maskItem: { Id: "#ftp_mask", Style: { "left": "0" } } });
@@ -128,7 +128,7 @@
             $("#ftp_loader").EbLoader("hide");
             var d = JSON.parse(data);
             this.appendFtpConnection(d);
-            $("#cldnry_conEdit").modal("toggle");
+            $("#ftp_connectionEdit").modal("toggle");
         }.bind(this));
     };
 
@@ -228,7 +228,7 @@
     this.appendImgManConnection = function (object) {
         let o = {};
         let img = "";
-        if (object === null) {
+        if (object === null || object === undefined) {
             o.Cloud = "xxxxxxx";
             o.ApiKey = "xxxxxxx";
             o.ApiSecret = "xxxxxx";
@@ -236,8 +236,6 @@
         }
         else {
             o = object;
-            if (object.Integrations == 1)
-                img = `<img src="${location.protocol}//${location.host}/images/cloudnary.png" />`;
         }
         $("#Cloudnary_Connection_config .VendorImage").empty().append(img);
         $("#Cloudnary_Connection_config .Cloud").text(o.Cloud);

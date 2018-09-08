@@ -361,8 +361,8 @@
         display: none !important;
     }
 
-    .DDdiv [type=checkbox] {
-        height: inherit !important;
+    .DDdiv td [type=checkbox] {
+        min-height: inherit !important;
         padding: 0 !important;
         margin: 0 !important;
     }

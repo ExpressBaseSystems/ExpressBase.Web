@@ -58,7 +58,7 @@
             let tapBtns = $ctrl.find("ul.nav-tabs a");
             $.each(ctrlObj.Controls.$values, function (i, pane) {
                 $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
-                $(tapBtns[0]).attr("href", "#" + pane.EbSid);
+                $(tapBtns[0]).attr("href", "#" + pane.EbSid).text(pane.EbSid).closest("li").attr("li-of", pane.EbSid);
             });
             this.makeTabsDropable();
         }
@@ -101,7 +101,7 @@
         let id = type + (this.controlCounters[type + "Counter"])++;// inc counter
         id = $el.attr("ebsid") || id;
         $el.attr("tabindex", "1");
-        if (type ==="TabControl")
+        if (type === "TabControl")
             $el.attr("onclick", "$(this).focus()");
         else
             $el.attr("onclick", "event.stopPropagation();$(this).focus()");
@@ -408,16 +408,16 @@
         this.addTabPane = function (SelectedCtrl, prop, val, addedObj) {
             let id = SelectedCtrl.EbSid;
             let $ctrl = $("#" + id);
-            let $tabMenu = $(`<li li-of="${addedObj.Name}"><a data-toggle="tab" href="#${addedObj.Name}">${addedObj.Name}</a></li>`);
-            let $tabPane = $(`<div id="${addedObj.Name}" ebsid="${addedObj.Name}" class="tab-pane fade "></div>`);
-            $ctrl.find(".nav-tabs").append($tabMenu);
-            $ctrl.find(".tab-content").append($tabPane);
+            let $tabMenu = $(`<li li-of="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}">${addedObj.Name}</a></li>`);
+            let $tabPane = $(`<div id="${addedObj.EbSid}" ebsid="${addedObj.EbSid}" class="tab-pane fade "></div>`);
+            $ctrl.closestInner(".nav-tabs").append($tabMenu);
+            $ctrl.closestInner(".tab-content").append($tabPane);
         };
 
         this.RemoveTabPane = function (SelectedCtrl, prop, val, delobj) {
             let id = SelectedCtrl.EbSid;
             let $ctrl = $("#" + id);
-            let $tabMenu = $ctrl.find(`[li-of=${delobj.Name}]`).remove();
+            let $tabMenu = $ctrl.find(`[li-of=${delobj.EbSid}]`).remove();
             let $tabPane = $(`#${delobj.Name}`).remove();
         };
 
@@ -426,8 +426,10 @@
             console.log(val);
             if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
                 alert();
-            else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls")
+            else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls") {
+                //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
                 this.addTabPane(this.SelectedCtrl, prop, val, addedObj);
+            }
         }.bind(this);
 
         this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
@@ -444,7 +446,7 @@
             console.log("PropsObj: " + JSON.stringify(PropsObj));
             console.log("CurProp: " + CurProp);
 
-            
+
             if (CurProp === 'DataSourceId') {
                 this.PGobj.PGHelper.dataSourceInit(this.DSchangeCallBack);
             }

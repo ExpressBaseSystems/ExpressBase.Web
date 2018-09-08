@@ -318,17 +318,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         
         //hard coding
         this.orderColl = [];
-        if (jQuery.isEmptyObject(this.EbObject.tempRowgrouping)) {
-            $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
-                if (obj.RowGrouping.$values.length > 0) {
-                    this.EbObject.tempRowgrouping = obj;
-                    this.visibilityCheck();
-                    return false;
-                }
-            }.bind(this));
+        if (!this.EbObject.DisableRowGrouping) {
+            if (jQuery.isEmptyObject(this.EbObject.tempRowgrouping)) {
+                $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+                    if (obj.RowGrouping.$values.length > 0) {
+                        this.EbObject.tempRowgrouping = obj;
+                        this.visibilityCheck();
+                        return false;
+                    }
+                }.bind(this));
+            }
+            else
+                this.visibilityCheck();
         }
-        else
-            this.visibilityCheck();
+        else {
+            this.EbObject.tempRowgrouping = {}
+            this.RGIndex = [];
+            this.rowgroupCols = [];
+        }
 
         //----------
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
@@ -530,7 +537,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         };
         o.columns = this.rowgroupCols.concat(this.extraCol,this.ebSettings.Columns.$values);
         o.order = [];
-        //o.deferRender = true;
+        o.deferRender = true;
         //o.filter = true;
         //o.select = true;
         //o.retrieve = true;
@@ -592,7 +599,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
-        o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
+        //o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
         return o;
     };
 

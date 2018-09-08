@@ -32,7 +32,7 @@ var EbBasicDataTable = function (Option) {
     this.FlagPresentId = false;
     this.columnSearch = Option.columnSearch || [];
     this.data = Option.data || null;
-
+    this.headerDisplay = Option.headerDisplay;
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -518,6 +518,8 @@ var EbBasicDataTable = function (Option) {
                 Option.fninitComplete();
         }.bind(this), 10);
         $(".dataTables_scroll").css("height", "100%");
+        if (!this.headerDisplay)
+            $(".dataTables_scrollHead").hide();
     }
 
     this.contextMenu = function () {

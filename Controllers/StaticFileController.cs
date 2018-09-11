@@ -363,7 +363,7 @@ namespace ExpressBase.Web.Controllers
                         res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
                         resp = new JsonResult(new UploadFileMqResponse
                         {
-                            Uploaded = "OK",
+                            IsUploaded = true,
                             initialPreview = "<img src='" + Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>" // 414 (URI Too Long)
                         });
                     }
@@ -377,6 +377,75 @@ namespace ExpressBase.Web.Controllers
 
             return resp;
         }
+
+        public async Task<JsonResult> UploadImageAsyncFromForm(int i, string tags)
+        {
+            Regex regEx = new Regex(RejexPattern);
+            UploadAsyncResponse res = new UploadAsyncResponse();
+            JsonResult resp = null;
+            var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);//workaround need to change
+            Dictionary<string, List<string>> tagDict = new Dictionary<string, List<string>>();//workaround need to change
+
+            foreach (KeyValuePair<string, List<string>> entry in dict)//workaround need to change
+            {
+                tagDict.Add(regEx.Replace(entry.Key.ToLower(), UnderScore), entry.Value);
+            }
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+                uploadImageRequest.ImageInfo = new ImageMeta();
+
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
+                    {
+                        string fname = regEx.Replace(formFile.FileName, UnderScore);
+
+                        byte[] myFileContent;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                            uploadImageRequest.ImageByte = myFileContent;
+                        }
+
+                        if (!dict.IsEmpty())
+                        {
+                            uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tagDict[fname]);
+                        }
+                        uploadImageRequest.ImageInfo.FileName = fname;
+                        uploadImageRequest.ImageInfo.FileType = fname.SplitOnLast(CharConstants.DOT).Last();
+                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                        uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
+                        uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+                        uploadImageRequest.ImageInfo.FileRefId = 1;
+
+                        res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+                        if (res.ImgRefId > 0)
+                        {
+                            resp = new JsonResult(new UploadFileMqResponse
+                            {
+                                IsUploaded = true,
+                                ImgRefId = res.ImgRefId
+                                //initialPreview = "<img src='" + Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>" // 414 (URI Too Long)
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
+                resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" });
+            }
+
+            return resp;
+        }
+
 
         [HttpPost]
         public async Task<string> UploadDPAsync(string base64)

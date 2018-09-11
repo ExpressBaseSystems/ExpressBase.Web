@@ -456,7 +456,7 @@
         this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
         this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
         this.$Closing.val(this.CustomerInfo["closing"]);
-        //this.$Nature.val(this.CustomerInfo["nature"].trim().toLowerCase());
+        this.$Nature.val(this.CustomerInfo["nature"]);
 
         this.$CostCenter.prop("disabled", true);
         this.$EnDate.prop("disabled", true);

@@ -19,7 +19,7 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("WebForm", refId);
         }
 
-        public int InsertBotDetails(string TableName, List<BotInsert> Fields)
+        public int InsertBotDetails(string TableName, List<BotFormField> Fields)
         {
             try
             {

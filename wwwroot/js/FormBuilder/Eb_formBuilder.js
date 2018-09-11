@@ -98,18 +98,26 @@
         this.tempArr.push(el);
         let $el = $(el);
         let type = $el.attr("ctype").trim();
-        let id = type + (this.controlCounters[type + "Counter"])++;// inc counter
-        id = $el.attr("ebsid") || id;
+        this.controlCounters[type + "Counter"] = parseInt($el.attr("ebsid").match(/\d+$/)[0]) || (this.controlCounters[type + "Counter"]);
+        let id = type + this.controlCounters[type + "Counter"]++;// inc counter
         $el.attr("tabindex", "1");
-        if (type === "TabControl")
-            $el.attr("onclick", "$(this).focus()");
-        else
-            $el.attr("onclick", "event.stopPropagation();$(this).focus()");
+        this.ctrlOnClickBinder($el, type);
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
         $el.attr("eb-type", type).attr("id", id);
         this.updateControlUI(id);
     };
+
+    this.ctrlOnClickBinder = function ($ctrl, type) {
+        if (type === "TabControl")
+            $ctrl.on("click", function myfunction() {
+                if (event.target.getAttribute("data-toggle") !== "tab")
+                    event.stopPropagation();
+                $(event.target).closest(".Eb-ctrlContainer").focus();
+            });
+        else
+            $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
+    }
 
     this.updateControlUI = function (id, type) {
         let obj = this.rootContainerObj.Controls.GetByName(id);
@@ -204,15 +212,15 @@
     };// start
 
     this.onDragendFn = function (el) {
-        var sibling = $(el).next();
+        var $sibling = $(el).next();
         var target = $(el).parent();
         if (this.movingObj) {
 
             //Drag end with in the form
             if (target.attr("id") !== "form-buider-toolBox") {
-                if (sibling.attr("id")) {
-                    console.log("sibling : " + sibling.id);
-                    var idx = sibling.index() - 1;
+                if ($sibling.attr("id")) {
+                    console.log("sibling : " + $sibling.id);
+                    var idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
@@ -262,21 +270,21 @@
                 var type = $el.attr("eb-type").trim();
                 var id = type + (this.controlCounters[type + "Counter"])++;
                 var $ctrl = new EbObjects["Eb" + type](id).$Control;
+                let $sibling = $(sibling);
                 $el.remove();
 
                 var t = $("<div class='controlTile'>" + $ctrl.outerHTML() + "</div>");
-
-                if (sibling)
-                    $ctrl.insertBefore($(sibling));
-                else
-                    $(target).append($ctrl);
-
-                $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-                $ctrl.on("focus", this.controlOnFocus.bind(this));
-                $ctrl.attr("id", id).attr("ebsid", id);
-                $ctrl.attr("eb-type", type);
                 var ctrlObj = new EbObjects["Eb" + type](id);
-                this.rootContainerObj.Controls.Append(ctrlObj);
+                this.dropedCtrlInit($ctrl, type, id);
+                if (sibling) {
+                    $ctrl.insertBefore($sibling);
+                    var idx = $sibling.index() - 1;
+                    this.rootContainerObj.Controls.InsertAt(idx, ctrlObj);
+                }
+                else {
+                    $(target).append($ctrl);
+                    this.rootContainerObj.Controls.Append(ctrlObj);
+                }
 
                 $ctrl.focus();
                 ctrlObj.Label = id;
@@ -289,6 +297,14 @@
                 console.log("ondrop else : removed");
         }
     };
+
+    this.dropedCtrlInit = function ($ctrl, type, id) {
+        $ctrl.attr("tabindex", "1");
+        this.ctrlOnClickBinder($ctrl, type);
+        $ctrl.on("focus", this.controlOnFocus.bind(this));
+        $ctrl.attr("id", id).attr("ebsid", id);
+        $ctrl.attr("eb-type", type);
+    }
 
     //this.controlCloseOnClick = function (e) {
     //    var ControlTile = $(e.target).parent().parent();
@@ -412,6 +428,7 @@
             let $tabPane = $(`<div id="${addedObj.EbSid}" ebsid="${addedObj.EbSid}" class="tab-pane fade "></div>`);
             $ctrl.closestInner(".nav-tabs").append($tabMenu);
             $ctrl.closestInner(".tab-content").append($tabPane);
+            this.drake.containers.push($tabPane[0]);
         };
 
         this.RemoveTabPane = function (SelectedCtrl, prop, val, delobj) {

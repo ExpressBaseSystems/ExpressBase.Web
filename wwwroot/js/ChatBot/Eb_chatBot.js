@@ -1127,7 +1127,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             //url: this.ssurl + "/bots",
             url: "../Boti/InsertBotDetails",
             data: {
-                TableName: this.curForm.tableName, Fields: this.getFormValuesWithTypeColl()
+                RefId: this.curRefid, Fields: this.getFormValuesWithTypeColl()
             },
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);

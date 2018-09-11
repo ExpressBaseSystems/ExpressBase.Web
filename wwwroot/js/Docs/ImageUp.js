@@ -38,19 +38,36 @@
 
         $(".file-drop-zone").css({ "height": '95%', "overflow-y": "auto" });
 
+        //this.cropfy = new cropfy({
+        //    Container: 'container',
+        //    Toggle: '.crop_btn',
+        //    isUpload: false,
+        //    enableSE: true,
+        //    Browse: false,
+        //    Result: 'base64'
+        //});
+
+        
         this.cropfy = new cropfy({
             Container: 'container',
             Toggle: '.crop_btn',
             isUpload: false,
             enableSE: true,
-            Browse: false,
-            Result: 'base64'
+            Browse: true,
+            Result: 'base64',
+            Type: 'doc',
+            Tid: this.TenantId,
+            ResizeViewPort: true,
         });
 
-        this.cropfy.getFile = function (file) {
-            $('#' + _prev).children().find("img").attr("src", file);
-            var f = this.updateStack(file);
-        }.bind(this);
+        this.cropfy.getObjId = function (o) {
+            
+        };
+
+        //this.cropfy.getFile = function (file) {
+        //    $('#' + _prev).children().find("img").attr("src", file);
+        //    var f = this.updateStack(file);
+        //}.bind(this);
     };
 
     this.updateStack = function (b64) {
@@ -170,7 +187,7 @@
     };
 
     this._start = function () {
-        this.loadImages();
+        //this.loadImages();
         this.makeFup();
         _tComm.tagsinput();
         _tImg.tagsinput();

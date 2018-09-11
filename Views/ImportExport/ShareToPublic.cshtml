@@ -10,8 +10,12 @@
 @{
     AppStore appstore = ViewBag.appstore;
 }
+<script>
+    var d = new EbHeader();
+    d.setName("ShareToPublic");
+</script>
 
-<div class="container">
+@*<div class="container">
     <div class="app_profile col-md-12">
         <h4>Application Profile</h4>
         @using (Html.BeginForm("ShareToPublic", "ImportExport", FormMethod.Post))
@@ -132,11 +136,191 @@
             </div>
             <input type="submit" class="pull-right" id="share" name="share" value="Share" />
         }
+    </div>
+</div>*@
 
+<div class="row s-dash-container">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+        <div class="t-container">
+            <ul class="list-group menuwrapper_ul_outer">
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">store</span>
+                        <span class="t__sidebar_text">App Store</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Survey/SurveyHome">
+                        <span class="material-icons t__sidebar_icon">question_answer</span>
+                        <span class="t__sidebar_text">Survey</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="s-dash-workplace tenant_workpane share_to_publicWraper">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+            <div class="col-md-10 pd-0">
+                <h4 class="mr-t-0 mr-b-0">Share To Public</h4>
+            </div>
+            <div class="col-md-2 pd-0">
+
+            </div>
+        </div>
+        @using (Html.BeginForm("ShareToPublic", "ImportExport", FormMethod.Post))
+        {
+            <div class="col-md-12 col-lg-12 col-sm-12 share_to_pub_info">
+                <input type="hidden" name="appid" value="@ViewBag.appid" />
+                <input type="hidden" name="detailid" value="@appstore.DetailId" />
+                <div class="form-group  col-md-4 pd-0">
+                    <label>Title</label>
+                    <input type="text" class="form-control" name="title" value="@appstore.Title">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Short Description</label>
+                    <textarea class="form-control" rows="1" name="short_description">@appstore.ShortDesc</textarea>
+                </div>
+                <div class="form-group col-md-2 pd-r-0">
+                    <label>Price</label>
+                    <label class="radio-inline pull-right">
+                        <input type="radio" name="price_option" value="2">Paid
+                    </label>
+                    <label class="radio-inline pull-right mr-r-10">
+                        <input type="radio" name="price_option" value="1" checked>Free
+                    </label>
+                    <div class="input-group ">
+                        <span class="input-group-addon"> $ </span>
+                        <input type="text" class="form-control" name="price" id="price" value="@appstore.Cost" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group tags_main col-md-12 pd-0">
+                    <label>Tags</label>
+                    <input type="text" class="form-control app_tags" value="@appstore.Tags" data-role="tagsinput" name="tags" />
+                </div>
+            </div>
+            <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item active devdshtab">
+                        <a class="nav-link devdshtab" data-toggle="tab" href="#desc_tab" role="tab">
+                            Details
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link devdshtab" data-toggle="tab" href="#media" role="tab">
+                            Media
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link devdshtab" data-toggle="tab" href="#pricing" role="tab">
+                            Pricing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link devdshtab" data-toggle="tab" href="#faq" role="tab">
+                            FAQ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link devdshtab" data-toggle="tab" href="#issue" role="tab">
+                            Issues
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link devdshtab" data-toggle="tab" href="#forum" role="tab">
+                            Forum (render side)
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="desc_tab" role="tabpanel">
+                        <div class="tab-pane active" id="desc_tab">
+                            <div class="form-group" id="">
+                                <label>Detailed Description</label>
+                                <textarea id="det_desc_note" name="detailed_description">@appstore.DetailedDesc</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="media" role="tabpanel">
+                        <div class="form-group">
+                            <label>Demo link</label>
+                            <input type="text" class="form-control" name="demo_link" value="@appstore.DemoLinks" />
+                        </div>
+                        <div class="form-group vdeo_lnks_main">
+                            <label>Video Links</label>
+                            <input type="text" class="form-control col-md-12 video_tgs primary" value="@appstore.VideoLinks" data-role="tagsinput" name="video_links" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Images</label>
+                            <textarea class="form-control" rows="1" name="images">@appstore.Images</textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="pricing" role="tabpanel">
+                        <div class="form-group" id="">
+                            <label>Pricing Description</label>
+                            <textarea id="price_desc_note" name="pricing_description">@appstore.PricingDesc</textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="faq" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-highlight">
+                                <thead>
+                                <th>Sl. No</th>
+                                <th>Question</th>
+                                <th>Answer</th>
+                                <th>Show / Hide</th>
+                                <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center">1</td>
+                                        <td><textarea class="form-control border-none" value="">How many clients are currently using the offered solution?</textarea></td>
+                                        <td><textarea class="form-control border-none" value="">10 clients.</textarea></td>
+                                        <td class="pd-10">
+                                            <select class="form-control">
+                                                <option>Show</option>
+                                                <option>Hide</option>
+                                            </select>
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="ebbtn eb_btngreen eb_btn-sm">save</button>
+                                            <button id="delete" class="ebbtn eb_btnblue eb_btn-sm">delete</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="issue" role="tabpanel">
+
+                    </div>
+                    <div class="tab-pane" id="forum" role="tabpanel">
+
+                    </div>
+                </div>
+                <input type="submit" class="pull-right" id="share_btn_form" name="share" value="Share" style="display:none;"/>
+            </div>
+        }
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
+        d.insertButton(`<button class="btn" onclick="$('#share_btn_form').click();"><i class="fa fa-share-alt" aria-hidden="true"></i></button>`);
+
         $('#det_desc_note').summernote();
         $('#price_desc_note').summernote();
         $("input[name='price_option'][value='" + @appstore.IsFree + "']").prop('checked', true);
@@ -161,36 +345,5 @@
     });
 </script>
 <style>
-    .app_profile {
-        margin-top: 50px;
-    }
-
-    .bootstrap-tagsinput {
-        width: 100%;
-    }
-
-    .vdeo_lnks_main .label-info {
-        background-color: #676a8e;
-    }
-
-    .tags_main .label-info {
-        background-color: #676a8e;
-    }
-
-    #store_nav .nav > li > a {
-        padding: 5px 15px;
-    }
-
-    #store_nav {
-        padding-top: 30px;
-        margin-top: 19px;
-    }
-
-    .note-editable {
-        height: 255px;
-    }
-
-    table tr td {
-        border: 1px solid #ccc;
-    }
+    
 </style>

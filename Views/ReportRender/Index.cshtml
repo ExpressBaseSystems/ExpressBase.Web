@@ -16,6 +16,7 @@
     }
 
 }
+
 @*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
     <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
@@ -24,7 +25,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 <link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
-
+<script type="text/javascript" src="~/js/Eb_CommonHeader.js"></script>
 <script type="text/javascript" src="~/js/eb_common.js"></script>
 @if (!ViewBag.RenderLimit)
 {
@@ -55,8 +56,8 @@
 
 @section EbHead {
     <script>
-        this.menuBarObj = $("#layout_div").data("EbHeader");
-        this.menuBarObj.insertButton(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
+       
+        new EbHeader().insertButton(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
     <button class="btn run" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div"><i class="fa fa-filter" aria-hidden="true"></i></button>`);
     //$(document).ready(function () {
         if ('@fd' === 'True') {

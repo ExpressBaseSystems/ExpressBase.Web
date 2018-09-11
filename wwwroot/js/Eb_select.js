@@ -121,11 +121,11 @@ var EbSelect = function (ctrl, options) {
         var mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         if (!this.IsDatatableInit) {
-            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
+            if (this.ComboObj.minSeachLength > searchVal.length)
                 return;
             var searchBy = " = ";
             if (mapedFieldType === "string")
-                searchBy = "*x*";
+                searchBy = "x*";
             var filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
             this.InitDT();
@@ -191,7 +191,7 @@ var EbSelect = function (ctrl, options) {
     this.InitDT = function () {
 
         var searchVal = this.getMaxLenVal();
-        if (searchVal === "" || this.ComboObj.minSeachLength > searchVal.length) {
+        if ( this.ComboObj.minSeachLength > searchVal.length) {
             //alert(`enter minimum ${this.ComboObj.minSeachLength} charecter in searchBox`);
             EbMakeInvalid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`, `Enter minimum ${this.ComboObj.minSeachLength} character(s) to search`);
             setTimeout(function () {
@@ -217,6 +217,7 @@ var EbSelect = function (ctrl, options) {
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
         o.columnSearch = this.filterArray;
+        o.headerDisplay = (this.Vobj.displayMembers.length > 1) ? true : false;
         //o.filterValues = this.getParams();
         o.keys = true;
         //o.hiddenFieldName = this.vmName;

@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Components
 		}
 		public async Task<IViewComponentResult> InvokeAsync(int itemid)
 		{
-			var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, SolnId = ViewBag.cid });
 			ViewBag.AppCollection = EbSerializers.Json_Serialize(fr.ApplicationCollection);
 			ViewBag.SelectedRoleInfo = EbSerializers.Json_Serialize(fr.SelectedRoleInfo);
 			ViewBag.PermissionList = EbSerializers.Json_Serialize(fr.PermissionList);

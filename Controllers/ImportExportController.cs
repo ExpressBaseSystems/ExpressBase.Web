@@ -47,6 +47,7 @@ namespace ExpressBase.Web.Controllers
             return obj;
         }
 
+        [EbBreadCrumbFilter("Appstore/ShareToPublic", new string[] { "/Appstore" })]
         [HttpGet]
         public IActionResult ShareToPublic(int id)
         {

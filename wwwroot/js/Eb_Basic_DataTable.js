@@ -1,6 +1,7 @@
 ﻿
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbBasicDataTable = function (Option) {
+    console.log(1);
     this.contId = Option.containerId;
     this.dsid = Option.dsid;
     this.tableId = Option.tableId;
@@ -31,7 +32,7 @@ var EbBasicDataTable = function (Option) {
     this.FlagPresentId = false;
     this.columnSearch = Option.columnSearch || [];
     this.data = Option.data || null;
-
+    this.headerDisplay = Option.headerDisplay;
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -296,7 +297,7 @@ var EbBasicDataTable = function (Option) {
                         }
                     }
 
-                    if (v !== "")
+                    if (v !== "" || v !== null)
                         fltr_collection.push(new fltr_obj(dtype, id, v));
                 });
             }
@@ -503,7 +504,8 @@ var EbBasicDataTable = function (Option) {
         }
 
         this.filterDisplay();
-        this.Api.columns.adjust();
+        if(this.Api !== null)
+            this.Api.columns.adjust();
 
         this.$dtLoaderCont.EbLoader("hide");
 
@@ -516,6 +518,8 @@ var EbBasicDataTable = function (Option) {
                 Option.fninitComplete();
         }.bind(this), 10);
         $(".dataTables_scroll").css("height", "100%");
+        if (!this.headerDisplay)
+            $(".dataTables_scrollHead").hide();
     }
 
     this.contextMenu = function () {

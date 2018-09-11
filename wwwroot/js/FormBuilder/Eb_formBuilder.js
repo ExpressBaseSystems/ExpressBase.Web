@@ -22,13 +22,9 @@
 
 
 
-    this.del = function (ce) {
-        var $e = $(ce.trigger.context);
+    this.del = function (eType, selector, action, originalEvent) {
+        var $e = selector.$trigger;
         var id = $e.attr("id");
-        this.DelCtrl(id);
-    }.bind(this);
-
-    this.DelCtrl = function (id) {
         var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
         var ctrl = this.rootContainerObj.Controls.PopByName(id);
@@ -37,30 +33,7 @@
         this.PGobj.removeFromDD(id);
         this.saveObj();
         return ctrl;
-    };
-    this.CtxMenu = [{
-        name: 'copy',
-        img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAE5SURBVGhD7dqvSgRhFIbx0apRMOwdmEwWvQAtbhKDVQRvwD/NC/AKlC2iRTDaBYuIFovXoAajTX2+dsKBGb45Z3ThfeAXlhnm27fsht1GKdW7bdziKcEyBukMP4nWkN4Y3uGRBhlyCe/wSIMMuYM99BxbwRaQ3j3skH1MZRry3+o6ZBYbOMBhoB3Mo3ddhozwDHtfpDf0/mRrGzKDB9h7MnxiEdW1DVmFvZ7pGNW1DdmFvf6B6yAvsM++QHVtQ8pre73cH9UR7LOvUJ2GBKQhXhoSkIZ4aUhAGuKlIQFpiJeGBKQhXhoSUOiQTewZS7BNzZC2NKRDGlKThnToT4e8wvsxp0Z54/bZqUPKx7M9LNMp0prDO7yDI31jBamV30W+4L2BKCcYpPKNP8EjvD8F1LrBOpRSvWuaX5uuctVnE+66AAAAAElFTkSuQmCC`,
-        title: 'Copy this control',
-        fun: function () {
-            alert('i am update button')
-        }
-    }, {
-        name: 'Cut',
-        img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPFSURBVGhD7dpXiFVHHMfxtfcGasCAJmJHfBFExBYDoj5FbNgFGxawgA19ULCHgARRoqBgoiEWFFGxKwo+iVjig2DDFiMhkii2YPn+dvd/mYxzz9kVxBnwBx9Yzpl79/zvPdPObkkE6Yo6ZT+ml+qYjKv4E1WQXPpABbwt9xuSSjWswGtYETINyURFbINbgOmIZLIFoSL+QDIZhVAR8iuSyJd4jFARMhVJZANCBZj2iD718RShAuQ+ksgwhAow25FE8m4rzexJxJ29Q9og+jTHG4QKkLtIInn942ckkfUIFWAmIIlcQagA8xWiT1Nk9Y9bSCJDESrAbMVHT0ssxmFcx194AN0qWoZrAVgLWfkRoQLMOHxItItshW+hPcwPOIDT0I6zNNovrMZ/CP1yl26NfiiWiwi9TvT+Gpqz8gV6YSJWYQ8u4TlC7zkThRTbLxTzEt/AT2P4O0DXUVjU4UdjGbScP49/EHpdMb+jBkrTH+5JVa8qu6MDumAAvse/sHY3UfhKyzMI7nv5RsJyCqE2FfUCurZCfoGdPIRChYFoW/oE1t6/xVbCzvluwwpvh6yRLY9eq2/zf3HvaX07edFtYO1n64CTs7BzvvGw/IRQm4pQEbPwXq7BGul2yssmWPu1OlCe2ijWIXUb2bOrr6E+FmqXR3fDYARzAtZwgQ5kRKObOpi118MD9R+lJ3TsBnT/Wpu/oWHTchB2rjL2I3NHuRDWWJ/oDOjT9aNRZjfcNxfrJ3qfeWU/lnSCFeN+gkPgvz6Lrke/Uw/1ctMMj+C+gS5CfecYzkCTo3veaF6oB0WfdOeyH0uj12hzZWmIewi9jybdc9gBDRhToIsPfaCZ6QE9gw39kiwa+5Wq0NOSvdC3MQdaFWhesUzCTqhfTYduSQ3vlb7YvGjGXYfKFKT2isZz/9xyfNJorNeFjYA6/xJo+bII6j9j0RvqMzbn6LhfSBJbWT/u3GLy1lRRRntwvxANIHrko76RxB9yNMH5RfhUaDdEHa15Qhfv08TYGtFGw6l7wbql5kKDxRo8g52L+uniEdiFvoLmETffwc5rjVUXUeYO7EK1QfOjxaI7o/dFlHEXiGN0IJDjsDbDdSC2NIJdoGjJEcpJWBs9wIguWku5hTRBKJdhbQbqQGypCbcQraT9aFHoPp2JdgjW5souMrRvcB/YPUS0/+WwC3ahenihXaSlAdwd5UZEG+0r7ELlArSEXwr3eYDmmOhXxPvgFhMyH9FHnX4zQk8ZNZuriKT+A6gttI3VXl39Qc+9WuBzKpaSknc0xTqzn9t8uAAAAABJRU5ErkJggg==`,
-        title: 'Cut this control',
-        fun: this.cut
-    }, {
-        name: 'Paste',
-        img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFgSURBVGhD7Zg9SkNBFEafCIKVrSAICiIIEsHCDWjlBlyBoOtwA/a27sBKySastUsX8AfFxt/vyr1wGZ7mzbwZX2K+A6eYmTfJnJAhkIoQ0hlrcA8uf48mkCXYh5/Oc7gAJ4Z5eA19hHkJZ2AnyMG2IzyBdvBXeAPf3dwxrNv3k7MwC5vQDhGjHH4HCgew7pkmZvs6poYMoCGfat0zTSwS8gHvnDK2tUedM+WeePya+ARt75vOifc6ZxYJeZAJh4xtTZ6LYR/aXh8tB7d5kSEhUxcS3pFR+jsyViFtZEgMv4Vswbpf41g3oNFJSAkYMoqpDlmEq4n2oA+Rsa3NwWRSQi6gP0wu5SzJMKSAnYYcyUQL5D3ttRgiMERliMKQEIaoDFEYEsIQlSEKQ0L+ZcgLPGyg/E9le8YyJEWGKNlCVuBVpENob34Kd1v4DLOEpOAve04ZksoZvC3gOiTkb6mqL4ZAWsBK7e3QAAAAAElFTkSuQmCC`,
-        title: 'Paste control',
-        fun: this.paste
-    }, {
-        name: 'Remove',
-        img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAF7SURBVGhD7dnBboJAEMZx7u2zeGmxB5uYAL7/a8iVpde2OzCfYsMCwiw7TeafbGIsZfsrK5o1syzLsqw9q8/nV34Yre/L4YUfxsmV71Vb5HVTfXzyU+LRudsyv7oqL/kp2QjhiuNXWx5//EQuBoYRDc1Bc4ljHhEYspghAqPD+Ln5kG3ReqVLPZzgPmQwY4jb8EtZ7DXTXN5OwYk2YiYRMZbwDKZZM+HuCCSJSYZAEpjkCLQFowaB1mDUIdAzGLUItASjHoGmMfTu/PdTAcaym8OuTf/Xx4ZCBFqOUYxAPSa0lPwHQf8z9QiK/sjwa6Ib+iH91fjnS2s5AsNj/N2Of11HUwheZuHbrxbM9JXol9DsMakxSxB86PyxqTDPIJA6zBoEUoPZgkDJMRIIlAwjiUC7Y2IgEJ/bBc8thZnZoNuEQDOYq9gGHe3BjmyZiiDQGEZ0yxQ9YmQRaIiJgkCEoUsdA4E6TJHX0RAo+pcwvj2+TLIsy7Kse1n2C9LWR7iAvc9TAAAAAElFTkSuQmCC`,
-        title: 'Remove this control',
-        fun: this.del
-    }];
+    }.bind(this);
 
     this.controlOnFocus = function (e) {
         if (e.target.id === this.formId) {
@@ -77,18 +50,25 @@
         //  this.PGobj.ReadOnly();
     };
 
-    this.MakeContDropable = function (type) {
-        if (type === "TableLayout")
+    this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
+        if (ctrlObj.ObjType === "TableLayout")
             this.makeTdsDropable();
-        else if (type === "TabControl")
+        else if (ctrlObj.ObjType === "TabControl") {
+            let tapPanes = $ctrl.find(".tab-pane");
+            let tapBtns = $ctrl.find("ul.nav-tabs a");
+            $.each(ctrlObj.Controls.$values, function (i, pane) {
+                $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
+                $(tapBtns[0]).attr("href", "#" + pane.EbSid).text(pane.EbSid).closest("li").attr("li-of", pane.EbSid);
+            });
             this.makeTabsDropable();
+        }
     }
 
     this.makeTabsDropable = function () {
-        $.each($(".tab-pane"), function (i) {
+        $.each($("#" + this.formId + " .tab-pane"), function (i, el) {
             if (this.drake) {
-                if (!this.drake.containers.contains(document.getElementsByClassName("tab-pane")[i])) {
-                    this.drake.containers.push(document.getElementsByClassName("tab-pane")[i]);
+                if (!this.drake.containers.contains(el)) {
+                    this.drake.containers.push(el);
                 }
             }
         }.bind(this));
@@ -112,7 +92,6 @@
         $(".Eb-ctrlContainer").each(function (i, el) {
             this.initCtrl(el);
         }.bind(this));
-        $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
     };
 
     this.initCtrl = function (el) {
@@ -121,7 +100,11 @@
         let type = $el.attr("ctype").trim();
         let id = type + (this.controlCounters[type + "Counter"])++;// inc counter
         id = $el.attr("ebsid") || id;
-        $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
+        $el.attr("tabindex", "1");
+        if (type === "TabControl")
+            $el.attr("onclick", "$(this).focus()");
+        else
+            $el.attr("onclick", "event.stopPropagation();$(this).focus()");
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
         $el.attr("eb-type", type).attr("id", id);
@@ -290,17 +273,16 @@
 
                 $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
                 $ctrl.on("focus", this.controlOnFocus.bind(this));
-                $ctrl.attr("id", id);
+                $ctrl.attr("id", id).attr("ebsid", id);
                 $ctrl.attr("eb-type", type);
                 var ctrlObj = new EbObjects["Eb" + type](id);
                 this.rootContainerObj.Controls.Append(ctrlObj);
 
                 $ctrl.focus();
-                $ctrl.contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
                 ctrlObj.Label = id;
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
-                    this.MakeContDropable(type);
+                    this.InitContCtrl(ctrlObj, $ctrl);
                 this.updateControlUI(id);
             }
             else
@@ -388,6 +370,24 @@
     this.CreateRelationString = function () { };
 
     this.Init = function () {
+
+        $.contextMenu({
+            selector: '.Eb-ctrlContainer',
+            autoHide: true,
+            build: function ($trigger, e) {
+                return {
+                    items: {
+                        "Delete": {
+                            "name": "Remove",
+                            icon: "fa-minus",
+                            callback: this.del
+                        },
+                    }
+                };
+            }.bind(this)
+        });
+
+
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formId)], {
             removeOnSpill: false,
             copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
@@ -408,16 +408,16 @@
         this.addTabPane = function (SelectedCtrl, prop, val, addedObj) {
             let id = SelectedCtrl.EbSid;
             let $ctrl = $("#" + id);
-            let $tabMenu = $(`<li li-of="${addedObj.Name}"><a data-toggle="tab" href="#${addedObj.Name}">${addedObj.Name}</a></li>`);
-            let $tabPane = $(`<div id="${addedObj.Name}" class="tab-pane fade "></div>`);
-            $ctrl.find(".nav-tabs").append($tabMenu);
-            $ctrl.find(".tab-content").append($tabPane);
+            let $tabMenu = $(`<li li-of="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}">${addedObj.Name}</a></li>`);
+            let $tabPane = $(`<div id="${addedObj.EbSid}" ebsid="${addedObj.EbSid}" class="tab-pane fade "></div>`);
+            $ctrl.closestInner(".nav-tabs").append($tabMenu);
+            $ctrl.closestInner(".tab-content").append($tabPane);
         };
 
         this.RemoveTabPane = function (SelectedCtrl, prop, val, delobj) {
             let id = SelectedCtrl.EbSid;
             let $ctrl = $("#" + id);
-            let $tabMenu = $ctrl.find(`[li-of=${delobj.Name}]`).remove();
+            let $tabMenu = $ctrl.find(`[li-of=${delobj.EbSid}]`).remove();
             let $tabPane = $(`#${delobj.Name}`).remove();
         };
 
@@ -426,8 +426,10 @@
             console.log(val);
             if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
                 alert();
-            else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls")
+            else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls") {
+                //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
                 this.addTabPane(this.SelectedCtrl, prop, val, addedObj);
+            }
         }.bind(this);
 
         this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
@@ -446,19 +448,7 @@
 
 
             if (CurProp === 'DataSourceId') {
-                $.LoadingOverlay('show');
-                $.ajax({
-                    type: "POST",
-                    url: "../DS/GetColumns",
-                    data: { DataSourceRefId: PropsObj.DataSourceId },
-                    success: function (Columns) {
-                        PropsObj.Columns = JSON.parse(Columns);
-                        this.PGobj.refresh();
-                        if (PropsObj.constructor.name === "EbDynamicCardSet")
-                            this.setAllChildObjColumns(PropsObj);
-                        $.LoadingOverlay('hide');
-                    }.bind(this)
-                });
+                this.PGobj.PGHelper.dataSourceInit(this.DSchangeCallBack);
             }
 
         }.bind(this);

@@ -60,7 +60,7 @@ namespace ExpressBase.Web.Components
                 _dict.Add(objectType.IntCode, objectType.Name);
             }
 
-            if (ValidateLocId(locid))
+            if (ValidateLocId(locid) || this.UserObject.Roles.Contains("SolutionOwner"))
             {
                 var Ids = String.Join(",", GetAccessIds(locid));
 

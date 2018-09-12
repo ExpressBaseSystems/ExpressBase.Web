@@ -84,7 +84,7 @@
     this.$SrgyDensity = $("#txtSrgyDensity");
     this.$PatientInstr = $("#txaPatientInstr");
     this.$DoctorInstr = $("#txaDoctorInstr");
-    this.$SrgySave = $("#btnSrgySave");        
+    this.$SrgySave = $("#btnSrgySave");  
     
     //DECLARED DATA
     this.OutDataList = [];
@@ -137,7 +137,7 @@
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
         
-        //FEEDBACK  BILLING  SURGERY
+        //FEEDBACK  BILLING  SURGERY 
         this.initFeedBackModal();
         this.initBillingModal();
         this.initSurgeryModal();
@@ -238,7 +238,7 @@
             this.$MdlFeedBack.attr("data-id", "");
         }.bind(this));
     }
-
+       
     this.initBillingModal = function () {
         this.$btnNewBilling.on("click", function () {
             if (this.AccId === 0) {
@@ -456,7 +456,7 @@
         this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
         this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
         this.$Closing.val(this.CustomerInfo["closing"]);
-        this.$Nature.val(this.CustomerInfo["nature"].trim().toLowerCase());
+        this.$Nature.val(this.CustomerInfo["nature"]);
 
         this.$CostCenter.prop("disabled", true);
         this.$EnDate.prop("disabled", true);

@@ -366,7 +366,8 @@ namespace ExpressBase.Web.Controllers
             return new JsonResult(res);
         }
 
-        public async Task<int> UploadImageAsyncFromForm(int i, string tags)
+		[HttpPost]
+		public async Task<int> UploadImageAsyncFromForm(int i, string tags)
         {
             Regex regEx = new Regex(RejexPattern);
             UploadAsyncResponse res = new UploadAsyncResponse();
@@ -420,7 +421,7 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
-			return res.ImgRefId;
+			return res.FileRefId;
 		}
 
         [HttpPost]

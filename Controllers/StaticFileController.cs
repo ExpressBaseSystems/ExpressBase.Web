@@ -378,11 +378,11 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        public async Task<JsonResult> UploadImageAsyncFromForm(int i, string tags)
+        public async Task<int> UploadImageAsyncFromForm(int i, string tags)
         {
             Regex regEx = new Regex(RejexPattern);
             UploadAsyncResponse res = new UploadAsyncResponse();
-            JsonResult resp = null;
+
             var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);//workaround need to change
             Dictionary<string, List<string>> tagDict = new Dictionary<string, List<string>>();//workaround need to change
 
@@ -425,26 +425,15 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.FileRefId = 1;
 
                         res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
-                        if (res.ImgRefId > 0)
-                        {
-                            resp = new JsonResult(new UploadFileMqResponse
-                            {
-                                IsUploaded = true,
-                                ImgRefId = res.ImgRefId
-                                //initialPreview = "<img src='" + Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>" // 414 (URI Too Long)
-                            });
-                        }
                     }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
-                resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" });
             }
-
-            return resp;
-        }
+			return res.ImgRefId;
+		}
 
 
         [HttpPost]

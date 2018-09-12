@@ -42,7 +42,7 @@
       <div class="modal-content cropfy_modal" style="border-radius:0;border:none;">
         <div class="modal-header cropfy_header" style="background: #3e8ef7;color: white;">
           <h5 class="modal-title" id="exampleModalLongTitle">Crop Image</h5>
-            <i class="material-icons cropfy_close pull-right" data-dismiss="modal" style="margin-top:-4%;cursor: context-menu" id="${this.Container}_close">close</i>
+            <i class="material-icons cropfy_close pull-right" data-dismiss="modal" style="margin-top:-2.5%;cursor: pointer" id="${this.Container}_close">close</i>
         </div>
         <div class="modal-body">
             <div class="cropy_container" style="height:450px;width:100%;padding-bottom:50px;">

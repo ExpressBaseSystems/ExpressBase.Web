@@ -1,7 +1,6 @@
 ﻿
 var EbBasicChart = function (Option) {
     this.data = Option.data || null;
-    this.ssurl = ssurl;
     this.XLabel = [];
     this.YLabel = [];
     this.dataset = [];

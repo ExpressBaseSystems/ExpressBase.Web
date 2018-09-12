@@ -48,7 +48,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined && rowData !== null ) ? rowData.split(",") : null;
+    this.rowData = (rowData !== undefined && rowData !== null) ? rowData.split(",") : null;
     this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues) : [];
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
@@ -130,9 +130,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
             this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
-        else if (this.rowData !== null && rowData !== "" && rowData[0] !== "") {
-            //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
-            this.isContextual = true;
+        else if (this.filterValues !== null && this.filterValues.length >0) {
+           // if (this.rowData !== null && rowData !== "" && rowData[0] !== "") {
+                this.isContextual = true;
+            //}
+           
         }
         else
             this.isTagged = true;
@@ -287,6 +289,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getColumnsSuccess = function () {
+        this.firstTime = false;
         if (!this.validateFD())
             return;
         $(".dv-body1").show();
@@ -332,6 +335,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.visibilityCheck();
         }
         else {
+            $.each(this.EbObject.Columns.$values, function (i, colobj) {
+                $.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (i, rgobj) {
+                    if (colobj.name === rgobj.name) {
+                        colobj.bVisible = true;
+                    }
+                }.bind(this));
+            }.bind(this));
             this.EbObject.tempRowgrouping = {}
             this.RGIndex = [];
             this.rowgroupCols = [];
@@ -829,6 +839,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.RowCount = dd.recordsFiltered;
         //return dd.data;
         this.unformatedData = dd.data;
+        this.Levels = dd.levels;
         return dd.formattedData;
     };
 
@@ -970,16 +981,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.initCompleteFunc = function (settings, json) {
+        this.Run = false;
         this.firstTime = true;
         this.GenerateButtons();
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
+            if (dvcounter === 0)
+                dvcontainerObj.modifyNavigation();
         }
-        this.Api.columns.adjust();
+        //this.Api.columns.adjust();
 
-        setTimeout(function () {
+        //setTimeout(function () {
 
             this.arrangeWindowHeight();
             this.createFilterRowHeader();
@@ -996,7 +1010,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.Api.columns.adjust();
 
             $("#eb_common_loader").EbLoader("hide");
-        }.bind(this), 10);
+        //}.bind(this), 10);
     }
 
     this.contextMenu = function () {
@@ -1027,12 +1041,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else
             idx = key;
-        //this.rowData = this.Api.row(idx).data();
-        if (typeof (idx) !== "undefined")
-            //this.rowData = this.Api.row(idx).data();
-            this.rowData = this.unformatedData[idx];
-        else
-            this.rowData = "";
+
         var splitarray = this.linkDV.split("-");
         if (splitarray[2] === "3") {
             var url = "../ReportRender/BeforeRender?refid=" + this.linkDV;
@@ -1379,8 +1388,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.EbObject.tempRowgrouping.$type.indexOf("MultipleLevelRowGroup") !== -1)
             this.multiplelevelRowgrouping();
-        else
-            this.singlelevelRowgrouping();        
+        else {
+            var rows = this.Api.rows().nodes();
+            $.each(this.Levels, function (i, obj) {
+                $(rows).eq(obj.rowIndex).before(obj.levelText);
+            });
+        }
+            //this.singlelevelRowgrouping();        
 
         
         $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
@@ -1457,7 +1471,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
             //}
             if (tempobj[0].LinkRefId !== null)
-                tempstr += tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'><a href="#" oncontextmenu="return false" class="tablelink" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
+                tempstr += tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'><a href="#" oncontextmenu="return false" class="tablelink" data-colindex="${tempobj[0].data}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupArray[j]}</a></b>`;
             else
                 tempstr += tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupArray[j]}'>${groupArray[j]}</b>`;
 
@@ -1482,7 +1496,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
         //}
         if (tempobj[0].LinkRefId !== null)
-            var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
+            var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-colindex="${tempobj[0].data}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${ groupString }</a></b>`;
         else
             var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
             str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
@@ -1606,7 +1620,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });//tempobj[0].sTitle + " : " +
             $.each(this.unformatedData, function (i, _dataArray) {
                 
-                var te = (_dataArray[dt].trim() === "") ? "(Blank)" : _dataArray[dt].trim();
+                var te = (_dataArray[dt] === null || _dataArray[dt].trim() === "") ? "(Blank)" : _dataArray[dt].trim();
                 groupString =  te;
 
                 if (last !== groupString) {
@@ -1918,7 +1932,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
 
         this.filterDisplay();
-
         this.Api.columns.adjust();        
     };
 
@@ -1952,11 +1965,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 "</div>" +
                 "</div>" +
                 "</div>");
-            //if (this.FD) {
-            //    $("#obj_icons").append("<button id= 'btnToggleFD" + this.tableId + "' class='btn'  data- toggle='ToogleFD'> <i class='fa fa-filter' aria-hidden='true'></i></button>");
-            //}
-            //$("#obj_icons").append("<button id= 'btnTogglePPGrid" + this.tableId + "' class='btn'  data- toggle='TooglePPGrid'><i class='fa fa-cog' aria-hidden='true'></i></button>");
-            //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
+
             if (this.login == "uc") {
                 //if (!this.isContextual)
                 dvcontainerObj.appendRelatedDv(this.tableId);
@@ -1986,13 +1995,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
 
             $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
-        }        
+        }    
 
         this.addFilterEventListeners();
     };
 
     this.setFilterboxValue = function (i, obj) {
-        //$(obj).children('div').children('.eb_finput').off("keypress").on("keypress", this.call_filter);
         $(obj).children('div').children('.eb_finput').on("keydown", function (event) {
             if (event.keyCode === $.ui.keyCode.TAB &&
                 $(this).autocomplete("instance").menu.active) {
@@ -2003,106 +2011,70 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var tempobj = $.grep(this.EbObject.Columns.$values, function (col) { return col.name === name; });
         if(tempobj.length > 0)
             var idx = tempobj[0].data;
-        //var idx = this.Api.columns(name + ':name').indexes()[0];
-        //var data = this.Api.columns(idx).data()[0];
-        //var data = getColdata(this.unformatedData,idx);
         var data = arrayColumn(this.unformatedData, idx);
         if ($(obj).children('div').children('.eb_finput').attr("data-coltyp") === "string") {
-            $(obj).children('div').children('.eb_finput').autocomplete({
-                //source: $.unique(this.Api.columns(idx).data()[0]),
-                source: function (request, response) {
-                    // delegate back to autocomplete, but extract the last term
-                    response($.ui.autocomplete.filter(
-                        $.unique(data), extractLast(request.term)));
-                }.bind(this),
-                focus: function () {
-                    // prevent value inserted on focus
-                    return false;
-                },
-                select: function (event, ui) {
-                    var terms = splitval(this.value);
-                    // remove the current input
-                    terms.pop();
-                    // add the selected item
-                    terms.push(ui.item.value);
-                    // add placeholder to get the comma-and-space at the end
-                    terms.push("");
-                    this.value = terms.join(" | ");
-                    //$(this).setCursorPosition(this.value.length-1);
-                    return false;
-                },
-                search: function (event, ui) {
-                }
-            });
+            this.setFilterboxValueInner(obj, data);
         }
         else {
             if ($(obj).children('div').length === 0) {
                 var $lctrl = $("#" + this.tableId + "_wrapper .DTFC_LeftHeadWrapper table tr[class=addedbyeb] th:eq(" + i + ")").find(".eb_finput");
                 var $rctrl = $("#" + this.tableId + "_wrapper .DTFC_RightHeadWrapper table tr[class=addedbyeb] th:eq(" + i + ")").find(".eb_finput");
                 if ($lctrl.length > 0) {
-                    if ($lctrl.attr("data-coltyp") === "string") {
-                        $lctrl.autocomplete({
-                            //source: $.unique(this.Api.columns(idx).data()[0]),
-                            source: function (request, response) {
-                                // delegate back to autocomplete, but extract the last term
-                                response($.ui.autocomplete.filter(
-                                    $.unique(data), extractLast(request.term)));
-                            }.bind(this),
-                            focus: function () {
-                                // prevent value inserted on focus
-                                return false;
-                            },
-                            select: function (event, ui) {
-                                var terms = splitval(this.value);
-                                // remove the current input
-                                terms.pop();
-                                // add the selected item
-                                terms.push(ui.item.value);
-                                // add placeholder to get the comma-and-space at the end
-                                terms.push("");
-                                this.value = terms.join(" | ");
-                                //$(this).setCursorPosition(this.value.length-1);
-                                return false;
-                            },
-                            search: function (event, ui) {
-                            }
-                        });
-                    }
+                    this.setfiletrvalueFixedcolumns($lctrl, data);
                 }
                 if ($rctrl.length > 0) {
-                    if ($rctrl.attr("data-coltyp") === "string") {
-                        $rctrl.autocomplete({
-                            //source: $.unique(this.Api.columns(idx).data()[0]),
-                            source: function (request, response) {
-                                // delegate back to autocomplete, but extract the last term
-                                response($.ui.autocomplete.filter(
-                                    $.unique(data), extractLast(request.term)));
-                            }.bind(this),
-                            focus: function () {
-                                // prevent value inserted on focus
-                                return false;
-                            },
-                            select: function (event, ui) {
-                                var terms = splitval(this.value);
-                                // remove the current input
-                                terms.pop();
-                                // add the selected item
-                                terms.push(ui.item.value);
-                                // add placeholder to get the comma-and-space at the end
-                                terms.push("");
-                                this.value = terms.join(" | ");
-                                //$(this).setCursorPosition(this.value.length-1);
-                                return false;
-                            },
-                            search: function (event, ui) {
-                            }
-                        });
-                    }
+                    this.setfiletrvalueFixedcolumns($rctrl, data);
                 }
             }
 
         }
     };
+
+    this.setFilterboxValueInner = function (obj,data) {
+        $(obj).children('div').children('.eb_finput').autocomplete({
+            source: function (request, response) {
+                response($.ui.autocomplete.filter(
+                    $.unique(data), extractLast(request.term)));
+            }.bind(this),
+            focus: function () {
+                return false;
+            },
+            select: function (event, ui) {
+                var terms = splitval(this.value);
+                terms.pop();
+                terms.push(ui.item.value);
+                terms.push("");
+                this.value = terms.join(" | ");
+                return false;
+            },
+            search: function (event, ui) {
+            }
+        });
+    }
+
+    this.setfiletrvalueFixedcolumns = function ($ctrl, data) {
+        if ($ctrl.attr("data-coltyp") === "string") {
+            $ctrl.autocomplete({
+                source: function (request, response) {
+                    response($.ui.autocomplete.filter(
+                        $.unique(data), extractLast(request.term)));
+                }.bind(this),
+                focus: function () {
+                    return false;
+                },
+                select: function (event, ui) {
+                    var terms = splitval(this.value);
+                    terms.pop();
+                    terms.push(ui.item.value);
+                    terms.push("");
+                    this.value = terms.join(" | ");
+                    return false;
+                },
+                search: function (event, ui) {
+                }
+            });
+        }
+    }
 
     this.orderingEvent = function (e) {
         //var col = $(e.target).children('span').text();
@@ -2521,8 +2493,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (typeof (idx) !== "undefined")
             //this.rowData = this.Api.row(idx).data();
             this.rowData = this.unformatedData[idx];
-        else
-            this.rowData = "";
+        else {//incomplete...
+            this.rowData = [];
+        }
 
         this.filterValues = this.getFilterValues("link");
 
@@ -2559,7 +2532,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.login === "uc") 
                 dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
             else
-                this.OpeninNewTab(idx, cData);
+                this.OpeninNewTab(idx, cData );
         }
     };
 

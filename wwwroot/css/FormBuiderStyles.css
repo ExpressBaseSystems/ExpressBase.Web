@@ -145,6 +145,10 @@
     margin: 10px 0;
 }
 
+#filterBox .Eb-ctrlContainer .dataTables_scroll {
+    height: 100% !important;
+}
+
 .Eb-ctrlContainer [type="RadioGroup"] {
     padding: 5px;
 }

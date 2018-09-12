@@ -43,19 +43,20 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.CityList = fr.CityList;
 			ViewBag.SourceCategoryList = fr.SourceCategoryList;
 			ViewBag.SubCategoryList = fr.SubCategoryList;
+			ViewBag.ImageIdList = fr.ImageIdList;
 			if (mode == 1)
 			{
 				ViewBag.FeedbackList = JsonConvert.SerializeObject(fr.FeedbackList);
 				ViewBag.BillingList = JsonConvert.SerializeObject(fr.BillingList);
-				ViewBag.SurgeryList = JsonConvert.SerializeObject(fr.SurgeryList);
+				ViewBag.SurgeryList = JsonConvert.SerializeObject(fr.SurgeryList);				
 			}
 
 			return View();
 		}
 
-		public int SaveCustomer(int Mode, string CustomerInfo)
+		public int SaveCustomer(int Mode, string CustomerInfo, string ImgRefId)
 		{
-			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode });
+			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode, ImgRefId = ImgRefId });
 			return res.Status;
 		}
 

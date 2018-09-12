@@ -1,14 +1,23 @@
 ﻿.form-cont {
-	background-color: white;
 	min-height: 100vh;
+	margin:0 -15px;
 }
-
+.white-tab {
+	width: 100%;
+	float: left;
+	border: 1px solid #ddd;
+	border-top: none;
+	background-color: white;
+}
 .lm-form-body {
 	padding-top: 42px;
 	float: left;
 	width: 100%;
 }
 
+.pd-lr-15{
+	padding:0 15px;
+}
 .lm-form-inline {
 	float: left;
 	width: 100%;
@@ -22,7 +31,7 @@
 	}
 
 	.lm-form-inline label {
-		font-family: sans-serif;
+		/*font-family: sans-serif;*/
 		font-size: 12.5px;
 		margin-bottom: 0px;
 		font-weight: normal;

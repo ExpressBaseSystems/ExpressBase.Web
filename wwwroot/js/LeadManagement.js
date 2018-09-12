@@ -84,7 +84,7 @@
     this.$SrgyDensity = $("#txtSrgyDensity");
     this.$PatientInstr = $("#txaPatientInstr");
     this.$DoctorInstr = $("#txaDoctorInstr");
-    this.$SrgySave = $("#btnSrgySave");        
+    this.$SrgySave = $("#btnSrgySave");  
     
     //DECLARED DATA
     this.OutDataList = [];
@@ -137,10 +137,11 @@
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
         
-        //FEEDBACK  BILLING  SURGERY
+        //FEEDBACK  BILLING  SURGERY 
         this.initFeedBackModal();
         this.initBillingModal();
         this.initSurgeryModal();
+        this.initAttachModal();
 
         this.$CostCenter.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {            
@@ -238,7 +239,7 @@
             this.$MdlFeedBack.attr("data-id", "");
         }.bind(this));
     }
-
+       
     this.initBillingModal = function () {
         this.$btnNewBilling.on("click", function () {
             if (this.AccId === 0) {
@@ -423,6 +424,28 @@
         }.bind(this));
     }
 
+    this.initAttachModal = function () {
+
+        $("#mdlAttach").on('shown.bs.modal', function (e) {
+            this.ImgRefdiff = [];
+            for (let i = 0; i < imgup.ImageRefIds.length; i++)
+                this.ImgRefdiff.push(imgup.ImageRefIds[i]);
+        }.bind(this));
+
+        $("#mdlAttach").on('hidden.bs.modal', function (e) {
+            for (let i = 0; i < imgup.ImageRefIds.length; i++) {
+                if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
+                    $("#menuAttach").append(`<div class="img_wrapper">
+                                                <div class="img_wrapper_img">
+                                                    <img src="${imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
+                                                </div>
+                                            </div>`);
+                }
+            }
+        }.bind(this));
+
+    }
+
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["firmcode"]);
         this.$EnDate.val(this.CustomerInfo["trdate"]);
@@ -456,7 +479,7 @@
         this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
         this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
         this.$Closing.val(this.CustomerInfo["closing"]);
-        this.$Nature.val(this.CustomerInfo["nature"].trim().toLowerCase());
+        this.$Nature.val(this.CustomerInfo["nature"]);
 
         this.$CostCenter.prop("disabled", true);
         this.$EnDate.prop("disabled", true);
@@ -470,7 +493,7 @@
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveCustomer",
-                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList) },
+                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(imgup.ImageRefIds)},
                 success: function (result) {
                     if (result) {
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
@@ -528,6 +551,8 @@
         this.pushToList("consultingfeepaid", (this.$FeePaid.val() || "False"));
         this.pushToList("closing", (this.$Closing.val() || "0"));
         this.pushToList("nature", $("#selNature option:selected").text());
+
+        //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });    
         
         return true;
     }

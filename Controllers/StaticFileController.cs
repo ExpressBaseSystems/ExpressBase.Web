@@ -149,7 +149,7 @@ namespace ExpressBase.Web.Controllers
                 dfs = this.FileClient.Get<DownloadFileResponse>
                         (new DownloadFileByIdRequest
                         {
-                            FileDetails = new FileMeta { FileStoreId = filename.SplitOnLast(CharConstants.DOT).First(), FileType = filename.SplitOnLast(CharConstants.DOT).Last(), FileCategory = EbFileCategory.File }
+                            FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
                         });
                 if (dfs.StreamWrapper != null)
                 {
@@ -170,27 +170,22 @@ namespace ExpressBase.Web.Controllers
             DownloadFileResponse dfs = null;
             HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
             ActionResult resp = new EmptyResult();
-            int irefid = 0;
-            Int32.TryParse(filename.SplitOnLast(CharConstants.DOT).First(), out irefid);
-            if (irefid != 0)
+            try
             {
-                try
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadFileByRefIdRequest
+                        {
+                            FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
+                        });
+                if (dfs.StreamWrapper != null)
                 {
-                    dfs = this.FileClient.Get<DownloadFileResponse>
-                            (new DownloadFileByRefIdRequest
-                            {
-                                FileDetails = new FileMeta { FileRefId = irefid, FileType = filename.SplitOnLast(CharConstants.DOT).Last(), FileCategory = EbFileCategory.File }
-                            });
-                    if (dfs.StreamWrapper != null)
-                    {
-                        dfs.StreamWrapper.Memorystream.Position = 0;
-                        resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
-                    }
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Exception: " + e.Message.ToString());
-                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
             }
             return resp;
         }
@@ -206,7 +201,7 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                dfq.ImageInfo = new ImageMeta { FileStoreId = filename.SplitOnLast(CharConstants.DOT).First(), FileType = filename.SplitOnLast(CharConstants.DOT).Last(), FileCategory = EbFileCategory.Images, ImageQuality = ImageQuality.original };
+                dfq.ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = ImageQuality.original };
 
                 dfs = this.FileClient.Get<DownloadFileResponse>(dfq);
 
@@ -231,12 +226,11 @@ namespace ExpressBase.Web.Controllers
             HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
             ActionResult resp = new EmptyResult();
 
-            string fname = String.Format("{0}_{1}.{2}", filename.SplitOnLast(CharConstants.DOT).First(), qlty, filename.SplitOnLast(CharConstants.DOT).Last());
-            DownloadImageByNameRequest dfq = new DownloadImageByNameRequest();
+            DownloadImageByIdRequest dfq = new DownloadImageByIdRequest();
 
             try
             {
-                dfq.ImageInfo = new ImageMeta { FileName = fname, FileCategory = EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(qlty) };
+                dfq.ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(qlty) };
 
                 dfs = this.FileClient.Get<DownloadFileResponse>(dfq);
 
@@ -245,7 +239,6 @@ namespace ExpressBase.Web.Controllers
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
                 }
-
             }
             catch (Exception e)
             {
@@ -299,9 +292,10 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last();
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
                         uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
-                        uploadFileRequest.FileDetails.FileRefId = 1;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
+
+                        return new JsonResult(res);
                     }
                 }
             }
@@ -361,22 +355,74 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.FileRefId = 1;
 
                         res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
-                        resp = new JsonResult(new UploadFileMqResponse
-                        {
-                            Uploaded = "OK",
-                            initialPreview = "<img src='" + Convert.ToBase64String(uploadImageRequest.ImageByte) + "'/>" // 414 (URI Too Long)
-                        });
                     }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
-                resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" });
             }
 
-            return resp;
+            return new JsonResult(res);
         }
+
+		[HttpPost]
+		public async Task<int> UploadImageAsyncFromForm(int i, string tags)
+        {
+            Regex regEx = new Regex(RejexPattern);
+            UploadAsyncResponse res = new UploadAsyncResponse();
+
+            var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);//workaround need to change
+            Dictionary<string, List<string>> tagDict = new Dictionary<string, List<string>>();//workaround need to change
+
+            foreach (KeyValuePair<string, List<string>> entry in dict)//workaround need to change
+            {
+                tagDict.Add(regEx.Replace(entry.Key.ToLower(), UnderScore), entry.Value);
+            }
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+                uploadImageRequest.ImageInfo = new ImageMeta();
+
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
+                    {
+                        string fname = regEx.Replace(formFile.FileName, UnderScore);
+
+                        byte[] myFileContent;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                            uploadImageRequest.ImageByte = myFileContent;
+                        }
+
+                        if (!dict.IsEmpty())
+                        {
+                            uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tagDict[fname]);
+                        }
+                        uploadImageRequest.ImageInfo.FileName = fname;
+                        uploadImageRequest.ImageInfo.FileType = fname.SplitOnLast(CharConstants.DOT).Last();
+                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                        uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
+                        uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+                        uploadImageRequest.ImageInfo.FileRefId = 1;
+
+                        res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
+            }
+			return res.FileRefId;
+		}
 
         [HttpPost]
         public async Task<string> UploadDPAsync(string base64)

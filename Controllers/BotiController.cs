@@ -223,21 +223,79 @@ namespace ExpressBase.Web.Controllers
             return Obj;
         }
 
-        public int InsertBotDetails(string TableName, List<BotInsert> Fields)
+        public int InsertBotDetails(string RefId, List<BotFormField> Fields)
         {
 			try
 			{
-				var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields, AnonUserId = this.AnonUserId });
-				return x.RowAffected;
+				var Resp = ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = RefId });
+				var FormObj = EbSerializers.Json_Deserialize(Resp.Data[0].Json);
+				if (FormObj is EbBotForm)
+				{
+					var BotForm = FormObj as EbBotForm;
+
+					foreach (EbControl control in BotForm.Controls)
+					{
+						var CurFld = Fields.Find(i => i.Name == control.Name);
+						if(CurFld != null)
+						{
+							//var engine = new Jurassic.ScriptEngine();
+							//Console.WriteLine(engine.Evaluate("5 * 10 + 2"));
+						}
+					}
+
+					//var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = BotForm.TableName, Fields = Fields, AnonUserId = this.AnonUserId });
+					//return x.RowAffected;
+				}
+				
 			}
 			catch(Exception ex)
 			{
-				Console.WriteLine("Exception in InsertBotDetails. Message: "+ ex.Message);
-				return 0;
-			}            
-        }
+				Console.WriteLine("Exception in InsertBotDetails. Message: "+ ex.Message);				
+			}
+			return 0;
+		}
 
-        [HttpPost]
+		public int SubmitBotForm(int Id, string RefId, List<BotFormField> Fields)
+		{
+			try
+			{
+				var x = ServiceClient.Post<SubmitBotFormResponse>(new SubmitBotFormRequest { Id = Id, RefId = RefId, Fields = Fields, AnonUserId = this.AnonUserId });
+				return x.RowAffected;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Exception in SubmitBotForm. Message: " + ex.Message);
+			}
+			return 0;
+
+		}
+
+
+		//var Resp = ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = RefId });
+		//var FormObj = EbSerializers.Json_Deserialize(Resp.Data[0].Json);
+		//if (FormObj is EbBotForm)
+		//{
+		//	var BotForm = FormObj as EbBotForm;
+
+		//	if (!IsFormDataValid(FormObj, Fields))
+		//	{
+		//		return -1;
+		//	}
+
+		//	if (Id == 0)
+		//	{
+		//		var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = BotForm.TableName, Fields = Fields, AnonUserId = this.AnonUserId });
+		//		return x.RowAffected;
+		//	}
+		//	else
+		//	{
+		//		var x = ServiceClient.Post<UpdateBotFormTableResponse>(new UpdateBotFormTableRequest { Id = Id, TableName = BotForm.TableName, Fields = Fields, AnonUserId = this.AnonUserId });
+		//		return x.RowAffected;
+		//	}
+		//}
+
+		
+		[HttpPost]
         public IActionResult dvView1(string dvobj)
         {
             var dvObject = EbSerializers.Json_Deserialize(dvobj);

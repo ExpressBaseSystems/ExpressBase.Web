@@ -26,9 +26,10 @@
     this.Append = function (newObject) {
         //var parentId = $("#" + newObject.Name).closest(".controlTile").closest(".controlTile").attr("id");
         var parentId = $("#" + newObject.EbSid).parent().attr("ebsid");
-        if (parentId === undefined)
-            this.$values.push(newObject);
-        else if (!$(`[ebsid ="${parentId}"]`).attr("eb-form")) { // need correction
+        //if (parentId === undefined)
+        //    this.$values.push(newObject);
+        //else
+        if (!$(`[ebsid ="${parentId}"]`).attr("eb-form")) { // need correction
             var parent = this.GetByName(parentId);
             parent.Controls.$values.push(newObject);
         }

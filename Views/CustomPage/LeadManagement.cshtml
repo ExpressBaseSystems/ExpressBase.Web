@@ -321,15 +321,15 @@
                             {
                                 if (ViewBag.Env == "Development")
                                 {
-                                    url = "http://" + ViewBag.cid + "-dev.localhost:41500/images/" + id + ".jpg";
+                                    url = "http://" + ViewBag.cid + ".localhost:41500/images/" + id + ".jpg";
                                 }
                                 else if (ViewBag.Env == "Staging")
                                 {
-                                    url = "https://" + ViewBag.cid + "-dev.eb-test.info/images/" + id + ".jpg";
+                                    url = "https://" + ViewBag.cid + ".eb-test.info/images/" + id + ".jpg";
                                 }
                                 else
                                 {
-                                    url = "https://" + ViewBag.cid + "-dev.expressbase.com/images/" + id + ".jpg";
+                                    url = "https://" + ViewBag.cid + ".expressbase.com/images/" + id + ".jpg";
                                 }
                                 <div class="img_wrapper">
                                     <div class="img_wrapper_img">

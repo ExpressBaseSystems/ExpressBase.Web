@@ -9,6 +9,9 @@
         this._tag = {};
         this._prev = null;
         this.start();
+
+        this.ImageRefIds = [];
+        this.ImageBase64 = {};
     }
 
     start() {
@@ -20,7 +23,7 @@
 
     makeFup() {
         this._input.fileinput({
-            uploadUrl: "../StaticFile/UploadImageAsync",
+            uploadUrl: "../StaticFile/UploadImageAsyncFromForm",
             maxFileCount: 5,
             uploadAsync: true,
             uploadExtraData: this.uploadtag.bind(this)
@@ -54,6 +57,10 @@
 
     fileUploadSuccess(event, data, previewId, index) {
         //this.ss.stopListening();
+        if (this.ImageRefIds.indexOf(data.response) === -1) {
+            this.ImageRefIds.push(data.response);
+            this.ImageBase64[data.response] = data.reader.result;
+        }            
     };
 
     addCustbtn(event, file, previewId, index, reader) {
@@ -83,10 +90,14 @@
 
     filepreajax(event, previewId, index) {
         var r = this._tComm.tagsinput('items');
-        if (!$.isEmptyObject(this._tag)) {
-            for (var key in this._tag) {
-                for (let i = 0; i < r.length; i++) {
-                    this._tag[key].push(r[i]);
+        var filearray = this._input.fileinput('getFileStack');
+
+        for (let k = 0; k < filearray.length; k++) {
+            if (this._tag[filearray[k].name.toLowerCase()] === null || this._tag[filearray[k].name] === undefined)
+                this._tag[filearray[k].name.toLowerCase()] = r;
+            else {
+                for (let z = 0; z < r.length; z++) {
+                    this._tag[filearray[k].name.toLowerCase()].push(r[z]);
                 }
             }
         }

@@ -51,8 +51,13 @@
     };
 
     this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
-        if (ctrlObj.ObjType === "TableLayout")
+        if (ctrlObj.ObjType === "TableLayout") {
             this.makeTdsDropable();
+            let tds = $ctrl.find("td");
+            $.each(ctrlObj.Controls.$values, function (i, td) {
+                $(tds[i]).attr("ebsid", td.EbSid).attr("id", td.EbSid);
+            });
+        }
         else if (ctrlObj.ObjType === "TabControl") {
             let tapPanes = $ctrl.find(".tab-pane");
             let tapBtns = $ctrl.find("ul.nav-tabs a");
@@ -206,6 +211,7 @@
         if ($(source).attr("id") !== "form-buider-toolBox") {
             console.log("el poped");
             this.movingObj = this.rootContainerObj.Controls.PopByName(id);
+            this.adjustPanesHeight($(source));
         }
         else
             this.movingObj = null;
@@ -213,11 +219,10 @@
 
     this.onDragendFn = function (el) {
         var $sibling = $(el).next();
-        var target = $(el).parent();
+        var $target = $(el).parent();
         if (this.movingObj) {
-
             //Drag end with in the form
-            if (target.attr("id") !== "form-buider-toolBox") {
+            if ($target.attr("id") !== "form-buider-toolBox") {
                 if ($sibling.attr("id")) {
                     console.log("sibling : " + $sibling.id);
                     var idx = $sibling.index() - 1;
@@ -230,39 +235,11 @@
                 this.saveObj();
                 $(el).on("focus", this.controlOnFocus.bind(this));
             }
-
         }
-
     };
 
-    //this.onDropFn = function (el, target, source, sibling) {
-
-    //    if (target) {
-    //        //drop from toolbox to form
-    //        if ($(source).attr("id") === "form-buider-toolBox") {
-    //            el.className = 'controlTile';
-    //            var ctrl = $(el);
-    //            var type = ctrl.attr("eb-type").trim();
-    //            var id = type + (this.controlCounters[type + "Counter"])++;
-    //            ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-    //            ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-    //            ctrl.attr("id", id);
-    //            this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
-    //            ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
-    //                + new EbObjects["Eb" + type](id).Html());
-
-    //            ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
-    //            ctrl.focus();
-    //        }
-    //        else
-    //            console.log("ondrop else : removed");
-    //        this.saveObj();
-    //    }
-    //};
-
-
     this.onDropFn = function (el, target, source, sibling) {
-
+        let $target = $(target);
         if (target) {
             //drop from toolbox to form
             if ($(source).attr("id") === "form-buider-toolBox") {
@@ -282,7 +259,7 @@
                     this.rootContainerObj.Controls.InsertAt(idx, ctrlObj);
                 }
                 else {
-                    $(target).append($ctrl);
+                    $target.append($ctrl);
                     this.rootContainerObj.Controls.Append(ctrlObj);
                 }
 
@@ -295,8 +272,18 @@
             }
             else
                 console.log("ondrop else : removed");
+            
+            this.adjustPanesHeight($target);
         }
     };
+
+    this.adjustPanesHeight = function ($target) {
+        parent = $target.attr("eb-form") ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($target.attr("ebsid"));
+        if (parent.ObjType === "TabPane") {
+            tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
+            EbOnChangeUIfns.EbTabControl.adjustPanesHeightToHighest(tabControl.EbSid, tabControl);
+        }
+    }
 
     this.dropedCtrlInit = function ($ctrl, type, id) {
         $ctrl.attr("tabindex", "1");
@@ -395,7 +382,7 @@
                     items: {
                         "Delete": {
                             "name": "Remove",
-                            icon: "fa-minus",
+                            icon: "fa-trash",
                             callback: this.del
                         },
                     }

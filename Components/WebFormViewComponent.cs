@@ -44,6 +44,7 @@ namespace ExpressBase.Web.Components
                     }
                 }
                 ViewBag.HtmlHead = WebForm.GetHead();
+                WebForm.IsRenderMode = true;
                 ViewBag.WebFormHtml = WebForm.GetHtml();
 
                 ViewBag.WebFormObj = Common.EbSerializers.Json_Serialize(WebForm);

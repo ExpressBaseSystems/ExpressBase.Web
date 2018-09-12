@@ -313,7 +313,7 @@
                         string url = string.Empty;
                         if (ViewBag.ImageIdList.Count == 0)
                         {
-                            <div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>
+                            @*<div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>*@
                         }
                         else
                         {
@@ -339,6 +339,10 @@
                             }
 
                         }
+                    }
+                    else
+                    {
+                        @*<div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>*@
                     }
                 }
 

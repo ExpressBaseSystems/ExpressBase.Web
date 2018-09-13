@@ -14,17 +14,33 @@ namespace ExpressBase.Web.Controllers
     {
         public WebFormController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public IActionResult Index(string refId )
+        public IActionResult Index(string refId , string _params)
         {
+            ViewBag.editModeObj = _params ?? "false";
+            ViewBag.formRefId = refId;
             return ViewComponent("WebForm", refId);
         }
 
-        public int InsertBotDetails(string TableName, List<BotFormField> Fields)
+        public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try
             {
-                var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields });
+                var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields ,Id = Id });
                 return x.RowAffected;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in InsertBotDetails. Message: " + ex.Message);
+                return 0;
+            }
+        }
+
+        public object getRowdata(string refid, string rowid)
+        {
+            try
+            {
+                var Rowdata = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid });
+                return Rowdata;
             }
             catch (Exception ex)
             {

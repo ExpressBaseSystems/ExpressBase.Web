@@ -1067,6 +1067,23 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //    $.LoadingOverlay("hide");
             //}
         }
+        else if (splitarray[2] === "0") {
+            var url = "../WEBFORM/index?refid=" + this.linkDV;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = JSON.stringify(this.filterValues);
+            _form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
         else {
             this.tabNum++;
             var url = "../DV/dv?refid=" + this.linkDV;

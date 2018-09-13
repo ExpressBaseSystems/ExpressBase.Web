@@ -1391,12 +1391,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else {
             var rows = this.Api.rows().nodes();
             $.each(this.Levels, function (i, obj) {
-                $(rows).eq(obj.rowIndex).before(obj.levelText);
+                if(obj.type !== "After")
+                    $(rows).eq(obj.rowIndex).before(obj.levelText);
+                else
+                    $(rows).eq(obj.rowIndex).after(obj.levelText);
             });
+            var ct = $(".group[group=0]").length;
+            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);
         }
             //this.singlelevelRowgrouping();        
 
         
+
         $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
         $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
 

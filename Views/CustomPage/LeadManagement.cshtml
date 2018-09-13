@@ -319,25 +319,13 @@
                         {
                             foreach (string id in ViewBag.ImageIdList)
                             {
-                                if (ViewBag.Env == "Development")
-                                {
-                                    url = "http://" + ViewBag.cid + "-dev.localhost:41500/images/" + id + ".jpg";
-                                }
-                                else if (ViewBag.Env == "Staging")
-                                {
-                                    url = "https://" + ViewBag.cid + "-dev.eb-test.info/images/" + id + ".jpg";
-                                }
-                                else
-                                {
-                                    url = "https://" + ViewBag.cid + "-dev.expressbase.com/images/" + id + ".jpg";
-                                }
+                                url = "/images/" + id + ".jpg";
                                 <div class="img_wrapper">
                                     <div class="img_wrapper_img">
                                         <img src="@url" class="img-responsive" />
                                     </div>
                                 </div>
                             }
-
                         }
                     }
                     else

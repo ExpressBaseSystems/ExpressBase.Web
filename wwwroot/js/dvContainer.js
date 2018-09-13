@@ -204,6 +204,7 @@ var DvContainerObj = function (settings) {
     }.bind(this);
 
     this.drawdvFromTable = function (row, filter, celldata) {
+        this.isContextual = true;
         this.rowData = row;
         this.filterValues = filter;
         this.cellData = celldata;
@@ -252,6 +253,7 @@ var DvContainerObj = function (settings) {
                     this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid, cellData = this.cellData);
 
                     $(`#reportIframe_${copycelldata}`).on('load', this.iframeLoad.bind(this));
+
                 }
                 else {
                     $.each(this.dvcol, function (key, value) {
@@ -456,10 +458,6 @@ var DvContainerObj = function (settings) {
             $("#prev").show();
             $("#next").show();
             $("#divDots").show();
-            $(".miniregion").remove();
-            $(".minimap").remove();
-            //this.slickApi = null;
-            //if (this.slickApi === null) {
             if (!$('.splitdiv_parent').hasClass("slick-slider")) {
                 this.slickApi = $('.splitdiv_parent').slick({
                     slidesToShow: 1,
@@ -482,18 +480,7 @@ var DvContainerObj = function (settings) {
                 this.clickDot = true;
                 $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
             }
-            //}
-            //else {
-            //    if ($('.splitdiv_parent').children().find("#" + focusedId).length === 0) {
-            //        $('.splitdiv_parent').slick('slickAdd', $("#" + focusedId));
-            //        $('.splitdiv_parent').slick('slickGoTo', counter, true);
-            //    }
-            //}
         }
-        //this.modifydivDots();
-        //}
-
-        
     }
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {

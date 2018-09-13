@@ -139,7 +139,7 @@ var EbBasicDataTable = function (Option) {
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
-        this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
+        //this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
         this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
 
@@ -179,6 +179,7 @@ var EbBasicDataTable = function (Option) {
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
         //$('#' + this.tableId + ' tbody').off('keyup').on('keyup', 'tr', this.DTKeyPressCallback.bind(this));
+        this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
     };
 
@@ -517,9 +518,9 @@ var EbBasicDataTable = function (Option) {
             if (Option.fninitComplete)
                 Option.fninitComplete();
         }.bind(this), 10);
-        $(".dataTables_scroll").css("height", "100%");
+        //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
         if (!this.headerDisplay)
-            $(".dataTables_scrollHead").hide();
+            $(".Eb-ctrlContainer .dataTables_scrollHead").hide();
     }
 
     this.contextMenu = function () {

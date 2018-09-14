@@ -26,6 +26,10 @@
 
 <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
 
+<link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version=@bApnd />    <!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css" />
+<script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
+
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
 <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
@@ -36,7 +40,7 @@
 <div class="form-cont">
     <div class="container" style="padding: 60px 0px 10px 0px;">
         <div class="lm-form-inline">
-            <div class="col-md-12" style="padding-left:0px;">
+            <div class="col-md-10" style="padding-left:0px;width: 88%;">
                 <div class="lm-form-inline">
                     <div class="col-md-2" style="min-width: 21%;">
                         <div class="lm-form-group">
@@ -160,7 +164,7 @@
                     </div>
                 </div>
             </div>
-            @*<div class="col-md-2 lm-img-cont"></div>*@
+            <div class="col-md-2 lm-img-cont"></div>
         </div>
     </div>
 
@@ -288,7 +292,9 @@
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
-                <div id="divBilling" style="max-height: 300px; overflow: auto;"></div>
+                <div class="lm-form-inline">
+                    <div id="divBilling" style="max-height: 300px; overflow: auto;"></div>
+                </div>
             </div>
 
             <!-- Surgery Menu -->
@@ -317,12 +323,12 @@
                         }
                         else
                         {
-                            foreach (string id in ViewBag.ImageIdList)
+                            for (int i = 0; i < ViewBag.ImageIdList.Count; i++)
                             {
-                                url = "/images/" + id + ".jpg";
+                                url = "/images/" + ViewBag.ImageIdList[i] + ".jpg";
                                 <div class="img_wrapper">
                                     <div class="img_wrapper_img">
-                                        <img src="@url" class="img-responsive" />
+                                        <img src="~/images/placeholder.png" data-src="@url" data-idx="@i" class="img-responsive Eb_Image list-item-img" />
                                     </div>
                                 </div>
                             }
@@ -589,6 +595,36 @@
             <div class="modal-footer">
                 <button class="ebbtn eb_btn-sm eb_btnblue" data-dismiss="modal">Ok</button>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ViewImage Modal -->
+<div class="modal fade" id="mdlViewImage" role="dialog" data-id="">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" style="opacity: 1; color: #fff; font-size: 32px;">&times;</button>
+                <h4 class="modal-title">Image Viewer</h4>
+            </div>
+            <div class="modal-body" >
+                <div id="modal-imgs-cont">
+                @{
+                    if (ViewBag.MC_Mode == 1)
+                    {
+                        foreach (string id in ViewBag.ImageIdList)
+                        {
+                            string url = "/images/" + id + ".jpg";
+                            <div class="image-cont">
+                                <img data-id="@id" class="img-in-viewer" src="~/images/placeholder.png" data-lazy="@url" />
+                            </div>
+                        }
+                    }
+                }
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>

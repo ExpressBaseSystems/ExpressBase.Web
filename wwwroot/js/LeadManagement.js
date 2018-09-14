@@ -90,6 +90,7 @@
     this.OutDataList = [];
 
     this.init = function () {
+        $("#eb_common_loader").EbLoader("show");
         this.initMenuBarObj();
         this.initForm();
 
@@ -98,6 +99,7 @@
         this.$HomeCity.autocomplete({ source: this.CityList });
         this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
+        $("#eb_common_loader").EbLoader("hide");
     }
 
    
@@ -133,6 +135,28 @@
             if (parseInt(moment.duration(moment().diff(moment(this.$Dob.val(), "DD-MM-YYYY"))).asYears()) !== parseInt(this.$Age.val()))
                 this.$Dob.val("01-01-" + (moment().year() - parseInt(this.$Age.val())));
         }.bind(this));
+
+        //=============================================================
+        this.isSlickInit = false;
+        $(".list-item-img").on("click", function (evt) {
+            $("#mdlViewImage").modal('show');
+            if (!this.isSlickInit) {
+                this.isSlickInit = true;
+                $('#modal-imgs-cont').slick({
+                    lazyLoad: 'ondemand',
+                    //dots: true,
+                    prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
+                    nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
+                });
+            }
+            let idx = parseInt($(evt.target).attr("data-idx"));
+            $('#modal-imgs-cont').slick('slickGoTo', idx);
+        }.bind(this));
+
+        //$('.img-in-viewer').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
+        //    console.log(nextSlide);
+        //});
+        //===============================================================
 
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
@@ -433,6 +457,7 @@
         }.bind(this));
 
         $("#mdlAttach").on('hidden.bs.modal', function (e) {
+            let ImgRefNew = [];
             for (let i = 0; i < imgup.ImageRefIds.length; i++) {
                 if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
                     $("#menuAttach").append(`<div class="img_wrapper">
@@ -490,6 +515,7 @@
     this.onClickBtnSave = function () {
         if (this.validateAndPrepareData()) {
             $("#btnSave").prop("disabled", true);
+            $("#eb_common_loader").EbLoader("show");
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveCustomer",
@@ -504,6 +530,7 @@
                         EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                     }
                     $("#btnSave").prop("disabled", false);
+                    $("#eb_common_loader").EbLoader("hide");
                 }.bind(this)
             });
         }

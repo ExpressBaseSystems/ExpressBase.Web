@@ -3,6 +3,10 @@
     this.$saveBtn = option.$saveBtn;
     this.flatControls = option.flatControls;
     this.initControls = new InitControls(this);
+    this.editModeObj = option.editModeObj;
+    this.formRefId = option.formRefId;
+    this.isEditMode = !!this.editModeObj;
+    this.rowId = 0;
 
     this.updateCtrlUI = function (cObj) {
         $.each(cObj, function (prop, val) {
@@ -61,8 +65,33 @@
             this.updateCtrlUI(cObj);
             this.initFormCtrl(cObj);
         }.bind(this));
+        if (this.isEditMode)
+            this.populateControls();
     };
 
+    this.populateControls = function () {
+        this.rowId = getObjByval(this.editModeObj, "Name", "id").Value;
+        this.setEditModevalues(this.rowId);
+    }
+    this.setEditModevalues = function (rowId) {
+        this.formRefId
+        // show loader
+        $.ajax({
+            type: "POST",
+            url: "../WebForm/getRowdata",
+            data: {
+                refid: this.formRefId, rowid: rowId
+            },
+            success: function (data) {
+                this.EditModevalues = data.rowValues;
+                $.each(this.flatControls, function (i, cObj) {
+                    $("#" + cObj.Name).val(this.EditModevalues[i]);
+                }.bind(this));
+                console.log(data);
+                //hide loader
+            }.bind(this),
+        });
+    }
 
     this.getFormValuesWithTypeColl = function () {
         var FVWTcoll = [];
@@ -93,14 +122,13 @@
     this.saveForm = function () {
         if (!this.submitReqCheck())
             return;
-        alert();
         // show loader
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
             url: "../WebForm/InsertBotDetails",
             data: {
-                TableName: this.FormObj.TableName, Fields: this.getFormValuesWithTypeColl()
+                TableName: this.FormObj.TableName, Fields: this.getFormValuesWithTypeColl(), Id : this.rowId
             },
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);

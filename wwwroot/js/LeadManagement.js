@@ -88,6 +88,7 @@
     
     //DECLARED DATA
     this.OutDataList = [];
+    this.drake = null;
 
     this.init = function () {
         $("#eb_common_loader").EbLoader("show");
@@ -143,7 +144,7 @@
             if (!this.isSlickInit) {
                 this.isSlickInit = true;
                 $('#modal-imgs-cont').slick({
-                    lazyLoad: 'ondemand',
+                    lazyLoad: 'progressive',
                     //dots: true,
                     prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
                     nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
@@ -166,6 +167,8 @@
         this.initBillingModal();
         this.initSurgeryModal();
         this.initAttachModal();
+
+        this.initDrake();
 
         this.$CostCenter.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {            
@@ -190,6 +193,34 @@
             this.$Closing.val("");
             this.$Doctor.val("");
         }
+    }
+
+    this.initDrake = function () {
+        this.drake = new dragula([document.getElementById("divAllImg"), document.getElementById("divCustomerDp")], {
+            
+            accepts: function (el, target, source, sibling) { 
+                if ($(target)[0] === $("#divCustomerDp")[0] && $(source)[0] === $("#divAllImg")[0]) {
+                    $("#divCustomerDp").children().hide();
+                    return true;
+                }
+                else {
+                    $("#divCustomerDp").children().show();
+                    return false;
+                }                    
+            },
+            copy: true
+        });
+
+        this.drake.on("drop", function (el, target, source, sibling) {
+            if ($(target)[0] === $("#divCustomerDp")[0] && $(source)[0] === $("#divAllImg")[0]) {
+                let id = $(el).find("img").attr('data-id');
+                $("#divCustomerDp").children().remove();
+                $("#divCustomerDp").append(`
+                    <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                        <img src="/images/${id}.jpg" data-id="${id}" style="max-height: 135px; max-width: 130px;" />
+                    </div>`);                
+            }            
+        });
     }
 
     this.initFeedBackModal = function () {
@@ -495,6 +526,14 @@
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
         this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
+        if (this.CustomerInfo["dpid"] !== "") {
+            let id = this.CustomerInfo["dpid"];
+            $("#divCustomerDp").children().remove();
+            $("#divCustomerDp").append(`
+                    <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                        <img src="/images/placeholder.png" data-src="/images/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                    </div>`);  
+        }
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
         this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);
@@ -579,8 +618,11 @@
         this.pushToList("closing", (this.$Closing.val() || "0"));
         this.pushToList("nature", $("#selNature option:selected").text());
 
-        //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });    
-        
+        //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });  
+
+        let dpid = $("#divCustomerDp").find("img").attr('data-id');
+        if(dpid !== undefined)
+            this.pushToList("dpid", dpid);
         return true;
     }
 

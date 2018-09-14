@@ -36,9 +36,10 @@
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbCropper.js"></script>
 <script type="text/javascript" src="~/js/UserScripts/EbFormsImageRender.js"></script>
+<script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
 
 <div class="form-cont">
-    <div class="container" style="padding: 60px 0px 10px 0px;">
+    <div class="container" style="padding: 60px 0px 0px 0px;">
         <div class="lm-form-inline">
             <div class="col-md-10" style="padding-left:0px;width: 88%;">
                 <div class="lm-form-inline">
@@ -164,7 +165,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-2 lm-img-cont"></div>
+            <div class="col-md-2 lm-img-cont" id="divCustomerDp">
+                <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                    <img src="~/images/image.png" style="max-height: 135px; max-width: 130px; opacity: 0.3;" />
+                </div>
+            </div>
         </div>
     </div>
 
@@ -179,7 +184,7 @@
         <div class="tab-content white-tab">
 
             <!-- Home Menu -->
-            <div id="home" class="tab-pane fade in active" style="padding-top: 25px;">
+            <div id="home" class="tab-pane fade in active" style="padding-top: 25px; height: calc(100vh - 290px); overflow: auto;">
                 <div class="lm-form-inline">
                     <div class="col-md-2">
                         <div class="form-group">
@@ -288,58 +293,58 @@
             </div>
 
             <!-- Billing Menu -->
-            <div id="menuBilling" class="tab-pane fade">
+            <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 290px); overflow: auto;">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
                 <div class="lm-form-inline">
-                    <div id="divBilling" style="max-height: 300px; overflow: auto;"></div>
+                    <div id="divBilling"></div>
                 </div>
             </div>
 
             <!-- Surgery Menu -->
-            <div id="menuSurgery" class="tab-pane fade">
+            <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 290px); overflow: auto;">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
                 <div class="lm-form-inline">
-                    <div id="divSrgy" style="max-height: 300px; overflow: auto;"></div>
+                    <div id="divSrgy"></div>
                 </div>
             </div>
 
             <!-- Attach Menu -->
-            <div id="menuAttach" class="tab-pane fade">
+            <div id="menuAttach" class="tab-pane fade" style="height: calc(100vh - 290px); overflow: auto;">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button data-target="#mdlAttach" data-toggle="modal" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
                 </div>
-
-                @{
-                    if (ViewBag.MC_Mode == 1)
-                    {
-                        string url = string.Empty;
-                        if (ViewBag.ImageIdList.Count == 0)
+                <div id="divAllImg">
+                    @{
+                        if (ViewBag.MC_Mode == 1)
                         {
-                            @*<div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>*@
+                            string url = string.Empty;
+                            if (ViewBag.ImageIdList.Count == 0)
+                            {
+                                @*<div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>*@
+                            }
+                            else
+                            {
+                                for (int i = 0; i < ViewBag.ImageIdList.Count; i++)
+                                {
+                                    url = "/images/" + ViewBag.ImageIdList[i] + ".jpg";
+                                    <div class="img_wrapper">
+                                        <div class="img_wrapper_img">
+                                            <img src="~/images/placeholder.png" data-src="@url" data-idx="@i" data-id="@ViewBag.ImageIdList[i]" class="img-responsive Eb_Image list-item-img" />
+                                        </div>
+                                    </div>
+                                }
+                            }
                         }
                         else
                         {
-                            for (int i = 0; i < ViewBag.ImageIdList.Count; i++)
-                            {
-                                url = "/images/" + ViewBag.ImageIdList[i] + ".jpg";
-                                <div class="img_wrapper">
-                                    <div class="img_wrapper_img">
-                                        <img src="~/images/placeholder.png" data-src="@url" data-idx="@i" class="img-responsive Eb_Image list-item-img" />
-                                    </div>
-                                </div>
-                            }
+                            @*<div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>*@
                         }
                     }
-                    else
-                    {
-                        @*<div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>*@
-                    }
-                }
-
+                </div>
                 @*<div style="text-align: center; padding-top: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>*@
             </div>
         </div>

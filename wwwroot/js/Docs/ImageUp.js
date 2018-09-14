@@ -30,7 +30,7 @@
         _input.fileinput({
             uploadUrl: "../StaticFile/UploadImageAsync",
             maxFileCount: 5,
-            uploadAsync: true,
+            uploadAsync: false,
             uploadExtraData: this.uploadtag.bind(this)
         }).on('fileuploaded', this.fileUploadSuccess.bind(this))
           .on('fileloaded', this.addCustbtn.bind(this))

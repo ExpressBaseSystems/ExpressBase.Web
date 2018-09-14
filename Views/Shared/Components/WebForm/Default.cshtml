@@ -63,6 +63,14 @@
 <style>
     .webform-cont {
         margin-top: 38px;
+        height: calc(100vh - 38px);
+        margin-left: -15px;
+        width: calc(100% + 30px);
+    }
+
+    .form-buider-form {
+        height: 100%;
+        border: none;
     }
 
     .Eb-ctrlContainer .input-group-addon {
@@ -74,12 +82,12 @@
     }
 
     .webform-save {
-        background-color: #2827a0;
+        /*background-color: #2827a0;
         border: none;
         padding: 3px 11px;
         color: white;
         box-shadow: -2px 2px 3px 0 #00000059;
-        border-radius: 2px;
+        border-radius: 2px;*/
     }
 
     .form-render-table td {
@@ -103,19 +111,24 @@
 
 <div id='WebForm-cont' class="webform-cont">
     @Html.Raw(ViewBag.WebFormHtml)
-    <div class="save-cont"><button class="webform-save" id="webformsave">Save <i class="fa fa-save" aria-hidden="true"></i></button></div>
+    <div class="save-cont"></div>
 </div>
 
 <script>
     Vue.component('v-select', VueSelect.VueSelect);
     Vue.config.devtools = true;
+    new EbHeader().insertButton('<button class="btn " id="webformsave"><i class="fa fa-save" aria-hidden="true"></i></button>');
 
     let _flatControls = @Html.Raw(ViewBag.FlatControls);
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
+    let _editModeObj =  @Html.Raw(ViewBag.editModeObj);
+    let _formRefId=  "@Html.Raw(ViewBag.formRefId)";
     let _$saveBtn = $("#webformsave");
     const renderer = new WebFormRender({
         formObj: _formObj,
         $saveBtn: _$saveBtn,
-        flatControls : _flatControls
+        flatControls: _flatControls,
+        formRefId: _formRefId,
+        editModeObj: _editModeObj
     });
 </script>

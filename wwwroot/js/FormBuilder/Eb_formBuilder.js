@@ -48,11 +48,11 @@
         this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
         this.CurColCount = $(e.target).val();
         //  this.PGobj.ReadOnly();
-    };
+    }.bind(this);
 
     this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
         if (ctrlObj.ObjType === "TableLayout") {
-            this.makeTdsDropable();
+            this.makeTdsDropable_Resizable();
             let tds = $ctrl.find("td");
             $.each(ctrlObj.Controls.$values, function (i, td) {
                 $(tds[i]).attr("ebsid", td.EbSid).attr("id", td.EbSid);
@@ -79,15 +79,34 @@
         }.bind(this));
     };
 
-    this.makeTdsDropable = function () {
-        $.each($(".tdDropable"), function (i) {
-            if (this.drake) {
-                if (!this.drake.containers.contains(document.getElementsByClassName("tdDropable")[i])) {
-                    this.drake.containers.push(document.getElementsByClassName("tdDropable")[i]);
-                }
-            }
+    this.makeTdsDropable_Resizable = function () {
+        $.each($(".tdDropable"), function (i, el) {
+            this.pushToDragables(el);
+            $(el).resizable({
+                handles: 'e',
+                stop: this.tdDragStop.bind(this)
+            });
         }.bind(this));
     };
+
+    this.tdDragStop = function (event, ui) {
+        let $curTd = ui.element;
+        let $tbl = $curTd.closest("table");
+        let $tableCont = $tbl.closest(".Eb-ctrlContainer");
+        let tblWidth = $tbl.outerWidth();
+        let curTdWidth = $curTd.outerWidth();
+        let curTdWidthPerc = (curTdWidth / tblWidth) * 100;
+        let cuTdobj = this.rootContainerObj.Controls.GetByName($curTd.attr("ebsid"));
+        cuTdobj.Width = curTdWidthPerc;
+    }
+
+    this.pushToDragables = function (el) {
+        if (this.drake) {
+            if (!this.drake.containers.contains(el)) {
+                this.drake.containers.push(el);
+            }
+        }
+    }
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
@@ -272,7 +291,7 @@
             }
             else
                 console.log("ondrop else : removed");
-            
+
             this.adjustPanesHeight($target);
         }
     };
@@ -340,7 +359,7 @@
         var noOfTds = curTr.children().length;
         this.rootContainerObj.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
         curTr.append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'> </td>");
-        this.makeTdsDropable.bind(this);
+        this.makeTdsDropable_Resizable.bind(this);
         this.CurColCount = $(e.target).val();//tmp
     };
 
@@ -349,7 +368,7 @@
         var noOfTds = this.curControl.children().children().children().children().length;
         this.rootContainerObj.Controls.GetByName(id).Controls.Pop();
         this.curControl.find("tr").find("td").last().remove();
-        this.makeTdsDropable.bind(this);
+        this.makeTdsDropable_Resizable.bind(this);
         this.CurColCount = $(e.target).val();//tmp
     };
 
@@ -458,7 +477,7 @@
         }.bind(this);
         this.$form.click();
         if (this.isEditMode) {
-            this.makeTdsDropable();
+            this.makeTdsDropable_Resizable();
             this.makeTabsDropable();
         }
     };

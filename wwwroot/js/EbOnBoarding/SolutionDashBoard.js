@@ -96,7 +96,7 @@
         }.bind(this));
     };
 
-    this.ImageManConSubmit = function (e) {
+    this.CloudnaryConSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
         $.ajax({
@@ -109,7 +109,7 @@
         }).done(function (data) {
             $("#cloudnary_loader").EbLoader("hide");
             var d = JSON.parse(data);
-            this.appendImgManConnection(d);
+            this.appendCloudnaryConnection(d);
             $("#cldnry_conEdit").modal("toggle");
         }.bind(this));
     };
@@ -225,19 +225,17 @@
                                     </div>`);
     };
 
-    this.appendImgManConnection = function (object) {
+    this.appendCloudnaryConnection = function (object) {
         let o = {};
-        let img = "";
         if (object === null || object === undefined) {
             o.Cloud = "xxxxxxx";
             o.ApiKey = "xxxxxxx";
             o.ApiSecret = "xxxxxx";
-            img = `<img src="${location.protocol}//${location.host}/images/cloudnary.png" />`;
         }
         else {
             o = object;
+
         }
-        $("#Cloudnary_Connection_config .VendorImage").empty().append(img);
         $("#Cloudnary_Connection_config .Cloud").text(o.Cloud);
         $("#Cloudnary_Connection_config .ApiKey").text(o.ApiKey);
         $("#Cloudnary_Connection_config .SecretKey").text(o.ApiSecret);
@@ -339,13 +337,13 @@
         this.appendFilesDb(this.Connections.FilesDbConnection);
         this.appendEmailConnection(this.Connections.SMTPConnection);
         this.appendSmsConnection(this.Connections.SMSConnection);
-        this.appendImgManConnection(this.Connections.ImageManipulateConnection);
+        this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
         this.appendFtpConnection(null);
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#EmailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
         $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
-        $("#CloudnaryConnectionSubmit").on("submit", this.ImageManConSubmit.bind(this));
+        $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));

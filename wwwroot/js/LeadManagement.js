@@ -154,6 +154,10 @@
             $('#modal-imgs-cont').slick('slickGoTo', idx);
         }.bind(this));
 
+        $('#modal-imgs-cont').on("dblclick", function () {
+            $("#mdlViewImage").modal('hide');
+        });
+
         //$('.img-in-viewer').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
         //    console.log(nextSlide);
         //});
@@ -217,7 +221,7 @@
                 $("#divCustomerDp").children().remove();
                 $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
-                        <img src="/images/${id}.jpg" data-id="${id}" style="max-height: 135px; max-width: 130px;" />
+                        <img src="/images/small/${id}.jpg" data-id="${id}" style="max-height: 135px; max-width: 130px;" />
                     </div>`);                
             }            
         });
@@ -421,18 +425,19 @@
 
     this.initSurgeryModal = function () {
         this.$btnNewSurgeryDtls.on("click", function () {
-            if (this.AccId === 0) {
-                EbMessage("show", { Message: 'Save Customer Information then try to add Surgery Details', AutoHide: true, Backgorund: '#a40000' });
-            }
-            else {
-                this.$MdlSurgery.modal('show');
-            }
+            EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
+            //if (this.AccId === 0) {
+            //    EbMessage("show", { Message: 'Save Customer Information then try to add Surgery Details', AutoHide: true, Background: '#aa0000' });
+            //}
+            //else {
+            //    this.$MdlSurgery.modal('show');
+            //}
         }.bind(this));
 
         this.$SrgyDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
         this.$SrgySave.on("click", function () {
-            EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Backgorund: '#0b851a' });
+            EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
             //var id = 0;
             //this.$SrgySave.children().show();
             //this.$SrgySave.prop("disabled", true);
@@ -526,12 +531,12 @@
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
         this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
-        if (this.CustomerInfo["dpid"] !== "") {
-            let id = this.CustomerInfo["dpid"];
+        if (this.CustomerInfo["dprefid"] !== "0") {
+            let id = this.CustomerInfo["dprefid"];
             $("#divCustomerDp").children().remove();
             $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
-                        <img src="/images/placeholder.png" data-src="/images/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                        <img src="/images/placeholder.png" data-src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
                     </div>`);  
         }
 
@@ -620,9 +625,9 @@
 
         //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });  
 
-        let dpid = $("#divCustomerDp").find("img").attr('data-id');
-        if(dpid !== undefined)
-            this.pushToList("dpid", dpid);
+        let dprefid = $("#divCustomerDp").find("img").attr('data-id');
+        if(dprefid !== "0")
+            this.pushToList("dprefid", dprefid);
         return true;
     }
 

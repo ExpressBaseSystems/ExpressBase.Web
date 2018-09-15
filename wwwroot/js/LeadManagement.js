@@ -88,8 +88,10 @@
     
     //DECLARED DATA
     this.OutDataList = [];
+    this.drake = null;
 
     this.init = function () {
+        $("#eb_common_loader").EbLoader("show");
         this.initMenuBarObj();
         this.initForm();
 
@@ -98,6 +100,7 @@
         this.$HomeCity.autocomplete({ source: this.CityList });
         this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
+        $("#eb_common_loader").EbLoader("hide");
     }
 
    
@@ -134,6 +137,28 @@
                 this.$Dob.val("01-01-" + (moment().year() - parseInt(this.$Age.val())));
         }.bind(this));
 
+        //=============================================================
+        this.isSlickInit = false;
+        $(".list-item-img").on("click", function (evt) {
+            $("#mdlViewImage").modal('show');
+            if (!this.isSlickInit) {
+                this.isSlickInit = true;
+                $('#modal-imgs-cont').slick({
+                    lazyLoad: 'progressive',
+                    //dots: true,
+                    prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
+                    nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
+                });
+            }
+            let idx = parseInt($(evt.target).attr("data-idx"));
+            $('#modal-imgs-cont').slick('slickGoTo', idx);
+        }.bind(this));
+
+        //$('.img-in-viewer').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
+        //    console.log(nextSlide);
+        //});
+        //===============================================================
+
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
         
@@ -142,6 +167,8 @@
         this.initBillingModal();
         this.initSurgeryModal();
         this.initAttachModal();
+
+        this.initDrake();
 
         this.$CostCenter.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {            
@@ -166,6 +193,34 @@
             this.$Closing.val("");
             this.$Doctor.val("");
         }
+    }
+
+    this.initDrake = function () {
+        this.drake = new dragula([document.getElementById("divAllImg"), document.getElementById("divCustomerDp")], {
+            
+            accepts: function (el, target, source, sibling) { 
+                if ($(target)[0] === $("#divCustomerDp")[0] && $(source)[0] === $("#divAllImg")[0]) {
+                    $("#divCustomerDp").children().hide();
+                    return true;
+                }
+                else {
+                    $("#divCustomerDp").children().show();
+                    return false;
+                }                    
+            },
+            copy: true
+        });
+
+        this.drake.on("drop", function (el, target, source, sibling) {
+            if ($(target)[0] === $("#divCustomerDp")[0] && $(source)[0] === $("#divAllImg")[0]) {
+                let id = $(el).find("img").attr('data-id');
+                $("#divCustomerDp").children().remove();
+                $("#divCustomerDp").append(`
+                    <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                        <img src="/images/${id}.jpg" data-id="${id}" style="max-height: 135px; max-width: 130px;" />
+                    </div>`);                
+            }            
+        });
     }
 
     this.initFeedBackModal = function () {
@@ -433,6 +488,7 @@
         }.bind(this));
 
         $("#mdlAttach").on('hidden.bs.modal', function (e) {
+            let ImgRefNew = [];
             for (let i = 0; i < imgup.ImageRefIds.length; i++) {
                 if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
                     $("#menuAttach").append(`<div class="img_wrapper">
@@ -470,6 +526,14 @@
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
         this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
+        if (this.CustomerInfo["dpid"] !== "") {
+            let id = this.CustomerInfo["dpid"];
+            $("#divCustomerDp").children().remove();
+            $("#divCustomerDp").append(`
+                    <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                        <img src="/images/placeholder.png" data-src="/images/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                    </div>`);  
+        }
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
         this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);
@@ -490,6 +554,7 @@
     this.onClickBtnSave = function () {
         if (this.validateAndPrepareData()) {
             $("#btnSave").prop("disabled", true);
+            $("#eb_common_loader").EbLoader("show");
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveCustomer",
@@ -504,6 +569,7 @@
                         EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                     }
                     $("#btnSave").prop("disabled", false);
+                    $("#eb_common_loader").EbLoader("hide");
                 }.bind(this)
             });
         }
@@ -552,8 +618,11 @@
         this.pushToList("closing", (this.$Closing.val() || "0"));
         this.pushToList("nature", $("#selNature option:selected").text());
 
-        //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });    
-        
+        //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });  
+
+        let dpid = $("#divCustomerDp").find("img").attr('data-id');
+        if(dpid !== undefined)
+            this.pushToList("dpid", dpid);
         return true;
     }
 

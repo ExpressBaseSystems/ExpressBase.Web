@@ -268,7 +268,7 @@
     this.validateConnection = function (form) {
         let f = true;
         for (let k in form) {
-            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken","IsNew"].indexOf(k) < 0) {
+            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken", "IsNew"].indexOf(k) < 0) {
                 if (form[k].length <= 0)
                     f = false;
             }
@@ -334,7 +334,8 @@
         this.appendFilesDb(this.Connections.FilesDbConnection);
         this.appendEmailConnection(this.Connections.SMTPConnection);
         this.appendSmsConnection(this.Connections.SMSConnection);
-        this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
+        if (this.Connections.CloudinaryConnection !== null)
+            this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
         this.appendFtpConnection(this.Connections.FTPConnection);
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));

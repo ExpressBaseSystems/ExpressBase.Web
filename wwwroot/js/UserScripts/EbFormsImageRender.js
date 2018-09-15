@@ -19,16 +19,18 @@
             uploadUrl: "../StaticFile/UploadImageAsyncFromForm",
             maxFileCount: 5,
             uploadAsync: false
-        }).on('fileuploaded', this.fileUploadSuccess.bind(this))
+        }).on('filebatchuploadsuccess', this.fileUploadSuccess.bind(this))
             .on('filepreajax', this.filepreajax.bind(this));
 
         $(".file-drop-zone").css({ "height": '80%', "overflow-y": "auto" });
     }
 
-    fileUploadSuccess(event, data, previewId, index) {
-        if (this.ImageRefIds.indexOf(data.response) === -1) {
-            this.ImageRefIds.push(data.response);
-            this.ImageBase64[data.response] = data.reader.result;
+    fileUploadSuccess(event, data) {
+        for (let i = 0; i < data.response.refIds;i++) {
+            if (this.ImageRefIds.indexOf(data.response.refIds[i]) === -1) {
+                this.ImageRefIds.push(data.response.refIds[i]);
+                this.ImageBase64[data.response] = data.reader.result;
+            }
         }
     };
 

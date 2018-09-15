@@ -167,7 +167,7 @@
             </div>
             <div class="col-md-2 lm-img-cont" id="divCustomerDp">
                 <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
-                    <img src="~/images/image.png" style="max-height: 135px; max-width: 130px; opacity: 0.3;" />
+                    <img src="~/images/image.png" style="max-height: 135px; max-width: 130px; opacity: 0.3;" data-id="0" />
                 </div>
             </div>
         </div>
@@ -184,7 +184,7 @@
         <div class="tab-content white-tab">
 
             <!-- Home Menu -->
-            <div id="home" class="tab-pane fade in active" style="padding-top: 25px; height: calc(100vh - 290px); overflow: auto;">
+            <div id="home" class="tab-pane fade in active" style="padding-top: 25px; height: calc(100vh - 290px); min-height: 200px; overflow-y: scroll;">
                 <div class="lm-form-inline">
                     <div class="col-md-2">
                         <div class="form-group">
@@ -212,7 +212,7 @@
                             <option value="true">Yes</option>
                         </select>
                     </div>
-                    <div class="col-md-1" style="min-width: 14%;">
+                    <div class="col-md-1" style="min-width: 15%;">
                         <div class="form-group">
                             <label>Consulted Date</label>
                             <div class="input-group">
@@ -221,7 +221,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2" style="min-width: 30.5%;">
+                    <div class="col-md-2" style="min-width: 29.5%;">
                         <div class="form-group">
                             <label>Consulting Doctor</label>
                             <select id="selDoctor" class="form-control"></select>
@@ -293,7 +293,7 @@
             </div>
 
             <!-- Billing Menu -->
-            <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 290px); overflow: auto;">
+            <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 290px); min-height: 200px; overflow-y: scroll;">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
@@ -303,7 +303,7 @@
             </div>
 
             <!-- Surgery Menu -->
-            <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 290px); overflow: auto;">
+            <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 290px); min-height: 200px; overflow-y: scroll;">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
@@ -313,7 +313,7 @@
             </div>
 
             <!-- Attach Menu -->
-            <div id="menuAttach" class="tab-pane fade" style="height: calc(100vh - 290px); overflow: auto;">
+            <div id="menuAttach" class="tab-pane fade" style="height: calc(100vh - 290px); min-height: 200px; overflow-y: scroll;">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button data-target="#mdlAttach" data-toggle="modal" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
                 </div>
@@ -330,7 +330,7 @@
                             {
                                 for (int i = 0; i < ViewBag.ImageIdList.Count; i++)
                                 {
-                                    url = "/images/" + ViewBag.ImageIdList[i] + ".jpg";
+                                    url = "/images/small/" + ViewBag.ImageIdList[i] + ".jpg";
                                     <div class="img_wrapper">
                                         <div class="img_wrapper_img">
                                             <img src="~/images/placeholder.png" data-src="@url" data-idx="@i" data-id="@ViewBag.ImageIdList[i]" class="img-responsive Eb_Image list-item-img" />
@@ -399,8 +399,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="btnFlUpSave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
-                <button type="button" class="ebbtn eb_btn-sm eb_btnblue" data-dismiss="modal">Close</button>
+                <button id="btnFlUpSave" class="ebbtn eb_btn-sm eb_btngreen" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
             </div>
         </div>
     </div>
@@ -493,8 +492,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="btnBlngSave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
-                <button type="button" class="ebbtn eb_btn-sm eb_btnblue" data-dismiss="modal">Close</button>
+                <button id="btnBlngSave" class="ebbtn eb_btn-sm eb_btngreen" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
             </div>
         </div>
     </div>
@@ -606,8 +604,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" style="opacity: 1; color: #fff; font-size: 32px;">&times;</button>
-                <h4 class="modal-title">Image Viewer</h4>
+                <button type="button" class="close" data-dismiss="modal" style="opacity: 1; color: #f00; font-size: 52px;">&times;</button>
+                <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body" >
                 <div id="modal-imgs-cont">

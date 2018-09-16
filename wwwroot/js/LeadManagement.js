@@ -144,7 +144,7 @@
             if (!this.isSlickInit) {
                 this.isSlickInit = true;
                 $('#modal-imgs-cont').slick({
-                    lazyLoad: 'progressive',
+                    lazyLoad: 'ondemand',//progressive
                     //dots: true,
                     prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
                     nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
@@ -154,9 +154,9 @@
             $('#modal-imgs-cont').slick('slickGoTo', idx);
         }.bind(this));
 
-        $('#modal-imgs-cont').on("dblclick", function () {
-            $("#mdlViewImage").modal('hide');
-        });
+        //$('#modal-imgs-cont').on("dblclick", function () {
+        //    $("#mdlViewImage").modal('hide');
+        //});
 
         //$('.img-in-viewer').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
         //    console.log(nextSlide);
@@ -536,7 +536,7 @@
             $("#divCustomerDp").children().remove();
             $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
-                        <img src="/images/placeholder.png" data-src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                        <img src="/images/spin.gif" data-src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
                     </div>`);  
         }
 

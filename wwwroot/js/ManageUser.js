@@ -188,7 +188,7 @@
             this.selectTimeZone.val(pobj.TimeZone);
         }
         else {
-            this.selectLocale.val("en-US");
+            this.selectLocale.val("en-IN");
             this.selectLocaleChangeAction();
             this.selectTimeZone.val("(UTC) Coordinated Universal Time");
         }

@@ -498,7 +498,7 @@
                 if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
                     $("#menuAttach").append(`<div class="img_wrapper">
                                                 <div class="img_wrapper_img">
-                                                    <img src="${imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
+                                                    <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
                                                 </div>
                                             </div>`);
                 }

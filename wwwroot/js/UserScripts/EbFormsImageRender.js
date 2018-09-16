@@ -42,7 +42,8 @@
         reader.onload = function () {
             this.ImageBase64[i]  = reader.result;
         }.bind(this)
-        reader.readAsDataURL(blob);
+        if (blob !== undefined)
+            reader.readAsDataURL(blob);
     };
 
     fileUploadSuccess(event, data) {

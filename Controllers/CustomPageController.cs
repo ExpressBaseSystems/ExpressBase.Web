@@ -56,7 +56,7 @@ namespace ExpressBase.Web.Controllers
 
 		public int SaveCustomer(int Mode, string CustomerInfo, string ImgRefId)
 		{
-			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode, ImgRefId = ImgRefId });
+			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode, ImgRefId = ImgRefId, UserName = this.LoggedInUser.FullName });
 			return res.Status;
 		}
 

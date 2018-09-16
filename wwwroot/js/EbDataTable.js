@@ -1417,7 +1417,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else
                 $(rows).eq(obj.rowIndex).after(obj.groupString);
         });
-        var ct = $(".group[group=0]").length;
+        var ct = $(".group[group=1]").length;
         $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);
 
         $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);

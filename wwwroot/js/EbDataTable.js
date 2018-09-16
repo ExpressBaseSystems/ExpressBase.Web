@@ -163,7 +163,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         if (this.PcFlag === "True")
             this.compareAndModifyRowGroup();
-        this.EbObject.tempRowgrouping = {};
+        this.EbObject.CurrentRowGroup = {};
 
         if ($(".filterCont #filterBox").children().not("button").length == 0) {
             this.FD = false;
@@ -230,7 +230,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.ValidateCalcExpression(obj);
         }
         else if (Pname === "RowGroupCollection") {
-            this.EbObject.tempRowgrouping = {};
+            this.EbObject.CurrentRowGroup = {};
             this.rowgroupCols = [];
         }
     }.bind(this);
@@ -322,10 +322,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //hard coding
         this.orderColl = [];
         if (!this.EbObject.DisableRowGrouping) {
-            if (jQuery.isEmptyObject(this.EbObject.tempRowgrouping)) {
+            if (jQuery.isEmptyObject(this.EbObject.CurrentRowGroup)) {
                 $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
                     if (obj.RowGrouping.$values.length > 0) {
-                        this.EbObject.tempRowgrouping = obj;
+                        this.EbObject.CurrentRowGroup = obj;
                         this.visibilityCheck();
                         return false;
                     }
@@ -336,13 +336,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             $.each(this.EbObject.Columns.$values, function (i, colobj) {
-                $.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (i, rgobj) {
+                $.each(this.EbObject.CurrentRowGroup.RowGrouping.$values, function (i, rgobj) {
                     if (colobj.name === rgobj.name) {
                         colobj.bVisible = true;
                     }
                 }.bind(this));
             }.bind(this));
-            this.EbObject.tempRowgrouping = {}
+            this.EbObject.CurrentRowGroup = {}
             this.RGIndex = [];
             this.rowgroupCols = [];
         }
@@ -628,10 +628,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //if (this.filterValues === null || this.filterValues === undefined || this.filterValues.length === 0 || filterChanged || this.login === "dc" || this.login === "uc")
         this.filterValues = this.getFilterValues("filter");
         dq.Params = this.filterValues;
-        if (!(jQuery.isEmptyObject(this.EbObject.tempRowgrouping))) {
-            if (this.EbObject.tempRowgrouping.RowGrouping.$values.length > 0) {
-                for (var i = this.EbObject.tempRowgrouping.RowGrouping.$values.length - 1; i > -1; i--)
-                    this.orderColl.unshift(new order_obj(this.EbObject.tempRowgrouping.RowGrouping.$values[i].name, 1));
+        if (!(jQuery.isEmptyObject(this.EbObject.CurrentRowGroup))) {
+            if (this.EbObject.CurrentRowGroup.RowGrouping.$values.length > 0) {
+                for (var i = this.EbObject.CurrentRowGroup.RowGrouping.$values.length - 1; i > -1; i--)
+                    this.orderColl.unshift(new order_obj(this.EbObject.CurrentRowGroup.RowGrouping.$values[i].name, 1));
             }
         }
         if (this.orderColl.length > 0)
@@ -643,7 +643,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (dq.length === -1)
             dq.length = this.RowCount;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
-        dq.RGIndex =this.RGIndex;
+        dq.CurrentRowGroup = this.EbObject.CurrentRowGroup;
         //return dq;
     };
 
@@ -1316,8 +1316,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.drawCallBackFunc = function (settings) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
-        if (!(jQuery.isEmptyObject(this.EbObject.tempRowgrouping))) {
-            if (this.ebSettings.tempRowgrouping.RowGrouping.$values.length > 0)
+        if (!(jQuery.isEmptyObject(this.EbObject.CurrentRowGroup))) {
+            if (this.ebSettings.CurrentRowGroup.RowGrouping.$values.length > 0)
                 this.doRowgrouping();
         }
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
@@ -1347,7 +1347,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         let name = $(e.target).val().trim();
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             if (obj.Name === name) {
-                this.EbObject.tempRowgrouping = obj;
+                this.EbObject.CurrentRowGroup = obj;
                 this.getColumnsSuccess();
             }
         }.bind(this));
@@ -1359,17 +1359,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.ebSettings.RightFixedColumn = 0;
         this.rowgroupCols = [];
         let visibleChanges = false;
-        $.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (i, rgobj) {
+        $.each(this.EbObject.CurrentRowGroup.RowGrouping.$values, function (i, rgobj) {
             this.RGIndex.push(rgobj.data);
             this.rowgroupCols.unshift(JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "data":null, "defaultContent": ""}'));
         }.bind(this));
 
-        if (this.rowgroupCols.length > 0 && this.EbObject.tempRowgrouping.$type.indexOf("MultipleLevelRowGroup") !== -1)
+        if (this.rowgroupCols.length > 0 && this.EbObject.CurrentRowGroup.$type.indexOf("MultipleLevelRowGroup") !== -1)
             this.rowgroupCols.unshift(JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "name":"AllGroup", "data":null, "defaultContent": ""}'));
 
         $.each(this.EbObject.Columns.$values, function (i, colobj) {
             visibleChanges = false;
-            $.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (i, rgobj) {
+            $.each(this.EbObject.CurrentRowGroup.RowGrouping.$values, function (i, rgobj) {
                 if (colobj.name === rgobj.name) {
                     colobj.bVisible = false;
                     visibleChanges = true;
@@ -1401,24 +1401,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }.bind(this));
 
         $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
-        $(`#rowgroupDD_${this.tableId} [value=${this.EbObject.tempRowgrouping.Name.trim()}]`).attr("selected", "selected");
+        $(`#rowgroupDD_${this.tableId} [value=${this.EbObject.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
 
-        if (this.EbObject.tempRowgrouping.$type.indexOf("MultipleLevelRowGroup") !== -1)
-            this.multiplelevelRowgrouping();
-        else {
-            var rows = this.Api.rows().nodes();
-            $.each(this.Levels, function (i, obj) {
-                if(obj.type !== "After")
-                    $(rows).eq(obj.rowIndex).before(obj.levelText);
-                else
-                    $(rows).eq(obj.rowIndex).after(obj.levelText);
-            });
-            var ct = $(".group[group=0]").length;
-            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);
-        }
+        //if (this.EbObject.CurrentRowGroup.$type.indexOf("MultipleLevelRowGroup") !== -1)
+        //    this.multiplelevelRowgrouping();
+        //else {
+        //}
             //this.singlelevelRowgrouping();        
 
-        
+
+        var rows = this.Api.rows().nodes();
+        $.each(this.Levels, function (i, obj) {
+            if (obj.type !== "After")
+                $(rows).eq(obj.rowIndex).before(obj.groupString);
+            else
+                $(rows).eq(obj.rowIndex).after(obj.groupString);
+        });
+        var ct = $(".group[group=0]").length;
+        $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);
 
         $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
         $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
@@ -1488,7 +1488,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var str = "<tr class='group' group='0'><td> &nbsp;</td>";
         var tempstr = "";
         $.each(this.RGIndex, function (j, dt) {
-            var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });
+            var tempobj = $.grep(this.EbObject.CurrentRowGroup.RowGrouping.$values, function (obj) { return dt === obj.data });
             var type = tempobj[0].Type;
             //if (type === 5 || type === 6) {
             //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
@@ -1502,7 +1502,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 tempstr += ",";
         }.bind(this));
 
-        //$.each(this.EbObject.tempRowgrouping.RowGrouping.$values, function (k, obj) {           
+        //$.each(this.EbObject.CurrentRowGroup.RowGrouping.$values, function (k, obj) {
         str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
         //});
         return str;
@@ -1513,7 +1513,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         for (var i = 0; i <=rowgroup; i++)
             str += "<td> &nbsp;</td>";
 
-        var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });
+        var tempobj = $.grep(this.EbObject.CurrentRowGroup.RowGrouping.$values, function (obj) { return dt === obj.data });
         var type = tempobj[0].Type;
         //if (type === 5 || type === 6) {
         //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
@@ -1640,7 +1640,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var last = null;
             var $parent = null;
             var $count = 0;
-            //var tempobj = $.grep(this.EbObject.tempRowgrouping.RowGrouping.$values, function (obj) { return dt === obj.data });//tempobj[0].sTitle + " : " +
+            //var tempobj = $.grep(this.EbObject.CurrentRowGroup.RowGrouping.$values, function (obj) { return dt === obj.data });//tempobj[0].sTitle + " : " +
             $.each(this.unformatedData, function (i, _dataArray) {
                 
                 var te = (_dataArray[dt] === null || _dataArray[dt].trim() === "") ? "(Blank)" : _dataArray[dt].trim();
@@ -2525,7 +2525,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if ($(e.target).parent("b").attr("data-rowgroup") !== undefined) {
 
             this.getRowGroupFilter($(e.target).parent("b"));
-            if (this.EbObject.tempRowgrouping.$type.indexOf("SingleLevelRowGroup") !== -1) {
+            if (this.EbObject.CurrentRowGroup.$type.indexOf("SingleLevelRowGroup") !== -1) {
                 $.each($(e.target).parent("b").siblings("b"), function (i, elem) {
                     this.getRowGroupFilter($(elem));
                 }.bind(this));

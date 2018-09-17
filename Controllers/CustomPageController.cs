@@ -43,7 +43,9 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.CityList = fr.CityList;
 			ViewBag.SourceCategoryList = fr.SourceCategoryList;
 			ViewBag.SubCategoryList = fr.SubCategoryList;
+
 			ViewBag.ImageIdList = fr.ImageIdList;
+
 			if (mode == 1)
 			{
 				ViewBag.FeedbackList = JsonConvert.SerializeObject(fr.FeedbackList);
@@ -75,7 +77,14 @@ namespace ExpressBase.Web.Controllers
 			SaveSurgeryDetailsResponse res = this.ServiceClient.Post<SaveSurgeryDetailsResponse>(new SaveSurgeryDetailsRequest { Data = SurgeryInfo, UserName = this.LoggedInUser.FullName });
 			return res.Status;
 		}
-		
+
+		public bool UniqueCheck(string Key, string Value)
+		{
+			LmUniqueCheckResponse res = this.ServiceClient.Post<LmUniqueCheckResponse>(new LmUniqueCheckRequest { Key = Key, Value = Value });
+			return res.Status;
+		}
+
+
 
 	}
 }

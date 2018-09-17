@@ -498,7 +498,7 @@
                 if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
                     $("#menuAttach").append(`<div class="img_wrapper">
                                                 <div class="img_wrapper_img">
-                                                    <img src="${imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
+                                                    <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
                                                 </div>
                                             </div>`);
                 }
@@ -536,7 +536,7 @@
             $("#divCustomerDp").children().remove();
             $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
-                        <img src="/images/spin.gif" data-src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
                     </div>`);  
         }
 

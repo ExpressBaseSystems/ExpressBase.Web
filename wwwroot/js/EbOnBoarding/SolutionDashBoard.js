@@ -227,7 +227,7 @@
 
     this.appendCloudnaryConnection = function (object) {
         let o = {};
-        if (object === null || object === undefined) {
+        if (object === null || object === undefined || $.isEmptyObject(object)) {
             o.Cloud = "xxxxxxx";
             o.ApiKey = "xxxxxxx";
             o.ApiSecret = "xxxxxx";
@@ -334,7 +334,12 @@
         this.appendFilesDb(this.Connections.FilesDbConnection);
         this.appendEmailConnection(this.Connections.SMTPConnection);
         this.appendSmsConnection(this.Connections.SMSConnection);
-        this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
+
+        if (this.Connections.CloudinaryConnection !== null)
+            this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
+        else
+            this.appendCloudnaryConnection(null);
+
         this.appendFtpConnection(this.Connections.FTPConnection);
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));

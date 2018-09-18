@@ -19,7 +19,7 @@
     };
 
     this.onHeartbeat = function (msg, e) {
-        if (console) console.log("onHeartbeat", msg, e);
+        //if (console) console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
@@ -39,7 +39,7 @@
     });   
 
     this.ES.addEventListener('error', function (e) {
-        console.log("ERROR!", e);
+        //console.log("ERROR!", e);
     }, false);
 
     this.sEvent.eventReceivers = { "document": document }; 

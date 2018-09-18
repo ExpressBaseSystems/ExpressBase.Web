@@ -95,13 +95,13 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Export(string refids, int appid)
         {
-            ExportApplicationResponse res = MqClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest { Refids = refids, AppId= appid });
+            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest { Refids = refids, AppId= appid });
             return RedirectToAction("AppStore");
         }
 
         public IActionResult Import(int Id)
         {
-            ImportApplicationResponse res = MqClient.Get<ImportApplicationResponse>(new ImportApplicationMqRequest { Id = Id });
+            ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationMqRequest { Id = Id });
             return RedirectToAction("DevDashboard","Dev");
         }
 

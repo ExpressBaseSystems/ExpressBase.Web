@@ -334,17 +334,12 @@
         this.appendFilesDb(this.Connections.FilesDbConnection);
         this.appendEmailConnection(this.Connections.SMTPConnection);
         this.appendSmsConnection(this.Connections.SMSConnection);
-<<<<<<< HEAD
 
         if (this.Connections.CloudinaryConnection !== null)
             this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
         else
             this.appendCloudnaryConnection(null);
 
-=======
-        if (this.Connections.CloudinaryConnection !== null)
-            this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
->>>>>>> 911666a94d02ecd5db3feab79a71344e67e45c11
         this.appendFtpConnection(this.Connections.FTPConnection);
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));

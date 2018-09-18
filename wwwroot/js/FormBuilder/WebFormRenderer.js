@@ -80,7 +80,7 @@
             type: "POST",
             url: "../WebForm/getRowdata",
             data: {
-                refid: this.formRefId, rowid: rowId
+                refid: this.formRefId, rowid: parseInt(rowId)
             },
             success: function (data) {
                 this.EditModevalues = data.rowValues;

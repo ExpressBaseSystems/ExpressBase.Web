@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SourceCategoryList, SubCategoryList) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SourceCategoryList, SubCategoryList, ImageIdList) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -13,6 +13,7 @@
     this.SourceCategoryList = SourceCategoryList || [];
     this.SubCategoryList = SubCategoryList || [];
 
+    this.ImageIdList = ImageIdList || [];
     this.FeedbackList = F_List || [];
     this.BillingList = B_List || [];
     this.SurgeryList = S_List || [];
@@ -85,10 +86,19 @@
     this.$PatientInstr = $("#txaPatientInstr");
     this.$DoctorInstr = $("#txaDoctorInstr");
     this.$SrgySave = $("#btnSrgySave");  
+    //ATTACH
+    this.$FirstImgPage = $("#btnFirstImgPage");
+    this.$PrevImgPage = $("#btnPrevImgPage");
+    this.$ImgPageNo = $("#lblImgPage");
+    this.$NextImgPage = $("#btnNextImgPage");
+    this.$LastImgPage = $("#btnLastImgPage");
     
     //DECLARED DATA
     this.OutDataList = [];
     this.drake = null;
+    this.imgCrntPage = 0;//current page const
+    this.imgPageSize = 10;//page size const
+    this.isMobileUnique = false;
 
     this.init = function () {
         $("#eb_common_loader").EbLoader("show");
@@ -139,24 +149,11 @@
 
         //=============================================================
         this.isSlickInit = false;
-        $(".list-item-img").on("click", function (evt) {
-            $("#mdlViewImage").modal('show');
-            if (!this.isSlickInit) {
-                this.isSlickInit = true;
-                $('#modal-imgs-cont').slick({
-                    lazyLoad: 'progressive',
-                    //dots: true,
-                    prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
-                    nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
-                });
-            }
-            let idx = parseInt($(evt.target).attr("data-idx"));
-            $('#modal-imgs-cont').slick('slickGoTo', idx);
-        }.bind(this));
+        
 
-        $('#modal-imgs-cont').on("dblclick", function () {
-            $("#mdlViewImage").modal('hide');
-        });
+        //$('#modal-imgs-cont').on("dblclick", function () {
+        //    $("#mdlViewImage").modal('hide');
+        //});
 
         //$('.img-in-viewer').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
         //    console.log(nextSlide);
@@ -172,6 +169,7 @@
         this.initSurgeryModal();
         this.initAttachModal();
 
+        this.initAttachTab();
         this.initDrake();
 
         this.$CostCenter.children().remove();
@@ -196,7 +194,94 @@
             this.$EnDate.val(moment(new Date()).format("DD-MM-YYYY"));
             this.$Closing.val("");
             this.$Doctor.val("");
+
+            this.$Mobile.on("change", function (e) {
+                $.ajax({
+                    type: "POST",
+                    url: "../CustomPage/UniqueCheck",
+                    data: { Key : "genurl", Value : $(e.target).val().trim() },
+                    success: function (result) {
+                        if (!result) {
+                            EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+                            this.isMobileUnique = false;
+                        }
+                        else
+                            this.isMobileUnique = true;
+                    }.bind(this)
+                });
+            }.bind(this));
         }
+    }
+
+    this.onClickSmallImage = function (evt) {
+        $("#mdlViewImage").modal('show');
+        if (!this.isSlickInit) {
+            this.isSlickInit = true;
+            $('#modal-imgs-cont').slick({
+                lazyLoad: 'ondemand',//progressive
+                //dots: true,
+                prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
+                nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
+            });
+        }
+        let idx = parseInt($(evt.target).attr("data-idx"));
+        $('#modal-imgs-cont').slick('slickGoTo', idx);
+    }.bind(this)
+
+    this.initAttachTab = function () {
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href") // activated tab
+            if (target === "#menuAttach" && this.ImageIdList.length !== 0) {
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$FirstImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== 0) {
+                this.imgCrntPage = 0;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$PrevImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== 0) {
+                this.imgCrntPage-- ;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$NextImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== parseInt((this.ImageIdList.length-1) / this.imgPageSize)) {
+                this.imgCrntPage++ ;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$LastImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== parseInt((this.ImageIdList.length-1) / this.imgPageSize)) {
+                this.imgCrntPage = parseInt((this.ImageIdList.length-1) / this.imgPageSize);
+                this.drawImagePage();
+            }
+        }.bind(this));
+    }
+
+    this.drawImagePage = function () {
+        $("#divAllImg").children().remove();
+        for (let i = this.imgCrntPage * this.imgPageSize; i < this.ImageIdList.length && i < (this.imgCrntPage+1) * this.imgPageSize; i++) {
+            this.appendSmallImage(i, this.ImageIdList[i]);
+        }
+        $("#divAllImg").children().find('.Eb_Image').Lazy();
+        this.$ImgPageNo.text("Page " + (this.imgCrntPage + 1) + " of " + (parseInt((this.ImageIdList.length - 1) / this.imgPageSize) + 1));
+        $(".list-item-img").on("click", this.onClickSmallImage);
+    }
+
+    this.appendSmallImage = function (indx, imgid) {
+        $("#divAllImg").append(`
+            <div class="img_wrapper">
+                <div class="img_wrapper_img">
+                    <img src="/images/spin.gif" data-src="/images/small/${imgid}.jpg" data-idx="${indx}" data-id="${imgid}" class="img-responsive Eb_Image list-item-img" />
+                </div>
+            </div>`);
     }
 
     this.initDrake = function () {
@@ -498,7 +583,7 @@
                 if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
                     $("#menuAttach").append(`<div class="img_wrapper">
                                                 <div class="img_wrapper_img">
-                                                    <img src="${imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
+                                                    <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
                                                 </div>
                                             </div>`);
                 }
@@ -536,7 +621,7 @@
             $("#divCustomerDp").children().remove();
             $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
-                        <img src="/images/placeholder.png" data-src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
                     </div>`);  
         }
 
@@ -578,14 +663,18 @@
                 }.bind(this)
             });
         }
-        else {
-            EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: '#aa0000' });
-        }
     }
 
     this.validateAndPrepareData = function () {
-        if (this.$Name.val() === "" || this.$Mobile.val() === "")
+        if (this.$Name.val() === "" || this.$Mobile.val() === "") {
+            EbMessage("show", { Message: 'Name and Mobile are Required Fields', AutoHide: true, Background: '#aa0000' });
             return false;
+        }
+        if (!this.isMobileUnique) {
+            EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+            return false;
+        }
+            
 
         this.OutDataList = [];
         this.OutDataList.push({ Key: "accountid", Value: this.AccId });

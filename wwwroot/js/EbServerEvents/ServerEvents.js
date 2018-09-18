@@ -7,15 +7,15 @@
     this.onUploadSuccess = function (m, e) { };
 
     this.onConnect = function (sub) {
-        console.log("You've connected! welcome " + sub.displayName);
+        //console.log("You've connected! welcome " + sub.displayName);
     };
 
     this.onJoin = function (user) {
-        console.log("Welcome, " + user.displayName);
+        //console.log("Welcome, " + user.displayName);
     }
 
     this.onLeave = function (user) {
-        console.log(user.displayName + " has left the building");
+        //console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
@@ -29,7 +29,7 @@
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-        console.log("stopped listening");
+        //console.log("stopped listening");
     };
 
     this.ES = new EventSourcePolyfill(this.Url, {
@@ -46,10 +46,10 @@
 
     $(document).bindHandlers({
         announce: function (msg) {
-            console.log("announce");
+            //console.log("announce");
         },
         toggle: function () {
-            console.log("toggle");
+            //console.log("toggle");
         },
         removeReceiver: function (name) {
             delete $.ss.eventReceivers[name];
@@ -61,7 +61,7 @@
             this.sEvent.reconnectServerEventsAuth();
         }
     }).on('customEvent', function (e, msg, msgEvent) {
-        console.log("custom");
+       // console.log("custom");
     });
 
     $(this.ES).handleServerEvents({

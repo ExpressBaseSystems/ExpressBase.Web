@@ -36,7 +36,7 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
-        
+
         //[HttpGet]
         //public IActionResult SqlFunction_Editor()
         //{
@@ -183,10 +183,15 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.ToString());
             }
             return resultlist1;
-        }        
-        public int Email()
+        }
+        public int Email(int val)
         {
-            this.ServiceClient.Post(new PdfCreateServiceMqRequest { Refid = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2153-2885-2153-2885"});
-            return 0; }
+            List<Param> _param = new List<Param> { new Param { Name = "ids", Type = ((int)EbDbTypes.Int32).ToString(), Value = val.ToString() } };
+            ServiceClient.Post(new PdfCreateServiceMqRequest {
+                Refid = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2174-2909-2174-2909" ,
+                Params = _param
+            });
+            return 0;
+        }
     }
 }

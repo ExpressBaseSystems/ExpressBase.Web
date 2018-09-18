@@ -57,7 +57,7 @@
 	}
 #mdlViewImage .modal-body {
 	height: 100vh;
-	margin-top: -55px;
+	margin-top: -30px;
 	z-index: -1;
 	padding: 0px;
 }

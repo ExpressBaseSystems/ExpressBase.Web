@@ -31,6 +31,9 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Security/type")]
 		public IActionResult CommonList(string type, string show)
 		{
+			if(!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return Redirect("/StatusCode/401");
+
 			IServiceClient client = this.ServiceClient;
 			type = type.ToLower();
 			ViewBag.ListType = type;
@@ -94,6 +97,9 @@ namespace ExpressBase.Web.Controllers
 	    [EbBreadCrumbFilter("Security")]
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return Redirect("/StatusCode/401");
+
 			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3
 			ViewBag.Culture = CultureHelper.CulturesAsJson;
 			ViewBag.TimeZone = CultureHelper.TimezonesAsJson;
@@ -162,8 +168,28 @@ namespace ExpressBase.Web.Controllers
 
 		public int SaveUser(int userid, string roles, string usergroups, string usrinfo)
 		{
+			Dictionary<string, string> Dict = null;
+
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return 0;
+			else//temp fix
+			{
+				Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
+				List<int> roleids = new List<int>();				
+				if (this.LoggedInUser.UserId == userid)
+				{
+					if (!string.IsNullOrEmpty(Dict["roles"]))//for avoiding format exception in next line
+						roleids = Array.ConvertAll(Dict["roles"].Split(','), int.Parse).ToList();
+					if (!roleids.Contains((int)SystemRoles.SolutionOwner))
+					{
+						roleids.Add((int)SystemRoles.SolutionOwner);
+						Dict["roles"] = String.Join(",", roleids);
+					}					
+				}
+			}
+
 			//var req = this.HttpContext.Request.Form;
-			Dictionary<string, string> Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
+			
 			//Dictionary<string, object> Dict = new Dictionary<string, object>();
 			//Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
 			//Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
@@ -214,7 +240,9 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Security")]
         public IActionResult ManageAnonymousUser(int itemid)
 		{
-			
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return Redirect("/StatusCode/401");
+
 			return View();
 		}
 
@@ -248,6 +276,9 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Security")]
         public IActionResult ManageUserGroups(int itemid)
 		{
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return Redirect("/StatusCode/401");
+
 			//var req = this.HttpContext.Request.Form;
 			//if (itemid > 0)
 			//{
@@ -284,6 +315,9 @@ namespace ExpressBase.Web.Controllers
 
 		public int SaveUserGroup(int _id, string _userGroupInfo)
 		{
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return 0;
+
 			//var req = this.HttpContext.Request.Form;
 			Dictionary<string, string> Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(_userGroupInfo);
 			//Dictionary<string, object> Dict = new Dictionary<string, object>();
@@ -305,6 +339,8 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Security")]
         public IActionResult ManageRoles(int itemid)
 		{
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return Redirect("/StatusCode/401");
 			//var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
 			//ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);
 			//ViewBag.SelectedRoleInfo = JsonConvert.SerializeObject(fr.SelectedRoleInfo);
@@ -352,13 +388,16 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		public object GetUserDetails(string srchTxt)
-	{
+		{
 			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText=srchTxt, SolnId = ViewBag.cid });
 			return fr.UserList;
 		}
 
 		public string SaveRole(int _roleId,string _roleName,string _roleDesc, bool _isAnonymous, int _appId,string _permission, string _role2role, string _users, string _locations)
 		{
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return "Failed";
+
 			Dictionary<string, object> Dict = new Dictionary<string, object>();
 			string return_msg;
 			Dict["roleid"] = _roleId;
@@ -386,8 +425,15 @@ namespace ExpressBase.Web.Controllers
 
 		public bool isValidRoleName(string reqRoleName)
 		{
-			var result = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { roleName = reqRoleName });
-            return result.unrespose;
+			try
+			{
+				Enum.Parse(typeof(SystemRoles), reqRoleName.ToLower(), true);
+				return true;//role name is already exists
+			}
+			catch (Exception ex){
+				var result = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { roleName = reqRoleName });
+				return result.unrespose;
+			}			
 		}
 
 

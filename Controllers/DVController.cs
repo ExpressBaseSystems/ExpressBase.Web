@@ -121,6 +121,8 @@ namespace ExpressBase.Web.Controllers
         {
             if (request.DataVizObjString != null)
                 request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+            if(request.CurrentRowGroup != null)
+                (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
             request.DataVizObjString = null;
             request.UserInfo = this.LoggedInUser;
             if (request.TFilters != null)

@@ -17,7 +17,7 @@
                 if (NSS) {
                     let NS1 = NSS.split(".")[0];
                     let NS2 = NSS.split(".")[1];
-                    if (cObj.ObjType === "TableLayout")
+                    if (cObj.ObjType === "TableLayout" || cObj.ObjType === "GroupBox")
                         EbOnChangeUIfns[NS1][NS2](cObj.Name, cObj);
                     else
                         EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);

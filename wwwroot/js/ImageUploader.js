@@ -139,7 +139,7 @@
         this.ss.onUploadSuccess = function (m, e) {
             $("#" + _container + "sub-upload").show();
             //this.FileId = this.getUrl(m.objectId);
-            this.FileId = m.objectId;
+            this.FileId = m;
             $('#' + _container + 'obj-id').text(this.FileId);
             $(".file-preview-initial").attr("tabindex", "1");
             $(".file-preview-initial").on("focus", this.imageOnSelect.bind(this));

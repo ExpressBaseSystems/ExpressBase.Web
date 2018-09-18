@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SourceCategoryList, SubCategoryList) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SourceCategoryList, SubCategoryList, ImageIdList) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -13,6 +13,7 @@
     this.SourceCategoryList = SourceCategoryList || [];
     this.SubCategoryList = SubCategoryList || [];
 
+    this.ImageIdList = ImageIdList || [];
     this.FeedbackList = F_List || [];
     this.BillingList = B_List || [];
     this.SurgeryList = S_List || [];
@@ -85,9 +86,20 @@
     this.$PatientInstr = $("#txaPatientInstr");
     this.$DoctorInstr = $("#txaDoctorInstr");
     this.$SrgySave = $("#btnSrgySave");  
+    //ATTACH
+    this.$FirstImgPage = $("#btnFirstImgPage");
+    this.$PrevImgPage = $("#btnPrevImgPage");
+    this.$ImgPageNo = $("#lblImgPage");
+    this.$NextImgPage = $("#btnNextImgPage");
+    this.$LastImgPage = $("#btnLastImgPage");
     
     //DECLARED DATA
     this.OutDataList = [];
+    this.drake = null;
+    this.imgCrntPage = 0;//current page const
+    this.imgPageSize = 10;//page size const
+    this.isMobileUnique = null;
+    this.isSlickInit = false;
 
     this.init = function () {
         $("#eb_common_loader").EbLoader("show");
@@ -101,10 +113,7 @@
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
         $("#eb_common_loader").EbLoader("hide");
     }
-
-   
-        
-
+    
     this.initMenuBarObj = function () {
         var menuBarObj = $("#layout_div").data("EbHeader");
         menuBarObj.setName("Lead Management");
@@ -137,21 +146,12 @@
         }.bind(this));
 
         //=============================================================
-        this.isSlickInit = false;
-        $(".list-item-img").on("click", function (evt) {
-            $("#mdlViewImage").modal('show');
-            if (!this.isSlickInit) {
-                this.isSlickInit = true;
-                $('#modal-imgs-cont').slick({
-                    lazyLoad: 'ondemand',
-                    //dots: true,
-                    prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
-                    nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
-                });
-            }
-            let idx = parseInt($(evt.target).attr("data-idx"));
-            $('#modal-imgs-cont').slick('slickGoTo', idx);
-        }.bind(this));
+       
+        
+
+        //$('#modal-imgs-cont').on("dblclick", function () {
+        //    $("#mdlViewImage").modal('hide');
+        //});
 
         //$('.img-in-viewer').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
         //    console.log(nextSlide);
@@ -166,6 +166,9 @@
         this.initBillingModal();
         this.initSurgeryModal();
         this.initAttachModal();
+
+        this.initAttachTab();
+        this.initDrake();
 
         this.$CostCenter.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {            
@@ -182,14 +185,131 @@
             this.$Closing.append(`<option value='${val}'">${key}</option>`);
         }.bind(this));
 
+        this.$Mobile.on("change", function (e) {
+            $.ajax({
+                type: "POST",
+                url: "../CustomPage/UniqueCheck",
+                data: { Key: "genurl", Value: $(e.target).val().trim() },
+                success: function (result) {
+                    if (!result) {
+                        EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+                        this.isMobileUnique = false;
+                    }
+                    else
+                        this.isMobileUnique = true;
+                }.bind(this)
+            });
+        }.bind(this));
+
         if (this.Mode === 1) {
             this.fillCustomerData();
+            this.isMobileUnique = true;
         }
         else if (this.Mode === 0) {
             this.$EnDate.val(moment(new Date()).format("DD-MM-YYYY"));
             this.$Closing.val("");
-            this.$Doctor.val("");
+            this.$Doctor.val("");  
+            this.isMobileUnique = false;
         }
+    }
+
+    this.onClickSmallImage = function (evt) {
+        $("#mdlViewImage").modal('show');
+        if (!this.isSlickInit) {
+            this.isSlickInit = true;
+            $('#modal-imgs-cont').slick({
+                lazyLoad: 'ondemand',//progressive
+                //dots: true,
+                prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
+                nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
+            });
+        }
+        let idx = parseInt($(evt.target).attr("data-idx"));
+        $('#modal-imgs-cont').slick('slickGoTo', idx);
+    }.bind(this)
+
+    this.initAttachTab = function () {
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href") // activated tab
+            if (target === "#menuAttach" && this.ImageIdList.length !== 0) {
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$FirstImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== 0) {
+                this.imgCrntPage = 0;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$PrevImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== 0) {
+                this.imgCrntPage-- ;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$NextImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== parseInt((this.ImageIdList.length-1) / this.imgPageSize)) {
+                this.imgCrntPage++ ;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$LastImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== parseInt((this.ImageIdList.length-1) / this.imgPageSize)) {
+                this.imgCrntPage = parseInt((this.ImageIdList.length-1) / this.imgPageSize);
+                this.drawImagePage();
+            }
+        }.bind(this));
+    }
+
+    this.drawImagePage = function () {
+        $("#divAllImg").children().remove();
+        for (let i = this.imgCrntPage * this.imgPageSize; i < this.ImageIdList.length && i < (this.imgCrntPage+1) * this.imgPageSize; i++) {
+            this.appendSmallImage(i, this.ImageIdList[i]);
+        }
+        $("#divAllImg").children().find('.Eb_Image').Lazy();
+        this.$ImgPageNo.text("Page " + (this.imgCrntPage + 1) + " of " + (parseInt((this.ImageIdList.length - 1) / this.imgPageSize) + 1));
+        $(".list-item-img").on("click", this.onClickSmallImage);
+    }
+
+    this.appendSmallImage = function (indx, imgid) {
+        $("#divAllImg").append(`
+            <div class="img_wrapper">
+                <div class="img_wrapper_img">
+                    <img src="/images/spin.gif" data-src="/images/small/${imgid}.jpg" data-idx="${indx}" data-id="${imgid}" class="img-responsive Eb_Image list-item-img" />
+                </div>
+            </div>`);
+    }
+
+    this.initDrake = function () {
+        this.drake = new dragula([document.getElementById("divAllImg"), document.getElementById("divCustomerDp")], {
+            
+            accepts: function (el, target, source, sibling) { 
+                if ($(target)[0] === $("#divCustomerDp")[0] && $(source)[0] === $("#divAllImg")[0]) {
+                    $("#divCustomerDp").children().hide();
+                    return true;
+                }
+                else {
+                    $("#divCustomerDp").children().show();
+                    return false;
+                }                    
+            },
+            copy: true
+        });
+
+        this.drake.on("drop", function (el, target, source, sibling) {
+            if ($(target)[0] === $("#divCustomerDp")[0] && $(source)[0] === $("#divAllImg")[0]) {
+                let id = $(el).find("img").attr('data-id');
+                $("#divCustomerDp").children().remove();
+                $("#divCustomerDp").append(`
+                    <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                        <img src="/images/small/${id}.jpg" data-id="${id}" style="max-height: 135px; max-width: 130px;" />
+                    </div>`);                
+            }            
+        });
     }
 
     this.initFeedBackModal = function () {
@@ -390,18 +510,19 @@
 
     this.initSurgeryModal = function () {
         this.$btnNewSurgeryDtls.on("click", function () {
-            if (this.AccId === 0) {
-                EbMessage("show", { Message: 'Save Customer Information then try to add Surgery Details', AutoHide: true, Backgorund: '#a40000' });
-            }
-            else {
-                this.$MdlSurgery.modal('show');
-            }
+            EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
+            //if (this.AccId === 0) {
+            //    EbMessage("show", { Message: 'Save Customer Information then try to add Surgery Details', AutoHide: true, Background: '#aa0000' });
+            //}
+            //else {
+            //    this.$MdlSurgery.modal('show');
+            //}
         }.bind(this));
 
         this.$SrgyDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
         this.$SrgySave.on("click", function () {
-            EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Backgorund: '#0b851a' });
+            EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
             //var id = 0;
             //this.$SrgySave.children().show();
             //this.$SrgySave.prop("disabled", true);
@@ -462,7 +583,7 @@
                 if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
                     $("#menuAttach").append(`<div class="img_wrapper">
                                                 <div class="img_wrapper_img">
-                                                    <img src="${imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
+                                                    <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
                                                 </div>
                                             </div>`);
                 }
@@ -495,6 +616,14 @@
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
         this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
+        if (this.CustomerInfo["dprefid"] !== "0") {
+            let id = this.CustomerInfo["dprefid"];
+            $("#divCustomerDp").children().remove();
+            $("#divCustomerDp").append(`
+                    <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                    </div>`);  
+        }
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
         this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);
@@ -506,9 +635,9 @@
         this.$Closing.val(this.CustomerInfo["closing"]);
         this.$Nature.val(this.CustomerInfo["nature"]);
 
-        this.$CostCenter.prop("disabled", true);
-        this.$EnDate.prop("disabled", true);
-        this.$Mobile.prop("disabled", true);
+        //this.$CostCenter.prop("disabled", true);
+        //this.$EnDate.prop("disabled", true);
+        //this.$Mobile.prop("disabled", true);
 
     }
 
@@ -534,14 +663,18 @@
                 }.bind(this)
             });
         }
-        else {
-            EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: '#aa0000' });
-        }
     }
 
     this.validateAndPrepareData = function () {
-        if (this.$Name.val() === "" || this.$Mobile.val() === "")
+        if (this.$Name.val() === "" || this.$Mobile.val() === "") {
+            EbMessage("show", { Message: 'Name and Mobile are Required Fields', AutoHide: true, Background: '#aa0000' });
             return false;
+        }
+        if (!this.isMobileUnique) {
+            EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+            return false;
+        }
+            
 
         this.OutDataList = [];
         this.OutDataList.push({ Key: "accountid", Value: this.AccId });
@@ -579,8 +712,11 @@
         this.pushToList("closing", (this.$Closing.val() || "0"));
         this.pushToList("nature", $("#selNature option:selected").text());
 
-        //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });    
-        
+        //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });  
+
+        let dprefid = $("#divCustomerDp").find("img").attr('data-id');
+        if(dprefid !== "0")
+            this.pushToList("dprefid", dprefid);
         return true;
     }
 

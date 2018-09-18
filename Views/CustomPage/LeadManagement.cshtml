@@ -36,9 +36,10 @@
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbCropper.js"></script>
 <script type="text/javascript" src="~/js/UserScripts/EbFormsImageRender.js"></script>
+<script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
 
 <div class="form-cont">
-    <div class="container" style="padding: 60px 0px 10px 0px;">
+    <div class="container" style="padding: 60px 0px 0px 0px;">
         <div class="lm-form-inline">
             <div class="col-md-10" style="padding-left:0px;width: 88%;">
                 <div class="lm-form-inline">
@@ -164,7 +165,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-2 lm-img-cont"></div>
+            <div class="col-md-2 lm-img-cont" id="divCustomerDp">
+                <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                    <img src="~/images/image.png" style="max-height: 135px; max-width: 130px; opacity: 0.3;" data-id="0" />
+                </div>
+            </div>
         </div>
     </div>
 
@@ -179,7 +184,7 @@
         <div class="tab-content white-tab">
 
             <!-- Home Menu -->
-            <div id="home" class="tab-pane fade in active" style="padding-top: 25px;">
+            <div id="home" class="tab-pane fade in active" style="padding-top: 25px; height: calc(100vh - 290px); min-height: 200px; overflow-y: scroll;">
                 <div class="lm-form-inline">
                     <div class="col-md-2">
                         <div class="form-group">
@@ -207,7 +212,7 @@
                             <option value="true">Yes</option>
                         </select>
                     </div>
-                    <div class="col-md-1" style="min-width: 14%;">
+                    <div class="col-md-1" style="min-width: 15%;">
                         <div class="form-group">
                             <label>Consulted Date</label>
                             <div class="input-group">
@@ -216,7 +221,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2" style="min-width: 30.5%;">
+                    <div class="col-md-2" style="min-width: 29.5%;">
                         <div class="form-group">
                             <label>Consulting Doctor</label>
                             <select id="selDoctor" class="form-control"></select>
@@ -288,58 +293,40 @@
             </div>
 
             <!-- Billing Menu -->
-            <div id="menuBilling" class="tab-pane fade">
+            <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 290px); min-height: 200px; overflow-y: scroll;">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
                 <div class="lm-form-inline">
-                    <div id="divBilling" style="max-height: 300px; overflow: auto;"></div>
+                    <div id="divBilling"></div>
                 </div>
             </div>
 
             <!-- Surgery Menu -->
-            <div id="menuSurgery" class="tab-pane fade">
+            <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 290px); min-height: 200px; overflow-y: scroll;">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
                 <div class="lm-form-inline">
-                    <div id="divSrgy" style="max-height: 300px; overflow: auto;"></div>
+                    <div id="divSrgy"></div>
                 </div>
             </div>
 
             <!-- Attach Menu -->
-            <div id="menuAttach" class="tab-pane fade">
-                <div style="text-align:right; padding: 15px 15px;">
-                    <button data-target="#mdlAttach" data-toggle="modal" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
+            <div id="menuAttach" class="tab-pane fade" style="height: calc(100vh - 290px); min-height: 200px; overflow-y: scroll;">
+                <div style="padding: 15px 15px; display:inline-block; width:79%;">
+                    <button id="btnFirstImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-step-backward"></i> First</button>
+                    <button id="btnPrevImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-chevron-left"></i> Prev</button>
+                    <label id="lblImgPage">Page 0 of 0</label>
+                    <button id="btnNextImgPage" class="ebbtn eb_btn-sm ">Next <i class="fa fa-chevron-right"></i></button>
+                    <button id="btnLastImgPage" class="ebbtn eb_btn-sm ">Last <i class="fa fa-step-forward"></i></button>
                 </div>
-
-                @{
-                    if (ViewBag.MC_Mode == 1)
-                    {
-                        string url = string.Empty;
-                        if (ViewBag.ImageIdList.Count == 0)
-                        {
-                            @*<div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>*@
-                        }
-                        else
-                        {
-                            for (int i = 0; i < ViewBag.ImageIdList.Count; i++)
-                            {
-                                url = "/images/" + ViewBag.ImageIdList[i] + ".jpg";
-                                <div class="img_wrapper">
-                                    <div class="img_wrapper_img">
-                                        <img src="~/images/placeholder.png" data-src="@url" data-idx="@i" class="img-responsive Eb_Image list-item-img" />
-                                    </div>
-                                </div>
-                            }
-                        }
-                    }
-                    else
-                    {
-                        @*<div style="text-align: center; padding: 5%; font-size: 22px; color: #bbb; "> No Data Available </div>*@
-                    }
-                }
-
+                @*<div style="text-align:right; padding: 15px 15px; display:inline-block; width:20%;">
+                    <button data-target="#mdlAttach" data-toggle="modal" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
+                </div>*@
+                <div id="divAllImg">
+                    
+                </div>
                 @*<div style="text-align: center; padding-top: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>*@
             </div>
         </div>
@@ -394,8 +381,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="btnFlUpSave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
-                <button type="button" class="ebbtn eb_btn-sm eb_btnblue" data-dismiss="modal">Close</button>
+                <button id="btnFlUpSave" class="ebbtn eb_btn-sm eb_btngreen" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
             </div>
         </div>
     </div>
@@ -488,8 +474,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="btnBlngSave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
-                <button type="button" class="ebbtn eb_btn-sm eb_btnblue" data-dismiss="modal">Close</button>
+                <button id="btnBlngSave" class="ebbtn eb_btn-sm eb_btngreen" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
             </div>
         </div>
     </div>
@@ -601,8 +586,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" style="opacity: 1; color: #fff; font-size: 32px;">&times;</button>
-                <h4 class="modal-title">Image Viewer</h4>
+                <button type="button" class="close" data-dismiss="modal" style="opacity: 1; color: #f00; font-size: 52px;">&times;</button>
+                <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body" >
                 <div id="modal-imgs-cont">
@@ -613,7 +598,7 @@
                         {
                             string url = "/images/" + id + ".jpg";
                             <div class="image-cont">
-                                <img data-id="@id" class="img-in-viewer" src="~/images/placeholder.png" data-lazy="@url" />
+                                <img data-id="@id" class="img-in-viewer" src="~/images/spin.gif" data-lazy="@url" />
                             </div>
                         }
                     }
@@ -656,15 +641,17 @@
     var SourceCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SourceCategoryList));
     var SubCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SubCategoryList));
 
+    var ImageIdList = Html.Raw(JsonConvert.SerializeObject(ViewBag.ImageIdList));
+    
+
     var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
     var BillingList = (Html.Raw(ViewBag.BillingList).ToString() == "") ? "null" : Html.Raw(ViewBag.BillingList);
     var SurgeryList = (Html.Raw(ViewBag.SurgeryList).ToString() == "") ? "null" : Html.Raw(ViewBag.SurgeryList);
 
-
 }
 
 <script>
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SourceCategoryList, @SubCategoryList );
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SourceCategoryList, @SubCategoryList, @ImageIdList );
     var imgup = new ImageRender({
         TenantId:'@ViewBag.cid'
     })

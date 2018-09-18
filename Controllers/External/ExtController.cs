@@ -565,8 +565,6 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.errormsg = wse.Message;
                 return Redirect(RoutingConstants.EXTERROR);
             }
-
-
         }
 
         public IActionResult VerificationStatus()
@@ -651,6 +649,12 @@ namespace ExpressBase.Web.Controllers
                 catch (Exception e) { Console.WriteLine("Exception:" + e.ToString()); }
             }
             return string.Empty;
+        }
+
+        [HttpGet("Public/AppStore")]
+        public IActionResult AppStorePublic()
+        {
+            return View();
         }
     }
 }

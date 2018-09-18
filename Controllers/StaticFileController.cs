@@ -370,7 +370,8 @@ namespace ExpressBase.Web.Controllers
 		public async Task<JsonResult> UploadImageAsyncFromForm(int i)
         {
             UploadAsyncResponse res = new UploadAsyncResponse();
-            FileRefIdsWraper _refs = new FileRefIdsWraper();
+            List<int> _refs = new List<int>();
+
             try
             {
                 var req = this.HttpContext.Request.Form;
@@ -397,7 +398,7 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
                         uploadImageRequest.ImageInfo.FileRefId = 1;
 
-                        _refs.RefIds.Add(this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest).FileRefId);
+                        _refs.Add(this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest).FileRefId);
                     }
                 }
             }
@@ -405,7 +406,7 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
-            return new JsonResult(_refs);
+            return new JsonResult(new FileRefIdsWraper { RefIds = _refs } );
 		}
 
         [HttpPost]

@@ -108,7 +108,7 @@
             }
         }).done(function (data) {
             $("#cloudnary_loader").EbLoader("hide");
-            var d = JSON.parse(data);
+            var d = JSON.parse(data.CloudinaryConnection.Account);
             this.appendCloudnaryConnection(d);
             $("#cldnry_conEdit").modal("toggle");
         }.bind(this));
@@ -227,15 +227,15 @@
 
     this.appendCloudnaryConnection = function (object) {
         let o = {};
-        if (object === null || object === undefined) {
+        if (object === null || object === undefined || $.isEmptyObject(object)) {
             o.Cloud = "xxxxxxx";
             o.ApiKey = "xxxxxxx";
             o.ApiSecret = "xxxxxx";
         }
         else {
             o = object;
-
         }
+
         $("#Cloudnary_Connection_config .Cloud").text(o.Cloud);
         $("#Cloudnary_Connection_config .ApiKey").text(o.ApiKey);
         $("#Cloudnary_Connection_config .SecretKey").text(o.ApiSecret);
@@ -243,20 +243,17 @@
 
     this.appendFtpConnection = function (object) {
         let o = {};
-        let img = "";
-        if (object === null) {
-            o.UserName = "xxxxxxx";
+        if (object === null || object === undefined) {
+            o.Username = "xxxxxxx";
             o.Password = "xxxxxxx";
-            o.Ip = "xxxxxx";
-            img = `<span style="font-size:20px;width:100%;font-weight:bold;">FTP</span>`;
+            o.Host = "xxxxxx";
         }
         else {
             o = object;
         }
-        $("#Ftp_Connection_config .VendorImage").empty().append(img);
-        $("#Ftp_Connection_config .UserName").text(o.UserName);
+        $("#Ftp_Connection_config .UserName").text(o.Username);
         $("#Ftp_Connection_config .Password").text(o.Password);
-        $("#Ftp_Connection_config .IpAddress").text(o.Ip);
+        $("#Ftp_Connection_config .IpAddress").text(o.Host);
     };
 
     this.testConnection = function (e) {
@@ -271,7 +268,7 @@
     this.validateConnection = function (form) {
         let f = true;
         for (let k in form) {
-            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken","IsNew"].indexOf(k) < 0) {
+            if (["ReadOnlyPassword", "ReadOnlyUserName", "ReadWritePassword", "ReadWriteUserName", "__RequestVerificationToken", "IsNew"].indexOf(k) < 0) {
                 if (form[k].length <= 0)
                     f = false;
             }
@@ -337,8 +334,13 @@
         this.appendFilesDb(this.Connections.FilesDbConnection);
         this.appendEmailConnection(this.Connections.SMTPConnection);
         this.appendSmsConnection(this.Connections.SMSConnection);
-        this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
-        this.appendFtpConnection(null);
+
+        if (this.Connections.CloudinaryConnection !== null)
+            this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
+        else
+            this.appendCloudnaryConnection(null);
+
+        this.appendFtpConnection(this.Connections.FTPConnection);
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#EmailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));

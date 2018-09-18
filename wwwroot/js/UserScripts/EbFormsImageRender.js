@@ -19,18 +19,43 @@
             uploadUrl: "../StaticFile/UploadImageAsyncFromForm",
             maxFileCount: 5,
             uploadAsync: false
-        }).on('fileuploaded', this.fileUploadSuccess.bind(this))
-            .on('filepreajax', this.filepreajax.bind(this));
-
+        }).on('filebatchuploadsuccess', this.fileUploadSuccess.bind(this))
+            .on('filepreajax', this.filepreajax.bind(this))
+        .on('fileuploaded', this.singleUpload.bind(this));
         $(".file-drop-zone").css({ "height": '80%', "overflow-y": "auto" });
     }
 
-    fileUploadSuccess(event, data, previewId, index) {
-        if (this.ImageRefIds.indexOf(data.response) === -1) {
-            this.ImageRefIds.push(data.response);
-            this.ImageBase64[data.response] = data.reader.result;
+    singleUpload(event,data,previd,i) {
+        for (let i = 0; i < data.response.refIds.length; i++) {
+            if (this.ImageRefIds.indexOf(data.response.refIds[i]) === -1) {
+                this.ImageRefIds.push(data.response.refIds[i]);
+                this.btob64(data.files[i], data.response.refIds[i]);
+            }
         }
+        $(".fileinput-remove-button").click();
+        $("#mdlAttach").modal("hide");
+    }
+
+    btob64(blob, i) {
+        var base64=null;
+        var reader = new FileReader();
+        reader.onload = function () {
+            this.ImageBase64[i]  = reader.result;
+        }.bind(this)
+        if (blob !== undefined)
+            reader.readAsDataURL(blob);
     };
+
+    fileUploadSuccess(event, data) {
+        for (let i = 0; i < data.response.refIds.length;i++) {
+            if (this.ImageRefIds.indexOf(data.response.refIds[i]) === -1) {
+                this.ImageRefIds.push(data.response.refIds[i]);
+                this.btob64(data.files[i], data.response.refIds[i]);
+            }
+        }
+        $(".fileinput-remove-button").click();
+        $("#mdlAttach").modal("hide");
+    };    
 
     startSE() {
         let url = "";

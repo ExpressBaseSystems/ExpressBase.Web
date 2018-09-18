@@ -20,7 +20,7 @@
 }
 
 .img_wrapper {
-	transition: 1s;
+	transition: 0.5s;
 }
 	.img_wrapper:hover {
 		cursor: pointer;
@@ -49,9 +49,15 @@
 	color: #ffffff !important;
 	font-size: 36px !important;
 }
+	#mdlViewImage .modal-header .close:focus{
+		outline: none;
+	}
+	#mdlViewImage .modal-header .close:hover {
+		color: white !important;
+	}
 #mdlViewImage .modal-body {
 	height: 100vh;
-	margin-top: -55px;
+	margin-top: -30px;
 	z-index: -1;
 	padding: 0px;
 }

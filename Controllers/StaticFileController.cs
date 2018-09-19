@@ -46,7 +46,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                 }
             }
             catch (Exception e)
@@ -54,6 +54,11 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
             return resp;
+        }
+
+        private string GetMime(string fname)
+        {
+            return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last()];
         }
     }
 
@@ -86,7 +91,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                 }
             }
             catch (Exception e)
@@ -126,7 +131,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                 }
             }
             catch (Exception e)
@@ -154,7 +159,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                 }
             }
             catch (Exception e)
@@ -180,7 +185,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.Split(CharConstants.DOT).Last()]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                 }
             }
             catch (Exception e)
@@ -208,7 +213,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                 }
 
             }
@@ -237,7 +242,7 @@ namespace ExpressBase.Web.Controllers
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, StaticFileConstants.GetMime[filename.SplitOnLast(CharConstants.DOT).Last()]);
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
                 }
             }
             catch (Exception e)
@@ -318,7 +323,7 @@ namespace ExpressBase.Web.Controllers
 
             foreach (KeyValuePair<string, List<string>> entry in dict)//workaround need to change
             {
-                tagDict.Add(regEx.Replace(entry.Key.ToLower(), UnderScore), entry.Value);
+                tagDict.Add(regEx.Replace(entry.Key.ToLower(), UnderScore).ToLower(), entry.Value);
             }
             try
             {
@@ -525,6 +530,11 @@ namespace ExpressBase.Web.Controllers
         {
             List<FileMeta> resp = this.FileClient.Post(new InitialFileReq { Type = (FileClass)type });
             return resp;
+        }
+        
+        private string GetMime(string fname)
+        {
+            return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
         }
     }
 }

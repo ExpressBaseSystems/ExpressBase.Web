@@ -406,8 +406,8 @@
     }
 
     this.addImageFn = function (obj) {
-        if (obj.Image)
-            obj.Source = 'url(' + window.location.protocol + "//" + window.location.host + "/static/" + obj.Image + ".JPG" + ') center no-repeat';
+        if (obj.ImageRefId)
+            obj.Source = 'url(' + window.location.protocol + "//" + window.location.host + "/images/" + obj.ImageRefId + ".jpg" + ') center no-repeat';
         this.RefreshControl(obj);
     };
     this.onDrag_stop = function (event, ui) {
@@ -625,7 +625,7 @@
         else if (pname === "IsLandscape") {
             this.setpageMode(obj);
         }
-        else if (pname === "Image" || pname === "WaterMark") {
+        else if (pname === "ImageRefId" || pname === "WaterMark") {
             this.addImageFn(obj);
         }
         else if (pname === "ValueExpression") {

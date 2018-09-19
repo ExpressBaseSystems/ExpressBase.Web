@@ -9,13 +9,14 @@
     this.url = option.Url||'';//load image on initialize
     this.fileurl = null;
     this.cropie = null;
-    this.getFile = function (b65) { return b65; }//return b65 croped image
+    this.getFile = function (b65,filename) { }//return b65 croped image
     this.getObjId = function (id) { };
     this.Type = option.Type;//type of image logo or dp
     this.ResizeViewPort = option.ResizeViewPort ? true : false;//enable resizing of viewport
     this.Preview = option.Preview||null;//previw el should be uniq and it sould be an img tag
     this.Tid = option.Tid || null;
     this.Extra = option.Extra || {};
+    this.FileName = null;
 
     var _typeRatio = {
         'logo': {
@@ -23,8 +24,8 @@
             height: 100
         },
         'dp': {
-            width: 50,
-            height: 50
+            width: 100,
+            height: 100
         },
         'doc': {
             width: 200,
@@ -59,10 +60,7 @@
       </div>
     </div>
   </div>`);
-        this.__cropfy();
-        $("." + this.Container + "_rotate").closest(".btn").on("click", this.rotate.bind(this));
-        $("#" + this.Container + "_crop").closest(".btn").on("click", this.crop.bind(this));
-        this.appendBtn();
+        
     };
 
     this.appendBtn = function () {
@@ -127,7 +125,7 @@
 
     this.saveCropfy = function () {
         this.toggleModal();
-        this.getFile(this.fileurl);
+        this.getFile(this.fileurl, this.FileName);
     };
 
     this.upload = function () {

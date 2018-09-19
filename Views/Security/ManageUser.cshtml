@@ -216,14 +216,16 @@
                                     <label style="font-family: open sans; font-weight: 300;">Select Locale:</label>
                                     <select class="form-control" id="sellocale" name="locale"></select>
                                 </div>
-                                <div class="form-group" id="divLocaleInfo">
-
+                                <div class="form-group" id="divLocaleInfo"></div>
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
+                                    <select id="seltimezone" name="timezone" class="form-control"></select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
-                                    <select id="seltimezone" name="timezone" class="form-control"></select>
+                                    <label style="font-family: open sans; font-weight: 300;">Default Location:</label>
+                                    <select id="selDefaultLocation" name="DefaultLocation" class="form-control"></select>
                                 </div>
                             </div>
                         </div>
@@ -277,6 +279,37 @@
             </div>
             <div class="modal-footer" style="">
                 <button id="btnUpdatePwd" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="MU_ResetPwdModal" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width:445px">
+        <div class="modal-content">
+            <div class="modal-header" style="">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Reset Password</h4> </div>
+                </div>
+            </div>
+            <div class="modal-body" style="height:185px">
+                <input type="hidden" id="itemid" />
+                <div id="">
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">New Password :</label>
+                        <input id="pwdResetNew" class="form-control" type="password" title="Enter New Password" style="width:60%; display: inline-block;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
+                        <input id="pwdResetNewConfirm" class="form-control" type="password" title="ReEnter New Password" style="width:60%; display: inline-block;">
+                    </div>
+                    <label id="lblPwdChngMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);"></label>
+                </div>
+            </div>
+            <div class="modal-footer" style="">
+                <button id="btnResetPwd" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Reset</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>

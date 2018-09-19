@@ -367,11 +367,52 @@ namespace ExpressBase.Web.Controllers
         }
 
 		[HttpPost]
-		public async Task<JsonResult> UploadImageAsyncFromForm(int i)
+		public async Task<int> UploadImageAsyncFromForm(int i)
         {
             UploadAsyncResponse res = new UploadAsyncResponse();
-            List<int> _refs = new List<int>();
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                List<string> tags = req["Tags"].ToList<string>();
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+                uploadImageRequest.ImageInfo = new ImageMeta();
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
+                    {
+                        byte[] myFileContent;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                            uploadImageRequest.ImageByte = myFileContent;
+                        }
+                        uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+                        uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tags);
 
+                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
+                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last();
+                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                        uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
+                        uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
+            }
+            return res.FileRefId;
+		}
+
+        [HttpPost]
+        public async Task<int> UploadDPAsync(int i)
+        {
+            UploadAsyncResponse res = new UploadAsyncResponse();
             try
             {
                 var req = this.HttpContext.Request.Form;
@@ -390,15 +431,13 @@ namespace ExpressBase.Web.Controllers
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
                             uploadImageRequest.ImageByte = myFileContent;
                         }
-
                         uploadImageRequest.ImageInfo.FileName = formFile.FileName;
-                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last();
+                        uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
-                        uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
+                        uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Dp;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
-                        uploadImageRequest.ImageInfo.FileRefId = 1;
 
-                        _refs.Add(this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest).FileRefId);
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
                     }
                 }
             }
@@ -406,38 +445,8 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
-            return new JsonResult(new FileRefIdsWraper { RefIds = _refs } );
-		}
 
-        [HttpPost]
-        public async Task<string> UploadDPAsync(string base64)
-        {
-            UploadAsyncResponse res = new UploadAsyncResponse();
-            string Id = string.Empty;
-            string url = string.Empty;
-            byte[] myFileContent;
-            try
-            {
-                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
-                uploadImageRequest.ImageInfo = new ImageMeta();
-                string base64Norm = base64.Replace("data:image/png;base64,", "");
-                myFileContent = System.Convert.FromBase64String(base64Norm);
-                uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
-                uploadImageRequest.ImageInfo.FileName = String.Format("dp_{0}.{1}", ViewBag.UId, uploadImageRequest.ImageInfo.FileType);
-                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
-                uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Dp;
-                uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
-
-                res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception:" + e.ToString() + "\n Response:" + res.ResponseStatus.Message);
-                return "upload failed";
-            }
-
-            return url;
+            return res.FileRefId;
         }
 
         [HttpPost]

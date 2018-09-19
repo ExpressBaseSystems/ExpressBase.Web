@@ -53,7 +53,6 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Connections = resp.EBSolutionConnections;
             ViewBag.SolutionInfo = resp.Data;
             ViewBag.cid = Sid;
-            ViewBag.Protocol = (this.HttpContext.Request.IsHttps) ? Constants.HTTPS : Constants.HTTP;
             ViewBag.Domain = this.HttpContext.Request.Host;
             ViewBag.rToken = Request.Cookies["rToken"];
             ViewBag.bToken = Request.Cookies["bToken"];
@@ -64,14 +63,12 @@ namespace ExpressBase.Web.Controllers
         public void EbCreateSolution(int i)
         {
             var req = this.HttpContext.Request.Form;
-            string DbName = req["Isid"];
+            string DbName = req["SolnId"];
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
                 SolutionName = req["Sname"],
-                Isid = req["Isid"],
-                Esid = req["Isid"],
-                Description = req["Desc"],
-                Subscription = req["Subscription"]
+                SolnId = req["SolnId"],
+                Description = req["Desc"]
             });
             if (res.Solnid > 0)
                 TempData[Msg] = "New Solution Created.";
@@ -100,7 +97,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [EbBreadCrumbFilter("MySolutions/NewSolution")]
+        [EbBreadCrumbFilter("MySolutions/NewSolution", new string[] { "/MySolutions" })]
         public IActionResult CreateSolution()
         {
             

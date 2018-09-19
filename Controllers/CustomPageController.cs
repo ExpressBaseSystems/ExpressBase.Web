@@ -41,6 +41,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.CrntCityList = fr.CrntCityList;
 			ViewBag.CrntCountryList = fr.CrntCountryList;
 			ViewBag.CityList = fr.CityList;
+			ViewBag.DistrictList = fr.DistrictList;
 			ViewBag.SourceCategoryList = fr.SourceCategoryList;
 			ViewBag.SubCategoryList = fr.SubCategoryList;
 

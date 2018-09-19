@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
@@ -39,8 +40,14 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                var Rowdata = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid });
-                return Rowdata;
+                EbDataSet DataSet = ServiceClient.Post<EbDataSet>(new GetRowDataRequest { RefId = refid, RowId = rowid });
+                GetRowDataResponse dataset = new GetRowDataResponse();
+
+                //dataset.RowValues = DataSet.Tables[0].Rows.ToArray();
+
+
+
+                return new GetRowDataResponse();
             }
             catch (Exception ex)
             {

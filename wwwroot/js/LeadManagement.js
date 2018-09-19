@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SourceCategoryList, SubCategoryList, ImageIdList) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, DistrictList, SourceCategoryList, SubCategoryList, ImageIdList) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -10,6 +10,7 @@
     this.CCityList = CCityList || [];
     this.CCountryList = CCountryList || [];
     this.CityList = CityList || [];
+    this.DistrictList = DistrictList || [];
     this.SourceCategoryList = SourceCategoryList || [];
     this.SubCategoryList = SubCategoryList || [];
 
@@ -35,7 +36,7 @@
     this.$HomeCity = $("#txtHomeCity");
     this.$HomeDistrict = $("#txtHomeDistrict");
     this.$Service = $("#selService");
-    this.$LeadOwner = $("#txtLeadOwner");
+    this.$LeadOwner = $("#selLeadOwner");
     this.$SourceCategory = $("#txtSourceCategory");
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
@@ -108,9 +109,18 @@
 
         this.$CrntCity.autocomplete({ source: this.CCityList });
         this.$CrntCountry.autocomplete({ source: this.CCountryList });
-        this.$HomeCity.autocomplete({ source: this.CityList });
+        this.$HomeCity.autocomplete({ source: this.CityList }); 
+        this.$HomeDistrict.autocomplete({ source: this.DistrictList });
         this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
+
+        $(document).bind('keypress', function (event) {
+            if (event.which === 19 && event.ctrlKey && event.shiftKey) {
+                if(!($("#btnSave").prop("disabled")))
+                    this.onClickBtnSave();
+            }
+        }.bind(this));
+
         $("#eb_common_loader").EbLoader("hide");
     }
     
@@ -120,7 +130,7 @@
         if (this.Mode === 0)
             menuBarObj.setName("Lead Management - New Customer");
         menuBarObj.insertButton(`
-            <button id="btnSave" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+            <button id="btnSave" class='btn' title='Save (Ctrl+Shift+S)'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
             <button id="btnNew" class='btn' title='New'><i class="fa fa-user-plus" aria-hidden="true"></i></button>`);
 
         $("#btnSave").on("click", this.onClickBtnSave.bind(this));
@@ -180,25 +190,36 @@
             this.$Doctor.append(`<option value='${val}'">${key}</option>`);
         }.bind(this));
 
+        this.$LeadOwner.children().remove();
+        $.each(this.StaffInfo, function (key, val) {
+            this.$LeadOwner.append(`<option value='${val}'">${key}</option>`);
+        }.bind(this));
+
         this.$Closing.children().remove();
         $.each(this.StaffInfo, function (key, val) {
             this.$Closing.append(`<option value='${val}'">${key}</option>`);
         }.bind(this));
 
         this.$Mobile.on("change", function (e) {
-            $.ajax({
-                type: "POST",
-                url: "../CustomPage/UniqueCheck",
-                data: { Key: "genurl", Value: $(e.target).val().trim() },
-                success: function (result) {
-                    if (!result) {
-                        EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
-                        this.isMobileUnique = false;
-                    }
-                    else
-                        this.isMobileUnique = true;
-                }.bind(this)
-            });
+            let newMob = $(e.target).val().trim();
+            if (this.Mode === 1 && this.CustomerInfo["genurl"] === newMob) {
+                this.isMobileUnique = true;
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "../CustomPage/UniqueCheck",
+                    data: { Key: "genurl", Value: newMob },
+                    success: function (result) {
+                        if (!result) {
+                            EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+                            this.isMobileUnique = false;
+                        }
+                        else
+                            this.isMobileUnique = true;
+                    }.bind(this)
+                });
+            }           
         }.bind(this));
 
         if (this.Mode === 1) {
@@ -209,6 +230,7 @@
             this.$EnDate.val(moment(new Date()).format("DD-MM-YYYY"));
             this.$Closing.val("");
             this.$Doctor.val("");  
+            this.$LeadOwner.val("");
             this.isMobileUnique = false;
         }
     }
@@ -325,9 +347,13 @@
         this.$FlUpDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$FlUpFolDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
-        this.$FlUpSave.on("click", function () {    
+        this.$FlUpSave.on("click", function () {
+            if (this.AccId === 0) {
+                EbMessage("show", { Message: 'Save Customer Information then try to add Followup', AutoHide: true, Background: '#aa0000' });
+                return;
+            }
             if (this.$FlUpDate.val() === "" || this.$FlUpStatus.val() === "" || this.$FlUpFolDate.val() === "" || this.$FlUpComnt.val() === "") {
-                EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: '#aa0000' });
+                EbMessage("show", { Message: 'Validation Faild. Fill all Fields.', AutoHide: true, Background: '#aa0000' });
                 return;
             }
 
@@ -408,6 +434,10 @@
         }.bind(this));
 
         this.$BlngSave.on("click", function () {
+            if (this.AccId === 0) {
+                EbMessage("show", { Message: 'Save Customer Information then try to add Billing Details', AutoHide: true, Background: '#aa0000' });
+                return;
+            }
             if (this.$BlngDate.val() === "" || this.$BlngTotal.val() === "" || this.$BlngRcvd.val() === "" || this.$BlngBal.val() === "" || this.$BlngPaid.val() === "" || this.$BlngMode.val() === "" || this.$BlngClrDate.val() === "" || this.$BlngNarr.val() === "") {
                 EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: '#aa0000' });
                 return;
@@ -601,7 +631,7 @@
         this.$Dob.val(this.CustomerInfo["dob"]);
         this.$Dob.trigger("change");
         //this.$Age.val(this.CustomerInfo["age"]);
-        //this.$Sex.val(this.CustomerInfo[""]);
+        this.$Sex.val(this.CustomerInfo["sex"]);///////////
         this.$Phone.val(this.CustomerInfo["genphoffice"]);
         this.$Profession.val(this.CustomerInfo["profession"]);
         this.$Email.val(this.CustomerInfo["genemail"]);
@@ -609,9 +639,9 @@
         this.$CrntCity.val(this.CustomerInfo["clcity"]);
         this.$CrntCountry.val(this.CustomerInfo["clcountry"]);
         this.$HomeCity.val(this.CustomerInfo["city"]);
-        //this.$HomeDistrict.val(this.CustomerInfo[""]);
+        this.$HomeDistrict.val(this.CustomerInfo["district"]);///////
         this.$Service.val(this.CustomerInfo["typeofcustomer"].trim().toLowerCase());
-        //this.$LeadOwner.val(this.CustomerInfo[""]);
+        this.$LeadOwner.val(this.CustomerInfo["leadowner"]);/////////
         this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
@@ -627,7 +657,7 @@
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
         this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);
-        //this.$ProbableMonth.val(this.CustomerInfo[""]);
+        this.$ProbableMonth.val(this.CustomerInfo["probmonth"]);/////////
         this.$TotalGrafts.val(this.CustomerInfo["noofgrafts"]);
         this.$TotalRate.val(this.CustomerInfo["totalrate"]);
         this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
@@ -686,7 +716,7 @@
         this.pushToList("name", this.$Name.val());
         this.pushToList("dob", this.$Dob.val());
         //this.pushToList("age", this.$Age.val());
-        //this.pushToList("", this.$Sex.val());
+        this.pushToList("sex", this.$Sex.val());////////////
         this.pushToList("genphoffice", this.$Phone.val());
         this.pushToList("profession", this.$Profession.val());
         this.pushToList("genemail", this.$Email.val());
@@ -694,22 +724,22 @@
         this.pushToList("clcity", this.$CrntCity.val());
         this.pushToList("clcountry", this.$CrntCountry.val());
         this.pushToList("city", this.$HomeCity.val());
-        //this.pushToList("", this.$HomeDistrict.val());
+        this.pushToList("district", this.$HomeDistrict.val());/////////////
         this.pushToList("typeofcustomer", $("#selService option:selected").text());
-        //this.pushToList("", this.$LeadOwner.val());
+        this.pushToList("leadowner", this.$LeadOwner.val());////////////
         this.pushToList("sourcecategory", this.$SourceCategory.val());
         this.pushToList("subcategory", this.$SubCategory.val());
         this.pushToList("consultation", this.$Consultation.val());
         this.pushToList("picsrcvd", this.$PicReceived.val());
 
         this.pushToList("consdate", this.$ConsultedDate.val());
-        this.pushToList("consultingdoctor", (this.$Doctor.val() || "0"));
-        //this.pushToList("", this.$ProbableMonth.val());
+        this.pushToList("consultingdoctor", this.$Doctor.val());
+        this.pushToList("probmonth", this.$ProbableMonth.val());/////////
         this.pushToList("noofgrafts", this.$TotalGrafts.val());
         this.pushToList("totalrate", this.$TotalRate.val());
         this.pushToList("prpsessions", this.$NoOfPRP.val());
-        this.pushToList("consultingfeepaid", (this.$FeePaid.val() || "False"));
-        this.pushToList("closing", (this.$Closing.val() || "0"));
+        this.pushToList("consultingfeepaid", this.$FeePaid.val());
+        this.pushToList("closing", this.$Closing.val());
         this.pushToList("nature", $("#selNature option:selected").text());
 
         //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });  
@@ -721,7 +751,10 @@
     }
 
     this.pushToList = function (_key, _val) {
-        _val = _val.trim();
+        if (_val === null || _val === undefined)
+            return;
+        if (typeof (_val) === "string")
+            _val = _val.trim();
         if (_val !== "")
             this.OutDataList.push({ Key: _key, Value: _val });
     }

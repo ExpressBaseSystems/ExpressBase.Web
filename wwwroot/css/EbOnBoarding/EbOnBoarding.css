@@ -320,31 +320,6 @@ body {
     justify-content: flex-end;
 }
 
-.Eb-product-container-bdy {
-    padding-bottom: 15px;
-    background: white;
-    padding-top: 15px;
-    text-align: center;
-    border: 1px solid #d7d7d7;
-    margin-top: 10px;
-    position:relative;
-}    
-    .pro-icon-bx {
-        padding: 0;
-    }
-
-    .pro-icon-bx img {
-        height: 50px;
-        margin: auto;
-    }
-
-.pro-name-bx {
-    font-size: 16px;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
 .client-id-sec {
     width: 100%;
     text-align: left;
@@ -511,10 +486,6 @@ body {
     border: none;
 }
 
-#save-subscrip {
-    background: var(--eb-blue);
-}
-
 .popover-clientid-edit {
     display: none;
     background: #3ea8dc;
@@ -526,7 +497,6 @@ body {
     margin-right: auto;
     margin-left: auto;
     width: 400px;
-    /* height: 150px; */
     padding: 20px;
     border-radius: 4px;
 }
@@ -556,6 +526,7 @@ body {
     overflow-x: auto;
     overflow-y: hidden;
     padding: 4em 0;
+    font-family: open sans;
 }
 
 .card--content {
@@ -654,12 +625,6 @@ body {
     margin-top: 15px;
 }
 
-.pro-icon-bx img {
-    height: 50px;
-    margin: auto;
-}
-
-
 .small-desc {
     height: calc(100% - 40px);
     display: flex;
@@ -743,55 +708,16 @@ body {
     display: none;
 }
 
-.prod-info {
-    display: none;
-}
-
 .prof-info-skip {
     display: none;
 }
 
-/*common message box*/
-.eb-mesageBox {
-    position: fixed;
-    padding: 10px;
-    width: auto;
-    border: 3px solid #25d012;
-    color: #25d012;
-    font-family: open sans;
-    font-weight: 600;
-    top: 30%;
-    right: 5px;
-    white-space: nowrap;
-    padding-top: 3px;
-    display: none;
-}
-
-    .eb-mesageBox .mesageBox-head {
-        padding-bottom: 20px;
-        width: 100%;
-        height: 15px;
-    }
-
-.eb-mesageBox-error {
-    position: fixed;
-    padding: 10px;
-    width: auto;
-    border: 3px solid #eb561e;
-    color: #eb561e;
-    font-family: open sans;
-    font-weight: 600;
-    top: 30%;
-    right: 5px;
-    white-space: nowrap;
-    padding-top: 3px;
-    display: none;
-}
-/*common message box end*/
 .display-inline {
     display: inline-block;
 }
-
+.prof-info-skip {
+    display: none;
+}
 .app-info {
     display: none;
 }
@@ -803,7 +729,7 @@ body {
 }
 
 .apptype {
-    height: 35px;
+    height: 30px;
     margin: 10px;
 }
 
@@ -897,37 +823,6 @@ body {
 .prdBTN_Click:hover {
     background: #eee;
 }
-.prdBTN_Click {
-    cursor: pointer;
-}
-.overlay_mark {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    display: none;
-}
-.comming_soon {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    font-weight: bold;
-}
-.overlay_mark-flex {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    z-index:10;
-    background:white;
-    opacity:.8;
-}
-    .overlay_mark-flex .material-icons{
-        font-size:40px;
-        color:green;
-    }
 .sname_fAppcreate {
     color: #9a9797;
 }
@@ -948,6 +843,8 @@ body {
     border-bottom-right-radius: 4px !important;
     background: white;
     border: 1px solid #e1e0e0 !important;
+    font-size: 20px;
+    padding: 5px 12px;
 }
 /*DevDash*/
 .apptype_icon_devd {
@@ -969,3 +866,32 @@ body {
 .f16{
     font-size:16px;
 }
+.card--content-body .form-control {
+    
+    height: 40px;
+    border: 1px solid #dedcda;
+    border-radius: 0; 
+}
+    .card--content-body .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+        background-color: #fff;
+    }
+.card--content-body .input-group .input-group-addon {
+    border-radius:0;
+}
+.card--content-body label {
+    font-weight: 400;
+}
+.circ_shadow {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    border-radius: 50%;
+    padding: 2px;
+    margin: 6px 0;
+}
+.row_eblog_t {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+}
+    .row_eblog_t img {
+        height: 40px;
+    }

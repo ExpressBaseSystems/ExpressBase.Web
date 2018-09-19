@@ -118,7 +118,7 @@
 .lm-form-inline {
 	float: left;
 	width: 100%;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 }
 
 	.lm-form-inline .form-group {
@@ -142,7 +142,7 @@
 .lm-img-cont {
 	height: 138px;
 	width: 132px;
-	margin-top: 20px;
+	margin-top: 10px;
 	border: 1px solid #cfced0;
 }
 .input-group-addon {

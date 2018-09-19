@@ -313,6 +313,27 @@
     top: -11px;
     left: 8px;
 }
+.gb-wraper {
+    padding: 2px;
+    padding-top: 8px;
+}
+.gb-border {
+    border: dashed 1px rgba(0, 0, 0, 0.19);
+    border-radius: 2px;
+}
+.gb-label {
+    position: absolute;
+    top: 0.5px;
+    left: 15px;
+    background-color: white;
+    padding: 0 4px;
+    line-height: 1em;
+    cursor: context-menu;
+}
+
+.group-box {
+    min-height: 60px;
+}
 
 .gridCont {
     /*padding: .25rem .25rem !important;

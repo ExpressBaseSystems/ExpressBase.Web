@@ -98,7 +98,8 @@
     this.drake = null;
     this.imgCrntPage = 0;//current page const
     this.imgPageSize = 10;//page size const
-    this.isMobileUnique = false;
+    this.isMobileUnique = null;
+    this.isSlickInit = false;
 
     this.init = function () {
         $("#eb_common_loader").EbLoader("show");
@@ -112,10 +113,7 @@
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
         $("#eb_common_loader").EbLoader("hide");
     }
-
-   
-        
-
+    
     this.initMenuBarObj = function () {
         var menuBarObj = $("#layout_div").data("EbHeader");
         menuBarObj.setName("Lead Management");
@@ -148,7 +146,7 @@
         }.bind(this));
 
         //=============================================================
-        this.isSlickInit = false;
+       
         
 
         //$('#modal-imgs-cont').on("dblclick", function () {
@@ -187,29 +185,31 @@
             this.$Closing.append(`<option value='${val}'">${key}</option>`);
         }.bind(this));
 
+        this.$Mobile.on("change", function (e) {
+            $.ajax({
+                type: "POST",
+                url: "../CustomPage/UniqueCheck",
+                data: { Key: "genurl", Value: $(e.target).val().trim() },
+                success: function (result) {
+                    if (!result) {
+                        EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+                        this.isMobileUnique = false;
+                    }
+                    else
+                        this.isMobileUnique = true;
+                }.bind(this)
+            });
+        }.bind(this));
+
         if (this.Mode === 1) {
             this.fillCustomerData();
+            this.isMobileUnique = true;
         }
         else if (this.Mode === 0) {
             this.$EnDate.val(moment(new Date()).format("DD-MM-YYYY"));
             this.$Closing.val("");
-            this.$Doctor.val("");
-
-            this.$Mobile.on("change", function (e) {
-                $.ajax({
-                    type: "POST",
-                    url: "../CustomPage/UniqueCheck",
-                    data: { Key : "genurl", Value : $(e.target).val().trim() },
-                    success: function (result) {
-                        if (!result) {
-                            EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
-                            this.isMobileUnique = false;
-                        }
-                        else
-                            this.isMobileUnique = true;
-                    }.bind(this)
-                });
-            }.bind(this));
+            this.$Doctor.val("");  
+            this.isMobileUnique = false;
         }
     }
 
@@ -635,9 +635,9 @@
         this.$Closing.val(this.CustomerInfo["closing"]);
         this.$Nature.val(this.CustomerInfo["nature"]);
 
-        this.$CostCenter.prop("disabled", true);
-        this.$EnDate.prop("disabled", true);
-        this.$Mobile.prop("disabled", true);
+        //this.$CostCenter.prop("disabled", true);
+        //this.$EnDate.prop("disabled", true);
+        //this.$Mobile.prop("disabled", true);
 
     }
 

@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public object getRowdata(string refid, string rowid)
+        public object getRowdata(string refid, int rowid)
         {
             try
             {

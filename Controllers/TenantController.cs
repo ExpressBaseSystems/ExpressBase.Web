@@ -53,7 +53,6 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Connections = resp.EBSolutionConnections;
             ViewBag.SolutionInfo = resp.Data;
             ViewBag.cid = Sid;
-            ViewBag.Protocol = (this.HttpContext.Request.IsHttps) ? Constants.HTTPS : Constants.HTTP;
             ViewBag.Domain = this.HttpContext.Request.Host;
             ViewBag.rToken = Request.Cookies["rToken"];
             ViewBag.bToken = Request.Cookies["bToken"];

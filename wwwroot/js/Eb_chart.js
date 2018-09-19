@@ -181,7 +181,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.isPipped || this.isContextual) {
                 if (this.filterValues.length > 0) {
                     $.each(this.filterValues, function (i, param) {
-                        $(".filterCont" + ' #' + param.name).val(param.value);
+                        $(".filterCont" + ' #' + param.Name).val(param.Value);
                     });
                 }
                 $("#btnGo" + this.tabNum).trigger("click");
@@ -466,7 +466,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             //if (!this.isContextual)
             dvcontainerObj.appendRelatedDv(this.tableId);
             dvcontainerObj.modifyNavigation();
-            $(".filterCont").html("<div class='pgHead'> Param window ");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
+
+            $(".filterCont").html("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
+            $('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
+
             $(".filterCont").append(dvcontainerObj.dvcol[focusedId].filterHtml);
             $(".filterCont #btnGo").click(this.init.bind(this));
             if (this.filterValues.length > 0) {

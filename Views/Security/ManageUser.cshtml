@@ -8,16 +8,13 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
 <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" />
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/EbCropper.js" asp-append-version=@bApnd></script>
 
 @*<meta name="google-signin-client_id" content="1097281192898-q73cm1h8faa3ksjj2o44jchdlm179m87.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>*@
@@ -216,14 +213,16 @@
                                     <label style="font-family: open sans; font-weight: 300;">Select Locale:</label>
                                     <select class="form-control" id="sellocale" name="locale"></select>
                                 </div>
-                                <div class="form-group" id="divLocaleInfo">
-
+                                <div class="form-group" id="divLocaleInfo"></div>
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
+                                    <select id="seltimezone" name="timezone" class="form-control"></select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
-                                    <select id="seltimezone" name="timezone" class="form-control"></select>
+                                    <label style="font-family: open sans; font-weight: 300;">Default Location:</label>
+                                    <select id="selDefaultLocation" name="DefaultLocation" class="form-control"></select>
                                 </div>
                             </div>
                         </div>
@@ -277,6 +276,37 @@
             </div>
             <div class="modal-footer" style="">
                 <button id="btnUpdatePwd" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="MU_ResetPwdModal" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width:445px">
+        <div class="modal-content">
+            <div class="modal-header" style="">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Reset Password</h4> </div>
+                </div>
+            </div>
+            <div class="modal-body" style="height:185px">
+                <input type="hidden" id="itemid" />
+                <div id="">
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">New Password :</label>
+                        <input id="pwdResetNew" class="form-control" type="password" title="Enter New Password" style="width:60%; display: inline-block;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
+                        <input id="pwdResetNewConfirm" class="form-control" type="password" title="ReEnter New Password" style="width:60%; display: inline-block;">
+                    </div>
+                    <label id="lblPwdChngMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);"></label>
+                </div>
+            </div>
+            <div class="modal-footer" style="">
+                <button id="btnResetPwd" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Reset</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>

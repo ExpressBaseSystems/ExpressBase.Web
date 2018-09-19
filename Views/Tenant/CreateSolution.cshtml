@@ -1,11 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
-<script src="~/js/EbCropper.js" type="text/javascript"></script>
 <script src="~/js/EbOnBoarding/EbOnBoarding.js" type="text/javascript"></script>
 @await Component.InvokeAsync("PageHeaderCommon")
 <script>
@@ -22,7 +17,7 @@
                     <form class="subscript-submit" method="post" id="sol-form-submit">
                         <label>Solution URL</label>
                         <div class="client-id-sec">
-                            <input type="text" id="ebsid" name="EbSid" class="form-control input-clientId" required />
+                            <input type="text" id="ebsid" name="SolnId" class="form-control input-clientId" required />
                             <div class="clientId-auto">.expressbase.com</div>
                         </div>
                         <div class="form-group">
@@ -47,18 +42,13 @@
                 </div>
                 <div class="card--content-footer">
                     <div class="form-inline">
-                        <a id="s-info-skip" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                        <a id="s-info-skip" class="btn btn-success pull-right"> <i class="fa fa-floppy-o"></i> Create</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 desc-section">
                 <div class="steps">
-                    <a class="step-no step-no-blue">
-                        1
-                    </a>
-                    <a class="step-no">
-                        2
-                    </a>
+                    
                 </div>
                 <div class="small-desc-last flex-center">
                     <img class="small-desc-img" src="~/images/svg/solutions.svg" />
@@ -66,98 +56,12 @@
                     <p class="text-center">Select atleast one paid plan for custom Solution Id</p>
                 </div>
             </div>
-        </div>
-        <div class="card--content mr-l-10 prod-info" id="product-info" style="display:block;">
-            <div class="loader_top" id="loader_product-info"></div>
-            <div class="col-md-8 card--form">
-                <div class="products-head">
-                    <h4>Select Products</h4>
-                </div>
-                <div class="card--content-body" id="product-container">
-                    <div class="col-md-12 pd-0">
-                        <div class="col-md-6 col-lg-6 col-sm-6 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy eb_prd_link prdBTN_Click" id="p_report" pid="Report" prod-id="3">
-                                <div class="pro-icon-bx">
-                                    <img src="~/images/svg/report_wall.svg" />
-                                </div>
-                                <div class="pro-name-bx">
-                                    Reporting
-                                </div>
-                                <div class="overlay_mark"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6 col-sm-6 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy eb_prd_link prdBTN_Click" id="p_bot" pid="ChatBot" prod-id="4">
-                                <div class="pro-icon-bx">
-                                    <img src="~/images/svg/chat_.svg" />
-                                </div>
-                                <div class="pro-name-bx">
-                                    Bots
-                                </div>
-                                <div class="overlay_mark"><div class="overlay_mark-flex"><i class="material-icons">check</i></div></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 pd-0 mr-t-15">
-                        <div class="col-md-6 col-lg-6 col-sm-6 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy" pid="Forms" prod-id="1">
-                                <div class="pro-icon-bx">
-                                    <img src="~/images/svg/form_.svg" />
-                                </div>
-                                <div class="pro-name-bx">
-                                    Forms
-                                </div>
-                                <div class="comming_soon"><div class="overlay_mark-flex">Coming Soon</div></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6 col-sm-6 col-xs-6 Eb-product-container">
-                            <div class="Eb-product-container-bdy" pid="Documents" prod-id="5">
-                                <div class="pro-icon-bx">
-                                    <img src="~/images/svg/document_ .svg" />
-                                </div>
-                                <div class="pro-name-bx">
-                                    Documents
-                                </div>
-                                <div class="comming_soon"><div class="overlay_mark-flex">Coming Soon</div></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card--content-footer">
-                    <div class="form-inline">
-                        <button id="save-subscrip" type="submit" onclick="$('#sol-form-sub').click();" class="btn btn-success pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-                        <button id="app-next" class="btn pull-right mr-10" style="display:none;"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button>
-                        <button id="plan-prev" class="btn pull-right mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 desc-section">
-                <div class="steps">
-                    <a class="step-no">
-                        1
-                    </a>
-                    <a class="step-no">
-                        2
-                    </a>
-                    <a class="step-no step-no-blue">
-                        3
-                    </a>
-                    <a class="step-no">
-                        4
-                    </a>
-                </div>
-                <div class="small-desc-last flex-center">
-                    <img class="small-desc-img" src="~/images/svg/product.svg" />
-                    <h4>Heading</h4>
-                    <p class="text-center">Select atleast one paid plan for custom Solution Id</p>
-                </div>
-            </div>
-        </div>
+        </div>        
         <div class="none"></div>
     </section>
 </div>
 <script>
-     $(document).ready(function () {
+    $(document).ready(function () {
         var boarding = new EbOnBoarding('initial');
     });
     if ('@ViewBag.Msg') {

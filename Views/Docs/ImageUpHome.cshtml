@@ -143,17 +143,23 @@
 </script>*@
 
 <script>
-    new EbFileUpload({
+    var d = new EbFileUpload({
         Type:"image",
         Toggle: "#toggle",
         TenantId:"@ViewBag.cid",
         SolutionId: "@ViewBag.SolnId",
         Container: "uploadtest",
-        Multiple: false,
+        Multiple: true,
         ServerEventUrl: 'https://se.eb-test.info',
         EnableTag: true,
         EnableCrop: true,
         Context: "dp",//if single and crop
         ResizeViewPort: true //if single and crop
     });
+    d.uploadSuccess = function(fileid){
+        EbMessage("show", { Message: fileid});
+    }
+    d.windowClose = function () {
+        EbMessage("show", { Message: "window closed",Background: "red" });
+    }
 </script>

@@ -109,9 +109,8 @@ class EbFileUpload {
             this.init();
     };
 
-    uploadSuccess(refIds) {
-
-    }
+    uploadSuccess(refId) { };
+    windowClose() { };
 
     validateOpt() {
         if (!this.Options.Container) {
@@ -226,6 +225,7 @@ class EbFileUpload {
 
     ok() {
         this.toggleM();
+        this.windowClose();
     };
 
     browse(e) {
@@ -445,7 +445,6 @@ class EbFileUpload {
                 this.successOper(thumb, refid);
             }.bind(this));
         }
-        this.uploadSuccess(this.RefIds);
     }
 
     cropClick(e) {//cropy flow
@@ -475,9 +474,9 @@ class EbFileUpload {
             thumb.find(".success").show();
             thumb.find(".error").hide()
             thumb.closest('file-thumb-wraper').remove();
-            this.RefIds.push(refid);
             for (let i = 0; i < this.Files.length; i++) {
                 if (this.Files[i].name === thumb.attr("exact")) {
+                    this.uploadSuccess(refid);
                     this.Files.splice(i, 1);
                     break;
                 }

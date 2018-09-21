@@ -175,7 +175,7 @@
         this.initFeedBackModal();
         this.initBillingModal();
         this.initSurgeryModal();
-        this.initAttachModal();
+        //this.initAttachModal();
 
         this.initAttachTab();
         this.initDrake();
@@ -599,28 +599,28 @@
         }.bind(this));
     }
 
-    this.initAttachModal = function () {
+    //this.initAttachModal = function () {
 
-        $("#mdlAttach").on('shown.bs.modal', function (e) {
-            this.ImgRefdiff = [];
-            for (let i = 0; i < imgup.ImageRefIds.length; i++)
-                this.ImgRefdiff.push(imgup.ImageRefIds[i]);
-        }.bind(this));
+        //$("#mdlAttach").on('shown.bs.modal', function (e) {
+        //    this.ImgRefdiff = [];
+        //    for (let i = 0; i < imgup.ImageRefIds.length; i++)
+        //        this.ImgRefdiff.push(imgup.ImageRefIds[i]);
+        //}.bind(this));
 
-        $("#mdlAttach").on('hidden.bs.modal', function (e) {
-            let ImgRefNew = [];
-            for (let i = 0; i < imgup.ImageRefIds.length; i++) {
-                if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
-                    $("#menuAttach").append(`<div class="img_wrapper">
-                                                <div class="img_wrapper_img">
-                                                    <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
-                                                </div>
-                                            </div>`);
-                }
-            }
-        }.bind(this));
+        //$("#mdlAttach").on('hidden.bs.modal', function (e) {
+        //    let ImgRefNew = [];
+        //    for (let i = 0; i < imgup.ImageRefIds.length; i++) {
+        //        if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
+        //            $("#menuAttach").append(`<div class="img_wrapper">
+        //                                        <div class="img_wrapper_img">
+        //                                            <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
+        //                                        </div>
+        //                                    </div>`);
+        //        }
+        //    }
+        //}.bind(this));
 
-    }
+    //}
 
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["firmcode"]);
@@ -678,9 +678,10 @@
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveCustomer",
-                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(imgup.ImageRefIds)},
+                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(uploadedImgRefList)},
                 success: function (result) {
                     if (result) {
+                        uploadedImgRefList = [];//cleared Image ref id list
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
                         if (this.Mode === 0)
                             window.location.search = 'ac=' + result;

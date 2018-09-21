@@ -97,7 +97,7 @@ namespace ExpressBase.Web.Controllers
 	    [EbBreadCrumbFilter("Security")]
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) && this.LoggedInUser.UserId != itemid)
 				return Redirect("/StatusCode/401");
 
 			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3
@@ -171,11 +171,16 @@ namespace ExpressBase.Web.Controllers
 			Dictionary<string, string> Dict = null;
 
 			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
-				return 0;
+			{
+				if(this.LoggedInUser.UserId == userid)
+					Dict["roles"] = String.Join(",", this.LoggedInUser.Roles);
+				else
+					return 0;
+			}
 			else//temp fix
 			{
 				Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
-				List<int> roleids = new List<int>();				
+				List<int> roleids = new List<int>();
 				if (this.LoggedInUser.UserId == userid)
 				{
 					if (!string.IsNullOrEmpty(Dict["roles"]))//for avoiding format exception in next line
@@ -184,7 +189,7 @@ namespace ExpressBase.Web.Controllers
 					{
 						roleids.Add((int)SystemRoles.SolutionOwner);
 						Dict["roles"] = String.Join(",", roleids);
-					}					
+					}
 				}
 			}
 
@@ -233,6 +238,17 @@ namespace ExpressBase.Web.Controllers
 		{
 			ChangeUserPasswordResponse resp = this.ServiceClient.Post<ChangeUserPasswordResponse>(new ChangeUserPasswordRequest { OldPwd = OldPwd, NewPwd = NewPwd, Email = ViewBag.email });
 			return resp.isSuccess;
+		}
+
+		public bool ResetUserPassword(int userid, string username, string NewPwd)
+		{
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return false;
+			else
+			{
+				ResetUserPasswordResponse resp = this.ServiceClient.Post<ResetUserPasswordResponse>(new ResetUserPasswordRequest { Id = userid, Email = username, NewPwd = NewPwd});
+				return resp.isSuccess;
+			}
 		}
 
 

@@ -34,9 +34,11 @@
 <script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
 <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/EbCropper.js"></script>
-<script type="text/javascript" src="~/js/UserScripts/EbFormsImageRender.js"></script>
+@*<script type="text/javascript" src="~/js/EbCropper.js"></script>*@
+@*<script type="text/javascript" src="~/js/UserScripts/EbFormsImageRender.js"></script>*@
 <script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
+<link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" />
+<script src="~/js/EbControls/EbFileUpload.js" type="text/javascript"></script>
 
 <div class="form-cont">
     <div class="container" style="padding: 50px 0px 0px 0px;">
@@ -149,7 +151,7 @@
                             <label>Home District</label>
                             <input id="txtHomeDistrict" type="text" class="form-control">
                         </div>
-                    </div>                    
+                    </div>
                 </div>
             </div>
             <div class="col-md-2 lm-img-cont" id="divCustomerDp">
@@ -222,7 +224,7 @@
                             <option value="false">No</option>
                             <option value="true">Yes</option>
                         </select>
-                    </div>                    
+                    </div>
                 </div>
 
                 <div class="lm-form-inline">
@@ -335,11 +337,11 @@
                     <button id="btnNextImgPage" class="ebbtn eb_btn-sm ">Next <i class="fa fa-chevron-right"></i></button>
                     <button id="btnLastImgPage" class="ebbtn eb_btn-sm ">Last <i class="fa fa-step-forward"></i></button>
                 </div>
-                @*<div style="text-align:right; padding: 15px 15px; display:inline-block; width:20%;">
-                    <button data-target="#mdlAttach" data-toggle="modal" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
-                </div>*@
+                <div style="text-align:right; padding: 15px 15px; display:inline-block; width:20%;">
+                    <button id="btnUploadImg" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
+                </div>
                 <div id="divAllImg">
-                    
+
                 </div>
                 @*<div style="text-align: center; padding-top: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>*@
             </div>
@@ -573,7 +575,7 @@
 
 
 <!-- Attach Modal -->
-<div class="modal fade" id="mdlAttach" role="dialog">
+@*<div class="modal fade" id="mdlAttach" role="dialog">
     <div class="modal-dialog" style="width:68%">
         <div class="modal-content">
             <div class="modal-header">
@@ -592,7 +594,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>*@
 
 
 <!-- ViewImage Modal -->
@@ -600,26 +602,26 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" style="opacity: 1; color: #f00; font-size: 52px;">&times;</button>
+                <button type="button" class="close" data-dismiss="modal" style="opacity: 1; color: #f00; font-size: 52px; position: absolute; top: 5px; right: 10px;">&times;</button>
                 <h4 class="modal-title"></h4>
             </div>
-            <div class="modal-body" >
+            <div class="modal-body">
                 <div id="modal-imgs-cont">
-                @{
-                    if (ViewBag.MC_Mode == 1)
-                    {
-                        foreach (string id in ViewBag.ImageIdList)
+                    @{
+                        if (ViewBag.MC_Mode == 1)
                         {
-                            string url = "/images/" + id + ".jpg";
-                            <div class="image-cont">
-                                <img data-id="@id" class="img-in-viewer" src="~/images/spin.gif" data-lazy="@url" />
-                            </div>
+                            foreach (string id in ViewBag.ImageIdList)
+                            {
+                                string url = "/images/" + id + ".jpg";
+                                <div class="image-cont">
+                                    <img data-id="@id" class="img-in-viewer" src="~/images/spin.gif" data-lazy="@url" />
+                                </div>
+                            }
                         }
                     }
-                }
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -668,7 +670,30 @@
 
 <script>
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @DistrictList, @SourceCategoryList, @SubCategoryList, @ImageIdList );
-    var imgup = new ImageRender({
+    @*var imgup = new ImageRender({
         TenantId:'@ViewBag.cid'
-    })
+    })*@
+
+    var imgup = new EbFileUpload({
+        Type:"image",
+        Toggle: "#btnUploadImg",
+        TenantId:"@ViewBag.cid",
+        SolutionId: "@ViewBag.SolnId",
+        Container: "uploadtest",
+        Multiple: true,
+        ServerEventUrl: 'https://se.eb-test.info',
+        EnableTag: true,
+        EnableCrop: true
+        //Context: "dp",//if single and crop
+        //ResizeViewPort: true //if single and crop
+    });
+    var uploadedImgRefList = [];
+    imgup.uploadSuccess = function (fileid) {
+        if (uploadedImgRefList.indexOf(fileid) === -1)
+            uploadedImgRefList.push(fileid);
+    }
+    imgup.windowClose = function () {
+        if (uploadedImgRefList.length > 0)
+            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+    }
 </script>

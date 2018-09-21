@@ -95,6 +95,9 @@
                 <div id="divChangePassword" style="padding-top: 28px; display:none;">
                     <button id="btnChangePassword" class="" title="Change Password">Change Password</button>
                 </div>
+                <div id="divResetPassword" style="padding-top: 28px; display:none;">
+                    <button id="btnResetPassword" class="" title="Reset Password">Reset Password</button>
+                </div>
             </div>
             <div class="form-group">
                 <div class="form-group" id="divStatus" style="display: none;">
@@ -291,7 +294,7 @@
                     <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Reset Password</h4> </div>
                 </div>
             </div>
-            <div class="modal-body" style="height:185px">
+            <div class="modal-body" style="height:135px">
                 <input type="hidden" id="itemid" />
                 <div id="">
                     <div class="form-group">
@@ -302,7 +305,7 @@
                         <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
                         <input id="pwdResetNewConfirm" class="form-control" type="password" title="ReEnter New Password" style="width:60%; display: inline-block;">
                     </div>
-                    <label id="lblPwdChngMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);"></label>
+                    <label id="lblPwdResetMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);">Minimum Pasword length should be 8</label>
                 </div>
             </div>
             <div class="modal-footer" style="">
@@ -342,17 +345,38 @@
 
         $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "Y-m-d" });
 
-        var logoCrp = new cropfy({
-            Container: 'DisplayPicture',
-            Toggle: '#profimage',
-            isUpload: true,
-            enableSE: true,
-            Browse: true,
-            Result: 'base64',
-            Type: 'dp',
-            ResizeViewPort: true,
-            Preview: "#profimage"
+        //var logoCrp = new cropfy({
+        //    Container: 'DisplayPicture',
+        //    Toggle: '#profimage',
+        //    isUpload: true,
+        //    enableSE: true,
+        //    Browse: true,
+        //    Result: 'base64',
+        //    Type: 'dp',
+        //    ResizeViewPort: true,
+        //    Preview: "#profimage"
+        //});
+
+        var d = new EbFileUpload({
+            Type:"image",
+            Toggle: "#profimage",
+            TenantId:"@ViewBag.cid",
+            SolutionId: "@ViewBag.SolnId",
+            Container: "DisplayPicture",
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.info',
+            EnableTag: false,
+            EnableCrop: true,
+            Context: "dp",//if single and crop
+            ResizeViewPort: true //if single and crop
         });
+
+        d.uploadSuccess = function(fileid){
+            EbMessage("show", { Message: fileid});
+        }
+        d.windowClose = function () {
+            EbMessage("show", { Message: "window closed",Background: "red" });
+        }
 
     });
 </script>

@@ -192,7 +192,7 @@ class EbFileUpload {
                 let realData = block[1].split(",")[1];
                 let blob = this.b64toBlob(realData, contentType);
                 this.replaceFile(blob, filename, contentType);
-                $(`div[file='${filename.replace(".", "")}']`).find("img").attr("src", b64);
+                $(`div[file='${this.replceSpl(filename)}']`).find("img").attr("src", b64);
             }.bind(this);
         }
         this.Modal.find('.eb-upl-bdy').on("dragover", this.handleDragOver.bind(this));
@@ -297,7 +297,7 @@ class EbFileUpload {
     drawThumbNail(e, file) {
         $(`#${this.Options.Container}-eb-upl-bdy`).append(`
                                                         <div class="file-thumb-wraper">
-                                                            <div class="eb-upl_thumb" exact="${file.name}" file="${file.name.replace('.', '')}">
+                                                            <div class="eb-upl_thumb" exact="${file.name}" file="${this.replceSpl(file.name)}">
                                                                 <div class="eb-upl-thumb-bdy">
                                                                     <img src="${e.target.result}"/>
                                                                 </div>
@@ -318,16 +318,16 @@ class EbFileUpload {
                                                         </div>
                                                         `);
 
-        $(`#${file.name.replace('.', '')}-del`).off("click").on("click", this.delThumb.bind(this));
-        $(`#${file.name.replace('.', '')}-fullscreen`).off("click").on("click", this.setFullscreen.bind(this));
+        $(`#${this.replceSpl(file.name)}-del`).off("click").on("click", this.delThumb.bind(this));
+        $(`#${this.replceSpl(file.name)}-fullscreen`).off("click").on("click", this.setFullscreen.bind(this));
 
         if (this.Options.EnableTag) {
-            $(`#${file.name.replace('.', '')}-tags_input`).tagsinput();
-            $(`#${file.name.replace('.', '')}-tag`).off("click").on("click", this.tagClick.bind(this));
+            $(`#${this.replceSpl(file.name)}-tags_input`).tagsinput();
+            $(`#${this.replceSpl(file.name)}-tag`).off("click").on("click", this.tagClick.bind(this));
         }
 
         if (this.Options.EnableCrop)
-            $(`#${file.name.replace('.', '')}-crop`).off("click").on("click", this.cropImg.bind(this));
+            $(`#${this.replceSpl(file.name)}-crop`).off("click").on("click", this.cropImg.bind(this));
 
         this.Files.push(file);
         this.isDropZoneEmpty();
@@ -339,17 +339,17 @@ class EbFileUpload {
 
     thumbButtons(file) {
         let html = new Array();
-        html.push(`<button class="upl-thumb-btn" size="${parseFloat((file.size / (1024))).toFixed(3)}" fname="${file.name}" id="${file.name.replace('.', '')}-fullscreen"><i class="fa fa-arrows-alt"></i></button>`);
-        html.push(`<button class="upl-thumb-btn" fname="${file.name}" id="${file.name.replace('.', '')}-del"><i class="fa fa-trash-o"></i></button>`);
+        html.push(`<button class="upl-thumb-btn" size="${parseFloat((file.size / (1024))).toFixed(3)}" fname="${file.name}" id="${this.replceSpl(file.name)}-fullscreen"><i class="fa fa-arrows-alt"></i></button>`);
+        html.push(`<button class="upl-thumb-btn" fname="${file.name}" id="${this.replceSpl(file.name)}-del"><i class="fa fa-trash-o"></i></button>`);
 
         if (this.Options.EnableTag)
-            html.push(`<button class="upl-thumb-btn" fname="${file.name}" id="${file.name.replace('.', '')}-tag"><i class="fa fa-tags"></i></button>
-                        <div class="upl-thumbtag" id="${file.name.replace('.', '')}-tagpop">
-                             <input data-role="tagsinput"  id="${file.name.replace('.', '')}-tags_input" type="text"/>
+            html.push(`<button class="upl-thumb-btn" fname="${file.name}" id="${this.replceSpl(file.name)}-tag"><i class="fa fa-tags"></i></button>
+                        <div class="upl-thumbtag" id="${this.replceSpl(file.name)}-tagpop">
+                             <input data-role="tagsinput"  id="${this.replceSpl(file.name)}-tags_input" type="text"/>
                         </div>`);
 
         if (this.Options.EnableCrop)
-            html.push(` <button class="upl-thumb-btn _crop" fname="${file.name}" id="${file.name.replace('.', '')}-crop"><i class="fa fa-crop"></i></button>`);
+            html.push(` <button class="upl-thumb-btn _crop" fname="${file.name}" id="${this.replceSpl(file.name)}-crop"><i class="fa fa-crop"></i></button>`);
         return html.join("");
     }
 
@@ -414,10 +414,11 @@ class EbFileUpload {
                 contentType: false,
                 processData: false,
                 beforeSend: function (evt) {
-
+                    $(`#${this.Options.Container}-loader`).EbLoader("show");
                 }.bind(this)
             }).done(function (refid) {
-                alert(refid);
+                $(`#${this.Options.Container}-loader`).EbLoader("hide");
+                this.toggleM()
             }.bind(this));
         }
     }
@@ -431,14 +432,14 @@ class EbFileUpload {
             formData.append("Tags", this.getTag(this.Files[k]));
 
             $.ajax({
-                url: "../StaticFile/UploadImageAsyncFromForm",
+                url: "../StaticFile/UploadImageAsync",
                 type: "POST",
                 data: formData,
                 cache: false,
                 contentType: false,
                 processData: false,
                 beforeSend: function (evt) {
-                    thumb = $(`#${this.Options.Container}-eb-upl-bdy div[file='${this.Files[k].name.replace('.', '')}']`);
+                    thumb = $(`#${this.Options.Container}-eb-upl-bdy div[file='${this.replceSpl(this.Files[k].name)}']`);
                     thumb.find(".eb-upl-loader").show();
                 }.bind(this)
             }).done(function (refid) {
@@ -464,7 +465,7 @@ class EbFileUpload {
     };
 
     getTag(file) {
-        let f = file.name.replace(".", "");
+        let f = this.replceSpl(file.name);
         return $(`#${f}-tags_input`).tagsinput("items");
     }
 
@@ -496,6 +497,7 @@ class EbFileUpload {
                                   <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <h4 class="modal-title">File Uploader</h4>
+                                    <div id="${this.Options.Container}-loader" class="upl-loader"></div>
                                   </div>
                                   <div class="modal-body">
                                         <div class="eb-upl-dbywraper display-flex">
@@ -592,4 +594,13 @@ class EbFileUpload {
             }
         }
     }
+
+    replceSpl(s) {
+        try {
+            return s.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/g, "").replace(/\s/g, "");
+        }
+        catch{
+            return s.replace(".", "").replace(/\s/g, "");
+        }
+    };
 };

@@ -313,30 +313,19 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UploadImageAsync(int i, string tags)
+        public async Task<int> UploadImageAsync(int i)
         {
-            Regex regEx = new Regex(RejexPattern);
             UploadAsyncResponse res = new UploadAsyncResponse();
-            JsonResult resp = null;
-            var dict = tags.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(tags);//workaround need to change
-            Dictionary<string, List<string>> tagDict = new Dictionary<string, List<string>>();//workaround need to change
-
-            foreach (KeyValuePair<string, List<string>> entry in dict)//workaround need to change
-            {
-                tagDict.Add(regEx.Replace(entry.Key.ToLower(), UnderScore).ToLower(), entry.Value);
-            }
             try
             {
                 var req = this.HttpContext.Request.Form;
+                List<string> tags = req["Tags"].ToList<string>();
                 UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new ImageMeta();
-
                 foreach (var formFile in req.Files)
                 {
                     if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
                     {
-                        string fname = regEx.Replace(formFile.FileName, UnderScore);
-
                         byte[] myFileContent;
                         using (var memoryStream = new MemoryStream())
                         {
@@ -346,20 +335,16 @@ namespace ExpressBase.Web.Controllers
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
                             uploadImageRequest.ImageByte = myFileContent;
                         }
+                        uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+                        uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tags);
 
-                        if (!dict.IsEmpty())
-                        {
-                            uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
-                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tagDict[fname]);
-                        }
-                        uploadImageRequest.ImageInfo.FileName = fname;
-                        uploadImageRequest.ImageInfo.FileType = fname.SplitOnLast(CharConstants.DOT).Last();
+                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
+                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last();
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
-                        uploadImageRequest.ImageInfo.FileRefId = 1;
 
-                        res = FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
                     }
                 }
             }
@@ -367,8 +352,7 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
-
-            return new JsonResult(res);
+            return res.FileRefId;
         }
 
 		[HttpPost]

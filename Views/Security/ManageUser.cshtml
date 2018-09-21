@@ -342,17 +342,38 @@
 
         $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "Y-m-d" });
 
-        var logoCrp = new cropfy({
-            Container: 'DisplayPicture',
-            Toggle: '#profimage',
-            isUpload: true,
-            enableSE: true,
-            Browse: true,
-            Result: 'base64',
-            Type: 'dp',
-            ResizeViewPort: true,
-            Preview: "#profimage"
+        //var logoCrp = new cropfy({
+        //    Container: 'DisplayPicture',
+        //    Toggle: '#profimage',
+        //    isUpload: true,
+        //    enableSE: true,
+        //    Browse: true,
+        //    Result: 'base64',
+        //    Type: 'dp',
+        //    ResizeViewPort: true,
+        //    Preview: "#profimage"
+        //});
+
+        var d = new EbFileUpload({
+            Type:"image",
+            Toggle: "#profimage",
+            TenantId:"@ViewBag.cid",
+            SolutionId: "@ViewBag.SolnId",
+            Container: "DisplayPicture",
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.info',
+            EnableTag: false,
+            EnableCrop: true,
+            Context: "dp",//if single and crop
+            ResizeViewPort: true //if single and crop
         });
+
+        d.uploadSuccess = function(fileid){
+            EbMessage("show", { Message: fileid});
+        }
+        d.windowClose = function () {
+            EbMessage("show", { Message: "window closed",Background: "red" });
+        }
 
     });
 </script>

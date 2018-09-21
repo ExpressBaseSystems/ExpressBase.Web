@@ -4,7 +4,7 @@
     this.flatControls = option.flatControls;
     this.initControls = new InitControls(this);
     this.editModeObj = option.editModeObj;
-    this.formRefId = option.formRefId;
+    this.formRefId = option.formRefId || "";
     this.isEditMode = !!this.editModeObj;
     this.rowId = 0;
 
@@ -73,6 +73,7 @@
         this.rowId = getObjByval(this.editModeObj, "Name", "id").Value;
         this.setEditModevalues(this.rowId);
     }
+
     this.setEditModevalues = function (rowId) {
         this.formRefId
         // show loader
@@ -91,7 +92,37 @@
                 //hide loader
             }.bind(this),
         });
-    }
+    };
+
+    this.ProcRecurForVal = function (src_obj, FVWTObjColl) {
+        let _val = null;
+        $.each(src_obj.Controls, function (i, obj) {
+            if (obj.IsContainer) {
+                if (obj.TableName === "" || obj.TableName === null)
+                    obj.TableName = src_obj.TableName;
+                if (FVWTObjColl[obj.TableName] === undefined)
+                    FVWTObjColl[obj.TableName] = [];
+                this.ProcRecurForVal(obj, FVWTObjColl);
+            }
+            else {
+                let colObj = {};
+                colObj.Name = obj.Name;
+                _type = obj.EbDbType;
+                colObj.Value = (_type === 7) ? parseInt($("#" + obj.Name).val()) : $("#" + obj.Name).val();
+                colObj.Type = _type;
+                colObj.AutoIncrement = obj.AutoIncrement || false;
+                FVWTObjColl[src_obj.TableName].push(colObj);
+            }
+        }.bind(this));
+
+    };
+
+    this.getFormValuesObjWithTypeColl = function () {
+        var FVWTObjColl = {};
+        //FVWTObjColl[this.FormObj.TableName] = [];
+        this.ProcRecurForVal(this.FormObj, FVWTObjColl);
+        return FVWTObjColl;
+    };
 
     this.getFormValuesWithTypeColl = function () {
         var FVWTcoll = [];
@@ -126,9 +157,9 @@
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url: "../WebForm/InsertBotDetails",
+            url: "../WebForm/InsertWebformData",
             data: {
-                TableName: this.FormObj.TableName, Fields: this.getFormValuesWithTypeColl(), Id : this.rowId
+                TableName: this.FormObj.TableName, ValObj: this.getFormValuesObjWithTypeColl(), RefId: this.formRefId, RowId: this.rowId
             },
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);

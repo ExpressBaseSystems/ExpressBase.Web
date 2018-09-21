@@ -22,12 +22,18 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("WebForm", refId);
         }
 
+        public int InsertWebformData(string TableName, object ValObj, string RefId, int RowId)
+        {
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, ValObj = ValObj, RowId = RowId });
+            return 0;
+        }
+
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try
             {
-                var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields ,Id = Id });
-                return x.RowAffected;
+                InsertIntoBotFormTableResponse resp = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields ,Id = Id });
+                return resp.RowAffected;
             }
             catch (Exception ex)
             {

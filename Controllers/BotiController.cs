@@ -220,7 +220,7 @@ namespace ExpressBase.Web.Controllers
             //else if (Obj is EbChartVisualization)
             //{
             //}
-            return Obj;
+            return EbSerializers.Json_Serialize(Obj);
         }
 
         public int InsertBotDetails(string RefId, List<BotFormField> Fields)

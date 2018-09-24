@@ -142,6 +142,7 @@
             //this.btnCreateUser.text("Update");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
+            $("#imgprofimage").attr("src", "/images/dp/" + this.itemId + ".png");
             if (this.whichMode === 3) {
                 this.menuBarObj.setName("My Profile");
                 this.divChangePassword.css("display", "block");

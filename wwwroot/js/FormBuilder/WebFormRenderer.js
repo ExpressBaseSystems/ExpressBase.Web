@@ -49,7 +49,7 @@
     };
 
     this.ProcRecur = function (src_obj, dest_coll) {
-        $.each(src_obj.Controls, function (i, obj) {
+        $.each(src_obj.Controls.$values, function (i, obj) {
             if (obj.IsContainer) {
                 dest_coll.push(obj);
                 this.ProcRecur(obj, dest_coll);
@@ -96,7 +96,7 @@
 
     this.ProcRecurForVal = function (src_obj, FVWTObjColl) {
         let _val = null;
-        $.each(src_obj.Controls, function (i, obj) {
+        $.each(src_obj.Controls.$values, function (i, obj) {
             if (obj.IsContainer) {
                 if (obj.TableName === "" || obj.TableName === null)
                     obj.TableName = src_obj.TableName;

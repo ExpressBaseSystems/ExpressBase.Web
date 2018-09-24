@@ -394,6 +394,8 @@ class EbFileUpload {
     };
 
     contextUpload() {
+        this.cropClick();
+
         var url = "";
         if (this.Options.Context === "logo")
             url = "../StaticFile/UploadLogoAsync";
@@ -424,7 +426,6 @@ class EbFileUpload {
     }
 
     comUpload() {
-
         for (let k = 0; k < this.Files.length; k++) {
             let thumb = null;
             let formData = new FormData(this.Files[k]);

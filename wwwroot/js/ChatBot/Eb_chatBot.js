@@ -201,25 +201,24 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
                 success: function (data) {
                     this.hideTypingAnim();
+                    data = JSON.parse(data);
 
-                    if (typeof data === "string") {
-                        data = JSON.parse(data);
-                        data.objType = data.ObjType;
-                    }
-
-
+                    //if (typeof data === "string") {
+                    //    data = JSON.parse(data);
+                    //    data.ObjType = data.ObjType;
+                    //}
                     this.formsList[RefId] = data;
-                    if (data.objType === "BotForm") {
+                    if (data.ObjType === "BotForm") {
                         this.curForm = data;
                         this.setFormControls();
                     }
-                    else if (data.objType === "TableVisualization") {
+                    else if (data.ObjType === "TableVisualization") {
                         //data.BotCols = JSON.parse(data.BotCols);
                         //data.BotData = JSON.parse(data.BotData);
                         this.curTblViz = data;
                         this.showTblViz();
                     }
-                    else if (data.objType === "ChartVisualization") {
+                    else if (data.ObjType === "ChartVisualization") {
                         this.curChartViz = data;
                         this.showChartViz();
                     }
@@ -233,22 +232,22 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
             //    if (typeof data === "string") {
             //        data = JSON.parse(data);
-            //        data.objType = data.ObjType;
+            //        data.ObjType = data.ObjType;
             //    }
 
 
             //    this.formsList[RefId] = data;
-            //    if (data.objType === "BotForm") {
+            //    if (data.ObjType === "BotForm") {
             //        this.curForm = data;
             //        this.setFormControls();
             //    }
-            //    else if (data.objType === "TableVisualization") {
+            //    else if (data.ObjType === "TableVisualization") {
             //        data.BotCols = JSON.parse(data.BotCols);
             //        data.BotData = JSON.parse(data.BotData);
             //        this.curTblViz = data;
             //        this.showTblViz();
             //    }
-            //    else if (data.objType === "ChartVisualization") {
+            //    else if (data.ObjType === "ChartVisualization") {
             //        this.curChartViz = data;
             //        this.showChartViz();
             //    }
@@ -260,11 +259,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.curForm = this.formsList[RefId];
 
             var data = this.formsList[RefId];
-            if (data.objType === "BotForm")
+            if (data.ObjType === "BotForm")
                 this.curForm = data;
-            else if (data.objType === "TableVisualization")
+            else if (data.ObjType === "TableVisualization")
                 this.curTblViz = data;
-            else if (data.objType === "ChartVisualization")
+            else if (data.ObjType === "ChartVisualization")
                 this.showChartViz();//////////////////////////////////////////////////////////////////////////////////
 
             this.setFormControls();
@@ -538,39 +537,39 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.initFormCtrls_fm = function () {
-        $.each(this.curForm.controls, function (i, control) {//////////////////////////////////////
-            if (this.initControls[control.objType] !== undefined)
-                this.initControls[control.objType](control);
-            $("#" + control.name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
+        $.each(this.curForm.Controls.$values, function (i, control) {//////////////////////////////////////
+            if (this.initControls[control.ObjType] !== undefined)
+                this.initControls[control.ObjType](control);
+            $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
         }.bind(this));
     }.bind(this);
 
     this.makeReqFm = function (control) {
-        var $ctrl = $("#" + control.name);
+        var $ctrl = $("#" + control.Name);
         if ($ctrl.length !== 0 && control.required && $ctrl.val().trim() === "")
-            EbMakeInvalid(`[for=${control.name}]`, '.ctrl-wraper');
+            EbMakeInvalid(`[for=${control.Name}]`, '.ctrl-wraper');
     };
 
     this.removeReqFm = function (control) {
-        EbMakeValid(`[for=${control.name}]`, '.ctrl-wraper');
+        EbMakeValid(`[for=${control.Name}]`, '.ctrl-wraper');
     };
 
     this.RenderForm = function () {
         var Html = `<div class='form-wraper'>`;
-        $.each(this.curForm.controls, function (i, control) {
+        $.each(this.curForm.Controls.$values, function (i, control) {
             if (!control.hidden)
-                Html += `<label>${control.label}</label><div for='${control.name}'><div class='ctrl-wraper'>${control.bareControlHtml}</div></div><br/>`;
+                Html += `<label>${control.Label}</label><div for='${control.Name}'><div class='ctrl-wraper'>${control.bareControlHtml}</div></div><br/>`;
         });
         this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn formname-btn">Submit</button><button name="formcancel_fm" class="btn formname-btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
 
     this.setFormControls = function () {
         this.formControls = [];
-        $.each(this.curForm.controls, function (i, control) {
+        $.each(this.curForm.Controls.$values, function (i, control) {
             if (control.visibleIf && control.visibleIf.trim())//if visibleIf is Not empty
-                this.formFunctions.visibleIfs[control.name] = new Function("form", atob(control.visibleIf));
+                this.formFunctions.visibleIfs[control.Name] = new Function("form", atob(control.visibleIf));
             if (control.valueExpression && control.valueExpression.trim())//if valueExpression is Not empty
-                this.formFunctions.valueExpressions[control.name] = new Function("form", "user", atob(control.valueExpression));
+                this.formFunctions.valueExpressions[control.Name] = new Function("form", "user", atob(control.valueExpression));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
         }.bind(this));
 
@@ -606,10 +605,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     var tempArray = new Array();
                     $.each(cardCtrl.cardFields, function (h, fObj) {
                         if (!fObj.doNotPersist) {
-                            tempArray.push(new Object({ Value: cObj.customFields[fObj.name], Type: fObj.ebDbType, Name: fObj.name }));
+                            tempArray.push(new Object({ Value: cObj.customFields[fObj.Name], Type: fObj.ebDbType, Name: fObj.Name }));
                         }
-                        if (fObj.objType === 'CardTitleField') {//for display selected card names on submit
-                            this.curDispValue += cObj.customFields[fObj.name] + '<br/>';
+                        if (fObj.ObjType === 'CardTitleField') {//for display selected card names on submit
+                            this.curDispValue += cObj.customFields[fObj.Name] + '<br/>';
                         }
                     }.bind(this));
                     resObj[cObj.cardId] = tempArray;
@@ -640,20 +639,20 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             inpVal = $checkedCB.val();
             this.curDispValue = $checkedCB.next().text();
         }
-        else if (this.curCtrl.objType === "ComboBox") {
+        else if (this.curCtrl.ObjType === "ComboBox") {
             //inpVal = this.curCtrl.tempValue;
             inpVal = this.curCtrl.selectedRow;
             console.log("inp");
             console.log(inpVal);
             this.curDispValue = this.curCtrl.DisplayMembers[Object.keys(this.curCtrl.DisplayMembers)[0]].toString().replace(/,/g, ", ");
         }
-        else if (this.curCtrl.objType === "InputGeoLocation") {
+        else if (this.curCtrl.ObjType === "InputGeoLocation") {
             inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();
         }
-        else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
+        else if (this.curCtrl.ObjType === "StaticCardSet" || this.curCtrl.ObjType === "DynamicCardSet") {
             inpVal = this.getCardsetValue(this.curCtrl);
         }
-        else if (this.curCtrl.objType === "Survey") {
+        else if (this.curCtrl.ObjType === "Survey") {
             inpVal = this.curCtrl.resultantJson;
         }
         else
@@ -664,11 +663,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.checkRequired = function () {
         if (this.curCtrl.required && !this.curVal) {
-            EbMakeInvalid(`[for=${this.curCtrl.name}]`, '.chat-ctrl-cont');
+            EbMakeInvalid(`[for=${this.curCtrl.Name}]`, '.chat-ctrl-cont');
             return false;
         }
         else {
-            EbMakeValid(`[for=${this.curCtrl.name}]`, '.chat-ctrl-cont');
+            EbMakeValid(`[for=${this.curCtrl.Name}]`, '.chat-ctrl-cont');
             return true;
         }
     };
@@ -678,35 +677,35 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $btn = $(e.target).closest("button");
         var $msgDiv = $btn.closest('.msg-cont');
         this.sendBtnIdx = parseInt($btn.attr('idx'));
-        this.curCtrl = this.curForm.controls[this.sendBtnIdx];
-        var id = this.curCtrl.name;
+        this.curCtrl = this.curForm.Controls.$values[this.sendBtnIdx];
+        var id = this.curCtrl.Name;
         var next_idx = this.sendBtnIdx + 1;
         this.nxtCtrlIdx = (next_idx > this.nxtCtrlIdx) ? next_idx : this.nxtCtrlIdx;
         var $input = $('#' + id);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         this.curVal = this.getValue($input);
-        if (this.curCtrl.objType === "ImageUploader") {
+        if (this.curCtrl.ObjType === "ImageUploader") {
             if (!this.checkRequired()) { return; }
             this.replyAsImage($msgDiv, $input[0], next_idx, id);
             //if()
             //this.formValues[id] = this.curVal;// last value set from outer fn
             //this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
-        else if (this.curCtrl.objType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.objType === "ComboBox") {
+        else if (this.curCtrl.ObjType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.ObjType === "ComboBox") {
             if (!this.checkRequired()) { return; }
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
-            if (this.curCtrl.objType === "ComboBox")//////////////////////////-------////////////
+            if (this.curCtrl.ObjType === "ComboBox")//////////////////////////-------////////////
                 this.formValuesWithType[id] = [this.curCtrl.tempValue, this.curCtrl.ebDbType];
             else
                 this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
             this.callGetControl(this.nxtCtrlIdx);
         }
-        else if (this.curCtrl.objType === "StaticCardSet" || this.curCtrl.objType === "DynamicCardSet") {
+        else if (this.curCtrl.ObjType === "StaticCardSet" || this.curCtrl.ObjType === "DynamicCardSet") {
             if (!this.checkRequired()) { return; }
             if (this.curCtrl.isReadOnly) {
                 $btn.css('display', 'none');
-                $('#' + this.curCtrl.name).attr('id', '');
+                $('#' + this.curCtrl.Name).attr('id', '');
             }
             else {
                 this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
@@ -715,7 +714,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
             this.callGetControl(this.nxtCtrlIdx);
         }
-        else if (this.curCtrl.objType === "Survey" ) {
+        else if (this.curCtrl.ObjType === "Survey" ) {
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
@@ -735,26 +734,26 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.valueExpHandler = function (nxtCtrl) {
-        //var nxtCtrl = this.curForm.controls[this.nxtCtrlIdx];
-        var valExpFunc = this.formFunctions.valueExpressions[nxtCtrl.name];
+        //var nxtCtrl = this.curForm.Controls.$values[this.nxtCtrlIdx];
+        var valExpFunc = this.formFunctions.valueExpressions[nxtCtrl.Name];
         if (valExpFunc !== undefined) {
-            this.formValues[nxtCtrl.name] = valExpFunc(this.formValues, this.userDtls);
-            this.formValuesWithType[nxtCtrl.name] = [this.formValues[nxtCtrl.name], nxtCtrl.ebDbType];
+            this.formValues[nxtCtrl.Name] = valExpFunc(this.formValues, this.userDtls);
+            this.formValuesWithType[nxtCtrl.Name] = [this.formValues[nxtCtrl.Name], nxtCtrl.ebDbType];
         }
         else if (nxtCtrl.autoIncrement) {
-            this.formValuesWithType[nxtCtrl.name] = [0, nxtCtrl.ebDbType, true];
+            this.formValuesWithType[nxtCtrl.Name] = [0, nxtCtrl.ebDbType, true];
         }
-        //console.log(this.curForm.controls[0].selectedRow);//  hardcoding
+        //console.log(this.curForm.Controls.$values[0].selectedRow);//  hardcoding
     }
 
     this.callGetControl = function () {
         if (this.nxtCtrlIdx !== this.formControls.length) { // if not last control
             if (!this.IsEdtMode || this.IsDpndgCtrEdt) {   // (if not edit mode or IsDpndgCtr edit mode) if not skip calling getControl()
-                var visibleIfFn = this.formFunctions.visibleIfs[this.curForm.controls[this.nxtCtrlIdx].name];
-                //if (this.curForm.controls[this.nxtCtrlIdx].hidden) {//////////////////////
-                this.valueExpHandler(this.curForm.controls[this.nxtCtrlIdx]);
+                var visibleIfFn = this.formFunctions.visibleIfs[this.curForm.Controls.$values[this.nxtCtrlIdx].Name];
+                //if (this.curForm.Controls.$values[this.nxtCtrlIdx].hidden) {//////////////////////
+                this.valueExpHandler(this.curForm.Controls.$values[this.nxtCtrlIdx]);
                 //}
-                if ((!visibleIfFn || visibleIfFn(this.formValues)) && !this.curForm.controls[this.nxtCtrlIdx].hidden) {//checks isVisible or no isVisible defined                    
+                if ((!visibleIfFn || visibleIfFn(this.formValues)) && !this.curForm.Controls.$values[this.nxtCtrlIdx].hidden) {//checks isVisible or no isVisible defined                    
                     this.getControl(this.nxtCtrlIdx);
                 }
                 else {
@@ -789,23 +788,23 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             return;
         var controlHTML = this.formControls[idx][0].outerHTML;
         var $ctrlCont = $(controlHTML);
-        this.curCtrl = this.curForm.controls[idx];
-        var name = this.curCtrl.name;
-        //if (!(this.curCtrl && (this.curCtrl.objType === "Cards" || this.curCtrl.objType === "Locations" || this.curCtrl.objType === "InputGeoLocation" || this.curCtrl.objType === "Image")))
+        this.curCtrl = this.curForm.Controls.$values[idx];
+        var name = this.curCtrl.Name;
+        //if (!(this.curCtrl && (this.curCtrl.ObjType === "Cards" || this.curCtrl.ObjType === "Locations" || this.curCtrl.ObjType === "InputGeoLocation" || this.curCtrl.ObjType === "Image")))
         if (!(this.curCtrl && this.curCtrl.isFullViewContol))
             $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
-        var label = this.curCtrl.label;
+        var label = this.curCtrl.Label;
         if (label) {
             if (this.curCtrl.helpText)
                 label += ` (${this.curCtrl.helpText})`;
             this.msgFromBot(label);
         }
-        if (this.curCtrl.objType === "Image") {
+        if (this.curCtrl.ObjType === "Image") {
             this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
             this.nxtCtrlIdx++;
             this.callGetControl();
         }
-        else if (this.curCtrl.objType === "Labels") {
+        else if (this.curCtrl.ObjType === "Labels") {
             this.sendLabels(this.curCtrl);
         }
         else
@@ -813,11 +812,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.sendLabels = function (ctrl) {
-        $.each(ctrl.labelCollection, function (idx, label) {
-            var lbl = label.label.trim();
+        $.each(ctrl.LabelCollection, function (idx, label) {
+            var lbl = label.Label.trim();
             if (lbl === "")
                 return true;
-            this.msgFromBot(label.label);
+            this.msgFromBot(label.Label);
         }.bind(this));
     }
 
@@ -827,7 +826,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.replyAsImage = function ($prevMsg, input, idx, ctrlname) {
         console.log("replyAsImage()");
-        var fname = input.files[0].name;
+        var fname = input.files[0].Name;
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
@@ -843,7 +842,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         console.log("sendImgAfter()");
         var $msg = this.$userMsgBox.clone();
         $msg.find(".msg-wraper-user").css("padding", "5px");
-        var $imgtag = $(`<div class="img-box" for="${ctrlname}"><div class="img-loader"></div><span class="img-edit"  idx="${this.curForm.controls.indexOf(this.curCtrl)}"  for="${ctrlname}" name="ctrledit"><i class="fa fa-pencil" aria-hidden="true"></i></span><img src="${path}" alt="amal face" width="100%"><div class="file-name">${filename}</div>${this.getTime()}</div>`);
+        var $imgtag = $(`<div class="img-box" for="${ctrlname}"><div class="img-loader"></div><span class="img-edit"  idx="${this.curForm.Controls.$values.indexOf(this.curCtrl)}"  for="${ctrlname}" name="ctrledit"><i class="fa fa-pencil" aria-hidden="true"></i></span><img src="${path}" alt="amal face" width="100%"><div class="file-name">${filename}</div>${this.getTime()}</div>`);
         $msg.find('.msg-wraper-user').append($imgtag);
         $msg.insertAfter($prevMsg);
         //$('.eb-chatBox').scrollTop(99999999999);
@@ -880,8 +879,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.ctrlEdit = function (e) {
         var $btn = $(e.target).closest("span");
         var idx = parseInt($btn.attr('idx'));
-        this.curCtrl = this.curForm.controls[idx];
-        var NxtRDpndgCtrlName = this.getNxtRndrdDpndgCtrlName(this.curCtrl.name);
+        this.curCtrl = this.curForm.Controls.$values[idx];
+        var NxtRDpndgCtrlName = this.getNxtRndrdDpndgCtrlName(this.curCtrl.Name);
         if (NxtRDpndgCtrlName) {
             this.__idx = idx; this.__NxtRDpndgCtrlName = NxtRDpndgCtrlName; this.__$btn = $btn;
             this.initEDCP();
@@ -911,15 +910,15 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.disableCtrledit();
         this.IsEdtMode = true;
         $('.msg-cont-bot [idx=' + idx + ']').closest('.msg-cont').show(200);
-        $("#" + this.curCtrl.name).click().select();
+        $("#" + this.curCtrl.Name).click().select();
         $btn.closest('.msg-cont').remove();
     };
 
     this.editDpndCtrl = function () {
         //this.$DPEBtn.confirmation('destroy');
         this.IsDpndgCtrEdt = true;
-        this.nxtCtrlIdx = this.curForm.controls.indexOf(getObjByval(this.curForm.controls, "name", this.getNxtDpndgCtrlName(this.curCtrl.name, this.formFunctions.visibleIfs)));
-        this.curCtrl = this.curForm.controls[this.__idx];
+        this.nxtCtrlIdx = this.curForm.Controls.$values.indexOf(getObjByval(this.curForm.Controls.$values, "name", this.getNxtDpndgCtrlName(this.curCtrl.Name, this.formFunctions.visibleIfs)));
+        this.curCtrl = this.curForm.Controls.$values[this.__idx];
         delKeyAndAfter(this.formValues, this.__NxtRDpndgCtrlName);
         delKeyAndAfter(this.formValuesWithType, this.__NxtRDpndgCtrlName);
         $('.eb-chatBox [for=' + this.__NxtRDpndgCtrlName + ']').prev().prev().nextAll().remove();
@@ -1004,13 +1003,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     }
 
                     if (this.curCtrl && ($msg.find(".ctrl-wraper").length === 1)) {
-                        if ($('#' + this.curCtrl.name).length === 1)
+                        if ($('#' + this.curCtrl.Name).length === 1)
                             this.loadcontrol();
                         else
-                            console.error("loadcontrol() called before rendering 'id = " + this.curCtrl.name + "' element");
+                            console.error("loadcontrol() called before rendering 'id = " + this.curCtrl.Name + "' element");
                     }
                     if (this.curForm)
-                        $msg.attr("form", this.curForm.name);
+                        $msg.attr("form", this.curForm.Name);
                 }
                 else
                     $msg.find('.msg-wraper-bot').text(msg).append(this.getTime());
@@ -1035,14 +1034,14 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.loadcontrol = function () {
         if (!this.curCtrl)
             return;
-        if (this.initControls[this.curCtrl.objType] !== undefined)
-            this.initControls[this.curCtrl.objType](this.curCtrl);
+        if (this.initControls[this.curCtrl.ObjType] !== undefined)
+            this.initControls[this.curCtrl.ObjType](this.curCtrl);
     };
 
     this.submitReqCheck = function () {
         var $firstCtrl = null;
-        $.each(this.curForm.controls, function (i, control) {
-            var $ctrl = $("#" + control.name);
+        $.each(this.curForm.Controls.$values, function (i, control) {
+            var $ctrl = $("#" + control.Name);
             if ($ctrl.length !== 0 && control.required && $ctrl.val().trim() === "") {
                 if (!$firstCtrl)
                     $firstCtrl = $ctrl;
@@ -1063,18 +1062,18 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             return;
         var $btn = $(e.target).closest(".btn");
         var html = "<div class='sum-box'><table style='font-size: inherit;'>";
-        $.each(this.curForm.controls, function (i, control) {
+        $.each(this.curForm.Controls.$values, function (i, control) {
             if (!control.hidden) {
                 this.curCtrl = control;
-                var curval = this.getValue($('#' + control.name));
-                var name = control.name;
+                var curval = this.getValue($('#' + control.Name));
+                var name = control.Name;
 
                 this.formValues[name] = curval;
-                if (control.objType === "ComboBox")
+                if (control.ObjType === "ComboBox")
                     this.formValuesWithType[name] = [control.tempValue, control.ebDbType];
                 else
                     this.formValuesWithType[name] = [curval, control.ebDbType];
-                html += `<tr><td style='padding: 5px;'>${control.label}</td> <td style='padding-left: 10px;'>${this.formValuesWithType[name][0]}</td></tr>`;
+                html += `<tr><td style='padding: 5px;'>${control.Label}</td> <td style='padding-left: 10px;'>${this.formValuesWithType[name][0]}</td></tr>`;
             }
             this.valueExpHandler(control);
         }.bind(this));
@@ -1117,7 +1116,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.formFunctions.visibleIfs = {};
         this.formFunctions.valueExpressions = {};
         this.nxtCtrlIdx = 0;
-        $(`[form=${this.curForm.name}]`).remove();
+        $(`[form=${this.curForm.Name}]`).remove();
     };
     //save botform
     this.DataCollection = function () {
@@ -1151,11 +1150,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.hideTypingAnim();
         if (rowAffected > 0) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
-            var msg = `Your ${this.curForm.name} form submitted successfully`;
+            var msg = `Your ${this.curForm.Name} form submitted successfully`;
         }
         else {
             EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
-            var msg = `Your ${this.curForm.name} form submission failed`;
+            var msg = `Your ${this.curForm.Name} form submission failed`;
         }
         this.msgFromBot(msg);
         this.AskWhatU();

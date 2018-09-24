@@ -243,8 +243,8 @@ namespace ExpressBase.Web.Controllers
 						}
 					}
 
-					//var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = BotForm.TableName, Fields = Fields, AnonUserId = this.AnonUserId });
-					//return x.RowAffected;
+					var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = BotForm.TableName, Fields = Fields, AnonUserId = this.AnonUserId });
+					return x.RowAffected;
 				}
 				
 			}

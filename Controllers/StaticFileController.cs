@@ -70,28 +70,32 @@ namespace ExpressBase.Web.Controllers
 
         private const string RejexPattern = " *[\\~#%&*{}/:<>?|\"-]+ *";
 
-        [HttpGet("images/dp/{filename}")]
-        public IActionResult GetDP(string filename)
+        [HttpGet("images/dp/{userid}")]
+        public IActionResult GetDP(string userid)
         {
-            filename = filename.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
+            userid = userid.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
 
             DownloadFileResponse dfs = null;
             ActionResult resp = new EmptyResult();
 
             try
             {
-                if (filename.StartsWith(StaticFileConstants.DP))
-                    dfs = this.FileClient.Get<DownloadFileResponse>
-                            (new DownloadFileRequest
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadDpRequest
+                        {
+                            ImageInfo = new ImageMeta
                             {
-                                FileDetails = new FileMeta { FileName = filename, FileType = StaticFileConstants.PNG, FileCategory = EbFileCategory.Dp }
-                            });
+                                FileName = userid,
+                                FileType = StaticFileConstants.PNG,
+                                FileCategory = EbFileCategory.Dp
+                            }
+                        });
 
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(userid));
                 }
             }
             catch (Exception e)
@@ -355,8 +359,8 @@ namespace ExpressBase.Web.Controllers
             return res.FileRefId;
         }
 
-		[HttpPost]
-		public async Task<int> UploadImageAsyncFromForm(int i)
+        [HttpPost]
+        public async Task<int> UploadImageAsyncFromForm(int i)
         {
             UploadAsyncResponse res = new UploadAsyncResponse();
             try
@@ -396,7 +400,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
             return res.FileRefId;
-		}
+        }
 
         [HttpPost]
         public async Task<int> UploadDPAsync(int i)
@@ -524,7 +528,7 @@ namespace ExpressBase.Web.Controllers
             List<FileMeta> resp = this.FileClient.Post(new InitialFileReq { Type = (FileClass)type });
             return resp;
         }
-        
+
         private string GetMime(string fname)
         {
             return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];

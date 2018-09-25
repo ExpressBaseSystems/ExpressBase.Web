@@ -164,7 +164,7 @@
                     $(e.target).css("border-color", "rgb(204, 0, 0)");
                     $("#spanRoleName").children().remove();
                     $("#spanRoleName").append(`<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color:red; padding: 9px;"></i>`);
-                    $("#spanRoleName").attr("title", "Give Role Name Already Exists");
+                    $("#spanRoleName").attr("title", "Role Name Already Exists");
                 }
                 else {
                     $("#spanRoleName").children().remove();

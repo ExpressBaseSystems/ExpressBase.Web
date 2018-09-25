@@ -17,6 +17,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />@*amal*@
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
 
     @* JQUERY CSS *@
     <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">@*jith*@
@@ -27,6 +29,7 @@
     <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version=@bApnd />
     <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" />
     <link rel="stylesheet" href="~/css/EbOnBoarding/eb-assets.style.css" />
+    <link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" />@*amal*@
 
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -34,6 +37,7 @@
 
     @* BOOTSTRAP JS *@
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
 
     @* OTHER JS *@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
@@ -42,6 +46,7 @@
     <script type="text/javascript" src="~/js/store.legacy.min.js"></script>@*amal*@
     <script src="~/js/validator.js" type="text/javascript"></script>@*amal*@
     <script src="~/js/Eb_CommonHeader.js" type="text/javascript"></script>@*amal*@
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 
     @* EB JS *@
     <script src="~/js/EbLoader.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
@@ -54,7 +59,9 @@
     <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="~/js/EbQuickMenu/Menu.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/Eb_CommonHeader.js" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbControls/EbCropper.js" type="text/javascript"></script>@*amal*@
     <script src="~/js/Eb_CommonHeader.js" type="text/javascript"></script>@*amal*@
+    <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript"></script>@*amal*@
 
     @if (ViewBag.wc == "uc")
     {
@@ -91,7 +98,10 @@
         }
     </div>
     <div id="layout_div" class="container-fluid main-cont">
-        @await Component.InvokeAsync("PageHeaderCommon")
+        @if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
+        {
+            @await Component.InvokeAsync("PageHeaderCommon")
+        }
 
         @RenderBody()
         @RenderSection("EbHead", false)

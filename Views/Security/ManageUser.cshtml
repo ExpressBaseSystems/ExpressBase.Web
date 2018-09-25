@@ -8,16 +8,13 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
 <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" />
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
-<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap2-toggle.min.css" />
+<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap2-toggle.min.js"></script>
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/EbCropper.js" asp-append-version=@bApnd></script>
 
 @*<meta name="google-signin-client_id" content="1097281192898-q73cm1h8faa3ksjj2o44jchdlm179m87.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>*@
@@ -63,7 +60,7 @@
     <div class="row">
         <div class="col-md-3" style="padding-right: 0px">
             <div id="profimage" style="text-align:center;">
-                <img src="~/images/proimg.jpg" id="imgprofimage" data-toggle="modal" data-target="#eb-cropie-mod" style="height:100px" />
+                <img src="~/images/proimg.jpg" id="imgprofimage" style="height:100px" />
             </div>
             <div class="form-group">
                 <label style="font-family: open sans; font-weight: 300;">Full Name</label>
@@ -97,6 +94,9 @@
                 </div>
                 <div id="divChangePassword" style="padding-top: 28px; display:none;">
                     <button id="btnChangePassword" class="" title="Change Password">Change Password</button>
+                </div>
+                <div id="divResetPassword" style="padding-top: 28px; display:none;">
+                    <button id="btnResetPassword" class="" title="Reset Password">Reset Password</button>
                 </div>
             </div>
             <div class="form-group">
@@ -216,14 +216,16 @@
                                     <label style="font-family: open sans; font-weight: 300;">Select Locale:</label>
                                     <select class="form-control" id="sellocale" name="locale"></select>
                                 </div>
-                                <div class="form-group" id="divLocaleInfo">
-
+                                <div class="form-group" id="divLocaleInfo"></div>
+                                <div class="form-group">
+                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
+                                    <select id="seltimezone" name="timezone" class="form-control"></select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
-                                    <select id="seltimezone" name="timezone" class="form-control"></select>
+                                    <label style="font-family: open sans; font-weight: 300;">Default Location:</label>
+                                    <select id="selDefaultLocation" name="DefaultLocation" class="form-control"></select>
                                 </div>
                             </div>
                         </div>
@@ -233,20 +235,10 @@
             </div>
             <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
             @*<button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;">Create</button>*@
-            <label id="lblMessage" style="color:red;padding-left: 36px;display:none;font-family: open sans; font-weight: 500;">  </label>
-
-            <div class="prof-setup-cropie">
-                <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog">
-                        <div class="loginmodal-container cropie" id="cropsection">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <label id="lblMessage" style="color:red;padding-left: 36px;display:none;font-family: open sans; font-weight: 500;">  </label>         
         </div>
     </div>
 </div>
-
 
 <div id="MU_ChangePwdModal" class="modal fade" role="dialog">
     <div class="modal-dialog" style="width:445px">
@@ -283,6 +275,37 @@
     </div>
 </div>
 
+<div id="MU_ResetPwdModal" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width:445px">
+        <div class="modal-content">
+            <div class="modal-header" style="">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Reset Password</h4> </div>
+                </div>
+            </div>
+            <div class="modal-body" style="height:135px">
+                <input type="hidden" id="itemid" />
+                <div id="">
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">New Password :</label>
+                        <input id="pwdResetNew" class="form-control" type="password" title="Enter New Password" style="width:60%; display: inline-block;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
+                        <input id="pwdResetNewConfirm" class="form-control" type="password" title="ReEnter New Password" style="width:60%; display: inline-block;">
+                    </div>
+                    <label id="lblPwdResetMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);">Minimum Pasword length should be 8</label>
+                </div>
+            </div>
+            <div class="modal-footer" style="">
+                <button id="btnResetPwd" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Reset</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 
     function onSignIn(googleUser) {
@@ -312,17 +335,38 @@
 
         $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "Y-m-d" });
 
-        var logoCrp = new cropfy({
-            Container: 'DisplayPicture',
-            Toggle: '#profimage',
-            isUpload: true,
-            enableSE: true,
-            Browse: true,
-            Result: 'base64',
-            Type: 'dp',
-            ResizeViewPort: true,
-            Preview: "#profimage"
+        //var logoCrp = new cropfy({
+        //    Container: 'DisplayPicture',
+        //    Toggle: '#profimage',
+        //    isUpload: true,
+        //    enableSE: true,
+        //    Browse: true,
+        //    Result: 'base64',
+        //    Type: 'dp',
+        //    ResizeViewPort: true,
+        //    Preview: "#profimage"
+        //});
+
+        var d = new EbFileUpload({
+            Type:"image",
+            Toggle: "#profimage",
+            TenantId:"@ViewBag.cid",
+            SolutionId: "@ViewBag.SolnId",
+            Container: "DisplayPicture",
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.info',
+            EnableTag: false,
+            EnableCrop: true,
+            Context: "dp",//if single and crop
+            ResizeViewPort: false //if single and crop
         });
+
+        d.uploadSuccess = function(fileid){
+            EbMessage("show", { Message: fileid});
+        }
+        d.windowClose = function () {
+            EbMessage("show", { Message: "window closed",Background: "red" });
+        }
 
     });
 </script>

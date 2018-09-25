@@ -9,13 +9,14 @@
     this.url = option.Url||'';//load image on initialize
     this.fileurl = null;
     this.cropie = null;
-    this.getFile = function (b65) { return b65; }//return b65 croped image
+    this.getFile = function (b65,filename) { }//return b65 croped image
     this.getObjId = function (id) { };
     this.Type = option.Type;//type of image logo or dp
     this.ResizeViewPort = option.ResizeViewPort ? true : false;//enable resizing of viewport
     this.Preview = option.Preview||null;//previw el should be uniq and it sould be an img tag
     this.Tid = option.Tid || null;
     this.Extra = option.Extra || {};
+    this.FileName = null;
 
     var _typeRatio = {
         'logo': {
@@ -23,8 +24,8 @@
             height: 100
         },
         'dp': {
-            width: 50,
-            height: 50
+            width: 100,
+            height: 100
         },
         'doc': {
             width: 200,
@@ -38,31 +39,28 @@
 
     this.appendModal = function () {
         $('body').append(`<div class="modal fade" id="${this.Container}_modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-      <div class="modal-content cropfy_modal" style="border-radius:0;border:none;">
-        <div class="modal-header cropfy_header" style="background: #3e8ef7;color: white;">
-          <h5 class="modal-title" id="exampleModalLongTitle">Crop Image</h5>
-            <i class="material-icons cropfy_close pull-right" data-dismiss="modal" style="margin-top:-2.5%;cursor: pointer" id="${this.Container}_close">close</i>
-        </div>
-        <div class="modal-body">
-            <div class="cropy_container" style="height:450px;width:100%;padding-bottom:50px;">
-                <div id="${this.Container}_cropy_container">
-                </div>
-            </div>
-        <div class="modal-footer cropfy_footer" id="${this.Container}_cropy_footer" style="padding-bottom: 0;padding-right:0;padding-left: 0;">
-            <div class="btn-group" role="group">
-            <button type="button" title="rotate_l" class="btn btn-secondary ${this.Container}_rotate"><i class="fa fa-undo"></i></button>
-            <button type="button" title="rotate_r" class="btn btn-secondary ${this.Container}_rotate"><i class="fa fa-repeat"></i></button>
-            </div>
-          <button type="button" class="btn btn-primary" id="${this.Container}_crop"><i class="fa fa-crop"></i></button>
-        </div>
-      </div>
-    </div>
-  </div>`);
-        this.__cropfy();
-        $("." + this.Container + "_rotate").closest(".btn").on("click", this.rotate.bind(this));
-        $("#" + this.Container + "_crop").closest(".btn").on("click", this.crop.bind(this));
-        this.appendBtn();
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content cropfy_modal" style="border-radius:0;border:none;">
+                                <div class="modal-header cropfy_header" style="background: #3e8ef7;color: white;">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Crop Image</h5>
+                                    <i class="material-icons cropfy_close pull-right" data-dismiss="modal" style="margin-top:-2.5%;cursor: pointer" id="${this.Container}_close">close</i>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="cropy_container" style="height:450px;width:100%;padding-bottom:50px;">
+                                        <div id="${this.Container}_cropy_container">
+                                        </div>
+                                    </div>
+                                <div class="modal-footer cropfy_footer" id="${this.Container}_cropy_footer" style="padding-bottom: 0;padding-right:0;padding-left: 0;">
+                                    <div class="btn-group" role="group">
+                                    <button type="button" title="rotate_l" class="btn btn-secondary ${this.Container}_rotate"><i class="fa fa-undo"></i></button>
+                                    <button type="button" title="rotate_r" class="btn btn-secondary ${this.Container}_rotate"><i class="fa fa-repeat"></i></button>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="${this.Container}_crop"><i class="fa fa-crop"></i></button>
+                                </div>
+                                </div>
+                            </div>
+                            </div>`);
+        
     };
 
     this.appendBtn = function () {
@@ -127,7 +125,7 @@
 
     this.saveCropfy = function () {
         this.toggleModal();
-        this.getFile(this.fileurl);
+        this.getFile(this.fileurl, this.FileName);
     };
 
     this.upload = function () {

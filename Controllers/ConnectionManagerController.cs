@@ -367,7 +367,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     ProviderName = req["Emailvendor"],
                     NickName = req["NickName"],
-                    Smtp = req["SMTP"],
+                    Host = req["SMTP"],
                     Port = Convert.ToInt32(req["Port"]),
                     EmailAddress = req["Email"],
                     Password = req["Password"],

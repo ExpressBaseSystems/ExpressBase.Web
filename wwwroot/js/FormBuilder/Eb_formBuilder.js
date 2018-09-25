@@ -67,6 +67,18 @@
             });
             this.makeTabsDropable();
         }
+        else if (ctrlObj.ObjType === "GroupBox") {
+            let el = $("#" + this.formId + " .group-box")[0];
+            this.makeGBDropable(el);
+        }
+    }
+
+    this.makeGBDropable = function (el) {
+        if (this.drake) {
+            if (!this.drake.containers.contains(el)) {
+                this.drake.containers.push(el);
+            }
+        }
     }
 
     this.makeTabsDropable = function () {
@@ -226,11 +238,13 @@
 
     this.onDragFn = function (el, source) {
         //if drag start within the form
-        id = $(el).closest(".Eb-ctrlContainer").attr("id");
-        if ($(source).attr("id") !== "form-buider-toolBox") {
+        let id = $(el).closest(".Eb-ctrlContainer").attr("id");
+        let $source = $(source);
+        if ($source.attr("id") !== "form-buider-toolBox") {
             console.log("el poped");
             this.movingObj = this.rootContainerObj.Controls.PopByName(id);
-            this.adjustPanesHeight($(source));
+            if ($source.closest(".ebcont-ctrl").attr("ctype") === "TabPane")
+                this.adjustPanesHeight($source);
         }
         else
             this.movingObj = null;
@@ -291,17 +305,16 @@
             }
             else
                 console.log("ondrop else : removed");
-
-            this.adjustPanesHeight($target);
+            let $parent = $target.closest(".ebcont-ctrl");
+            if ($parent.attr("ctype") === "TabPane")
+                this.adjustPanesHeight($parent);
         }
     };
 
     this.adjustPanesHeight = function ($target) {
-        parent = $target.attr("eb-form") ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($target.attr("ebsid"));
-        if (parent.ObjType === "TabPane") {
-            tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
-            EbOnChangeUIfns.EbTabControl.adjustPanesHeightToHighest(tabControl.EbSid, tabControl);
-        }
+        let parent = $target.attr("eb-form") ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($target.attr("ebsid"));
+        let = tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
+        EbOnChangeUIfns.EbTabControl.adjustPanesHeightToHighest(tabControl.EbSid, tabControl);
     }
 
     this.dropedCtrlInit = function ($ctrl, type, id) {
@@ -431,7 +444,7 @@
             let id = SelectedCtrl.EbSid;
             let $ctrl = $("#" + id);
             let $tabMenu = $(`<li li-of="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}">${addedObj.Name}</a></li>`);
-            let $tabPane = $(`<div id="${addedObj.EbSid}" ebsid="${addedObj.EbSid}" class="tab-pane fade "></div>`);
+            let $tabPane = $(`<div id="${addedObj.EbSid}" ebsid="${addedObj.EbSid}" class="tab-pane fade  ebcont-ctrl"></div>`);
             $ctrl.closestInner(".nav-tabs").append($tabMenu);
             $ctrl.closestInner(".tab-content").append($tabPane);
             this.drake.containers.push($tabPane[0]);

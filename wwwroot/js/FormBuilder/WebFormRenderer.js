@@ -4,7 +4,7 @@
     this.flatControls = option.flatControls;
     this.initControls = new InitControls(this);
     this.editModeObj = option.editModeObj;
-    this.formRefId = option.formRefId;
+    this.formRefId = option.formRefId || "";
     this.isEditMode = !!this.editModeObj;
     this.rowId = 0;
 
@@ -17,7 +17,7 @@
                 if (NSS) {
                     let NS1 = NSS.split(".")[0];
                     let NS2 = NSS.split(".")[1];
-                    if (cObj.ObjType === "TableLayout")
+                    if (cObj.ObjType === "TableLayout" || cObj.ObjType === "GroupBox")
                         EbOnChangeUIfns[NS1][NS2](cObj.Name, cObj);
                     else
                         EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);
@@ -49,7 +49,7 @@
     };
 
     this.ProcRecur = function (src_obj, dest_coll) {
-        $.each(src_obj.Controls, function (i, obj) {
+        $.each(src_obj.Controls.$values, function (i, obj) {
             if (obj.IsContainer) {
                 dest_coll.push(obj);
                 this.ProcRecur(obj, dest_coll);
@@ -73,6 +73,7 @@
         this.rowId = getObjByval(this.editModeObj, "Name", "id").Value;
         this.setEditModevalues(this.rowId);
     }
+
     this.setEditModevalues = function (rowId) {
         this.formRefId
         // show loader
@@ -80,7 +81,7 @@
             type: "POST",
             url: "../WebForm/getRowdata",
             data: {
-                refid: this.formRefId, rowid: rowId
+                refid: this.formRefId, rowid: parseInt(rowId)
             },
             success: function (data) {
                 this.EditModevalues = data.rowValues;
@@ -91,7 +92,37 @@
                 //hide loader
             }.bind(this),
         });
-    }
+    };
+
+    this.ProcRecurForVal = function (src_obj, FVWTObjColl) {
+        let _val = null;
+        $.each(src_obj.Controls.$values, function (i, obj) {
+            if (obj.IsContainer) {
+                if (obj.TableName === "" || obj.TableName === null)
+                    obj.TableName = src_obj.TableName;
+                if (FVWTObjColl[obj.TableName] === undefined)
+                    FVWTObjColl[obj.TableName] = [];
+                this.ProcRecurForVal(obj, FVWTObjColl);
+            }
+            else {
+                let colObj = {};
+                colObj.Name = obj.Name;
+                _type = obj.EbDbType;
+                colObj.Value = (_type === 7) ? parseInt($("#" + obj.Name).val()) : $("#" + obj.Name).val();
+                colObj.Type = _type;
+                colObj.AutoIncrement = obj.AutoIncrement || false;
+                FVWTObjColl[src_obj.TableName].push(colObj);
+            }
+        }.bind(this));
+
+    };
+
+    this.getFormValuesObjWithTypeColl = function () {
+        var FVWTObjColl = {};
+        //FVWTObjColl[this.FormObj.TableName] = [];
+        this.ProcRecurForVal(this.FormObj, FVWTObjColl);
+        return FVWTObjColl;
+    };
 
     this.getFormValuesWithTypeColl = function () {
         var FVWTcoll = [];
@@ -126,9 +157,9 @@
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url: "../WebForm/InsertBotDetails",
+            url: "../WebForm/InsertWebformData",
             data: {
-                TableName: this.FormObj.TableName, Fields: this.getFormValuesWithTypeColl(), Id : this.rowId
+                TableName: this.FormObj.TableName, ValObj: this.getFormValuesObjWithTypeColl(), RefId: this.formRefId, RowId: this.rowId
             },
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);

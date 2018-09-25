@@ -11,6 +11,9 @@
         case 400:
             statusmessage = "Bad request: The request cannot be fulfilled due to bad syntax";
             break;
+        case 401:
+            statusmessage = "Access denied";
+            break;
         case 403:
             statusmessage = "Forbidden";
             break;
@@ -32,7 +35,12 @@
     <div class="error_wrapper">
         <div class="errorcode_img">
             @{
-                if (Model == 404)
+                if(Model == 401)
+                {
+                    <img src="~/images/eb_401.svg" />
+
+                }
+                else if (Model == 404)
                 {
                     <img src="~/images/eb_404.jpg" />
 
@@ -44,8 +52,3 @@
         <button class="ebbtn eb_btnblue backto_home" id="backto_home" onclick="javascript: history.go(-1)">Go Back</button>
     </div>
 </div>
-<script>
-    $("#backto_home").off("click").on("click", function (e) { 
-
-    });
-</script>

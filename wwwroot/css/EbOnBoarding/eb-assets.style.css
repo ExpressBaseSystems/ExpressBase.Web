@@ -386,3 +386,34 @@ flex-direction:column;
 pd-10{
     padding:5px !important;
 }
+.mr-b-15{
+    margin-bottom:15px;
+}
+/*appstorepublic*/
+.fd_As_hd {
+    position: fixed;
+    padding: 15px;
+    /*background-color: #0280db;*/
+    color: white;
+    font-family: Montserrat;
+    font-weight: 500;
+}
+.font_wmed{
+    font-weight:400;
+}
+.as_search_in input {
+    height: 55px;
+    font-size: 20px;
+    border-left: none;
+    box-shadow: none;
+}
+.as_search_in span {
+    height: 55px;
+    font-size: 20px;
+    background: white;
+    border-right: none !important;
+    color: #b5b2b2;
+}
+.as_search_in input:focus{
+outline:none;
+}

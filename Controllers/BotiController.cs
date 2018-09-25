@@ -220,7 +220,7 @@ namespace ExpressBase.Web.Controllers
             //else if (Obj is EbChartVisualization)
             //{
             //}
-            return Obj;
+            return EbSerializers.Json_Serialize(Obj);
         }
 
         public int InsertBotDetails(string RefId, List<BotFormField> Fields)
@@ -243,8 +243,8 @@ namespace ExpressBase.Web.Controllers
 						}
 					}
 
-					//var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = BotForm.TableName, Fields = Fields, AnonUserId = this.AnonUserId });
-					//return x.RowAffected;
+					var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = BotForm.TableName, Fields = Fields, AnonUserId = this.AnonUserId });
+					return x.RowAffected;
 				}
 				
 			}

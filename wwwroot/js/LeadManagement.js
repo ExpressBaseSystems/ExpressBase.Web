@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SourceCategoryList, SubCategoryList) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, DistrictList, SourceCategoryList, SubCategoryList, ImageIdList) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -10,9 +10,11 @@
     this.CCityList = CCityList || [];
     this.CCountryList = CCountryList || [];
     this.CityList = CityList || [];
+    this.DistrictList = DistrictList || [];
     this.SourceCategoryList = SourceCategoryList || [];
     this.SubCategoryList = SubCategoryList || [];
 
+    this.ImageIdList = ImageIdList || [];
     this.FeedbackList = F_List || [];
     this.BillingList = B_List || [];
     this.SurgeryList = S_List || [];
@@ -34,7 +36,7 @@
     this.$HomeCity = $("#txtHomeCity");
     this.$HomeDistrict = $("#txtHomeDistrict");
     this.$Service = $("#selService");
-    this.$LeadOwner = $("#txtLeadOwner");
+    this.$LeadOwner = $("#selLeadOwner");
     this.$SourceCategory = $("#txtSourceCategory");
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
@@ -85,10 +87,20 @@
     this.$PatientInstr = $("#txaPatientInstr");
     this.$DoctorInstr = $("#txaDoctorInstr");
     this.$SrgySave = $("#btnSrgySave");  
+    //ATTACH
+    this.$FirstImgPage = $("#btnFirstImgPage");
+    this.$PrevImgPage = $("#btnPrevImgPage");
+    this.$ImgPageNo = $("#lblImgPage");
+    this.$NextImgPage = $("#btnNextImgPage");
+    this.$LastImgPage = $("#btnLastImgPage");
     
     //DECLARED DATA
     this.OutDataList = [];
     this.drake = null;
+    this.imgCrntPage = 0;//current page const
+    this.imgPageSize = 10;//page size const
+    this.isMobileUnique = null;
+    this.isSlickInit = false;
 
     this.init = function () {
         $("#eb_common_loader").EbLoader("show");
@@ -97,22 +109,28 @@
 
         this.$CrntCity.autocomplete({ source: this.CCityList });
         this.$CrntCountry.autocomplete({ source: this.CCountryList });
-        this.$HomeCity.autocomplete({ source: this.CityList });
+        this.$HomeCity.autocomplete({ source: this.CityList }); 
+        this.$HomeDistrict.autocomplete({ source: this.DistrictList });
         this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
+
+        $(document).bind('keypress', function (event) {
+            if (event.which === 19 && event.ctrlKey && event.shiftKey) {
+                if(!($("#btnSave").prop("disabled")))
+                    this.onClickBtnSave();
+            }
+        }.bind(this));
+
         $("#eb_common_loader").EbLoader("hide");
     }
-
-   
-        
-
+    
     this.initMenuBarObj = function () {
         var menuBarObj = $("#layout_div").data("EbHeader");
         menuBarObj.setName("Lead Management");
         if (this.Mode === 0)
             menuBarObj.setName("Lead Management - New Customer");
         menuBarObj.insertButton(`
-            <button id="btnSave" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+            <button id="btnSave" class='btn' title='Save (Ctrl+Shift+S)'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
             <button id="btnNew" class='btn' title='New'><i class="fa fa-user-plus" aria-hidden="true"></i></button>`);
 
         $("#btnSave").on("click", this.onClickBtnSave.bind(this));
@@ -138,21 +156,8 @@
         }.bind(this));
 
         //=============================================================
-        this.isSlickInit = false;
-        $(".list-item-img").on("click", function (evt) {
-            $("#mdlViewImage").modal('show');
-            if (!this.isSlickInit) {
-                this.isSlickInit = true;
-                $('#modal-imgs-cont').slick({
-                    lazyLoad: 'ondemand',//progressive
-                    //dots: true,
-                    prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
-                    nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
-                });
-            }
-            let idx = parseInt($(evt.target).attr("data-idx"));
-            $('#modal-imgs-cont').slick('slickGoTo', idx);
-        }.bind(this));
+       
+        
 
         //$('#modal-imgs-cont').on("dblclick", function () {
         //    $("#mdlViewImage").modal('hide');
@@ -170,8 +175,9 @@
         this.initFeedBackModal();
         this.initBillingModal();
         this.initSurgeryModal();
-        this.initAttachModal();
+        //this.initAttachModal();
 
+        this.initAttachTab();
         this.initDrake();
 
         this.$CostCenter.children().remove();
@@ -184,19 +190,135 @@
             this.$Doctor.append(`<option value='${val}'">${key}</option>`);
         }.bind(this));
 
+        this.$LeadOwner.children().remove();
+        $.each(this.StaffInfo, function (key, val) {
+            this.$LeadOwner.append(`<option value='${val}'">${key}</option>`);
+        }.bind(this));
+
         this.$Closing.children().remove();
         $.each(this.StaffInfo, function (key, val) {
             this.$Closing.append(`<option value='${val}'">${key}</option>`);
         }.bind(this));
 
+        this.$Mobile.on("change", function (e) {
+            let newMob = $(e.target).val().trim();
+            if (this.Mode === 1 && this.CustomerInfo["genurl"] === newMob) {
+                this.isMobileUnique = true;
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "../CustomPage/UniqueCheck",
+                    data: { Key: "genurl", Value: newMob },
+                    success: function (result) {
+                        if (!result) {
+                            EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+                            this.isMobileUnique = false;
+                        }
+                        else
+                            this.isMobileUnique = true;
+                    }.bind(this)
+                });
+            }           
+        }.bind(this));
+
         if (this.Mode === 1) {
             this.fillCustomerData();
+            this.isMobileUnique = true;
         }
         else if (this.Mode === 0) {
             this.$EnDate.val(moment(new Date()).format("DD-MM-YYYY"));
             this.$Closing.val("");
-            this.$Doctor.val("");
+            this.$Doctor.val("");  
+            this.$LeadOwner.val("");
+            this.isMobileUnique = false;
         }
+    }
+
+    this.onClickSmallImage = function (evt) {
+        $("#mdlViewImage").modal('show');
+        if (!this.isSlickInit) {
+            this.isSlickInit = true;
+            $('#modal-imgs-cont').slick({
+                lazyLoad: 'ondemand',//progressive
+                //dots: true,
+                prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
+                nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
+            });
+            
+            $('#modal-imgs-cont').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
+                $(currentSlide).attr('src', '/images/imagenotfound.svg');
+            });
+        }
+        let idx = parseInt($(evt.target).attr("data-idx"));
+        $('#modal-imgs-cont').slick('slickGoTo', idx);
+    }.bind(this)
+
+    this.initAttachTab = function () {
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href") // activated tab
+            if (target === "#menuAttach" && this.ImageIdList.length !== 0) {
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$FirstImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== 0) {
+                this.imgCrntPage = 0;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$PrevImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== 0) {
+                this.imgCrntPage-- ;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$NextImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== parseInt((this.ImageIdList.length-1) / this.imgPageSize)) {
+                this.imgCrntPage++ ;
+                this.drawImagePage();
+            }
+        }.bind(this));
+
+        this.$LastImgPage.on("click", function (evt) {
+            if (this.imgCrntPage !== parseInt((this.ImageIdList.length-1) / this.imgPageSize)) {
+                this.imgCrntPage = parseInt((this.ImageIdList.length-1) / this.imgPageSize);
+                this.drawImagePage();
+            }
+        }.bind(this));
+    }
+
+    this.drawImagePage = function () {
+        $("#divAllImg").children().remove();
+        for (let i = this.imgCrntPage * this.imgPageSize; i < this.ImageIdList.length && i < (this.imgCrntPage+1) * this.imgPageSize; i++) {
+            this.appendSmallImage(i, this.ImageIdList[i]);
+        }
+        $("#divAllImg").children().find('.Eb_Image').Lazy();
+        this.$ImgPageNo.text("Page " + (this.imgCrntPage + 1) + " of " + (parseInt((this.ImageIdList.length - 1) / this.imgPageSize) + 1));
+        $(".list-item-img").on("click", this.onClickSmallImage);
+
+        $(".list-item-img").Lazy({
+            // your configuration goes here
+            scrollDirection: 'vertical',
+            effect: 'fadeIn',
+            visibleOnly: true,
+            onError: function (element) {
+                element.attr('src', '/images/imagenotfound.svg');
+            }
+        });
+
+    }
+
+    this.appendSmallImage = function (indx, imgid) {
+        $("#divAllImg").append(`
+            <div class="img_wrapper">
+                <div class="img_wrapper_img">
+                    <img src="/images/spin.gif" data-src="/images/small/${imgid}.jpg" data-idx="${indx}" data-id="${imgid}" class="img-responsive list-item-img" />
+                </div>
+            </div>`);
     }
 
     this.initDrake = function () {
@@ -240,9 +362,13 @@
         this.$FlUpDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$FlUpFolDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
-        this.$FlUpSave.on("click", function () {    
+        this.$FlUpSave.on("click", function () {
+            if (this.AccId === 0) {
+                EbMessage("show", { Message: 'Save Customer Information then try to add Followup', AutoHide: true, Background: '#aa0000' });
+                return;
+            }
             if (this.$FlUpDate.val() === "" || this.$FlUpStatus.val() === "" || this.$FlUpFolDate.val() === "" || this.$FlUpComnt.val() === "") {
-                EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: '#aa0000' });
+                EbMessage("show", { Message: 'Validation Faild. Fill all Fields.', AutoHide: true, Background: '#aa0000' });
                 return;
             }
 
@@ -323,6 +449,10 @@
         }.bind(this));
 
         this.$BlngSave.on("click", function () {
+            if (this.AccId === 0) {
+                EbMessage("show", { Message: 'Save Customer Information then try to add Billing Details', AutoHide: true, Background: '#aa0000' });
+                return;
+            }
             if (this.$BlngDate.val() === "" || this.$BlngTotal.val() === "" || this.$BlngRcvd.val() === "" || this.$BlngBal.val() === "" || this.$BlngPaid.val() === "" || this.$BlngMode.val() === "" || this.$BlngClrDate.val() === "" || this.$BlngNarr.val() === "") {
                 EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: '#aa0000' });
                 return;
@@ -484,28 +614,28 @@
         }.bind(this));
     }
 
-    this.initAttachModal = function () {
+    //this.initAttachModal = function () {
 
-        $("#mdlAttach").on('shown.bs.modal', function (e) {
-            this.ImgRefdiff = [];
-            for (let i = 0; i < imgup.ImageRefIds.length; i++)
-                this.ImgRefdiff.push(imgup.ImageRefIds[i]);
-        }.bind(this));
+        //$("#mdlAttach").on('shown.bs.modal', function (e) {
+        //    this.ImgRefdiff = [];
+        //    for (let i = 0; i < imgup.ImageRefIds.length; i++)
+        //        this.ImgRefdiff.push(imgup.ImageRefIds[i]);
+        //}.bind(this));
 
-        $("#mdlAttach").on('hidden.bs.modal', function (e) {
-            let ImgRefNew = [];
-            for (let i = 0; i < imgup.ImageRefIds.length; i++) {
-                if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
-                    $("#menuAttach").append(`<div class="img_wrapper">
-                                                <div class="img_wrapper_img">
-                                                    <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
-                                                </div>
-                                            </div>`);
-                }
-            }
-        }.bind(this));
+        //$("#mdlAttach").on('hidden.bs.modal', function (e) {
+        //    let ImgRefNew = [];
+        //    for (let i = 0; i < imgup.ImageRefIds.length; i++) {
+        //        if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
+        //            $("#menuAttach").append(`<div class="img_wrapper">
+        //                                        <div class="img_wrapper_img">
+        //                                            <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
+        //                                        </div>
+        //                                    </div>`);
+        //        }
+        //    }
+        //}.bind(this));
 
-    }
+    //}
 
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["firmcode"]);
@@ -516,7 +646,7 @@
         this.$Dob.val(this.CustomerInfo["dob"]);
         this.$Dob.trigger("change");
         //this.$Age.val(this.CustomerInfo["age"]);
-        //this.$Sex.val(this.CustomerInfo[""]);
+        this.$Sex.val(this.CustomerInfo["sex"]);///////////
         this.$Phone.val(this.CustomerInfo["genphoffice"]);
         this.$Profession.val(this.CustomerInfo["profession"]);
         this.$Email.val(this.CustomerInfo["genemail"]);
@@ -524,9 +654,9 @@
         this.$CrntCity.val(this.CustomerInfo["clcity"]);
         this.$CrntCountry.val(this.CustomerInfo["clcountry"]);
         this.$HomeCity.val(this.CustomerInfo["city"]);
-        //this.$HomeDistrict.val(this.CustomerInfo[""]);
+        this.$HomeDistrict.val(this.CustomerInfo["district"]);///////
         this.$Service.val(this.CustomerInfo["typeofcustomer"].trim().toLowerCase());
-        //this.$LeadOwner.val(this.CustomerInfo[""]);
+        this.$LeadOwner.val(this.CustomerInfo["leadowner"]);/////////
         this.$SourceCategory.val(this.CustomerInfo["sourcecategory"]);
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
@@ -536,13 +666,13 @@
             $("#divCustomerDp").children().remove();
             $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
-                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive" style="max-height: 135px; max-width: 130px;" onerror="this.src = '/images/imagenotfound.svg';" />
                     </div>`);  
         }
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
         this.$Doctor.val(this.CustomerInfo["consultingdoctor"]);
-        //this.$ProbableMonth.val(this.CustomerInfo[""]);
+        this.$ProbableMonth.val(this.CustomerInfo["probmonth"]);/////////
         this.$TotalGrafts.val(this.CustomerInfo["noofgrafts"]);
         this.$TotalRate.val(this.CustomerInfo["totalrate"]);
         this.$NoOfPRP.val(this.CustomerInfo["prpsessions"]);
@@ -550,9 +680,9 @@
         this.$Closing.val(this.CustomerInfo["closing"]);
         this.$Nature.val(this.CustomerInfo["nature"]);
 
-        this.$CostCenter.prop("disabled", true);
-        this.$EnDate.prop("disabled", true);
-        this.$Mobile.prop("disabled", true);
+        //this.$CostCenter.prop("disabled", true);
+        //this.$EnDate.prop("disabled", true);
+        //this.$Mobile.prop("disabled", true);
 
     }
 
@@ -563,9 +693,10 @@
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveCustomer",
-                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(imgup.ImageRefIds)},
+                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(uploadedImgRefList)},
                 success: function (result) {
                     if (result) {
+                        uploadedImgRefList = [];//cleared Image ref id list
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
                         if (this.Mode === 0)
                             window.location.search = 'ac=' + result;
@@ -578,14 +709,18 @@
                 }.bind(this)
             });
         }
-        else {
-            EbMessage("show", { Message: 'Validation Faild. Check all Fields.', AutoHide: true, Background: '#aa0000' });
-        }
     }
 
     this.validateAndPrepareData = function () {
-        if (this.$Name.val() === "" || this.$Mobile.val() === "")
+        if (this.$Name.val() === "" || this.$Mobile.val() === "") {
+            EbMessage("show", { Message: 'Name and Mobile are Required Fields', AutoHide: true, Background: '#aa0000' });
             return false;
+        }
+        if (!this.isMobileUnique) {
+            EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+            return false;
+        }
+            
 
         this.OutDataList = [];
         this.OutDataList.push({ Key: "accountid", Value: this.AccId });
@@ -597,7 +732,7 @@
         this.pushToList("name", this.$Name.val());
         this.pushToList("dob", this.$Dob.val());
         //this.pushToList("age", this.$Age.val());
-        //this.pushToList("", this.$Sex.val());
+        this.pushToList("sex", this.$Sex.val());////////////
         this.pushToList("genphoffice", this.$Phone.val());
         this.pushToList("profession", this.$Profession.val());
         this.pushToList("genemail", this.$Email.val());
@@ -605,22 +740,22 @@
         this.pushToList("clcity", this.$CrntCity.val());
         this.pushToList("clcountry", this.$CrntCountry.val());
         this.pushToList("city", this.$HomeCity.val());
-        //this.pushToList("", this.$HomeDistrict.val());
+        this.pushToList("district", this.$HomeDistrict.val());/////////////
         this.pushToList("typeofcustomer", $("#selService option:selected").text());
-        //this.pushToList("", this.$LeadOwner.val());
+        this.pushToList("leadowner", this.$LeadOwner.val());////////////
         this.pushToList("sourcecategory", this.$SourceCategory.val());
         this.pushToList("subcategory", this.$SubCategory.val());
         this.pushToList("consultation", this.$Consultation.val());
         this.pushToList("picsrcvd", this.$PicReceived.val());
 
         this.pushToList("consdate", this.$ConsultedDate.val());
-        this.pushToList("consultingdoctor", (this.$Doctor.val() || "0"));
-        //this.pushToList("", this.$ProbableMonth.val());
+        this.pushToList("consultingdoctor", this.$Doctor.val());
+        this.pushToList("probmonth", this.$ProbableMonth.val());/////////
         this.pushToList("noofgrafts", this.$TotalGrafts.val());
         this.pushToList("totalrate", this.$TotalRate.val());
         this.pushToList("prpsessions", this.$NoOfPRP.val());
-        this.pushToList("consultingfeepaid", (this.$FeePaid.val() || "False"));
-        this.pushToList("closing", (this.$Closing.val() || "0"));
+        this.pushToList("consultingfeepaid", this.$FeePaid.val());
+        this.pushToList("closing", this.$Closing.val());
         this.pushToList("nature", $("#selNature option:selected").text());
 
         //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });  
@@ -632,7 +767,10 @@
     }
 
     this.pushToList = function (_key, _val) {
-        _val = _val.trim();
+        if (_val === null || _val === undefined)
+            return;
+        if (typeof (_val) === "string")
+            _val = _val.trim();
         if (_val !== "")
             this.OutDataList.push({ Key: _key, Value: _val });
     }

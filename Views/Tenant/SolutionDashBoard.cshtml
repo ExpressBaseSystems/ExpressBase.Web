@@ -9,8 +9,24 @@
 <script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
 @{
     var EbConnections = ViewBag.Connections;
-    string sso_dev = ViewBag.Protocol + ViewBag.SolutionInfo.EsolutionId + "-dev." + ViewBag.Domain + "/Ext/SwitchContext";
-    string sso_user = ViewBag.Protocol + ViewBag.SolutionInfo.EsolutionId + "." + ViewBag.Domain + "/Ext/SwitchContext";
+    string proto = string.Empty;
+
+    if (ViewBag.Env == "Development")
+    {
+        proto = "http://";
+    }
+    else if (ViewBag.Env == "Staging")
+    {
+        proto = "https://";
+    }
+    else if (ViewBag.Env == "Production")
+    {
+        proto = "https://";
+    }
+
+
+    string sso_dev = proto + ViewBag.SolutionInfo.EsolutionId + "-dev." + ViewBag.Domain + "/Ext/SwitchContext";
+    string sso_user = proto + ViewBag.SolutionInfo.EsolutionId + "." + ViewBag.Domain + "/Ext/SwitchContext";
     string dbdefault = (EbConnections.DataDbConnection.IsDefault) ? "(Default)" : "";
     string filedefault = "";
     if (EbConnections.FilesDbConnection != null)

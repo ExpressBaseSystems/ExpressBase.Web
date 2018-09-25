@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -85,7 +86,15 @@ namespace ExpressBase.Web.Controllers
                 TempData["Message"] = string.Format("{0} invalid!", Email);
                 return RedirectToAction("ForgotPassword");
             }
+        }
 
+        private bool isAvailSolution(string url)
+        {
+            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_CONNECTION_REDIS_KEY, url.Split(CharConstants.DASH)[0]));
+            if (resp.Any())
+                return true;
+            else
+                return false;
         }
 
         public IActionResult UsrSignIn()
@@ -93,22 +102,27 @@ namespace ExpressBase.Web.Controllers
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
 
-            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
-            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
-
-            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+            if (isAvailSolution(hostParts[0]))
             {
-                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+                string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+
+                if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
                 {
-                    if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
-                        return Redirect(RoutingConstants.MYAPPLICATIONS);
-                    else
-                        return RedirectToAction("UserDashboard", "TenantUser");
+                    if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    {
+                        if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                            return Redirect(RoutingConstants.MYAPPLICATIONS);
+                        else
+                            return RedirectToAction("UserDashboard", "TenantUser");
+                    }
                 }
+                ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+                ViewBag.ErrorMsg = TempData["ErrorMessage"];
+                return View();
             }
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            ViewBag.ErrorMsg = TempData["ErrorMessage"];
-            return View();
+            else
+                return Redirect("/StatusCode/404");
         }
 
         public IActionResult TenantSignIn(string Email)
@@ -565,8 +579,6 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.errormsg = wse.Message;
                 return Redirect(RoutingConstants.EXTERROR);
             }
-
-
         }
 
         public IActionResult VerificationStatus()
@@ -651,6 +663,12 @@ namespace ExpressBase.Web.Controllers
                 catch (Exception e) { Console.WriteLine("Exception:" + e.ToString()); }
             }
             return string.Empty;
+        }
+
+        [HttpGet("Public/AppStore")]
+        public IActionResult AppStorePublic()
+        {
+            return View();
         }
     }
 }

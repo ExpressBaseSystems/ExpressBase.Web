@@ -15,6 +15,7 @@ namespace ExpressBase.Web2
                 .UseKestrel(options=> {
                     options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);
                     options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(5);
+                    options.Limits.MinResponseDataRate = null;
                 })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseUrls(urls: "http://*:41500/")

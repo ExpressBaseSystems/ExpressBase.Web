@@ -10,8 +10,8 @@
 
 <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" />
-<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap2-toggle.min.css" />
+<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap2-toggle.min.js"></script>
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
@@ -60,7 +60,7 @@
     <div class="row">
         <div class="col-md-3" style="padding-right: 0px">
             <div id="profimage" style="text-align:center;">
-                <img src="~/images/proimg.jpg" id="imgprofimage" data-toggle="modal" data-target="#eb-cropie-mod" style="height:100px" />
+                <img src="~/images/proimg.jpg" id="imgprofimage" style="height:100px" />
             </div>
             <div class="form-group">
                 <label style="font-family: open sans; font-weight: 300;">Full Name</label>
@@ -235,20 +235,10 @@
             </div>
             <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
             @*<button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;">Create</button>*@
-            <label id="lblMessage" style="color:red;padding-left: 36px;display:none;font-family: open sans; font-weight: 500;">  </label>
-
-            <div class="prof-setup-cropie">
-                <div class="modal fade" id="eb-cropie-mod" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog">
-                        <div class="loginmodal-container cropie" id="cropsection">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <label id="lblMessage" style="color:red;padding-left: 36px;display:none;font-family: open sans; font-weight: 500;">  </label>         
         </div>
     </div>
 </div>
-
 
 <div id="MU_ChangePwdModal" class="modal fade" role="dialog">
     <div class="modal-dialog" style="width:445px">
@@ -368,7 +358,7 @@
             EnableTag: false,
             EnableCrop: true,
             Context: "dp",//if single and crop
-            ResizeViewPort: true //if single and crop
+            ResizeViewPort: false //if single and crop
         });
 
         d.uploadSuccess = function(fileid){

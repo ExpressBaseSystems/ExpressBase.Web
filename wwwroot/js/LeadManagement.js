@@ -97,7 +97,7 @@
     //DECLARED DATA
     this.OutDataList = [];
     this.drake = null;
-    this.imgCrntPage = 0;//current page const
+    this.imgCrntPage = 0;//current page
     this.imgPageSize = 10;//page size const
     this.isMobileUnique = null;
     this.isSlickInit = false;
@@ -382,6 +382,11 @@
                 type: "POST",
                 url: "../CustomPage/SaveFollowup",
                 data: { FollowupInfo: JSON.stringify(fdbkObj) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    this.$FlUpSave.prop("disabled", false);
+                    this.$FlUpSave.children().hide();
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
                 success: function (result) {
                     this.$FlUpSave.prop("disabled", false);
                     this.$FlUpSave.children().hide();
@@ -481,6 +486,11 @@
                 type: "POST",
                 url: "../CustomPage/SaveBilling",
                 data: { BillingInfo: JSON.stringify(billingObj) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    this.$BlngSave.prop("disabled", false);
+                    this.$BlngSave.children().hide();
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
                 success: function (result) {
                     this.$BlngSave.prop("disabled", false);
                     this.$BlngSave.children().hide();
@@ -693,7 +703,12 @@
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveCustomer",
-                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(uploadedImgRefList)},
+                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(uploadedImgRefList) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                    $("#btnSave").prop("disabled", false);
+                    $("#eb_common_loader").EbLoader("hide");
+                },
                 success: function (result) {
                     if (result) {
                         uploadedImgRefList = [];//cleared Image ref id list

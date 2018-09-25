@@ -241,6 +241,9 @@ namespace ExpressBase.Web.Controllers
             {
                 dfq.ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(qlty) };
 
+
+                this.FileClient.Timeout = new TimeSpan(0, 5, 0);
+
                 dfs = this.FileClient.Get<DownloadFileResponse>(dfq);
 
                 if (dfs.StreamWrapper != null)

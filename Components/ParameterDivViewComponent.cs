@@ -27,12 +27,12 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog paramDiv, User _user, Eb_Solution _sol)
+        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog FilterDialogObj, User _user, Eb_Solution _sol)
         {
-            if (paramDiv != null)
+            if (FilterDialogObj != null)
             {              
 
-                foreach (EbControl control in paramDiv.Controls)
+                foreach (EbControl control in FilterDialogObj.Controls)
                 {
                     if (control is EbSimpleSelect)
                     {
@@ -43,15 +43,16 @@ namespace ExpressBase.Web.Components
                         (control as EbUserLocation).InitFromDataBase(this.ServiceClient, _user, _sol);
                     }
                 }
-                ViewBag.HtmlHead = paramDiv.GetHead();
-                ViewBag.HtmlBody = paramDiv.GetHtml();
+                ViewBag.HtmlHead = FilterDialogObj.GetHead();
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(FilterDialogObj as EbControlContainer, BuilderType.FilterDialog);
+                ViewBag.HtmlBody = FilterDialogObj.GetHtml();
 
-                ViewBag.FilterObj = Common.EbSerializers.Json_Serialize(paramDiv);
+                ViewBag.FilterObj = Common.EbSerializers.Json_Serialize(FilterDialogObj);
 
                 var serializerSettings = new JsonSerializerSettings();
                 serializerSettings.TypeNameHandling = TypeNameHandling.All;
                 serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                ViewBag.FilterObj = JsonConvert.SerializeObject(paramDiv, serializerSettings);
+                ViewBag.FilterObj = JsonConvert.SerializeObject(FilterDialogObj, serializerSettings);
             }
 
             return View();

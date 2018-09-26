@@ -7,6 +7,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
@@ -18,13 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {
@@ -34,10 +34,10 @@ namespace ExpressBase.Web.Controllers
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
 
-        public ExtController(IServiceClient _client, IRedisClient _redis)
-            : base(_client, _redis) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc)
+            : base(_client, _redis, _cxtacc) { }
 
-        [HttpGet]
+		[HttpGet]
         public IActionResult ResetPassword()
         {
 
@@ -85,7 +85,15 @@ namespace ExpressBase.Web.Controllers
                 TempData["Message"] = string.Format("{0} invalid!", Email);
                 return RedirectToAction("ForgotPassword");
             }
+        }
 
+        private bool isAvailSolution(string url)
+        {
+            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_CONNECTION_REDIS_KEY, url.Split(CharConstants.DASH)[0]));
+            if (resp.Any())
+                return true;
+            else
+                return false;
         }
 
         public IActionResult UsrSignIn()
@@ -93,22 +101,27 @@ namespace ExpressBase.Web.Controllers
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
 
-            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
-            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
-
-            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+            if (isAvailSolution(hostParts[0]))
             {
-                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+                string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+
+                if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
                 {
-                    if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
-                        return Redirect(RoutingConstants.MYAPPLICATIONS);
-                    else
-                        return RedirectToAction("UserDashboard", "TenantUser");
+                    if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    {
+                        if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                            return Redirect(RoutingConstants.MYAPPLICATIONS);
+                        else
+                            return RedirectToAction("UserDashboard", "TenantUser");
+                    }
                 }
+                ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+                ViewBag.ErrorMsg = TempData["ErrorMessage"];
+                return View();
             }
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            ViewBag.ErrorMsg = TempData["ErrorMessage"];
-            return View();
+            else
+                return Redirect("/StatusCode/404");
         }
 
         public IActionResult TenantSignIn(string Email)
@@ -344,19 +357,34 @@ namespace ExpressBase.Web.Controllers
             return false;
         }
 
-        [HttpPost]
+		
+
+		[HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
             var host = this.HttpContext.Request.Host;
             string[] hostParts = host.Host.Split(CharConstants.DOT);
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
+			string _redirectUrl = null;
 
-            string _redirectUrl = null;
+			//var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
+			var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
+			//Console.WriteLine("first ip" + ip);
+			//Console.WriteLine("second ip" + t.ToString());
+			Console.WriteLine("-------------------------------------------------");
+			IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
+			foreach(var ttt in heserver.AddressList)
+				Console.WriteLine("From IP AddressList  ---> " + ttt.ToString());
+			Console.WriteLine("-------------------------------------------------");
 
-            //CHECK WHETHER SOLUTION ID IS VALID
+			Console.WriteLine(this.httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
+			//var ipt = heserver.AddressList[2].ToString();
+			foreach (var zzz in this.HttpContext.Request.Headers)
+				Console.WriteLine("Key : " + zzz.Key + "Value : " + zzz.Value);
 
-            bool bOK2AttemptLogin = true;
+			//CHECK WHETHER SOLUTION ID IS VALID
+			bool bOK2AttemptLogin = true;
 
             this.DecideConsole(hostParts[0], out whichconsole);
 

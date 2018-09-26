@@ -313,20 +313,38 @@
     };
 
     this.LogoImageUpload = function () {
-        var logoCrp = new cropfy({
-            Container: 'onboarding_logo',
-            Toggle: '#log-upload-btn',
-            isUpload: true,  //upload to cloud
-            enableSE: true, //enable server event
-            Browse: true,  //browse image
-            Result: 'base64',
-            Type: 'logo',
-            Tid: this.Sid, //if type is logo
-            Preview: "#oB_logo-prev"
-        });
-        logoCrp.getObjId = function (file) {
+        //var logoCrp = new cropfy({
+        //    Container: 'onboarding_logo',
+        //    Toggle: '#log-upload-btn',
+        //    isUpload: true,  //upload to cloud
+        //    enableSE: true, //enable server event
+        //    Browse: true,  //browse image
+        //    Result: 'base64',
+        //    Type: 'logo',
+        //    Tid: this.Sid, //if type is logo
+        //    Preview: "#oB_logo-prev"
+        //});
 
-        }.bind(this);
+        var logoCrp = new EbFileUpload({
+            Type: "image",
+            Toggle: "#log-upload-btn",
+            TenantId: "ViewBagcid",
+            SolutionId: this.Sid,
+            Container: "onboarding_logo",
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.info',
+            EnableTag: false,
+            EnableCrop: true,
+            Context: "logo",//if single and crop
+            ResizeViewPort: false //if single and crop
+        });
+
+        logoCrp.uploadSuccess = function (fileid) {
+            EbMessage("show", { Message: "Profile Image Uploaded Successfully" });
+        }
+        logoCrp.windowClose = function () {
+            //EbMessage("show", { Message: "window closed", Background: "red" });
+        }
     };
 
     this.init = function () {

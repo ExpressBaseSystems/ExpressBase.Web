@@ -42,7 +42,7 @@ var z = 100;
 var EbSelect = function (ctrl, options) {
     //parameters   
     this.ComboObj = ctrl;
-    this.name = ctrl.name;
+    this.name = ctrl.ebSid_CtxId;
     this.dsid = ctrl.dataSourceId;
     this.idField = "name";
     if (!(Object.keys(ctrl.valueMember).includes("name")))//////////////////
@@ -386,17 +386,17 @@ var EbSelect = function (ctrl, options) {
         console.log("DISPLAY MEMBER 0 a=" + this.Vobj.displayMembers[0]);
     };
 
-    this.ajaxDataSrcfn = function (dd) {
-        $('#' + this.name + '_loadingdiv').hide();
-        this.clmAdjst = this.clmAdjst + 1;
-        if (this.clmAdjst < 3)
-            setTimeout(function () {
-                $('#' + this.name + 'tbl').DataTable().columns.adjust().draw();
-                console.log('le().columns.adjust()');
-            }, 520);
-        setTimeout(function () { this.Vobj.updateCk(); }.bind(this), 1);
-        return dd.data;
-    };
+    //this.ajaxDataSrcfn = function (dd) {
+    //    $('#' + this.name + '_loadingdiv').hide();
+    //    this.clmAdjst = this.clmAdjst + 1;
+    //    if (this.clmAdjst < 3)
+    //        setTimeout(function () {
+    //            $('#' + this.name + 'tbl').DataTable().columns.adjust().draw();
+    //            console.log('le().columns.adjust()');
+    //        }, 520);
+    //    setTimeout(function () { this.Vobj.updateCk(); }.bind(this), 1);
+    //    return dd.data;
+    //};
 
     this.toggleIndicatorBtn = function (e) {
         this.Vobj.toggleDD();

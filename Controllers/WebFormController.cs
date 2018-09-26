@@ -22,12 +22,18 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("WebForm", refId);
         }
 
+        public int InsertWebformData(string TableName, object ValObj, string RefId, int RowId)
+        {
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, ValObj = ValObj, RowId = RowId });
+            return 0;
+        }
+
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try
             {
-                var x = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields ,Id = Id });
-                return x.RowAffected;
+                InsertIntoBotFormTableResponse resp = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields ,Id = Id });
+                return resp.RowAffected;
             }
             catch (Exception ex)
             {
@@ -43,17 +49,34 @@ namespace ExpressBase.Web.Controllers
                 EbDataSet DataSet = ServiceClient.Post<EbDataSet>(new GetRowDataRequest { RefId = refid, RowId = rowid });
                 GetRowDataResponse dataset = new GetRowDataResponse();
 
-                //dataset.RowValues = DataSet.Tables[0].Rows.ToArray();
+                dataset.RowValues = getDataSetAsRowCollection(DataSet);
 
 
 
-                return new GetRowDataResponse();
+                return dataset;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in InsertBotDetails. Message: " + ex.Message);
                 return 0;
             }
+        }
+
+        private List<object> getDataSetAsRowCollection(EbDataSet dataset)
+        {
+            List<object> rowColl = new List<object>();
+            foreach (EbDataTable dataTable in dataset.Tables)
+            {
+                foreach (EbDataRow dataRow in dataTable.Rows)
+                {                    
+                    foreach (object item in dataRow)
+                    {
+                        rowColl.Add(item);
+                    }
+                }
+            }
+
+            return rowColl;
         }
     }
 }

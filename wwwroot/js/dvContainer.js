@@ -45,13 +45,13 @@ var DvContainerObj = function (settings) {
         $extCont: $(".ppcont")
     });
 
-    this.stickBtn = new EbStickButton({
-        $wraper: $(".filterCont"),
-        $extCont: $(".filterCont"),
-        icon: "fa-filter",
-        dir: "left",
-        label: "Parameters",
-    });
+    //this.stickBtn = new EbStickButton({
+    //    $wraper: $(".filterCont"),
+    //    $extCont: $(".filterCont"),
+    //    icon: "fa-filter",
+    //    dir: "left",
+    //    label: "Parameters",
+    //});
 
     this.init = function () {
         $("#btnGo" + counter).off("click").on("click", this.btnGoClick.bind(this));

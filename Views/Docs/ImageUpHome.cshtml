@@ -1,8 +1,8 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" />
-<script src="~/js/EbControls/EbFileUpload.js" type="text/javascript"></script>
+@*<link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" />
+<script src="~/js/EbControls/EbFileUpload.js" type="text/javascript"></script>*@
 <button class="ebbtn eb_btnblue" style="margin-top:10%;" id="toggle">Test</button>
 
 @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
@@ -143,17 +143,23 @@
 </script>*@
 
 <script>
-    new EbFileUpload({
+    var d = new EbFileUpload({
         Type:"image",
         Toggle: "#toggle",
         TenantId:"@ViewBag.cid",
         SolutionId: "@ViewBag.SolnId",
         Container: "uploadtest",
-        Multiple: false,
+        Multiple: true,
         ServerEventUrl: 'https://se.eb-test.info',
         EnableTag: true,
         EnableCrop: true,
         Context: "dp",//if single and crop
         ResizeViewPort: true //if single and crop
     });
+    d.uploadSuccess = function(fileid){
+        EbMessage("show", { Message: fileid});
+    }
+    d.windowClose = function () {
+        EbMessage("show", { Message: "window closed",Background: "red" });
+    }
 </script>

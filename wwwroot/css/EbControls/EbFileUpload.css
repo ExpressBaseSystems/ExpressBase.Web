@@ -7,9 +7,14 @@
     text-align: unset !important;
     padding: 10px 13px;
 }
-.upl-container-outer .modal-header{
+.upl-container-outer .modal-header {
     padding: 10px 13px;
+    position: relative;
 }
+    .upl-container-outer .modal-header .upl-loader {
+        bottom:0;
+        left:0;
+    }
 .upl-container-outer .modal-footer button {
     margin: 0 5px;
 }
@@ -105,7 +110,7 @@
         position: absolute;
         width: 100%;
         text-align: center;
-        top: 36%;
+        top: 48%;
         font-size: 20px;
         color: #ccc;
     }

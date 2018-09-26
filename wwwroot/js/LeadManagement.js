@@ -97,7 +97,7 @@
     //DECLARED DATA
     this.OutDataList = [];
     this.drake = null;
-    this.imgCrntPage = 0;//current page const
+    this.imgCrntPage = 0;//current page
     this.imgPageSize = 10;//page size const
     this.isMobileUnique = null;
     this.isSlickInit = false;
@@ -175,7 +175,7 @@
         this.initFeedBackModal();
         this.initBillingModal();
         this.initSurgeryModal();
-        this.initAttachModal();
+        //this.initAttachModal();
 
         this.initAttachTab();
         this.initDrake();
@@ -245,6 +245,10 @@
                 prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
                 nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
             });
+            
+            $('#modal-imgs-cont').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
+                $(currentSlide).attr('src', '/images/imagenotfound.svg');
+            });
         }
         let idx = parseInt($(evt.target).attr("data-idx"));
         $('#modal-imgs-cont').slick('slickGoTo', idx);
@@ -295,13 +299,24 @@
         $("#divAllImg").children().find('.Eb_Image').Lazy();
         this.$ImgPageNo.text("Page " + (this.imgCrntPage + 1) + " of " + (parseInt((this.ImageIdList.length - 1) / this.imgPageSize) + 1));
         $(".list-item-img").on("click", this.onClickSmallImage);
+
+        $(".list-item-img").Lazy({
+            // your configuration goes here
+            scrollDirection: 'vertical',
+            effect: 'fadeIn',
+            visibleOnly: true,
+            onError: function (element) {
+                element.attr('src', '/images/imagenotfound.svg');
+            }
+        });
+
     }
 
     this.appendSmallImage = function (indx, imgid) {
         $("#divAllImg").append(`
             <div class="img_wrapper">
                 <div class="img_wrapper_img">
-                    <img src="/images/spin.gif" data-src="/images/small/${imgid}.jpg" data-idx="${indx}" data-id="${imgid}" class="img-responsive Eb_Image list-item-img" />
+                    <img src="/images/spin.gif" data-src="/images/small/${imgid}.jpg" data-idx="${indx}" data-id="${imgid}" class="img-responsive list-item-img" />
                 </div>
             </div>`);
     }
@@ -367,6 +382,11 @@
                 type: "POST",
                 url: "../CustomPage/SaveFollowup",
                 data: { FollowupInfo: JSON.stringify(fdbkObj) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    this.$FlUpSave.prop("disabled", false);
+                    this.$FlUpSave.children().hide();
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
                 success: function (result) {
                     this.$FlUpSave.prop("disabled", false);
                     this.$FlUpSave.children().hide();
@@ -466,6 +486,11 @@
                 type: "POST",
                 url: "../CustomPage/SaveBilling",
                 data: { BillingInfo: JSON.stringify(billingObj) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    this.$BlngSave.prop("disabled", false);
+                    this.$BlngSave.children().hide();
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
                 success: function (result) {
                     this.$BlngSave.prop("disabled", false);
                     this.$BlngSave.children().hide();
@@ -599,28 +624,28 @@
         }.bind(this));
     }
 
-    this.initAttachModal = function () {
+    //this.initAttachModal = function () {
 
-        $("#mdlAttach").on('shown.bs.modal', function (e) {
-            this.ImgRefdiff = [];
-            for (let i = 0; i < imgup.ImageRefIds.length; i++)
-                this.ImgRefdiff.push(imgup.ImageRefIds[i]);
-        }.bind(this));
+        //$("#mdlAttach").on('shown.bs.modal', function (e) {
+        //    this.ImgRefdiff = [];
+        //    for (let i = 0; i < imgup.ImageRefIds.length; i++)
+        //        this.ImgRefdiff.push(imgup.ImageRefIds[i]);
+        //}.bind(this));
 
-        $("#mdlAttach").on('hidden.bs.modal', function (e) {
-            let ImgRefNew = [];
-            for (let i = 0; i < imgup.ImageRefIds.length; i++) {
-                if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
-                    $("#menuAttach").append(`<div class="img_wrapper">
-                                                <div class="img_wrapper_img">
-                                                    <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
-                                                </div>
-                                            </div>`);
-                }
-            }
-        }.bind(this));
+        //$("#mdlAttach").on('hidden.bs.modal', function (e) {
+        //    let ImgRefNew = [];
+        //    for (let i = 0; i < imgup.ImageRefIds.length; i++) {
+        //        if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
+        //            $("#menuAttach").append(`<div class="img_wrapper">
+        //                                        <div class="img_wrapper_img">
+        //                                            <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
+        //                                        </div>
+        //                                    </div>`);
+        //        }
+        //    }
+        //}.bind(this));
 
-    }
+    //}
 
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["firmcode"]);
@@ -651,7 +676,7 @@
             $("#divCustomerDp").children().remove();
             $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
-                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive Eb_Image" style="max-height: 135px; max-width: 130px;" />
+                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive" style="max-height: 135px; max-width: 130px;" onerror="this.src = '/images/imagenotfound.svg';" />
                     </div>`);  
         }
 
@@ -678,9 +703,15 @@
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveCustomer",
-                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(imgup.ImageRefIds)},
+                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(uploadedImgRefList) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                    $("#btnSave").prop("disabled", false);
+                    $("#eb_common_loader").EbLoader("hide");
+                },
                 success: function (result) {
                     if (result) {
+                        uploadedImgRefList = [];//cleared Image ref id list
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
                         if (this.Mode === 0)
                             window.location.search = 'ac=' + result;

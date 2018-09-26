@@ -10,7 +10,7 @@
     @{
         string console = ViewBag.WhichConsole == "dc" ? "Dev" : "User";
 
-        string LogoUrl = "/static/logo/logo_" + ViewBag.SolutionId + ".png";
+        string logo = "/images/logo/" + ViewBag.SolutionId + ".png";
     }
 </script>
 <section class="eb_login">
@@ -20,7 +20,7 @@
                 <div class="loader_top" id="loader_profile"></div>
                 <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
                     <div class="login-sec-image text-center">
-                        <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="T_logo Eb_Image" />
+                        <img src="~/images/your_company_logo.png" data-src=@logo class="T_logo Eb_Image" />
                     </div>
                     <h1 class="text-center">Sign In as @console</h1><br>
                     <div class="form-group mb-25">
@@ -37,14 +37,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="checkbox icheck remembrpw text-right">
-                            <label>
-                                <input type="checkbox" id="loginrem"> Remember Me
-                            </label>
-                            @*<div class="text-right nopadding">
-                                    <a href="~/Ext/ForgotPassword">Forgot password?</a>
-                                </div>*@
-                        </div>
                         <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit'>
                             Sign In <i class="fa fa-spinner fa-spin login_spiner"></i>
                         </button>

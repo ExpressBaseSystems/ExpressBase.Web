@@ -33,6 +33,7 @@
     this.txtExtension = $("#txtExtension");
 
     this.chkboxHide = $("#chkboxHide");
+    //CHANGE PWD
     this.divChangePassword = $("#divChangePassword");
     this.btnChangePassword = $("#btnChangePassword");
     this.ChangePwdModal = $("#MU_ChangePwdModal");
@@ -41,6 +42,15 @@
     this.pwdNewConfirm = $("#pwdNewConfirm");
     this.lblPwdChngMsg = $("#lblPwdChngMsg");
     this.btnUpdatePwd = $("#btnUpdatePwd");
+    //RESET PWD
+    this.divResetPassword = $("#divResetPassword");
+    this.btnResetPassword = $("#btnResetPassword");
+    this.ResetPwdModal = $("#MU_ResetPwdModal");
+    this.pwdResetNew = $("#pwdResetNew");
+    this.pwdResetNewConfirm = $("#pwdResetNewConfirm");
+    this.lblPwdResetMsg = $("#lblPwdResetMsg");
+    this.btnResetPwd = $("#btnResetPwd");
+
 
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
@@ -69,7 +79,11 @@
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
         this.btnChangePassword.on("click", this.initChangePwdModal.bind(this));
         this.btnUpdatePwd.on('click', this.updatePassword.bind(this));
-        
+
+        //RESET PWD
+        this.btnResetPassword.on("click", this.initResetPwdModal.bind(this));
+        this.btnResetPwd.on('click', this.resetPassword.bind(this));
+
         this.pwdOld.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdOld));
         this.pwdNew.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNew));
         this.pwdNewConfirm.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNewConfirm));
@@ -128,6 +142,7 @@
             //this.btnCreateUser.text("Update");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
+            $("#imgprofimage").attr("src", "/images/dp/" + this.itemId + ".png");
             if (this.whichMode === 3) {
                 this.menuBarObj.setName("My Profile");
                 this.divChangePassword.css("display", "block");
@@ -136,6 +151,7 @@
                 this.chkboxHide.parent().show();
                 this.chkboxHide.parent().prev().show();
                 $("#divStatus").show();
+                this.divResetPassword.css("display", "block");
             }
                 
             this.isInfoValidEmail = true;
@@ -508,6 +524,11 @@
         this.lblPwdChngMsg.text("");
         this.ChangePwdModal.modal('show');
     }
+    this.initResetPwdModal = function () {
+        this.pwdResetNew.val('');
+        this.pwdResetNewConfirm.val('');
+        this.ResetPwdModal.modal('show');
+    }
 
     this.updatePassword = function () {
         if (this.pwdOld.val().length < 8 || this.pwdNew.val().length < 8 || this.pwdNewConfirm.val().length < 8 || this.pwdNew.val() !== this.pwdNewConfirm.val())
@@ -528,6 +549,30 @@
                 else
                     alert("Something went wrong");
                 $(this.btnUpdatePwd.children()[0]).hide();
+            }.bind(this)
+        });
+    }
+
+    this.resetPassword = function () {
+        if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val() && this.pwdResetNew.val().length < 8) {
+            alert("Password mismach or length too short");
+            return;
+        }
+        $(this.btnResetPwd.children()[0]).show();
+        $.ajax({
+            type: "POST",
+            url: "../Security/ResetUserPassword",
+            data: { userid: this.itemId, username: this.userinfo["email"], NewPwd: this.pwdResetNew.val() },
+            success: function (status) {
+                if (status) {
+                    alert("Password Changed Successfully");
+                    this.pwdResetNew.val("");
+                    this.pwdResetNewConfirm.val("");
+                    this.ResetPwdModal.modal('hide');
+                }
+                else
+                    alert("Something went wrong");
+                $(this.btnResetPwd.children()[0]).hide();
             }.bind(this)
         });
     }

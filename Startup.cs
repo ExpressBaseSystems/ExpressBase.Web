@@ -3,6 +3,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Web.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
@@ -61,10 +62,22 @@ namespace ExpressBase.Web2
             {
                 options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
             });
-            services.AddSingleton<AreaRouter>();
+			services.Configure<ForwardedHeadersOptions>(options =>
+			{
+				options.ForwardedHeaders =
+					ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+			});
 
-            // Added - uses IOptions<T> for your settings.
-            services.AddOptions();
+			services.Configure<ForwardedHeadersOptions>(options =>
+			{
+				options.ForwardLimit = 5;
+				options.ForwardedForHeaderName = "Eb-X-Forwarded-For";
+			});
+
+			services.AddSingleton<AreaRouter>();
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+			// Added - uses IOptions<T> for your settings.
+			services.AddOptions();
 
 
 
@@ -102,12 +115,14 @@ namespace ExpressBase.Web2
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
-            });
+            //app.UseForwardedHeaders(new ForwardedHeadersOptions
+            //{
+            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+            //});
 
-            app.UseApplicationInsightsRequestTelemetry();
+			app.UseForwardedHeaders();
+
+			app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())
             {

@@ -46,7 +46,7 @@ var EbBasicDataTable = function (Option) {
         if(this.EbObject === null)
             this.EbObject = new EbTableVisualization(this.tableId);
         this.EbObject.IsPaging = Option.IsPaging || false;
-        this.$dtLoaderCont = $("<div id='dtloadercont' class='dt-loader-cont'></div>");
+        this.$dtLoaderCont = $(`<div id='${this.tableId}dtloadercont' class='dt-loader-cont'></div>`);
         this.$dtLoaderCont.insertBefore($("#" + this.contId));
         if (this.data === null)
             this.call2FD();
@@ -355,10 +355,8 @@ var EbBasicDataTable = function (Option) {
         if (this.login == "uc") {
             dvcontainerObj.currentObj.data = dd;
             this.MainData = dd;
-        }
-
+        }        
         return dd.data;
-        this.$dtLoaderCont.EbLoader("hide");
     };
 
     this.compareFilterValues = function () {

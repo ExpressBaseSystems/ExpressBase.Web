@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag, User _user, Eb_Solution _sol)
+        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag, User _user, Eb_Solution _sol, string contextId)
         {
             var dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -45,8 +45,10 @@ namespace ExpressBase.Web.Components
             if (dvobj != null)
             {
                 dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
+                EbTableVisualization TableVisObj = getDVObject(dvobj);
+                EbControlContainer.SetContextId(TableVisObj.EbDataSource.FilterDialog, contextId);
                 //if (flag)
-                    ViewBag.data = getDVObject(dvobj);
+                    ViewBag.data = TableVisObj;
                 //else
                 //    ViewBag.data = dvobj;
             }

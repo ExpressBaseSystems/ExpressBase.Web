@@ -15,8 +15,8 @@
         uobj = {};
 
         $.each(this.filterObj.Controls.$values, function (k, cObj) {
+            var $input = $("#" + cObj.EbSid_CtxId);
             if (cObj.ObjType === 'Date') {
-                var $input = $("[name=" + cObj.Name + "]");
                 if (cObj.showDateAs_ === 1) {
                     $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
                     $input.MonthPicker('option', 'ShowOn', 'both');
@@ -32,8 +32,6 @@
             //    var $input = $("[name=" + cObj.Name + "]");
             //}
             else if (cObj.ObjType === 'ComboBox') {
-                var $input = $("[name=" + cObj.Name + "]");
-
                 Vue.component('v-select', VueSelect.VueSelect);
                 Vue.config.devtools = true;
 
@@ -60,7 +58,7 @@
 
             Object.defineProperty(this.formObject, cObj.Name, {
                 get: function () {
-                    return $('#' + cObj.Name);
+                    return $('#' + cObj.EbSid_CtxId);
                 }.bind(this),
             });
         }.bind(this));
@@ -82,21 +80,11 @@
     }
 
     this.getValue = function (ctrlObj) {
-        if (ctrlObj.ObjType === 'TextBox' || ctrlObj.ObjType === 'Date') {
-            return ($('#' + ctrlObj.Name).val());
-        }
-        else if (ctrlObj.ObjType === 'RadioGroup') {
-            return ($("input[name='" + ctrlObj.Name + "']:checked").val());
-        }
+        return ctrlObj.getValue();
     }
 
     this.setValue = function (ctrlObj, val) {
-        if (ctrlObj.ObjType === 'TextBox' || ctrlObj.ObjType === 'Date') {
-            $('#' + ctrlObj.Name).val(val);
-        }
-        else if (ctrlObj.ObjType === 'RadioGroup') {
-            $("input[name='" + ctrlObj.Name + "'][value='" + val + "']").prop('checked', true);
-        }
+        ctrlObj.setValue(val);
     }
 
     this.bindFuncsToDom = function () {
@@ -106,11 +94,11 @@
             if (cObj.OnChange && cObj.OnChange !== '') {
                 this.onChangeExeFuncs[cObj.Name] = new Function("form", atob(cObj.OnChange));
                 if (cObj.ObjType === 'TextBox') {
-                    $("body").on("change", ('#' + cObj.Name), this.ctrlValueChanged.bind(this, cObj.Name));
+                    $("body").on("change", ('#' + cObj.EbSid_CtxId), this.ctrlValueChanged.bind(this, cObj.Name));
                 }
                 else if (cObj.ObjType === 'RadioGroup') {
                     this.onChangeExeFlag = true;
-                    $("body").on("change", "input[name='" + cObj.Name + "']", this.ctrlValueChanged.bind(this, cObj.Name));
+                    $("body").on("change", "input[name='" + cObj.EbSid_CtxId + "']", this.ctrlValueChanged.bind(this, cObj.Name));
                 }
             }
         }.bind(this));
@@ -128,9 +116,9 @@
         $.each(this.filterObj.Controls.$values, function (k, cObj) {
             if (cObj.ObjType === 'RadioGroup' && cObj.onChange && cObj.onChange !== '') {
                 if (cObj.DefaultValue !== "")
-                    $("body input[name='" + cObj.Name + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
+                    $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
                 else
-                    $("body input[name='" + cObj.Name + "']:eq(0)").prop("checked", true).trigger("change");
+                    $("body input[name='" + cObj.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
                 return false;
             }
         });

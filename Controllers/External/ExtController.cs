@@ -368,10 +368,16 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
 			string _redirectUrl = null;
 
-			var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
-			var t = this.HttpContext.Request.Headers["XForwardedFor"];
-			Console.WriteLine("first ip" + ip);
-			Console.WriteLine("second ip" + t.ToString());
+			//var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
+			//var t = this.HttpContext.Request.Headers["XForwardedFor"];
+			//Console.WriteLine("first ip" + ip);
+			//Console.WriteLine("second ip" + t.ToString());
+			Console.WriteLine("-------------------------------------------------");
+			IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
+			foreach(var ttt in heserver.AddressList)
+				Console.WriteLine("From IP AddressList  ---> " + ttt.ToString());
+			//var ipt = heserver.AddressList[2].ToString();
+
 
 			//CHECK WHETHER SOLUTION ID IS VALID
 			bool bOK2AttemptLogin = true;

@@ -41,27 +41,24 @@ var z = 100;
 //var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
 var EbSelect = function (ctrl, options) {
     //parameters   
+    this.getFilterValuesFn = options.getFilterValuesFn;
     this.ComboObj = ctrl;
-    this.name = ctrl.ebSid_CtxId;
-    this.dsid = ctrl.dataSourceId;
+    this.name = ctrl.EbSid_CtxId;
+    this.dsid = ctrl.DataSourceId;
     this.idField = "name";
-    if (!(Object.keys(ctrl.valueMember).includes("name")))//////////////////
+    if (!(Object.keys(ctrl.ValueMember).includes("name")))//////////////////
         this.idField = "columnName";////////////////////////
-    this.vmName = ctrl.valueMember[this.idField]; //ctrl.vmName;
+    this.vmName = ctrl.ValueMember[this.idField]; //ctrl.vmName;
 
-    /// temporary for filterdialog
-    if (!Array.isArray(ctrl.displayMembers))
-        this.dmNames = ctrl.displayMembers.$values.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
-    else
-        this.dmNames = ctrl.displayMembers.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
+    this.dmNames = ctrl.DisplayMembers.$values.map(function (obj) { return obj[this.idField]; }.bind(this));//['acmaster1_xid', 'acmaster1_name', 'tdebit']; //ctrl.dmNames;
 
-    this.maxLimit = (ctrl.maxLimit === 0) ? 9999999999999999999999 : ctrl.maxLimit;
-    this.minLimit = ctrl.minLimit;//ctrl.minLimit;
-    this.multiSelect = (ctrl.maxLimit > 1);
-    this.required = ctrl.required;//ctrl.required;
+    this.maxLimit = (ctrl.MaxLimit === 0) ? 9999999999999999999999 : ctrl.MaxLimit;
+    this.minLimit = ctrl.MinLimit;//ctrl.minLimit;
+    this.multiSelect = (ctrl.MaxLimit > 1);
+    this.required = ctrl.Required;//ctrl.required;
     this.servicestack_url = "";//ctrl.servicestack_url;
     //this.vmValues = (ctrl.vmValues !== null) ? ctrl.vmValues : [];
-    this.dropdownHeight = (ctrl.dropdownHeight === 0) ? "400" : ctrl.dropdownHeight;
+    this.dropdownHeight = (ctrl.DropdownHeight === 0) ? "400" : ctrl.DropdownHeight;
 
 
     //local variables
@@ -73,10 +70,10 @@ var EbSelect = function (ctrl, options) {
     this.clmAdjst = 0;
 
 
-    ctrl.DisplayMembers = [];
-    ctrl.ValueMembers = [];
-    this.valueMembers = ctrl.ValueMembers;
-    this.localDMS = ctrl.DisplayMembers;
+    ctrl._DisplayMembers = [];
+    ctrl._ValueMembers = [];
+    this.valueMembers = ctrl._ValueMembers;
+    this.localDMS = ctrl._DisplayMembers;
 
     this.$curEventTarget = null;
     this.IsDatatableInit = false;
@@ -121,7 +118,7 @@ var EbSelect = function (ctrl, options) {
         var mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         if (!this.IsDatatableInit) {
-            if (this.ComboObj.minSeachLength > searchVal.length)
+            if (this.ComboObj.MinSeachLength > searchVal.length)
                 return;
             var searchBy = " = ";
             if (mapedFieldType === "string")
@@ -134,8 +131,8 @@ var EbSelect = function (ctrl, options) {
         else {
             $filterInp.val($e.val());
             this.Vobj.DDstate = true;
-            EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
-            if (searchVal.trim() === "" || this.ComboObj.minSeachLength > searchVal.length)
+            EbMakeValid(`#${this.ComboObj.Name}Container`, `#${this.ComboObj.Name}Wraper`);
+            if (searchVal.trim() === "" || this.ComboObj.MinSeachLength > searchVal.length)
                 return;
             this.datatable.Api.ajax.reload();
         }
@@ -191,11 +188,12 @@ var EbSelect = function (ctrl, options) {
     this.InitDT = function () {
 
         var searchVal = this.getMaxLenVal();
-        if ( this.ComboObj.minSeachLength > searchVal.length) {
-            //alert(`enter minimum ${this.ComboObj.minSeachLength} charecter in searchBox`);
-            EbMakeInvalid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`, `Enter minimum ${this.ComboObj.minSeachLength} character(s) to search`);
+        let _name = this.ComboObj.Name;
+        if (this.ComboObj.MinSeachLength > searchVal.length) {
+            //alert(`enter minimum ${this.ComboObj.MinSeachLength} charecter in searchBox`);
+            EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
             setTimeout(function () {
-                EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
+                EbMakeValid(`#${_name}Container`, `#${_name}Wraper`);
             }.bind(this), 2000000);
             return;
         }
@@ -208,9 +206,9 @@ var EbSelect = function (ctrl, options) {
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
         o.showSerialColumn = true;
-        o.showCheckboxColumn = this.ComboObj.multiSelect;
+        o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.ComboObj.dropdownHeight + "px";
+        o.scrollHeight = this.ComboObj.DropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -222,9 +220,10 @@ var EbSelect = function (ctrl, options) {
         o.keys = true;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
-        o.columns = this.ComboObj.columns;//////////////////////////////////////////////////////
+        o.columns = this.ComboObj.Columns;//////////////////////////////////////////////////////
         if (options)
             o.wc = options.wc;
+        o.getFilterValuesFn = this.getFilterValuesFn;
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
@@ -405,7 +404,7 @@ var EbSelect = function (ctrl, options) {
     this.getSelectedRow = function () {
         console.log(100);
         var res = [];
-        $.each(this.ComboObj.tempValue, function (idx, item) {
+        $.each(this.ComboObj.TempValue, function (idx, item) {
             var obj = {};
             var rowData = this.datatable.getRowDataByUid(item);
             var temp = this.datatable.sortedColumns;
@@ -419,7 +418,7 @@ var EbSelect = function (ctrl, options) {
             res.push(obj);
         }.bind(this));
         console.log(res);
-        this.ComboObj.selectedRow = res;
+        this.ComboObj.SelectedRow = res;
         return res;
     }.bind(this);
 
@@ -455,7 +454,7 @@ var EbSelect = function (ctrl, options) {
 
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
-        this.ComboObj.tempValue = [...this.Vobj.valueMembers]
+        this.ComboObj.TempValue = [...this.Vobj.valueMembers]
         $("#" + this.name).val(this.Vobj.valueMembers);
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
@@ -468,7 +467,7 @@ var EbSelect = function (ctrl, options) {
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
 
-        $("#" + this.ComboObj.name).attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
+        $("#" + this.ComboObj.Name).attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
         this.getSelectedRow();
 
         if (VMs.length === 0)
@@ -512,7 +511,7 @@ var EbSelect = function (ctrl, options) {
             this.V_hideDD();
         else {
             searchVal = this.getMaxLenVal();
-            if (searchVal === "" || this.ComboObj.minSeachLength > searchVal.length)
+            if (searchVal === "" || this.ComboObj.MinSeachLength > searchVal.length)
                 return;
             else
                 this.V_showDD();
@@ -539,7 +538,7 @@ var EbSelect = function (ctrl, options) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
-            EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
+            EbMakeValid(`#${this.ComboObj.Name}Container`, `#${this.ComboObj.Name}Wraper`);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
@@ -603,7 +602,7 @@ var EbSelect = function (ctrl, options) {
     };
 
     this.tagCloseBtnHand = function (e) {
-        if (this.ComboObj.multiSelect)
+        if (this.ComboObj.MultiSelect)
             $(this.DTSelector + ' [type=checkbox][value=' + this.Vobj.valueMembers.splice(delid(), 1) + ']').prop("checked", false);
         else
             this.Vobj.valueMembers.splice(delid(), 1);
@@ -642,17 +641,18 @@ var EbSelect = function (ctrl, options) {
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
         var container1 = $('#' + this.name + 'Container');
+        let _name = this.ComboObj.Name;
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                EbMakeInvalid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
+                EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
-                    EbMakeInvalid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
+                    EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`);
                 }
                 else {
-                    EbMakeValid(`#${this.ComboObj.name}Container`, `#${this.ComboObj.name}Wraper`);
+                    EbMakeValid(`#${_name}Container`, `#${_name}Wraper`);
                 }
 
             }

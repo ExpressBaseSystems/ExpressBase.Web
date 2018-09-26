@@ -33,6 +33,7 @@ var EbBasicDataTable = function (Option) {
     this.columnSearch = Option.columnSearch || [];
     this.data = Option.data || null;
     this.headerDisplay = Option.headerDisplay;
+    this.getFilterValues = Option.getFilterValuesFn;
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -259,7 +260,7 @@ var EbBasicDataTable = function (Option) {
         this.columnSearch = this.repopulate_filter_arr();
         dq.TFilters = this.columnSearch;
         //if (this.filterValues.length === 0)
-            this.filterValues = this.getFilterValues("filter");
+            this.filterValues = this.getFilterValues();
         dq.Params = this.filterValues;
         dq.rowData = this.rowData;
         if (this.orderColl.length > 0)
@@ -275,36 +276,36 @@ var EbBasicDataTable = function (Option) {
         return dq;
     };
 
-    this.getFilterValues = function (from) {
-        this.filterChanged = false;
-        var fltr_collection = [];
-        var FdCont = ".fd";
-        var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
-        if (paramstxt != undefined) {
-            var params = paramstxt.split(',');
-            if (params.length > 0) {
-                $.each(params, function (i, id) {
-                    var v = null;
-                    var dtype = $(FdCont + ' #' + id).attr('data-ebtype');
-                    if (dtype === '6')
-                        v = $(FdCont + ' #' + id).val().substring(0, 10);
-                    else if (dtype === '3')
-                        v = $(FdCont).children().find("[name=" + id + "]:checked").val();
-                    else {
-                        v = $(FdCont + ' #' + id).val();
-                        if (dtype === '16' && !(isNaN(v))) {
-                            v = parseInt(v);
-                            dtype = 8;
-                        }
-                    }
+    //this.getFilterValues = function () {
+    //    this.filterChanged = false;
+    //    var fltr_collection = [];
+    //    var FdCont = ".fd";
+    //    var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
+    //    if (paramstxt != undefined) {
+    //        var params = paramstxt.split(',');
+    //        if (params.length > 0) {
+    //            $.each(params, function (i, id) {
+    //                var v = null;
+    //                var dtype = $(FdCont + ' #' + id).attr('data-ebtype');
+    //                if (dtype === '6')
+    //                    v = $(FdCont + ' #' + id).val().substring(0, 10);
+    //                else if (dtype === '3')
+    //                    v = $(FdCont).children().find("[name=" + id + "]:checked").val();
+    //                else {
+    //                    v = $(FdCont + ' #' + id).val();
+    //                    if (dtype === '16' && !(isNaN(v))) {
+    //                        v = parseInt(v);
+    //                        dtype = 8;
+    //                    }
+    //                }
 
-                    if (v !== "" || v !== null)
-                        fltr_collection.push(new fltr_obj(dtype, id, v));
-                });
-            }
-        }
-        return fltr_collection;
-    };
+    //                if (v !== "" || v !== null)
+    //                    fltr_collection.push(new fltr_obj(dtype, id, v));
+    //            });
+    //        }
+    //    }
+    //    return fltr_collection;
+    //};
 
     this.filterDisplay = function () {
         if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").children().hasClass("filter_Display")) {
@@ -360,7 +361,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.compareFilterValues = function () {
-        var filter = this.getFilterValues("compare");
+        var filter = this.getFilterValues();
         if (focusedId !== undefined) {
             $.each(filter, function (i, obj) {
                 if (obj.Value !== dvcontainerObj.dvcol[focusedId].filterValues[i].Value) {

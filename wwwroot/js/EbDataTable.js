@@ -199,7 +199,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(subDivId).focus();
 
         this.PcFlag = "False";
-        //this.FilterDialog = FilterDialog;
+        this.FilterDialog = FilterDialog;
     }.bind(this);
 
     this.CloseParamDiv = function () {

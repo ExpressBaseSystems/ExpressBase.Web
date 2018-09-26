@@ -42,24 +42,9 @@
         $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
     }.bind(this);
 
-    this.getFlatContControls = function () {
-        let coll = [];
-        this.ProcRecur(this.FormObj, coll);
-        return coll;
-    };
-
-    this.ProcRecur = function (src_obj, dest_coll) {
-        $.each(src_obj.Controls.$values, function (i, obj) {
-            if (obj.IsContainer) {
-                dest_coll.push(obj);
-                this.ProcRecur(obj, dest_coll);
-            }
-        }.bind(this));
-    };
-
     this.init = function () {
         this.$saveBtn.on("click", this.saveForm.bind(this));
-        let allFlatControls = this.getFlatContControls().concat(this.flatControls);
+        let allFlatControls = getFlatContControls(this.FormObj).concat(this.flatControls);
 
         $.each(allFlatControls, function (k, cObj) {
             this.updateCtrlUI(cObj);

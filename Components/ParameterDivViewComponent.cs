@@ -52,7 +52,6 @@ namespace ExpressBase.Web.Components
                 var serializerSettings = new JsonSerializerSettings();
                 serializerSettings.TypeNameHandling = TypeNameHandling.All;
                 serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                ViewBag.FilterObj = JsonConvert.SerializeObject(FilterDialogObj, serializerSettings);
             }
 
             return View();

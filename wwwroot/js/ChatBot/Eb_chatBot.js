@@ -644,7 +644,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             inpVal = this.curCtrl.selectedRow;
             console.log("inp");
             console.log(inpVal);
-            this.curDispValue = this.curCtrl.DisplayMembers[Object.keys(this.curCtrl.DisplayMembers)[0]].toString().replace(/,/g, ", ");
+            this.curDispValue = this.curCtrl._DisplayMembers[Object.keys(this.curCtrl._DisplayMembers)[0]].toString().replace(/,/g, ", ");
         }
         else if (this.curCtrl.ObjType === "InputGeoLocation") {
             inpVal = $("#" + $input[0].id + "lat").val() + ", " + $("#" + $input[0].id + "long").val();

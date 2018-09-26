@@ -58,7 +58,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag, string contextId)
         {
-            var dvObject = EbSerializers.Json_Deserialize(dvobj);
+            EbDataVisualization dvObject = EbSerializers.Json_Deserialize(dvobj);
             dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
             Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = solu, contextId = contextId });

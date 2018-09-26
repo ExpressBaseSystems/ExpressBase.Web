@@ -263,6 +263,58 @@ function gettypefromString(str) {
     else if (str == "Date")
         return "5";
 }
+
+function JsonToEbControls(ctrlsContainer) {
+    $.each(ctrlsContainer.Controls.$values, function (i, obj) {
+        ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);
+        if (obj.IsContainer) {
+            dest_coll.push(obj);
+            AddFnsToEbControls(ctrlsContainer);
+        }
+    }.bind(this));
+};
+
+function getFlatContControls(formObj) {
+    let coll = [];
+    RecurFlatContControls(formObj, coll);
+    return coll;
+};
+
+function RecurFlatContControls(src_obj, dest_coll) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        if (obj.IsContainer) {
+            dest_coll.push(obj);
+            RecurFlatContControls(obj, dest_coll);
+        }
+    });
+};
+
+
+function getFlatControls(formObj) {
+    let coll = [];
+    RecurFlatControls(formObj, coll);
+    return coll;
+};
+
+function RecurFlatControls(src_obj, dest_coll) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        dest_coll.push(obj);
+        if (obj.IsContainer) {
+            getFlatControls(obj, dest_coll);
+        }
+    });
+};
+
+function getValsFromForm(formObj) {
+    let fltr_collection = [];
+    $.each(getFlatControls(formObj), function (i, obj) {
+        var value = obj.getValue();
+        if (value.trim() !== "" || value !== null)
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+    });
+    return fltr_collection;
+}
+
 //JQuery extends
 (function ($) {
     $.fn.closestInner = function (filter) {
@@ -277,6 +329,7 @@ function gettypefromString(str) {
         return $found.first(); // Return first match of the collection
     }
 })(jQuery);
+
 //JQuery extends ends
 
 //Object.defineProperty(window, "store", {

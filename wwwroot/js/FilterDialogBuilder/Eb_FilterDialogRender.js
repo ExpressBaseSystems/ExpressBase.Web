@@ -13,11 +13,10 @@
     this.initFilterDialogCtrls = function () {
         console.log("===========================");
         uobj = {};
-        $.each(this.filterObj.controls.$values, function (k, cObj) {
-            cObj = new ControlOps[cObj.objType](cObj);
-            uobj[cObj.name] = cObj;
-            if (cObj.objType === 'Date') {
-                var $input = $("[name=" + cObj.name + "]");
+
+        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+            if (cObj.ObjType === 'Date') {
+                var $input = $("[name=" + cObj.Name + "]");
                 if (cObj.showDateAs_ === 1) {
                     $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
                     $input.MonthPicker('option', 'ShowOn', 'both');
@@ -29,85 +28,95 @@
                     $input.next().children('i').off('click').on('click', function () { $input.datetimepicker('show'); });
                 }
             }
-            //else if (cObj.objType === 'Numeric') {
-            //    var $input = $("[name=" + cObj.name + "]");
+            //else if (cObj.ObjType === 'Numeric') {
+            //    var $input = $("[name=" + cObj.Name + "]");
             //}
-            else if (cObj.objType === 'ComboBox') {
-                var $input = $("[name=" + cObj.name + "]");
+            else if (cObj.ObjType === 'ComboBox') {
+                var $input = $("[name=" + cObj.Name + "]");
 
                 Vue.component('v-select', VueSelect.VueSelect);
                 Vue.config.devtools = true;
 
-                $(`#${cObj.name}_loading-image`).hide();
+                $(`#${cObj.Name}_loading-image`).hide();
                 //MakeCaps(cObj);
-                var EbCombo = new EbSelect(cObj);
-            }            
+                var EbCombo = new EbSelect(cObj, {
+                    getFilterValuesFn: this.getFilterVals
+                });
+            }
+        }.bind(this));
+
+        JsonToEbControls(this.filterObj);
+        $.each(this.filterObj.Controls.$values, function (k, cObj) {//////////////////////
         }.bind(this));
     };
 
-    this.initFormObject2 = function () {
-        $.each(this.filterObj.controls.$values, function (k, cObj) {
-            this.formObject[cObj.name] = cObj;
+    this.getFilterVals = function () {
+        return getValsFromForm(this.filterObj);
+    }.bind(this);
 
-            Object.defineProperty(this.formObject, cObj.name, {
+    this.initFormObject2 = function () {
+        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+            this.formObject[cObj.Name] = cObj;
+
+            Object.defineProperty(this.formObject, cObj.Name, {
                 get: function () {
-                    return $('#' + cObj.name);
+                    return $('#' + cObj.Name);
                 }.bind(this),
             });
         }.bind(this));
     };
 
     this.initFormObject = function () {
-        $.each(this.filterObj.controls.$values, function (k, cObj) {
-            this.formObject[cObj.name] = cObj;
+        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+            this.formObject[cObj.Name] = cObj;
 
-            Object.defineProperty(this.formObject, cObj.name, {
+            Object.defineProperty(this.formObject, cObj.Name, {
                 get: function () {
-                    return this.getValue(this.filterObj.controls.$values[k]);
+                    return this.getValue(this.filterObj.Controls.$values[k]);
                 }.bind(this),
                 set: function (val) {
-                    this.setValue(this.filterObj.controls.$values[k], val);
+                    this.setValue(this.filterObj.Controls.$values[k], val);
                 }.bind(this)
             });
         }.bind(this));
     }
 
     this.getValue = function (ctrlObj) {
-        if (ctrlObj.objType === 'TextBox' || ctrlObj.objType === 'Date') {
-            return ($('#' + ctrlObj.name).val());
+        if (ctrlObj.ObjType === 'TextBox' || ctrlObj.ObjType === 'Date') {
+            return ($('#' + ctrlObj.Name).val());
         }
-        else if (ctrlObj.objType === 'RadioGroup') {
-            return ($("input[name='" + ctrlObj.name + "']:checked").val());
+        else if (ctrlObj.ObjType === 'RadioGroup') {
+            return ($("input[name='" + ctrlObj.Name + "']:checked").val());
         }
     }
 
     this.setValue = function (ctrlObj, val) {
-        if (ctrlObj.objType === 'TextBox' || ctrlObj.objType === 'Date') {
-            $('#' + ctrlObj.name).val(val);
+        if (ctrlObj.ObjType === 'TextBox' || ctrlObj.ObjType === 'Date') {
+            $('#' + ctrlObj.Name).val(val);
         }
-        else if (ctrlObj.objType === 'RadioGroup') {
-            $("input[name='" + ctrlObj.name + "'][value='" + val + "']").prop('checked', true);
+        else if (ctrlObj.ObjType === 'RadioGroup') {
+            $("input[name='" + ctrlObj.Name + "'][value='" + val + "']").prop('checked', true);
         }
     }
 
     this.bindFuncsToDom = function () {
         this.onChangeExeFlag = false;
-        $.each(this.filterObj.controls.$values, function (k, cObj) {
+        $.each(this.filterObj.Controls.$values, function (k, cObj) {
             //creating onChangeExeFuncs and binding to dom elements
-            if (cObj.onChange && cObj.onChange !== '') {
-                this.onChangeExeFuncs[cObj.name] = new Function("form", atob(cObj.onChange));
-                if (cObj.objType === 'TextBox') {
-                    $("body").on("change", ('#' + cObj.name), this.ctrlValueChanged.bind(this, cObj.name));
+            if (cObj.OnChange && cObj.OnChange !== '') {
+                this.onChangeExeFuncs[cObj.Name] = new Function("form", atob(cObj.OnChange));
+                if (cObj.ObjType === 'TextBox') {
+                    $("body").on("change", ('#' + cObj.Name), this.ctrlValueChanged.bind(this, cObj.Name));
                 }
-                else if (cObj.objType === 'RadioGroup') {
+                else if (cObj.ObjType === 'RadioGroup') {
                     this.onChangeExeFlag = true;
-                    $("body").on("change", "input[name='" + cObj.name + "']", this.ctrlValueChanged.bind(this, cObj.name));
+                    $("body").on("change", "input[name='" + cObj.Name + "']", this.ctrlValueChanged.bind(this, cObj.Name));
                 }
             }
         }.bind(this));
 
         //if (this.onChangeExeFlag)
-            this.initialLoad();
+        this.initialLoad();
 
     }
 
@@ -116,17 +125,17 @@
     }
 
     this.initialLoad = function () {
-        $.each(this.filterObj.controls.$values, function (k, cObj) {
-            if (cObj.objType === 'RadioGroup' && cObj.onChange && cObj.onChange !== '') {
-                if(cObj.defaultValue !== "")
-                    $("body input[name='" + cObj.name + "'][value='" + cObj.defaultValue+"']").prop("checked", true).trigger("change");
+        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+            if (cObj.ObjType === 'RadioGroup' && cObj.onChange && cObj.onChange !== '') {
+                if (cObj.DefaultValue !== "")
+                    $("body input[name='" + cObj.Name + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
                 else
-                    $("body input[name='" + cObj.name + "']:eq(0)").prop("checked", true).trigger("change");
+                    $("body input[name='" + cObj.Name + "']:eq(0)").prop("checked", true).trigger("change");
                 return false;
             }
         });
-        //if (this.filterObj.width > 150)
-        //    this.$filterBox.parent().css("width", this.filterObj.width + "px");
+        //if (this.filterObj.Width > 150)
+        //    this.$filterBox.parent().css("width", this.filterObj.Width + "px");
     }
 
     this.init();

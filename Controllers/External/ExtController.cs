@@ -7,6 +7,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
@@ -363,12 +364,15 @@ namespace ExpressBase.Web.Controllers
             string[] hostParts = host.Host.Split(CharConstants.DOT);
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
+			string _redirectUrl = null;
 
-            string _redirectUrl = null;
+			var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
+			var t = this.HttpContext.Request.Headers["XForwardedFor"];
+			Console.WriteLine("first ip" + ip);
+			Console.WriteLine("second ip" + t.ToString());
 
-            //CHECK WHETHER SOLUTION ID IS VALID
-
-            bool bOK2AttemptLogin = true;
+			//CHECK WHETHER SOLUTION ID IS VALID
+			bool bOK2AttemptLogin = true;
 
             this.DecideConsole(hostParts[0], out whichconsole);
 

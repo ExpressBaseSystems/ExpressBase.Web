@@ -56,15 +56,15 @@ namespace ExpressBase.Web.Controllers
         }
 
 
-        public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag)
+        public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag, string contextId)
         {
             var dvObject = EbSerializers.Json_Deserialize(dvobj);
             dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
             Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = solu });
+            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = solu, contextId = contextId });
         }
 
-       
+
         //[HttpPost]//copied to boti - febin
         //public IActionResult dvView1(string dvobj)
         //{
@@ -121,7 +121,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (request.DataVizObjString != null)
                 request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
-            if(request.CurrentRowGroup != null)
+            if (request.CurrentRowGroup != null)
                 (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
             request.DataVizObjString = null;
             request.UserInfo = this.LoggedInUser;

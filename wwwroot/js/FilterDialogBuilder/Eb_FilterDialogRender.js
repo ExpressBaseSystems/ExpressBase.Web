@@ -1,6 +1,6 @@
-﻿var Eb_FilterDialogRender = function (fObj, $filterBox) {
+﻿var Eb_FilterDialogRender = function (fObj) {
+    console.log("kitty--------------------------------------------");
     this.filterObj = fObj;
-    this.$filterBox = $filterBox;
     this.formObject = {};
     this.onChangeExeFuncs = {};
 
@@ -10,8 +10,12 @@
         this.bindFuncsToDom();
     }
 
-    this.initFilterDialogCtrls = function() {        
+    this.initFilterDialogCtrls = function () {
+        console.log("===========================");
+        uobj = {};
         $.each(this.filterObj.controls.$values, function (k, cObj) {
+            cObj = new ControlOps[cObj.objType](cObj);
+            uobj[cObj.name] = cObj;
             if (cObj.objType === 'Date') {
                 var $input = $("[name=" + cObj.name + "]");
                 if (cObj.showDateAs_ === 1) {
@@ -121,8 +125,8 @@
                 return false;
             }
         });
-        if (this.filterObj.width > 150)
-            this.$filterBox.parent().css("width", this.filterObj.width + "px");
+        //if (this.filterObj.width > 150)
+        //    this.$filterBox.parent().css("width", this.filterObj.width + "px");
     }
 
     this.init();

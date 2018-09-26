@@ -34,10 +34,10 @@ namespace ExpressBase.Web.Controllers
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
 
-        public ExtController(IServiceClient _client, IRedisClient _redis)
-            : base(_client, _redis) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc)
+            : base(_client, _redis, _cxtacc) { }
 
-        [HttpGet]
+		[HttpGet]
         public IActionResult ResetPassword()
         {
 
@@ -357,7 +357,9 @@ namespace ExpressBase.Web.Controllers
             return false;
         }
 
-        [HttpPost]
+		
+
+		[HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
             var host = this.HttpContext.Request.Host;
@@ -367,15 +369,19 @@ namespace ExpressBase.Web.Controllers
 			string _redirectUrl = null;
 
 			//var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
-			//var t = this.HttpContext.Request.Headers["XForwardedFor"];
+			var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
 			//Console.WriteLine("first ip" + ip);
 			//Console.WriteLine("second ip" + t.ToString());
 			Console.WriteLine("-------------------------------------------------");
 			IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
 			foreach(var ttt in heserver.AddressList)
 				Console.WriteLine("From IP AddressList  ---> " + ttt.ToString());
-			//var ipt = heserver.AddressList[2].ToString();
+			Console.WriteLine("-------------------------------------------------");
 
+			Console.WriteLine(this.httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
+			//var ipt = heserver.AddressList[2].ToString();
+			foreach (var zzz in this.HttpContext.Request.Headers)
+				Console.WriteLine("Key : " + zzz.Key + "Value : " + zzz.Value);
 
 			//CHECK WHETHER SOLUTION ID IS VALID
 			bool bOK2AttemptLogin = true;

@@ -7,6 +7,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
@@ -25,8 +26,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
     [EnableCors("AllowSpecificOrigin")]
@@ -35,10 +34,10 @@ namespace ExpressBase.Web.Controllers
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
 
-        public ExtController(IServiceClient _client, IRedisClient _redis)
-            : base(_client, _redis) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc)
+            : base(_client, _redis, _cxtacc) { }
 
-        [HttpGet]
+		[HttpGet]
         public IActionResult ResetPassword()
         {
 
@@ -358,19 +357,34 @@ namespace ExpressBase.Web.Controllers
             return false;
         }
 
-        [HttpPost]
+		
+
+		[HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
             var host = this.HttpContext.Request.Host;
             string[] hostParts = host.Host.Split(CharConstants.DOT);
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
+			string _redirectUrl = null;
 
-            string _redirectUrl = null;
+			//var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
+			var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
+			//Console.WriteLine("first ip" + ip);
+			//Console.WriteLine("second ip" + t.ToString());
+			Console.WriteLine("-------------------------------------------------");
+			IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
+			foreach(var ttt in heserver.AddressList)
+				Console.WriteLine("From IP AddressList  ---> " + ttt.ToString());
+			Console.WriteLine("-------------------------------------------------");
 
-            //CHECK WHETHER SOLUTION ID IS VALID
+			Console.WriteLine(this.httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
+			//var ipt = heserver.AddressList[2].ToString();
+			foreach (var zzz in this.HttpContext.Request.Headers)
+				Console.WriteLine("Key : " + zzz.Key + "Value : " + zzz.Value);
 
-            bool bOK2AttemptLogin = true;
+			//CHECK WHETHER SOLUTION ID IS VALID
+			bool bOK2AttemptLogin = true;
 
             this.DecideConsole(hostParts[0], out whichconsole);
 

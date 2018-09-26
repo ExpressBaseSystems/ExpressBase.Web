@@ -3,6 +3,7 @@ using ExpressBase.Common.Constants;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using ExpressBase.Security;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack;
@@ -28,7 +29,16 @@ namespace ExpressBase.Web.BaseControllers
 
         protected User LoggedInUser { get; set; }
 
-        public EbBaseController(IServiceClient _ssclient)
+		public IHttpContextAccessor httpContextAccessor { get; set; }
+
+		public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc)
+		{
+			this.ServiceClient = _ssclient as JsonServiceClient;
+			this.Redis = _redis as RedisClient;
+			this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+		}
+
+		public EbBaseController(IServiceClient _ssclient)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
         }

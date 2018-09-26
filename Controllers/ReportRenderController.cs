@@ -58,11 +58,17 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult RenderReport2(string refid, string Params)
         {
-            List<Param> param = (Params==null)?null:JsonConvert.DeserializeObject<List<Param>>(Params);
+            List<Param> param = (Params == null) ? null : JsonConvert.DeserializeObject<List<Param>>(Params);
             Render(refid, param);
             return Pdf;
         }
-
+        public IActionResult Renderlink(string refid, string Params)
+        {
+            byte[] encodedDataAsBytes = System.Convert.FromBase64String(Params);
+            string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
+            var _pdf =RenderReport2(refid, returnValue); // visualizations logic to be implemented
+            return _pdf;
+        }
         public IActionResult RenderforBot(string refid)
         {
             Render(refid, null);

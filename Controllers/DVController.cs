@@ -55,7 +55,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-
+        public IActionResult renderlink(string _refid, string Params)
+        {
+            byte[] encodedDataAsBytes = System.Convert.FromBase64String(Params);
+            string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
+            return RedirectToAction("dv", new { refid = _refid, rowData = "", filterValues = returnValue, tabNum = 0 });
+        }
         public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag)
         {
             var dvObject = EbSerializers.Json_Deserialize(dvobj);

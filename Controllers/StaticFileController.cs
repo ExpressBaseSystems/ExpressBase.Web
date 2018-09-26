@@ -22,31 +22,27 @@ namespace ExpressBase.Web.Controllers
     {
         public StaticFileExtController(IEbStaticFileClient _sfc) : base(_sfc) { }
 
-        [HttpGet("images/logo/{filename}")]
-        public IActionResult GetLogo(string filename)
+        [HttpGet("images/logo/{solnid}")]
+        public IActionResult GetLogo(string solnid)
         {
-            filename = filename.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
-
+            solnid = solnid.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
             DownloadFileResponse dfs = null;
-
             ActionResult resp = new EmptyResult();
 
             try
             {
-                if (filename.StartsWith(StaticFileConstants.LOGO))
-                {
-                    HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
 
-                    dfs = this.FileClient.Get<DownloadFileResponse>
-                            (new DownloadFileExtRequest
-                            {
-                                FileName = filename,
-                            });
-                }
+                HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
+
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadLogoExtRequest
+                        {
+                            SolnId = solnid.Split(CharConstants.DOT)[0],
+                        });
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(solnid));
                 }
             }
             catch (Exception e)
@@ -58,7 +54,7 @@ namespace ExpressBase.Web.Controllers
 
         private string GetMime(string fname)
         {
-            return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last()];
+            return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
         }
     }
 
@@ -443,33 +439,44 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> UploadLogoAsync(string base64, string tid)
+        public async Task<int> UploadLogoAsync(int i)
         {
             UploadAsyncResponse res = new UploadAsyncResponse();
-            List<string> Tags = new List<string>() { "Logo" };
-            byte[] myFileContent;
             try
             {
+                var req = this.HttpContext.Request.Form;
                 UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new ImageMeta();
-                string base64Norm = base64.Replace("data:image/png;base64,", "");
-                myFileContent = System.Convert.FromBase64String(base64Norm);
-                uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
-                uploadImageRequest.ImageInfo.FileName = String.Format("logo_{0}.{1}", tid, uploadImageRequest.ImageInfo.FileType);
-                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
-                uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
-                uploadImageRequest.ImageInfo.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
-                uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.SolLogo;
-                uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+                uploadImageRequest.SolutionId = req["SolnId"];
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
+                    {
+                        byte[] myFileContent;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                            uploadImageRequest.ImageByte = myFileContent;
+                        }
+                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
+                        uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
+                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                        uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.SolLogo;
+                        uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
-                res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+                    }
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
-            return true;
+
+            return res.FileRefId;
         }
 
         [HttpPost]

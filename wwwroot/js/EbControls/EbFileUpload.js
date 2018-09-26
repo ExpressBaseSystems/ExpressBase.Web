@@ -287,10 +287,10 @@ class EbFileUpload {
                 break;
             }
         }
-        if (!this.Options.Multiple) {
-            if (this.Files.length === 1)
-                stat = false;
-        }
+        //if (!this.Options.Multiple) {
+        //    if (this.Files.length === 1)
+        //        stat = false;
+        //}
         return stat;
     }
 
@@ -407,6 +407,7 @@ class EbFileUpload {
         for (let k = 0; k < this.Files.length; k++) {
             let formData = new FormData(this.Files[k]);
             formData.append("File", this.Files[k]);
+            formData.append("SolnId", this.Options.SolutionId || "");
 
             $.ajax({
                 url: url,

@@ -26,8 +26,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
     [EnableCors("AllowSpecificOrigin")]

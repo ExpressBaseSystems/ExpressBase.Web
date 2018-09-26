@@ -309,7 +309,7 @@ function getValsFromForm(formObj) {
     let fltr_collection = [];
     $.each(getFlatControls(formObj), function (i, obj) {
         var value = obj.getValue();
-        if (value.trim() !== "" || value !== null)
+        if (value !== "" || value !== null)
             fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
     });
     return fltr_collection;

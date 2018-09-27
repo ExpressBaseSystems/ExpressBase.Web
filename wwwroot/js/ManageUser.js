@@ -651,6 +651,8 @@ var UserGroupJs = function (infoDict, usersList) {
     this.btnSaveAll = $("#btnSaveAll");
 
     this.usersTile = null;
+    this.ipAddTile = null;
+    this.timeAddTile = null;
 
     this.init = function () {
 
@@ -678,6 +680,20 @@ var UserGroupJs = function (infoDict, usersList) {
             this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, null, metadata2, "../Security/GetUserDetails", null, this);
         }
         //-----------------------------------------------
+
+        //------------------INIT CONSTRAINTS TILE------------------
+
+        var metadata3 = ['_simpleClose'];
+        if (this.ipAddTile === null) {
+            let options = { longTitle: "IP Address Whitelist", tileDivHeight: "200px"};
+            this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", null, null, metadata3, null, null, null, options);
+        }
+        if (this.timeAddTile === null) {
+            let options = { longTitle: "Time Whitelist", tileDivHeight: "200px" };
+            this.timeAddTile = new TileSetupJs($("#divTime"), "New Time", null, null, metadata3, null, null, null, options);
+        }
+
+        //--------------------------------------------------------
     }
     this.clickbtnSaveAll = function () {
         var dict = new Object();

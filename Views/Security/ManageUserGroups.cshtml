@@ -75,9 +75,16 @@
             <div style="padding: 0px 15px;">
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#divusers">Users</a></li>
+                    <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
                 </ul>
-                <div class="tab-content" style="">
-                    <div id="divusers" class="row tab-pane fade in active" style="padding: 0px 18px;"></div>
+                <div class="tab-content">
+                    <div id="divusers" class="tab-pane fade in active"></div>
+                    <div id="divconstraints" class="tab-pane fade">                        
+                                            
+                        <div id="divIp"></div>
+                        <div id="divTime"></div>
+                        
+                    </div>
                 </div>
             </div>
             @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
@@ -86,37 +93,21 @@
     </div>
 </div>
 
+<style>
+
+    
+</style>
 
 <script>
     $('document').ready(function () {
 
         var obj = new UserGroupJs(@_infoDict, @_userList);
-       // var userid ="";
-       // $.each($('#div2').children(), function (i, obj) {
-       //     userid += $(obj).attr("id")+ ",";
-       // });
-       //var Ids = userid.substring(0, userid.length - 1);
-       //$('#userslist').val(Ids);
-        //$.post("../TenantUser/GetRoles",
-        //         {
 
-        //         }, function (result) {
-        //             if (result) {
-        //                 document.getElementById("userroles").innerHTML = result;
-        //             }
-        //         });
-        //    $('#sendmail').change(function () {
-        //        if (!this.checked)
-        //            $('#pw').fadeIn();
-        //        else
-        //            $('#pw').fadeOut();
-        //    });
-        //    var f = true;
-        //    $('.selectpicker').on('rendered.bs.select', function (e) {
-        //        if (f)
-        //            $("#roleSel").find("span:eq(0)").text("Select Role")
-        //        f = false;
-        //    });
+        //function newIpAddress(e) {
+        //    $("#ulIpAddress").append(`<li class="list-group-item">${$("#txtIpAddress").val();}<i class="fa fa-times" aria-hidden="true" style="float: right;"></i></li>`);
+
+        //}
+
     });
 
 </script>

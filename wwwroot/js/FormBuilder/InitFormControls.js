@@ -1,6 +1,8 @@
 ﻿var InitControls = function (option) {
-    this.Bot = option.botBuilder;
-    this.Wc = option.wc;
+    if (option) {
+        this.Bot = option.botBuilder;
+        this.Wc = option.wc;
+    }
 
     this.init = function (control, ctrlOpts) {
         if (this[control.ObjType] !== undefined) {

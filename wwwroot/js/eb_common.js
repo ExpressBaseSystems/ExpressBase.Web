@@ -308,8 +308,7 @@ function RecurFlatControls(src_obj, dest_coll) {
 function getValsFromForm(formObj) {
     let fltr_collection = [];
     $.each(getFlatControls(formObj), function (i, obj) {
-        var value = obj.getValue();
-        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
     });
     return fltr_collection;
 }

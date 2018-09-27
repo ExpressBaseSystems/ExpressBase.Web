@@ -41,7 +41,7 @@
                     {
                         if (ViewBag.Fd.EbDataSource.FilterDialog != null)
                         {
-                            @await Component.InvokeAsync("ParameterDiv", new { paramDiv = dsobj });
+                            @await Component.InvokeAsync("ParameterDiv", new { FilterDialogObj = dsobj });
                             fd = true;
                         }
                     }

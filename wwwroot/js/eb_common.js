@@ -308,9 +308,20 @@ function RecurFlatControls(src_obj, dest_coll) {
 function getValsFromForm(formObj) {
     let fltr_collection = [];
     $.each(getFlatControls(formObj), function (i, obj) {
+        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+    });
+    return fltr_collection;
+}
+
+function getValsForViz(formObj) {
+    let fltr_collection = [];
+    $.each(getFlatControls(formObj), function (i, obj) {
         var value = obj.getValue();
-        if (value !== "" || value !== null)
-            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+        if (value == "" || value == null) {
+            if (obj.EbDbType === 7 || obj.EbDbType === 8)
+                value = 0;
+        }
+        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
     });
     return fltr_collection;
 }

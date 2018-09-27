@@ -670,38 +670,39 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getFilterValues = function (from) {
-        this.filterChanged = false;
-        var fltr_collection = [];
-        var FdCont = "#" + this.ContextId;
-        var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
-        var paramsCtx = $(FdCont + " #all_control_cxtnames").val();
-        if (paramstxt != undefined) {
-            var params = paramstxt.split(',');
-            var ctxIds = paramsCtx.split(',');
-            if (params.length > 0) {
-                $.each(params, function (i, id) {
-                    var v = null;
-                    let $ctrl = $(FdCont + ' [name=' + id + ']');
-                    if (!$ctrl.attr('data-ebtype'))
-                        $ctrl = $ctrl.find("[data-ebtype]");
-                    var dtype = $ctrl.attr('data-ebtype');
-                    if (dtype === '6')
-                        v = $ctrl.val().substring(0, 10);
-                    else if (dtype === '3')
-                        v = $(FdCont).children().find("[name=" + ctxIds[i] + "]:checked").val();
-                    else {
-                        v = $ctrl.val();
-                        if (dtype === '16' && !(isNaN(v))) {
-                            v = parseInt(v);
-                            dtype = 8;
-                        }
-                    }
+        //this.filterChanged = false;
+        //var fltr_collection = [];
+        //var FdCont = "#" + this.ContextId;
+        //var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
+        //var paramsCtx = $(FdCont + " #all_control_cxtnames").val();
+        //if (paramstxt != undefined) {
+        //    var params = paramstxt.split(',');
+        //    var ctxIds = paramsCtx.split(',');
+        //    if (params.length > 0) {
+        //        $.each(params, function (i, id) {
+        //            var v = null;
+        //            let $ctrl = $(FdCont + ' [name=' + id + ']');
+        //            if (!$ctrl.attr('data-ebtype'))
+        //                $ctrl = $ctrl.find("[data-ebtype]");
+        //            var dtype = $ctrl.attr('data-ebtype');
+        //            if (dtype === '6')
+        //                v = $ctrl.val().substring(0, 10);
+        //            else if (dtype === '3')
+        //                v = $(FdCont).children().find("[name=" + ctxIds[i] + "]:checked").val();
+        //            else {
+        //                v = $ctrl.val();
+        //                if (dtype === '16' && !(isNaN(v))) {
+        //                    v = parseInt(v);
+        //                    dtype = 8;
+        //                }
+        //            }
 
-                    if (v !== "")
-                        fltr_collection.push(new fltr_obj(dtype, id, v));
-                });
-            }
-        }
+        //            if (v !== "")
+        //                fltr_collection.push(new fltr_obj(dtype, id, v));
+        //        });
+        //    }
+        //}
+        var fltr_collection = getValsForViz(this.FilterDialog.filterObj);
         if (this.isContextual && from !== "compare") {
             if (from === "filter" && prevfocusedId !== undefined) {
                 $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
@@ -740,7 +741,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
                     var type = dvcontainerObj.dvcol[prevfocusedId].tempColumns[i].Type;
-                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].this.tempColumns[i].name, data));
+                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].tempColumns[i].name, data));
                 }
             }
         }

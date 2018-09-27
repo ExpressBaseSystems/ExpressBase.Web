@@ -1,7 +1,8 @@
-﻿var TileSetupJs = function (parentDiv, title, initObjList, searchObjList, objMetadata, searchAjax, chkUnChkItemCustomFunc, parentThis) {
+﻿var TileSetupJs = function (parentDiv, title, initObjList, searchObjList, objMetadata, searchAjax, chkUnChkItemCustomFunc, parentThis, options) {
     
     this.parentDiv = parentDiv;
     this.title = title;
+    this.options = options || {};
     this.resultObject = [];
     this.initObjectList = (initObjList === null) ? [] : initObjList;
     this.objectList = (searchObjList === null) ? [] : searchObjList;
@@ -29,16 +30,63 @@
     
     this.init = function () {
         this.createBody.bind(this)(this.parentDiv, this.title);
-        
+
         
         
     }
+
+    this.getPresetModalBody = function () {
+        var t = title.replace(/\s/g, "_");
+
+        if (this.title === 'New IP') {
+            return (`   <div class="modal-body" style="height:110px">
+                            <div class="form-group" style="display: inline-block; width: 39%;">
+                                <label style="font-family: open sans; font-weight: 300;">Enter IP Address</label>
+                                <input id="txtIpAddress${t}" class="form-control" placeholder="Type Here" title="Enter IP Address Here">
+                            </div>
+                            <div class="form-group" style="display: inline-block; width: 60%; padding-left: 10px;">
+                                <label style="font-family: open sans; font-weight: 300;">Description</label>
+                                <input id="txtIpDescription${t}" class="form-control" placeholder="Type Here" title="Enter Description Here">
+                            </div>
+                        </div>`);
+        }
+        else if (this.title === 'New Time') {
+            return (`   <div class="modal-body" style="height:180px">
+                            <div class="form-group" style="display: inline-block; width: 49%;">
+                                <label style="font-family: open sans; font-weight: 300;">From Time</label>
+                                <input id="txtFromTime${t}" type="time" class="form-control" placeholder="Type Here" title="Enter From Time Here">
+                            </div>
+                            <div class="form-group" style="display: inline-block; width: 49%; padding-left: 10px;">
+                                <label style="font-family: open sans; font-weight: 300;">To Time</label>
+                                <input id="txtToTime${t}" type="time" class="form-control" placeholder="Type Here" title="Enter To Time Here">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">Description</label>
+                                <input id="txtTimeDescription${t}" class="form-control" placeholder="Type Here" title="Enter Description Here">
+                            </div>
+                        </div>`);
+        }
+        else {
+            return (`   <div class="modal-body" style="height:400px">
+                            <div class="input-group ">
+                                <input id="txtSearch${t}" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                <span class="input-group-btn">
+                                    <button id="btnSearch${t}" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
+                            <div id="message${t}" style=" margin-left: 32%; margin-top: 25% ;font-size: 24px; color: #bbb; display:none;">Type Few Characters</div>
+                            <div id="loader${t}" style=" margin-left:45%; margin-top:25% ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
+                            <div id="divSearchResults${t}" style="height:338px; overflow-y:auto"></div>
+                        </div>`);
+        }
+    }
+
     //<button id="btnClearDemoSearch${t}" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
         $(parent).append(`
         <div class="row" style="padding:6px 0px">
-            <div class="col-md-7"></div>
+            <div class="col-md-7"><div class="subHeading">${this.options.longTitle || ""}</div></div>
             <div class="col-md-3">
                 <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:100%" />
                 <span id="spanSrch${t}" class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 16px;"></span>
@@ -56,19 +104,9 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">${title}</h4>
-                        </div>
-                        <div class="modal-body" style="height:400px">
-                            <div class="input-group ">
-                                <input id="txtSearch${t}" title="Type to Search" type="text" class="form-control" placeholder="Search">
-                                <span class="input-group-btn">
-                                    <button id="btnSearch${t}" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
-                                </span>
-                            </div>
-                            <div id="message${t}" style=" margin-left: 32%; margin-top: 25% ;font-size: 24px; color: #bbb; display:none;">Type Few Characters</div>
-                            <div id="loader${t}" style=" margin-left:45%; margin-top:25% ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
-                            <div id="divSearchResults${t}" style="height:338px; overflow-y:auto"></div>
-                        </div>
-                        <div class="modal-footer">
+                        </div>`
+     + this.getPresetModalBody() +
+                        `<div class="modal-footer">
                             <button id="btnModalOk${t}" type="button" class="btn btn-default">OK</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         </div>
@@ -76,8 +114,7 @@
                 </div>
             </div>
         </div>
-        <div id="divSelectedDisplay${t}" class="row tilediv1">
-
+        <div id="divSelectedDisplay${t}" class="row tilediv1" style="Height: ${this.options.tileDivHeight || "500px"}">
         
 
         </div>`);
@@ -120,11 +157,11 @@
             }
         }
         else {
-            this.divSelectedDisplay.append(`<div style="text-align: center; margin-top: 20%; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
+            this.divSelectedDisplay.append(`<div style="text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
         }
     }
 
-    //FUNCTIONS FOR EXTERNAL--------------------------------------
+    //FUNCTIONS FOR EXTERNAL USE--------------------------------------
     this.setObjectList = function (obj) {
         this.objectList = obj;
     }
@@ -143,16 +180,17 @@
         this.divSelectedDisplay.children().remove();
     }
 
-    //-------------------------------------------------------------------
-
     this.getItemIds = function () {
-        var itemid= '';
+        var itemid = '';
         for (i = 0; i < this.resultObject.length; i++)
             itemid += this.resultObject[i].Id + ',';
         itemid = itemid.substring(0, itemid.length - 1);
         return itemid;
     }
 
+    //-------------------------------------------------------------------
+
+    
     this.onClickBtnAddModal = function () {
         $(this.addModal).modal('show');
     }
@@ -195,13 +233,23 @@
     
 
     this.initModal = function () {
-        this.divMessage.show();
-        this.txtSearch.focus();
-        this.getSearchResult(false);
+        if (this.title === 'New IP') {
+            let t = title.replace(/\s/g, "_");
+            $("#txtIpAddress" + t).val("");
+            $("#txtIpDescription" + t).val("");
+        }
+        else {
+            this.divMessage.show();
+            this.txtSearch.focus();
+            this.getSearchResult(false);
+        }
     }
     this.finalizeModal = function () {
-        $(this.txtSearch).val("");
-        $(this.divSearchResults).children().remove();
+        if (this.title !== 'New IP') {
+            $(this.txtSearch).val("");
+            $(this.divSearchResults).children().remove();
+        }
+        
     }
     this.keyUptxtSearch = function (e) {
         $(this.divSearchResults).children().remove();
@@ -312,6 +360,14 @@
         });
     }
     this.drawSelected = function () {
+        var t = title.replace(/\s/g, "_");
+
+        if (this.title === 'New IP') {
+            let t = title.replace(/\s/g, "_");
+            this.appendToSelected(this.divSelectedDisplay, { Id: $("#txtIpAddress" + t).val().trim(), Name: $("#txtIpAddress" + t).val(), Data1: $("#txtIpDescription" + t).val() });
+            return;
+        }
+
         var checkedBoxList = $('.SearchCheckbox:checked');
         var _this = this;
         $(checkedBoxList).each(function () {
@@ -331,6 +387,7 @@
         });
         if (itempresent.length === 0)
             this.resultObject.push(obj);
+
         var temp = `<div class="col-md-4 container-md-4" data-id=${obj.Id} data-name=${obj.Name}>
                         <div class="mydiv1" style="overflow:visible;">
                             <div class="icondiv1">`;
@@ -343,15 +400,21 @@
                         <b>${obj.Name}</b>
                         <div style="font-size: smaller;">&nbsp${obj.Data1}</div>
                     </div>
-                    <div class="closediv1">
-                        <div class="dropdown">
+                    <div class="closediv1">`;
+        if (this.objectMetadata.indexOf('_simpleClose') > -1)
+            temp += `   <i class="fa fa-times dropDownRemoveClass" aria-hidden="true"></i>`;
+        else if (this.objectMetadata.indexOf('_hideClose') > -1)
+            temp += ``;
+        else{
+            temp+=`     <div class="dropdown">
                             <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
                             <ul class="dropdown-menu" style="left:-140px; width:160px;">`;
         if (!this.readOnly)
             temp +=             `<li><a href="#" class='dropDownViewClass'>View</a></li><li><a href="#" class='dropDownRemoveClass'>Remove</a></li>`;
         temp += `           </ul>
-                        </div>
-                    </div>
+                        </div>`
+        }
+        temp += `   </div>
                 </div>
             </div>`
         $(divSelected).append(temp);
@@ -373,10 +436,10 @@
                 }
             }
             if (this.resultObject.length === 0)
-                this.divSelectedDisplay.append(`<div style="text-align: center; margin-top: 20%; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
+                this.divSelectedDisplay.append(`<div style="text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
         }
     }
-
+    
     this.onClickViewFromSelected = function (e) {
         if (this.readOnly) {
             alert("Not Available in ReadOnly Mode");

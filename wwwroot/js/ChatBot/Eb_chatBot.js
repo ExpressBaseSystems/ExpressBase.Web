@@ -20,7 +20,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.isAlreadylogined = true;
     this.bearerToken = null;
     this.refreshToken = null;
-    this.initControls = new InitControls(this);
+    this.initControls = new InitControls({
+        botBuilder: this,
+        wc:"bc"
+    });
     this.typeDelay = 200;
     this.ChartCounter = 0;
     this.formsList = {};
@@ -538,8 +541,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.initFormCtrls_fm = function () {
         $.each(this.curForm.Controls.$values, function (i, control) {//////////////////////////////////////
-            if (this.initControls[control.ObjType] !== undefined)
-                this.initControls[control.ObjType](control);
+            this.initControls.init(control);
             $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
         }.bind(this));
     }.bind(this);
@@ -714,7 +716,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
             this.callGetControl(this.nxtCtrlIdx);
         }
-        else if (this.curCtrl.ObjType === "Survey" ) {
+        else if (this.curCtrl.ObjType === "Survey") {
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
@@ -1027,7 +1029,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
         //$('.eb-chatBox').scrollTop(99999999999);
         //$('.eb-chatBox').animate({ scrollTop: $('.eb-chatBox')[0].scrollHeight });
-        
+
     }.bind(this);
 
     //load control script

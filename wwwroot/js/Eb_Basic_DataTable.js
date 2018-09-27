@@ -110,7 +110,7 @@ var EbBasicDataTable = function (Option) {
 
     this.Init = function () {
         $.event.props.push('dataTransfer');
-        this.updateRenderFunc();
+       // this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
 
         this.eb_agginfo = this.getAgginfo();
@@ -257,7 +257,7 @@ var EbBasicDataTable = function (Option) {
     this.ajaxData = function (dq) {
         delete dq.columns; delete dq.order; delete dq.search;
         dq.RefId = this.EbObject.DataSourceRefId;
-        this.columnSearch = this.repopulate_filter_arr();
+        //this.columnSearch = this.repopulate_filter_arr();
         dq.TFilters = this.columnSearch;
         //if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues();

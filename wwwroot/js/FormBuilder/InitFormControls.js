@@ -1,34 +1,53 @@
-﻿var InitControls = function (bot) {
-    this.Bot = bot;
+﻿var InitControls = function (option) {
+    this.Bot = option.botBuilder;
+    this.Wc = option.wc;
+
+    this.init = function (control, ctrlOpts) {
+        if (this[control.ObjType] !== undefined) {
+            this.$input = $("#" + control.EbSid_CtxId);
+            this[control.ObjType](control, ctrlOpts);
+        }
+    }
 
     this.Date = function (ctrl) {
-        if (typeof ctrl === typeof "")
-            ctrl = { name: ctrl, ebDateType: 5 }
-        var settings = { timepicker: false };
-
-        if (ctrl.EbDateType === 5) {
-            settings.timepicker = false;
-            settings.format = "Y/m/d";
-        }
-        else if (ctrl.EbDateType === 17) {
-            settings.datepicker = false;
-            settings.format = "H:i";
+        if (ctrl.showDateAs_ === 1) {
+            this.$input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
+            this.$input.MonthPicker('option', 'ShowOn', 'both');
+            this.$input.MonthPicker('option', 'UseInputMask', true);
         }
         else {
-            settings.timepicker = true;
-            settings.datepicker = true;
-            settings.format = "Y/m/d H:i";
+
+            if (typeof ctrl === typeof "")
+                ctrl = { name: ctrl, ebDateType: 5 }
+            var settings = { timepicker: false };
+
+            if (ctrl.EbDateType === 5) {
+                settings.timepicker = false;
+                settings.format = "Y/m/d";
+            }
+            else if (ctrl.EbDateType === 17) {
+                settings.datepicker = false;
+                settings.format = "H:i";
+            }
+            else {
+                settings.timepicker = true;
+                settings.datepicker = true;
+                settings.format = "Y/m/d H:i";
+            }
+
+            //settings.minDate = ctrl.Min;
+            //settings.maxDate = ctrl.Max;
+
+            //this.$input.mask("0000-00-00");
+            //this.$input.datetimepicker({ timepicker: false, format: "Y-m-d" });
+            this.$input.datetimepicker(settings);
+            this.$input.mask(ctrl.MaskPattern || '00/00/0000');
+            this.$input.next().children('i').off('click').on('click', function () { this.$input.datetimepicker('show'); });
         }
-
-        //settings.minDate = ctrl.Min;
-        //settings.maxDate = ctrl.Max;
-
-        $('#' + ctrl.Name).datetimepicker(settings);
-        $('#' + ctrl.Name).mask(ctrl.MaskPattern || '00/00/0000');
     };
 
     this.SimpleSelect = function (ctrl) {
-        //$('#' + ctrl.Name).selectpicker();
+        //this.$input.selectpicker();
     };
 
     this.InputGeoLocation = function (ctrl) {
@@ -42,7 +61,7 @@
     this.InitMap4inpG = function (ctrl) {
 
         var name = ctrl.Name;
-        $('#' + name).locationpicker({
+        this.$input.locationpicker({
             location: {
                 latitude: this.Bot.userLoc.lat,
                 longitude: this.Bot.userLoc.long
@@ -122,32 +141,35 @@
         });
     }
 
-    this.ComboBox = function (ctrl) {
+    this.ComboBox = function (ctrl, ctrlOpts) {
 
         Vue.component('v-select', VueSelect.VueSelect);
         Vue.config.devtools = true;
 
-        $(`#${ctrl.Name}_loading-image`).hide();
-        //var EbCombo = new EbSelect(ctrl.Name, ctrl.DataSourceId, ctrl.DropdownHeight, ctrl.ValueMember, ['acmaster1_name', 'tdebit', 'tcredit'], (!ctrl.MultiSelect || ctrl.MaxLimit == 0) ? "1" : ctrl.MaxLimit, ctrl.MinLimit, ctrl.Required, ctrl.DefaultSearchFor, "https://expressbaseservicestack.azurewebsites.net", [1000], ctrl);
-        var o = new Object();
-        o.wc = 'bc';
-        var EbCombo = new EbSelect(ctrl, o);
-        if (this.Bot.curCtrl !== undefined)
+        $(`#${ctrl.EbSid_CtxId}_loading-image`).hide();
+
+
+        var EbCombo = new EbSelect(ctrl, {
+            getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
+            wc: this.Wc
+        });
+
+        if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
     };
 
     this.Survey = function (ctrl) {
         new EbSurveyRender($('#' + ctrl.Name), this.Bot);
     }
-        
+
     this.StaticCardSet = function (ctrl) {
         this.initCards($('#' + ctrl.Name));
     };
-    
+
     this.DynamicCardSet = function (ctrl) {
         this.initCards($('#' + ctrl.Name));
     };
-    
+
     this.initCards = function ($Ctrl) {
         $Ctrl.find(".cards-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl));
         this.SelectedCards = [];
@@ -157,8 +179,8 @@
         this.searchTxt = null;
         this.slickFiltered = false;
         var noOfCard = $Ctrl.find('.cards-cont').children().length;
-        $Ctrl.find(".card-head-cardno").text((noOfCard === 0 ? "0": "1") + " of " + noOfCard);
-        
+        $Ctrl.find(".card-head-cardno").text((noOfCard === 0 ? "0" : "1") + " of " + noOfCard);
+
         //getting the sum fields to display total
         $.each(this.Bot.curCtrl.CardFields, function (k, obj) {
             if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
@@ -172,7 +194,7 @@
         $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {
             var $e = $(evt.target).closest(".btn");
             var $card = $e.closest('.card-cont');
-            
+
             if (!this.Bot.curCtrl.MultiSelect) {
                 this.SelectedCards = [];
                 this.resetSelectedCardDisplay($('#' + this.Bot.curCtrl.Name));
@@ -186,18 +208,18 @@
             if (itempresent.length === 0) {
                 $e.html('Remove <i class="fa fa-times"  style="color: red; display: inline-block;" aria-hidden="true"></i>');
                 $($e.parent().siblings('.card-title-cont').children()[0]).show();
-                this.processSelectedCard($card, evt);                
+                this.processSelectedCard($card, evt);
             }
             else {
                 $e.html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
                 $($e.parent().siblings('.card-title-cont').children()[0]).hide();
                 this.spliceCardArray($card.attr('card-id'));
                 this.drawSummaryTable($e.closest('.cards-cont').next().find(".table tbody"));
-            } 
+            }
         }.bind(this));
 
 
-        $Ctrl.find(".card-head-filterdiv select").off('change').on('change', function () {                
+        $Ctrl.find(".card-head-filterdiv select").off('change').on('change', function () {
             this.filterVal = $(event.target).val();
             if ($($(event.target)[0]).find(":selected")["0"].index === 0) {
                 this.filterVal = null;
@@ -205,7 +227,7 @@
             this.filterCards($Ctrl);
         }.bind(this, $Ctrl));
 
-        $Ctrl.find(".card-head-searchdiv input").off('keyup').on('keyup', function () {              
+        $Ctrl.find(".card-head-searchdiv input").off('keyup').on('keyup', function () {
             this.searchTxt = $(event.target).val().trim();
             if (this.searchTxt === "")
                 this.searchTxt = null;
@@ -255,7 +277,7 @@
         $Ctrl.find('.cards-cont').slick('slickFilter', $cards);
         this.slickFiltered = true;
         var cardLength = $Ctrl.find('.cards-cont')["0"].slick.$slides.length;
-        $Ctrl.find(".card-head-cardno").text((cardLength === 0 ? "0": "1") + " of " + cardLength);
+        $Ctrl.find(".card-head-cardno").text((cardLength === 0 ? "0" : "1") + " of " + cardLength);
     }
 
     //it will return card array(jqry object) of all condition satisfying cards
@@ -284,8 +306,8 @@
         else if (searchTxt === null && filterVal !== null) {
             selQuery = '.card-cont' + ftemp;
         }
-        else if (filterVal === null && searchTxt !== null){
-            selQuery = '.card-cont' + stemp[0] ;
+        else if (filterVal === null && searchTxt !== null) {
+            selQuery = '.card-cont' + stemp[0];
             for (var i = 1; i < stemp.length; i++) {
                 selQuery += ',' + stemp[i];
             }
@@ -333,14 +355,14 @@
             $tbody.append("<tr><td style='text-align:center;' colspan=" + tcols + "><i> Nothing to Display </i></td></tr>");
             return;
         }
-        
+
         $.each(this.SelectedCards, function (k, obj) {
             var trhtml = "<tr card-id='" + obj.cardid + "'>";
             var ind = 0;
             for (obprop in obj) {
                 var isNum = (typeof (obj[obprop]) === "number");
                 if (ind++) {
-                    trhtml += "<td "+ (isNum? "style='text-align: right;'": "") +">" + (isNum? obj[obprop].toFixed(2): obj[obprop]) + "</td>";
+                    trhtml += "<td " + (isNum ? "style='text-align: right;'" : "") + ">" + (isNum ? obj[obprop].toFixed(2) : obj[obprop]) + "</td>";
                 }
             }
             trhtml += "<td><i class='fa fa-trash-o remove-cart-item' aria-hidden='true' style='cursor: pointer;'></i></td></tr>";
@@ -356,7 +378,7 @@
             sumhtml += "Total&nbsp" + fn + ":&nbsp&nbsp" + sum.toFixed(2) + "<br/>";
         }.bind(this));
         if (this.sumFieldsName.length !== 0)
-            $tbody.append(sumhtml+"</tr></td>");
+            $tbody.append(sumhtml + "</tr></td>");
 
         $('.remove-cart-item').off('click').on('click', function (evt) {
             var cardid = $(evt.target).closest('tr').attr('card-id');
@@ -409,13 +431,13 @@
             }
         }.bind(this));
     }
-    this.getCardReference = function(cardid){
+    this.getCardReference = function (cardid) {
         var card = null;
         $.each(this.Bot.curCtrl.CardCollection, function (k, cardObj) {
             if (cardObj.cardId === cardid) {
                 card = cardObj;
                 return;
-            }               
+            }
         }.bind(this));
         return card;
     }

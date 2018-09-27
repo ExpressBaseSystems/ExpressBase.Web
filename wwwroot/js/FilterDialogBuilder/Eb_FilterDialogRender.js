@@ -58,7 +58,7 @@
 
             Object.defineProperty(this.formObject, cObj.Name, {
                 get: function () {
-                    return $('#' + cObj.EbSid_CtxId);
+                    return cObj;
                 }.bind(this),
             });
         }.bind(this));
@@ -114,7 +114,7 @@
 
     this.initialLoad = function () {
         $.each(this.filterObj.Controls.$values, function (k, cObj) {
-            if (cObj.ObjType === 'RadioGroup' && cObj.onChange && cObj.onChange !== '') {
+            if (cObj.ObjType === 'RadioGroup' && cObj.OnChange && cObj.OnChange !== '') {
                 if (cObj.DefaultValue !== "")
                     $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
                 else

@@ -110,7 +110,7 @@ var EbBasicDataTable = function (Option) {
 
     this.Init = function () {
         $.event.props.push('dataTransfer');
-        this.updateRenderFunc();
+       // this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
 
         this.eb_agginfo = this.getAgginfo();

@@ -155,7 +155,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 		if (callback)
             this.stickBtn.minimise();
         else
-            this.stickBtn.maximise();
+			this.stickBtn.maximise();
+		this.filterDialog = FilterDialog;
+
     };
 
     this.CloseParamDiv = function () {
@@ -261,64 +263,35 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.CountParameters();
     };
 
-    this.CountParameters = function () {
-        commonO.flagRun = false;
-        var result = window["editor" + tabNum].getValue().match(/\:\w+|\@\w+/g);
-        var filterparams = [];
-        if (result !== null) {
-            for (var i = 0; i < result.length; i++) {
-                result[i] = result[i].substr(1);
-                if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby" /*|| result[i] === "id"*/) {
-                    //
-                }
-                else {
-                    if ($.inArray(result[i], filterparams) === -1)
-                        filterparams.push(result[i]);
-                }
-            }
-            filterparams.sort();
-            this.Filter_Params = filterparams;
-            this.Parameter_Count = filterparams.length;
-        }
-        else {
-            this.Parameter_Count = 0;
-        }
-        this.DrawTable();
-    }
+	this.CountParameters = function () {
+		commonO.flagRun = false;
+		var result = window["editor" + tabNum].getValue().match(/\:\w+|\@\w+/g);
+		var filterparams = [];
+		if (result !== null) {
+			for (var i = 0; i < result.length; i++) {
+				result[i] = result[i].substr(1);
+				if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby" /*|| result[i] === "id"*/) {
+					//
+				}
+				else {
+					if ($.inArray(result[i], filterparams) === -1)
+						filterparams.push(result[i]);
+				}
+			}
+			filterparams.sort();
+			this.Filter_Params = filterparams;
+			this.Parameter_Count = filterparams.length;
+		}
+		else {
+			this.Parameter_Count = 0;
+		}
+		this.DrawTable();
+	};
 
-    this.CreateObjString = function () {
-        var ParamsArray = [];
-        var value = null;
-        if (this.Parameter_Count !== 0) {
-            var filter_control_list = $("#all_control_names").val();
-            if (filter_control_list !== undefined) {
-                var myarray = filter_control_list.split(',');
-                for (var i = 0; i < myarray.length; i++) {
-                    console.log($("#" + myarray[i]).val());
-                    var type = $('#' + myarray[i]).attr('data-ebtype');
-                    var name = $('#' + myarray[i]).attr('id');
-                    if (type === "3")
-                        value = $("[name=" + myarray[i] + "]:checked").val()
-                    else
-                        value = $('#' + myarray[i]).val();
-                    if (type === '6')
-                        value = value.substring(0, 10);
-                    else
-                        if (typeof value === "string") {
-                            //value = value.trim();
-                        }
-
-
-                    if (type === '16' && !(isNaN(value))) {
-                        value = parseInt(value);
-                        type = 8;
-                    }
-                    ParamsArray.push(new fltr_obj(type, name, value));
-                }
-            }
-        }
-        return ParamsArray;
-    }
+	this.CreateObjString = function () {
+		var ParamsArray = this.filterDialog.getFilterVals();
+		return ParamsArray;
+	};
 
     this.DrawTable = function () {
         commonO.tabNum++;

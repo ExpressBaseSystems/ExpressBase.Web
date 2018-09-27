@@ -408,34 +408,8 @@
         //$("#content_dv").removeClass("col-md-9").addClass("col-md-12");
         //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
-
-        var ParamsArray = [];
-        var filter_control_list = $("#all_control_names").val();
-        if (filter_control_list !== undefined) {
-            var myarray = filter_control_list.split(',');
-            for (var i = 0; i < myarray.length; i++) {
-                console.log($("#" + myarray[i]).val());
-                var type = $('#' + myarray[i]).attr('data-ebtype');
-                var name = $('#' + myarray[i]).attr('id');
-                if (type === "3")
-                    value = $("[name=" + myarray[i] + "]:checked").val()
-                else
-                    value = $('#' + myarray[i]).val();
-                if (type === '6')
-                    value = value.substring(0, 10);
-                else
-                    if (typeof value === "string") {
-                        //value = value.trim();
-                    }
-
-
-                if (type === '16' && !(isNaN(value))) {
-                    value = parseInt(value);
-                    type = 8;
-                }
-                ParamsArray.push(new fltr_obj(type, name, value));
-            }
-        }
+		var ParamsArray = FilterDialog.getFilterVals();
+        
 
         //if (!validateFD()) {
         //    //$.LoadingOverlay("hide");

@@ -134,6 +134,8 @@ var EbSelect = function (ctrl, options) {
             EbMakeValid(`#${this.ComboObj.Name}Container`, `#${this.ComboObj.Name}Wraper`);
             if (searchVal.trim() === "" || this.ComboObj.MinSeachLength > searchVal.length)
                 return;
+            this.datatable.columnSearch = [];
+            this.datatable.columnSearch.push( new filter_obj(mapedField, "x*", searchVal, mapedFieldType));
             this.datatable.Api.ajax.reload();
         }
     };
@@ -272,36 +274,7 @@ var EbSelect = function (ctrl, options) {
         //});
     };
 
-    this.getParams = function () {
-        var fltr_collection = [];
-        var FdCont = ".fd";
-        var paramstxt = $(FdCont + " #all_control_names").val();
-        if (paramstxt != undefined) {
-            var params = paramstxt.split(',');
-            if (params.length > 0) {
-                $.each(params, function (i, id) {
-                    var v = null;
-                    var dtype = $(FdCont + ' #' + id).attr('data-ebtype');
-                    if (dtype === '6')
-                        v = $(FdCont + ' #' + id).val().substring(0, 10);
-                    else if (dtype === '3')
-                        v = $(FdCont).children().find("[name=" + id + "]:checked").val();
-                    else {
-                        v = $(FdCont + ' #' + id).val();
-                        if (dtype === '16' && !(isNaN(v))) {
-                            v = parseInt(v);
-                            dtype = 8;
-                        }
-                    }
-
-                    if (v !== "")
-                        fltr_collection.push(new fltr_obj(dtype, id, v));
-                });
-            }
-        }
-        return fltr_collection;
-    };
-
+   
     this.xxx = function (e, dt, type, indexes) {
         console.log("keysssss");
     }

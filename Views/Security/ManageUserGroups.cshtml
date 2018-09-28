@@ -14,6 +14,8 @@
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
 <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
 
 @*@using (Html.BeginForm(FormMethod.Post, new { itemid = 9 }))
     {
@@ -79,11 +81,11 @@
                 </ul>
                 <div class="tab-content">
                     <div id="divusers" class="tab-pane fade in active"></div>
-                    <div id="divconstraints" class="tab-pane fade">                        
-                                            
+                    <div id="divconstraints" class="tab-pane fade">
+
                         <div id="divIp"></div>
                         <div id="divTime"></div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -94,8 +96,6 @@
 </div>
 
 <style>
-
-    
 </style>
 
 <script>

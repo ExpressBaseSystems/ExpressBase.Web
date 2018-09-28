@@ -41,10 +41,10 @@
             //settings.maxDate = ctrl.Max;
 
             //this.$input.mask("0000-00-00");
-            //this.$input.datetimepicker({ timepicker: false, format: "Y-m-d" });
-            this.$input.datetimepicker(settings);
-            this.$input.mask(ctrl.MaskPattern || '00/00/0000');
-            this.$input.next().children('i').off('click').on('click', function () { this.$input.datetimepicker('show'); });
+            this.$input.datetimepicker({ timepicker: false, format: "Y-m-d" });
+            //this.$input.datetimepicker(settings);
+            //this.$input.mask(ctrl.MaskPattern || '00/00/0000');
+            this.$input.next().children('i').off('click').on('click', function () { this.$input.datetimepicker('show'); }.bind(this));
         }
     };
 

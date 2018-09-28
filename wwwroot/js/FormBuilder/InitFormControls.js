@@ -6,16 +6,16 @@
 
     this.init = function (control, ctrlOpts) {
         if (this[control.ObjType] !== undefined) {
-            this.$input = $("#" + control.EbSid_CtxId);
             this[control.ObjType](control, ctrlOpts);
         }
     }
 
     this.Date = function (ctrl) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.showDateAs_ === 1) {
-            this.$input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
-            this.$input.MonthPicker('option', 'ShowOn', 'both');
-            this.$input.MonthPicker('option', 'UseInputMask', true);
+            $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
+            $input.MonthPicker('option', 'ShowOn', 'both');
+            $input.MonthPicker('option', 'UseInputMask', true);
         }
         else {
 
@@ -40,16 +40,17 @@
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
 
-            //this.$input.mask("0000-00-00");
-            this.$input.datetimepicker({ timepicker: false, format: "Y-m-d" });
-            //this.$input.datetimepicker(settings);
-            //this.$input.mask(ctrl.MaskPattern || '00/00/0000');
-            this.$input.next().children('i').off('click').on('click', function () { this.$input.datetimepicker('show'); }.bind(this));
+            //$input.mask("0000-00-00");
+            $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
+            //$input.datetimepicker(settings);
+            //$input.mask(ctrl.MaskPattern || '00/00/0000');
+            $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
         }
     };
 
     this.SimpleSelect = function (ctrl) {
-        //this.$input.selectpicker();
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        //$input.selectpicker();
     };
 
     this.InputGeoLocation = function (ctrl) {
@@ -61,9 +62,9 @@
     };
 
     this.InitMap4inpG = function (ctrl) {
-
+        let $input = $("#" + ctrl.EbSid_CtxId);
         var name = ctrl.Name;
-        this.$input.locationpicker({
+        $input.locationpicker({
             location: {
                 latitude: this.Bot.userLoc.lat,
                 longitude: this.Bot.userLoc.long
@@ -482,7 +483,8 @@
 
     this.Numeric = function (ctrl) {
         var id = ctrl.Name;
-        $('#' + id).focusout(function () {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        $input.focusout(function () {
             var val = $(this).val().toString();
             var l = 'SZZZZZZZZZZZ'.length - 1;
             var ndp = ctrl.DecimalPlaces;
@@ -509,15 +511,15 @@
             }
         });
 
-        $('#' + id).focus(function () { $(this).select(); });
-        $('#' + id).keypress(function (e) {
+        $input.focus(function () { $(this).select(); });
+        $input.keypress(function (e) {
 
-            var val = $('#' + id).val();
+            var val = $input.val();
             var cs = document.getElementById(id).selectionStart;
             var ce = document.getElementById(id).selectionEnd;
             if (e.which == 46 && val.includes('.')) {
                 setTimeout(function () {
-                    $('#' + id).val(val);
+                    $input.val(val);
                 }, 1);
             }
             // containes '.' and no selection
@@ -526,40 +528,40 @@
                     var pi = val.indexOf('.');
                     //prevents exceeding decimal part length when containes '.'
                     if ((val.length - pi) === (ctrl.DecimalPlaces + 1) && (e.which >= 48) && (e.which <= 57) && ce > pi)
-                        $('#' + id).val(val);
+                        $input.val(val);
                     //prevents exceeding integer part length when containes '.'
                     if (pi === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
-                        $('#' + id).val(val);
+                        $input.val(val);
                 }, 1);
             }
             //prevents exceeding integer-part length when no '.'
             if (!(val.includes('.')) && val.length === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57)) {
                 setTimeout(function () {
-                    $('#' + id).val(val + '.' + String.fromCharCode(e.which));
+                    $input.val(val + '.' + String.fromCharCode(e.which));
 
                 }, 1);
             }
             //prevents del before '.'if it leads to exceed integerpart limit
             if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === val.indexOf('.') && e.which === 0) {
                 setTimeout(function () {
-                    $('#' + id).val(val);
+                    $input.val(val);
                 }, 1);
             }
             //prevents <- after '.' if it leads to exceed integerpart limit
             if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === (val.indexOf('.') + 1) && e.which === 8) {
                 setTimeout(function () {
-                    $('#' + id).val(val);
+                    $input.val(val);
                 }, 1);
             }
             //prevents deletion of selection when containes '.' if it leads to exceed integerpart limit
             if ((val.includes('.') && val.length - (ce - cs)) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs <= val.indexOf('.') && ce > val.indexOf('.')) {
                 setTimeout(function () {
-                    $('#' + id).val(val);
+                    $input.val(val);
                 }, 1);
             }
         });
 
-        $('#' + id).mask('SZZZZZZZZZZZ', {
+        $input.mask('SZZZZZZZZZZZ', {
             //reverse: true,
             translation: {
                 'S': {

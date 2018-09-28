@@ -68,10 +68,10 @@
             url: "../ConnectionManager/SMTP",
             data: postData,
             beforeSend: function () {
-                $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
+                $("#email_loader").EbLoader("show", { maskItem: { Id: "#email_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $("#dbConnection_loder").EbLoader("hide");
+            $("#email_loader").EbLoader("hide");
             this.appendEmailConnection(JSON.parse(data));
             $("#EmailConnectionEdit").modal("toggle");
         }.bind(this));
@@ -183,24 +183,17 @@
         let o = {};
         if ($.isEmptyObject(object)) {
             o.ProviderName = "Not Set";
-            o.EmailAddress = "xxxxxxxxx@xxx.xxxx";
-            o.Smtp = "xxx.xxx.xxx.xxx";
-            o.Port = "0000";
+            o.Host = "xxxxxxxxxxx";
+            o.Port = "00000000000";
             o.NickName = "Not Set";
+            o.EmailAddress = "xxx xxx xxx xxx";
         }
         else
             o = object;
 
-        $("#EmailConnection_config").empty();
-        $("#EmailConnection_config").append(`<div class="col-md-2 db_vendorimg text-center VendorImage">
-                                        <img class="img-responsive" src="${location.protocol}//${location.host}/images/svg/email.svg" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <p class="Server mr-0 pdt-5">${o.Smtp}:${o.Port}</p>
-                                        <p class="EmailAddress mr-0 pdt-5">${o.EmailAddress}</p>
-                                        <p class="NickName mr-0 pdt-5">${o.NickName}</p>
-                                    </div>`);
-
+        $("#EmailConnection_config .Provider").text(o.ProviderName);
+        $("#EmailConnection_config .EmailAddress").text(o.EmailAddress);
+        $("#EmailConnection_config .NickName").text(o.NickName);
 
     };
     this.appendSmsConnection = function (object) {
@@ -313,17 +306,6 @@
     };
 
     this.LogoImageUpload = function () {
-        //var logoCrp = new cropfy({
-        //    Container: 'onboarding_logo',
-        //    Toggle: '#log-upload-btn',
-        //    isUpload: true,  //upload to cloud
-        //    enableSE: true, //enable server event
-        //    Browse: true,  //browse image
-        //    Result: 'base64',
-        //    Type: 'logo',
-        //    Tid: this.Sid, //if type is logo
-        //    Preview: "#oB_logo-prev"
-        //});
 
         var logoCrp = new EbFileUpload({
             Type: "image",
@@ -361,13 +343,19 @@
         this.appendFtpConnection(this.Connections.FTPConnection);
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
-        $("#EmailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
+        $("#emailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
         $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();
+        $(`#EmailconnectionEdit input[name="IsSSL"]`).on("change", function (e) {
+            if ($(e.target).is(":checked"))
+                $(e.target).val(true);
+            else
+                $(e.target).val(false);
+        });
     };
 
     this.init();

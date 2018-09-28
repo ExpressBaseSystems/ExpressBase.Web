@@ -46,7 +46,7 @@ namespace ExpressBase.Web.Components
                 ViewBag.HtmlHead = WebForm.GetHead();
                 WebForm.IsRenderMode = true;
                 ViewBag.WebFormHtml = WebForm.GetHtml();
-
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(WebForm as EbControlContainer, BuilderType.WebForm);
                 ViewBag.WebFormObj = Common.EbSerializers.Json_Serialize(WebForm);
 
                 //ViewBag.FlatControls = JsonConvert.SerializeObject(WebForm.Controls.FlattenEbControls());

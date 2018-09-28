@@ -1,17 +1,20 @@
 ﻿@{
-    string signinurl = string.Empty, appstoreurl = string.Empty;
+    string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
     if (ViewBag.Env == "Development")
     {
+        home = "http://localhost:41400";
         signinurl = "http://myaccount.localhost:41500";
         appstoreurl = "http://myaccount.localhost:41500/AppStore";
     }
     if (ViewBag.Env == "Staging")
     {
+        home = "https://eb-test.info";
         signinurl = "https://myaccount.eb-test.info";
         appstoreurl = "http://myaccount.eb-test.info/AppStore";
     }
     if (ViewBag.Env == "Production")
     {
+        home = "https://expressbase.com";
         signinurl = "https://myaccount.expressbase.com";
         appstoreurl = "http://myaccount.expressbase.com/AppStore";
     }
@@ -27,13 +30,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="~/"><img class="img-responsive" src="~/images/EB_Logo.png"></a>
+                <a class="navbar-brand" href="@home"><img class="img-responsive" src="~/images/EB_Logo.png"></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a class="hvr-underline-from-center" href="~/" id="Home">Home</a></li>
+                    <li><a class="hvr-underline-from-center" href="@home" id="Home">Home</a></li>
                     <li class="dropdown">
                         <a href="" class="dropdown-toggle drp_down" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Platform <span class="caret"></span></a>
                         <ul class="dropdown-menu navmain drp_container">
@@ -44,7 +47,7 @@
                                             <span class="drop-title">Products</span>
                                             <ul>
                                                 <li>
-                                                    <a href="/Products/Reports" class="drop-link">
+                                                    <a href="@home/Products/Reports" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/laptop.svg" class="attachment-full" alt="saas" width="16">
                                                         </span>
@@ -53,7 +56,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="/Products/Bots" class="drop-link">
+                                                    <a href="@home/Products/Bots" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/chat.svg" class="attachment-full" alt="financial-services" width="16">
                                                         </span>
@@ -62,7 +65,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="" class="drop-link">
+                                                    <a href="@home" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/forms.svg" class="attachment-full" alt="consumer-tech" width="14">
                                                         </span>
@@ -71,11 +74,11 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="" class="drop-link">
+                                                    <a href="@home" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/docs.png" class="attachment-full" alt="media-entertainment" width="16">
                                                         </span>
-                                                        <strong class="dl-title">Manage.Documents</strong>
+                                                        <strong class="dl-title">Documents</strong>
                                                         <span class="dl-sub">Manage your Files</span>
                                                     </a>
                                                 </li>
@@ -85,7 +88,7 @@
                                             <span class="drop-title">Help</span>
                                             <ul>
                                                 <li>
-                                                    <a href="" class="drop-link">
+                                                    <a href="@home" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/expert.svg" class="attachment-full" width="16">
                                                         </span>
@@ -94,7 +97,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="" class="drop-link">
+                                                    <a href="@home" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/faq.svg" class="attachment-full" width="16">
                                                         </span>
@@ -103,7 +106,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="" class="drop-link">
+                                                    <a href="@home" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/customer-support.svg" class="attachment-full" width="16">
                                                         </span>
@@ -115,7 +118,7 @@
                                         </div>
                                     </div>
                                     <div class="drop-foot single">
-                                        <a href="~/Platform" class="drop-link">
+                                        <a href="@home/Platform" class="drop-link">
                                             <span class="ico-plain">
                                                 <img src="~/images/svg/layers.svg" class="attachment-full" width="24">
                                             </span>
@@ -127,9 +130,9 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a class="hvr-underline-from-center" href=@appstoreurl id="AppStore">App Store</a></li>
-                    <li><a class="hvr-underline-from-center" href="~/AboutUs" id="AboutUs">About Us</a></li>
-                    <li><a class="hvr-underline-from-center" href="~/Blog" id="Blog">Blog</a></li>
+                    @*<li><a class="hvr-underline-from-center" href=@appstoreurl id="AppStore">App Store</a></li>*@
+                    <li><a class="hvr-underline-from-center" href="@home/AboutUs" id="AboutUs">About Us</a></li>
+                    <li><a class="hvr-underline-from-center" href="@home/Blog" id="Blog">Blog</a></li>
                     <li id="signIn"><a class="hvr-underline-from-center" href=@signinurl>Sign in &#8594;</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->

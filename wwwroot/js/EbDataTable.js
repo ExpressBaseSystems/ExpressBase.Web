@@ -748,11 +748,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.placefiltervalues = function () {
-        if (this.filterValues.length > 0) {
-            $.each(this.filterValues, function (i, param) {
-                $("#" + this.ContextId + ' #' + param.Name).val(param.Value);
-            });
-        }
+        //if (this.filterValues.length > 0) {
+        //    $.each(this.filterValues, function (i, param) {
+        //        $("#" + this.ContextId + ' #' + param.Name).val(param.Value);
+        //    });
+        //}
+        $.each(getFlatControls(this.FilterDialog.filterObj), function (i, obj) {
+            let val = getObjByval(this.filterValues, "Name", obj.Name).Value;
+            obj.setValue(val);
+        }.bind(this));
     }
 
     this.filterDisplay = function () {

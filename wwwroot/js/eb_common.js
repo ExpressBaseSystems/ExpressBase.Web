@@ -308,8 +308,7 @@ function RecurFlatControls(src_obj, dest_coll) {
 function getValsFromForm(formObj) {
     let fltr_collection = [];
     $.each(getFlatControls(formObj), function (i, obj) {
-        var value = obj.getValue();
-        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
     });
     return fltr_collection;
 }
@@ -321,6 +320,8 @@ function getValsForViz(formObj) {
         if (value == "" || value == null) {
             if (obj.EbDbType === 7 || obj.EbDbType === 8)
                 value = 0;
+            else if (obj.EbDbType === 16)
+                value = "EB";
         }
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
     });

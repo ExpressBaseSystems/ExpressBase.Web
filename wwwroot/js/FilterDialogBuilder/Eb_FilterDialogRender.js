@@ -3,6 +3,7 @@
     this.filterObj = fObj;
     this.formObject = {};
     this.onChangeExeFuncs = {};
+    this.initControls = new InitControls();
 
     this.init = function () {
         this.initFilterDialogCtrls();
@@ -11,40 +12,12 @@
     }
 
     this.initFilterDialogCtrls = function () {
-        console.log("===========================");
-        uobj = {};
-
-        $.each(this.filterObj.Controls.$values, function (k, cObj) {
-            var $input = $("#" + cObj.EbSid_CtxId);
-            if (cObj.ObjType === 'Date') {
-                if (cObj.showDateAs_ === 1) {
-                    $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
-                    $input.MonthPicker('option', 'ShowOn', 'both');
-                    $input.MonthPicker('option', 'UseInputMask', true);
-                }
-                else {
-                    //$input.mask("0000-00-00");
-                    $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
-                    $input.next().children('i').off('click').on('click', function () { $input.datetimepicker('show'); });
-                }
-            }
-            //else if (cObj.ObjType === 'Numeric') {
-            //    var $input = $("[name=" + cObj.Name + "]");
-            //}
-            else if (cObj.ObjType === 'ComboBox') {
-                Vue.component('v-select', VueSelect.VueSelect);
-                Vue.config.devtools = true;
-
-                $(`#${cObj.Name}_loading-image`).hide();
-                //MakeCaps(cObj);
-                var EbCombo = new EbSelect(cObj, {
-                    getFilterValuesFn: this.getFilterVals
-                });
-            }
-        }.bind(this));
-
         JsonToEbControls(this.filterObj);
-        $.each(this.filterObj.Controls.$values, function (k, cObj) {//////////////////////
+        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+            let opt = {};
+            if (cObj.ObjType === "ComboBox")
+                opt.getAllCtrlValuesFn = this.getFilterVals;
+            this.initControls.init(cObj, opt);
         }.bind(this));
     };
 

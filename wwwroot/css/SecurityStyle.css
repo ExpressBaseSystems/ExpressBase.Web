@@ -67,6 +67,11 @@
 	margin: 0px;
 }
 
+.subHeading {
+	font-size: 22px;
+	color: #ccc;
+}
+
 .nav-tabs > li.active {
 	border-top: 3px solid #339bb3;
 	border-top-left-radius: 5px;

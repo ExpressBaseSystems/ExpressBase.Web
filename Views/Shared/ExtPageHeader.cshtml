@@ -4,19 +4,16 @@
     {
         home = "http://localhost:41400";
         signinurl = "http://myaccount.localhost:41500";
-        appstoreurl = "http://myaccount.localhost:41500/AppStore";
     }
     if (ViewBag.Env == "Staging")
     {
         home = "https://eb-test.info";
         signinurl = "https://myaccount.eb-test.info";
-        appstoreurl = "http://myaccount.eb-test.info/AppStore";
     }
     if (ViewBag.Env == "Production")
     {
         home = "https://expressbase.com";
         signinurl = "https://myaccount.expressbase.com";
-        appstoreurl = "http://myaccount.expressbase.com/AppStore";
     }
 }
 <section class="ext-pageheader" id="pgheaderExt">
@@ -65,7 +62,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="@home" class="drop-link">
+                                                    <a href="@home/Products/Forms" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/forms.svg" class="attachment-full" alt="consumer-tech" width="14">
                                                         </span>
@@ -74,7 +71,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="@home" class="drop-link">
+                                                    <a href="@home/Products/Documents" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/docs.png" class="attachment-full" alt="media-entertainment" width="16">
                                                         </span>
@@ -88,16 +85,7 @@
                                             <span class="drop-title">Help</span>
                                             <ul>
                                                 <li>
-                                                    <a href="@home" class="drop-link">
-                                                        <span class="ico">
-                                                            <img src="~/images/svg/expert.svg" class="attachment-full" width="16">
-                                                        </span>
-                                                        <strong class="dl-title">Wiki</strong>
-                                                        <span class="dl-sub">Learn More</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="@home" class="drop-link">
+                                                    <a href="@home/FAQS" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/faq.svg" class="attachment-full" width="16">
                                                         </span>
@@ -106,7 +94,16 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="@home" class="drop-link">
+                                                    <a href="@home/Wiki" class="drop-link">
+                                                        <span class="ico">
+                                                            <img src="~/images/svg/expert.svg" class="attachment-full" width="16">
+                                                        </span>
+                                                        <strong class="dl-title">Wiki</strong>
+                                                        <span class="dl-sub">Learn More</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="@home/Support" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/svg/customer-support.svg" class="attachment-full" width="16">
                                                         </span>
@@ -130,7 +127,7 @@
                             </li>
                         </ul>
                     </li>
-                    @*<li><a class="hvr-underline-from-center" href=@appstoreurl id="AppStore">App Store</a></li>*@
+                    <li><a class="hvr-underline-from-center" href="Public/AppStore" id="AppStore">App Store</a></li>
                     <li><a class="hvr-underline-from-center" href="@home/AboutUs" id="AboutUs">About Us</a></li>
                     <li><a class="hvr-underline-from-center" href="@home/Blog" id="Blog">Blog</a></li>
                     <li id="signIn"><a class="hvr-underline-from-center" href=@signinurl>Sign in &#8594;</a></li>

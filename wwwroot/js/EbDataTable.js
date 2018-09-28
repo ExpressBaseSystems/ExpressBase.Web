@@ -1452,10 +1452,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         var rows = this.Api.rows().nodes();
         $.each(this.Levels, function (i, obj) {
-            if (obj.type !== "After")
-                $(rows).eq(obj.rowIndex).before(obj.groupString);
+            if (obj.insertionType !== "After")
+                $(rows).eq(obj.rowIndex).before(obj.html);
             else
-                $(rows).eq(obj.rowIndex).after(obj.groupString);
+				$(rows).eq(obj.rowIndex).after(obj.html);
         });
         var ct = $("#" + this.tableId + " .group[group=1]").length;
         $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);

@@ -371,6 +371,7 @@ namespace ExpressBase.Web.Controllers
                     Port = Convert.ToInt32(req["Port"]),
                     EmailAddress = req["Email"],
                     Password = req["Password"],
+                    EnableSsl = Convert.ToBoolean(req["IsSSL"]),
                     IsDefault = false
                 };
 

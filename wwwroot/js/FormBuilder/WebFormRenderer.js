@@ -36,23 +36,36 @@
         EbMakeValid(`#cont_${control.Name}`, `.${control.Name}Wraper`);
     };
 
-    this.initFormCtrl = function (control) {
-        if (this.initControls[control.ObjType] !== undefined)
-            this.initControls[control.ObjType](control);
-        $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
-    }.bind(this);
-
     this.init = function () {
         this.$saveBtn.on("click", this.saveForm.bind(this));
         let allFlatControls = getFlatContControls(this.FormObj).concat(this.flatControls);
-
-        $.each(allFlatControls, function (k, cObj) {
-            this.updateCtrlUI(cObj);
-            this.initFormCtrl(cObj);
+        this.initWebFormCtrls();
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
         }.bind(this));
         if (this.isEditMode)
             this.populateControls();
     };
+
+    this.initWebFormCtrls = function () {
+        JsonToEbControls(this.FormObj);
+        $.each(this.flatControls, function (k, Obj) {
+            let opt = {};
+            if (Obj.ObjType === "ComboBox")
+                opt.getAllCtrlValuesFn = this.getWebFormVals;
+            this.initControls.init(Obj, opt);
+            this.bindRequired(Obj);
+        }.bind(this));
+    };
+
+    this.bindRequired = function (control) {
+        $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
+    };
+
+    this.getWebFormVals = function () {
+        return getValsFromForm(this.filterObj);
+    }.bind(this);
+
 
     this.populateControls = function () {
         this.rowId = getObjByval(this.editModeObj, "Name", "id").Value;

@@ -266,13 +266,14 @@ function gettypefromString(str) {
 
 function JsonToEbControls(ctrlsContainer) {
     $.each(ctrlsContainer.Controls.$values, function (i, obj) {
-        ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);
         if (obj.IsContainer) {
-            dest_coll.push(obj);
-            AddFnsToEbControls(ctrlsContainer);
+            JsonToEbControls(obj);
         }
-    }.bind(this));
+        else
+            ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);
+    });
 };
+
 
 function getFlatContControls(formObj) {
     let coll = [];

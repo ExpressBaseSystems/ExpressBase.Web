@@ -1,6 +1,19 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Html.RenderPartial("ExtPageHeader");
 }
+<script>$("#AppStore").remove();</script>
+<style>
+    .comsoon-plcholder img {
+        max-height: 500px;
+    }
+
+    .comsoon-plcholder .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
 @*<div class="row fd_As_hd navbar-fixed-top">
     <div class="col-md-8 col-md-offset-2">
         <h2 class="font_wmed mr-b-15">App Store</h2>
@@ -12,8 +25,8 @@
         </div>
     </div>
 </div>*@
-<div class="row">
+<section class="comsoon-plcholder mt mb">
     <div class="container">
-
+        <img src="~/images/underconstruct.jpg" />
     </div>
-</div>
+</section>

@@ -689,8 +689,8 @@ var UserGroupJs = function (infoDict, usersList) {
             this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", null, null, metadata3, null, null, null, options);
         }
         if (this.timeAddTile === null) {
-            let options = { longTitle: "Time Whitelist", tileDivHeight: "200px" };
-            this.timeAddTile = new TileSetupJs($("#divTime"), "New Time", null, null, metadata3, null, null, null, options);
+            let options = { longTitle: "DateTime Whitelist", tileDivHeight: "200px" };
+            this.timeAddTile = new TileSetupJs($("#divTime"), "New DateTime", null, null, metadata3, null, null, null, options);
         }
 
         //--------------------------------------------------------

@@ -415,30 +415,31 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (data.ErrorCodes.Count <= 0)
                     {
-                        return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
+                        TempData["ErrorMessage"] = "The captcha input is invalid or malformed.";
+                        return Redirect("/");
                     }
                     var error = data.ErrorCodes[0].ToLower();
                     switch (error)
                     {
                         case ("missing-input-secret"):
-                            ViewBag.CaptchaMessage = "The secret parameter is missing.";
+                            TempData["ErrorMessage"] = "The secret parameter is missing.";
                             break;
                         case ("invalid-input-secret"):
-                            ViewBag.CaptchaMessage = "The secret parameter is invalid or malformed.";
+                            TempData["ErrorMessage"] = "The secret parameter is invalid or malformed.";
                             break;
 
                         case ("missing-input-response"):
-                            ViewBag.CaptchaMessage = "The captcha input is missing.";
+                            TempData["ErrorMessage"] = "The captcha input is missing.";
                             break;
                         case ("invalid-input-response"):
-                            ViewBag.CaptchaMessage = "The captcha input is invalid or malformed.";
+                            TempData["ErrorMessage"] = "The captcha input is invalid or malformed.";
                             break;
 
                         default:
-                            ViewBag.CaptchaMessage = "Error occured. Please try again";
+                            TempData["ErrorMessage"] = "Error occured. Please try again";
                             break;
                     }
-                    return RedirectToAction("Error", RoutingConstants.EXTCONTROLLER);
+                    return Redirect("/");
                 }
                 else
                 {

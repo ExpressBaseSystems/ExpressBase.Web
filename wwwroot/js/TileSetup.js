@@ -1,5 +1,6 @@
 ﻿var TileSetupJs = function (parentDiv, title, initObjList, searchObjList, objMetadata, searchAjax, chkUnChkItemCustomFunc, parentThis, options) {
-    
+
+    //PARAMETERS COMMON
     this.parentDiv = parentDiv;
     this.title = title;
     this.options = options || {};
@@ -8,66 +9,172 @@
     this.objectList = (searchObjList === null) ? [] : searchObjList;
     this.objectMetadata = objMetadata;
     this.searchAjaxUrl = searchAjax;
-    
+    this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
+    this.parentthis = parentThis;
+
+    //DOM ELEMENTS COMMON
     this.txtDemoSearch = null;
     this.spanSrch = null;
     this.spanRemv = null;
-    //this.btnClearDemoSearch = null;
     this.btnAddModal = null;
+    this.addModal = null;
+    this.btnModalOk = null;
+    this.divSelectedDisplay = null;
+
+    //DOM ELEMENTS ROLE USERS
     this.txtSearch = null;
     this.btnSearch = null;
     this.loader = null;
     this.divMessage = null;
-    this.btnModalOk = null;
-    this.addModal = null;
-    this.divSelectedDisplay = null;
-    //this.divMessageOnSelected = null;
     this.divSearchResults = null;
-    this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
-    this.parentthis = parentThis;
+
+    //DOM ELEMENTS IP
+    this.txtIpAddress = null;
+    this.txtIpDescription = null;
+
+    //DOM ELEMENTS DATE TIME
+    this.txtDtTitle = null;
+    this.txtDtDescription = null;
+    this.radType = null;
+    //this.divOneTimeOverlay = null;
+    //this.divRecurringOverlay = null;
+    this.txtStartDate = null;
+    this.txtEndDate = null;
+    this.divChkDay = null;
+    this.txtStartTime = null;
+    this.txtEndTime = null;
+    
     this.profilePicStatus = null;
     this.readOnly = false;
     
     this.init = function () {
         this.createBody.bind(this)(this.parentDiv, this.title);
-
-        
-        
     }
 
     this.getPresetModalBody = function () {
-        var t = title.replace(/\s/g, "_");
+        let t = this.title.replace(/\s/g, "_");
 
         if (this.title === 'New IP') {
-            return (`   <div class="modal-body" style="height:110px">
-                            <div class="form-group" style="display: inline-block; width: 39%;">
-                                <label style="font-family: open sans; font-weight: 300;">Enter IP Address</label>
-                                <input id="txtIpAddress${t}" class="form-control" placeholder="Type Here" title="Enter IP Address Here">
-                            </div>
-                            <div class="form-group" style="display: inline-block; width: 60%; padding-left: 10px;">
-                                <label style="font-family: open sans; font-weight: 300;">Description</label>
-                                <input id="txtIpDescription${t}" class="form-control" placeholder="Type Here" title="Enter Description Here">
-                            </div>
-                        </div>`);
-        }
-        else if (this.title === 'New Time') {
-            return (`   <div class="modal-body" style="height:180px">
-                            <div class="form-group" style="display: inline-block; width: 49%;">
-                                <label style="font-family: open sans; font-weight: 300;">From Time</label>
-                                <input id="txtFromTime${t}" type="time" class="form-control" placeholder="Type Here" title="Enter From Time Here">
-                            </div>
-                            <div class="form-group" style="display: inline-block; width: 49%; padding-left: 10px;">
-                                <label style="font-family: open sans; font-weight: 300;">To Time</label>
-                                <input id="txtToTime${t}" type="time" class="form-control" placeholder="Type Here" title="Enter To Time Here">
+            return (`   
+            <div class="modal fade" id="addModal${t}" role="dialog">
+                <div class="modal-dialog" style="width: 400px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">${this.title}</h4>
+                        </div>
+                        <div class="modal-body" style="height:180px">
+                            <div class="form-group">
+                                <label style="font-family: open sans; font-weight: 300;">IP Address</label>
+                                <input id="txtIpAddress${t}" class="form-control" placeholder="Type IP Address Here" title="IP Address">
                             </div>
                             <div class="form-group">
                                 <label style="font-family: open sans; font-weight: 300;">Description</label>
-                                <input id="txtTimeDescription${t}" class="form-control" placeholder="Type Here" title="Enter Description Here">
+                                <input id="txtIpDescription${t}" class="form-control" placeholder="Type Description Here" title="Description">
                             </div>
-                        </div>`);
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btnModalOk${t}" type="button" class="btn btn-default">OK</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`);
+        }
+        else if (this.title === 'New DateTime') {
+            return (`   
+            <div class="modal fade" id="addModal${t}" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">${this.title}</h4>
+                        </div>   
+                        <div class="modal-body" style="height:315px">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label style="font-family: open sans; font-weight: 300;">Title</label>
+                                        <input id="txtDtTitle${t}" type="text" class="form-control" placeholder="Type Title Here" title="Title for the Constraint">
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label style="font-family: open sans; font-weight: 300;">Description</label>
+                                        <input id="txtDtDescription${t}" class="form-control" placeholder="Type Description Here" title="Description for the Constraint">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div style="padding-left: 15px;"><label style="font-family: open sans; font-weight: 300;">Select the Type of the Constraint</label></div>
+                                <div class="col-md-4">
+                                    <div class="radio">
+                                        <label><input type="radio" name="radType${t}" value="OneTime" checked onchange="if($(event.target).prop('checked')) { $('#divRecurringOverlay${t}').show();  $('#divOneTimeOverlay${t}').hide();}">One Time</label>
+                                    </div>                                    
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="radio">
+                                        <label><input type="radio" name="radType${t}" value="Recurring" onchange="if($(event.target).prop('checked')) { $('#divRecurringOverlay${t}').hide();  $('#divOneTimeOverlay${t}').show();}">Recurring</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div id="divOneTimeOverlay${t}" style="position: absolute; z-index: 10; height: 100%; width: 100%; opacity: 0.7; background-color: #fff; display: none; margin-left: -15px;"></div>
+                                    <div class="form-group">
+                                        <label style="font-family: open sans; font-weight: 300;">Start DateTime</label>
+                                        <input id="txtStartDate${t}" type="text" class="form-control" title="Start Date Time">
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-family: open sans; font-weight: 300;">End DateTime</label>
+                                        <input id="txtEndDate${t}" type="text" class="form-control" title="End Date Time">
+                                    </div>
+                                </div>
+                                <div class="col-md-8" style="position: relative;">
+                                    <div id="divRecurringOverlay${t}" style="position: absolute; z-index: 10; height: 100%; width: 100%; opacity: 0.7; background-color: #fff; display: block; margin-left: -15px;"></div>
+                                    <div id="divChkDay${t}" class="checkbox" style="padding-left: 25px; margin-top: 0px;">
+                                        <label class="checkbox-inline" style="min-width: 28%; margin-left: 10px;"><input type="checkbox" value="Sun" checked>Sunday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Mon" checked>Monday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Tue" checked>Tuesday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Wed" checked>Wednesday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Thu" checked>Thursday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Fri" checked>Friday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Sat" checked>Saturday</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label style="font-family: open sans; font-weight: 300;">Start Time</label>
+                                                <input id="txtStartTime${t}" type="text" class="form-control" title="Start Time">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label style="font-family: open sans; font-weight: 300;">To Time</label>
+                                                <input id="txtEndTime${t}" type="text" class="form-control" title="End Time">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btnModalOk${t}" type="button" class="btn btn-default">OK</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`);
         }
         else {
-            return (`   <div class="modal-body" style="height:400px">
+            return (`   
+            <div class="modal fade" id="addModal${t}" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">${this.title}</h4>
+                        </div>   <div class="modal-body" style="height:400px">
                             <div class="input-group ">
                                 <input id="txtSearch${t}" title="Type to Search" type="text" class="form-control" placeholder="Search">
                                 <span class="input-group-btn">
@@ -77,11 +184,17 @@
                             <div id="message${t}" style=" margin-left: 32%; margin-top: 25% ;font-size: 24px; color: #bbb; display:none;">Type Few Characters</div>
                             <div id="loader${t}" style=" margin-left:45%; margin-top:25% ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
                             <div id="divSearchResults${t}" style="height:338px; overflow-y:auto"></div>
-                        </div>`);
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btnModalOk${t}" type="button" class="btn btn-default">OK</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`);
         }
     }
-
-    //<button id="btnClearDemoSearch${t}" type="button" class="btn btn-default" style="float:right; display:inline-block">Clear</button>
+        
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
         $(parent).append(`
@@ -90,63 +203,67 @@
             <div class="col-md-3">
                 <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:100%" />
                 <span id="spanSrch${t}" class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 16px;"></span>
-                <span id="spanRemv${t}" class="glyphicon glyphicon-remove form-control-feedback" style="top: 0px; right: 16px; display:none;"></span>
-                
+                <span id="spanRemv${t}" class="glyphicon glyphicon-remove form-control-feedback" style="top: 0px; right: 16px; display:none;"></span>                
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn" id="btnAddModal${t}" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}</button>
             </div>
         </div>
-        <div class="container">
-            <div class="modal fade" id="addModal${t}" role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">${title}</h4>
-                        </div>`
-     + this.getPresetModalBody() +
-                        `<div class="modal-footer">
-                            <button id="btnModalOk${t}" type="button" class="btn btn-default">OK</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="divSelectedDisplay${t}" class="row tilediv1" style="Height: ${this.options.tileDivHeight || "500px"}">
-        
-
-        </div>`);
+        <div class="container">`
+        + this.getPresetModalBody() +
+        `</div>
+        <div id="divSelectedDisplay${t}" class="row tilediv1" style="Height: ${this.options.tileDivHeight || '500px'}"> </div>`);        
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
         this.spanSrch = $('#spanSrch' + t);
         this.spanRemv = $('#spanRemv'+ t);
-        //this.btnClearDemoSearch = $('#btnClearDemoSearch' + t);
-        this.btnAddModal = $('#btnAddModal' + t );
-        this.txtSearch = $('#txtSearch' + t);
-        this.btnSearch = $('#btnSearch' + t);
-        this.loader = $('#loader' + t);
-        this.divMessage = $('#message' + t);
-        this.btnModalOk = $('#btnModalOk' + t);
+        this.btnAddModal = $('#btnAddModal' + t);
         this.addModal = $('#addModal' + t);
-        this.divSelectedDisplay = $('#divSelectedDisplay' + t);
-        //this.divMessageOnSelected = $('#divMsgOnSelected' + t);
-        this.divSearchResults = $('#divSearchResults' + t);
+        this.btnModalOk = $('#btnModalOk' + t);
+        this.divSelectedDisplay = $('#divSelectedDisplay' + t);        
+
+        if (this.title === 'New IP') {
+            this.txtIpAddress = $('#txtIpAddress' + t);
+            this.txtIpDescription = $('#txtIpDescription' + t);
+        }
+        else if (this.title === 'New DateTime') {
+            this.txtDtTitle = $('#txtDtTitle' + t);
+            this.txtDtDescription = $('#txtDtDescription' + t);
+            this.radType = 'radType' + t;
+            //this.divOneTimeOverlay = $('#divOneTimeOverlay' + t);
+            //this.divRecurringOverlay = $('#divRecurringOverlay' + t);
+            this.txtStartDate = $('#txtStartDate' + t);
+            this.txtEndDate = $('#txtEndDate' + t);
+            this.divChkDay = $('#divChkDay' + t);
+            this.txtStartTime = $('#txtStartTime' + t);
+            this.txtEndTime = $('#txtEndTime' + t);
+
+            this.txtStartDate.datetimepicker({ datepicker: true, timepicker: true, format: "d/m/Y H:i" });
+            this.txtEndDate.datetimepicker({ datepicker: true, timepicker: true, format: "d/m/Y H:i" });
+            this.txtStartTime.datetimepicker({ datepicker: false, timepicker: true, format: "H:i" });
+            this.txtEndTime.datetimepicker({ datepicker: false, timepicker: true, format: "H:i" });
+        }
+        else {
+            this.txtSearch = $('#txtSearch' + t);
+            this.btnSearch = $('#btnSearch' + t);
+            this.loader = $('#loader' + t);
+            this.divMessage = $('#message' + t);
+            this.divSearchResults = $('#divSearchResults' + t);
+            
+            $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
+            $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
+            $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
+            $(this.divSelectedDisplay).on('click', ".dropDownViewClass", this.onClickViewFromSelected.bind(this));
+        }
+
 
         $(this.parentDiv).on('keyup', '#txtDemoSearch' + t, this.keyUpTxtDemoSearch.bind(this));
-        //$(this.parentDiv).on('click', '#btnClearDemoSearch' + t, this.onClickbtnClearDemoSearch.bind(this));
         $(this.parentDiv).on('click', '#spanRemv' + t, this.onClickbtnClearDemoSearch.bind(this));
-        $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
-        $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
         $(this.parentDiv).on('click', '#btnModalOk' + t, this.clickbtnModalOkAction.bind(this));
         $(this.parentDiv).on('shown.bs.modal', '#addModal' + t, this.initModal.bind(this));
         $(this.parentDiv).on('hidden.bs.modal', '#addModal' + t, this.finalizeModal.bind(this));
-
         $(this.parentDiv).on('click', '#btnAddModal' + t, this.onClickBtnAddModal.bind(this));
-        $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
         $(this.divSelectedDisplay).on('click', ".dropDownRemoveClass", this.onClickRemoveFromSelected.bind(this));
-        $(this.divSelectedDisplay).on('click', ".dropDownViewClass", this.onClickViewFromSelected.bind(this));
 
         if (this.objectMetadata.indexOf('ProfilePicture') > -1)
             this.profilePicStatus = true;
@@ -187,7 +304,6 @@
         itemid = itemid.substring(0, itemid.length - 1);
         return itemid;
     }
-
     //-------------------------------------------------------------------
 
     
@@ -234,9 +350,8 @@
 
     this.initModal = function () {
         if (this.title === 'New IP') {
-            let t = title.replace(/\s/g, "_");
-            $("#txtIpAddress" + t).val("");
-            $("#txtIpDescription" + t).val("");
+            this.txtIpAddress.val("");
+            this.txtIpDescription.val("");
         }
         else {
             this.divMessage.show();
@@ -329,7 +444,7 @@
     }
 
     this.appendToSearchResult = function (divSearchResults, st, obj) {
-        var temp= `<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id=${obj.Id}>
+        var temp= `<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id='${obj.Id}'>
                         <div class='col-md-1' style="padding:10px">
                             <input type ='checkbox' class='SearchCheckbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d1 = '${obj.Data1}' aria-label='...'>
                         </div>`;
@@ -363,8 +478,21 @@
         var t = title.replace(/\s/g, "_");
 
         if (this.title === 'New IP') {
-            let t = title.replace(/\s/g, "_");
-            this.appendToSelected(this.divSelectedDisplay, { Id: $("#txtIpAddress" + t).val().trim(), Name: $("#txtIpAddress" + t).val(), Data1: $("#txtIpDescription" + t).val() });
+            this.appendToSelected(this.divSelectedDisplay, { Id: this.txtIpAddress.val().trim(), Name: this.txtIpAddress.val(), Data1: this.txtIpDescription.val() });
+            return;
+        }
+        else if (this.title === 'New DateTime') {
+            let dscr = '';
+            if ($("input:radio:checked[name='" + this.radType + "']").attr("value") === 'OneTime')
+                dscr = "One Time - " + this.txtStartDate.val() + " to " + this.txtEndDate.val();
+            else {
+                dscr = "Recurring - " + this.txtStartTime.val() + " to " + this.txtEndTime.val() + "<br/>";
+                let $chkd = $(this.divChkDay.selector + " input:checkbox:checked");
+                for (let i = 0; i < $chkd.length; i++)
+                    dscr += $($chkd[i]).attr('value') + " "; 
+            }
+            
+            this.appendToSelected(this.divSelectedDisplay, { Id: this.txtDtTitle.val().trim(), Name: this.txtDtTitle.val(), Data1: dscr });
             return;
         }
 
@@ -388,7 +516,7 @@
         if (itempresent.length === 0)
             this.resultObject.push(obj);
 
-        var temp = `<div class="col-md-4 container-md-4" data-id=${obj.Id} data-name=${obj.Name}>
+        var temp = `<div class="col-md-4 container-md-4" data-id='${obj.Id}' data-name='${obj.Name}'>
                         <div class="mydiv1" style="overflow:visible;">
                             <div class="icondiv1">`;
         if (this.profilePicStatus === true)

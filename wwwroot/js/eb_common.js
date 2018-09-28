@@ -266,13 +266,14 @@ function gettypefromString(str) {
 
 function JsonToEbControls(ctrlsContainer) {
     $.each(ctrlsContainer.Controls.$values, function (i, obj) {
-        ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);
         if (obj.IsContainer) {
-            dest_coll.push(obj);
-            AddFnsToEbControls(ctrlsContainer);
+            JsonToEbControls(obj);
         }
-    }.bind(this));
+        else
+            ctrlsContainer.Controls.$values[i] = new ControlOps[obj.ObjType](obj);
+    });
 };
+
 
 function getFlatContControls(formObj) {
     let coll = [];
@@ -321,7 +322,7 @@ function getValsForViz(formObj) {
             if (obj.EbDbType === 7 || obj.EbDbType === 8)
                 value = 0;
             else if (obj.EbDbType === 16)
-                value = "EB";
+                value = "0";
         }
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
     });

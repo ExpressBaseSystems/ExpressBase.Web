@@ -115,8 +115,7 @@
 </div>
 
 <script>
-    Vue.component('v-select', VueSelect.VueSelect);
-    Vue.config.devtools = true;
+    @Html.Raw(ViewBag.ControlOperations);
     new EbHeader().insertButton('<button class="btn " id="webformsave"><i class="fa fa-save" aria-hidden="true"></i></button>');
 
     let _flatControls = @Html.Raw(ViewBag.FlatControls).$values;

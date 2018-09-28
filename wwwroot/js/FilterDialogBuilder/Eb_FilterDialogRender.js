@@ -73,6 +73,10 @@
                     this.onChangeExeFlag = true;
                     $("body").on("change", "input[name='" + cObj.EbSid_CtxId + "']", this.ctrlValueChanged.bind(this, cObj.Name));
                 }
+                else if (cObj.ObjType === 'UserLocation') {
+                    this.onChangeExeFlag = true;
+                    $("body").on("change", "#" + cObj.EbSid_CtxId, this.ctrlValueChanged.bind(this, cObj.Name));
+                }
             }
         }.bind(this));
 

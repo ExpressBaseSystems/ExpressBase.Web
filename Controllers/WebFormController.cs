@@ -8,6 +8,7 @@ using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
+using Newtonsoft.Json;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -15,16 +16,17 @@ namespace ExpressBase.Web.Controllers
     {
         public WebFormController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public IActionResult Index(string refId , string _params)
+        public IActionResult Index(string refId, string _params)
         {
             ViewBag.editModeObj = _params ?? "false";
             ViewBag.formRefId = refId;
             return ViewComponent("WebForm", refId);
         }
 
-        public int InsertWebformData(string TableName, object ValObj, string RefId, int RowId)
+        public int InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
         {
-            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, ValObj = ValObj, RowId = RowId });
+            Dictionary<string, List<TableColumnMetaS>>  Values = JsonConvert.DeserializeObject<Dictionary<string, List<TableColumnMetaS>>>(ValObj);
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, Values = Values, RowId = RowId });
             return 0;
         }
 
@@ -32,7 +34,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                InsertIntoBotFormTableResponse resp = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields ,Id = Id });
+                InsertIntoBotFormTableResponse resp = ServiceClient.Post<InsertIntoBotFormTableResponse>(new InsertIntoBotFormTableRequest { TableName = TableName, Fields = Fields, Id = Id });
                 return resp.RowAffected;
             }
             catch (Exception ex)
@@ -68,7 +70,7 @@ namespace ExpressBase.Web.Controllers
             foreach (EbDataTable dataTable in dataset.Tables)
             {
                 foreach (EbDataRow dataRow in dataTable.Rows)
-                {                    
+                {
                     foreach (object item in dataRow)
                     {
                         rowColl.Add(item);

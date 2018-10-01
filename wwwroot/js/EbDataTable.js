@@ -157,6 +157,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#filterWindow_" + this.tableId).append(text);
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.getColumnsSuccess.bind(this));
 
+        this.FilterDialog = FilterDialog;
 
         if (text !== "") {
             if (typeof commonO !== "undefined")
@@ -188,6 +189,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //        $("this.ContextId" + ' #' + param.Name).val(param.Value);
                 //    });
                 //}
+                this.placefiltervalues();
                 $("#btnGo" + this.tabNum).trigger("click");
             }
             else {
@@ -199,7 +201,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(subDivId).focus();
 
         this.PcFlag = "False";
-        this.FilterDialog = FilterDialog;
     }.bind(this);
 
     this.CloseParamDiv = function () {
@@ -1023,7 +1024,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
         this.firstTime = true;
-        this.placefiltervalues();
         this.GenerateButtons();
         if (this.login == "uc") {
             this.initCompleteflag = true;
@@ -1452,10 +1452,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         var rows = this.Api.rows().nodes();
         $.each(this.Levels, function (i, obj) {
-            if (obj.type !== "After")
-                $(rows).eq(obj.rowIndex).before(obj.groupString);
+            if (obj.insertionType !== "After")
+                $(rows).eq(obj.rowIndex).before(obj.html);
             else
-                $(rows).eq(obj.rowIndex).after(obj.groupString);
+				$(rows).eq(obj.rowIndex).after(obj.html);
         });
         var ct = $("#" + this.tableId + " .group[group=1]").length;
         $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);

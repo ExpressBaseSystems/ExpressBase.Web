@@ -143,22 +143,31 @@ var EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues) {
         this.clearValues();
-        values = StrValues.split(",");
+        this.setvaluesColl = StrValues.split(",");
 
-        this.datatable.columnSearch = [];
-        $.each(values, function (i, val) {
-            this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", val, this.ComboObj.ValueMember.Type));
-        }.bind(this));
-        this.datatable.Api.ajax.reload();
-
-        $.each(values, function (i, val) {
-            $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`).click();
-        }.bind(this));
+        if (this.datatable) {
+            this.datatable.columnSearch = [];
+            //$.each(this.setvaluesColl, function (i, val) {
+            this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
+            //}.bind(this));
+            this.datatable.Api.ajax.reload();
+        }
+        else {
+            this.filterArray = [];
+            //$.each(this.setvaluesColl, function (i, val) {
+            this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
+            //}.bind(this));
+            if (this.setvaluesColl.length > 0) {
+                this.InitDT();
+                this.V_showDD();
+            }
+        }
+        
     }.bind(this);
 
     this.getValues = function () {
-
-    }
+        
+    };
 
     this.clearValues = function () {
         $.each(this.Vobj.valueMembers, function (i, val) {
@@ -167,6 +176,14 @@ var EbSelect = function (ctrl, options) {
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
 
+    }
+
+    this.initComplete4SetVal = function () {
+        if (this.setvaluesColl) {
+            $.each(this.setvaluesColl, function (i, val) {
+                $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`).click();
+            }.bind(this));
+        }
     }
 
 
@@ -250,6 +267,7 @@ var EbSelect = function (ctrl, options) {
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
+        o.fninitComplete4SetVal = this.initComplete4SetVal.bind(this);
         o.columnSearch = this.filterArray;
         o.headerDisplay = (this.Vobj.displayMembers.length > 1) ? true : false;
         //o.filterValues = this.getParams();

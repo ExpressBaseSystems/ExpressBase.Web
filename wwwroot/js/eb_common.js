@@ -322,7 +322,7 @@ function getValsForViz(formObj) {
             if (obj.EbDbType === 7 || obj.EbDbType === 8)
                 value = 0;
             else if (obj.EbDbType === 16)
-                value = "EB";
+                value = "0";
         }
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
     });

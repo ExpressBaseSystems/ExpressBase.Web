@@ -516,6 +516,8 @@ var EbBasicDataTable = function (Option) {
             this.Api.columns.adjust();
             if (Option.fninitComplete)
                 Option.fninitComplete();
+            if (Option.fninitComplete4SetVal)
+                Option.fninitComplete4SetVal();
         }.bind(this), 10);
         //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
         if (!this.headerDisplay)

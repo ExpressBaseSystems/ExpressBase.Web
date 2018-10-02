@@ -492,7 +492,7 @@ var EbSelect = function (ctrl, options) {
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
 
-        $("#" + this.ComboObj.Name).attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
+        $("#" + this.ComboObj.EbSid_CtxId).attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
         this.getSelectedRow();
 
         if (VMs.length === 0)

@@ -49,7 +49,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.filterFlag = false;
     //if (index !== 1)
     this.rowData = (rowData !== undefined && rowData !== null) ? rowData.split(",") : null;
-    this.filterValues = (filterValues !== "" && filterValues !== undefined) ? JSON.parse(filterValues) : [];
+    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(filterValues) : [];
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
     this.drake = null;
@@ -152,12 +152,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.FDCont = $("#filterWindow_" + this.tableId);
         $("#filterWindow_" + this.tableId).empty();
-        $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
+        $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv_" + this.tableId+"'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
         $("#filterWindow_" + this.tableId).children().find('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
         $("#filterWindow_" + this.tableId).append(text);
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.getColumnsSuccess.bind(this));
 
-        this.FilterDialog = FilterDialog;
+        this.FilterDialog = (typeof(FilterDialog) !== "undefined") ? FilterDialog : {};
 
         if (text !== "") {
             if (typeof commonO !== "undefined")
@@ -672,7 +672,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.getFilterValues = function (from) {
         //this.filterChanged = false;
-        //var fltr_collection = [];
+        var fltr_collection = [];
         //var FdCont = "#" + this.ContextId;
         //var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
         //var paramsCtx = $(FdCont + " #all_control_cxtnames").val();
@@ -703,7 +703,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //        });
         //    }
         //}
-        var fltr_collection = getValsForViz(this.FilterDialog.filterObj);
+        if(this.FD)
+            fltr_collection = getValsForViz(this.FilterDialog.filterObj);
         if (this.isContextual && from !== "compare") {
             if (from === "filter" && prevfocusedId !== undefined) {
                 $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
@@ -761,7 +762,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.filterDisplay = function () {
-        var $controls = $("#" + this.ContextId + "#filterBox").children().not("[type=hidden],button");
+        var $controls = $("#" + this.ContextId + " #filterBox").children().not("[type=hidden],button");
         var filter = "";
         var filterdialog = [], columnFilter = [];
         if ($controls.length > 0) {
@@ -785,7 +786,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     o.logicOp = "AND";
                 else
                     o.logicOp = "";
-                if (o.value !== undefined)
+                if (o.value !== undefined && o.value !== null && o.value !== "" )
                     filterdialog.push(o);
             });
         }
@@ -1023,19 +1024,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        this.firstTime = true;
         this.GenerateButtons();
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
-            //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
-            if (dvcounter === 0)
-                dvcontainerObj.modifyNavigation();
+            //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");            
         }
-        //this.Api.columns.adjust();
-
-        //setTimeout(function () {
-
         this.arrangeWindowHeight();
         this.createFilterRowHeader();
         this.createFooter();
@@ -1043,6 +1037,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
         $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
 
+        this.filterDisplay();
         this.addFilterEventListeners();
         this.arrangeFooterWidth();
         //this.arrangefixedHedaerWidth();
@@ -1051,7 +1046,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
 
         $("#eb_common_loader").EbLoader("hide");
-        //}.bind(this), 10);
+        this.contextMenu4Cell();
+        //this.contextMenu();
+        this.firstTime = true;
     }
 
     this.contextMenu = function () {
@@ -1070,6 +1067,27 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 "Copy": { name: "Copy", icon: "fa-external-link-square", callback: this.copyLabelData.bind(this) }
             }
         });
+    }
+
+    this.contextMenu4Cell = function () {
+        var isDisable = this.EbObject.DisableCopy;
+        $.contextMenu('destroy', ".tdheight");
+        $.contextMenu({
+            selector: ".tdheight",
+            items: {
+                "Copy": {
+                    name: "Copy", icon: "fa-external-link-square", callback: this.copyCellData.bind(this),
+                        disabled: function (key, opt) {
+                            return isDisable;
+                        }
+                }
+            }
+        });
+        //$(".tdheight").contextMenu('update');
+    };
+
+    this.copyCellData = function (key, opt, event) {
+
     }
 
     this.OpeninNewTab = function (key, opt, event) {
@@ -1365,11 +1383,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
         if (this.firstTime) {
+            //if (this.columnSearch.length > 0)
+                this.filterDisplay();
             this.addFilterEventListeners();
             this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
-
             this.arrangeWindowHeight();
         }
         this.Api.columns.adjust();
@@ -1389,7 +1408,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             if (obj.Name === name) {
                 this.CurrentRowGroup = jQuery.extend({}, obj);
-                this.getColumnsSuccess();
+                this.getColumnsSuccess(e);
             }
         }.bind(this));
     }
@@ -1978,6 +1997,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
+        $('#close_paramdiv_' + this.tableId).off('click').on('click', this.toggleFilterdialog.bind(this));
         //$("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
         $(".columnMarker_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $('[data-toggle="tooltip"]').tooltip({
@@ -1994,7 +2014,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $(this).datepicker("show");
         });
 
-        this.filterDisplay();
         this.Api.columns.adjust();
     };
 
@@ -2031,21 +2050,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     "</div>");
             }
 
-            if (this.login == "uc") {
-                //if (!this.isContextual)
-                dvcontainerObj.appendRelatedDv(this.tableId);
-                dvcontainerObj.modifyNavigation();
-                //$("#" + this.ContextId).html("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//<div class='icon-cont  pull-right'><i class='fa fa-times' aria-hidden='true'></i></div></div>
-                //$('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
-
-                //$("#" + this.ContextId).append(dvcontainerObj.dvcol[focusedId].filterHtml);
-                //$("#" + this.ContextId + " #btnGo").click(this.getColumnsSuccess.bind(this));
-                //if (this.filterValues.length > 0) {
-                //    $.each(this.filterValues, function (i, param) {
-                //        $("#" + this.ContextId + ' #' + param.Name).val(param.Value);
-                //    });
-                //}
-            }
+           
             //if (this.login === "dc") {
             //    if (this.FD)
             //        this.stickBtn.minimise();
@@ -2061,9 +2066,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.FD)
                 $("#obj_icons").append("<button id='btnToggleFD" + this.tableId + "' class='btn'>F</button>");
             $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
-        }
 
-        this.addFilterEventListeners();
+            if (this.login == "uc") {
+                dvcontainerObj.modifyNavigation();
+            }
+        }
+        if (this.firstTime) {
+            this.addFilterEventListeners();
+        }
+        
     };
 
     this.setFilterboxValue = function (i, obj) {

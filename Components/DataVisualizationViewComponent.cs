@@ -48,7 +48,7 @@ namespace ExpressBase.Web.Components
                 EbDataVisualization TableVisObj = getDVObject(dvobj);
                 EbControlContainer.SetContextId(TableVisObj.EbDataSource.FilterDialog, contextId);
                 //if (flag)
-                    ViewBag.data = TableVisObj;
+                ViewBag.data = TableVisObj;
                 //else
                 //    ViewBag.data = dvobj;
             }
@@ -56,19 +56,19 @@ namespace ExpressBase.Web.Components
             //ViewBag.forWrap = forWrap;
             return View();
         }
-        
+
         private EbDataVisualization getDVObject(EbDataVisualization dvobj)
         {
             //DataSourceColumnsResponse columnresp = null;
             DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
-            Console.WriteLine("Columns;;;"+ columnresp);
+            Console.WriteLine("Columns;;;" + columnresp);
             Console.WriteLine("Columns;;;" + dvobj.EbDataSource);
             if (columnresp == null || columnresp.Columns.Count == 0)
-                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new TableColumnsRequest { RefId = dvobj.DataSourceRefId, SolnId = ViewBag.cid, Params = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() :  null});
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new TableColumnsRequest { RefId = dvobj.DataSourceRefId, SolnId = ViewBag.cid, Params = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() : null });
 
 
             var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
-            int _pos = __columns.Count+100;
+            int _pos = __columns.Count + 100;
 
             var Columns = new DVColumnCollection();
             dvobj.IsPaged = columnresp.IsPaged.ToString();
@@ -79,7 +79,7 @@ namespace ExpressBase.Web.Components
                 DVBaseColumn _col = null;
 
                 if (column.Type == EbDbTypes.String && column.ColumnName == "socialid")
-                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos , ClassName = "tdheight", RenderAs = StringRenderType.Image };
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight", RenderAs = StringRenderType.Image };
                 else if (column.Type == EbDbTypes.String && column.ColumnName == "latlong")
                     _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, ClassName = "tdheight", RenderAs = StringRenderType.Marker };
                 else if (column.Type == EbDbTypes.String)
@@ -106,7 +106,7 @@ namespace ExpressBase.Web.Components
         private DVColumnCollection compareDVColumns(DVColumnCollection OldColumns, DVColumnCollection CurrentColumns)
         {
             var NewColumns = new DVColumnCollection();
-            foreach(DVBaseColumn oldcol in OldColumns)
+            foreach (DVBaseColumn oldcol in OldColumns)
             {
                 var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type);
                 if (tempCol != null)
@@ -125,5 +125,5 @@ namespace ExpressBase.Web.Components
         }
     }
 
-    
+
 }

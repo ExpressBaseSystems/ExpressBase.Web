@@ -378,10 +378,10 @@ namespace ExpressBase.Web.Controllers
                 if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
                 {
                     smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = false });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = false, SolutionId = req["SolutionId"] });
                 }
                 else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = true });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(smtpcon);
             }
             catch (Exception e)

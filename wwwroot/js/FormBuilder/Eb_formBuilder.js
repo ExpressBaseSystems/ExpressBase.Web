@@ -141,7 +141,7 @@
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
         $el.attr("eb-type", type).attr("id", id);
-        this.updateControlUI(id);
+        //this.updateControlUI(id);
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -301,7 +301,7 @@
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
-                this.updateControlUI(id);
+                //this.updateControlUI(id);
             }
             else
                 console.log("ondrop else : removed");

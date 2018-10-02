@@ -67,10 +67,10 @@ namespace ExpressBase.Web.Controllers
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
                 SolutionName = req["Sname"],
-                SolnId = req["SolnId"],
+                SolnUrl = req["SolnId"],
                 Description = req["Desc"]
             });
-            if (res.Solnid > 0)
+            if (res.Status > 0)
                 TempData[Msg] = "New Solution Created.";
         }
 

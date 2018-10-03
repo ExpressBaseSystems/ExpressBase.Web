@@ -502,23 +502,19 @@ var EbBasicDataTable = function (Option) {
             if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-
-        this.filterDisplay();
         if(this.Api !== null)
             this.Api.columns.adjust();
 
         this.$dtLoaderCont.EbLoader("hide");
 
-        setTimeout(function () {
-            if (this.showFilterRow)
-                this.createFilterRowHeader();
-            this.addFilterEventListeners();
-            this.Api.columns.adjust();
-            if (Option.fninitComplete)
-                Option.fninitComplete();
-            if (Option.fninitComplete4SetVal)
-                Option.fninitComplete4SetVal();
-        }.bind(this), 10);
+        if (this.showFilterRow)
+            this.createFilterRowHeader();
+        this.addFilterEventListeners();
+        this.Api.columns.adjust();
+        if (Option.fninitComplete)
+            Option.fninitComplete();
+        if (Option.fninitComplete4SetVal)
+            Option.fninitComplete4SetVal
         //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
         if (!this.headerDisplay)
             $(".Eb-ctrlContainer .dataTables_scrollHead").hide();
@@ -641,13 +637,13 @@ var EbBasicDataTable = function (Option) {
     this.drawCallBackFunc = function (settings) {
         //if (this.ebSettings.rowGrouping.$values.length > 0)
         //    this.doRowgrouping();
-        this.summarize2();
-        if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
-            //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
-        }
-        this.filterDisplay();
-        if(this.Api !== null)
-            this.Api.columns.adjust();
+        //this.summarize2();
+        //if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
+        //    //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
+        //}
+        //this.filterDisplay();
+        //if(this.Api !== null)
+        //    this.Api.columns.adjust();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {

@@ -106,7 +106,7 @@
                 let colObj = {};
                 colObj.Name = obj.Name;
                 _type = obj.EbDbType;
-                colObj.Value = (_type === 7) ? parseInt($("#" + obj.EbSid_CtxId).val()) : $("#" + obj.EbSid_CtxId).val();
+                colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();
                 colObj.Type = _type;
                 colObj.AutoIncrement = obj.AutoIncrement || false;
                 FVWTObjColl[src_obj.TableName].push(colObj);

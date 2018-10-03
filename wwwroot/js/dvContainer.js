@@ -34,7 +34,6 @@ var DvContainerObj = function (settings) {
     this.clickDot = false;
     this.cellData = null;
     this.isExistReport = false;
-    this.curTVobj = settings.dsobj;
     //this.PGobj = new Eb_PropertyGrid("pp_inner", "uc");
 
 
@@ -89,7 +88,7 @@ var DvContainerObj = function (settings) {
                 refid = this.dvRefid,
                 ver_num = this.ver_num,
                 type = this.type,
-                dsobj = this.curTVobj,
+                dsobj = this.currentObj,
                 cur_status = this.cur_status,
                 tabNum = this.tabnum,
                 ss_url = this.ssurl,
@@ -175,28 +174,28 @@ var DvContainerObj = function (settings) {
                     count++;
                 }
             }.bind(this));
-            dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+            this.previousObj = this.currentObj;
             $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
             $.ajax({
                 type: "POST",
                 url: "../DV/getdv",
-                data: { refid: this.dvRefid, objtype: $(e.target).attr("objtype"), dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
+                data: { refid: this.dvRefid, objtype: $(e.target).attr("objtype"), dsrefid: this.currentObj.DataSourceRefId },
                 success: function (dvObj) {
                     counter++;
                     dvcounter++;
                     dvObj = JSON.parse(dvObj);
-                    dvcontainerObj.currentObj = dvObj.DsObj;
-                    dvcontainerObj.currentObj.Name = (count > 0) ? dvcontainerObj.currentObj.Name + "(" + (count + 1) + ")" : dvcontainerObj.currentObj.Name;
+                    this.currentObj = dvObj.DsObj;
+                    this.currentObj.Name = (count > 0) ? this.currentObj.Name + "(" + (count + 1) + ")" : this.currentObj.Name;
                     this.TaggedDvlist = dvObj.DvTaggedList.$values;
                     if (dvtype === "pipped") {
-                        dvcontainerObj.currentObj.Pippedfrom = dvcontainerObj.previousObj.Name;
+                        this.currentObj.Pippedfrom = this.previousObj.Name;
                         this.RelatedDvlist = this.PippedColl[focusedId];
                     }
                     else
                         this.RelatedDvlist = dvObj.DvList.$values;
                     //this.removeDupliateDV();
                     $("#eb_common_loader").EbLoader("hide");
-                    dvcontainerObj.btnGoClick();
+                    this.btnGoClick();
                 }.bind(this),
             });
         }
@@ -209,8 +208,8 @@ var DvContainerObj = function (settings) {
         this.filterValues = filter;
         this.cellData = celldata;
         var copycelldata = this.cellData.replace(/[^a-zA-Z ]/g, "").replace(/ /g, "_");
-        this.dvRefid = dvcontainerObj.dvcol[focusedId].linkDV;
-        dvcontainerObj.previousObj = dvcontainerObj.currentObj;
+        this.dvRefid = this.dvcol[focusedId].linkDV;
+        this.previousObj = this.currentObj;
 
         if (dvcounter === 24) {
             this.ReportExist();
@@ -271,13 +270,12 @@ var DvContainerObj = function (settings) {
                 $.ajax({
                     type: "POST",
                     url: "../DV/getdv",
-                    data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2], dsrefid: dvcontainerObj.currentObj.DataSourceRefId },
+                    data: { refid: this.dvRefid, objtype: this.dvRefid.split("-")[2], dsrefid: this.currentObj.DataSourceRefId },
                     success: function (dvObj) {
                         counter++;
                         dvcounter++;
                         dvObj = JSON.parse(dvObj);
-                        dvcontainerObj.currentObj = dvObj.DsObj;
-                        this.curTVobj = dvObj.DsObj;
+                        this.currentObj = dvObj.DsObj;
                         this.TaggedDvlist = dvObj.DvTaggedList.$values;
                         if (dvObj.DvList.$values.length > 0) {
                             this.RelatedDvlist = dvObj.DvList.$values;
@@ -285,7 +283,7 @@ var DvContainerObj = function (settings) {
                         //this.removeDupliateDV();
                         $("#eb_common_loader").EbLoader("hide");
                         $("#obj_icons .btn").prop("disabled", false);
-                        dvcontainerObj.btnGoClick();
+                        this.btnGoClick();
                     }.bind(this),
                 });
             }
@@ -293,11 +291,11 @@ var DvContainerObj = function (settings) {
         else {
             counter++;
             dvcounter++;
-            dvcontainerObj.currentObj = new EbObjects["EbGoogleMap"]("Container_" + Date.now());
-            dvcontainerObj.currentObj.Columns = dvcontainerObj.previousObj.Columns;
-            dvcontainerObj.currentObj.DSColumns = dvcontainerObj.previousObj.DSColumns;
-            dvcontainerObj.currentObj.DataSourceRefId = dvcontainerObj.previousObj.DataSourceRefId;
-            dvcontainerObj.btnGoClick();
+            this.currentObj = new EbObjects["EbGoogleMap"]("Container_" + Date.now());
+            this.currentObj.Columns = this.previousObj.Columns;
+            this.currentObj.DSColumns = this.previousObj.DSColumns;
+            this.currentObj.DataSourceRefId = this.previousObj.DataSourceRefId;
+            this.btnGoClick();
         }
     };
 
@@ -451,35 +449,23 @@ var DvContainerObj = function (settings) {
 
     this.modifyNavigation = function () {
         this.modifydivDots();
-        if (!this.clickDot) {
-            $("#Save_btn").show();
-            $("#Related_btn").show();
-            //if (counter >= 1) {
-            $("#prev").show();
-            $("#next").show();
-            $("#divDots").show();
-            if (!$('.splitdiv_parent').hasClass("slick-slider")) {
-                this.slickApi = $('.splitdiv_parent').slick({
-                    slidesToShow: 1,
-                    infinite: false,
-                    draggable: false,
-                    speed: 800,
-                    cssEase: 'ease-in',
-                    //arrows: false,
-                    //dots: true,
-                    prevArrow: "<i class='pull-left fa fa-angle-left ' aria-hidden='true' style='left: 15px;'></i>",
-                    nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 15px;' aria-hidden='true'></i>"
-                    //prevArrow: $("#prev"),
-                    //nextArrow: $("#next")
-                });
-                //$('.splitdiv_parent').prepend(`<div id='divDots' class='dotsDiv'><div class='dotstable'></div></div>`);
-                $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
-                $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
-            }
-            else {
-                this.clickDot = true;
-                $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
-            }
+        $("#divDots").show();
+        if (!$('.splitdiv_parent').hasClass("slick-slider")) {
+            $('.splitdiv_parent').slick({
+                slidesToShow: 1,
+                infinite: false,
+                draggable: false,
+                speed: 800,
+                cssEase: 'ease-in',
+                prevArrow: "<i class='pull-left fa fa-angle-left ' aria-hidden='true' style='left: 15px;'></i>",
+                nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 15px;' aria-hidden='true'></i>"
+            });
+            $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
+            $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
+        }
+        else {
+            this.clickDot = true;
+            $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
         }
     }
 
@@ -487,92 +473,56 @@ var DvContainerObj = function (settings) {
         $("#Relateddiv").hide();
         //$(".ppcont").hide();
         $(".filterCont").hide();
-        if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) {
+        if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) 
             focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
-            var __count = focusedId.split("_")[5];
-            $("#" + focusedId).focus();
-            var dvobj = this.dvcol[focusedId].EbObject;
-            this.dvRefid = this.dvcol[focusedId].Refid;
-            dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-            dvcontainerObj.currentObj = dvobj;
-            this.curTVobj = dvobj;
-            if (dvcontainerObj.currentObj.Pippedfrom !== "")
-                $("#Pipped").text("Pipped From : " + dvcontainerObj.currentObj.Pippedfrom);
-            else
-                $("#Pipped").text("");
-            if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-                if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                    this.PGobj.setObject(this.curTVobj, AllMetas["EbTableVisualization"]);
+
+        var __count = focusedId.split("_")[5];
+        $("#" + focusedId).focus();
+        var dvobj = this.dvcol[focusedId].EbObject;
+        this.dvRefid = this.dvcol[focusedId].Refid;
+        this.previousObj = this.currentObj;
+        this.currentObj = dvobj;
+        if (this.currentObj.Pippedfrom !== "")
+            $("#Pipped").text("Pipped From : " + this.currentObj.Pippedfrom);
+        else
+            $("#Pipped").text("");
+        if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
+            if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
+                this.PGobj.setObject(this.currentObj, AllMetas["EbTableVisualization"]);
+                if(this.dvcol[focusedId].firstTime)
                     this.dvcol[focusedId].GenerateButtons();
-                    $("#Common_obj_icons").hide();
-                    $("#obj_icons").show();
-                    $(".stickBtn").show();
-                    if (__count !== "0") {
-                        $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
-                        this.eventBind();
-                    }
+                $("#Common_obj_icons").hide();
+                $("#obj_icons").show();
+                $(".stickBtn").show();
+                if (__count !== "0") {
+                    $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
+                    this.eventBind();
                 }
-                $(".dv-body2").removeClass("dv-pdf");
-                //this.dvcol[focusedId].Api.draw();
             }
-            else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
-                if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {
-                    this.dvcol[focusedId].GenerateButtons();
-                }
-                $(".dv-body2").removeClass("dv-pdf");
+            $(".dv-body2").removeClass("dv-pdf");
+            //this.dvcol[focusedId].Api.draw();
+        }
+        else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
+            if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {
+                this.dvcol[focusedId].GenerateButtons();
             }
-            else {
-                $(".stickBtn").hide();
-                $("#obj_icons").hide();
-                $("#Common_obj_icons").show();
-                $("#Common_obj_icons").empty();
-                $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
-                this.eventBind();
-                if (!$(".dv-body2").hasClass("dv-pdf"))
-                    $(".dv-body2").addClass("dv-pdf");
-            }
+            $(".dv-body2").removeClass("dv-pdf");
         }
         else {
-            var dvobj = this.dvcol[focusedId].EbObject;
-
-            this.dvRefid = this.dvcol[focusedId].Refid;
-            dvcontainerObj.previousObj = dvcontainerObj.currentObj;
-            dvcontainerObj.currentObj = dvobj;
-            this.curTVobj = dvobj;
-
-            var __count = focusedId.split("_")[5];
-            if (dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-                if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
-                    this.PGobj.setObject(this.curTVobj, AllMetas["EbTableVisualization"]);
-                    this.dvcol[focusedId].GenerateButtons();
-                    $("#Common_obj_icons").hide();
-                    $("#obj_icons").show();
-                    $(".stickBtn").show();
-                    if (__count !== "0") {
-                        $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
-                        this.eventBind();
-                    }                    
-                }
-                $(".dv-body2").removeClass("dv-pdf");
-            }
-            else if (dvobj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
-                if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {
-                    this.dvcol[focusedId].GenerateButtons();
-                }
-            }
-            else {
-                $(".stickBtn").hide();
-                $("#obj_icons").hide();
-                $("#Common_obj_icons").show();
-                $("#Common_obj_icons").empty();
-                $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
-                this.eventBind();
-            }
+            $(".stickBtn").hide();
+            $("#obj_icons").hide();
+            $("#Common_obj_icons").show();
+            $("#Common_obj_icons").empty();
+            $("#Common_obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
+            this.eventBind();
+            if (!$(".dv-body2").hasClass("dv-pdf"))
+                $(".dv-body2").addClass("dv-pdf");
         }
+        
         if (this.dvcol[focusedId].cellData !== null && this.dvcol[focusedId].cellData !== "")
-            $("#objname").text(this.dvcol[focusedId].EbObject.Name + " - " + this.dvcol[focusedId].cellData);
+            $("#objname").text(this.currentObj.Name + " - " + this.dvcol[focusedId].cellData);
         else
-            $("#objname").text(this.dvcol[focusedId].EbObject.Name);
+            $("#objname").text(this.currentObj.Name);
         this.focusDot();
     };
     this.pgChanged = function (obj, Pname, CurDTobj) {
@@ -582,7 +532,7 @@ var DvContainerObj = function (settings) {
             if (CurDTobj.login == "dc")
                 commonO.Current_obj = obj;
             else
-                dvcontainerObj.currentObj = obj;
+                this.currentObj = obj;
             if (Pname == "DataSourceRefId") {
                 if (obj[Pname] !== null) {
                     CurDTobj.PcFlag = "True";
@@ -613,23 +563,23 @@ var DvContainerObj = function (settings) {
         var firstKey = Object.keys(this.dvcol)[0];
         $.each(this.dvcol, function (key, obj) {
             //if (!this.clickDot) {
-            if (obj.EbObject.Pippedfrom !== "") {
-                var parent;
-                $.each(this.dvcol, function (key1, obj1) {
-                    if (obj.EbObject.Pippedfrom === obj1.EbObject.Name) {
-                        parent = key1;
-                        return false;
-                    }
-                });
-                //parent = $.grep(this.dvcol, function (key1, obj1) { if (obj.EbObject.Pippedfrom === obj1.EbObject.Name) return key1 });
-                if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
-                    $("[data-mapid=" + parent + "]").after(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
-                }
-                else {
-                    $("[data-mapid=" + parent + "]").after(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
-                }
-            }
-            else {
+            //if (obj.EbObject.Pippedfrom !== "") {
+            //    var parent;
+            //    $.each(this.dvcol, function (key1, obj1) {
+            //        if (obj.EbObject.Pippedfrom === obj1.EbObject.Name) {
+            //            parent = key1;
+            //            return false;
+            //        }
+            //    });
+            //    //parent = $.grep(this.dvcol, function (key1, obj1) { if (obj.EbObject.Pippedfrom === obj1.EbObject.Name) return key1 });
+            //    if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
+            //        $("[data-mapid=" + parent + "]").after(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+            //    }
+            //    else {
+            //        $("[data-mapid=" + parent + "]").after(`<div class='dottool'><img src="../images/svg/pipe.svg" style="height: 40px;"></div><div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-table fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
+            //    }
+            //}
+            //else {
                 //if (counter === 0) {
                 if (obj.EbObject.$type.indexOf("EbChartVisualization") !== -1 || obj.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
                     $(".dotstable").append(`<div class='dot dottool' data-mapid='${key}'><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true" style='color:black;'></i></a></div>`);
@@ -654,7 +604,7 @@ var DvContainerObj = function (settings) {
                 //if (obj.isContextual)
                 if (firstKey !== key)
                     $(".dotstable .dot[data-mapid=" + key + "]").css("margin-left", "12px");
-            }
+            //}
             //}
         }.bind(this));
 

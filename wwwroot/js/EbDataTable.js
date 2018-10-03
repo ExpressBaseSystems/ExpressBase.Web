@@ -165,6 +165,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else
                 this.EbObject = dvcontainerObj.currentObj;
         }
+        //this.InitializeColumns();
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         if (this.PcFlag === "True")
             this.compareAndModifyRowGroup();
@@ -294,8 +295,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getColumnsSuccess = function (e) {
-        if (!this.firstTime)
-            this.InitializeColumns();
         this.firstTime = false;
         if ($(e.target).closest("button").attr("id") === "btnGo") {
             this.filterValues = this.getFilterValues();
@@ -381,8 +380,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.InitializeColumns = function () {
         $.each(this.EbObject.Columns.$values, function (i, col) {
-            ObjectFactory(col);
-        });
+            if (col.HideDataIfRowMoreThan === null)
+                col.HideDataIfRowMoreThan = { "$type": "ExpressBase.Objects.Objects.DVRelated.HideColumnData, ExpressBase.Objects", "Enable": false, "UnRestrictedRowCount": 0, "ReplaceByCharacter": "", "ReplaceByText": "" };
+        }.bind(this));
     }
 
     this.validateFD = function () {

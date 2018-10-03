@@ -245,9 +245,9 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 if (solutionConnections.EBSolutionConnections.FilesDbConnection != null)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = false });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });
                 else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = true });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(dbcon);
 
             }
@@ -278,9 +278,9 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 if (String.IsNullOrEmpty(smscon.Password) && smscon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
                 else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true });
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(smscon);
             }
             catch (Exception e)

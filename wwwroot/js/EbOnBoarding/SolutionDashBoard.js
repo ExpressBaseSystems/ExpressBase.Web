@@ -85,12 +85,12 @@
             url: "../ConnectionManager/SMSAccount",
             data: postData,
             beforeSend: function () {
-                $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
+                $("#smsConnection_loder").EbLoader("show", { maskItem: { Id: "#sms_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $("#dbConnection_loder").EbLoader("hide");
+            $("#smsConnection_loder").EbLoader("hide");
             var d = JSON.parse(data);
-            d.FilesDB_url = atob(d.FilesDB_url);
+            //d.FilesDB_url = atob(d.FilesDB_url);
             this.appendSmsConnection(d);
             $("#SmsConnectionEdit").modal("toggle");
         }.bind(this));
@@ -206,16 +206,9 @@
         }
         else
             o = object;
-
-        $("#SMSConnection_config").empty();
-        $("#SMSConnection_config").append(`<div class="col-md-2 db_vendorimg text-center VendorImage">
-                                        <img class="img-responsive" src="${location.protocol}//${location.host}/images/svg/text.svg" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <p class="UserName mr-0 pdt-5">${o.UserName}</p>
-                                        <p class="SendNo mr-0 pdt-5">${o.From}</p>
-                                        <p class="NickName mr-0 pdt-5">${o.NickName}</p>
-                                    </div>`);
+        $("#SMSConnection_config .UserName").text(o.UserName);
+        $("#SMSConnection_config .SendNo").text(o.From);
+        $("#SMSConnection_config .NickName").text(o.NickName);
     };
 
     this.appendCloudnaryConnection = function (object) {

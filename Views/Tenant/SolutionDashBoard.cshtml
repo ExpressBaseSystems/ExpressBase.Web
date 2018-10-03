@@ -219,16 +219,16 @@
                             </div>
                         </div>
                         <div class="col-md-6 connection_wrap_outer">
-                            <div class="connection_wrap w-100 grayscale">
+                            <div class="connection_wrap w-100">
                                 <div class="connection_wrap_header w-100" id="SMSConnection_config">
-                                    @*<div class="col-md-2 db_vendorimg text-center VendorImage">
-                                            <img class="img-responsive" src="~/images/svg/text.svg" />
-                                        </div>
-                                        <div class="col-md-10">
-                                            <p class="UserName mr-0 pdt-5">-------</p>
-                                            <p class="SendNo mr-0 pdt-5">0000000000</p>
-                                            <p class="NickName mr-0 pdt-5">-------</p>
-                                        </div>*@
+                                    <div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        <img class="img-responsive" src="/images/svg/text.svg" />
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p class="UserName mr-0 pdt-5"></p>
+                                        <p class="SendNo mr-0 pdt-5"></p>
+                                        <p class="NickName mr-0 pdt-5"></p>
+                                    </div>`
                                 </div>
                                 <div class="connection_wrap_footer">
                                     <label>SMS Connection</label>
@@ -444,7 +444,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="" method="post" id="filesDbConnectionSubmit" data-toggle="validator">
-                <div class="modal-header">
+                <div class="modal-header relative">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Files Db Connection</h4>
                 </div>
@@ -463,6 +463,7 @@
                         <label>NickName</label>
                         <input type="text" name="NickName" class="form-control" required />
                     </div>
+                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -473,80 +474,15 @@
         </div>
     </div>
 </div>
-<div id="EmailConnectionEdit" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" id="EmailConnectionSubmit" data-toggle="validator">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Email Accounts</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-6 pd-l-0">
-                                <div class="form-group">
-                                    <label>Email Vendor</label>
-                                    <select name="Emailvendor" class="form-control">
-                                        <option>Google</option>
-                                        <option>Zoho</option>
-                                        <option>MSN</option>
-                                        <option>Others</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 pd-r-0">
-                                <div class="form-group">
-                                    <label>Nick Name</label>
-                                    <input name="NickName" type="text" class="form-control" required />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="col-md-6 pd-l-0">
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input name="Email" type="text" class="form-control" required />
-                                </div>
-                            </div>
-                            <div class="col-md-6 pd-r-0">
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <input name="Password" type="text" class="form-control" required />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="col-md-6 pd-l-0">
-                                <div class="form-group">
-                                    <label>SMTP Server</label>
-                                    <input name="SMTP" type="text" class="form-control" required />
-                                </div>
-                            </div>
-                            <div class="col-md-6 pd-r-0">
-                                <div class="form-group">
-                                    <label>Port</label>
-                                    <input name="Port" type="text" class="form-control" required />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 <div id="SmsConnectionEdit" class="modal fade" role="dialog">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" id="sms_mask">
             <form id="smsConnectionSubmit" method="post" data-toggle="validator">
-                <div class="modal-header">
+                <div class="modal-header relative">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Sms Accounts</h4>
+                    <div id="smsConnection_loder" class="dbConnection_loder"></div>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -569,9 +505,9 @@
                         <label>Nick Name</label>
                         <input name="NickName" class="form-control" type="text" required />
                     </div>
+                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>

@@ -1,11 +1,11 @@
 ﻿const WebFormRender = function (option) {
     this.FormObj = option.formObj;
     this.$saveBtn = option.$saveBtn;
-    this.flatControls = option.flatControls;
     this.initControls = new InitControls(this);
     this.editModeObj = option.editModeObj;
     this.formRefId = option.formRefId || "";
     this.isEditMode = !!this.editModeObj;
+    this.flatControls = getFlatCtrlObjs(this.FormObj);// without functions
     this.rowId = 0;
 
     this.updateCtrlUI = function (cObj) {
@@ -38,13 +38,13 @@
 
     this.init = function () {
         this.$saveBtn.on("click", this.saveForm.bind(this));
-        let allFlatControls = getFlatContControls(this.FormObj).concat(this.flatControls);
         this.initWebFormCtrls();
-        $.each(allFlatControls, function (k, Obj) {
-            this.updateCtrlUI(Obj);
-        }.bind(this));
         if (this.isEditMode)
-            this.populateControls();
+            this.flatControls = getFlatCtrlObjs(this.FormObj);// re-assign objectcoll with functions
+        let allFlatControls = getFlatContControls(this.FormObj).concat(this.flatControls);
+        //$.each(allFlatControls, function (k, Obj) {/////////////////////
+        //    this.updateCtrlUI(Obj);
+        //}.bind(this));
     };
 
     this.initWebFormCtrls = function () {
@@ -56,6 +56,8 @@
             this.initControls.init(Obj, opt);
             this.bindRequired(Obj);
         }.bind(this));
+        if (this.isEditMode)
+            this.populateControls();
     };
 
     this.bindRequired = function (control) {
@@ -83,8 +85,8 @@
             },
             success: function (data) {
                 this.EditModevalues = data.rowValues;
-                $.each(this.flatControls, function (i, cObj) {
-                    $("#" + cObj.Name).val(this.EditModevalues[i]);
+                $.each(this.flatControls, function (i, Obj) {
+                    Obj.setValue(this.EditModevalues[i]);
                 }.bind(this));
                 console.log(data);
                 //hide loader

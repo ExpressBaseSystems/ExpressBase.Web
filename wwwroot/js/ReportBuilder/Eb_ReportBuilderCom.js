@@ -5,11 +5,19 @@
     var $sectionselect = $("#summarry-editor-modal-container #summary-sections").empty();
     var fields = $("#summarry-editor-modal-container #summary-fieldname").empty();
     var $summModal = $("#summarry-editor-modal-container");
-    var _icons = {
-        "Numeric": "fa-sort-numeric-asc",
-        "String": "fa-font",
-        "DateTime": "fa-calendar",
-        "Bool": ""
+    var EbParams = {
+        Icons:{
+            "Numeric": "fa-sort-numeric-asc",
+            "String": "fa-font",
+            "DateTime": "fa-calendar",
+            "Bool": ""
+        },
+        EbType: {
+            "Numeric": "ParamNumeric",
+            "String": "ParamText",
+            "DateTime": "ParamDateTime",
+            "Bool": "ParamBoolean"
+        }
     };
 
     this.subSecCounter = {
@@ -294,16 +302,26 @@
 
     this.drawDsParmsTree = function (paramsList) {
         var icon = "";
+        var t = "";
         paramsList.forEach(function (param) {
-            if (param.type === "16")
-                icon = _icons["String"];
-            else if (param.type === "7" || param.type === "8" || param.type === "10" || param.type === "11" || param.type === "12" || param.type === "21")
-                icon = _icons["Numeric"];
-            else if (param.type === "3")
-                icon = _icons["Bool"];
-            else if (param.type === "5" || param.type === "6" || param.type === "17" || param.type === "26")
-                icon = _icons["DateTime"];
-            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><span eb-type='Parameter' class='fd_params draggable textval'><i class='fa ${icon}'></i> ${param.name}</span></li>`);
+            if (param.type === "16") {
+                t = EbParams.EbType["String"];
+                icon = EbParams.Icons["String"];
+            }
+            else if (param.type === "7" || param.type === "8" || param.type === "10" || param.type === "11" || param.type === "12" || param.type === "21") {
+                t = EbParams.EbType["Numeric"];
+                icon = EbParams.Icons["Numeric"];
+            }
+            else if (param.type === "3") {
+                t = EbParams.EbType["Bool"];
+                icon = EbParams.Icons["Bool"];
+            }
+            else if (param.type === "5" || param.type === "6" || param.type === "17" || param.type === "26") {
+                t = EbParams.EbType["DateTime"];
+                icon = EbParams.Icons["DateTime"];
+            }
+
+            $("#ds_parameter_list ul[id='ds_parameters']").append(`<li class='styl'><span eb-type='${t}' class='fd_params draggable textval'><i class='fa ${icon}'></i> ${param.name}</span></li>`);
         });
         $('#ds_parameter_list').killTree();
         $('#ds_parameter_list').treed();
@@ -316,16 +334,16 @@
             $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {
                 if (obj.type === 16) {
-                    type = "DataFieldText"; icon = _icons["String"];
+                    type = "DataFieldText"; icon = EbParams.Icons["String"];
                 }
                 else if (obj.type === 7 || obj.type === 8 || obj.type === 10 || obj.type === 11 || obj.type === 12 || obj.type === 21) {
-                    type = "DataFieldNumeric"; icon = _icons["Numeric"];
+                    type = "DataFieldNumeric"; icon = EbParams.Icons["Numeric"];
                 }
                 else if (obj.type === 3) {
-                    type = "DataFieldBoolean"; icon = _icons["Bool"];
+                    type = "DataFieldBoolean"; icon = _EbParams.Icons["Bool"];
                 }
                 else if (obj.type === 5 || obj.type === 6 || obj.type === 17 || obj.type === 26) {
-                    type = "DataFieldDateTime"; icon = _icons["DateTime"];
+                    type = "DataFieldDateTime"; icon = EbParams.Icons["DateTime"];
                 }
                 $("#data-table-list ul[id='t" + i + "']").append(`<li class='styl'><span eb-type='${type}' DbType='${obj.type}' class='coloums draggable textval'><i class='fa ${icon}'></i> ${obj.columnName}</span></li>`);
             });

@@ -152,7 +152,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;
             ViewBag.EbObjectTypes = _c2js.EbObjectTypes;
-
+            ViewBag.TypeRegister = _c2js.TypeRegister;
             return View();
         }
 

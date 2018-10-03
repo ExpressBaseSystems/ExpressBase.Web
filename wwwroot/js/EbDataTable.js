@@ -294,6 +294,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getColumnsSuccess = function (e) {
+        if (!this.firstTime)
+            this.InitializeColumns();
         this.firstTime = false;
         if ($(e.target).closest("button").attr("id") === "btnGo") {
             this.filterValues = this.getFilterValues();
@@ -376,6 +378,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.Init();
         }
     };
+
+    this.InitializeColumns = function () {
+        $.each(this.EbObject.Columns.$values, function (i, col) {
+            ObjectFactory(col);
+        });
+    }
 
     this.validateFD = function () {
         var isValid = true;
@@ -1046,8 +1054,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
 
         $("#eb_common_loader").EbLoader("hide");
-        this.contextMenu4Cell();
+        //this.contextMenu4Cell();
         //this.contextMenu();
+        if (this.login === "uc") {
+            if (!this.EbObject.DisableCopy)
+                $("#" + focusedId + " .wrapper-cont").removeClass("userselect").addClass("userselect");
+            else
+                $("#" + focusedId + " .wrapper-cont").removeClass("userselect");
+        }
+        else {
+            if (!this.EbObject.DisableCopy)
+                $(".wrapper-cont").removeClass("userselect").addClass("userselect");
+            else
+                $(" .wrapper-cont").removeClass("userselect");
+        }
         this.firstTime = true;
     }
 

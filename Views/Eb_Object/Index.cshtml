@@ -97,6 +97,11 @@
                     @await Component.InvokeAsync("FilterDialogBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
+                else if (ViewBag.ObjType == (int)EbObjectTypes.SmsBuilder)
+                {
+                    @await Component.InvokeAsync("Smsbuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
             }
         </div>
         @if (ViewBag.ObjType == (int)EbObjectTypes.Report)

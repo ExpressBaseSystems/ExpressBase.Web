@@ -246,12 +246,13 @@ body {
         font-weight: bold;
         color: #528ff0;
     }
-    .s-dash-workplace .tab-content {
-        padding: 12px;
-        float: left;
-        width: 100%;
-        background: white;
-    }
+.s-dash-workplace .tab-content {
+    padding: 12px;
+    float: left;
+    width: 100%;
+    background: white;
+    margin-bottom: 50px;
+}
 
     .s-dash-workplace .solution-logo {
         width: auto;

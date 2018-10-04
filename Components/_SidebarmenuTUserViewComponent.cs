@@ -54,10 +54,18 @@ namespace ExpressBase.Web.Components
         {
             var resultlist = new SidebarUserResponse();
             this.UserObject = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, solnid, email, console));
-            Dictionary<int, string> _dict = new Dictionary<int, string>();
+            Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
+
             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
             {
-                _dict.Add(objectType.IntCode, objectType.Name);
+                _dict.Add(objectType.IntCode, new EbObjectTypeWrap
+                {
+                    Name = objectType.Name,
+                    IntCode = objectType.IntCode,
+                    BMW = objectType.BMW,
+                    IsUserFacing = objectType.IsUserFacing,
+                    Icon = objectType.Icon
+                });
             }
 
             if (ValidateLocId(locid) || this.UserObject.Roles.Contains("SolutionOwner"))
@@ -72,7 +80,7 @@ namespace ExpressBase.Web.Components
                 foreach (KeyValuePair<int, AppObject> obj in resultlist.AppList)
                 {
                     if (resultlist.Data.ContainsKey(obj.Key))
-                        sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link for_brd'> " + resultlist.AppList[obj.Key].AppName + "</a></li>");
+                        sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link for_brd'> <div class='apibox'><i class='fa " + resultlist.AppList[obj.Key].AppIcon + "'></i></div>" + resultlist.AppList[obj.Key].AppName + "</a></li>");
                 }
                 ViewBag.Object = resultlist;
                 ViewBag.menu = sb.ToString();

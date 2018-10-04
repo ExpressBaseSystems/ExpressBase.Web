@@ -153,6 +153,9 @@
 .Eb-ctrlContainer [type="RadioGroup"] {
     padding: 5px;
 }
+.Eb-ctrlContainer .input-group-addon {
+    border: 0 !important;
+}
 
 .Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
     /*height: auto !important;*/

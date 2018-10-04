@@ -30,12 +30,18 @@ namespace ExpressBase.Web.Components
             StringBuilder sb = new StringBuilder();
             foreach (var obj in resultlist.AppList)
             {
-               sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link for_brd'> " + resultlist.AppList[obj.Key].AppName + " </a></li>");
+               sb.Append(@"<li><a Appid='" + obj.Key + "' class='list-group-item inner_li Obj_link for_brd'><div class='apibox'><i class='fa "+ resultlist.AppList[obj.Key].AppIcon + "'></i></div>" + resultlist.AppList[obj.Key].AppName + " </a></li>");
             }
-            Dictionary<int, string> _dict = new Dictionary<int, string>();
+            Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
             {
-                _dict.Add(objectType.IntCode, objectType.Name);
+                _dict.Add(objectType.IntCode, new EbObjectTypeWrap {
+                    Name = objectType.Name,
+                    IntCode = objectType.IntCode,
+                    BMW = objectType.BMW,
+                    IsUserFacing =objectType.IsUserFacing,
+                    Icon = objectType.Icon
+                });
             }
             ViewBag.Types = JsonConvert.SerializeObject(_dict);
             ViewBag.menu = sb.ToString();

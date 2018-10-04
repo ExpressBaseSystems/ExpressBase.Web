@@ -127,22 +127,22 @@ function isPrintable(e) {
 
 function getEbObjectTypes() {
     Eb_ObjectTypes = {
-        WebForm: { Id: 0, ImgSrc: "form1.svg" },
+        WebForm: { Id: 0, ImgSrc: "fa fa-wpforms" },
         DisplayBlock: { Id: 1, ImgSrc: "form1.svg" },
-        DataSource: { Id: 2, ImgSrc: "form1.svg" },
-        Report: { Id: 3, ImgSrc: "report1.svg" },
-        Table: { Id: 4, ImgSrc: "form1.svg" },
+        DataSource: { Id: 2, ImgSrc: "fa fa-database" },
+        Report: { Id: 3, ImgSrc: "fa fa-file-pdf-o" },
+        Table: { Id: 4, ImgSrc: "fa fa-table" },
         SqlFunction: { Id: 5, ImgSrc: "form1.svg" },
         SqlValidator: { Id: 6, ImgSrc: "form1.svg" },
         JavascriptFunction: { Id: 7, ImgSrc: "form1.svg" },
         JavascriptValidator: { Id: 8, ImgSrc: "form1.svg" },
         DataVisualization: { Id: 11, ImgSrc: "dv1.svg" },
-        FilterDialog: { Id: 12, ImgSrc: "form1.svg" },
+        FilterDialog: { Id: 12, ImgSrc: "fa fa-filter" },
         MobileForm: { Id: 13, ImgSrc: "form1.svg" },
         UserControl: { Id: 14, ImgSrc: "form1.svg" },
-        EmailBuilder: { Id: 15, ImgSrc: "form1.svg" },
-        TableVisualization: { Id: 16, ImgSrc: "form1.svg" },
-        ChartVisualization: { Id: 17, ImgSrc: "form1.svg" },
+        EmailBuilder: { Id: 15, ImgSrc: "fa fa-envelope-o" },
+        TableVisualization: { Id: 16, ImgSrc: "fa fa-table" },
+        ChartVisualization: { Id: 17, ImgSrc: "fa fa-bar-chart" },
         BotForm: { Id: 18, ImgSrc: "chat1.svg" },
     }
     return Eb_ObjectTypes;
@@ -287,6 +287,22 @@ function RecurFlatContControls(src_obj, dest_coll) {
             dest_coll.push(obj);
             RecurFlatContControls(obj, dest_coll);
         }
+    });
+};
+
+
+function getFlatCtrlObjs(formObj) {
+    let coll = [];
+    RecurFlatCtrlObjs(formObj, coll);
+    return coll;
+};
+
+function RecurFlatCtrlObjs(src_obj, dest_coll) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        if (obj.IsContainer)
+            RecurFlatCtrlObjs(obj, dest_coll);
+        else
+            dest_coll.push(obj);
     });
 };
 

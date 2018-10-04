@@ -8,10 +8,6 @@
 }
 
 <link href="~/css/EbOnBoarding/eb-assets.style.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
-<script src="~/js/EbCropper.js" type="text/javascript"></script>
 <script type="text/javascript" src="~/js/location-config.js"></script>@*dona*@
 <script>
     var cm = new EbHeader().setName("Configure Locations");
@@ -83,7 +79,7 @@
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
                             <a class="appcontainer_inner loc_tile" locid=@locations[loc.Key].LocId>
                                 <div class="col-md-4 pd-l-0 flex-center locsImage">
-                                    <img src="~/images/EB_Logo.png"/>
+                                    <img src="~/images/your_company_logo.png"/>
                                 </div>
                                 <div class="col-md-10 pd-0">
                                     <h5 class="txtdecor_none ellipsis-text">@locations[loc.Key].LongName</h5>

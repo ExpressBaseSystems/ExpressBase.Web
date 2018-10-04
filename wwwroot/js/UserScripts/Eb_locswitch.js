@@ -14,10 +14,10 @@
 
 
     this.trigger = function () {
-        $(document).bind('keypress', function (event) {
-            if (event.which === 108)
-                this.showSwitcher();
-        }.bind(this));
+        //$(document).bind('keypress', function (event) {
+        //    if (event.which === 108)
+        //        this.showSwitcher();
+        //}.bind(this));
         this.drawLocs();
         this.setDeafault();
         $(TriggerId).off("click").on("click", this.showSwitcher.bind(this));

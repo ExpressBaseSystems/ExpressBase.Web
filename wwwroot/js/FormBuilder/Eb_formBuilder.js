@@ -198,7 +198,6 @@
 
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
-        console.log(control);
         this.$propGrid.css("visibility", "visible");
         this.SelectedCtrl = control;
         this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
@@ -241,7 +240,6 @@
         let id = $(el).closest(".Eb-ctrlContainer").attr("id");
         let $source = $(source);
         if ($source.attr("id") !== "form-buider-toolBox") {
-            console.log("el poped");
             this.movingObj = this.rootContainerObj.Controls.PopByName(id);
             if ($source.closest(".ebcont-ctrl").attr("ctype") === "TabPane")
                 this.adjustPanesHeight($source);
@@ -257,12 +255,10 @@
             //Drag end with in the form
             if ($target.attr("id") !== "form-buider-toolBox") {
                 if ($sibling.attr("id")) {
-                    console.log("sibling : " + $sibling.id);
                     var idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
-                    console.log("no sibling ");
                     this.rootContainerObj.Controls.Append(this.movingObj);
                 }
                 this.saveObj();
@@ -303,8 +299,6 @@
                     this.InitContCtrl(ctrlObj, $ctrl);
                 //this.updateControlUI(id);
             }
-            else
-                console.log("ondrop else : removed");
             let $parent = $target.closest(".ebcont-ctrl");
             if ($parent.attr("ctype") === "TabPane")
                 this.adjustPanesHeight($parent);
@@ -458,8 +452,6 @@
         };
 
         this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
-            console.log(prop);
-            console.log(val);
             if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
                 alert();
             else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls") {
@@ -469,9 +461,6 @@
         }.bind(this);
 
         this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
-            console.log(prop);
-            console.log(val);
-            console.log(delobj);
             if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
                 alert();
             else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls")
@@ -479,10 +468,6 @@
         }.bind(this);
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-            console.log("PropsObj: " + JSON.stringify(PropsObj));
-            console.log("CurProp: " + CurProp);
-
-
             if (CurProp === 'DataSourceId') {
                 this.PGobj.PGHelper.dataSourceInit(this.DSchangeCallBack);
             }

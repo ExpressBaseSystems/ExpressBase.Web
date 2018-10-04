@@ -165,6 +165,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else
                 this.EbObject = dvcontainerObj.currentObj;
         }
+        //this.InitializeColumns();
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         if (this.PcFlag === "True")
             this.compareAndModifyRowGroup();
@@ -376,6 +377,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.Init();
         }
     };
+
+    this.InitializeColumns = function () {
+        $.each(this.EbObject.Columns.$values, function (i, col) {
+            if (col.HideDataIfRowMoreThan === null)
+                col.HideDataIfRowMoreThan = { "$type": "ExpressBase.Objects.Objects.DVRelated.HideColumnData, ExpressBase.Objects", "Enable": false, "UnRestrictedRowCount": 0, "ReplaceByCharacter": "", "ReplaceByText": "" };
+        }.bind(this));
+    }
 
     this.validateFD = function () {
         var isValid = true;
@@ -1046,8 +1054,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
 
         $("#eb_common_loader").EbLoader("hide");
-        this.contextMenu4Cell();
+        //this.contextMenu4Cell();
         //this.contextMenu();
+        if (this.login === "uc") {
+            if (!this.EbObject.DisableCopy)
+                $("#" + focusedId + " .wrapper-cont").removeClass("userselect").addClass("userselect");
+            else
+                $("#" + focusedId + " .wrapper-cont").removeClass("userselect");
+        }
+        else {
+            if (!this.EbObject.DisableCopy)
+                $(".wrapper-cont").removeClass("userselect").addClass("userselect");
+            else
+                $(" .wrapper-cont").removeClass("userselect");
+        }
         this.firstTime = true;
     }
 

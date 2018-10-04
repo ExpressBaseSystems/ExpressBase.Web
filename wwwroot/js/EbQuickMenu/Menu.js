@@ -17,6 +17,12 @@
         $('.Eb_quick_menu').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
         //$('.Eb_quick_menu').off("click").on('click', ".for_brd", this.setBrdCrump.bind(this));
         $('.Eb_quick_menu').off("click").on('click', "#menu_refresh", this.refreshMenu.bind(this));
+        $("#searchic").off("click").on("click", this.toggleSearch.bind(this));
+    };
+
+    this.toggleSearch = function (e) {
+        let ip = $(e.target).closest(".searchBox");
+        ip.toggleClass("expandedip");
     };
 
     this.refreshMenu = function () {
@@ -87,7 +93,8 @@
         $(".Eb_quick_menu .drp_new #drp_new_wrapper").empty();
         for (t in this.objTypes) {
             $(".Eb_quick_menu .drp_new #drp_new_wrapper").append(`<li class="drp_menuitems">
-                                                    <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${t}"">${this.objTypes[t]}</a></li>`);
+                                                    <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${t}"">
+                                                    <div class="apibox"><i class="fa ${this.objTypes[t].Icon}"></i></div> ${this.objTypes[t].Name}</a></li>`);
         }
     };
 
@@ -102,7 +109,7 @@
                                                 <div class="objContainer2">
                                                     <div class="form-inline obType_wrapper_head" obj_container="obtype_container${otype}" id="obType_wrapper_head${otype}"
                                                         len="${_obj.length}" data-toggle="collapse" data-target="#obtype_container${otype}" style="cursor:pointer;">
-                                                       ${this.objTypes[otype]}s<span class="obj_count">(${_obj.length})</span>
+                                                       <i class="fa ${this.objTypes[otype].Icon} obtypeic"></i> ${this.objTypes[otype].Name}s<span class="obj_count">(${_obj.length})</span>
                                                         <div class="btn_container pull-right">
                                                        <a class="btn btn-sm table-btn ob_search"><i class="material-icons">search</i></a>
                                                         <input type="text" search_body="obtype_container${otype}" class="form-control obj_search_input" placeholder="Search" style="display:none;">                                    
@@ -236,8 +243,6 @@
                         <p class='text-justify'>${_obj.Description || 'no description'}</p>
                         <div class="label_container">
                                 <span name="Version" class="label">V.${_obj.VersionNumber}</span>
-                                <span class="label">${_obj.EbType}</span>
-                                <span name="Application" class="label">${appname}</span>
                         </div>
                     </div>
                     </a>

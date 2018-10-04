@@ -14,7 +14,7 @@
 <link rel="stylesheet" type="text/css" href="~/css/splitWindow.css">
 <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css">
 <link rel="stylesheet" type="text/css" href="~/css/ChartStyle.css">
-
+<link rel="stylesheet" type="text/css" href="~/css/EbOnBoarding/eb-assets.style.css" />
 <script src="~/js/splitWindow.js" type="text/javascript"></script>
 <script src="~/js/EbReportSample.js" type="text/javascript"></script>
 <script type="text/javascript" src="~/js/EbDataTable.js"></script>
@@ -146,6 +146,7 @@
         @Html.Raw(ViewBag.EbObjectType)
         @Html.Raw(ViewBag.Meta)
         @Html.Raw(ViewBag.JsObjects);
+        @Html.Raw(ViewBag.TypeRegister);
 
         var dvcontainerObj = new DvContainerObj({
             refid: '@ViewBag.dvRefId',

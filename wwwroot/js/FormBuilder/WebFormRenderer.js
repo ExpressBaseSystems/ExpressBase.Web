@@ -81,7 +81,7 @@
 
     this.setEditModevalues = function (rowId) {
         this.formRefId
-        // show loader
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
         $.ajax({
             type: "POST",
             url: "../WebForm/getRowdata",
@@ -94,7 +94,7 @@
                     Obj.setValue(this.EditModevalues[i]);
                 }.bind(this));
                 console.log(data);
-                //hide loader
+                $("#eb_common_loader").EbLoader("hide");
             }.bind(this),
         });
     };

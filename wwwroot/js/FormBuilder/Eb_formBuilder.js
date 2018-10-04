@@ -109,7 +109,7 @@
         let curTdWidth = $curTd.outerWidth();
         let curTdWidthPerc = (curTdWidth / tblWidth) * 100;
         let cuTdobj = this.rootContainerObj.Controls.GetByName($curTd.attr("ebsid"));
-        cuTdobj.Width = curTdWidthPerc;
+        cuTdobj.WidthPercentage = curTdWidthPerc;
     }
 
     this.pushToDragables = function (el) {
@@ -452,8 +452,11 @@
         };
 
         this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
-            if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
-                alert();
+            if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls") {
+                let $tblTr = $(`#${this.PGobj.CurObj.EbSid}>table>tbody>tr`);
+                let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='width:auto'; class='form-render-table-Td tdDropable ebcont-ctrl'></td>`);
+                $tblTr.append($td);
+            }
             else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls") {
                 //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
                 this.addTabPane(this.SelectedCtrl, prop, val, addedObj);

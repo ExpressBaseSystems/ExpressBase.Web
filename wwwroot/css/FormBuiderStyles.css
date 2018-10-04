@@ -134,7 +134,7 @@
 
     .form-buider-form table {
         width: 100%;
-        table-layout: fixed;
+        /*table-layout: fixed;*/
     }
 
     .form-buider-form .btn-group {
@@ -383,7 +383,7 @@
 }
 
 .form-render-table-Td {
-    width: 100%;
+    /*width: 100%;*/
     vertical-align: top;
     padding: 1px;
 }

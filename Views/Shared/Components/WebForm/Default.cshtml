@@ -118,7 +118,6 @@
     @Html.Raw(ViewBag.ControlOperations);
     new EbHeader().insertButton('<button class="btn " id="webformsave"><i class="fa fa-save" aria-hidden="true"></i></button>');
 
-    let _flatControls = @Html.Raw(ViewBag.FlatControls).$values;
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _editModeObj =  @Html.Raw(ViewBag.editModeObj);
     let _formRefId=  "@Html.Raw(ViewBag.formRefId)";
@@ -126,7 +125,6 @@
     const renderer = new WebFormRender({
         formObj: _formObj,
         $saveBtn: _$saveBtn,
-        flatControls: _flatControls,
         formRefId: _formRefId,
         editModeObj: _editModeObj
     });

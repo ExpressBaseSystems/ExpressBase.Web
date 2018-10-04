@@ -18,6 +18,7 @@
     height: calc(100vh - 100px) !important;
     /*width: inherit !important;*/
     padding: 0px 17px;
+    user-select:none !important;
 }
 
 .parent {
@@ -210,9 +211,12 @@
 }
 
 .slick-slider {
-    user-select: text !important;
     height: 100%;
     position: inherit !important;
+}
+
+.userselect {
+    user-select: text !important;
 }
 
 .slick-initialized .slick-slide {

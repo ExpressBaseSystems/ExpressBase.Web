@@ -1,0 +1,91 @@
+﻿@{
+    @using ExpressBase.Common;
+    var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
+    var body = (dsObj != null) ? dsObj.Body : String.Empty;
+    var sms_to = (dsObj != null) ? dsObj.To : String.Empty;
+}
+<link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" />
+<script src="~/js/eb_smsbuilder.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+<body>
+    <div class="container-fluid">
+        <div class="side-toolbar" id="colselect">
+            <div class="toolbox">
+                <div class="tool_items">
+                    <div class="tool_item_head">
+                        <i class="fa fa-caret-down"></i> Data
+                    </div>
+                    <div class="tool_item_body">
+                        <ul id="data-table-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-outer-cont col-md-8 " id="sms_container@(ViewBag.tabnum)">
+
+            <div class="input-group ">
+                <div class="input-group-btn">
+                    <label class="btn btn-default to" type="submit">To</label>
+                </div>
+                <input id="sms_to" class="form-control" value="@sms_to" />
+            </div> 
+            <textarea id="sms_body@(ViewBag.tabnum)" class="panel form-control z-depth-1">
+                @Html.Raw(body)                                                         @*sms builder*@
+            </textarea>
+            <label >count</label>
+            <label id="characters@(ViewBag.tabnum)">0</label>
+        </div>
+        <div class="smspg">
+            <div id="PropertyG"></div>
+        </div>
+    </div>
+</body>
+<style>
+    .smspg {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 4;
+        padding-top: 37px;
+        border: 1px solid #ccc;
+        box-shadow: var(--eb-shadow);
+        height: 100%;
+        background-color: white;
+        width: 300px;
+    }
+
+    .panel {
+        height: calc(100vh - 152px) !important;
+        overflow-y: auto !important;
+        margin-top: 5px;
+    }
+
+    .page-outer-cont {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding-bottom: 0 !important;
+    }
+
+    .to {
+        background: #316396;
+        color: white;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var commonO;
+        if (parseInt(@ViewBag.tabnum) == 0) {
+            commonO = $("#layout_div").data("commonObj");
+        }
+
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new SmsWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum);
+        $('#sms_body@(ViewBag.tabnum)').on('keyup', function () { updateCount()});
+        $('#sms_body@(ViewBag.tabnum)').on('keydown', function () { updateCount() });
+
+        function updateCount() {
+            var cs = $('#sms_body@(ViewBag.tabnum)').val().length;
+            $('#characters@(ViewBag.tabnum)').text(cs);
+        }
+    });
+</script>

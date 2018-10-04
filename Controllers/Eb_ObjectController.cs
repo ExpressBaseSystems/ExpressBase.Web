@@ -21,6 +21,7 @@ using ExpressBase.Common.JsonConverters;
 using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
 using ExpressBase.Web.Filters;
+using ExpressBase.Objects.Objects.SmsRelated;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -149,10 +150,20 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+            else if (type.Equals(EbObjectTypes.SmsBuilder))
+            {
+                Type[] typeArray = typeof(EbSmsTemplateBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.SmsBuilder, typeof(EbSmsTemplateBase));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
             ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;
             ViewBag.EbObjectTypes = _c2js.EbObjectTypes;
-
+            ViewBag.TypeRegister = _c2js.TypeRegister;
             return View();
         }
 

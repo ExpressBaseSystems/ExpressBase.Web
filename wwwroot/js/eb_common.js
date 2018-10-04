@@ -291,6 +291,22 @@ function RecurFlatContControls(src_obj, dest_coll) {
 };
 
 
+function getFlatCtrlObjs(formObj) {
+    let coll = [];
+    RecurFlatCtrlObjs(formObj, coll);
+    return coll;
+};
+
+function RecurFlatCtrlObjs(src_obj, dest_coll) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        if (obj.IsContainer)
+            RecurFlatCtrlObjs(obj, dest_coll);
+        else
+            dest_coll.push(obj);
+    });
+};
+
+
 function getFlatControls(formObj) {
     let coll = [];
     RecurFlatControls(formObj, coll);

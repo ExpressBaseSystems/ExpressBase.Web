@@ -52,6 +52,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.rowData = rowData;
             ViewBag.DvList = JsonConvert.SerializeObject(resultlist.DvList);
             ViewBag.DvTaggedList = JsonConvert.SerializeObject(resultlist.DvTaggedList);
+            ViewBag.TypeRegister = _jsResult.TypeRegister;
             return View();
         }
 

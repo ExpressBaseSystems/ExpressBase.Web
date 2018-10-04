@@ -27,7 +27,7 @@ namespace ExpressBase.Web.Controllers
         {
             Dictionary<string, List<TableColumnMetaS>>  Values = JsonConvert.DeserializeObject<Dictionary<string, List<TableColumnMetaS>>>(ValObj);
             InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, Values = Values, RowId = RowId });
-            return 0;
+            return Resp.RowAffected;
         }
 
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
@@ -50,11 +50,7 @@ namespace ExpressBase.Web.Controllers
             {
                 EbDataSet DataSet = ServiceClient.Post<EbDataSet>(new GetRowDataRequest { RefId = refid, RowId = rowid });
                 GetRowDataResponse dataset = new GetRowDataResponse();
-
                 dataset.RowValues = getDataSetAsRowCollection(DataSet);
-
-
-
                 return dataset;
             }
             catch (Exception ex)

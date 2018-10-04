@@ -30,7 +30,7 @@
 		$(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
 
 		this.target = $("#versionNav li.active a").attr("href");//edits by amal
-	}
+	};
 
 	this.checkKeyDown = function (event) {
 		if (event.ctrlKey || event.metaKey) {
@@ -40,7 +40,8 @@
 				//alert(111);
 			}
 		}
-	}
+	};
+
 	this.ShowMessage = function () {
 		this.tags = $('#tags').val();
 		this.UpdateDashboard();
@@ -157,7 +158,7 @@
 		$('#versionTab').append(tabitem);
 		$("#versionNav a[href='#vernav" + this.tabNum + "']").tab('show');
 		$('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-	}
+	};
 
 	this.deleteTab = function (e) {
 		var tabContentId = $(e.target).parent().attr("href");
@@ -226,7 +227,7 @@
 		this.tabNum++;
 		$.post('../Eb_Object/CallDifferVC', { _tabnum: this.tabNum })
 			.done(this.Load_differ.bind(this));
-	}
+	};
 
 	this.Load_differ = function (data) {
 		var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> Diff <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
@@ -259,7 +260,7 @@
 				});
 				$('.selectpicker').selectpicker('refresh');
 				$('#loader_fd' + tabnum).hide();
-			})
+			});
 
 	};
 
@@ -355,7 +356,7 @@
 		if (apps === "")
 			apps = "0";
 		var getNav = this.target;/*$("#versionNav li.active a").attr("href");*/
-		if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1) {
+		if (this.ObjCollection[getNav].EbObject.$type.indexOf("Report") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1 || this.ObjCollection[getNav].EbObject.$type.indexOf("Sms") !== -1) {
 			this.ObjCollection[getNav].BeforeSave();
 		}
 		this.ObjCollection[getNav].CreateRelationString();
@@ -396,7 +397,7 @@
 
 	this.UpdateCreateVersionDD = function () {
 		$("#objname").text(this.Current_obj.Name);
-		$('#create li').remove()
+		$('#create li').remove();
 		var arr = this.Current_obj.VersionNumber.split(".")
 		var vNumMajor = ("v." + (parseInt(major) + 1) + ".0.0.w");
 		var vNumMinor = ("v." + arr[0] + "." + (parseInt(arr[1]) + 1) + ".0.w");
@@ -412,7 +413,7 @@
 		if (this.Current_obj.Status !== "Live") {
 			$('#_patch').hide();
 		}
-	}
+	};
 
 	this.createVersion = function (e) {
 		var selected_opt = $(e.target).attr("id");
@@ -450,13 +451,13 @@
 
 	this.OpenVersionAfterCreate = function (_refid) {
 		//$.LoadingOverlay("show");
-        $("#eb_common_loader").EbLoader("show");
+		$("#eb_common_loader").EbLoader("show");
 		this.ver_Refid = _refid;
 		$.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
 			.done(this.VersionCode_success.bind(this));
 		this.alertBgColor = "#00AD6E";
 		this.alertMsg = "Success";
 		this.ShowMessage();
-	}
+	};
 	this.init();
 };

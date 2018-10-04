@@ -28,11 +28,9 @@
                 <div class="input-group-btn">
                     <label class="btn btn-default to" type="submit">To</label>
                 </div>
-                <input id="sms_to" class="form-control" value="@sms_to" />
+                <input id="sms_to@(ViewBag.tabnum)" class="form-control" value="@sms_to" />
             </div> 
-            <textarea id="sms_body@(ViewBag.tabnum)" class="panel form-control z-depth-1">
-                @Html.Raw(body)                                                         @*sms builder*@
-            </textarea>
+            <div id="sms_body@(ViewBag.tabnum)" class="panel form-control z-depth-1" contenteditable="true">@Html.Raw(body)</div>
             <label >count</label>
             <label id="characters@(ViewBag.tabnum)">0</label>
         </div>
@@ -74,6 +72,7 @@
 </style>
 <script>
     $(document).ready(function () {
+        updateCount();
         var commonO;
         if (parseInt(@ViewBag.tabnum) == 0) {
             commonO = $("#layout_div").data("commonObj");
@@ -84,7 +83,7 @@
         $('#sms_body@(ViewBag.tabnum)').on('keydown', function () { updateCount() });
 
         function updateCount() {
-            var cs = $('#sms_body@(ViewBag.tabnum)').val().length;
+            var cs = $('#sms_body@(ViewBag.tabnum)').text().length;
             $('#characters@(ViewBag.tabnum)').text(cs);
         }
     });

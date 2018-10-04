@@ -28,9 +28,9 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             SMSSentRequest sMSSentRequest = new SMSSentRequest();
-            sMSSentRequest.To = req["to"];
-            sMSSentRequest.From = req["from"];
-            sMSSentRequest.Body = req["body"];
+            //sMSSentRequest.To = req["to"];
+            //sMSSentRequest.From = req["from"];
+            //sMSSentRequest.Body = req["body"];
             string[] subdomain = this.HttpContext.Request.Host.Host.Split('.');
             sMSSentRequest.SolnId = subdomain[0];
 
@@ -50,8 +50,8 @@ namespace ExpressBase.Web.Controllers
             var messageStatus = Request.Form["MessageStatus"];
             string stsbody = req.ToJson();
             SMSSentRequest sMSSentRequest = new SMSSentRequest();
-            sMSSentRequest.To = "+919961596200";
-            sMSSentRequest.Body = "SMS Id: "+smsSid.ToString()+"/nMessageStatus:" + messageStatus.ToString() +"/nFull Message:" + stsbody.ToString();
+          //  sMSSentRequest.To = "+919961596200";
+          //  sMSSentRequest.Body = "SMS Id: "+smsSid.ToString()+"/nMessageStatus:" + messageStatus.ToString() +"/nFull Message:" + stsbody.ToString();
             string[] subdomain = this.HttpContext.Request.Host.Host.Split('.');
             sMSSentRequest.SolnId = subdomain[0];
 

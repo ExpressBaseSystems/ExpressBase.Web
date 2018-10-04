@@ -20,10 +20,10 @@
 
     this.setLocNameToImg = function (e) {
         $(".disablebtn").prop("disabled", false);
-        this.Cropies['Logo'].Extra.FileName = $(e.target).val() + this.Cropies['Logo'].Extra.Name;
+        this.Cropies['Logo'].Options.ExtraData.FileName = $(e.target).val() + this.Cropies['Logo'].Options.ExtraData.Name;
         $(this.data).each(function (i, item) {
             if (item.Type === "Image") {
-                this.Cropies[item.Name].Extra.FileName = $(e.target).val() + this.Cropies[item.Name].Extra.Name;
+                this.Cropies[item.Name].Options.ExtraData.FileName = $(e.target).val() + this.Cropies[item.Name].Options.ExtraData.Name;
             }
         }.bind(this));
     };
@@ -96,23 +96,30 @@
     };
 
     this.imageUploader = function (container, toggle, prev, extra, viwportresize) {
-        let resize = viwportresize ? true : false;
-        this.Cropies[extra.Name] = new cropfy({
-            Container: container,
+        let resize = viwportresize ? true : false;      
+
+        this.Cropies[extra.Name] = new EbFileUpload({
+            Type: "image",
             Toggle: toggle,
-            isUpload: true,
-            enableSE: true,
-            Browse: true,
-            Result: 'base64',
-            Type: 'location',
-            Tid: this.Tid,
-            Preview: prev,
-            Extra: extra,
-            ResizeViewPort: resize,
+            TenantId: this.Tid,
+            SolutionId: "",
+            Container: container,
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.info',
+            EnableTag: false,
+            EnableCrop: true,
+            ExtraData: extra,//extra data for location optional for other
+            Context: "location",//if single and crop
+            ResizeViewPort: resize //if single and crop
         });
-        this.Cropies[extra.Name].getObjId = function (o) {
+
+        this.Cropies[extra.Name].uploadSuccess = function (fileid) {
+            EbMessage("show", { Message: "Uploaded Successfully" });
             $(`input[name='${extra.Name}']`).val(o.objectId);
-        };
+        }
+        this.Cropies[extra.Name].windowClose = function () {
+            //EbMessage("show", { Message: "window closed", Background: "red" });
+        }
     };
 
     this._CreateLocation = function (e) {

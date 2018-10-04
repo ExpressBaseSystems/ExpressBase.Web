@@ -17,10 +17,15 @@
                 if (NSS) {
                     let NS1 = NSS.split(".")[0];
                     let NS2 = NSS.split(".")[1];
-                    if (cObj.ObjType === "TableLayout" || cObj.ObjType === "GroupBox")
-                        EbOnChangeUIfns[NS1][NS2](cObj.Name, cObj);
-                    else
-                        EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);
+                    try {
+                        if (cObj.ObjType === "TableLayout" || cObj.ObjType === "GroupBox")
+                            EbOnChangeUIfns[NS1][NS2](cObj.Name, cObj);
+                        else
+                            EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);
+                    }
+                    catch (e) {
+                        alert(e.message);
+                    }
                 }
             }
         });
@@ -42,9 +47,9 @@
         if (this.isEditMode)
             this.flatControls = getFlatCtrlObjs(this.FormObj);// re-assign objectcoll with functions
         let allFlatControls = getFlatContControls(this.FormObj).concat(this.flatControls);
-        //$.each(allFlatControls, function (k, Obj) {/////////////////////
-        //    this.updateCtrlUI(Obj);
-        //}.bind(this));
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
+        }.bind(this));
     };
 
     this.initWebFormCtrls = function () {

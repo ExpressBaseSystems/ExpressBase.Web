@@ -60,41 +60,58 @@
         }.bind(this));
     };
 
-    this.emailConnectionSubmit = function (e) {
-        e.preventDefault();
-        var postData = $(e.target).serializeArray();
-        $.ajax({
-            type: 'POST',
-            url: "../ConnectionManager/SMTP",
-            data: postData,
-            beforeSend: function () {
-                $("#email_loader").EbLoader("show", { maskItem: { Id: "#email_mask", Style: { "left": "0" } } });
-            }
-        }).done(function (data) {
-            $("#email_loader").EbLoader("hide");
-            this.appendEmailConnection(JSON.parse(data));
-            $("#EmailConnectionEdit").modal("toggle");
-        }.bind(this));
-    }
+	this.emailConnectionSubmit = function (e) {
+		e.preventDefault();
+		var postData = $(e.target).serializeArray();
+		$.ajax({
+			type: 'POST',
+			url: "../ConnectionManager/SMTP",
+			data: postData,
+			beforeSend: function () {
+				$("#email_loader").EbLoader("show", { maskItem: { Id: "#email_mask", Style: { "left": "0" } } });
+			}
+		}).done(function (data) {
+			$("#email_loader").EbLoader("hide");
+			this.appendEmailConnection(JSON.parse(data));
+			$("#EmailConnectionEdit").modal("toggle");
+		}.bind(this));
+	};
 
-    this.smsAccountSubmit = function (e) {
+    this.expertAccountSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
-            url: "../ConnectionManager/SMSAccount",
+			url: "../ConnectionManager/ExpertTextingAccount",
             data: postData,
             beforeSend: function () {
-                $("#smsConnection_loder").EbLoader("show", { maskItem: { Id: "#sms_mask", Style: { "left": "0" } } });
+                $("#expertConnection_loder").EbLoader("show", { maskItem: { Id: "#expert_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $("#smsConnection_loder").EbLoader("hide");
+			$("#expertConnection_loder").EbLoader("hide");
             var d = JSON.parse(data);
-            //d.FilesDB_url = atob(d.FilesDB_url);
-            this.appendSmsConnection(d);
-            $("#SmsConnectionEdit").modal("toggle");
+			this.appendExpertConnection(d);
+            $("#ExpertConnectionEdit").modal("toggle");
         }.bind(this));
-    };
+	};
+
+	this.twilioAccountSubmit = function (e) {
+		e.preventDefault();
+		var postData = $(e.target).serializeArray();
+		$.ajax({
+			type: 'POST',
+			url: "../ConnectionManager/TwilioAccount",
+			data: postData,
+			beforeSend: function () {
+				$("#twilioConnection_loder").EbLoader("show", { maskItem: { Id: "#twilio_mask", Style: { "left": "0" } } });
+			}
+		}).done(function (data) {
+			$("#twilioConnection_loder").EbLoader("hide");
+			var d = JSON.parse(data);
+			this.appendTwilioConnection(d);
+			$("#TwilioConnectionEdit").modal("toggle");
+		}.bind(this));
+	};
 
     this.CloudnaryConSubmit = function (e) {
         e.preventDefault();
@@ -196,7 +213,7 @@
         $("#EmailConnection_config .NickName").text(o.NickName);
 
     };
-    this.appendSmsConnection = function (object) {
+    this.appendTwilioConnection = function (object) {
         let o = {};
         if ($.isEmptyObject(object)) {
             o.ProviderName = "Not Set";
@@ -206,10 +223,25 @@
         }
         else
             o = object;
-        $("#SMSConnection_config .UserName").text(o.UserName);
-        $("#SMSConnection_config .SendNo").text(o.From);
-        $("#SMSConnection_config .NickName").text(o.NickName);
-    };
+		$("#TwilioConnection_config .UserName").text(o.UserName);
+        $("#TwilioConnection_config .SendNo").text(o.From);
+        $("#TwilioConnection_config .NickName").text(o.NickName);
+	};
+
+	this.appendExpertConnection = function (object) {
+		let o = {};
+		if ($.isEmptyObject(object)) {
+			o.ProviderName = "Not Set";
+			o.UserName = "xxxxxxxxxxx";
+			o.From = "00000000000";
+			o.NickName = "Not Set";
+		}
+		else
+			o = object;
+		$("#ExpertTextingConnection_config .UserName").text(o.UserName);
+		$("#ExpertTextingConnection_config .SendNo").text(o.From);
+		$("#ExpertTextingConnection_config .NickName").text(o.NickName);
+	};
 
     this.appendCloudnaryConnection = function (object) {
         let o = {};
@@ -325,8 +357,15 @@
     this.init = function () {
         this.appendDataDb(this.Connections.DataDbConnection);
         this.appendFilesDb(this.Connections.FilesDbConnection);
-        this.appendEmailConnection(this.Connections.SMTPConnection);
-        this.appendSmsConnection(this.Connections.SMSConnection);
+		this.appendEmailConnection(this.Connections.SMTPConnection);
+		if (this.Connections.SMSConnections !== null) {
+			for (let i = 0; i < this.Connections.SMSConnections.length; i++) {
+				if (this.Connections.SMSConnections[i].ProviderName === 2)
+					this.appendExpertConnection(this.Connections.SMSConnections[i]);
+				else if (this.Connections.SMSConnections[i].ProviderName === 1)
+					this.appendTwilioConnection(this.Connections.SMSConnections[i]);
+			}
+		} 
 
         if (this.Connections.CloudinaryConnection !== null)
             this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
@@ -337,7 +376,8 @@
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#emailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
-        $("#smsConnectionSubmit").on("submit", this.smsAccountSubmit.bind(this));
+		$("#TwilioConnectionSubmit").on("submit", this.twilioAccountSubmit.bind(this));
+		$("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));

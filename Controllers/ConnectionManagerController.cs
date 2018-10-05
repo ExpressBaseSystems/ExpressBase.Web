@@ -1,5 +1,8 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Connections;
+using ExpressBase.Common.Messaging;
+using ExpressBase.Common.Messaging.ExpertTexting;
+using ExpressBase.Common.Messaging.Twilio;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
@@ -112,8 +115,8 @@ namespace ExpressBase.Web.Controllers
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS });
             if (solutionConnections.EBSolutionConnections == null)
-                solutionConnections.EBSolutionConnections.SMSConnection = new SMSConnection();
-            ViewBag.SMS = solutionConnections.EBSolutionConnections.SMSConnection;
+                solutionConnections.EBSolutionConnections.SMSConnections = new EbSmsConCollection();
+            ViewBag.SMS = solutionConnections.EBSolutionConnections.SMSConnections;
             return View();
         }
 
@@ -192,40 +195,39 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult ObjectsDb(int i)
-        {
-            ChangeConnectionResponse res = new ChangeConnectionResponse();
-            try
-            {
-                var req = this.HttpContext.Request.Form;
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbOBJECTS, SolutionId = req["SolutionId"] });
+        //public IActionResult ObjectsDb(int i)
+        //{
+        //    ChangeConnectionResponse res = new ChangeConnectionResponse();
+        //    try
+        //    {
+        //        var req = this.HttpContext.Request.Form;
+        //        GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbOBJECTS, SolutionId = req["SolutionId"] });
 
-                EbObjectsDbConnection dbcon = new EbObjectsDbConnection();
-                dbcon.NickName = req["nickname"];
-                dbcon.Server = req["server"];
-                dbcon.Port = Int32.Parse(req["port"]);
-                dbcon.UserName = req["username"];
-                dbcon.DatabaseName = req["databasename"];
-                dbcon.Timeout = 500;
-                dbcon.Password = req["pwd"];
-                if (!String.IsNullOrEmpty(req["Isdef"]))
-                    dbcon.IsDefault = false;
+        //        EbObjectsDbConnection dbcon = new EbObjectsDbConnection();
+        //        dbcon.NickName = req["nickname"];
+        //        dbcon.Server = req["server"];
+        //        dbcon.Port = Int32.Parse(req["port"]);
+        //        dbcon.UserName = req["username"];
+        //        dbcon.DatabaseName = req["databasename"];
+        //        dbcon.Timeout = 500;
+        //        dbcon.Password = req["pwd"];
+        //        if (!String.IsNullOrEmpty(req["Isdef"]))
+        //            dbcon.IsDefault = false;
 
-                if (solutionConnections.EBSolutionConnections.ObjectsDbConnection != null)
-                {
-                    if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
-                        dbcon.Password = solutionConnections.EBSolutionConnections.ObjectsDbConnection.Password;
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = dbcon, IsNew = false });
-                }
-                else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = dbcon, IsNew = true });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception: " + e.Message + "\nResponse: " + res.ResponseStatus.Message);
-            }
-            return Redirect("/ConnectionManager");
-        }
+        //        if (solutionConnections.EBSolutionConnections.ObjectsDbConnection != null)
+        //        {
+        //                dbcon.Password = solutionConnections.EBSolutionConnections.ObjectsDbConnection.Password;
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = dbcon, IsNew = false });
+        //        }
+        //        else
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = dbcon, IsNew = true });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("Exception: " + e.Message + "\nResponse: " + res.ResponseStatus.Message);
+        //    }
+        //    return Redirect("/ConnectionManager");
+        //}
 
         [HttpPost]
         public string FilesDb(int i)
@@ -259,25 +261,50 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public string SMSAccount(int i)
+        public string TwilioAccount()
         {
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
                 var req = this.HttpContext.Request.Form;
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS, SolutionId = req["SolutionId"] });
-
-                SMSConnection smscon = new SMSConnection()
+                TwilioConnection smscon = new TwilioConnection
                 {
-                    ProviderName = req["ProviderName"],
-                    NickName = req["NickName"],
                     UserName = req["UserName"],
                     From = req["From"],
                     Password = req["Password"],
-                    IsDefault = false
+                    Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
                 };
 
-                if (String.IsNullOrEmpty(smscon.Password) && smscon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName)
+                if (Convert.ToInt32(req["Conid"]) > 0)
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
+                else
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true, SolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(smscon);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+
+        [HttpPost]
+        public string ExpertTextingAccount()
+        {
+            ChangeConnectionResponse res = new ChangeConnectionResponse();
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                ExpertTextingConnection smscon = new ExpertTextingConnection
+                {
+                    UserName = req["UserName"],
+                    From = req["From"],
+                    Password = req["Password"],
+                    Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
+                    ApiKey = req["ApiKey"]
+                };
+
+                if (Convert.ToInt32(req["Conid"]) > 0)
                     res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
                 else
                     res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true, SolutionId = req["SolutionId"] });

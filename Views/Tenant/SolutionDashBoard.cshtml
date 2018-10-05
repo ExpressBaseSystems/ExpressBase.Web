@@ -1,35 +1,36 @@
 ﻿@{
     @using System;
     @using Newtonsoft.Json;
-    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    @using ExpressBase.Common;
+Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
 @{
-    var EbConnections = ViewBag.Connections;
-    string proto = string.Empty;
+        var EbConnections = ViewBag.Connections;
+        string proto = string.Empty;
 
-    if (ViewBag.Env == "Development")
-    {
-        proto = "http://";
-    }
-    else if (ViewBag.Env == "Staging")
-    {
-        proto = "https://";
-    }
-    else if (ViewBag.Env == "Production")
-    {
-        proto = "https://";
-    }
+        if (ViewBag.Env == "Development")
+        {
+            proto = "http://";
+        }
+        else if (ViewBag.Env == "Staging")
+        {
+            proto = "https://";
+        }
+        else if (ViewBag.Env == "Production")
+        {
+            proto = "https://";
+        }
 
 
-    string sso_dev = proto + ViewBag.SolutionInfo.EsolutionId + "-dev." + ViewBag.Domain + "/Ext/SwitchContext";
-    string sso_user = proto + ViewBag.SolutionInfo.EsolutionId + "." + ViewBag.Domain + "/Ext/SwitchContext";
-    string dbdefault = (EbConnections.DataDbConnection.IsDefault) ? "(Default)" : "";
-    string filedefault = "";
-    if (EbConnections.FilesDbConnection != null)
-    {
-        filedefault = (EbConnections.FilesDbConnection.IsDefault) ? "(Default)" : "";
-    }
+        string sso_dev = proto + ViewBag.SolutionInfo.EsolutionId + "-dev." + ViewBag.Domain + "/Ext/SwitchContext";
+string sso_user = proto + ViewBag.SolutionInfo.EsolutionId + "." + ViewBag.Domain + "/Ext/SwitchContext";
+string dbdefault = (EbConnections.DataDbConnection.IsDefault) ? "(Default)" : "";
+string filedefault = "";
+        if (EbConnections.FilesDbConnection != null)
+        {
+            filedefault = (EbConnections.FilesDbConnection.IsDefault)? "(Default)" : "";
+        }
 }
 <script>
     var EbConnections = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
@@ -220,7 +221,7 @@
                         </div>
                         <div class="col-md-6 connection_wrap_outer">
                             <div class="connection_wrap w-100">
-                                <div class="connection_wrap_header w-100" id="SMSConnection_config">
+                                <div class="connection_wrap_header w-100" id="TwilioConnection_config">
                                     <div class="col-md-2 db_vendorimg text-center VendorImage">
                                         <img class="img-responsive" src="/images/svg/text.svg" />
                                     </div>
@@ -231,8 +232,26 @@
                                     </div>`
                                 </div>
                                 <div class="connection_wrap_footer">
-                                    <label>SMS Connection</label>
-                                    <a class="pull-right" data-toggle="modal" data-target="#SmsConnectionEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
+                                    <label>Twilio Connection</label>
+                                    <a class="pull-right" data-toggle="modal" data-target="#TwilioConnectionEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 connection_wrap_outer">
+                            <div class="connection_wrap w-100">
+                                <div class="connection_wrap_header w-100" id="ExpertTextingConnection_config">
+                                    <div class="col-md-2 db_vendorimg text-center VendorImage">
+                                        <img class="img-responsive" src="/images/svg/text.svg" />
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p class="UserName mr-0 pdt-5"></p>
+                                        <p class="SendNo mr-0 pdt-5"></p>
+                                        <p class="NickName mr-0 pdt-5"></p>
+                                    </div>`
+                                </div>
+                                <div class="connection_wrap_footer">
+                                    <label>ExpertTexting Connection</label>
+                                    <a class="pull-right" data-toggle="modal" data-target="#ExpertTextingConnectionEdit">Configure <i class="fa fa-cog" aria-hidden="true"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -475,20 +494,16 @@
     </div>
 </div>
 
-<div id="SmsConnectionEdit" class="modal fade" role="dialog">
+<div id="TwilioConnectionEdit" class="modal fade" role="dialog">
     <div class="modal-dialog">
-        <div class="modal-content" id="sms_mask">
-            <form id="smsConnectionSubmit" method="post" data-toggle="validator">
+        <div class="modal-content" id="twilio_mask">
+            <form id="TwilioConnectionSubmit" method="post" data-toggle="validator">
                 <div class="modal-header relative">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Sms Accounts</h4>
-                    <div id="smsConnection_loder" class="dbConnection_loder"></div>
+                    <h4 class="modal-title">Twilio Accounts</h4>
+                    <div id="twilioConnection_loder" class="dbConnection_loder"></div>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label>Provider Name</label>
-                        <input name="ProviderName" class="form-control" type="text" required />
-                    </div>
                     <div class="form-group">
                         <label>Username</label>
                         <input name="UserName" class="form-control" type="text" required />
@@ -514,6 +529,47 @@
         </div>
     </div>
 </div>
+
+<div id="ExpertTextingConnectionEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" id="expert_mask">
+            <form id="ExpertConnectionSubmit" method="post" data-toggle="validator">
+                <div class="modal-header relative">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Expert Accounts</h4>
+                    <div id="expertConnection_loder" class="dbConnection_loder"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input name="UserName" class="form-control" type="text" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input name="Password" class="form-control" type="text" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Sender Number</label>
+                        <input name="From" class="form-control" type="text" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Nick Name</label>
+                        <input name="NickName" class="form-control" type="text" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Api Key</label>
+                        <input name="ApiKey" class="form-control" type="text" required />
+                    </div>
+                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div id="cldnry_conEdit" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content" id="cloudnary_mask">
@@ -615,7 +671,7 @@
                     </div>
                     <div class="form-group">
                         <label style="margin-right:15px;margin-bottom:0;">Enable SSL</label>
-                        <input type="checkbox" name="IsSSL" value="false"/>
+                        <input type="checkbox" name="IsSSL" value="false" />
                     </div>
                     <div class="form-group">
                         <label>NickName</label>

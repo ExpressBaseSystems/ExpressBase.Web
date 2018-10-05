@@ -43,9 +43,9 @@
         }
         else
             this.curControl = $(e.target).closest(".Eb-ctrlContainer");
-        var id = this.curControl.attr("id");
+        let ebsid = this.curControl.attr("ebsid");
         e.stopPropagation();
-        this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
+        this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
         this.CurColCount = $(e.target).val();
         //  this.PGobj.ReadOnly();
     }.bind(this);
@@ -93,13 +93,19 @@
 
     this.makeTdsDropable_Resizable = function () {
         $.each($(".tdDropable"), function (i, el) {
-            this.pushToDragables(el);
-            $(el).resizable({
-                handles: 'e',
-                stop: this.tdDragStop.bind(this)
-            });
+            let $e = $(el);
+            this.pushToDragables($e);
+            if (($(".tdDropable").length - 1) !== i)
+                this.makeTdResizable($e);
         }.bind(this));
     };
+
+    this.makeTdResizable = function ($el) {
+        $el.resizable({
+            handles: 'e',
+            stop: this.tdDragStop.bind(this)
+        });
+    }.bind(this);
 
     this.tdDragStop = function (event, ui) {
         let $curTd = ui.element;
@@ -112,7 +118,8 @@
         cuTdobj.WidthPercentage = curTdWidthPerc;
     }
 
-    this.pushToDragables = function (el) {
+    this.pushToDragables = function ($e) {
+        let el = $e[0];
         if (this.drake) {
             if (!this.drake.containers.contains(el)) {
                 this.drake.containers.push(el);

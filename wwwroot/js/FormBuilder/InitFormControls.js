@@ -482,7 +482,7 @@
     };
 
     this.Numeric = function (ctrl) {
-        var id = ctrl.Name;
+        var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.focusout(function () {
             var val = $(this).val().toString();

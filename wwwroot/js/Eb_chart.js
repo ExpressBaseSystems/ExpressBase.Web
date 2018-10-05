@@ -94,16 +94,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
     var split = new splitWindow("parent-div" + this.tabNum, "contBox");
 
-    //if (this.login === "dc") {
-    //    this.stickBtn = new EbStickButton({
-    //        $wraper: $(".filterCont"),
-    //        $extCont: $(".filterCont"),
-    //        icon: "fa-filter",
-    //        dir: "left",
-    //        label: "Parameters"
-    //    });
-    //}
-
     split.windowOnFocus = function (ev) {
         $("#Relateddiv").hide();
         if ($(ev.target).attr("class") !== undefined) {
@@ -120,6 +110,19 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.FDCont = $(`<div id='${this.ContextId}' class='filterCont fd'></div>`);
         $("#parent-div0").before(this.FDCont);
         this.FDCont.hide();
+
+        if (this.login === "dc") {
+            this.stickBtn = new EbStickButton({
+                $wraper: this.FDCont,
+                $extCont: this.FDCont,
+                //$scope: $(subDivId),
+                icon: "fa-filter",
+                dir: "left",
+                label: "Parameters",
+                //btnTop: 42,
+                style: { top: "112px" }
+            });
+        }
     }
 
     this.call2FD = function () {
@@ -136,7 +139,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.ajaxSucc = function (text) {
         var flag = false;
-        //this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         if (this.login == "uc") {
             $("#ppcont").hide();
         }
@@ -158,24 +160,29 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#btnGo" + this.tabNum).click(this.init.bind(this));
         var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter).empty();
-        this.filterHtml = text;
-
-        //$(".filterCont").empty();
-        //$(".filterCont").append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
-        //$('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
-        //$(".filterCont").append(text);
-        //$("#btnGo").click(this.init.bind(this));
+        this.filterHtml = text;        
 
         this.FDCont = $("#filterWindow_" + this.tableId);
         $("#filterWindow_" + this.tableId).empty();
         $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv_" + this.tableId + "'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
-        $("#filterWindow_" + this.tableId).children().find('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
+        $("#filterWindow_" + this.tableId).children().find('#close_paramdiv_' + this.tableId).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#filterWindow_" + this.tableId).append(text);
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.init.bind(this));
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
 
-
+        if (this.login === "uc") {
+            this.stickBtn = new EbStickButton({
+                $wraper: $(".dv-body"),
+                $extCont: this.FDCont,
+                $scope: $("#" + focusedId),
+                icon: "fa-filter",
+                dir: "left",
+                label: "Parameters",
+                //btnTop: 42,
+                style: { position: "absolute", top: "46px" }
+            });
+        }
         if (typeof commonO !== "undefined")
             this.EbObject = commonO.Current_obj;
         else
@@ -184,12 +191,12 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if ($("#" + this.ContextId + " #filterBox").children().not("button").length == 0) {
             this.FD = false;
             this.FDCont.hide();
-            //if (this.login === "dc") {
-            //    this.stickBtn.hide();
-            //}
-            //else {
-            //    dvcontainerObj.stickBtn.hide();
-            //}
+            if (this.login === "dc") {
+                this.stickBtn.hide();
+            }
+            else {
+                dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+            }
             $("#btnGo" + this.tabNum).trigger("click");
             $.LoadingOverlay("hide");
         }
@@ -314,26 +321,25 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 this.collapseGraph();
             }
             this.propGrid.ClosePG();
-            //$(".pgpin").click();
-            //if (this.login === "dc") {
-            //    if (this.FD)
-            //        this.stickBtn.minimise();
-            //    else
-            //        this.stickBtn.hide();
-            //}
-            //else {
-            //    if (this.FD)
-            //        dvcontainerObj.stickBtn.minimise();
-            //    else
-            //        dvcontainerObj.stickBtn.hide();
-            //}
-            if (this.login === "uc") {
-                $.each(dvcontainerObj.dvcol, function (i, obj) {
-                    this.FDCont.hide();
-                });
+            if (this.login === "dc") {
+                if (this.FD)
+                    this.stickBtn.minimise();
+                else
+                    this.stickBtn.hide();
             }
-            else
-                this.FDCont.hide();
+            else {
+                if (this.FD) {
+                    $.each(dvcontainerObj.dvcol, function (i, obj) {
+                        if (focusedId === "sub_window_" + obj.tableId)
+                            obj.stickBtn.minimise();
+                        else
+                            obj.stickBtn.hide();
+                    });
+                }
+                else
+                    dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+            }
+            
             filterChanged = false;
             if (!this.isTagged)
                 f = this.compareFilterValues();
@@ -383,7 +389,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.stickBtn.minimise();
         }
         else {
-            dvcontainerObj.stickBtn.minimise();
+            dvcontainerObj.dvcol[focusedId].stickBtn.minimise();
         }
     };
 
@@ -448,12 +454,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 <div id='canvasDiv${this.tableId}' style='height:100%;padding-bottom:10px;'><canvas id='myChart${this.tableId}'></canvas></div> 
                 </div> 
                 </div>`);
-        //this.GenerateButtons();
-        //  "  <div class='tag-wraper'><div class='pgHead'>Measures</div><div class='tag-scroll'><div id='measure" + this.tableId + "'></div></div></div>" +
-        //}
-        //else {
-
-        //}
     };
 
     this.GenerateButtons = function () {
@@ -522,8 +522,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else {
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["bar"]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
-        if (this.FD)
-            $("#obj_icons").append("<button id='btnToggleFD" + this.tableId + "' class='btn'>F</button>");
 
         if (this.login == "uc") {
             dvcontainerObj.modifyNavigation();

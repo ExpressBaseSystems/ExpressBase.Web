@@ -79,19 +79,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.rowgroupFilter = [];
     this.CurrentRowGroup = null;
 
-    var split = new splitWindow("parent-div0", "contBox");
-
-    //if (this.login === "dc") {
-    //    this.stickBtn = new EbStickButton({
-    //        $wraper: $("this.ContextId"),
-    //        $extCont: $("this.ContextId"),
-    //        icon: "fa-filter",
-    //        dir: "left",
-    //        label: "Parameters",
-    //        //$scope: $("this.ContextId"),
-    //        //btnTop: 78,
-    //    });
-    //}
+    var split = new splitWindow("parent-div0", "contBox");    
 
     this.init = function () {
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
@@ -99,6 +87,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.FDCont = $(`<div id='${this.ContextId}' class='filterCont fd'></div>`);
         $("#parent-div0").before(this.FDCont);
         this.FDCont.hide();
+
+        if (this.login === "dc") {
+            this.stickBtn = new EbStickButton({
+                $wraper: this.FDCont,
+                $extCont: this.FDCont,
+                //$scope: $(subDivId),
+                icon: "fa-filter",
+                dir: "left",
+                label: "Parameters",
+                //btnTop: 42,
+                style: { top: "112px" }
+            });
+        }
     }
 
     split.windowOnFocus = function (ev) {
@@ -143,13 +144,24 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter).empty();
         this.filterHtml = text;
-
-
+        if (this.login === "uc") {
+            this.stickBtn = new EbStickButton({
+                $wraper: $(".dv-body"),
+                $extCont: this.FDCont,
+                $scope: $("#" + focusedId),
+                icon: "fa-filter",
+                dir: "left",
+                label: "Parameters",
+                //btnTop: 42,
+                style: { position: "absolute", top: "46px" }
+            });
+        }
 
         this.FDCont = $("#filterWindow_" + this.tableId);
         $("#filterWindow_" + this.tableId).empty();
         $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv_" + this.tableId + "'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
         $("#filterWindow_" + this.tableId).children().find('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
+        $("#filterWindow_" + this.tableId).children().find("#close_paramdiv_" + this.tableId).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#filterWindow_" + this.tableId).append(text);
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.getColumnsSuccess.bind(this));
 
@@ -169,12 +181,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if ($("#" + this.ContextId + " #filterBox").children().not("button").length == 0) {
             this.FD = false;
             this.FDCont.hide();
-            //if (this.login === "dc") {
-            //    this.stickBtn.hide();
-            //}
-            //else {
-            //    dvcontainerObj.stickBtn.hide();
-            //}
+            if (this.login === "dc") {
+                this.stickBtn.hide();
+            }
+            else {
+                dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+            }
             $("#eb_common_loader").EbLoader("hide");
             $("#btnGo" + this.tabNum).trigger("click");
         }
@@ -200,7 +212,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.stickBtn.minimise();
         }
         else {
-            dvcontainerObj.stickBtn.minimise();
+            dvcontainerObj.dvcol[focusedId].stickBtn.minimise();
         }
     };
 
@@ -209,11 +221,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
-                this.call2FD();
-                //this.EbObject.rowGrouping.$values = [];
+                this.stickBtn.hide();
                 this.isContextual = false;
                 this.isPipped = false;
                 this.rowData = null;
+                this.CurrentRowGroup = null;
+                this.rowgroupCols = [];
+                this.EbObject.RowGroupCollection.$values = [];
+                this.orderColl = [];
+                this.call2FD();
+                //this.EbObject.rowGrouping.$values = [];
+
             }
         }
         else if (Pname == "Name") {
@@ -298,7 +316,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 return;
             this.filterValues = this.getFilterValues();
         }
-        this.isSecondTime = false;        
+        this.isSecondTime = false;
         $(".dv-body1").show();
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#dv-body", Style: { "top": "39px", "margin-left": "-15px" } } });
         this.extraCol = [];
@@ -311,26 +329,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("#objname").text(this.dvName);
         this.propGrid.ClosePG()
-        //$("this.ContextId").hide();
-        //if (this.login === "dc") {
-        //    if (this.FD)
-        //        this.stickBtn.minimise();
-        //    else
-        //        this.stickBtn.hide();
-        //}
-        //else {
-        //    if (this.FD)
-        //        dvcontainerObj.stickBtn.minimise();
-        //    else
-        //        dvcontainerObj.stickBtn.hide();
-        //}
-        if (this.login === "uc") {
-            $.each(dvcontainerObj.dvcol, function (i, obj) {
-                this.FDCont.hide();
-            });
+
+        if (this.login === "dc") {
+            if (this.FD)
+                this.stickBtn.minimise();
+            else
+                this.stickBtn.hide();
         }
-        else
-            this.FDCont.hide();
+        else {
+            if (this.FD) {
+                $.each(dvcontainerObj.dvcol, function (i, obj) {
+                    if (focusedId === "sub_window_" + obj.tableId)
+                        obj.stickBtn.minimise();
+                    else
+                        obj.stickBtn.hide();
+                });
+            }
+
+            else
+                dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+        }
         this.addSerialAndCheckboxColumns();
 
         //hard coding
@@ -1006,6 +1024,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //if (this.isSecondTime) { }
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");            
         }
+
+        this.filterDisplay();
         this.arrangeWindowHeight();
         this.createFilterRowHeader();
         this.createFooter();
@@ -1013,7 +1033,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
         $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
 
-        this.filterDisplay();
         this.addFilterEventListeners();
         this.arrangeFooterWidth();
         //this.arrangefixedHedaerWidth();
@@ -1304,8 +1323,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 else
                     $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 105px)", "important");
             }
-
-            $(".stickBtn").css("top", "76px");
+            this.stickBtn.$stickBtn.css("top", "46px");
         }
         else {
             if (this.tabNum !== 0) {
@@ -1985,8 +2003,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
-        $('#close_paramdiv_' + this.tableId).off('click').on('click', this.toggleFilterdialog.bind(this));
-        //$("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
         $(".columnMarker_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $('[data-toggle="tooltip"]').tooltip({
             placement: 'bottom'
@@ -2037,22 +2053,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     "</div>" +
                     "</div>");
             }
-
-
-            //if (this.login === "dc") {
-            //    if (this.FD)
-            //        this.stickBtn.minimise();
-            //    else
-            //        this.stickBtn.hide();
-            //}
-            //else {
-            //    if (this.FD)
-            //        dvcontainerObj.stickBtn.minimise();
-            //    else
-            //        dvcontainerObj.stickBtn.hide();
-            //}
-            if (this.FD)
-                $("#obj_icons").append("<button id='btnToggleFD" + this.tableId + "' class='btn'>F</button>");
+            //if (this.FD)
+            //    $("#obj_icons").append("<button id='btnToggleFD" + this.tableId + "' class='btn'>F</button>");
             $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
 
             if (this.login == "uc") {

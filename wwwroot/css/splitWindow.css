@@ -19,6 +19,7 @@
     /*width: inherit !important;*/
     padding: 0px 17px;
     user-select:none !important;
+    position:relative;
 }
 
 .parent {

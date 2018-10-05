@@ -24,9 +24,23 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("WebForm", refId);
         }
 
-        public int InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
+		public object getRowdata(string refid, int rowid)
+		{
+			try
+			{
+				GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid });
+				return DataSet;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
+				return 0;
+			}
+		}
+
+		public int InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
         {
-            Dictionary<string, List<TableColumnMetaS>>  Values = JsonConvert.DeserializeObject<Dictionary<string, List<TableColumnMetaS>>>(ValObj);
+            Dictionary<string, List<SingleRecordField>>  Values = JsonConvert.DeserializeObject<Dictionary<string, List<SingleRecordField>>>(ValObj);
             InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, Values = Values, RowId = RowId });
             return Resp.RowAffected;
         }
@@ -44,22 +58,5 @@ namespace ExpressBase.Web.Controllers
                 return 0;
             }
         }
-
-        public object getRowdata(string refid, int rowid)
-        {
-            try
-            {
-				GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid });
-                
-                return DataSet;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception in InsertBotDetails. Message: " + ex.Message);
-                return 0;
-            }
-        }
-
-        
-    }
+	}
 }

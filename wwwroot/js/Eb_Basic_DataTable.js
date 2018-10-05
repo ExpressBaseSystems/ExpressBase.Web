@@ -510,7 +510,6 @@ var EbBasicDataTable = function (Option) {
         if (this.showFilterRow)
             this.createFilterRowHeader();
         this.addFilterEventListeners();
-        this.Api.columns.adjust();
         if (Option.fninitComplete)
             Option.fninitComplete();
         if (Option.fninitComplete4SetVal)

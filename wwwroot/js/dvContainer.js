@@ -489,7 +489,7 @@ var DvContainerObj = function (settings) {
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
             if ($("#" + focusedId).find(".dataTables_scroll").length > 0) {
                 this.PGobj.setObject(this.currentObj, AllMetas["EbTableVisualization"]);
-                if(this.dvcol[focusedId].firstTime)
+                if (this.dvcol[focusedId].isSecondTime)
                     this.dvcol[focusedId].GenerateButtons();
                 $("#Common_obj_icons").hide();
                 $("#obj_icons").show();
@@ -505,6 +505,10 @@ var DvContainerObj = function (settings) {
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || dvobj.$type.indexOf("EbGoogleMap") !== -1) {
             if ($("#" + focusedId).find("canvas").length > 0 || $("#" + focusedId).find(".gm-style").length > 0) {
                 this.dvcol[focusedId].GenerateButtons();
+                if (__count !== "0") {
+                    $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
+                    this.eventBind();
+                }
             }
             $(".dv-body2").removeClass("dv-pdf");
         }

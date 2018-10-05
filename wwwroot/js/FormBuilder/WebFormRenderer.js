@@ -19,9 +19,9 @@
                     let NS2 = NSS.split(".")[1];
                     try {
                         if (cObj.ObjType === "TableLayout" || cObj.ObjType === "GroupBox")
-                            EbOnChangeUIfns[NS1][NS2](cObj.Name, cObj);
+                            EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
                         else
-                            EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.Name, cObj);
+                            EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.EbSid_CtxId, cObj);
                     }
                     catch (e) {
                         alert(e.message);
@@ -32,13 +32,13 @@
     };
 
     this.makeReqFm = function (control) {
-        var $ctrl = $("#" + control.Name);
+        var $ctrl = $("#" + control.EbSid_CtxId);
         if ($ctrl.length !== 0 && control.Required && $ctrl.val().trim() === "")
-            EbMakeInvalid(`#cont_${control.Name}`, `.${control.Name}Wraper`);
+            EbMakeInvalid(`#cont_${control.EbSid_CtxId}`, `.${control.EbSid_CtxId}Wraper`);
     };
 
     this.removeReqFm = function (control) {
-        EbMakeValid(`#cont_${control.Name}`, `.${control.Name}Wraper`);
+        EbMakeValid(`#cont_${control.EbSid_CtxId}`, `.${control.EbSid_CtxId}Wraper`);
     };
 
     this.init = function () {
@@ -54,20 +54,41 @@
 
     this.initWebFormCtrls = function () {
         JsonToEbControls(this.FormObj);
+        this.flatControls = getFlatCtrlObjs(this.FormObj);// with functions
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
             if (Obj.ObjType === "ComboBox")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             this.initControls.init(Obj, opt);
             this.bindRequired(Obj);
+            this.bindUniqueCheck(Obj);
         }.bind(this));
         if (this.isEditMode)
             this.populateControls();
     };
 
     this.bindRequired = function (control) {
-        $("#" + control.Name).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
+        $("#" + control.EbSid_CtxId).on("blur", this.makeReqFm.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
     };
+
+    this.bindUniqueCheck = function (control) {
+        $("#" + control.EbSid_CtxId).on("blur", this.makeUniqueCheck.bind(this, control));
+    };
+
+    this.makeUniqueCheck = function (Obj) {
+        this.showLoader();
+        $.ajax({
+            type: "POST",
+            url: "../WebForm/DoUniqueCheck",
+            data: {
+                TableName: "formedittbl2", Field: Obj.Name,  Value: Obj.getValue()
+            },
+            success: function (isUnique) {
+
+                this.hideLoader();
+            }.bind(this),
+        });
+    }
 
     this.getWebFormVals = function () {
         return getValsFromForm(this.filterObj);
@@ -80,8 +101,7 @@
     }
 
     this.setEditModevalues = function (rowId) {
-        this.formRefId
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+        this.showLoader();
         $.ajax({
             type: "POST",
             url: "../WebForm/getRowdata",
@@ -94,7 +114,7 @@
                     Obj.setValue(this.EditModevalues[i]);
                 }.bind(this));
                 console.log(data);
-                $("#eb_common_loader").EbLoader("hide");
+                this.hideLoader();
             }.bind(this),
         });
     };
@@ -130,22 +150,21 @@
     };
 
     this.ajaxsuccess = function (rowAffected) {
-        // hide loader
+        this.hideLoader();
         if (rowAffected > 0) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
-            var msg = `Your ${this.FormObj.Name} form submitted successfully`;
+            var msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
         }
         else {
             EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
-            var msg = `Your ${this.FormObj.Name} form submission failed`;
+            var msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
         }
-        //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 
     this.saveForm = function () {
         if (!this.submitReqCheck())
             return;
-        // show loader
+        this.showLoader();
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
@@ -161,10 +180,18 @@
 
     };
 
+    this.showLoader = function () {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    };
+
+    this.hideLoader = function () {
+        $("#eb_common_loader").EbLoader("hide");
+    }
+
     this.submitReqCheck = function () {
         var $firstCtrl = null;
         $.each(this.flatControls, function (i, control) {
-            var $ctrl = $("#" + control.Name);
+            var $ctrl = $("#" + control.EbSid_CtxId);
             if ($ctrl.length !== 0 && control.Required && $ctrl.val().trim() === "") {
                 if (!$firstCtrl)
                     $firstCtrl = $ctrl;

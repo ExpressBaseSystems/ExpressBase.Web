@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, DistrictList, SourceCategoryList, SubCategoryList, ImageIdList) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SubCategoryList, ImageIdList) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -10,8 +10,8 @@
     this.CCityList = CCityList || [];
     this.CCountryList = CCountryList || [];
     this.CityList = CityList || [];
-    this.DistrictList = DistrictList || [];
-    this.SourceCategoryList = SourceCategoryList || [];
+    //this.DistrictList = DistrictList || [];
+    //this.SourceCategoryList = SourceCategoryList || [];
     this.SubCategoryList = SubCategoryList || [];
 
     this.ImageIdList = ImageIdList || [];
@@ -34,10 +34,10 @@
     this.$CrntCity = $("#txtCrntCity");
     this.$CrntCountry = $("#txtCrntCountry");
     this.$HomeCity = $("#txtHomeCity");
-    this.$HomeDistrict = $("#txtHomeDistrict");
+    this.$HomeDistrict = $("#selHomeDistrict");
     this.$Service = $("#selService");
     this.$LeadOwner = $("#selLeadOwner");
-    this.$SourceCategory = $("#txtSourceCategory");
+    this.$SourceCategory = $("#selSourceCategory");
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
     this.$PicReceived = $("#selPicReceived");
@@ -57,7 +57,7 @@
     this.$btnNewFeedBack = $("#btnNewFeedBack");
     this.$MdlFeedBack = $("#mdlFeedBack");
     this.$FlUpDate = $("#txtFlUpDate");
-    this.$FlUpStatus = $("#txtFlUpStatus");
+    this.$FlUpStatus = $("#selFlUpStatus");
     this.$FlUpFolDate = $("#txtFlUpFolDate");
     this.$FlUpComnt = $("#txaFlUpComnt");
     this.$FlUpSave = $("#btnFlUpSave");
@@ -110,8 +110,8 @@
         this.$CrntCity.autocomplete({ source: this.CCityList });
         this.$CrntCountry.autocomplete({ source: this.CCountryList });
         this.$HomeCity.autocomplete({ source: this.CityList }); 
-        this.$HomeDistrict.autocomplete({ source: this.DistrictList });
-        this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
+        //this.$HomeDistrict.autocomplete({ source: this.DistrictList });
+        //this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
 
         $(document).bind('keypress', function (event) {

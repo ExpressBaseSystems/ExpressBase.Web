@@ -17,6 +17,12 @@
         $('.Eb_quick_menu').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
         //$('.Eb_quick_menu').off("click").on('click', ".for_brd", this.setBrdCrump.bind(this));
         $('.Eb_quick_menu').off("click").on('click', "#menu_refresh", this.refreshMenu.bind(this));
+        $("#searchic").off("click").on("click", this.toggleSearch.bind(this));
+    };
+
+    this.toggleSearch = function (e) {
+        let ip = $(e.target).closest(".searchBox");
+        ip.toggleClass("expandedip");
     };
 
     this.refreshMenu = function () {
@@ -239,6 +245,7 @@
                                 <span name="Version" class="label">V.${_obj.VersionNumber}</span>
                         </div>
                     </div>
+                    <div class="wcobtype"><span class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></span></div>
                     </a>
                 </div>`);
     };

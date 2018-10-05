@@ -3,7 +3,6 @@
     Html.RenderPartial("ExtPageHeader");
 }
 <script>
-    $("#signIn").remove();
     function onSubmit(token) {
         document.getElementById("log_form").submit();
         $(".loader_top").EbLoader("show");
@@ -44,14 +43,14 @@
                     <div class="form-group">
                         <div class="checkbox icheck btm_pdng text-right">
                             <div class="nopadding" style="float:left;">
-                                <a href="~/Ext/ForgotPassword">Forgot password?</a>
+                                <a href="/ForgotPassword">Forgot password?</a>
                             </div>
                         </div>
                         <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit'>
                             Sign In
                         </button>
                     </div>
-                    @*<div class="form-group text-center">Or Sign In by</div>
+                   <div class="form-group text-center">Or Sign In by</div>
                         <div class="form-group" style="padding-left: 34px;float: left;">
                             <div class="col-xs-2 col-sm-2">
                                 <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
@@ -83,7 +82,7 @@
                                     <span class="hidden-xs"></span>
                                 </a>
                             </div>
-                        </div>*@
+                        </div>
                 </form>
             </div>
         </div>

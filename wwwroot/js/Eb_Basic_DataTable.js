@@ -510,11 +510,10 @@ var EbBasicDataTable = function (Option) {
         if (this.showFilterRow)
             this.createFilterRowHeader();
         this.addFilterEventListeners();
-        this.Api.columns.adjust();
         if (Option.fninitComplete)
             Option.fninitComplete();
         if (Option.fninitComplete4SetVal)
-            Option.fninitComplete4SetVal
+            Option.fninitComplete4SetVal();
         //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
         if (!this.headerDisplay)
             $(".Eb-ctrlContainer .dataTables_scrollHead").hide();

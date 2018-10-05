@@ -80,14 +80,21 @@
 .Eb_quick_menu .objitems {
     padding: 9px 9px;
 }
+    .Eb_quick_menu .objitems .wcobtype{
+        position:absolute;
+        right:5px;
+        top:5px;
+    }
+
     .Eb_quick_menu .objitems .object_container {
         width: 100%;
         height: 100%;
         float: left;
-        background-color:white;
+        background-color: white;
         padding: 6px;
         border-radius: 2px;
         border: 1px solid #e8e6e6;
+        position:relative;
     }
 .Eb_quick_menu .obtype_container .object_container {
     background-color: #f2f2f1 !important;
@@ -102,7 +109,7 @@
 }
     .Eb_quick_menu .modal-header .searchBox {
         margin-right: 15px;
-        width: calc(25% - 6px);
+        /*width: calc(25% - 6px);*/
     }
 .Eb_quick_menu .cls_btn {
 }
@@ -127,11 +134,21 @@
     position: absolute;
     z-index: 5;
     height: 100%;
+    color: white;
+    cursor:pointer;
 }
     .Eb_quick_menu .search_icon i {
     }
 .Eb_quick_menu .search_input {
     border-radius: 20px !important;
+    display: none;
+    transition: all 0.35s
+}
+.Eb_quick_menu .expandedip .search_icon {
+    color: inherit !important;
+}
+.Eb_quick_menu .expandedip .search_input {
+    display:block !important;
 }
 .Eb_quick_menu .apibox {
     width: 25px;

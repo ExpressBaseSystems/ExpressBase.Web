@@ -687,6 +687,7 @@
         }
         this.Metas = metas;
         this.PropsObj = props;
+        this.CurObj = this.PropsObj;
         this.ParentPG = parentPG;
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         this.ImgSlctrs = {};

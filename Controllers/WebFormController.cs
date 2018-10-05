@@ -45,6 +45,12 @@ namespace ExpressBase.Web.Controllers
             return Resp.RowAffected;
         }
 
+        public bool DoUniqueCheck(string TableName, string Field, string Value)
+        {
+            DoUniqueCheckResponse Resp = ServiceClient.Post<DoUniqueCheckResponse>(new DoUniqueCheckRequest { TableName = TableName, Field = Field, Value = Value });
+            return (Resp.NoRowsWithSameValue == 0);
+        }
+
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try

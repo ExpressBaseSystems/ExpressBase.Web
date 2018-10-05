@@ -60,9 +60,8 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("ForgotPassword")]
         public IActionResult ForgotPassword()
-
         {
             ViewBag.message = TempData["Message"];
             return View();
@@ -72,17 +71,21 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult ForgotPassword(int i)
         {
-            string Email = this.HttpContext.Request.Form["Email"];
-            UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = Email });
+            string email = this.HttpContext.Request.Form["Email"];
+            UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
             if (!result.isUniq)
             {
-                this.ServiceClient.Post(new EmailServicesMqRequest() { Refid = "expressbase-expressbase-15-26-26", SolnId = CoreConstants.EXPRESSBASE});
-                TempData["Message"] = string.Format("we've sent a password reset link to {0}", Email);
+                this.ServiceClient.Post(new ResetPasswordMqRequest() {
+                    Refid = "expressbase-expressbase-15-26-26",
+                    Email = email
+                });
+
+                TempData["Message"] = string.Format("we've sent a password reset link to {0}", email);
                 return RedirectToAction(RoutingConstants.INDEX);
             }
             else
             {
-                TempData["Message"] = string.Format("{0} invalid!", Email);
+                TempData["Message"] = string.Format("{0} invalid!", email);
                 return RedirectToAction("ForgotPassword");
             }
         }

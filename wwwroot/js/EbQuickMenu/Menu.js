@@ -245,6 +245,7 @@
                                 <span name="Version" class="label">V.${_obj.VersionNumber}</span>
                         </div>
                     </div>
+                    <div class="wcobtype"><span class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></span></div>
                     </a>
                 </div>`);
     };

@@ -149,7 +149,14 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Home District</label>
-                            <input id="txtHomeDistrict" type="text" class="form-control">
+                            <select id="selHomeDistrict" class="form-control">
+                                @{ 
+                                    foreach(string str in ViewBag.DistrictList)
+                                    {
+                                        <option value="@str">@str</option>
+                                    }
+                                } 
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -173,7 +180,7 @@
         <div class="tab-content white-tab">
 
             <!-- Home Menu -->
-            <div id="home" class="tab-pane fade in active" style="padding-top: 15px; height: calc(100vh - 256px); min-height: 200px; overflow-y: scroll;">
+            <div id="home" class="tab-pane fade in active" style="padding-top: 15px; height: calc(100vh - 256px); min-height: 200px;">
                 <div class="lm-form-inline">
                     <div class="col-md-2">
                         <div class="form-group">
@@ -202,7 +209,14 @@
                     <div class="col-md-2" style="min-width: 21%;">
                         <div class="form-group">
                             <label>Source Category</label>
-                            <input id="txtSourceCategory" type="text" class="form-control">
+                             <select id="selSourceCategory" class="form-control">
+                                @{ 
+                                    foreach(string str in ViewBag.SourceCategoryList)
+                                    {
+                                        <option value="@str">@str</option>
+                                    }
+                                } 
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-2" style="min-width: 21%;">
@@ -309,7 +323,7 @@
             </div>
 
             <!-- Billing Menu -->
-            <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; overflow-y: scroll;">
+            <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
@@ -319,7 +333,7 @@
             </div>
 
             <!-- Surgery Menu -->
-            <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; overflow-y: scroll;">
+            <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
                 <div style="text-align:right; padding: 15px 15px;">
                     <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
                 </div>
@@ -329,7 +343,7 @@
             </div>
 
             <!-- Attach Menu -->
-            <div id="menuAttach" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; overflow-y: scroll;">
+            <div id="menuAttach" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
                 <div style="padding: 15px 15px; display:inline-block; width:79%;">
                     <button id="btnFirstImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-step-backward"></i> First</button>
                     <button id="btnPrevImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-chevron-left"></i> Prev</button>
@@ -374,7 +388,14 @@
                     <div class="col-md-8">
                         <div class="lm-form-group">
                             <label class="tag-title">Lead Status</label>
-                            <input id="txtFlUpStatus" type="text" class="form-control">
+                            <select id="selFlUpStatus" class="form-control">
+                                @{ 
+                                    foreach(string str in ViewBag.StatusList)
+                                    {
+                                        <option value="@str">@str</option>
+                                    }
+                                } 
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -654,9 +675,9 @@
     var CCityList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CrntCityList));
     var CCountryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CrntCountryList));
     var CityList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CityList));
-    var DistrictList = Html.Raw(JsonConvert.SerializeObject(ViewBag.DistrictList));
+    //var DistrictList = Html.Raw(JsonConvert.SerializeObject(ViewBag.DistrictList));
 
-    var SourceCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SourceCategoryList));
+    //var SourceCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SourceCategoryList));
     var SubCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SubCategoryList));
 
     var ImageIdList = Html.Raw(JsonConvert.SerializeObject(ViewBag.ImageIdList));
@@ -669,7 +690,7 @@
 }
 
 <script>
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @DistrictList, @SourceCategoryList, @SubCategoryList, @ImageIdList );
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList, @ImageIdList );
     @*var imgup = new ImageRender({
         TenantId:'@ViewBag.cid'
     })*@

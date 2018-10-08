@@ -512,7 +512,6 @@ var DvContainerObj = function (settings) {
             $(".dv-body2").removeClass("dv-pdf");
         }
         else {
-            $(".stickBtn").hide();
             $("#obj_icons").hide();
             $("#Common_obj_icons").show();
             $("#Common_obj_icons").empty();

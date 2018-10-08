@@ -308,13 +308,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.isSecondTime) {
                 if (!this.validateFD())
                     return;
-                this.filterValues = this.getFilterValues();
+                this.filterValues = this.getFilterValues("filter");
             }
         }
         else {
             if (!this.validateFD())
                 return;
-            this.filterValues = this.getFilterValues();
+            this.filterValues = this.getFilterValues("filter");
         }
         this.isSecondTime = false;
         $(".dv-body1").show();
@@ -338,16 +338,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             if (this.FD) {
-                $.each(dvcontainerObj.dvcol, function (i, obj) {
-                    if (focusedId === "sub_window_" + obj.tableId)
-                        obj.stickBtn.minimise();
-                    else
-                        obj.stickBtn.hide();
-                });
+                //$.each(dvcontainerObj.dvcol, function (i, obj) {
+                //    if (focusedId === "sub_window_" + obj.tableId)
+                //        obj.stickBtn.minimise();
+                //    else
+                //        obj.stickBtn.hide();
+                //});
+                this.stickBtn.minimise();
             }
 
             else
-                dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+                this.stickBtn.hide();
+                //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
 
@@ -699,7 +701,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.filterObj);
-        if (this.isContextual && from !== "compare") {
+        if (this.isContextual && from !== "compare" ) {
             if (from === "filter" && prevfocusedId !== undefined) {
                 $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
                     var f = false;
@@ -2028,7 +2030,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
 
         if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("Lead Details") !== -1)
-            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/custompage/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
+            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
 
         $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
         if ($("#" + this.tableId).children().length > 0) {

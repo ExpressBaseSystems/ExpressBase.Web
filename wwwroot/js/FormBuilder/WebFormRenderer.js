@@ -32,7 +32,7 @@
     };
 
     this.makeReqFm = function (control) {
-        var $ctrl = $("#" + control.EbSid_CtxId);
+        let $ctrl = $("#" + control.EbSid_CtxId);
         if ($ctrl.length !== 0 && control.Required && $ctrl.val().trim() === "")
             EbMakeInvalid(`#cont_${control.EbSid_CtxId}`, `.${control.EbSid_CtxId}Wraper`);
     };
@@ -76,16 +76,21 @@
     };
 
     this.makeUniqueCheck = function (Obj) {
+        if (Obj.getValue().trim() === "")
+            return;
         this.showLoader();
         $.ajax({
             type: "POST",
             url: "../WebForm/DoUniqueCheck",
             data: {
-                TableName: "formedittbl2", Field: Obj.Name,  Value: Obj.getValue()
+                TableName: this.FormObj.TableName, Field: Obj.Name, Value: Obj.getValue()
             },
             success: function (isUnique) {
-
                 this.hideLoader();
+                if (!isUnique)
+                    EbMakeInvalid(`#cont_${Obj.EbSid_CtxId}`, `#${Obj.EbSid_CtxId}Wraper`, "This field is unique, try another value");
+                else
+                    EbMakeValid(`#cont_${Obj.EbSid_CtxId}`, `#${Obj.EbSid_CtxId}Wraper`);
             }.bind(this),
         });
     }
@@ -143,7 +148,7 @@
     };
 
     this.getFormValuesObjWithTypeColl = function () {
-        var FVWTObjColl = {};
+        let FVWTObjColl = {};
         FVWTObjColl[this.FormObj.TableName] = []
         this.ProcRecurForVal(this.FormObj, FVWTObjColl);
         return JSON.stringify(FVWTObjColl);
@@ -151,13 +156,14 @@
 
     this.ajaxsuccess = function (rowAffected) {
         this.hideLoader();
+        let msg = "";
         if (rowAffected > 0) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
-            var msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
+            msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
         }
         else {
             EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
-            var msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
+            msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
         }
     };
 
@@ -189,9 +195,9 @@
     }
 
     this.submitReqCheck = function () {
-        var $firstCtrl = null;
+        let $firstCtrl = null;
         $.each(this.flatControls, function (i, control) {
-            var $ctrl = $("#" + control.EbSid_CtxId);
+            let $ctrl = $("#" + control.EbSid_CtxId);
             if ($ctrl.length !== 0 && control.Required && $ctrl.val().trim() === "") {
                 if (!$firstCtrl)
                     $firstCtrl = $ctrl;

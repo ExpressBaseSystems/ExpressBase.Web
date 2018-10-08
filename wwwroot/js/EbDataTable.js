@@ -308,13 +308,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.isSecondTime) {
                 if (!this.validateFD())
                     return;
-                this.filterValues = this.getFilterValues();
+                this.filterValues = this.getFilterValues("filter");
             }
         }
         else {
             if (!this.validateFD())
                 return;
-            this.filterValues = this.getFilterValues();
+            this.filterValues = this.getFilterValues("filter");
         }
         this.isSecondTime = false;
         $(".dv-body1").show();
@@ -701,7 +701,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.filterObj);
-        if (this.isContextual && from !== "compare") {
+        if (this.isContextual && from !== "compare" ) {
             if (from === "filter" && prevfocusedId !== undefined) {
                 $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
                     var f = false;

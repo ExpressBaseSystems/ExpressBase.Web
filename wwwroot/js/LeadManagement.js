@@ -136,7 +136,8 @@
         $("#btnSave").on("click", this.onClickBtnSave.bind(this));
         $("#btnNew").on("click", function () {
             if (confirm("Unsaved data will be lost!\n\nClick OK to Continue"))
-                window.location.search = '';
+                //window.location.search = '';
+                window.location = window.origin + "/leadmanagement";
         }.bind(this));
     }
 
@@ -714,7 +715,8 @@
                         uploadedImgRefList = [];//cleared Image ref id list
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
                         if (this.Mode === 0)
-                            window.location.search = 'ac=' + result;
+                            //window.location.search = 'ac=' + result;
+                            window.location = window.origin + "/leadmanagement/" + result;
                     }
                     else {
                         EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });

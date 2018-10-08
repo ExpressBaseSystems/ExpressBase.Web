@@ -132,7 +132,7 @@ var EbSelect = function (ctrl, options) {
         else {
             $filterInp.val($e.val());
             this.Vobj.DDstate = true;
-            EbMakeValid(`#${this.ComboObj.Name}Container`, `#${this.ComboObj.Name}Wraper`);
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.Name}Wraper`);
             if (searchVal.trim() === "" || this.ComboObj.MinSeachLength > searchVal.length)
                 return;
             this.datatable.columnSearch = [];
@@ -241,7 +241,7 @@ var EbSelect = function (ctrl, options) {
     this.InitDT = function () {
 
         var searchVal = this.getMaxLenVal();
-        let _name = this.ComboObj.Name;
+        let _name = this.ComboObj.EbSid_CtxId;
         if (this.ComboObj.MinSeachLength > searchVal.length) {
             //alert(`enter minimum ${this.ComboObj.MinSeachLength} charecter in searchBox`);
             EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
@@ -667,7 +667,7 @@ var EbSelect = function (ctrl, options) {
     this.hideDDclickOutside = function (e) {
         var container = $('#' + this.name + 'DDdiv');
         var container1 = $('#' + this.name + 'Container');
-        let _name = this.ComboObj.Name;
+        let _name = this.ComboObj.EbSid_CtxId;
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {

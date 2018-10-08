@@ -18,6 +18,8 @@ namespace ExpressBase.Web.Controllers
 	{
 		public CustomPageController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
+		[HttpGet("leadmanagement/{ac}")]
+		[HttpGet("leadmanagement")]
 		public IActionResult LeadManagement(string ac)
 		{
 			//mode=0 -> new customer

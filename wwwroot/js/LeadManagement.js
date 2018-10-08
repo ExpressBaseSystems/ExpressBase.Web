@@ -136,7 +136,8 @@
         $("#btnSave").on("click", this.onClickBtnSave.bind(this));
         $("#btnNew").on("click", function () {
             if (confirm("Unsaved data will be lost!\n\nClick OK to Continue"))
-                window.location.search = '';
+                //window.location.search = '';
+                window.location = window.origin + "/leadmanagement";
         }.bind(this));
     }
 
@@ -377,7 +378,7 @@
             this.$FlUpSave.prop("disabled", true);
             if (this.$MdlFeedBack.attr("data-id") !== '')
                 id = parseInt(this.$MdlFeedBack.attr("data-id"));
-            var fdbkObj = { Id: id, Date: this.$FlUpDate.val(), Status: this.$FlUpStatus.val(), Followup_Date: this.$FlUpFolDate.val(), Comments: this.$FlUpComnt.val(), Account_Code: this.AccId };
+            var fdbkObj = { Id: id, Tr_Date: this.$FlUpDate.val(), Status: this.$FlUpStatus.val(), Fup_Date: this.$FlUpFolDate.val(), Comments: this.$FlUpComnt.val(), Account_Code: this.AccId };
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveFollowup",
@@ -416,7 +417,7 @@
         this.$MdlFeedBack.on('shown.bs.modal', function (e) {
             if (this.$MdlFeedBack.attr("data-id") === "") {
                 this.$FlUpDate.val(moment(new Date()).format("DD-MM-YYYY"));
-                this.$FlUpStatus.val("");
+                //this.$FlUpStatus.val("");
                 this.$FlUpFolDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$FlUpComnt.val("");
                 this.$FlUpSave.children().hide();
@@ -714,7 +715,8 @@
                         uploadedImgRefList = [];//cleared Image ref id list
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
                         if (this.Mode === 0)
-                            window.location.search = 'ac=' + result;
+                            //window.location.search = 'ac=' + result;
+                            window.location = window.origin + "/leadmanagement/" + result;
                     }
                     else {
                         EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
@@ -805,7 +807,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
     this.init = function () {
         if (this.ParentDivId === "divFdbk") {
-            this.metadata = ["6", "Id", "Date", "Status", "Followup_Date", "Comments", "Created_By", "_feedback"];
+            this.metadata = ["7", "Id", "Created_Date", "Tr_Date", "Status", "Fup_Date", "Comments", "Created_By", "_feedback"];
         }
         else if (this.ParentDivId === "divBilling") {
             this.metadata = ["9", "Id", "Date", "Total_Amount", "Amount_Received", "Balance_Amount", "Cash_Paid", "Payment_Mode", "Narration", "Created_By", "_billing"];
@@ -831,7 +833,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]] });
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]]  });
         }
         else if (this.metadata.indexOf("_billing") !== -1) {
             for (i = 0; i < this.itemList.length; i++)

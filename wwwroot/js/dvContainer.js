@@ -472,7 +472,7 @@ var DvContainerObj = function (settings) {
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
         $("#Relateddiv").hide();
         //$(".ppcont").hide();
-        $(".filterCont").hide();
+       // $(".filterCont").hide();
         if (focusedId !== $("[data-slick-index='" + currentSlide + "']").attr("id")) 
             focusedId = $("[data-slick-index='" + currentSlide + "']").attr("id");
 
@@ -493,7 +493,6 @@ var DvContainerObj = function (settings) {
                     this.dvcol[focusedId].GenerateButtons();
                 $("#Common_obj_icons").hide();
                 $("#obj_icons").show();
-                $(".stickBtn").show();
                 if (__count !== "0") {
                     $("#obj_icons").append(` <button id='Close_btn${focusedId}' class='btn'><i class="fa fa-close" aria-hidden="true"></i></button>`);
                     this.eventBind();
@@ -513,7 +512,6 @@ var DvContainerObj = function (settings) {
             $(".dv-body2").removeClass("dv-pdf");
         }
         else {
-            $(".stickBtn").hide();
             $("#obj_icons").hide();
             $("#Common_obj_icons").show();
             $("#Common_obj_icons").empty();

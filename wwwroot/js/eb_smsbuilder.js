@@ -22,6 +22,10 @@
 		}
 		else {
 			this.smspropG.setObject(this.EbObject, AllMetas["EbSmsTemplate"]);
+			if (this.EbObject.DataSourceRefId !== "")
+			{
+				this.getDataSourceColoumns();
+			}
 			$.each(this.EbObject.DsColumnsCollection.$values, function (i, value) {
 				var id = "DataField" + this.ObjId++;
 				var obj = new EbObjects["DsColumns"](id);

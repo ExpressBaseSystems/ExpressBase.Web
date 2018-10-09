@@ -42,7 +42,8 @@
     <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version=@bApnd />
     <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version=@bApnd />@*amal*@
     <link rel="stylesheet" href="~/css/Eb.css" asp-append-version=@bApnd />@*jith*@
-    <link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" />@*amal*@
+    <link rel="stylesheet" href="~/css/EbOnBoarding/eb-assets.style.css" asp-append-version=@bApnd />
+    <link href="~/css/EbControls/EbFileUpload.css" asp-append-version=@bApnd rel="stylesheet" />@*amal*@
 
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -79,12 +80,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>@*amal*@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.4/js/fileinput.min.js"></script>@*amal*@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.js"></script>@*amal*@
-    <script type="text/javascript" src="~/js/store.legacy.min.js"></script>@*amal*@
+    <script type="text/javascript" src="~/js/store.legacy.min.js" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>@*dona*@
     <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
-    <script src="~/js/Eb_Basic_DataTable.js"></script>
+    <script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
-
+    <script type="text/javascript" src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
     @* EB JS *@
     <script src="~/js/EbLoader.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
@@ -102,28 +103,28 @@
     <script type="text/javascript" src="~/js/Eb_ObjectCommon.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/ImageUploader.js" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="~/js/EbQuickMenu/Menu.js" asp-append-version=@bApnd></script>@*amal*@
-    <script src="~/js/EbControls/EbCropper.js" type="text/javascript"></script>@*amal*@
-    <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript"></script>@*amal*@
+    <script src="~/js/EbControls/EbCropper.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
 
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
     <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" asp-append-version=@bApnd>
-    <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" />
-    <script src="~/lib/codemirror/lib/codemirror.js"></script>
-    <script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
-    <script src="~/lib/codemirror/addon/hint/javascript-hint.js"></script>
-    <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
-    <script src="~/lib/codemirror/addon/hint/sql-hint.js"></script>
-    <script src="~/lib/codemirror/mode/sql/sql.js"></script>
-    <script src="~/lib/codemirror/addon/fold/foldcode.js"></script>
-    <script src="~/lib/codemirror/addon/fold/foldgutter.js"></script>
-    <script src="~/lib/codemirror/addon/fold/brace-fold.js"></script>
-    <script src="~/lib/codemirror/addon/fold/xml-fold.js"></script>
-    <script src="~/lib/codemirror/addon/fold/comment-fold.js"></script>
-    <script src="~/lib/codemirror/mode/xml/xml.js"></script>
-    <script src="~/lib/codemirror/addon/hint/anyword-hint.js"></script>
-    <script src="~/lib/codemirror/mode/clike/clike.js"></script>
-    <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" asp-append-version=@bApnd />
+    <script src="~/lib/codemirror/lib/codemirror.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/hint/show-hint.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/hint/javascript-hint.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/mode/javascript/javascript.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/hint/sql-hint.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/mode/sql/sql.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/foldcode.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/foldgutter.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/brace-fold.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/xml-fold.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/comment-fold.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/mode/xml/xml.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/hint/anyword-hint.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/mode/clike/clike.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/edit/matchbrackets.js" asp-append-version=@bApnd></script>
     <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
 </head>
 <body>

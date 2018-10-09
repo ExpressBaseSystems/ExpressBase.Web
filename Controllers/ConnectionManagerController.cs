@@ -262,11 +262,13 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public string TwilioAccount()
-        {
+        {           
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
                 var req = this.HttpContext.Request.Form;
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS, SolutionId = req["SolutionId"] });
+
                 TwilioConnection smscon = new TwilioConnection
                 {
                     UserName = req["UserName"],
@@ -275,6 +277,11 @@ namespace ExpressBase.Web.Controllers
                     Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
                 };
 
+               // if (solutionConnections.EBSolutionConnections.SMSConnections == null)
+                {
+                    smscon.Preference = ConPreferences.PRIMARY;
+                }
+                
                 if (Convert.ToInt32(req["Conid"]) > 0)
                     res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
                 else
@@ -303,7 +310,11 @@ namespace ExpressBase.Web.Controllers
                     Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
                     ApiKey = req["ApiKey"]
                 };
-
+                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS, SolutionId = req["SolutionId"] });
+                if (solutionConnections.EBSolutionConnections.SMSConnections.Capacity == 0)
+                {
+                    smscon.Preference = ConPreferences.PRIMARY;
+                }
                 if (Convert.ToInt32(req["Conid"]) > 0)
                     res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
                 else

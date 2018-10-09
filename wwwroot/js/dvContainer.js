@@ -243,7 +243,7 @@ var DvContainerObj = function (settings) {
                         $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' style='height: calc(100vh - 60px) !important;'>
                              <div class='split-inner'>
                              <div class='wrapper-cont' id='content_dv' style='width:100%;height:100%;'>
-                             <iframe id="reportIframe_${copycelldata}" class="reportIframe" name="reportIframe_${copycelldata}" src='../ReportRender/RenderReport2?refid=${this.dvRefid}&Params=${this.filterValues}'>                              
+                             <iframe id="reportIframe_${copycelldata}" class="reportIframe" name="reportIframe_${copycelldata}" src='../ReportRender/Renderlink?refid=${this.dvRefid}&_params=${btoa(JSON.stringify(this.filterValues))}'>    
                             </iframe>
                              </div>
                              </div>

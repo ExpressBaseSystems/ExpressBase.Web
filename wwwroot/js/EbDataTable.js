@@ -598,7 +598,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.filter = true;
         //o.select = true;
         //o.retrieve = true;
-        //o.keys = true;
+        o.keys = true;
         //this.filterValues = this.getFilterValues();
         //filterChanged = false;
         //if (!this.isTagged)
@@ -1122,7 +1122,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>                              
                         </div>
-                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/RenderReport2?refid=${this.linkDV}&Params=${JSON.stringify(this.filterValues)}'></iframe>
+                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/Renderlink?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}'></iframe>
             </div>
                     </div>
                 </div>
@@ -2030,7 +2030,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
 
         if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("Lead Details") !== -1)
-            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/custompage/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
+            $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
 
         $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
         if ($("#" + this.tableId).children().length > 0) {
@@ -2610,7 +2610,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-minus").addClass("fa-plus");
         this.call2newDv(rows, idx, colindex);
         $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
-        $("#eb_common_loader").EbLoader("hide");
     };
     this.OpenInlineDv = function (rows, e, idx, colindex) {
         if ($(e.target).closest("I").hasClass("fa-minus")) {
@@ -2680,6 +2679,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $(this).parents().closest(".containerrow").remove();
 
         });
+
+        $("#eb_common_loader").EbLoader("hide");
     }
 
     this.Params4InlineTable = function (dsid) {

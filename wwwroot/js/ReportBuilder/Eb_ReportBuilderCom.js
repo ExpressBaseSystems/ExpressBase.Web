@@ -435,7 +435,7 @@
         //    $("#filter").trigger("click");
         //    return;
         //}
-        $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}&Params=${JSON.stringify(ParamsArray)}`);
+		$("#reportIframe").attr("src", `../ReportRender/Renderlink?refid=${this.refid}&_params=${btoa(JSON.stringify(ParamsArray))}`);
         // $("#RptModal").modal('hide');
         //$.LoadingOverlay("hide");
         $("#eb_common_loader").EbLoader("hide");

@@ -96,7 +96,7 @@
         $("#tblCommonList").on('click', '.editviewclass', this.onClickEdit.bind(this));
         $("#tblCommonList").on('click', '.convertuserclass', this.onClickConvert.bind(this));
 
-        $("#CL_Image").Lazy();
+        $(".CL_Image").Lazy();
         this.setMenuBar();
     }
 

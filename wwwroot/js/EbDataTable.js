@@ -598,7 +598,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //o.filter = true;
         //o.select = true;
         //o.retrieve = true;
-        //o.keys = true;
+        o.keys = true;
         //this.filterValues = this.getFilterValues();
         //filterChanged = false;
         //if (!this.isTagged)
@@ -1092,7 +1092,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         });
-        //$(".tdheight").contextMenu('update');
     };
 
     this.copyCellData = function (key, opt, event) {
@@ -2610,7 +2609,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-minus").addClass("fa-plus");
         this.call2newDv(rows, idx, colindex);
         $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
-        $("#eb_common_loader").EbLoader("hide");
     };
     this.OpenInlineDv = function (rows, e, idx, colindex) {
         if ($(e.target).closest("I").hasClass("fa-minus")) {
@@ -2680,6 +2678,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $(this).parents().closest(".containerrow").remove();
 
         });
+
+        $("#eb_common_loader").EbLoader("hide");
     }
 
     this.Params4InlineTable = function (dsid) {

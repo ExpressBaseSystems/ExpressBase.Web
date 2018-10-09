@@ -378,7 +378,7 @@
             this.$FlUpSave.prop("disabled", true);
             if (this.$MdlFeedBack.attr("data-id") !== '')
                 id = parseInt(this.$MdlFeedBack.attr("data-id"));
-            var fdbkObj = { Id: id, Tr_Date: this.$FlUpDate.val(), Status: this.$FlUpStatus.val(), Fup_Date: this.$FlUpFolDate.val(), Comments: this.$FlUpComnt.val(), Account_Code: this.AccId };
+            var fdbkObj = { Id: id, Date: this.$FlUpDate.val(), Status: this.$FlUpStatus.val(), Fup_Date: this.$FlUpFolDate.val(), Comments: this.$FlUpComnt.val(), Account_Code: this.AccId };
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveFollowup",
@@ -807,7 +807,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
     this.init = function () {
         if (this.ParentDivId === "divFdbk") {
-            this.metadata = ["7", "Id", "Created_Date", "Tr_Date", "Status", "Fup_Date", "Comments", "Created_By", "_feedback"];
+            this.metadata = ["7", "Id", "Created_Date", "Date", "Status", "Fup_Date", "Comments", "Created_By", "_feedback"];
         }
         else if (this.ParentDivId === "divBilling") {
             this.metadata = ["9", "Id", "Date", "Total_Amount", "Amount_Received", "Balance_Amount", "Cash_Paid", "Payment_Mode", "Narration", "Created_By", "_billing"];

@@ -133,13 +133,13 @@
                                 <div class="col-md-8" style="position: relative;">
                                     <div id="divRecurringOverlay${t}" style="position: absolute; z-index: 10; height: 100%; width: 100%; opacity: 0.7; background-color: #fff; display: block; margin-left: -15px;"></div>
                                     <div id="divChkDay${t}" class="checkbox" style="padding-left: 25px; margin-top: 0px;">
-                                        <label class="checkbox-inline" style="min-width: 28%; margin-left: 10px;"><input type="checkbox" value="Sun" checked>Sunday</label>
-                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Mon" checked>Monday</label>
-                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Tue" checked>Tuesday</label>
-                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Wed" checked>Wednesday</label>
-                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Thu" checked>Thursday</label>
-                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Fri" checked>Friday</label>
-                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" value="Sat" checked>Saturday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%; margin-left: 10px;"><input type="checkbox" data-label="Sun" data-code="0" checked>Sunday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" data-label="Mon" data-code="1" checked>Monday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" data-label="Tue" data-code="2" checked>Tuesday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" data-label="Wed" data-code="3" checked>Wednesday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" data-label="Thu" data-code="4" checked>Thursday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" data-label="Fri" data-code="5" checked>Friday</label>
+                                        <label class="checkbox-inline" style="min-width: 28%;"><input type="checkbox" data-label="Sat" data-code="6" checked>Saturday</label>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
@@ -451,7 +451,7 @@
 
         if (this.profilePicStatus === true)
             temp += `   <div class='col-md-2'>
-                            <img class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' />
+                            <img class='img-thumbnail pull-right' src='/images/dp/${obj.Id}.png' onerror="this.src = '/images/imagenotfound.svg';" />
                         </div>`;
         temp+=`         <div class='col-md-8'>
                             <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
@@ -489,7 +489,7 @@
                 dscr = "Recurring - " + this.txtStartTime.val() + " to " + this.txtEndTime.val() + "<br/>";
                 let $chkd = $(this.divChkDay.selector + " input:checkbox:checked");
                 for (let i = 0; i < $chkd.length; i++)
-                    dscr += $($chkd[i]).attr('value') + " "; 
+                    dscr += $($chkd[i]).attr('data-label') + " "; 
             }
             
             this.appendToSelected(this.divSelectedDisplay, { Id: this.txtDtTitle.val().trim(), Name: this.txtDtTitle.val(), Data1: dscr });
@@ -520,7 +520,7 @@
                         <div class="mydiv1" style="overflow:visible;">
                             <div class="icondiv1">`;
         if (this.profilePicStatus === true)
-            temp += `<img style = "width:52px" class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' />`;
+            temp += `<img style = "width:52px" class='img-thumbnail pull-right' src='../images/dp/${obj.Id}.png' onerror="this.src = '/images/imagenotfound.svg';" />`;
         else
             temp += `<b>${obj.Name.substring(0, 1).toUpperCase()}</b>`;
         temp += `     </div>

@@ -12,7 +12,7 @@
     }
     if (!ViewBag.RenderLimit)
     {
-        Layout = "~/Views/Shared/_Layout1.cshtml";
+        Layout = "~/Views/Shared/LayoutBuilders.cshtml";
     }
 
 }
@@ -148,7 +148,8 @@ else
 <style>
 
     .repdiv_parent {
-        height: calc(100vh - 40px);
+        height: calc(100vh);
+        padding-top: 38px;
     }
     .rep-inner{
         height:100%

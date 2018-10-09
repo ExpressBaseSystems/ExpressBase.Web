@@ -45,9 +45,9 @@ namespace ExpressBase.Web.Controllers
             return Resp.RowAffected;
         }
 
-        public bool DoUniqueCheck(string TableName, string Field, string Value)
+        public bool DoUniqueCheck(string TableName, string Field, string Value, string type)
         {
-            DoUniqueCheckResponse Resp = ServiceClient.Post<DoUniqueCheckResponse>(new DoUniqueCheckRequest { TableName = TableName, Field = Field, Value = Value });
+            DoUniqueCheckResponse Resp = ServiceClient.Post<DoUniqueCheckResponse>(new DoUniqueCheckRequest { TableName = TableName, Field = Field, Value = Value,TypeS = type });
             return (Resp.NoRowsWithSameValue == 0);
         }
 

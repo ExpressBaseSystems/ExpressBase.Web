@@ -60,7 +60,11 @@
     <div class="row">
         <div class="col-md-3" style="padding-right: 0px">
             <div id="profimage" style="text-align:center;">
-                <img src="~/images/proimg.jpg" id="imgprofimage" style="height:100px" />
+
+                @{  var dpurl = "/images/dp/" + ViewBag.itemid + ".png";
+                    <img src="@dpurl" id="imgprofimage" style="height:100px" onerror="this.src = '/images/imagenotfound.svg';" />
+                }
+
             </div>
             <div class="form-group">
                 <label style="font-family: open sans; font-weight: 300;">Full Name</label>
@@ -107,8 +111,10 @@
                     <label class="radio-inline"><input type="radio" name="status" value="1">Suspend</label>
                     <label class="radio-inline"><input type="radio" name="status" value="2">Terminate</label>
                 </div>
-                <label style="font-family: open sans; font-weight: 300;">Visibility </label>
-                <input id="chkboxHide" type="checkbox" data-toggle="toggle" data-on="Hidden" data-off="Exposed">
+                <div class="form-group" id="divVisibility">
+                    <label style="font-family: open sans; font-weight: 300;">Visibility </label>
+                    <input id="chkboxHide" type="checkbox" data-toggle="toggle" data-on="Hidden" data-off="Exposed" >
+                </div>
             </div>
         </div>
 
@@ -305,6 +311,13 @@
         </div>
     </div>
 </div>
+
+<style>
+    #divVisibility .toggle {
+        width: 100px !important;
+        height: 32px !important;
+    }
+</style>
 
 <script>
 

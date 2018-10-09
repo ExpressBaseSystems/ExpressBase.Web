@@ -97,7 +97,7 @@ namespace ExpressBase.Web.Controllers
 	    [EbBreadCrumbFilter("Security")]
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) && this.LoggedInUser.UserId != itemid)
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) && Mode != 3)
 				return Redirect("/StatusCode/401");
 
 			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3

@@ -75,8 +75,9 @@
         $("#" + control.EbSid_CtxId).on("blur", this.makeUniqueCheck.bind(this, control));
     };
 
-    this.makeUniqueCheck = function (Obj) {
-        if (Obj.getValue().trim() === "")
+	this.makeUniqueCheck = function (Obj) {
+		let val = Obj.getValue();
+		if (val === NaN || (typeof val === "string" && val.trim() === ""))
             return;
         this.showLoader();
         $.ajax({

@@ -1092,7 +1092,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         });
-        //$(".tdheight").contextMenu('update');
     };
 
     this.copyCellData = function (key, opt, event) {

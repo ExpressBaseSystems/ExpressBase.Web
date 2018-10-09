@@ -179,7 +179,7 @@ td {
 }
 
 table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected {
-    color: #090808;
+    color: white !important;
 }
 
 .eb_finput {

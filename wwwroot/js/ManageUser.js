@@ -590,7 +590,7 @@
         }    
         var dateRegex = /^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/;
         if (!dateRegex.test(this.txtDateOfBirth.val().trim())) {
-            this.txtDateOfBirth.val('2000/01/01');
+            this.txtDateOfBirth.val('2000-01-01');
         }
 
         this.btnCreateUser.attr("disabled", "true");

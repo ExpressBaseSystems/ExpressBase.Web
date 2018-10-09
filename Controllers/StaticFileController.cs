@@ -69,7 +69,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("images/dp/{userid}")]
         public IActionResult GetDP(string userid)
         {
-            userid = userid.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
+            string uid = userid.Split(CharConstants.DOT).First();
+            string fname = userid.SplitOnLast(CharConstants.DOT).First() + StaticFileConstants.DOTPNG;
 
             DownloadFileResponse dfs = null;
             ActionResult resp = new EmptyResult();
@@ -81,7 +82,7 @@ namespace ExpressBase.Web.Controllers
                         {
                             ImageInfo = new ImageMeta
                             {
-                                FileName = userid,
+                                FileName = uid,
                                 FileType = StaticFileConstants.PNG,
                                 FileCategory = EbFileCategory.Dp
                             }
@@ -91,7 +92,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
                     HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=2628000";
-                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(userid));
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(fname));
                 }
             }
             catch (Exception e)

@@ -1,8 +1,8 @@
-﻿let EbTableLayout = function (report,EbControl) {
+﻿let EbTableLayout = function (report, EbControl) {
     this.Report = report || null;
     this.EbCtrl = {};
     this.EditCtrl = EbControl || {};
-    this.isNew = $.isEmptyObject(this.EditCtrl) ? true: false;
+    this.isNew = $.isEmptyObject(this.EditCtrl) ? true : false;
     this.Table = null;
     const _resizer = "eb_resize_e";
     const _resizerV = "eb_resize_row";
@@ -23,6 +23,7 @@
         this.makeResizable(id);
         this.makeTLayoutDroppable(id);
         this.InitColResize(id);
+        //this.InitColResizable();
     };
 
     this.createTableOnEdit = function () {
@@ -50,16 +51,32 @@
         this.isNew = true;
     };
 
+    //this.InitColResizable = function () {
+    //    this.Table.find("tr").eq(0).find("td").each(function (i, o) {
+    //        if (!$(o).is(':last-child'))
+    //            $(o).resizable({ handles: "e", resize: this.onResizeTd.bind(this) });
+    //    }.bind(this));
+    //};
+
+    //this.onResizeTd = function (event, ui) {
+
+    //};
+
     this.setCells = function () {
         let coll = this.EditCtrl.CellCollection.$values;
         let $td = null;
         for (let k = 0; k < coll.length; k++) {
             $td = this.Table.find("tr").eq(coll[k].RowIndex).find("td").eq(coll[k].CellIndex);
-            if (!$td.closest("tr").is(':last-child')) {
-                if (!$td.is(':last-child') && $td.closest("tr").is(':first-child')) 
+            if (!($td.closest("tr").is(':last-child'))) {
+                if (!$td.is(':last-child') && $td.closest("tr").is(':first-child'))
                     $td.css({ width: this.calcPercent(coll[k].Width) + "%" });
                 $td.closest("tr").css({ height: this.calcPercentTop(coll[k].Height) + "%" });
             }
+            else {
+                if (!$td.is(':last-child'))
+                    $td.css({ width: this.calcPercent(coll[k].Width) + "%" });
+            }
+
             if (coll[k].ControlCollection.$values.length > 0)
                 this.drawControls($td, coll[k].ControlCollection.$values[0]);
         }
@@ -158,11 +175,11 @@
                 $(ob).css({ height: this.calcPercentTop($(ob).outerHeight()) + "%" });
         }.bind(this));
 
-        for (let i = 0; i < tdlen-1; i++) {
+        for (let i = 0; i < tdlen - 1; i++) {
             $(`#${id}`).append(`<div class="eb_resize_e" wt="${id}" id="${id + i}" index="${i}" style="left:${this.getPos(i)}%"></div>`);
         }
 
-        for (let j = 0; j < trlen-1; j++) {
+        for (let j = 0; j < trlen - 1; j++) {
             if (trlen > 1) {
                 $(`#${id}`).append(
                     `<div class="eb_resize_row"  wt="${id}" id="eb_resize_row${id + j}" index="${j}" style="top:${this.getTop(j)}%"></div>`);
@@ -212,7 +229,7 @@
 
     this.setTdPixelW = function () {
         this.Table.find("tr").eq(0).find("td").each(function (k, o) {
-                $(o).css({ width: $(o).width() });
+            $(o).css({ width: $(o).width() });
         }.bind(this));
     };
 
@@ -236,7 +253,7 @@
             let _tdCount = this.Table.find("tr").eq(0).children("td").length;
             if (this.isNew)
                 this.Table.css("height", this.Table.height() + ((obj.RowCount - _row) * 26));
-            for (let c = _row; c <= obj.RowCount-1; c++) {
+            for (let c = _row; c <= obj.RowCount - 1; c++) {
                 this.Table.find("tbody").append(`<tr id="${obj.EbSid}_tr_${c}">`);
                 this.appendTd($(`#${obj.EbSid}_tr_${c}`), _tdCount);
             }
@@ -254,7 +271,7 @@
         let lastnode = null;
         if (pname === "ColoumCount") {
             this.setTdPixelW();
-            for (let z = 0; z < this.ColCount - obj.ColoumCount;z++) {
+            for (let z = 0; z < this.ColCount - obj.ColoumCount; z++) {
                 this.Table.find("tr").each(function (i, o) {
                     lastnode = $(o).find("td:last-child");
                     if (lastnode.closest("tr").index() === 0)

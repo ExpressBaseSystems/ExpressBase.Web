@@ -1122,7 +1122,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>                              
                         </div>
-                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/RenderReport2?refid=${this.linkDV}&Params=${JSON.stringify(this.filterValues)}'></iframe>
+                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/Renderlink?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}'></iframe>
             </div>
                     </div>
                 </div>

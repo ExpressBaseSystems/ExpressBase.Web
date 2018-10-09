@@ -96,6 +96,7 @@
         $("#tblCommonList").on('click', '.editviewclass', this.onClickEdit.bind(this));
         $("#tblCommonList").on('click', '.convertuserclass', this.onClickConvert.bind(this));
 
+        $("#CL_Image").Lazy();
         this.setMenuBar();
     }
 
@@ -230,8 +231,8 @@
     this.tblProfPicRender = function (data, type, row, meta) {        
         //return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' style = 'max-width: 80% !important;'/>`;
         if (data[4] === 'Female')
-            return `<img class='Eb_Image img-thumbnail pull-right' src='../images/businesswoman.png' style = 'max-width: 80% !important;' onerror="this.src = '/images/imagenotfound.svg';" data-src="/images/dp/${data[1]}.png" />`;
-        return `<img class='Eb_Image img-thumbnail pull-right' src='../images/businessman.png' style = 'max-width: 80% !important;' onerror="this.src = '/images/imagenotfound.svg';" data-src="/images/dp/${data[1]}.png" />`;
+            return `<img class='CL_Image img-thumbnail pull-right' src='../images/businesswoman.png' style = 'max-width: 80% !important;' onerror="this.src = '/images/imagenotfound.svg';" data-src="/images/dp/${data[1]}.png" />`;
+        return `<img class='CL_Image img-thumbnail pull-right' src='../images/businessman.png' style = 'max-width: 80% !important;' onerror="this.src = '/images/imagenotfound.svg';" data-src="/images/dp/${data[1]}.png" />`;
     }
     this.tblFbProfPicRender = function (data, type, row, meta) {
         var id = data[9];

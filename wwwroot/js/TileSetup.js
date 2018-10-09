@@ -451,7 +451,7 @@
 
         if (this.profilePicStatus === true)
             temp += `   <div class='col-md-2'>
-                            <img class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' onerror="this.src = '/images/imagenotfound.svg';" />
+                            <img class='img-thumbnail pull-right' src='/images/dp/${obj.Id}.png' onerror="this.src = '/images/imagenotfound.svg';" />
                         </div>`;
         temp+=`         <div class='col-md-8'>
                             <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
@@ -520,7 +520,7 @@
                         <div class="mydiv1" style="overflow:visible;">
                             <div class="icondiv1">`;
         if (this.profilePicStatus === true)
-            temp += `<img style = "width:52px" class='img-thumbnail pull-right' src='../static/dp/dp_${obj.Id}_micro.jpg' onerror="this.src = '/images/imagenotfound.svg';"  />`;
+            temp += `<img style = "width:52px" class='img-thumbnail pull-right' src='../images/dp/${obj.Id}.png' onerror="this.src = '/images/imagenotfound.svg';" />`;
         else
             temp += `<b>${obj.Name.substring(0, 1).toUpperCase()}</b>`;
         temp += `     </div>

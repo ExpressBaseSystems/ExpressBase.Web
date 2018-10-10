@@ -24,7 +24,7 @@
 
     this.del = function (eType, selector, action, originalEvent) {
         var $e = selector.$trigger;
-        var id = $e.attr("id");
+        var id = $e.attr("ebsid");
         var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
         var ctrl = this.rootContainerObj.Controls.PopByName(id);
@@ -141,14 +141,15 @@
         this.tempArr.push(el);
         let $el = $(el);
         let type = $el.attr("ctype").trim();
+        /////////////////////////////////////////////////
         this.controlCounters[type + "Counter"] = parseInt($el.attr("ebsid").match(/\d+$/)[0]) || (this.controlCounters[type + "Counter"]);
-        let id = type + this.controlCounters[type + "Counter"]++;// inc counter
+        let ebsid = type + this.controlCounters[type + "Counter"]++;// inc counter
         $el.attr("tabindex", "1");
         this.ctrlOnClickBinder($el, type);
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
-        $el.attr("eb-type", type).attr("id", id);
-        //this.updateControlUI(id);
+        $el.attr("eb-type", type).attr("ebsid", ebsid);
+        this.updateControlUI(ebsid);
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -162,13 +163,13 @@
             $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
     }
 
-    this.updateControlUI = function (id, type) {
-        let obj = this.rootContainerObj.Controls.GetByName(id);
+    this.updateControlUI = function (ebsid, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(ebsid);
         let _type = obj.ObjType
         $.each(obj, function (propName, propVal) {
             let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
             if (meta && meta.IsUIproperty)
-                this.updateUIProp(propName, id, _type);
+                this.updateUIProp(propName, ebsid, _type);
         }.bind(this));
     }
 
@@ -281,14 +282,14 @@
             if ($(source).attr("id") === "form-buider-toolBox") {
                 var $el = $(el);
                 var type = $el.attr("eb-type").trim();
-                var id = type + (this.controlCounters[type + "Counter"])++;
-                var $ctrl = new EbObjects["Eb" + type](id).$Control;
+                var ebsid = type + (this.controlCounters[type + "Counter"])++;
+                var $ctrl = new EbObjects["Eb" + type](ebsid).$Control;
                 let $sibling = $(sibling);
                 $el.remove();
 
                 var t = $("<div class='controlTile'>" + $ctrl.outerHTML() + "</div>");
-                var ctrlObj = new EbObjects["Eb" + type](id);
-                this.dropedCtrlInit($ctrl, type, id);
+                var ctrlObj = new EbObjects["Eb" + type](ebsid);
+                this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
                     $ctrl.insertBefore($sibling);
                     var idx = $sibling.index() - 1;
@@ -300,11 +301,11 @@
                 }
 
                 $ctrl.focus();
-                ctrlObj.Label = id;
+                ctrlObj.Label = ebsid;
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
-                //this.updateControlUI(id);
+                this.updateControlUI(ebsid);
             }
             let $parent = $target.closest(".ebcont-ctrl");
             if ($parent.attr("ctype") === "TabPane")
@@ -489,5 +490,10 @@
             this.makeTabsDropable();
         }
     };
+
+    this.DSchangeCallBack = function () {
+
+    };
+
     this.Init();
 };

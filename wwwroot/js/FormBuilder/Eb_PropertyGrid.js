@@ -87,7 +87,10 @@
             if ((meta.Limit === 1 && type === 25) || (meta.Limit === 1 && type === 8)) {
                 var _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
-                _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.name || a.ColumnName || a.Name))];
+                if (!this.PropsObj[meta.source])
+                    _meta.enumoptions = ["--none--"];
+                else
+                    _meta.enumoptions = ["--none--", ...this.PropsObj[meta.source].$values.map(a => (a.name || a.ColumnName || a.Name))];
                 //_meta.enumoptions = ["--none--","one"];
                 value = value ? _meta.enumoptions.indexOf(value.name || value.ColumnName || value.Name) : 0;
                 return this.getPropertyRowHtml(name, value, _meta, options, SubtypeOf, true);

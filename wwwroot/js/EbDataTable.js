@@ -222,6 +222,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
                 this.stickBtn.hide();
+                this.filterValues = [];
                 this.isContextual = false;
                 this.isPipped = false;
                 this.rowData = null;
@@ -528,6 +529,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.CheckforColumnID = function () {
+        this.FlagPresentId = false;
         $.each(this.ebSettings.Columns.$values, function (i, col) {
             if (col.name === "id") {
                 this.FlagPresentId = true;
@@ -1092,7 +1094,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         });
-        //$(".tdheight").contextMenu('update');
+
+        $('.tdheight').on('contextmenu', function (e) {
+            alert(1);
+            e.preventDefault();
+            return false;
+        });
     };
 
     this.copyCellData = function (key, opt, event) {
@@ -2282,11 +2289,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var drptext = "";
         drptext = "<div class='input-group input-group-sm'>" +
             "<div class='input-group-btn'>" +// style='z-index:" + zidx.toString() + "'
-            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>x*</button>" +
+            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>*x*</button>" +
             " <ul class='dropdown-menu'>" +
+            "  <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x*</a></li>" +
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">x*</a></li>" +
             "  <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x</a></li>" +
-            "  <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x*</a></li>" +
+            
             " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " </ul>" +
             " </div>" +

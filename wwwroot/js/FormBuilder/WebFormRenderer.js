@@ -79,7 +79,7 @@
 
 	this.makeUniqueCheck = function (Obj) {
 		let val = Obj.getValue();
-		if ((typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === ""))
+		if ((typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "")) 
 			return;
 		this.showLoader();
 		$.ajax({

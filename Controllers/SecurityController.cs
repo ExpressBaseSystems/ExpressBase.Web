@@ -92,7 +92,10 @@ namespace ExpressBase.Web.Controllers
 
 		//--------------MANAGE USER START------------------------------------
 		
-		
+		public IActionResult MyProfile()
+		{
+			return View();
+		}
 
 	    [EbBreadCrumbFilter("Security")]
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
@@ -412,6 +415,15 @@ namespace ExpressBase.Web.Controllers
 		{
 			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
 				return "Failed";
+			try
+			{
+				Enum.Parse(typeof(SystemRoles), _roleName.Trim().ToLower(), true);
+				return "Failed";
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine("RoleSave rolename check : " + ex.Message);
+			}
 
 			Dictionary<string, object> Dict = new Dictionary<string, object>();
 			string return_msg;

@@ -168,18 +168,17 @@ namespace ExpressBase.Web.Controllers
 
 		public int SaveUser(int userid, string roles, string usergroups, string usrinfo)
 		{
-			Dictionary<string, string> Dict = null;
+			Dictionary<string, string> Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
 
 			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
 			{
-				if(this.LoggedInUser.UserId == userid)
-					Dict["roles"] = String.Join(",", this.LoggedInUser.Roles);
+				if (this.LoggedInUser.UserId == userid) ;
+				//Dict["roles"] = String.Join(",", this.LoggedInUser.Roles);//bug
 				else
 					return 0;
 			}
 			else//temp fix
 			{
-				Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
 				List<int> roleids = new List<int>();
 				if (this.LoggedInUser.UserId == userid)
 				{

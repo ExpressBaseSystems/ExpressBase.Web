@@ -141,7 +141,8 @@ namespace ExpressBase.Web.Controllers
                 ReadOnlyUserName = req["readOnlyUserName"],
                 ReadOnlyPassword = req["readOnlyPassword"],
                 Timeout = Convert.ToInt32(req["timeout"]),
-                IsDefault = false
+                IsDefault = false,
+                IsSSL = (req["IsSSL"] == "on") ? true : false
             };
 
             EbObjectsDbConnection objdbcon = new EbObjectsDbConnection()
@@ -157,7 +158,8 @@ namespace ExpressBase.Web.Controllers
                 ReadOnlyUserName = req["readOnlyUserName"],
                 ReadOnlyPassword = req["readOnlyPassword"],
                 Timeout = Convert.ToInt32(req["timeout"]),
-                IsDefault = false
+                IsDefault = false,
+                IsSSL = (req["IsSSL"] == "on") ? true : false
             };
 
             this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });
@@ -262,7 +264,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public string TwilioAccount()
-        {           
+        {
             ChangeConnectionResponse res = new ChangeConnectionResponse();
             try
             {
@@ -277,11 +279,11 @@ namespace ExpressBase.Web.Controllers
                     Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
                 };
 
-               // if (solutionConnections.EBSolutionConnections.SMSConnections == null)
+                // if (solutionConnections.EBSolutionConnections.SMSConnections == null)
                 {
                     smscon.Preference = ConPreferences.PRIMARY;
                 }
-                
+
                 if (Convert.ToInt32(req["Conid"]) > 0)
                     res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
                 else
@@ -445,7 +447,8 @@ namespace ExpressBase.Web.Controllers
                 ReadWritePassword = req["readWritePassword"],
                 ReadOnlyUserName = req["readOnlyUserName"],
                 ReadOnlyPassword = req["readOnlyPassword"],
-                Timeout = Convert.ToInt32(req["timeout"])
+                Timeout = Convert.ToInt32(req["timeout"]),
+                IsSSL = (req["IsSSL"] == "on") ? true : false
             };
             TestConnectionResponse res = this.ServiceClient.Post<TestConnectionResponse>(new TestConnectionRequest { DataDBConnection = dbcon });
             return res.ConnectionStatus;

@@ -385,6 +385,10 @@ string filedefault = "";
                                 <label>Nick Name</label>
                                 <input name="NickName" type="text" class="form-control" required />
                             </div>
+                            <div class="form-group">
+                                <label>Enable SSL</label>
+                                <input name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;"/>
+                            </div>
                         </div>
                         <div class="col-md-8">
                             <label>User Name</label>
@@ -401,17 +405,17 @@ string filedefault = "";
                                         <tr>
                                             <td>Admin</td>
                                             <td><input name="UserName" type="text" class="form-control" required /></td>
-                                            <td><input name="Password" type="text" class="form-control" required /></td>
+                                            <td><input name="Password" type="password" class="form-control" required /></td>
                                         </tr>
                                         <tr class="advanced-tr" style="display:none">
                                             <td>Read-Write User</td>
                                             <td><input name="ReadWriteUserName" type="text" class="form-control" /></td>
-                                            <td><input name="ReadWritePassword" type="text" class="form-control" /></td>
+                                            <td><input name="ReadWritePassword" type="password" class="form-control" /></td>
                                         </tr>
                                         <tr class="advanced-tr" style="display:none">
                                             <td>ReadOnly User</td>
                                             <td><input name="ReadOnlyUserName" type="text" class="form-control" /></td>
-                                            <td><input name="ReadOnlyPassword" type="text" class="form-control" /></td>
+                                            <td><input name="ReadOnlyPassword" type="password" class="form-control" /></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -429,7 +433,7 @@ string filedefault = "";
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Server Address</label>
-                                <input name="Server" type="text" pattern="^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" class="form-control" required />
+                                <input name="Server" type="text" class="form-control" required />
                                 <div class="help-block with-errors"></div>
                             </div>
                         </div>

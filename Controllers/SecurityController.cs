@@ -92,7 +92,10 @@ namespace ExpressBase.Web.Controllers
 
 		//--------------MANAGE USER START------------------------------------
 		
-		
+		public IActionResult MyProfile()
+		{
+			return View();
+		}
 
 	    [EbBreadCrumbFilter("Security")]
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
@@ -168,18 +171,17 @@ namespace ExpressBase.Web.Controllers
 
 		public int SaveUser(int userid, string roles, string usergroups, string usrinfo)
 		{
-			Dictionary<string, string> Dict = null;
+			Dictionary<string, string> Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
 
 			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
 			{
-				if(this.LoggedInUser.UserId == userid)
-					Dict["roles"] = String.Join(",", this.LoggedInUser.Roles);
+				if (this.LoggedInUser.UserId == userid) ;
+				//Dict["roles"] = String.Join(",", this.LoggedInUser.Roles);//bug
 				else
 					return 0;
 			}
 			else//temp fix
 			{
-				Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
 				List<int> roleids = new List<int>();
 				if (this.LoggedInUser.UserId == userid)
 				{
@@ -413,6 +415,15 @@ namespace ExpressBase.Web.Controllers
 		{
 			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
 				return "Failed";
+			try
+			{
+				Enum.Parse(typeof(SystemRoles), _roleName.Trim().ToLower(), true);
+				return "Failed";
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine("RoleSave rolename check : " + ex.Message);
+			}
 
 			Dictionary<string, object> Dict = new Dictionary<string, object>();
 			string return_msg;

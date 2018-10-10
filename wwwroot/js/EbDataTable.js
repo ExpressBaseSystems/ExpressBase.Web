@@ -222,6 +222,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (obj[Pname] !== null) {
                 this.PcFlag = "True";
                 this.stickBtn.hide();
+                this.filterValues = [];
                 this.isContextual = false;
                 this.isPipped = false;
                 this.rowData = null;
@@ -528,6 +529,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.CheckforColumnID = function () {
+        this.FlagPresentId = false;
         $.each(this.ebSettings.Columns.$values, function (i, col) {
             if (col.name === "id") {
                 this.FlagPresentId = true;
@@ -1091,6 +1093,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     }
                 }
             }
+        });
+
+        $('.tdheight').on('contextmenu', function (e) {
+            alert(1);
+            e.preventDefault();
+            return false;
         });
     };
 

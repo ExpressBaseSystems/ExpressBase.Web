@@ -36,7 +36,7 @@ namespace ExpressBase.Web.Components
             if (WebForm != null)
             {
 
-                foreach (EbControl control in WebForm.Controls)
+                foreach (EbControl control in WebForm.Controls.FlattenEbControls())
                 {
                     if (control is EbSimpleSelect)
                     {

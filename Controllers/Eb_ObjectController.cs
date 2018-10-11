@@ -98,17 +98,27 @@ namespace ExpressBase.Web.Controllers
 
 
             }
-            if (type.Equals(EbObjectTypes.DataSource))
+            if (type.Equals(EbObjectTypes.DataReader))
             {
-                Type[] typeArray = typeof(EbDatasourceMain).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.DataSource, typeof(EbDatasourceMain));
+                Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.DataReader, typeof(EbDataSourceMain));
                 //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
                 if (dsobj != null)
                 {
                     dsobj.AfterRedisGet(Redis, ServiceClient);
                     ViewBag.dsObj = dsobj;
                 }
-
+            }
+            else if (type.Equals(EbObjectTypes.DataWriter))
+            {
+                Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.DataWriter, typeof(EbDataSourceMain));
+                //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis, ServiceClient);
+                    ViewBag.dsObj = dsobj;
+                }
             }
             else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization))
             {
@@ -171,9 +181,14 @@ namespace ExpressBase.Web.Controllers
         {
             string refid;
             EbObject obj = EbSerializers.Json_Deserialize(_json);
-            if (obj is EbDataSource)
+            if (obj is EbDataReader)
             {
-                bool ContainsRestricted = CheckRestricted((obj as EbDataSource).Sql);
+                bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
+                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+            }
+            else if(obj is EbDataWriter)
+            {
+                bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
                 if (ContainsRestricted) return "RestrictedStatementinQuerry";
             }
             if (string.IsNullOrEmpty(_refid))
@@ -228,9 +243,9 @@ namespace ExpressBase.Web.Controllers
         {
             string refid;
             EbObject obj = EbSerializers.Json_Deserialize(_json);
-            if (obj is EbDataSource)
+            if (obj is EbDataReader)
             {
-                bool ContainsRestricted = CheckRestricted((obj as EbDataSource).Sql);
+                bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
                 if (ContainsRestricted) return "RestrictedStatementinQuerry";
             }
             if (string.IsNullOrEmpty(_refid))
@@ -314,7 +329,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype, string _refid, string _ssurl)
         {
             string VCName = string.Empty;
-            if (Objtype == (int)EbObjectTypes.DataSource)
+            if (Objtype == (int)EbObjectTypes.DataReader)
                 VCName = "CodeEditor";
             else if (Objtype == (int)EbObjectTypes.TableVisualization)
                 VCName = "DVTable";
@@ -496,6 +511,11 @@ namespace ExpressBase.Web.Controllers
         {
             return
                 Regex.IsMatch(_sql.ToLower(), @"\b(create\s|update\s|delete\s|insert\s|alter\s|truncate\s|drop\s)");
+        }
+
+        public bool CheckDataWriterRestricted(string sql)
+        {
+            return Regex.IsMatch(sql.ToLower(), @"\b(create\s|delete\s|alter\s|truncate\s|drop\s)");
         }
     }
 }

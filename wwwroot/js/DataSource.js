@@ -53,23 +53,28 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste', (this.SetCode.bind(this)));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
-        $(".selectpicker").selectpicker();             
+        $(".selectpicker").selectpicker();
 
         if (this.EbObject === null) {
-            this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
+            if (this.ObjectType === 2) {
+                this.EbObject = new EbObjects["EbDataReader"]("EbDataReader1");
+                this.propGrid.setObject(this.EbObject, AllMetas["EbDataReader"]);
+            }
+            else if(this.ObjectType === 4){
+                this.EbObject = new EbObjects["EbDataWriter"]("EbDataWriter1");
+                this.propGrid.setObject(this.EbObject, AllMetas["EbDataWriter"]);
+            }
             commonO.Current_obj = this.EbObject;
-           // this.FD = false;
+            // this.FD = false;
         }
         else {
-			if (this.EbObject.FilterDialogRefId !== "") {
-			//this.FD = true;
-				var callback = true;
-				this.GetFD(callback);
-			}
+            if (this.EbObject.FilterDialogRefId !== "") {
+                //this.FD = true;
+                var callback = true;
+                this.GetFD(callback);
+            }
         }
         this.GenerateButtons();
-
-        this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
         //$(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
@@ -115,7 +120,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (pname === "Name") {
             $("#objname").text(this.EbObject.Name);
         }
-		if (pname === "LinkRefid") {
+        if (pname === "LinkRefid") {
         }
     }.bind(this);
 
@@ -126,7 +131,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this, callback));
     };
 
-	this.AppendFD = function (callback , result) {
+    this.AppendFD = function (callback, result) {
         $('#paramdiv' + tabNum).remove();
         $('#ds-page' + tabNum).prepend(`
                 <div id='paramdiv-Cont${tabNum}' class='param-div-cont'>
@@ -151,11 +156,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             label: "Parameters",
         });
 
-		if (callback)
+        if (callback)
             this.stickBtn.minimise();
         else
-			this.stickBtn.maximise();
-		this.filterDialog = FilterDialog;
+            this.stickBtn.maximise();
+        this.filterDialog = FilterDialog;
 
     };
 
@@ -262,37 +267,37 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.CountParameters();
     };
 
-	this.CountParameters = function () {
-		commonO.flagRun = false;
-		var result = window["editor" + tabNum].getValue().match(/\:\w+|\@\w+/g);
-		var filterparams = [];
-		if (result !== null) {
-			for (var i = 0; i < result.length; i++) {
-				result[i] = result[i].substr(1);
-				if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby" /*|| result[i] === "id"*/) {
-					//
-				}
-				else {
-					if ($.inArray(result[i], filterparams) === -1)
-						filterparams.push(result[i]);
-				}
-			}
-			filterparams.sort();
-			this.Filter_Params = filterparams;
-			this.Parameter_Count = filterparams.length;
-		}
-		else {
-			this.Parameter_Count = 0;
-		}
-		this.DrawTable();
-	};
+    this.CountParameters = function () {
+        commonO.flagRun = false;
+        var result = window["editor" + tabNum].getValue().match(/\:\w+|\@\w+/g);
+        var filterparams = [];
+        if (result !== null) {
+            for (var i = 0; i < result.length; i++) {
+                result[i] = result[i].substr(1);
+                if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby" /*|| result[i] === "id"*/) {
+                    //
+                }
+                else {
+                    if ($.inArray(result[i], filterparams) === -1)
+                        filterparams.push(result[i]);
+                }
+            }
+            filterparams.sort();
+            this.Filter_Params = filterparams;
+            this.Parameter_Count = filterparams.length;
+        }
+        else {
+            this.Parameter_Count = 0;
+        }
+        this.DrawTable();
+    };
 
-	this.CreateObjString = function () {
-		var ParamsArray = [];
-		if (this.FilterDialogRefId !== undefined)
+    this.CreateObjString = function () {
+        var ParamsArray = [];
+        if (this.FilterDialogRefId !== undefined)
             ParamsArray = getValsForViz(this.filterDialog.filterObj);
-		return ParamsArray;
-	};
+        return ParamsArray;
+    };
 
     this.DrawTable = function () {
         commonO.tabNum++;
@@ -329,7 +334,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 scrollY: "300px",
                 processing: true,
                 dom: "<lip>rt",
-                paging : true,
+                paging: true,
                 lengthChange: true,
                 ajax: {
                     //url: this.Ssurl + "/ds/data/" + this.Refid,

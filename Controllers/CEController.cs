@@ -123,21 +123,13 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
 
-        public IActionResult GetFilterBody(string dvobj)
+        public IActionResult GetFilterBody(string dvobj, string contextId)
         {
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
             dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            //if (dsObject.FilterDialog != null)
-            //{
-            //    foreach (EbControl control in dsObject.FilterDialog.Controls)
-            //    {
-            //        if (control is EbSimpleSelect)
-            //        {
-            //            (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-            //        }
-            //    }
-            //}
             Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            if(dsObject.FilterDialog != null)
+                EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
             return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu });
         }
 

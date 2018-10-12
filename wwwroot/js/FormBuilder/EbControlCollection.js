@@ -6,9 +6,9 @@
         return this.$values;
     };
 
-    this.InitFromDataBase = function (ebsid) {
+    this.getParentId = function (ebsid) {
         return $(`#cont_${ebsid}.Eb-ctrlContainer`).parents('.ebcont-ctrl:first').attr("ebsid");
-    }
+    };
 
     this.PopByName = function (_name) {
         let parentId = this.getParentId(_name);

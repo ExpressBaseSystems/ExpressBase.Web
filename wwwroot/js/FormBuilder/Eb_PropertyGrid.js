@@ -412,6 +412,8 @@
         //var res = this.getvaluesFromPG();
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
         this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
+        if (this.CurProp === "Name")
+            this.updateDD(this.PropsObj);
         if (typeof EbOnChangeUIfns != "undefined" && this.CurMeta.UIChangefn) {
             let NS1 = this.CurMeta.UIChangefn.split(".")[0];
             let NS2 = this.CurMeta.UIChangefn.split(".")[1];
@@ -420,11 +422,30 @@
         this.PropertyChanged(this.PropsObj, this.CurProp);
     };
 
+    ////Add a control name to Control DD
+    //this.addToDD = function (obj) {
+    //    //  this.AllObjects[obj.EbSid] = obj;
+    //    let $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
+    //    let ebsid = obj.EbSid;
+    //    let _name = (obj.Name || obj.name);
+    //    if (!this.isModalOpen) {
+    //        if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
+    //            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
+    //            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
+    //        }
+    //    }
+    //    if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
+    //        $MainCtrlsDDCont.find("select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
+    //        $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
+    //    }
+    //    $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
+    //};
+
     //Add a control name to Control DD
     this.addToDD = function (obj) {
         //  this.AllObjects[obj.EbSid] = obj;
-        var $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
-        var _name = (obj.Name || obj.name);
+        let $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
+        let _name = (obj.Name || obj.name);
         if ($(".pgCXEditor-bg").css("display") !== "none") {
             if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
                 $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.EbSid + "'id='SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
@@ -437,6 +458,11 @@
         }
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
     };
+
+    this.updateDD = function (obj) {
+        this.removeFromDD(obj.EbSid);
+        this.addToDD(obj);
+    }
 
     //removes a control name to Control DD
     this.removeFromDD = function (EbSid) {
@@ -528,6 +554,7 @@
         this.CallpostInitFns();
         this.setBasicBinding();
         this.callOnchangeExecFns();
+        this.isModalOpen = false;
         this.getvaluesFromPG();//no need
 
         $("#" + this.wraperId + " .propgrid-table-cont .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
@@ -556,19 +583,21 @@
             this.propNames.push(meta.name.toLowerCase());
             let Name = meta.name;
             let InpId = '#' + this.wraperId + Name;
+            let $inp = $('#' + this.wraperId + " " + InpId);
             $('#' + this.wraperId).off("change", InpId);
             if (meta.IsUnique) {
                 this.uniqueProps.push(Name);
                 //if ($(InpId).length === 0)
-                    $('#' + this.wraperId).on("change", InpId, this.checkUnique);
+                $('#' + this.wraperId).on("change", InpId, this.checkUnique);
             }
             if (meta.IsRequired) {
                 this.requiredProps.push(Name);
                 //if ($(InpId).length === 0)
-                    $('#' + this.wraperId).on("change", InpId, this.checkRequired);
+                $('#' + this.wraperId).on("change", InpId, this.checkRequired);
             }
             if (meta.MaskPattern) {
-                $('#' + this.wraperId + " " + InpId).inputmask({
+                $inp.val($inp.val().toLowerCase());
+                $inp.inputmask({
                     alias: "Regex",
                     regex: meta.MaskPattern
                 });

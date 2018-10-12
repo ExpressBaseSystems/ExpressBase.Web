@@ -28,6 +28,7 @@ using System.Reflection;
 using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
 using ExpressBase.Web.BaseControllers;
+using System.Text.RegularExpressions;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -536,5 +537,25 @@ namespace ExpressBase.Web.Controllers
 			return response.ResStatus;
 		}
 
+        public IActionResult RedisExplorer()
+        {
+            List<string> dsCollection = new List<string>();
+
+            var keys = this.Redis.GetAllKeys();
+            string _json = string.Empty;
+
+            foreach(string k in keys)
+            {
+                string[] splistr = k.Split("-");
+                if (splistr.Length >= 3)
+                {
+                    if(splistr[2] == "2" && !k.EndsWith("columns"))
+                    {
+                        _json = this.Redis.Get<string>(k);
+                    }
+                }
+            }
+            return View();
+        }
     }
 }

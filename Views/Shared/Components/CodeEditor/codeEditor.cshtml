@@ -200,6 +200,33 @@
             </div>*@
     </div>
 </section>
+<div id="paramsModal-toggle" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Input Parameters</h4>
+            </div>
+            <div class="modal-body" id="paraWinTab_@ViewBag.tabnum">
+                <table class="table" style="margin-bottom:0;">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
 
     @*var builder = new QueryBuilder("@ViewBag.TableSchema");*@//edited  by amal
@@ -251,9 +278,13 @@
             };
 
             return result;
-        };
+    };
+
         setTimeout(function () {
             window["editor@(ViewBag.tabnum)"].refresh();
-        }, 500);
+    }, 500);
+
+    var EbDbType = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.EbDbType));
+
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataSourceWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ssurl');
 </script>

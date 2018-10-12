@@ -14,6 +14,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Ssurl = ssurl;
     this.delay = 300;
 
+    const _DataReader = "DataReader";
+    const _DataWriter = "DataWriter";
+
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
     //this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
@@ -48,6 +51,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
 
     this.Init = function () {
+        let dsType = "";
         //$('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         //$('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
@@ -55,15 +59,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
         $(".selectpicker").selectpicker();
 
+        if (this.ObjectType === 2)
+            dsType = _DataReader;
+        else if (this.ObjectType === 4)
+            dsType = _DataWriter;
+
         if (this.EbObject === null) {
-            if (this.ObjectType === 2) {
-                this.EbObject = new EbObjects["EbDataReader"]("EbDataReader1");
-                this.propGrid.setObject(this.EbObject, AllMetas["EbDataReader"]);
-            }
-            else if(this.ObjectType === 4){
-                this.EbObject = new EbObjects["EbDataWriter"]("EbDataWriter1");
-                this.propGrid.setObject(this.EbObject, AllMetas["EbDataWriter"]);
-            }
+            this.EbObject = new EbObjects["Eb" + dsType](dsType + "1");
             commonO.Current_obj = this.EbObject;
             // this.FD = false;
         }
@@ -74,6 +76,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 this.GetFD(callback);
             }
         }
+
+        this.propGrid.setObject(this.EbObject, AllMetas["Eb" + dsType]);
         this.GenerateButtons();
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
@@ -128,7 +132,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
         //this.relatedObjects += this.FilterDialogRefId;
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
-            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this, callback));
+            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + tabNum}, this.AppendFD.bind(this, callback));
     };
 
     this.AppendFD = function (callback, result) {

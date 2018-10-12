@@ -24,7 +24,7 @@
 
     this.del = function (eType, selector, action, originalEvent) {
         var $e = selector.$trigger;
-        var id = $e.attr("id");
+        var id = $e.attr("ebsid");
         var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
         var ctrl = this.rootContainerObj.Controls.PopByName(id);
@@ -46,7 +46,6 @@
         let ebsid = this.curControl.attr("ebsid");
         e.stopPropagation();
         this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
-        this.CurColCount = $(e.target).val();
         //  this.PGobj.ReadOnly();
     }.bind(this);
 
@@ -141,14 +140,20 @@
         this.tempArr.push(el);
         let $el = $(el);
         let type = $el.attr("ctype").trim();
-        this.controlCounters[type + "Counter"] = parseInt($el.attr("ebsid").match(/\d+$/)[0]) || (this.controlCounters[type + "Counter"]);
-        let id = type + this.controlCounters[type + "Counter"]++;// inc counter
+        let attrEbsid = parseInt($el.attr("ebsid").match(/\d+$/)[0]);
+        if (attrEbsid || attrEbsid === 0)
+            this.controlCounters[type + "Counter"] = attrEbsid;
+        else
+            this.controlCounters[type + "Counter"] = (this.controlCounters[type + "Counter"]);
+
+        //this.controlCounters[type + "Counter"] = parseInt($el.attr("ebsid").match(/\d+$/)[0]) || (this.controlCounters[type + "Counter"]);
+        let ebsid = type + this.controlCounters[type + "Counter"]++;// inc counter
         $el.attr("tabindex", "1");
         this.ctrlOnClickBinder($el, type);
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
-        $el.attr("eb-type", type).attr("id", id);
-        //this.updateControlUI(id);
+        $el.attr("eb-type", type).attr("ebsid", ebsid);
+        this.updateControlUI(ebsid);
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -162,13 +167,13 @@
             $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
     }
 
-    this.updateControlUI = function (id, type) {
-        let obj = this.rootContainerObj.Controls.GetByName(id);
+    this.updateControlUI = function (ebsid, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(ebsid);
         let _type = obj.ObjType
         $.each(obj, function (propName, propVal) {
             let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
             if (meta && meta.IsUIproperty)
-                this.updateUIProp(propName, id, _type);
+                this.updateUIProp(propName, ebsid, _type);
         }.bind(this));
     }
 
@@ -207,17 +212,11 @@
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");
         this.SelectedCtrl = control;
-        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
-        $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));////////
+        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);////
     };
 
     this.saveObj = function () {
         this.PGobj.getvaluesFromPG();
-    };
-
-    this.PGinputChange = function (e) {
-        this.currentProperty = $(e.target);
-        this.updateHTML(e);
     };
 
     this.movesfn = function (el, source, handle, sibling) {
@@ -244,7 +243,7 @@
 
     this.onDragFn = function (el, source) {
         //if drag start within the form
-        let id = $(el).closest(".Eb-ctrlContainer").attr("id");
+        let id = $(el).closest(".Eb-ctrlContainer").attr("ebsid");
         let $source = $(source);
         if ($source.attr("id") !== "form-buider-toolBox") {
             this.movingObj = this.rootContainerObj.Controls.PopByName(id);
@@ -281,14 +280,14 @@
             if ($(source).attr("id") === "form-buider-toolBox") {
                 var $el = $(el);
                 var type = $el.attr("eb-type").trim();
-                var id = type + (this.controlCounters[type + "Counter"])++;
-                var $ctrl = new EbObjects["Eb" + type](id).$Control;
+                var ebsid = type + (this.controlCounters[type + "Counter"])++;
+                var $ctrl = new EbObjects["Eb" + type](ebsid).$Control;
                 let $sibling = $(sibling);
                 $el.remove();
 
                 var t = $("<div class='controlTile'>" + $ctrl.outerHTML() + "</div>");
-                var ctrlObj = new EbObjects["Eb" + type](id);
-                this.dropedCtrlInit($ctrl, type, id);
+                var ctrlObj = new EbObjects["Eb" + type](ebsid);
+                this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
                     $ctrl.insertBefore($sibling);
                     var idx = $sibling.index() - 1;
@@ -300,11 +299,11 @@
                 }
 
                 $ctrl.focus();
-                ctrlObj.Label = id;
+                ctrlObj.Label = ebsid;
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
-                //this.updateControlUI(id);
+                this.updateControlUI(ebsid);
             }
             let $parent = $target.closest(".ebcont-ctrl");
             if ($parent.attr("ctype") === "TabPane")
@@ -337,58 +336,6 @@
     //    e.preventDefault();
     //    this.saveObj();
     //};
-
-    this.updateHTML = function (e) {
-        if (this.curControl.attr("id").toString().substr(0, 8) === "GridView") {
-            if (this.currentProperty.parent().prev().text() === "Columns") {
-                this.ChangeGridColNo(e);
-            }
-        }
-
-    };
-
-    this.ChangeGridColNo = function (e) {
-        var newVal = $("#propGrid td:contains(Columns)").next().children().val();
-        console.log("this.CurColCount: " + this.CurColCount + ", newVal " + newVal);
-        var noOfTds = this.curControl.children().children().children().children().length;
-
-        if (this.CurColCount < newVal)
-            for (var i = noOfTds; i < newVal; i++) {
-                console.log("this.CurColCount < newVal  ");//
-                console.log(">  " + i);
-                this.addTd(e);
-            }
-        else if (this.CurColCount > newVal) {
-            console.log("this.CurColCount > newVal  ");//
-            for (var j = noOfTds; j > newVal; j--) {
-                console.log(">  " + j);//
-                this.removeTd(e);
-            }
-        }
-    };
-
-    this.addTd = function (e) {
-        var id = this.curControl.attr("id");
-        var curTr = this.curControl.children().children().children();
-        var noOfTds = curTr.children().length;
-        this.rootContainerObj.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
-        curTr.append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'> </td>");
-        this.makeTdsDropable_Resizable.bind(this);
-        this.CurColCount = $(e.target).val();//tmp
-    };
-
-    this.removeTd = function (e) {
-        var id = this.curControl.attr("id");
-        var noOfTds = this.curControl.children().children().children().children().length;
-        this.rootContainerObj.Controls.GetByName(id).Controls.Pop();
-        this.curControl.find("tr").find("td").last().remove();
-        this.makeTdsDropable_Resizable.bind(this);
-        this.CurColCount = $(e.target).val();//tmp
-    };
-
-    this.onChangeGridRowNo = function () {
-
-    };
 
     //this.initCtrl = function (el) {
     //    var $EbCtrl = $(el);
@@ -489,5 +436,10 @@
             this.makeTabsDropable();
         }
     };
+
+    this.DSchangeCallBack = function () {
+
+    };
+
     this.Init();
 };

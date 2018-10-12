@@ -62,7 +62,7 @@ namespace ExpressBase.Web.Controllers
 			else
 				return View();
 		}
-		
+
 
 		//[HttpGet]
 		//public IActionResult UserPreferences()
@@ -90,11 +90,30 @@ namespace ExpressBase.Web.Controllers
 		//	return View();
 		//}
 
-		//--------------MANAGE USER START------------------------------------
-		
-		
+		//--------------MY PROFILE------------------------------------------
+		public IActionResult MyProfile()
+		{
+			var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { });
+			ViewBag.UserData = fr.UserData;
+			return View();
+		}
 
-	    [EbBreadCrumbFilter("Security")]
+		public bool SaveMyProfile(string UserData)
+		{
+			var fr = this.ServiceClient.Get<SaveMyProfileResponse>(new SaveMyProfileRequest {UserData = UserData });
+			return (fr.RowsAffectd > 0);
+		}
+
+		public bool ChangeUserPassword(string OldPwd, string NewPwd)
+		{
+			ChangeUserPasswordResponse resp = this.ServiceClient.Post<ChangeUserPasswordResponse>(new ChangeUserPasswordRequest { OldPwd = OldPwd, NewPwd = NewPwd, Email = ViewBag.email });
+			return resp.isSuccess;
+		}
+
+
+		//--------------MANAGE USER START------------------------------------
+
+		[EbBreadCrumbFilter("Security")]
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
 			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) && Mode != 3)
@@ -232,13 +251,7 @@ namespace ExpressBase.Web.Controllers
             UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail });
             return temp.unrespose;
 		}
-
-		public bool ChangeUserPassword(string OldPwd, string NewPwd)
-		{
-			ChangeUserPasswordResponse resp = this.ServiceClient.Post<ChangeUserPasswordResponse>(new ChangeUserPasswordRequest { OldPwd = OldPwd, NewPwd = NewPwd, Email = ViewBag.email });
-			return resp.isSuccess;
-		}
-
+				
 		public bool ResetUserPassword(int userid, string username, string NewPwd)
 		{
 			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
@@ -412,6 +425,15 @@ namespace ExpressBase.Web.Controllers
 		{
 			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
 				return "Failed";
+			try
+			{
+				Enum.Parse(typeof(SystemRoles), _roleName.Trim().ToLower(), true);
+				return "Failed";
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine("RoleSave rolename check : " + ex.Message);
+			}
 
 			Dictionary<string, object> Dict = new Dictionary<string, object>();
 			string return_msg;

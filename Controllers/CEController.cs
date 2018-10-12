@@ -188,7 +188,7 @@ namespace ExpressBase.Web.Controllers
         {
             List<Param> _param = new List<Param> { new Param { Name = "ids", Type = ((int)EbDbTypes.Int32).ToString(), Value = val.ToString() } };
             ServiceClient.Post(new PdfCreateServiceMqRequest {
-                Refid = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2174-2909-2174-2909" ,
+                ObjId = /*"ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2174-2909-2174-2909"*/2174 ,
                 Params = _param
             });
             return 0;

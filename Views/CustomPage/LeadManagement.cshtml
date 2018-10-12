@@ -186,16 +186,12 @@
                         <div class="form-group">
                             <label>Service</label>
                             <select id="selService" class="form-control">
-                                <option value="bmt">BMT</option>
-                                <option value="ebt">EBT</option>
-                                <option value="hair extension">Hair Extension</option>
-                                <option value="hair fixing">Hair Fixing</option>
-                                <option value="hair fixing (wig)">Hair Fixing (Wig)</option>
-                                <option value="hair treatment">Hair Treatment</option>
-                                <option value="hair transplant">Hair Transplant</option>
-                                <option value="patch">Patch</option>
-                                <option value="prp">PRP</option>
-                                <option value="smp">SMP</option>
+                                @{ 
+                                    foreach(string str in ViewBag.ServiceList)
+                                    {
+                                        <option value="@str.ToLower()">@str</option>
+                                    }
+                                }
                             </select>
                             @*<input id="txtService" type="text" class="form-control">*@
                         </div>

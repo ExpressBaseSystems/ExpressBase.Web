@@ -286,7 +286,7 @@ div.dataTables_wrapper div.dataTables_processing {
 }
 
 .odd{
-    background-color: rgba(49,99,150,0.09) !important;
+    background-color: white !important;
 }
 
 .even {

@@ -1,0 +1,1411 @@
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+
+<style>
+    .main-cont {
+        background-color: #fff;
+    }
+    .profpic-out {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+    }
+
+    .profpic-in {
+        /*border: 1px solid #cfced0;*/
+        border-radius: 50%;
+    }
+
+    .myTextField {
+        border-radius: 0px;
+        background-color: transparent;
+        box-shadow: none;
+        border-left: none;
+        border-top: none;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+        font-weight: 600;
+    }
+
+        .myTextField:focus {
+            border-bottom: 2px solid #aaa;
+            box-shadow: none;
+            transition: 1s;
+        }
+
+    .myLabel {
+        font-weight: 400;
+        margin: 0px;
+        color: #6666be;
+    }
+
+    ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        color: #ccc !important;
+        font-weight: 400;
+    }
+
+    .sub-head {
+        font-size: 22px;
+        color: #ccc;
+    }
+
+    .linkDiv {
+        padding-top: 10px;
+        color: #339bb3;
+        cursor: pointer;
+    }
+
+        .linkDiv:hover, .linkDiv:focus {
+            color: #2a6496;
+            text-decoration: underline;
+        }
+
+    .pwdLabel {
+        font-family: open sans;
+        font-weight: 300;
+        width: 38%;
+    }
+
+    .pwdField {
+        width: 60%;
+        display: inline-block;
+        border-radius: 0px;
+        box-shadow: none !important;
+    }
+</style>
+
+<div class="container" style="margin-top: 38px;">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="profpic-out">
+                <div class="profpic-in">
+                    <img id="imgprofimage" src="~/images/proimg.jpg" style="border-radius: 50%;height: 135px; max-width: 135px; opacity: 0.3;" data-id="0" onerror="this.src = '/images/imagenotfound.svg';" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="myLabel">Full Name</label>
+                <input id="txtFullName" type="text" class="form-control myTextField" title="Full Name" placeholder="Enter Full Name" autocomplete="off" onchange="this.title = 'Full Name : ' + this.value ;">
+            </div>
+            <div class="form-group">
+                <label class="myLabel">Nick Name</label>
+                <input id="txtNickName" type="text" class="form-control myTextField" title="Nick Name" placeholder="Enter Nick Name" autocomplete="off" onchange="this.title = 'Nick Name : ' + this.value ;">
+            </div>
+            <div class="form-group">
+                <label class="myLabel">Email ID</label>
+                <input id="txtEmailPri" type="text" class="form-control myTextField" style="background: transparent;" title="Email ID" placeholder="Enter Email ID" autocomplete="off" onchange="this.title = 'Email ID : ' + this.value ;" disabled="disabled">
+            </div>
+            <div class="linkDiv" onclick="$('#MU_ChangePwdModal').modal('show');">Change Password</div>
+            <div class="linkDiv" id="btnChngDp">Change Display Picture</div>
+        </div>
+        <div class="col-md-9" style="padding-left: 50px;">
+            <div class="sub-head" style="padding: 65px 0px 20px 0px;">Basic Details</div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="myLabel">Date of Birth</label>
+                        <input id="txtDob" type="text" class="form-control myTextField" title="Date of Birth" placeholder="Date of Birth" autocomplete="off" onchange="this.title = 'Date of Birth : ' + this.value ;">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="myLabel">Gender</label>
+                        <select id="selGender" class="form-control myTextField" title="Gender" onchange="this.title = 'Gender : ' + this.value ;">
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label class="myLabel">Alternate Email ID</label>
+                        <input id="txtEmailSec" type="text" class="form-control myTextField" title="Alternate Email ID" placeholder="Alternate Email ID" autocomplete="off" onchange="this.title = 'Alternate Email ID : ' + this.value ;">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="myLabel">Primary Phone Number</label>
+                        <input id="txtPhPri" type="text" class="form-control myTextField" title="Primary Phone Number" placeholder="Primary Phone Number" autocomplete="off" onchange="this.title = 'Primary Phone Number : ' + this.value ;">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="myLabel">Secondary Phone Number</label>
+                        <input id="txtPhSec" type="text" class="form-control myTextField" title="Secondary Phone Number" placeholder="Secondary Phone Number" autocomplete="off" onchange="this.title = 'Secondary Phone Number : ' + this.value ;">
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="myLabel">Land Phone Number</label>
+                        <input id="txtPhLand" type="text" class="form-control myTextField" title="Land Phone Number" placeholder="Land Phone Number" autocomplete="off" onchange="this.title = 'Land Phone Number : ' + this.value ;">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="myLabel">Extension</label>
+                        <input id="txtPhExt" type="text" class="form-control myTextField" title="Extension" placeholder="Extension" autocomplete="off" onchange="this.title = 'Extension : ' + this.value ;">
+                    </div>
+                </div>
+            </div>
+            <div class="sub-head" style="padding: 20px 0px 20px 0px;">Preferences</div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="myLabel">Default Location</label>
+                        <select id="selDefaultLoc" class="form-control myTextField" title="Default Location"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="myLabel">Locale</label>
+                        <select id="selLocale" class="form-control myTextField" title="Locale">
+                            <option>aa</option>
+                            <option>aa-DJ</option>
+                            <option>aa-ER</option>
+                            <option>aa-ET</option>
+                            <option>af</option>
+                            <option>af-NA</option>
+                            <option>af-ZA</option>
+                            <option>agq</option>
+                            <option>agq-CM</option>
+                            <option>ak</option>
+                            <option>ak-GH</option>
+                            <option>am</option>
+                            <option>am-ET</option>
+                            <option>ar</option>
+                            <option>ar-001</option>
+                            <option>ar-AE</option>
+                            <option>ar-BH</option>
+                            <option>ar-DJ</option>
+                            <option>ar-DZ</option>
+                            <option>ar-EG</option>
+                            <option>ar-ER</option>
+                            <option>ar-IL</option>
+                            <option>ar-IQ</option>
+                            <option>ar-JO</option>
+                            <option>ar-KM</option>
+                            <option>ar-KW</option>
+                            <option>ar-LB</option>
+                            <option>ar-LY</option>
+                            <option>ar-MA</option>
+                            <option>ar-MR</option>
+                            <option>ar-OM</option>
+                            <option>ar-PS</option>
+                            <option>ar-QA</option>
+                            <option>ar-SA</option>
+                            <option>ar-SD</option>
+                            <option>ar-SO</option>
+                            <option>ar-SS</option>
+                            <option>ar-SY</option>
+                            <option>ar-TD</option>
+                            <option>ar-TN</option>
+                            <option>ar-YE</option>
+                            <option>arn</option>
+                            <option>arn-CL</option>
+                            <option>as</option>
+                            <option>as-IN</option>
+                            <option>asa</option>
+                            <option>asa-TZ</option>
+                            <option>ast</option>
+                            <option>ast-ES</option>
+                            <option>az</option>
+                            <option>az-Cyrl</option>
+                            <option>az-Cyrl-AZ</option>
+                            <option>az-Latn</option>
+                            <option>az-Latn-AZ</option>
+                            <option>ba</option>
+                            <option>ba-RU</option>
+                            <option>bas</option>
+                            <option>bas-CM</option>
+                            <option>be</option>
+                            <option>be-BY</option>
+                            <option>bem</option>
+                            <option>bem-ZM</option>
+                            <option>bez</option>
+                            <option>bez-TZ</option>
+                            <option>bg</option>
+                            <option>bg-BG</option>
+                            <option>bin</option>
+                            <option>bin-NG</option>
+                            <option>bm</option>
+                            <option>bm-Latn</option>
+                            <option>bm-Latn-ML</option>
+                            <option>bn</option>
+                            <option>bn-BD</option>
+                            <option>bn-IN</option>
+                            <option>bo</option>
+                            <option>bo-CN</option>
+                            <option>bo-IN</option>
+                            <option>br</option>
+                            <option>br-FR</option>
+                            <option>brx</option>
+                            <option>brx-IN</option>
+                            <option>bs</option>
+                            <option>bs-Cyrl</option>
+                            <option>bs-Cyrl-BA</option>
+                            <option>bs-Latn</option>
+                            <option>bs-Latn-BA</option>
+                            <option>byn</option>
+                            <option>byn-ER</option>
+                            <option>ca</option>
+                            <option>ca-AD</option>
+                            <option>ca-ES</option>
+                            <option>ca-ES-valencia</option>
+                            <option>ca-FR</option>
+                            <option>ca-IT</option>
+                            <option>ce</option>
+                            <option>ce-RU</option>
+                            <option>cgg</option>
+                            <option>cgg-UG</option>
+                            <option>chr</option>
+                            <option>chr-Cher</option>
+                            <option>chr-Cher-US</option>
+                            <option>co</option>
+                            <option>co-FR</option>
+                            <option>cs</option>
+                            <option>cs-CZ</option>
+                            <option>cu</option>
+                            <option>cu-RU</option>
+                            <option>cy</option>
+                            <option>cy-GB</option>
+                            <option>da</option>
+                            <option>da-DK</option>
+                            <option>da-GL</option>
+                            <option>dav</option>
+                            <option>dav-KE</option>
+                            <option>de</option>
+                            <option>de-AT</option>
+                            <option>de-BE</option>
+                            <option>de-CH</option>
+                            <option>de-DE</option>
+                            <option>de-IT</option>
+                            <option>de-LI</option>
+                            <option>de-LU</option>
+                            <option>dje</option>
+                            <option>dje-NE</option>
+                            <option>dsb</option>
+                            <option>dsb-DE</option>
+                            <option>dua</option>
+                            <option>dua-CM</option>
+                            <option>dv</option>
+                            <option>dv-MV</option>
+                            <option>dyo</option>
+                            <option>dyo-SN</option>
+                            <option>dz</option>
+                            <option>dz-BT</option>
+                            <option>ebu</option>
+                            <option>ebu-KE</option>
+                            <option>ee</option>
+                            <option>ee-GH</option>
+                            <option>ee-TG</option>
+                            <option>el</option>
+                            <option>el-CY</option>
+                            <option>el-GR</option>
+                            <option>en</option>
+                            <option>en-001</option>
+                            <option>en-029</option>
+                            <option>en-150</option>
+                            <option>en-AG</option>
+                            <option>en-AI</option>
+                            <option>en-AS</option>
+                            <option>en-AT</option>
+                            <option>en-AU</option>
+                            <option>en-BB</option>
+                            <option>en-BE</option>
+                            <option>en-BI</option>
+                            <option>en-BM</option>
+                            <option>en-BS</option>
+                            <option>en-BW</option>
+                            <option>en-BZ</option>
+                            <option>en-CA</option>
+                            <option>en-CC</option>
+                            <option>en-CH</option>
+                            <option>en-CK</option>
+                            <option>en-CM</option>
+                            <option>en-CX</option>
+                            <option>en-CY</option>
+                            <option>en-DE</option>
+                            <option>en-DK</option>
+                            <option>en-DM</option>
+                            <option>en-ER</option>
+                            <option>en-FI</option>
+                            <option>en-FJ</option>
+                            <option>en-FK</option>
+                            <option>en-FM</option>
+                            <option>en-GB</option>
+                            <option>en-GD</option>
+                            <option>en-GG</option>
+                            <option>en-GH</option>
+                            <option>en-GI</option>
+                            <option>en-GM</option>
+                            <option>en-GU</option>
+                            <option>en-GY</option>
+                            <option>en-HK</option>
+                            <option>en-ID</option>
+                            <option>en-IE</option>
+                            <option>en-IL</option>
+                            <option>en-IM</option>
+                            <option>en-IN</option>
+                            <option>en-IO</option>
+                            <option>en-JE</option>
+                            <option>en-JM</option>
+                            <option>en-KE</option>
+                            <option>en-KI</option>
+                            <option>en-KN</option>
+                            <option>en-KY</option>
+                            <option>en-LC</option>
+                            <option>en-LR</option>
+                            <option>en-LS</option>
+                            <option>en-MG</option>
+                            <option>en-MH</option>
+                            <option>en-MO</option>
+                            <option>en-MP</option>
+                            <option>en-MS</option>
+                            <option>en-MT</option>
+                            <option>en-MU</option>
+                            <option>en-MW</option>
+                            <option>en-MY</option>
+                            <option>en-NA</option>
+                            <option>en-NF</option>
+                            <option>en-NG</option>
+                            <option>en-NL</option>
+                            <option>en-NR</option>
+                            <option>en-NU</option>
+                            <option>en-NZ</option>
+                            <option>en-PG</option>
+                            <option>en-PH</option>
+                            <option>en-PK</option>
+                            <option>en-PN</option>
+                            <option>en-PR</option>
+                            <option>en-PW</option>
+                            <option>en-RW</option>
+                            <option>en-SB</option>
+                            <option>en-SC</option>
+                            <option>en-SD</option>
+                            <option>en-SE</option>
+                            <option>en-SG</option>
+                            <option>en-SH</option>
+                            <option>en-SI</option>
+                            <option>en-SL</option>
+                            <option>en-SS</option>
+                            <option>en-SX</option>
+                            <option>en-SZ</option>
+                            <option>en-TC</option>
+                            <option>en-TK</option>
+                            <option>en-TO</option>
+                            <option>en-TT</option>
+                            <option>en-TV</option>
+                            <option>en-TZ</option>
+                            <option>en-UG</option>
+                            <option>en-UM</option>
+                            <option>en-US</option>
+                            <option>en-VC</option>
+                            <option>en-VG</option>
+                            <option>en-VI</option>
+                            <option>en-VU</option>
+                            <option>en-WS</option>
+                            <option>en-ZA</option>
+                            <option>en-ZM</option>
+                            <option>en-ZW</option>
+                            <option>eo</option>
+                            <option>eo-001</option>
+                            <option>es</option>
+                            <option>es-419</option>
+                            <option>es-AR</option>
+                            <option>es-BO</option>
+                            <option>es-BR</option>
+                            <option>es-BZ</option>
+                            <option>es-CL</option>
+                            <option>es-CO</option>
+                            <option>es-CR</option>
+                            <option>es-CU</option>
+                            <option>es-DO</option>
+                            <option>es-EC</option>
+                            <option>es-ES</option>
+                            <option>es-GQ</option>
+                            <option>es-GT</option>
+                            <option>es-HN</option>
+                            <option>es-MX</option>
+                            <option>es-NI</option>
+                            <option>es-PA</option>
+                            <option>es-PE</option>
+                            <option>es-PH</option>
+                            <option>es-PR</option>
+                            <option>es-PY</option>
+                            <option>es-SV</option>
+                            <option>es-US</option>
+                            <option>es-UY</option>
+                            <option>es-VE</option>
+                            <option>et</option>
+                            <option>et-EE</option>
+                            <option>eu</option>
+                            <option>eu-ES</option>
+                            <option>ewo</option>
+                            <option>ewo-CM</option>
+                            <option>fa</option>
+                            <option>fa-IR</option>
+                            <option>ff</option>
+                            <option>ff-CM</option>
+                            <option>ff-GN</option>
+                            <option>ff-Latn</option>
+                            <option>ff-Latn-SN</option>
+                            <option>ff-MR</option>
+                            <option>ff-NG</option>
+                            <option>fi</option>
+                            <option>fi-FI</option>
+                            <option>fil</option>
+                            <option>fil-PH</option>
+                            <option>fo</option>
+                            <option>fo-DK</option>
+                            <option>fo-FO</option>
+                            <option>fr</option>
+                            <option>fr-029</option>
+                            <option>fr-BE</option>
+                            <option>fr-BF</option>
+                            <option>fr-BI</option>
+                            <option>fr-BJ</option>
+                            <option>fr-BL</option>
+                            <option>fr-CA</option>
+                            <option>fr-CD</option>
+                            <option>fr-CF</option>
+                            <option>fr-CG</option>
+                            <option>fr-CH</option>
+                            <option>fr-CI</option>
+                            <option>fr-CM</option>
+                            <option>fr-DJ</option>
+                            <option>fr-DZ</option>
+                            <option>fr-FR</option>
+                            <option>fr-GA</option>
+                            <option>fr-GF</option>
+                            <option>fr-GN</option>
+                            <option>fr-GP</option>
+                            <option>fr-GQ</option>
+                            <option>fr-HT</option>
+                            <option>fr-KM</option>
+                            <option>fr-LU</option>
+                            <option>fr-MA</option>
+                            <option>fr-MC</option>
+                            <option>fr-MF</option>
+                            <option>fr-MG</option>
+                            <option>fr-ML</option>
+                            <option>fr-MQ</option>
+                            <option>fr-MR</option>
+                            <option>fr-MU</option>
+                            <option>fr-NC</option>
+                            <option>fr-NE</option>
+                            <option>fr-PF</option>
+                            <option>fr-PM</option>
+                            <option>fr-RE</option>
+                            <option>fr-RW</option>
+                            <option>fr-SC</option>
+                            <option>fr-SN</option>
+                            <option>fr-SY</option>
+                            <option>fr-TD</option>
+                            <option>fr-TG</option>
+                            <option>fr-TN</option>
+                            <option>fr-VU</option>
+                            <option>fr-WF</option>
+                            <option>fr-YT</option>
+                            <option>fur</option>
+                            <option>fur-IT</option>
+                            <option>fy</option>
+                            <option>fy-NL</option>
+                            <option>ga</option>
+                            <option>ga-IE</option>
+                            <option>gd</option>
+                            <option>gd-GB</option>
+                            <option>gl</option>
+                            <option>gl-ES</option>
+                            <option>gn</option>
+                            <option>gn-PY</option>
+                            <option>gsw</option>
+                            <option>gsw-CH</option>
+                            <option>gsw-FR</option>
+                            <option>gsw-LI</option>
+                            <option>gu</option>
+                            <option>gu-IN</option>
+                            <option>guz</option>
+                            <option>guz-KE</option>
+                            <option>gv</option>
+                            <option>gv-IM</option>
+                            <option>ha</option>
+                            <option>ha-Latn</option>
+                            <option>ha-Latn-GH</option>
+                            <option>ha-Latn-NE</option>
+                            <option>ha-Latn-NG</option>
+                            <option>haw</option>
+                            <option>haw-US</option>
+                            <option>he</option>
+                            <option>he-IL</option>
+                            <option>hi</option>
+                            <option>hi-IN</option>
+                            <option>hr</option>
+                            <option>hr-BA</option>
+                            <option>hr-HR</option>
+                            <option>hsb</option>
+                            <option>hsb-DE</option>
+                            <option>hu</option>
+                            <option>hu-HU</option>
+                            <option>hy</option>
+                            <option>hy-AM</option>
+                            <option>ia</option>
+                            <option>ia-001</option>
+                            <option>ia-FR</option>
+                            <option>ibb</option>
+                            <option>ibb-NG</option>
+                            <option>id</option>
+                            <option>id-ID</option>
+                            <option>ig</option>
+                            <option>ig-NG</option>
+                            <option>ii</option>
+                            <option>ii-CN</option>
+                            <option>is</option>
+                            <option>is-IS</option>
+                            <option>it</option>
+                            <option>it-CH</option>
+                            <option>it-IT</option>
+                            <option>it-SM</option>
+                            <option>it-VA</option>
+                            <option>iu</option>
+                            <option>iu-Cans</option>
+                            <option>iu-Cans-CA</option>
+                            <option>iu-Latn</option>
+                            <option>iu-Latn-CA</option>
+                            <option>ja</option>
+                            <option>ja-JP</option>
+                            <option>jgo</option>
+                            <option>jgo-CM</option>
+                            <option>jmc</option>
+                            <option>jmc-TZ</option>
+                            <option>jv</option>
+                            <option>jv-Java</option>
+                            <option>jv-Java-ID</option>
+                            <option>jv-Latn</option>
+                            <option>jv-Latn-ID</option>
+                            <option>ka</option>
+                            <option>ka-GE</option>
+                            <option>kab</option>
+                            <option>kab-DZ</option>
+                            <option>kam</option>
+                            <option>kam-KE</option>
+                            <option>kde</option>
+                            <option>kde-TZ</option>
+                            <option>kea</option>
+                            <option>kea-CV</option>
+                            <option>khq</option>
+                            <option>khq-ML</option>
+                            <option>ki</option>
+                            <option>ki-KE</option>
+                            <option>kk</option>
+                            <option>kk-KZ</option>
+                            <option>kkj</option>
+                            <option>kkj-CM</option>
+                            <option>kl</option>
+                            <option>kl-GL</option>
+                            <option>kln</option>
+                            <option>kln-KE</option>
+                            <option>km</option>
+                            <option>km-KH</option>
+                            <option>kn</option>
+                            <option>kn-IN</option>
+                            <option>ko</option>
+                            <option>ko-KP</option>
+                            <option>ko-KR</option>
+                            <option>kok</option>
+                            <option>kok-IN</option>
+                            <option>kr</option>
+                            <option>kr-NG</option>
+                            <option>ks</option>
+                            <option>ks-Arab</option>
+                            <option>ks-Arab-IN</option>
+                            <option>ks-Deva</option>
+                            <option>ks-Deva-IN</option>
+                            <option>ksb</option>
+                            <option>ksb-TZ</option>
+                            <option>ksf</option>
+                            <option>ksf-CM</option>
+                            <option>ksh</option>
+                            <option>ksh-DE</option>
+                            <option>ku</option>
+                            <option>ku-Arab</option>
+                            <option>ku-Arab-IQ</option>
+                            <option>ku-Arab-IR</option>
+                            <option>kw</option>
+                            <option>kw-GB</option>
+                            <option>ky</option>
+                            <option>ky-KG</option>
+                            <option>la</option>
+                            <option>la-001</option>
+                            <option>lag</option>
+                            <option>lag-TZ</option>
+                            <option>lb</option>
+                            <option>lb-LU</option>
+                            <option>lg</option>
+                            <option>lg-UG</option>
+                            <option>lkt</option>
+                            <option>lkt-US</option>
+                            <option>ln</option>
+                            <option>ln-AO</option>
+                            <option>ln-CD</option>
+                            <option>ln-CF</option>
+                            <option>ln-CG</option>
+                            <option>lo</option>
+                            <option>lo-LA</option>
+                            <option>lrc</option>
+                            <option>lrc-IQ</option>
+                            <option>lrc-IR</option>
+                            <option>lt</option>
+                            <option>lt-LT</option>
+                            <option>lu</option>
+                            <option>lu-CD</option>
+                            <option>luo</option>
+                            <option>luo-KE</option>
+                            <option>luy</option>
+                            <option>luy-KE</option>
+                            <option>lv</option>
+                            <option>lv-LV</option>
+                            <option>mas</option>
+                            <option>mas-KE</option>
+                            <option>mas-TZ</option>
+                            <option>mer</option>
+                            <option>mer-KE</option>
+                            <option>mfe</option>
+                            <option>mfe-MU</option>
+                            <option>mg</option>
+                            <option>mg-MG</option>
+                            <option>mgh</option>
+                            <option>mgh-MZ</option>
+                            <option>mgo</option>
+                            <option>mgo-CM</option>
+                            <option>mi</option>
+                            <option>mi-NZ</option>
+                            <option>mk</option>
+                            <option>mk-MK</option>
+                            <option>ml</option>
+                            <option>ml-IN</option>
+                            <option>mn</option>
+                            <option>mn-Cyrl</option>
+                            <option>mn-MN</option>
+                            <option>mn-Mong</option>
+                            <option>mn-Mong-CN</option>
+                            <option>mn-Mong-MN</option>
+                            <option>mni</option>
+                            <option>mni-IN</option>
+                            <option>moh</option>
+                            <option>moh-CA</option>
+                            <option>mr</option>
+                            <option>mr-IN</option>
+                            <option>ms</option>
+                            <option>ms-BN</option>
+                            <option>ms-MY</option>
+                            <option>ms-SG</option>
+                            <option>mt</option>
+                            <option>mt-MT</option>
+                            <option>mua</option>
+                            <option>mua-CM</option>
+                            <option>my</option>
+                            <option>my-MM</option>
+                            <option>mzn</option>
+                            <option>mzn-IR</option>
+                            <option>naq</option>
+                            <option>naq-NA</option>
+                            <option>nb</option>
+                            <option>nb-NO</option>
+                            <option>nb-SJ</option>
+                            <option>nd</option>
+                            <option>nd-ZW</option>
+                            <option>nds</option>
+                            <option>nds-DE</option>
+                            <option>nds-NL</option>
+                            <option>ne</option>
+                            <option>ne-IN</option>
+                            <option>ne-NP</option>
+                            <option>nl</option>
+                            <option>nl-AW</option>
+                            <option>nl-BE</option>
+                            <option>nl-BQ</option>
+                            <option>nl-CW</option>
+                            <option>nl-NL</option>
+                            <option>nl-SR</option>
+                            <option>nl-SX</option>
+                            <option>nmg</option>
+                            <option>nmg-CM</option>
+                            <option>nn</option>
+                            <option>nn-NO</option>
+                            <option>nnh</option>
+                            <option>nnh-CM</option>
+                            <option>no</option>
+                            <option>nqo</option>
+                            <option>nqo-GN</option>
+                            <option>nr</option>
+                            <option>nr-ZA</option>
+                            <option>nso</option>
+                            <option>nso-ZA</option>
+                            <option>nus</option>
+                            <option>nus-SS</option>
+                            <option>nyn</option>
+                            <option>nyn-UG</option>
+                            <option>oc</option>
+                            <option>oc-FR</option>
+                            <option>om</option>
+                            <option>om-ET</option>
+                            <option>om-KE</option>
+                            <option>or</option>
+                            <option>or-IN</option>
+                            <option>os</option>
+                            <option>os-GE</option>
+                            <option>os-RU</option>
+                            <option>pa</option>
+                            <option>pa-Arab</option>
+                            <option>pa-Arab-PK</option>
+                            <option>pa-Guru</option>
+                            <option>pa-IN</option>
+                            <option>pap</option>
+                            <option>pap-029</option>
+                            <option>pl</option>
+                            <option>pl-PL</option>
+                            <option>prg</option>
+                            <option>prg-001</option>
+                            <option>prs</option>
+                            <option>prs-AF</option>
+                            <option>ps</option>
+                            <option>ps-AF</option>
+                            <option>pt</option>
+                            <option>pt-AO</option>
+                            <option>pt-BR</option>
+                            <option>pt-CH</option>
+                            <option>pt-CV</option>
+                            <option>pt-GQ</option>
+                            <option>pt-GW</option>
+                            <option>pt-LU</option>
+                            <option>pt-MO</option>
+                            <option>pt-MZ</option>
+                            <option>pt-PT</option>
+                            <option>pt-ST</option>
+                            <option>pt-TL</option>
+                            <option>quc</option>
+                            <option>quc-Latn</option>
+                            <option>quc-Latn-GT</option>
+                            <option>quz</option>
+                            <option>quz-BO</option>
+                            <option>quz-EC</option>
+                            <option>quz-PE</option>
+                            <option>rm</option>
+                            <option>rm-CH</option>
+                            <option>rn</option>
+                            <option>rn-BI</option>
+                            <option>ro</option>
+                            <option>ro-MD</option>
+                            <option>ro-RO</option>
+                            <option>rof</option>
+                            <option>rof-TZ</option>
+                            <option>ru</option>
+                            <option>ru-BY</option>
+                            <option>ru-KG</option>
+                            <option>ru-KZ</option>
+                            <option>ru-MD</option>
+                            <option>ru-RU</option>
+                            <option>ru-UA</option>
+                            <option>rw</option>
+                            <option>rw-RW</option>
+                            <option>rwk</option>
+                            <option>rwk-TZ</option>
+                            <option>sa</option>
+                            <option>sa-IN</option>
+                            <option>sah</option>
+                            <option>sah-RU</option>
+                            <option>saq</option>
+                            <option>saq-KE</option>
+                            <option>sbp</option>
+                            <option>sbp-TZ</option>
+                            <option>sd</option>
+                            <option>sd-Arab</option>
+                            <option>sd-Arab-PK</option>
+                            <option>sd-Deva</option>
+                            <option>sd-Deva-IN</option>
+                            <option>se</option>
+                            <option>se-FI</option>
+                            <option>se-NO</option>
+                            <option>se-SE</option>
+                            <option>seh</option>
+                            <option>seh-MZ</option>
+                            <option>ses</option>
+                            <option>ses-ML</option>
+                            <option>sg</option>
+                            <option>sg-CF</option>
+                            <option>shi</option>
+                            <option>shi-Latn</option>
+                            <option>shi-Latn-MA</option>
+                            <option>shi-Tfng</option>
+                            <option>shi-Tfng-MA</option>
+                            <option>si</option>
+                            <option>si-LK</option>
+                            <option>sk</option>
+                            <option>sk-SK</option>
+                            <option>sl</option>
+                            <option>sl-SI</option>
+                            <option>sma</option>
+                            <option>sma-NO</option>
+                            <option>sma-SE</option>
+                            <option>smj</option>
+                            <option>smj-NO</option>
+                            <option>smj-SE</option>
+                            <option>smn</option>
+                            <option>smn-FI</option>
+                            <option>sms</option>
+                            <option>sms-FI</option>
+                            <option>sn</option>
+                            <option>sn-Latn</option>
+                            <option>sn-Latn-ZW</option>
+                            <option>so</option>
+                            <option>so-DJ</option>
+                            <option>so-ET</option>
+                            <option>so-KE</option>
+                            <option>so-SO</option>
+                            <option>sq</option>
+                            <option>sq-AL</option>
+                            <option>sq-MK</option>
+                            <option>sq-XK</option>
+                            <option>sr</option>
+                            <option>sr-Cyrl</option>
+                            <option>sr-Cyrl-BA</option>
+                            <option>sr-Cyrl-ME</option>
+                            <option>sr-Cyrl-RS</option>
+                            <option>sr-Cyrl-XK</option>
+                            <option>sr-Latn</option>
+                            <option>sr-Latn-BA</option>
+                            <option>sr-Latn-ME</option>
+                            <option>sr-Latn-RS</option>
+                            <option>sr-Latn-XK</option>
+                            <option>ss</option>
+                            <option>ss-SZ</option>
+                            <option>ss-ZA</option>
+                            <option>ssy</option>
+                            <option>ssy-ER</option>
+                            <option>st</option>
+                            <option>st-LS</option>
+                            <option>st-ZA</option>
+                            <option>sv</option>
+                            <option>sv-AX</option>
+                            <option>sv-FI</option>
+                            <option>sv-SE</option>
+                            <option>sw</option>
+                            <option>sw-CD</option>
+                            <option>sw-KE</option>
+                            <option>sw-TZ</option>
+                            <option>sw-UG</option>
+                            <option>syr</option>
+                            <option>syr-SY</option>
+                            <option>ta</option>
+                            <option>ta-IN</option>
+                            <option>ta-LK</option>
+                            <option>ta-MY</option>
+                            <option>ta-SG</option>
+                            <option>te</option>
+                            <option>te-IN</option>
+                            <option>teo</option>
+                            <option>teo-KE</option>
+                            <option>teo-UG</option>
+                            <option>tg</option>
+                            <option>tg-Cyrl</option>
+                            <option>tg-Cyrl-TJ</option>
+                            <option>th</option>
+                            <option>th-TH</option>
+                            <option>ti</option>
+                            <option>ti-ER</option>
+                            <option>ti-ET</option>
+                            <option>tig</option>
+                            <option>tig-ER</option>
+                            <option>tk</option>
+                            <option>tk-TM</option>
+                            <option>tn</option>
+                            <option>tn-BW</option>
+                            <option>tn-ZA</option>
+                            <option>to</option>
+                            <option>to-TO</option>
+                            <option>tr</option>
+                            <option>tr-CY</option>
+                            <option>tr-TR</option>
+                            <option>ts</option>
+                            <option>ts-ZA</option>
+                            <option>tt</option>
+                            <option>tt-RU</option>
+                            <option>twq</option>
+                            <option>twq-NE</option>
+                            <option>tzm</option>
+                            <option>tzm-Arab</option>
+                            <option>tzm-Arab-MA</option>
+                            <option>tzm-Latn</option>
+                            <option>tzm-Latn-DZ</option>
+                            <option>tzm-Latn-MA</option>
+                            <option>tzm-Tfng</option>
+                            <option>tzm-Tfng-MA</option>
+                            <option>ug</option>
+                            <option>ug-CN</option>
+                            <option>uk</option>
+                            <option>uk-UA</option>
+                            <option>ur</option>
+                            <option>ur-IN</option>
+                            <option>ur-PK</option>
+                            <option>uz</option>
+                            <option>uz-Arab</option>
+                            <option>uz-Arab-AF</option>
+                            <option>uz-Cyrl</option>
+                            <option>uz-Cyrl-UZ</option>
+                            <option>uz-Latn</option>
+                            <option>uz-Latn-UZ</option>
+                            <option>vai</option>
+                            <option>vai-Latn</option>
+                            <option>vai-Latn-LR</option>
+                            <option>vai-Vaii</option>
+                            <option>vai-Vaii-LR</option>
+                            <option>ve</option>
+                            <option>ve-ZA</option>
+                            <option>vi</option>
+                            <option>vi-VN</option>
+                            <option>vo</option>
+                            <option>vo-001</option>
+                            <option>vun</option>
+                            <option>vun-TZ</option>
+                            <option>wae</option>
+                            <option>wae-CH</option>
+                            <option>wal</option>
+                            <option>wal-ET</option>
+                            <option>wo</option>
+                            <option>wo-SN</option>
+                            <option>xh</option>
+                            <option>xh-ZA</option>
+                            <option>xog</option>
+                            <option>xog-UG</option>
+                            <option>yav</option>
+                            <option>yav-CM</option>
+                            <option>yi</option>
+                            <option>yi-001</option>
+                            <option>yo</option>
+                            <option>yo-BJ</option>
+                            <option>yo-NG</option>
+                            <option>zgh</option>
+                            <option>zgh-Tfng</option>
+                            <option>zgh-Tfng-MA</option>
+                            <option>zh</option>
+                            <option>zh-CN</option>
+                            <option>zh-Hans</option>
+                            <option>zh-Hans-HK</option>
+                            <option>zh-Hans-MO</option>
+                            <option>zh-Hant</option>
+                            <option>zh-HK</option>
+                            <option>zh-MO</option>
+                            <option>zh-SG</option>
+                            <option>zh-TW</option>
+                            <option>zu</option>
+                            <option>zu-ZA</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="myLabel">Time Zone</label>
+                        <select id="selTimezone" class="form-control myTextField" title="Time Zone">
+                            <option>(UTC-12:00) International Date Line West</option>
+                            <option>(UTC-11:00) Coordinated Universal Time-11</option>
+                            <option>(UTC-10:00) Aleutian Islands</option>
+                            <option>(UTC-10:00) Hawaii</option>
+                            <option>(UTC-09:30) Marquesas Islands</option>
+                            <option>(UTC-09:00) Alaska</option>
+                            <option>(UTC-09:00) Coordinated Universal Time-09</option>
+                            <option>(UTC-08:00) Baja California</option>
+                            <option>(UTC-08:00) Coordinated Universal Time-08</option>
+                            <option>(UTC-08:00) Pacific Time (US &amp; Canada)</option>
+                            <option>(UTC-07:00) Arizona</option>
+                            <option>(UTC-07:00) Chihuahua, La Paz, Mazatlan</option>
+                            <option>(UTC-07:00) Mountain Time (US &amp; Canada)</option>
+                            <option>(UTC-06:00) Central America</option>
+                            <option>(UTC-06:00) Central Time (US &amp; Canada)</option>
+                            <option>(UTC-06:00) Easter Island</option>
+                            <option>(UTC-06:00) Guadalajara, Mexico City, Monterrey</option>
+                            <option>(UTC-06:00) Saskatchewan</option>
+                            <option>(UTC-05:00) Bogota, Lima, Quito, Rio Branco</option>
+                            <option>(UTC-05:00) Chetumal</option>
+                            <option>(UTC-05:00) Eastern Time (US &amp; Canada)</option>
+                            <option>(UTC-05:00) Haiti</option>
+                            <option>(UTC-05:00) Havana</option>
+                            <option>(UTC-05:00) Indiana (East)</option>
+                            <option>(UTC-05:00) Turks and Caicos</option>
+                            <option>(UTC-04:00) Asuncion</option>
+                            <option>(UTC-04:00) Atlantic Time (Canada)</option>
+                            <option>(UTC-04:00) Caracas</option>
+                            <option>(UTC-04:00) Cuiaba</option>
+                            <option>(UTC-04:00) Georgetown, La Paz, Manaus, San Juan</option>
+                            <option>(UTC-04:00) Santiago</option>
+                            <option>(UTC-03:30) Newfoundland</option>
+                            <option>(UTC-03:00) Araguaina</option>
+                            <option>(UTC-03:00) Brasilia</option>
+                            <option>(UTC-03:00) Cayenne, Fortaleza</option>
+                            <option>(UTC-03:00) City of Buenos Aires</option>
+                            <option>(UTC-03:00) Greenland</option>
+                            <option>(UTC-03:00) Montevideo</option>
+                            <option>(UTC-03:00) Punta Arenas</option>
+                            <option>(UTC-03:00) Saint Pierre and Miquelon</option>
+                            <option>(UTC-03:00) Salvador</option>
+                            <option>(UTC-02:00) Coordinated Universal Time-02</option>
+                            <option>(UTC-02:00) Mid-Atlantic - Old</option>
+                            <option>(UTC-01:00) Azores</option>
+                            <option>(UTC-01:00) Cabo Verde Is.</option>
+                            <option>(UTC) Coordinated Universal Time</option>
+                            <option>(UTC+00:00) Casablanca</option>
+                            <option>(UTC+00:00) Dublin, Edinburgh, Lisbon, London</option>
+                            <option>(UTC+00:00) Monrovia, Reykjavik</option>
+                            <option>(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
+                            <option>(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
+                            <option>(UTC+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+                            <option>(UTC+01:00) Sao Tome</option>
+                            <option>(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
+                            <option>(UTC+01:00) West Central Africa</option>
+                            <option>(UTC+02:00) Amman</option>
+                            <option>(UTC+02:00) Athens, Bucharest</option>
+                            <option>(UTC+02:00) Beirut</option>
+                            <option>(UTC+02:00) Cairo</option>
+                            <option>(UTC+02:00) Chisinau</option>
+                            <option>(UTC+02:00) Damascus</option>
+                            <option>(UTC+02:00) Gaza, Hebron</option>
+                            <option>(UTC+02:00) Harare, Pretoria</option>
+                            <option>(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
+                            <option>(UTC+02:00) Jerusalem</option>
+                            <option>(UTC+02:00) Kaliningrad</option>
+                            <option>(UTC+02:00) Khartoum</option>
+                            <option>(UTC+02:00) Tripoli</option>
+                            <option>(UTC+02:00) Windhoek</option>
+                            <option>(UTC+03:00) Baghdad</option>
+                            <option>(UTC+03:00) Istanbul</option>
+                            <option>(UTC+03:00) Kuwait, Riyadh</option>
+                            <option>(UTC+03:00) Minsk</option>
+                            <option>(UTC+03:00) Moscow, St. Petersburg, Volgograd</option>
+                            <option>(UTC+03:00) Nairobi</option>
+                            <option>(UTC+03:30) Tehran</option>
+                            <option>(UTC+04:00) Abu Dhabi, Muscat</option>
+                            <option>(UTC+04:00) Astrakhan, Ulyanovsk</option>
+                            <option>(UTC+04:00) Baku</option>
+                            <option>(UTC+04:00) Izhevsk, Samara</option>
+                            <option>(UTC+04:00) Port Louis</option>
+                            <option>(UTC+04:00) Saratov</option>
+                            <option>(UTC+04:00) Tbilisi</option>
+                            <option>(UTC+04:00) Yerevan</option>
+                            <option>(UTC+04:30) Kabul</option>
+                            <option>(UTC+05:00) Ashgabat, Tashkent</option>
+                            <option>(UTC+05:00) Ekaterinburg</option>
+                            <option>(UTC+05:00) Islamabad, Karachi</option>
+                            <option>(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+                            <option>(UTC+05:30) Sri Jayawardenepura</option>
+                            <option>(UTC+05:45) Kathmandu</option>
+                            <option>(UTC+06:00) Astana</option>
+                            <option>(UTC+06:00) Dhaka</option>
+                            <option>(UTC+06:00) Omsk</option>
+                            <option>(UTC+06:30) Yangon (Rangoon)</option>
+                            <option>(UTC+07:00) Bangkok, Hanoi, Jakarta</option>
+                            <option>(UTC+07:00) Barnaul, Gorno-Altaysk</option>
+                            <option>(UTC+07:00) Hovd</option>
+                            <option>(UTC+07:00) Krasnoyarsk</option>
+                            <option>(UTC+07:00) Novosibirsk</option>
+                            <option>(UTC+07:00) Tomsk</option>
+                            <option>(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
+                            <option>(UTC+08:00) Irkutsk</option>
+                            <option>(UTC+08:00) Kuala Lumpur, Singapore</option>
+                            <option>(UTC+08:00) Perth</option>
+                            <option>(UTC+08:00) Taipei</option>
+                            <option>(UTC+08:00) Ulaanbaatar</option>
+                            <option>(UTC+08:45) Eucla</option>
+                            <option>(UTC+09:00) Chita</option>
+                            <option>(UTC+09:00) Osaka, Sapporo, Tokyo</option>
+                            <option>(UTC+09:00) Pyongyang</option>
+                            <option>(UTC+09:00) Seoul</option>
+                            <option>(UTC+09:00) Yakutsk</option>
+                            <option>(UTC+09:30) Adelaide</option>
+                            <option>(UTC+09:30) Darwin</option>
+                            <option>(UTC+10:00) Brisbane</option>
+                            <option>(UTC+10:00) Canberra, Melbourne, Sydney</option>
+                            <option>(UTC+10:00) Guam, Port Moresby</option>
+                            <option>(UTC+10:00) Hobart</option>
+                            <option>(UTC+10:00) Vladivostok</option>
+                            <option>(UTC+10:30) Lord Howe Island</option>
+                            <option>(UTC+11:00) Bougainville Island</option>
+                            <option>(UTC+11:00) Chokurdakh</option>
+                            <option>(UTC+11:00) Magadan</option>
+                            <option>(UTC+11:00) Norfolk Island</option>
+                            <option>(UTC+11:00) Sakhalin</option>
+                            <option>(UTC+11:00) Solomon Is., New Caledonia</option>
+                            <option>(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky</option>
+                            <option>(UTC+12:00) Auckland, Wellington</option>
+                            <option>(UTC+12:00) Coordinated Universal Time+12</option>
+                            <option>(UTC+12:00) Fiji</option>
+                            <option>(UTC+12:00) Petropavlovsk-Kamchatsky - Old</option>
+                            <option>(UTC+12:45) Chatham Islands</option>
+                            <option>(UTC+13:00) Coordinated Universal Time+13</option>
+                            <option>(UTC+13:00) Nuku'alofa</option>
+                            <option>(UTC+13:00) Samoa</option>
+                            <option>(UTC+14:00) Kiritimati Island</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="MU_ChangePwdModal" class="modal fade" role="dialog">
+    <div class="modal-dialog" style="width:445px">
+        <div class="modal-content" style="border-radius: 0px;">
+            <div class="modal-header" style="">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Change Password</h4> </div>
+                </div>
+            </div>
+            <div class="modal-body" style="height:185px">
+                <input type="hidden" id="itemid" />
+                <div id="modalBodyDiv">
+                    <div class="form-group">
+                        <label class="pwdLabel">Old Password :</label>
+                        <input id="pwdOld" class="form-control pwdField" type="password" title="Enter Old Password">
+                    </div>
+                    <div class="form-group">
+                        <label class="pwdLabel">New Password :</label>
+                        <input id="pwdNew" class="form-control pwdField" type="password" title="Enter New Password">
+                    </div>
+                    <div class="form-group">
+                        <label class="pwdLabel">Confirm New Password :</label>
+                        <input id="pwdNewConfirm" class="form-control pwdField" type="password" title="ReEnter New Password">
+                    </div>
+                    <label id="lblPwdChngMsg" style="font-family: open sans; font-weight: 300; float: right; padding-right: 5%; color: rgb(204, 0, 0);"></label>
+                </div>
+            </div>
+            <div class="modal-footer" style="">
+                <button id="btnUpdatePwd" type="button" class="btn btn-default" style="border-radius: 0px;"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Update</button>
+                <button type="button" class="btn btn-default" style="border-radius: 0px;" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    @using Newtonsoft.Json;
+    var UserData = Html.Raw(JsonConvert.SerializeObject(ViewBag.UserData));
+
+}
+
+<script>
+    var myProfileJs = function (UserData) {
+
+        this.UserData = UserData;
+        this.OutDataList = [];
+        this.menuBarObj = $("#layout_div").data("EbHeader");
+        //DOM ELEMENTS
+        this.$FullName = $("#txtFullName");
+        this.$NickName = $("#txtNickName");
+        this.$EmailPri = $("#txtEmailPri");
+        this.$Dob = $("#txtDob");
+        this.$Gender = $("#selGender");
+        this.$EmailSec = $("#txtEmailSec");
+        this.$PhPri = $("#txtPhPri");
+        this.$PhSec = $("#txtPhSec");
+        this.$PhLand = $("#txtPhLand");
+        this.$PhExt = $("#txtPhExt");
+        this.$DefaultLoc = $("#selDefaultLoc");
+        this.$Locale = $("#selLocale");
+        this.$Timezone = $("#selTimezone");
+        //CHANGE PWD MODAL ELEMENTS
+        this.$ChangePwdModal = $("#MU_ChangePwdModal");
+        this.$pwdOld = $("#pwdOld");
+        this.$pwdNew = $("#pwdNew");
+        this.$pwdNewConfirm = $("#pwdNewConfirm");
+        this.$lblPwdChngMsg = $("#lblPwdChngMsg");
+        this.$btnUpdatePwd = $("#btnUpdatePwd");
+
+        this.init = function () {
+            this.$Dob.datetimepicker({ timepicker: false, format: "d-m-Y" });
+
+            this.menuBarObj.setName("My Profile");
+            this.menuBarObj.insertButton(`<button id="btnSaveMyProf" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
+
+            $("#btnSaveMyProf").on('click', this.clickbtnSaveMyProf.bind(this));
+            this.$btnUpdatePwd.on('click', this.clickbtnUpdatePwd.bind(this))
+
+            this.$ChangePwdModal.on('shown.bs.modal', function (e) {
+                this.$pwdOld.val("");
+                this.$pwdNew.val("");
+                this.$pwdNewConfirm.val("");
+                this.$btnUpdatePwd.prop("disabled", false);
+                $(this.$btnUpdatePwd.children()[0]).hide();
+            }.bind(this));
+
+            this.initFormData();
+        }
+        this.initFormData = function () {
+            this.$FullName.val(this.UserData["fullname"]);
+            this.$NickName.val(this.UserData["nickname"]);
+            this.$EmailPri.val(this.UserData["email"]);
+            this.$Dob.val(this.UserData["dob"]);
+            this.$Gender.val(this.UserData["sex"]);
+            this.$EmailSec.val(this.UserData["alternateemail"]);
+            this.$PhPri.val(this.UserData["phnoprimary"]);
+            this.$PhSec.val(this.UserData["phnosecondary"]);
+            this.$PhLand.val(this.UserData["landline"]);
+            this.$PhExt.val(this.UserData["phextension"]);
+            //this.DefaultLoc.val(this.UserData[""]);
+            let pobj = JSON.parse(this.UserData["preferencesjson"]);
+            this.$Locale.val(pobj.Locale);
+            this.$Timezone.val(pobj.TimeZone);
+        }
+
+        this.prepareOutData = function () {
+            this.OutDataList = [];
+            this.pushToOutData("fullname", this.$FullName.val());
+            this.pushToOutData("nickname", this.$NickName.val());
+            this.pushToOutData("email", this.$EmailPri.val());
+            this.pushToOutData("dob", this.$Dob.val());
+            this.pushToOutData("sex", this.$Gender.val());
+            this.pushToOutData("alternateemail", this.$EmailSec.val());
+            this.pushToOutData("phnoprimary", this.$PhPri.val());
+            this.pushToOutData("phnosecondary", this.$PhSec.val());
+            this.pushToOutData("landline", this.$PhLand.val());
+            this.pushToOutData("phextension", this.$PhExt.val());
+            
+            let tempobj = { Locale: this.$Locale.val(), TimeZone: this.$Timezone.val(), DefaultLocation: 0 };
+            let tempjson = JSON.stringify(tempobj);
+            if (this.UserData["preferencesjson"] !== tempjson )
+                this.OutDataList.push({ Key: "preferencesjson", Value: tempjson });
+            if (this.OutDataList.length > 0)
+                return true;
+            EbMessage("show", { Message: 'No Changes to Save', AutoHide: true, Background: '#0000aa' });
+            return false;
+        }
+
+        this.pushToOutData = function (_key, _val) {
+            if (_val === null || _val === undefined)
+                return;
+            if (typeof (_val) === "string")
+                _val = _val.trim();
+            if (this.UserData[_key] !== _val)
+                this.OutDataList.push({ Key: _key, Value: _val });
+        }
+
+        this.clickbtnSaveMyProf = function () {
+            if (this.prepareOutData()) {
+                $("#btnSaveMyProf").prop("disabled", true);
+                $("#eb_common_loader").EbLoader("show");
+
+                $.ajax({
+                    type: "POST",
+                    url: "../Security/SaveMyProfile",
+                    data: { UserData: JSON.stringify(this.OutDataList)},
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                        $("#btnSaveMyProf").prop("disabled", false);
+                        $("#eb_common_loader").EbLoader("hide");
+                    },
+                    success: function (result) {
+                        if (result) {
+                            EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });                           
+                        }
+                        else {
+                            EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                        }
+                        $("#btnSaveMyProf").prop("disabled", false);
+                        $("#eb_common_loader").EbLoader("hide");
+                    }.bind(this)
+                });
+
+            }
+
+        }
+
+        this.clickbtnUpdatePwd = function (evt) {
+            if (this.$pwdOld.val().length < 8 || this.$pwdNew.val().length < 8 || this.$pwdNewConfirm.val().length < 8) {
+                this.$lblPwdChngMsg.text("Password too short - minimum length is 8");
+                setTimeout(function () { this.$lblPwdChngMsg.text(""); }.bind(this), 4000);
+                return;
+            }
+            if (this.$pwdNew.val() !== this.$pwdNewConfirm.val()) {
+                this.$lblPwdChngMsg.text("Password does not match the confirm password");
+                setTimeout(function () { this.$lblPwdChngMsg.text(""); }.bind(this), 4000);
+                return;
+            }
+            if (this.$pwdOld.val() === this.$pwdNew.val()) {
+                this.$lblPwdChngMsg.text("New Password should not be same as old ");
+                setTimeout(function () { this.$lblPwdChngMsg.text(""); }.bind(this), 4000);
+                return;
+            }
+            this.$btnUpdatePwd.prop("disabled", true);
+            $(this.$btnUpdatePwd.children()[0]).show();
+            
+            $.ajax({
+                type: "POST",
+                url: "../Security/ChangeUserPassword",
+                data: { OldPwd: this.$pwdOld.val(), NewPwd: this.$pwdNew.val() },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                    this.$btnUpdatePwd.prop("disabled", false);
+                    $(this.$btnUpdatePwd.children()[0]).hide();
+                },
+                success: function (status) {
+                    if (status) {
+                        EbMessage("show", { Message: 'Password Changed Successfully', AutoHide: true, Background: '#00aa00' });
+                        this.$ChangePwdModal.modal('hide');
+                    }
+                    else {
+                        EbMessage("show", { Message: 'Something Went Wrong', AutoHide: true, Background: '#aa0000' });                        
+                    } 
+                    this.$btnUpdatePwd.prop("disabled", false);
+                    $(this.$btnUpdatePwd.children()[0]).hide();
+                }.bind(this)
+            });
+
+        }
+        
+        this.init();
+    }
+
+    new myProfileJs(@UserData);
+
+     var d = new EbFileUpload({
+        Type:"image",
+         Toggle: "#btnChngDp",
+        TenantId:"@ViewBag.cid",
+        SolutionId: "@ViewBag.SolnId",
+        Container: "DisplayPicture",
+        Multiple: false,
+        ServerEventUrl: 'https://se.eb-test.info',
+        EnableTag: false,
+        EnableCrop: true,
+        Context: "dp",//if single and crop
+        ResizeViewPort: false //if single and crop
+    });
+
+    d.uploadSuccess = function(fileid){
+        EbMessage("show", { Message: fileid});
+    }
+    d.windowClose = function () {
+        EbMessage("show", { Message: "window closed",Background: "red" });
+    }
+
+</script>

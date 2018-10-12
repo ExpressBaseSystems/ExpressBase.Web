@@ -677,14 +677,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues();
         dq.Params = this.filterValues;
-        if (this.CurrentRowGroup !== null) {
-            if (this.CurrentRowGroup.RowGrouping.$values.length > 0) {
-                for (var i = this.CurrentRowGroup.RowGrouping.$values.length - 1; i > -1; i--)
-                    this.orderColl.unshift(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 1));
-            }
-        }
-        if (this.orderColl.length > 0)
-            dq.OrderBy = this.orderColl;
+       
+        dq.OrderBy  = this.getOrderByInfo();
         if (this.columnSearch.length > 0) {
             this.filterFlag = true;
         }
@@ -696,6 +690,38 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         //return dq;
     };
+
+    this.getOrderByInfo = function () {
+        var tempArray = [];
+        if (this.CurrentRowGroup !== null) {
+            if (this.CurrentRowGroup.RowGrouping.$values.length > 0) {
+                for (var i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
+                    tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 1));
+            }
+        }
+
+        if (this.EbObject.OrderBy.$values.length > 0) {
+            $.each(this.EbObject.OrderBy.$values, function (i, obj) {
+                if (tempArray.filter(e => e.Column === obj.name).length === 0) 
+                    tempArray.push(new order_obj(obj.name, 1));
+            });
+        }
+
+        $.each(this.orderColl, function (i, obj) {
+            var index = tempArray.findIndex(x => x.Column == obj.Column)
+            if (index === -1)
+                tempArray.push(obj);
+            else {
+                tempArray.splice(index, 1);
+                obj.Direction = (obj.Direction === 1) ? 2 : 1;
+                tempArray.push(obj);
+            }
+
+        });
+
+        return tempArray;
+
+    }
 
     this.getFilterValues = function (from) {
         //this.filterChanged = false;

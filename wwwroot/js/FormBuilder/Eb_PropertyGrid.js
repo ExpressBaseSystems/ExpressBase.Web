@@ -522,12 +522,11 @@
         this.requiredProps = [];
         this.innerHTML = '<table class="table-hover pg-table">';
         this.$PGcontainer.empty();
-
-        this.setBasic();
-
+        $.each(this.Metas, function (i, meta) { this.propNames.push(meta.name.toLowerCase()); }.bind(this));
         this.buildRows();
         this.buildGrid();
         this.CallpostInitFns();
+        this.setBasicBinding();
         this.callOnchangeExecFns();
         this.getvaluesFromPG();//no need
 
@@ -552,22 +551,27 @@
     }.bind(this);
 
     // performs some basic tasks after initialization of variables 
-    this.setBasic = function () {
+    this.setBasicBinding = function () {
         $.each(this.Metas, function (i, meta) {
             this.propNames.push(meta.name.toLowerCase());
-
-            var Name = meta.name;
-            var InpId = '#' + this.wraperId + Name;
+            let Name = meta.name;
+            let InpId = '#' + this.wraperId + Name;
             $('#' + this.wraperId).off("change", InpId);
             if (meta.IsUnique) {
                 this.uniqueProps.push(Name);
-                if ($(InpId).length === 0)
+                //if ($(InpId).length === 0)
                     $('#' + this.wraperId).on("change", InpId, this.checkUnique);
             }
             if (meta.IsRequired) {
                 this.requiredProps.push(Name);
-                if ($(InpId).length === 0)
+                //if ($(InpId).length === 0)
                     $('#' + this.wraperId).on("change", InpId, this.checkRequired);
+            }
+            if (meta.MaskPattern) {
+                $('#' + this.wraperId + " " + InpId).inputmask({
+                    alias: "Regex",
+                    regex: meta.MaskPattern
+                });
             }
         }.bind(this));
     };
@@ -603,6 +607,8 @@
             });
             $e.focus().addClass("Eb-invalid");
         }
+        else
+            $e.removeClass("Eb-invalid");
     }.bind(this);
 
     //??

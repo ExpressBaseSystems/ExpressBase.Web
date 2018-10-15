@@ -48,6 +48,10 @@
             transition: 1s;
         }
 
+    .myTextField[disabled]{
+        background-color: transparent;
+    }
+
     .myLabel {
         font-weight: 400;
         margin: 0px;
@@ -108,7 +112,7 @@
             </div>
             <div class="form-group">
                 <label class="myLabel">Email ID</label>
-                <input id="txtEmailPri" type="text" class="form-control myTextField" style="background: transparent;" title="Email ID" placeholder="Enter Email ID" autocomplete="off" onchange="this.title = 'Email ID : ' + this.value ;" disabled="disabled">
+                <input id="txtEmailPri" type="text" class="form-control myTextField" title="Email ID" placeholder="Enter Email ID" autocomplete="off" onchange="this.title = 'Email ID : ' + this.value ;" disabled="disabled">
             </div>
             <div class="linkDiv" onclick="$('#MU_ChangePwdModal').modal('show');">Change Password</div>
         </div>

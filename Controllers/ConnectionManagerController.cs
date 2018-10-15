@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Connections;
+using ExpressBase.Common.Data;
 using ExpressBase.Common.Messaging;
 using ExpressBase.Common.Messaging.ExpertTexting;
 using ExpressBase.Common.Messaging.Twilio;
@@ -103,9 +104,9 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SMTP()
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP });
-            if ((solutionConnections.EBSolutionConnections.SMTPConnection == null))
-                solutionConnections.EBSolutionConnections.SMTPConnection = new SMTPConnection();
-            ViewBag.SMTP = solutionConnections.EBSolutionConnections.SMTPConnection;
+            if ((solutionConnections.EBSolutionConnections.EmailConnection == null))
+                solutionConnections.EBSolutionConnections.EmailConnection = new EbMailConCollection();
+            ViewBag.SMTP = solutionConnections.EBSolutionConnections.EmailConnection;
 
             return View();
         }
@@ -403,7 +404,7 @@ namespace ExpressBase.Web.Controllers
                 var req = this.HttpContext.Request.Form;
 
                 GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP, SolutionId = req["SolutionId"] });
-                SMTPConnection smtpcon = new SMTPConnection()
+                EbEmail smtpcon = new EbEmail
                 {
                     ProviderName = req["Emailvendor"],
                     NickName = req["NickName"],
@@ -412,16 +413,17 @@ namespace ExpressBase.Web.Controllers
                     EmailAddress = req["Email"],
                     Password = req["Password"],
                     EnableSsl = Convert.ToBoolean(req["IsSSL"]),
-                    IsDefault = false
+                    IsDefault = false,
+                    Preference =ConPreferences.PRIMARY
                 };
 
-                if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
-                {
-                    smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = false, SolutionId = req["SolutionId"] });
-                }
-                else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
+                //if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
+                //{
+                //    smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
+                //    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { email = smtpcon, IsNew = false, SolutionId = req["SolutionId"] });
+                //}
+                //else
+                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { Email = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(smtpcon);
             }
             catch (Exception e)

@@ -22,6 +22,9 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Common.Data;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Constants;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -184,6 +187,38 @@ namespace ExpressBase.Web.Controllers
                 Params = _param
             });
             return 0;
+        }
+
+        public string DataWriterSqlEval(string sql)
+        {
+            //List<object> _inputParams = new List<object>();
+            //Regex r = new Regex(@"insert\sinto\s([\w]*)");
+            //string[] _qrys = sql.Split(CharConstants.SEMI_COLON);
+            //foreach (string q in _qrys)
+            //{
+            //    Match match = r.Match(q);
+            //    string _tname = match.Groups[1].Value;
+            //}
+            List<InputParam> param = new List<InputParam>();
+            List<string> _temp = new List<string>();
+
+            Regex r = new Regex(@"\:\w+|\@\w+g");
+            //Match match = r.Match(sql);
+            //;
+
+            foreach (Match match in r.Matches(sql))
+            {
+                if (!_temp.Contains(match.Value))
+                {
+                    param.Add(new InputParam
+                    {
+                        Column = match.Value,
+                    });
+
+                    _temp.Add(match.Value);
+                }
+            }
+            return JsonConvert.SerializeObject(param);
         }
     }
 }

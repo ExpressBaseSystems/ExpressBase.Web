@@ -30,7 +30,7 @@
         border-radius: 50%;
     }
 
-    .myTextField {
+    /*.myTextField {
         border-radius: 0px;
         background-color: transparent;
         box-shadow: none;
@@ -46,7 +46,7 @@
             border-bottom: 2px solid #aaa;
             box-shadow: none;
             transition: 1s;
-        }
+        }*/
 
     .myLabel {
         font-weight: 400;
@@ -1210,15 +1210,13 @@
 
 @{
     @using Newtonsoft.Json;
-
     var UserData = Html.Raw(JsonConvert.SerializeObject(ViewBag.UserData));
-    var Mode = ViewBag.Mode;
 
 }
 
 <script>
-    var myProfileJs = function (UserData, Mode) {
-        this.mode = Mode;
+    var myProfileJs = function (UserData) {
+
         this.UserData = UserData;
         this.OutDataList = [];
         this.menuBarObj = $("#layout_div").data("EbHeader");
@@ -1278,37 +1276,21 @@
             let pobj = JSON.parse(this.UserData["preferencesjson"]);
             this.$Locale.val(pobj.Locale);
             this.$Timezone.val(pobj.TimeZone);
-
-            if(this.mode !== 'user'){
-                this.$FullName.prop("disabled", true);
-                this.$NickName.prop("disabled", true);
-                //this.$EmailPri.prop("disabled", true);
-                this.$Dob.prop("disabled", true);
-                this.$Gender.prop("disabled", true);
-                this.$EmailSec.prop("disabled", true);
-                this.$PhPri.prop("disabled", true);
-                this.$PhSec.prop("disabled", true);
-                this.$PhLand.prop("disabled", true);
-                this.$PhExt.prop("disabled", true);
-                $(".linkDiv").hide();
-            }
-
         }
 
         this.prepareOutData = function () {
             this.OutDataList = [];
-            if(this.mode === 'user'){                
-                this.pushToOutData("fullname", this.$FullName.val());
-                this.pushToOutData("nickname", this.$NickName.val());
-                this.pushToOutData("email", this.$EmailPri.val());
-                this.pushToOutData("dob", this.$Dob.val());
-                this.pushToOutData("sex", this.$Gender.val());
-                this.pushToOutData("alternateemail", this.$EmailSec.val());
-                this.pushToOutData("phnoprimary", this.$PhPri.val());
-                this.pushToOutData("phnosecondary", this.$PhSec.val());
-                this.pushToOutData("landline", this.$PhLand.val());
-                this.pushToOutData("phextension", this.$PhExt.val());
-            }
+            this.pushToOutData("fullname", this.$FullName.val());
+            this.pushToOutData("nickname", this.$NickName.val());
+            this.pushToOutData("email", this.$EmailPri.val());
+            this.pushToOutData("dob", this.$Dob.val());
+            this.pushToOutData("sex", this.$Gender.val());
+            this.pushToOutData("alternateemail", this.$EmailSec.val());
+            this.pushToOutData("phnoprimary", this.$PhPri.val());
+            this.pushToOutData("phnosecondary", this.$PhSec.val());
+            this.pushToOutData("landline", this.$PhLand.val());
+            this.pushToOutData("phextension", this.$PhExt.val());
+
             let tempobj = { Locale: this.$Locale.val(), TimeZone: this.$Timezone.val(), DefaultLocation: 0 };
             let tempjson = JSON.stringify(tempobj);
             if (this.UserData["preferencesjson"] !== tempjson )
@@ -1404,7 +1386,7 @@
         this.init();
     }
 
-    new myProfileJs(@UserData, '@Mode');
+    new myProfileJs(@UserData);
 
      var d = new EbFileUpload({
         Type:"image",

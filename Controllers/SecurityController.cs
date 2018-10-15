@@ -93,21 +93,52 @@ namespace ExpressBase.Web.Controllers
 		//--------------MY PROFILE------------------------------------------
 		public IActionResult MyProfile()
 		{
-			var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { });
+			if (ViewBag.wc == RoutingConstants.TC)
+				return Redirect("/MyProfile");
+			string mode = "user";
+			if (isTenant())
+				mode = "tenant";
+			var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { WC = ViewBag.wc });
 			ViewBag.UserData = fr.UserData;
+			ViewBag.Mode = mode;
 			return View();
+		}
+
+		[HttpGet("MyProfile")]
+		public IActionResult MyProfile_Tenant()
+		{
+			if (ViewBag.wc == RoutingConstants.TC)
+			{
+				var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { WC = ViewBag.wc });
+				ViewBag.UserData = fr.UserData;
+				return View();
+			}
+			return Redirect("/StatusCode/404");
 		}
 
 		public bool SaveMyProfile(string UserData)
 		{
-			var fr = this.ServiceClient.Get<SaveMyProfileResponse>(new SaveMyProfileRequest {UserData = UserData });
+			bool isTenantAsUser = false;
+			if (isTenant() && (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.DC))
+				isTenantAsUser = true;
+			var fr = this.ServiceClient.Get<SaveMyProfileResponse>(new SaveMyProfileRequest {UserData = UserData, WC = ViewBag.wc, PreferenceOnly = isTenantAsUser });
 			return (fr.RowsAffectd > 0);
 		}
 
 		public bool ChangeUserPassword(string OldPwd, string NewPwd)
 		{
-			ChangeUserPasswordResponse resp = this.ServiceClient.Post<ChangeUserPasswordResponse>(new ChangeUserPasswordRequest { OldPwd = OldPwd, NewPwd = NewPwd, Email = ViewBag.email });
+			if(isTenant() && (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.DC))
+				return false;
+			ChangeUserPasswordResponse resp = this.ServiceClient.Post<ChangeUserPasswordResponse>(new ChangeUserPasswordRequest { OldPwd = OldPwd, NewPwd = NewPwd, Email = ViewBag.email, WC = ViewBag.wc });
 			return resp.isSuccess;
+		}
+
+		private bool isTenant()
+		{
+			foreach (var item in Enum.GetNames(typeof(SystemRoles)))
+				if (this.LoggedInUser.Roles.Contains(item))
+					return true;
+			return false;
 		}
 
 

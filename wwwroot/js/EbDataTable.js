@@ -1677,7 +1677,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
         $(".containerrow").hide();
-        $(".containerrow").prev().children().find("I").removeClass("fa-minus").addClass("fa-plus");
+        $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
     }.bind(this);
 
     this.collapseGroup = function (e) {
@@ -1697,7 +1697,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
         $(".containerrow").hide();
-        $(".containerrow").prev().children().find("I").removeClass("fa-minus").addClass("fa-plus");
+        $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
         this.Api.columns.adjust();
     }.bind(this);
 
@@ -2669,17 +2669,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.drawInlinedv = function (rows, e, idx, colindex) {
         $("#eb_common_loader").EbLoader("show");
-        $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-minus").addClass("fa-plus");
+        $(e.target).parents().closest("td").siblings().children(".tablelink").children("i").removeClass("fa-caret-up").addClass("fa-caret-down");
         this.call2newDv(rows, idx, colindex);
-        $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
+        $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
     };
     this.OpenInlineDv = function (rows, e, idx, colindex) {
-        if ($(e.target).closest("I").hasClass("fa-minus")) {
-            $(e.target).closest("I").removeClass("fa-minus").addClass("fa-plus");
+        if ($(e.target).closest("I").hasClass("fa-caret-up")) {
+            $(e.target).closest("I").removeClass("fa-caret-up").addClass("fa-caret-down");
             $(rows).eq(idx).next().hide();
         }
         else {
-            $(e.target).closest("I").removeClass("fa-plus").addClass("fa-minus");
+            $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
             $(rows).eq(idx).next().show();
         }
     }
@@ -2737,7 +2737,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
         }
         $(".containerrow .close").off("click").on("click", function () {
-            $(this).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-minus").addClass("fa-plus");
+            $(this).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
             $(this).parents().closest(".containerrow").remove();
 
         });

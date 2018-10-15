@@ -199,26 +199,29 @@ namespace ExpressBase.Web.Controllers
             //    Match match = r.Match(q);
             //    string _tname = match.Groups[1].Value;
             //}
-            List<InputParam> param = new List<InputParam>();
-            List<string> _temp = new List<string>();
 
-            Regex r = new Regex(@"\:\w+|\@\w+g");
-            //Match match = r.Match(sql);
-            //;
-
-            foreach (Match match in r.Matches(sql))
+            if (!string.IsNullOrEmpty(sql))
             {
-                if (!_temp.Contains(match.Value))
-                {
-                    param.Add(new InputParam
-                    {
-                        Column = match.Value,
-                    });
+                List<InputParam> param = new List<InputParam>();
+                List<string> _temp = new List<string>();
+                Regex r = new Regex(@"\:\w+|\@\w+g");
 
-                    _temp.Add(match.Value);
+                foreach (Match match in r.Matches(sql))
+                {
+                    if (!_temp.Contains(match.Value))
+                    {
+                        param.Add(new InputParam
+                        {
+                            Column = match.Value,
+                        });
+
+                        _temp.Add(match.Value);
+                    }
                 }
+                return JsonConvert.SerializeObject(param);
             }
-            return JsonConvert.SerializeObject(param);
+            else
+                return null;
         }
     }
 }

@@ -19,6 +19,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
+    this.Sql = null;
     //this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
     this.propGrid = new Eb_PropertyGrid({
@@ -85,33 +86,53 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         //$('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
         if (this.ObjectType === 4) {
             $("#paramsModal-toggle").on("show.bs.modal", this.getInputParams.bind(this));
+            $("#parmSetupSave").off("click").on("click", this.SaveParamsetup.bind(this));
         }
     }
 
-    this.getInputParams = function () {
-        $.ajax({
-            type: 'GET',
-            url: "../CE/DataWriterSqlEval",
-            data: { "sql": window["editor" + tabNum].getValue().trim()},
-            beforeSend: function () {
-            }
-        }).done(function (data) {
-            this.InputParams = JSON.parse(data);
-            this.AppendInpuParams();
-        }.bind(this));
+    this.SaveParamsetup = function (ev) {
+        for (let i = 0; i < this.InputParams.length; i++) {
+            this.InputParams[i].Type = eval($(`select[name="${this.InputParams[i].Column}-DBTYPE"]`).val());
+            this.InputParams[i].Value = $(`input[name="${this.InputParams[i].Column}-VLU"]`).val();
+        }
+        this.EbObject.InputParams.$values = this.InputParams;
     };
+
+    this.getInputParams = function () {
+        if (this.Sql !== window["editor" + tabNum].getValue().trim()) {
+            this.Sql = window["editor" + tabNum].getValue().trim();
+            $.ajax({
+                type: 'GET',
+                url: "../CE/DataWriterSqlEval",
+                data: { "sql": this.Sql },
+                beforeSend: function () {
+                }
+            }).done(function (data) {
+                this.InputParams = JSON.parse(data);
+                this.AppendInpuParams();
+                this.setValues();
+            }.bind(this));
+        }
+    };
+
+    this.setValues = function () {
+        for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
+            $(`select[name="${this.EbObject.InputParams.$values[i].Column}-DBTYPE"]`).val(this.EbObject.InputParams.$values[i].Type);
+            $(`input[name="${this.EbObject.InputParams.$values[i].Column}-VLU"]`).val(this.EbObject.InputParams.$values[i].Value);
+        }
+    }
 
     this.AppendInpuParams = function () {
         $("#paraWinTab_" + tabNum + " tbody").empty();
         for (let i = 0; i < this.InputParams.length; i++) {
-            $("#paraWinTab_" + tabNum+" tbody").append(`<tr>
+            $("#paraWinTab_" + tabNum + " tbody").append(`<tr>
                             <td>${this.InputParams[i].Column}</td>
                             <td>
-                                <select class="form-cont">
+                                <select name="${this.InputParams[i].Column}-DBTYPE" class="form-control">
                                     ${this.setDbType()}
                                 </select>
                             </td>
-                            <td><input type="text" class="form-control"/></td>
+                            <td><input type="text" name="${this.InputParams[i].Column}-VLU" class="form-control"/></td>
                         </tr>`);
         }
     };
@@ -174,7 +195,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
         //this.relatedObjects += this.FilterDialogRefId;
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
-            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + tabNum}, this.AppendFD.bind(this, callback));
+            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + tabNum }, this.AppendFD.bind(this, callback));
     };
 
     this.AppendFD = function (callback, result) {

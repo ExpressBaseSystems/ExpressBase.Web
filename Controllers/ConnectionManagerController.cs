@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Connections;
+using ExpressBase.Common.Data;
 using ExpressBase.Common.Messaging;
 using ExpressBase.Common.Messaging.ExpertTexting;
 using ExpressBase.Common.Messaging.Twilio;
@@ -103,9 +104,9 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SMTP()
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP });
-            if ((solutionConnections.EBSolutionConnections.SMTPConnection == null))
-                solutionConnections.EBSolutionConnections.SMTPConnection = new SMTPConnection();
-            ViewBag.SMTP = solutionConnections.EBSolutionConnections.SMTPConnection;
+            if ((solutionConnections.EBSolutionConnections.EmailConnections == null))
+                solutionConnections.EBSolutionConnections.EmailConnections = new EbMailConCollection();
+            ViewBag.SMTP = solutionConnections.EBSolutionConnections.EmailConnections;
 
             return View();
         }
@@ -279,7 +280,7 @@ namespace ExpressBase.Web.Controllers
                     Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
                 };
 
-                // if (solutionConnections.EBSolutionConnections.SMSConnections == null)
+                if (solutionConnections.EBSolutionConnections.SMSConnections.Capacity == 0)
                 {
                     smscon.Preference = ConPreferences.PRIMARY;
                 }
@@ -403,7 +404,7 @@ namespace ExpressBase.Web.Controllers
                 var req = this.HttpContext.Request.Form;
 
                 GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP, SolutionId = req["SolutionId"] });
-                SMTPConnection smtpcon = new SMTPConnection()
+                EbEmail smtpcon = new EbEmail
                 {
                     ProviderName = req["Emailvendor"],
                     NickName = req["NickName"],
@@ -414,14 +415,15 @@ namespace ExpressBase.Web.Controllers
                     EnableSsl = Convert.ToBoolean(req["IsSSL"]),
                     IsDefault = false
                 };
-
-                if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
-                {
-                    smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = false, SolutionId = req["SolutionId"] });
-                }
-                else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { SMTPConnection = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
+                if (solutionConnections.EBSolutionConnections.EmailConnections.Capacity == 0)
+                    smtpcon.Preference = ConPreferences.PRIMARY;
+                //if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
+                //{
+                //    smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
+                //    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { email = smtpcon, IsNew = false, SolutionId = req["SolutionId"] });
+                //}
+                //else
+                res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { Email = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(smtpcon);
             }
             catch (Exception e)

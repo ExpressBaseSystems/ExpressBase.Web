@@ -104,9 +104,9 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SMTP()
         {
             GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP });
-            if ((solutionConnections.EBSolutionConnections.EmailConnection == null))
-                solutionConnections.EBSolutionConnections.EmailConnection = new EbMailConCollection();
-            ViewBag.SMTP = solutionConnections.EBSolutionConnections.EmailConnection;
+            if ((solutionConnections.EBSolutionConnections.EmailConnections == null))
+                solutionConnections.EBSolutionConnections.EmailConnections = new EbMailConCollection();
+            ViewBag.SMTP = solutionConnections.EBSolutionConnections.EmailConnections;
 
             return View();
         }
@@ -280,7 +280,7 @@ namespace ExpressBase.Web.Controllers
                     Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
                 };
 
-                // if (solutionConnections.EBSolutionConnections.SMSConnections == null)
+                if (solutionConnections.EBSolutionConnections.SMSConnections.Capacity == 0)
                 {
                     smscon.Preference = ConPreferences.PRIMARY;
                 }
@@ -413,17 +413,17 @@ namespace ExpressBase.Web.Controllers
                     EmailAddress = req["Email"],
                     Password = req["Password"],
                     EnableSsl = Convert.ToBoolean(req["IsSSL"]),
-                    IsDefault = false,
-                    Preference =ConPreferences.PRIMARY
+                    IsDefault = false
                 };
-
+                if (solutionConnections.EBSolutionConnections.EmailConnections.Capacity == 0)
+                    smtpcon.Preference = ConPreferences.PRIMARY;
                 //if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
                 //{
                 //    smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
                 //    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { email = smtpcon, IsNew = false, SolutionId = req["SolutionId"] });
                 //}
                 //else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { Email = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
+                res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { Email = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(smtpcon);
             }
             catch (Exception e)

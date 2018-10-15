@@ -22,6 +22,9 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Common.Data;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Constants;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -120,21 +123,13 @@ namespace ExpressBase.Web.Controllers
             return rlist;
         }
 
-        public IActionResult GetFilterBody(string dvobj)
+        public IActionResult GetFilterBody(string dvobj, string contextId)
         {
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
             dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            //if (dsObject.FilterDialog != null)
-            //{
-            //    foreach (EbControl control in dsObject.FilterDialog.Controls)
-            //    {
-            //        if (control is EbSimpleSelect)
-            //        {
-            //            (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-            //        }
-            //    }
-            //}
             Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            if(dsObject.FilterDialog != null)
+                EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
             return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu });
         }
 
@@ -188,10 +183,42 @@ namespace ExpressBase.Web.Controllers
         {
             List<Param> _param = new List<Param> { new Param { Name = "ids", Type = ((int)EbDbTypes.Int32).ToString(), Value = val.ToString() } };
             ServiceClient.Post(new PdfCreateServiceMqRequest {
-                Refid = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2174-2909-2174-2909" ,
+                ObjId = /*"ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2174-2909-2174-2909"*/2174 ,
                 Params = _param
             });
             return 0;
+        }
+
+        public string DataWriterSqlEval(string sql)
+        {
+            //List<object> _inputParams = new List<object>();
+            //Regex r = new Regex(@"insert\sinto\s([\w]*)");
+            //string[] _qrys = sql.Split(CharConstants.SEMI_COLON);
+            //foreach (string q in _qrys)
+            //{
+            //    Match match = r.Match(q);
+            //    string _tname = match.Groups[1].Value;
+            //}
+            List<InputParam> param = new List<InputParam>();
+            List<string> _temp = new List<string>();
+
+            Regex r = new Regex(@"\:\w+|\@\w+g");
+            //Match match = r.Match(sql);
+            //;
+
+            foreach (Match match in r.Matches(sql))
+            {
+                if (!_temp.Contains(match.Value))
+                {
+                    param.Add(new InputParam
+                    {
+                        Column = match.Value,
+                    });
+
+                    _temp.Add(match.Value);
+                }
+            }
+            return JsonConvert.SerializeObject(param);
         }
     }
 }

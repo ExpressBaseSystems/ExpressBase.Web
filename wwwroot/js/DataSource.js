@@ -14,6 +14,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Ssurl = ssurl;
     this.delay = 300;
 
+    const _DataReader = "DataReader";
+    const _DataWriter = "DataWriter";
+
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
     //this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
@@ -48,6 +51,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
 
     this.Init = function () {
+        let dsType = "";
         //$('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         //$('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
@@ -55,15 +59,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
         $(".selectpicker").selectpicker();
 
+        if (this.ObjectType === 2)
+            dsType = _DataReader;
+        else if (this.ObjectType === 4)
+            dsType = _DataWriter;
+
         if (this.EbObject === null) {
-            if (this.ObjectType === 2) {
-                this.EbObject = new EbObjects["EbDataReader"]("EbDataReader1");
-                this.propGrid.setObject(this.EbObject, AllMetas["EbDataReader"]);
-            }
-            else if(this.ObjectType === 4){
-                this.EbObject = new EbObjects["EbDataWriter"]("EbDataWriter1");
-                this.propGrid.setObject(this.EbObject, AllMetas["EbDataWriter"]);
-            }
+            this.EbObject = new EbObjects["Eb" + dsType](dsType + "1");
             commonO.Current_obj = this.EbObject;
             // this.FD = false;
         }
@@ -74,19 +76,63 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 this.GetFD(callback);
             }
         }
+
+        this.propGrid.setObject(this.EbObject, AllMetas["Eb" + dsType]);
         this.GenerateButtons();
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
         //$(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
         //$('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
+        if (this.ObjectType === 4) {
+            $("#paramsModal-toggle").on("show.bs.modal", this.getInputParams.bind(this));
+        }
     }
+
+    this.getInputParams = function () {
+        $.ajax({
+            type: 'GET',
+            url: "../CE/DataWriterSqlEval",
+            data: { "sql": window["editor" + tabNum].getValue().trim()},
+            beforeSend: function () {
+            }
+        }).done(function (data) {
+            this.InputParams = JSON.parse(data);
+            this.AppendInpuParams();
+        }.bind(this));
+    };
+
+    this.AppendInpuParams = function () {
+        $("#paraWinTab_" + tabNum + " tbody").empty();
+        for (let i = 0; i < this.InputParams.length; i++) {
+            $("#paraWinTab_" + tabNum+" tbody").append(`<tr>
+                            <td>${this.InputParams[i].Column}</td>
+                            <td>
+                                <select class="form-cont">
+                                    ${this.setDbType()}
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control"/></td>
+                        </tr>`);
+        }
+    };
+
+    this.setDbType = function () {
+        let d = [];
+        for (let k in EbDbType) {
+            d.push(`<option value="${EbDbType[k]}">${k}</option>`);
+        }
+        return d.join(",");
+    };
 
     this.GenerateButtons = function () {
         $("#obj_icons").empty();
         $("#obj_icons").append(`
             <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'> <i class='fa fa-play' aria-hidden='true'></i></button >
             `);
+
         $("#run").off("click").on("click", this.RunDs.bind(this));
+        if (this.ObjectType === 4)
+            $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle">P</button>`);
 
         //$(".adv-dsb-cont").hide(this.delay);
         $(".simple-dsb-cont").hide(this.delay);
@@ -128,7 +174,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
         //this.relatedObjects += this.FilterDialogRefId;
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
-            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this, callback));
+            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + tabNum}, this.AppendFD.bind(this, callback));
     };
 
     this.AppendFD = function (callback, result) {

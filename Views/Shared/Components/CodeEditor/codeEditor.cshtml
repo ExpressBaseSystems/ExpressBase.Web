@@ -110,6 +110,9 @@
     .CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
         z-index: 2;
     }
+    #paramsModal-toggle .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+        vertical-align: middle;
+    }
 </style>
 <section class="ds-page ds-cont adv-dsb-cont" id="ds-page@(ViewBag.tabnum)">
     <div class='code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
@@ -222,7 +225,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" id="parmSetupSave" data-dismiss="modal">Save</button>
             </div>
         </div>
     </div>

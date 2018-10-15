@@ -30,7 +30,7 @@
         border-radius: 50%;
     }
 
-    .myTextField {
+    /*.myTextField {
         border-radius: 0px;
         background-color: transparent;
         box-shadow: none;
@@ -46,11 +46,7 @@
             border-bottom: 2px solid #aaa;
             box-shadow: none;
             transition: 1s;
-        }
-
-    .myTextField[disabled]{
-        background-color: transparent;
-    }
+        }*/
 
     .myLabel {
         font-weight: 400;
@@ -106,13 +102,13 @@
                 <label class="myLabel">Full Name</label>
                 <input id="txtFullName" type="text" class="form-control myTextField" title="Full Name" placeholder="Enter Full Name" autocomplete="off" onchange="this.title = 'Full Name : ' + this.value ;">
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label class="myLabel">Nick Name</label>
                 <input id="txtNickName" type="text" class="form-control myTextField" title="Nick Name" placeholder="Enter Nick Name" autocomplete="off" onchange="this.title = 'Nick Name : ' + this.value ;">
-            </div>
+            </div>*@
             <div class="form-group">
                 <label class="myLabel">Email ID</label>
-                <input id="txtEmailPri" type="text" class="form-control myTextField" title="Email ID" placeholder="Enter Email ID" autocomplete="off" onchange="this.title = 'Email ID : ' + this.value ;" disabled="disabled">
+                <input id="txtEmailPri" type="text" class="form-control myTextField" style="background: transparent;" title="Email ID" placeholder="Enter Email ID" autocomplete="off" onchange="this.title = 'Email ID : ' + this.value ;" disabled="disabled">
             </div>
             <div class="linkDiv" onclick="$('#MU_ChangePwdModal').modal('show');">Change Password</div>
         </div>
@@ -1214,21 +1210,19 @@
 
 @{
     @using Newtonsoft.Json;
-
     var UserData = Html.Raw(JsonConvert.SerializeObject(ViewBag.UserData));
-    var Mode = ViewBag.Mode;
 
 }
 
 <script>
-    var myProfileJs = function (UserData, Mode) {
-        this.mode = Mode;
+    var myProfileJs = function (UserData) {
+
         this.UserData = UserData;
         this.OutDataList = [];
         this.menuBarObj = $("#layout_div").data("EbHeader");
         //DOM ELEMENTS
         this.$FullName = $("#txtFullName");
-        this.$NickName = $("#txtNickName");
+        //this.$NickName = $("#txtNickName");
         this.$EmailPri = $("#txtEmailPri");
         this.$Dob = $("#txtDob");
         this.$Gender = $("#selGender");
@@ -1269,54 +1263,38 @@
         }
         this.initFormData = function () {
             this.$FullName.val(this.UserData["fullname"]);
-            this.$NickName.val(this.UserData["nickname"]);
+            //this.$NickName.val(this.UserData["nickname"]);
             this.$EmailPri.val(this.UserData["email"]);
             this.$Dob.val(this.UserData["dob"]);
             this.$Gender.val(this.UserData["sex"]);
-            this.$EmailSec.val(this.UserData["alternateemail"]);
-            this.$PhPri.val(this.UserData["phnoprimary"]);
-            this.$PhSec.val(this.UserData["phnosecondary"]);
-            this.$PhLand.val(this.UserData["landline"]);
-            this.$PhExt.val(this.UserData["phextension"]);
+            this.$EmailSec.val(this.UserData["alternate_email"]);
+            this.$PhPri.val(this.UserData["ph_primary"]);
+            this.$PhSec.val(this.UserData["ph_secondary"]);
+            this.$PhLand.val(this.UserData["ph_landline"]);
+            this.$PhExt.val(this.UserData["ph_land_extensn"]);
             //this.DefaultLoc.val(this.UserData[""]);
-            let pobj = JSON.parse(this.UserData["preferencesjson"]);
+            let pobj = JSON.parse(this.UserData["preferences_json"]);
             this.$Locale.val(pobj.Locale);
             this.$Timezone.val(pobj.TimeZone);
-
-            if(this.mode !== 'user'){
-                this.$FullName.prop("disabled", true);
-                this.$NickName.prop("disabled", true);
-                //this.$EmailPri.prop("disabled", true);
-                this.$Dob.prop("disabled", true);
-                this.$Gender.prop("disabled", true);
-                this.$EmailSec.prop("disabled", true);
-                this.$PhPri.prop("disabled", true);
-                this.$PhSec.prop("disabled", true);
-                this.$PhLand.prop("disabled", true);
-                this.$PhExt.prop("disabled", true);
-                $(".linkDiv").hide();
-            }
-
         }
 
         this.prepareOutData = function () {
             this.OutDataList = [];
-            if(this.mode === 'user'){                
-                this.pushToOutData("fullname", this.$FullName.val());
-                this.pushToOutData("nickname", this.$NickName.val());
-                this.pushToOutData("email", this.$EmailPri.val());
-                this.pushToOutData("dob", this.$Dob.val());
-                this.pushToOutData("sex", this.$Gender.val());
-                this.pushToOutData("alternateemail", this.$EmailSec.val());
-                this.pushToOutData("phnoprimary", this.$PhPri.val());
-                this.pushToOutData("phnosecondary", this.$PhSec.val());
-                this.pushToOutData("landline", this.$PhLand.val());
-                this.pushToOutData("phextension", this.$PhExt.val());
-            }
+            this.pushToOutData("fullname", this.$FullName.val());
+            //this.pushToOutData("nickname", this.$NickName.val());
+            this.pushToOutData("email", this.$EmailPri.val());
+            this.pushToOutData("dob", this.$Dob.val());
+            this.pushToOutData("sex", this.$Gender.val());
+            this.pushToOutData("alternate_email", this.$EmailSec.val());
+            this.pushToOutData("ph_primary", this.$PhPri.val());
+            this.pushToOutData("ph_secondary", this.$PhSec.val());
+            this.pushToOutData("ph_landline", this.$PhLand.val());
+            this.pushToOutData("ph_land_extensn", this.$PhExt.val());
+
             let tempobj = { Locale: this.$Locale.val(), TimeZone: this.$Timezone.val(), DefaultLocation: 0 };
             let tempjson = JSON.stringify(tempobj);
-            if (this.UserData["preferencesjson"] !== tempjson )
-                this.OutDataList.push({ Key: "preferencesjson", Value: tempjson });
+            if (this.UserData["preferences_json"] !== tempjson )
+                this.OutDataList.push({ Key: "preferences_json", Value: tempjson });
             if (this.OutDataList.length > 0)
                 return true;
             EbMessage("show", { Message: 'No Changes to Save', AutoHide: true, Background: '#0000aa' });
@@ -1408,7 +1386,7 @@
         this.init();
     }
 
-    new myProfileJs(@UserData, '@Mode');
+    new myProfileJs(@UserData);
 
      var d = new EbFileUpload({
         Type:"image",

@@ -6,13 +6,14 @@
     this.toolBoxid = options.toolBoxId;
     this.rootContainerObj = null;
     this.$propGrid = $("#" + options.PGId);
+
+    $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
+
     this.$form = $("#" + this.formId);
     this.EbObject = options.objInEditMode;
     this.tempArr = [];
     this.isEditMode = false;
     commonO.Current_obj = this.EbObject;
-
-
 
     this.controlCounters = CtrlCounters;//Global
     this.currentProperty = null;

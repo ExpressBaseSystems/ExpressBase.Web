@@ -371,8 +371,8 @@
 
 .form-buider-form .Eb-ctrlContainer:focus {
     outline: none;
-    border: dashed 1px #9699a5;
-    margin: 1px;
+    border: dashed 1px rgb(150, 153, 165);
+    box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.109);
 }
 
 /*rendering*/

@@ -278,15 +278,13 @@
         if (target) {
             //drop from toolbox to form
             if ($(source).attr("id") === "form-buider-toolBox") {
-                var $el = $(el);
-                var type = $el.attr("eb-type").trim();
-                var ebsid = type + (this.controlCounters[type + "Counter"])++;
-                var $ctrl = new EbObjects["Eb" + type](ebsid).$Control;
+                let $el = $(el);
+                let type = $el.attr("eb-type").trim();
+                let ebsid = type + (this.controlCounters[type + "Counter"])++;
+                let $ctrl = new EbObjects["Eb" + type](ebsid).$Control;
                 let $sibling = $(sibling);
                 $el.remove();
-
-                var t = $("<div class='controlTile'>" + $ctrl.outerHTML() + "</div>");
-                var ctrlObj = new EbObjects["Eb" + type](ebsid);
+                let ctrlObj = new EbObjects["Eb" + type](ebsid);
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
                     $ctrl.insertBefore($sibling);
@@ -315,15 +313,15 @@
         let parent = $target.attr("eb-form") ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($target.attr("ebsid"));
         let = tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
         EbOnChangeUIfns.EbTabControl.adjustPanesHeightToHighest(tabControl.EbSid, tabControl);
-    }
+    };
 
     this.dropedCtrlInit = function ($ctrl, type, id) {
         $ctrl.attr("tabindex", "1");
         this.ctrlOnClickBinder($ctrl, type);
         $ctrl.on("focus", this.controlOnFocus.bind(this));
-        $ctrl.attr("id", id).attr("ebsid", id);
+        $ctrl.attr("id", "cont_" + id).attr("ebsid", id);
         $ctrl.attr("eb-type", type);
-    }
+    };
 
     //this.controlCloseOnClick = function (e) {
     //    var ControlTile = $(e.target).parent().parent();

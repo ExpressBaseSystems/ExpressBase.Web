@@ -181,64 +181,88 @@
 
     };
 
-    //this.onDropFn = function (el, target, source, sibling) {
-
-    //    if (target) {
-    //        //drop from toolbox to form
-    //        if ($(source).attr("id") === "form-buider-toolBox") {
-    //            el.className = 'controlTile';
-    //            var ctrl = $(el);
-    //            var type = ctrl.attr("eb-type").trim();
-    //            var id = type + (this.controlCounters[type + "Counter"])++;
-    //            ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-    //            ctrl.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-    //            ctrl.attr("id", id);
-    //            this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
-    //            ctrl.html("<div class='ctrlHead'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>"
-    //                + new EbObjects["Eb" + type](id).Html());
-
-    //            ctrl.find(".close").on("click", this.controlCloseOnClick.bind(this));
-    //            ctrl.focus();
-    //        }
-    //        else
-    //            console.log("ondrop else : removed");
-    //        this.saveObj();
-    //    }
-    //};
 
 
     this.onDropFn = function (el, target, source, sibling) {
-
+        let $target = $(target);
         if (target) {
             //drop from toolbox to form
             if ($(source).attr("id") === "form-buider-toolBox") {
-                var $el = $(el);
-                var type = $el.attr("eb-type").trim();
-                var id = type + (this.controlCounters[type + "Counter"])++;
-                var $ctrl = new EbObjects["Eb" + type](id).$Control;
+                let $el = $(el);
+                let type = $el.attr("eb-type").trim();
+                let ebsid = type + (this.controlCounters[type + "Counter"])++;
+                let $ctrl = new EbObjects["Eb" + type](ebsid).$Control;
+                let $sibling = $(sibling);
                 $el.remove();
-
-                var t = $("<div class='controlTile'>" + $ctrl.outerHTML() + "</div>");
-
-                if (sibling)
-                    $ctrl.insertBefore($(sibling));
-                else
-                    $(target).append($ctrl);
-
-                $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-                $ctrl.on("focus", this.controlOnFocus.bind(this));
-                $ctrl.attr("id", id);
-                $ctrl.attr("eb-type", type);
-                this.rootContainerObj.Controls.Append(new EbObjects["Eb" + type](id));
+                let ctrlObj = new EbObjects["Eb" + type](ebsid);
+                this.dropedCtrlInit($ctrl, type, ebsid);
+                if (sibling) {
+                    $ctrl.insertBefore($sibling);
+                    var idx = $sibling.index() - 1;
+                    this.rootContainerObj.Controls.InsertAt(idx, ctrlObj);
+                }
+                else {
+                    $target.append($ctrl);
+                    this.rootContainerObj.Controls.Append(ctrlObj);
+                }
 
                 $ctrl.focus();
-                $ctrl.contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
+                ctrlObj.Label = ebsid;
+                ctrlObj.HelpText = "";
+                if (ctrlObj.IsContainer)
+                    this.InitContCtrl(ctrlObj, $ctrl);
+                this.updateControlUI(ebsid);
             }
-            else
-                console.log("ondrop else : removed");
-            this.saveObj();
+            let $parent = $target.closest(".ebcont-ctrl");
+            if ($parent.attr("ctype") === "TabPane")
+                this.adjustPanesHeight($parent);
         }
     };
+
+    this.adjustPanesHeight = function ($target) {
+        let parent = $target.attr("eb-form") ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($target.attr("ebsid"));
+        let = tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
+        EbOnChangeUIfns.EbTabControl.adjustPanesHeightToHighest(tabControl.EbSid, tabControl);
+    };
+
+    this.dropedCtrlInit = function ($ctrl, type, id) {
+        $ctrl.attr("tabindex", "1");
+        this.ctrlOnClickBinder($ctrl, type);
+        $ctrl.on("focus", this.controlOnFocus.bind(this));
+        $ctrl.attr("id", "cont_" + id).attr("ebsid", id);
+        $ctrl.attr("eb-type", type);
+    };
+
+    this.ctrlOnClickBinder = function ($ctrl, type) {
+        if (type === "TabControl")
+            $ctrl.on("click", function myfunction() {
+                if (event.target.getAttribute("data-toggle") !== "tab")
+                    event.stopPropagation();
+                $(event.target).closest(".Eb-ctrlContainer").focus();
+            });
+        else
+            $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
+    };
+
+    this.updateControlUI = function (ebsid, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(ebsid);
+        let _type = obj.ObjType
+        $.each(obj, function (propName, propVal) {
+            let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
+            if (meta && meta.IsUIproperty)
+                this.updateUIProp(propName, ebsid, _type);
+        }.bind(this));
+    };
+
+    this.updateUIProp = function (propName, id, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(id);
+        let NSS = getObjByval(AllMetas["Eb" + type], "name", propName).UIChangefn;
+        if (NSS) {
+            let NS1 = NSS.split(".")[0];
+            let NS2 = NSS.split(".")[1];
+            EbOnChangeUIfns[NS1][NS2](id, obj);
+        }
+    }
 
     this.del = function (ce) {
         var $e = $(ce.trigger.context);

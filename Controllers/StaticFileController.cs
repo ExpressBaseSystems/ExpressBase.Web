@@ -352,6 +352,8 @@ namespace ExpressBase.Web.Controllers
 
                         if (res.FileRefId > 0)
                             Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
                     }
                 }
             }
@@ -398,6 +400,8 @@ namespace ExpressBase.Web.Controllers
 
                         if (res.FileRefId > 0)
                             Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
                     }
                 }
             }
@@ -440,6 +444,8 @@ namespace ExpressBase.Web.Controllers
 
                         if (res.FileRefId > 0)
                             Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
                     }
                 }
             }
@@ -484,6 +490,8 @@ namespace ExpressBase.Web.Controllers
 
                         if (res.FileRefId > 0)
                             Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
                     }
                 }
             }
@@ -523,6 +531,8 @@ namespace ExpressBase.Web.Controllers
 
                 if (res.FileRefId > 0)
                     Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                else
+                    Console.WriteLine("Exception: Img Upload Failure");
             }
             catch (Exception e)
             {

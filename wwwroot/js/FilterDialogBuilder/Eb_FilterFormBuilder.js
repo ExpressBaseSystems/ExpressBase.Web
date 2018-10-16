@@ -4,9 +4,9 @@
     this.Name = formid;
     this.toolBoxid = toolBoxid;
     this.rootContainerObj = null;
-    this.formid = formid;
+    this.formId = formid;
     this.$propGrid = $("#" + propGridId);
-    this.$form = $("#" + formid);
+    this.$form = $("#" + this.formId);
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
 
@@ -32,18 +32,16 @@
     this.movingObj = {};
 
     this.controlOnFocus = function (e) {
-        if (e.target.id === this.formid) {
+        if (e.target.id === this.formId) {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
             return;
         }
         else
             this.curControl = $(e.target).closest(".Eb-ctrlContainer");
-        var id = this.curControl.attr("id");
+        let ebsid = this.curControl.attr("ebsid");
         e.stopPropagation();
-        this.curControl.children('.ctrlHead').show();
-        this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
-        this.CurColCount = $(e.target).val();
+        this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
         //  this.PGobj.ReadOnly();
     };
 
@@ -79,7 +77,7 @@
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
-        this.rootContainerObj = new EbObjects.EbFilterDialog(formid);
+        this.rootContainerObj = new EbObjects.EbFilterDialog(this.formId);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
     }
@@ -266,7 +264,7 @@
 
     this.del = function (ce) {
         var $e = $(ce.trigger.context);
-        var id = $e.attr("id");
+        var id = $e.attr("ebsid");
         this.DelCtrl(id);
     }.bind(this);
 
@@ -382,11 +380,11 @@
     };
 
     this.Init = function () {
-        this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
+        this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formId)], {
             removeOnSpill: false,
             copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
             copySortSource: true,
-            //mirrorContainer: document.getElementById(this.formid),
+            //mirrorContainer: document.getElementById(this.formId),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });

@@ -55,7 +55,7 @@
     let formBuilderObj = null;
     let objid =$("#objid").val();
     let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
-    let FBid = editModeFormObj ? editModeFormObj.Name : "WebForm1";
+    let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm1";
     let ToolBoxId = "form-buider-toolBox";
     let PGid = "form-buider-propGrid";
     let PGformId = "form-buider-propGrid";

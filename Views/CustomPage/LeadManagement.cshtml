@@ -347,14 +347,9 @@
                     <button id="btnNextImgPage" class="ebbtn eb_btn-sm ">Next <i class="fa fa-chevron-right"></i></button>
                     <button id="btnLastImgPage" class="ebbtn eb_btn-sm ">Last <i class="fa fa-step-forward"></i></button>
                 </div>
-                @{ 
-                    if(ViewBag.Env == "Development" || ViewBag.Env == "Staging")
-                    {
-                        <div style="text-align:right; padding: 15px 15px; display:inline-block; width:20%;">
-                            <button id="btnUploadImg" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
-                        </div>
-                    }
-                }
+				<div style="text-align:right; padding: 15px 15px; display:inline-block; width:20%;">
+					<button id="btnUploadImg" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
+				</div>
                 <div id="divAllImg"> </div>
                 @*<div style="text-align: center; padding-top: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>*@
             </div>

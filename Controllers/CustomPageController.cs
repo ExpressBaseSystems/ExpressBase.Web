@@ -18,6 +18,8 @@ namespace ExpressBase.Web.Controllers
 	{
 		public CustomPageController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
+		[HttpGet("leadmanagement/{ac}")]
+		[HttpGet("leadmanagement")]
 		public IActionResult LeadManagement(string ac)
 		{
 			//mode=0 -> new customer
@@ -45,6 +47,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.SourceCategoryList = fr.SourceCategoryList;
 			ViewBag.SubCategoryList = fr.SubCategoryList;
 			ViewBag.StatusList = fr.StatusList;
+			ViewBag.ServiceList = fr.ServiceList;
 
 			ViewBag.ImageIdList = fr.ImageIdList;
 

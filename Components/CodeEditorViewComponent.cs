@@ -35,6 +35,10 @@ namespace ExpressBase.Web.Components
             //ViewBag.SqlFns = Getsqlfns((int)EbObjectTypes.SqlFunction);
             ViewBag.ssurl = ssurl;
             //ViewBag.TableSchema = GetTableSchemaRequest();
+            ViewBag.EbDbType = Enum.GetValues(typeof(EbDbTypes))
+               .Cast<EbDbTypes>()
+               .ToDictionary(t => t.ToString(), t =>(int)t );
+
             return View("codeEditor");
         }
         public List<string> Getsqlfns(int obj_type)

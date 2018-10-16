@@ -12,7 +12,7 @@
     }
     if (!ViewBag.RenderLimit)
     {
-        Layout = "~/Views/Shared/_Layout1.cshtml";
+        Layout = "~/Views/Shared/LayoutBuilders.cshtml";
     }
 
 }
@@ -120,7 +120,7 @@
             $("#filter").trigger("click");
             return;
         }
-        $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${'@ViewBag.Refid'}&Params=${JSON.stringify(ParamsArray)}`);
+        $("#reportIframe").attr("src", `../ReportRender/Renderlink?refid=${'@ViewBag.Refid'}&_params=${btoa(JSON.stringify(ParamsArray))}`);
        // $("#RptModal").modal('hide');
         //$.LoadingOverlay("hide");
         }
@@ -148,7 +148,8 @@ else
 <style>
 
     .repdiv_parent {
-        height: calc(100vh - 40px);
+        height: calc(100vh);
+        padding-top: 38px;
     }
     .rep-inner{
         height:100%

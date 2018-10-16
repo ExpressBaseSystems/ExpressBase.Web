@@ -179,7 +179,7 @@ td {
 }
 
 table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected {
-    color: #090808;
+    color: white !important;
 }
 
 .eb_finput {
@@ -286,14 +286,19 @@ div.dataTables_wrapper div.dataTables_processing {
 }
 
 .odd{
-    background-color: rgba(49,99,150,0.09) !important;
+    background-color: white !important;
 }
 
-.even:hover {
-    background-color: #f3f3f3 !important;
+.even {
+    background-color: white !important;
 }
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
-    background-color: unset !important;
+    background-color: #08C !important;
+}
+
+table.dataTable td.focus {
+    outline: 3px solid #00080e;
+    outline-offset: -1px;
 }
 
 .objlist {
@@ -407,13 +412,13 @@ table.dataTable tbody td.dt-body-right {
 
 
 .div.dataTables_wrapper dataTables_scrollFoot .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
-    height: 22px;
+    height: 30px;
 }
 .div.dataTables_wrapper DTFC_LeftFootWrapper .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
-    height: 22px;
+    height: 30px;
 }
 .div.dataTables_wrapper DTFC_RightFootWrapper .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
-    height: 22px;
+    height: 30px;
 }
 
 .between-inp2 {

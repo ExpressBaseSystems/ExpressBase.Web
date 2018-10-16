@@ -329,15 +329,17 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             else {
                 if (this.FD) {
-                    $.each(dvcontainerObj.dvcol, function (i, obj) {
-                        if (focusedId === "sub_window_" + obj.tableId)
-                            obj.stickBtn.minimise();
-                        else
-                            obj.stickBtn.hide();
-                    });
+                    //$.each(dvcontainerObj.dvcol, function (i, obj) {
+                    //    if (focusedId === "sub_window_" + obj.tableId)
+                    //        obj.stickBtn.minimise();
+                    //    else
+                    //        obj.stickBtn.hide();
+                    //});
+                    this.stickBtn.minimise();
                 }
                 else
-                    dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+                    this.stickBtn.hide();
+                    //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
             }
             
             filterChanged = false;

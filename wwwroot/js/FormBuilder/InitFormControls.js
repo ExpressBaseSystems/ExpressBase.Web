@@ -12,7 +12,7 @@
 
     this.Date = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
-        if (ctrl.showDateAs_ === 1) {
+        if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);

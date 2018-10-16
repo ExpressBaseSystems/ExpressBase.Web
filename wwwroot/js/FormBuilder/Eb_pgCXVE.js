@@ -4,6 +4,7 @@
     this.pgCXE_Cont_Slctr = "#" + this.PGobj.wraperId + " .pgCXEditor-Cont";
     this.CEctrlsContId = this.PGobj.wraperId + "_CEctrlsCont";
     this.CE_all_ctrlsContId = this.PGobj.wraperId + "_CE_all_ctrlsCont";
+    this.modalBg_Slctr = "#" + this.PGobj.wraperId + " .pgCXEditor-bg";
     this.OnCXE_OK = function (obj) { };
     this.OSE_curTypeObj = null;
     this.onAddToCE = function () { };
@@ -42,7 +43,6 @@
             PropsObj[_CurProp] = this.MLEObj.get();
 
         this.OnCXE_OK(PropsObj[_CurProp]);
-        this.reDrawRelatedPGrows();
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         if ((this.editor > 6 && this.editor < 15) || (this.editor > 15 && this.editor < 15)) {
             let func = this.PGobj.OnChangeExec[_CurProp]
@@ -50,9 +50,12 @@
                 func.bind(PropsObj, this.PGobj)();// call Onchange exec for non inp field CXVEs
             }
         }
+        this.CXVE_close();
     };
 
     this.CXVE_close = function (e) {
+        $(this.modalBg_Slctr).hide(500);
+        this.PGobj.isModalOpen = false;
         this.reDrawRelatedPGrows();
     };
 
@@ -103,6 +106,7 @@
     };
 
     this.pgCXE_BtnClicked = function (e) {
+        this.PGobj.isModalOpen = true;
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurMeta = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp);
         this.curCXEbtn = $(e.target);
@@ -120,7 +124,7 @@
         this.CurProplabel = getObjByval(_meta, "name", this.PGobj.CurProp).alias || this.PGobj.CurProp;
         //this.CurProplabel = this.CurMeta.alias || this.PGobj.CurProp;
         if (!(this.editor === 17 || this.editor === 14 || this.editor === 21))
-            $("#" + this.PGobj.wraperId + " .pgCXEditor-bg").show(450, this.pgCXEshowCallback.bind(this));
+            $(this.modalBg_Slctr).show(450, this.pgCXEshowCallback.bind(this));
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         //this.CurEditor = this.CurMeta.editor;
         if (this.editor > 6 && this.editor < 11 || this.editor === 22 || this.editor === 24 || this.editor === 26)
@@ -893,7 +897,7 @@
             + `<div class="pgCXEditor-Cont" style="width:${modalWidth}px; height:${modalHeight}px;right:${this.modalRight}px;top:${this.modalTop}px;">`
 
             + '<div class="modal-header">'
-            + '<button type="button" class="close" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);" >&times;</button>'
+            + '<button type="button" class="close">&times;</button>'
             + '<h4 class="modal-title"> </h4>'
             + '</div>'
 
@@ -901,7 +905,7 @@
             + '<div class="modal-footer">'
             + '<div class="modal-footer-body">'
             + '</div>'
-            + '<button type="button" name="CXE_OK" class="btn" onclick="$(\'#' + this.PGobj.wraperId + ' .pgCXEditor-bg\').hide(500);">OK</button>'
+            + '<button type="button" name="CXE_OK" class="btn">OK</button>'
             + '</div>'
 
             + '</div>'

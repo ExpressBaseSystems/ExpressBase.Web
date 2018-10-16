@@ -14,8 +14,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Ssurl = ssurl;
     this.delay = 300;
 
+    const _DataReader = "DataReader";
+    const _DataWriter = "DataWriter";
+
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
+    this.Sql = null;
     //this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
 
     this.propGrid = new Eb_PropertyGrid({
@@ -48,40 +52,108 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
 
     this.Init = function () {
+        let dsType = "";
         //$('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
         //$('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
         //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste', (this.SetCode.bind(this)));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
-        $(".selectpicker").selectpicker();             
+        $(".selectpicker").selectpicker();
+
+        if (this.ObjectType === 2)
+            dsType = _DataReader;
+        else if (this.ObjectType === 4)
+            dsType = _DataWriter;
 
         if (this.EbObject === null) {
-            this.EbObject = new EbObjects["EbDataSource"]("EbDataSource1");
+            this.EbObject = new EbObjects["Eb" + dsType](dsType + "1");
             commonO.Current_obj = this.EbObject;
-           // this.FD = false;
+            // this.FD = false;
         }
         else {
-			if (this.EbObject.FilterDialogRefId !== "") {
-			//this.FD = true;
-				var callback = true;
-				this.GetFD(callback);
-			}
+            if (this.EbObject.FilterDialogRefId !== "") {
+                //this.FD = true;
+                var callback = true;
+                this.GetFD(callback);
+            }
         }
-        this.GenerateButtons();
 
-        this.propGrid.setObject(this.EbObject, AllMetas["EbDataSource"]);
+        this.propGrid.setObject(this.EbObject, AllMetas["Eb" + dsType]);
+        this.GenerateButtons();
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
         //$(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
         //$('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
+        if (this.ObjectType === 4) {
+            $("#paramsModal-toggle").on("show.bs.modal", this.getInputParams.bind(this));
+            $("#parmSetupSave").off("click").on("click", this.SaveParamsetup.bind(this));
+        }
     }
+
+    this.SaveParamsetup = function (ev) {
+        for (let i = 0; i < this.InputParams.length; i++) {
+            this.InputParams[i].Type = eval($(`select[name="${this.InputParams[i].Column}-DBTYPE"]`).val());
+            this.InputParams[i].Value = $(`input[name="${this.InputParams[i].Column}-VLU"]`).val();
+        }
+        this.EbObject.InputParams.$values = this.InputParams;
+    };
+
+    this.getInputParams = function () {
+        if (this.Sql !== window["editor" + tabNum].getValue().trim()) {
+            this.Sql = window["editor" + tabNum].getValue().trim();
+            $.ajax({
+                type: 'GET',
+                url: "../CE/DataWriterSqlEval",
+                data: { "sql": this.Sql },
+                beforeSend: function () {
+                }
+            }).done(function (data) {
+                this.InputParams = JSON.parse(data);
+                this.AppendInpuParams();
+                this.setValues();
+            }.bind(this));
+        }
+    };
+
+    this.setValues = function () {
+        for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
+            $(`select[name="${this.EbObject.InputParams.$values[i].Column}-DBTYPE"]`).val(this.EbObject.InputParams.$values[i].Type);
+            $(`input[name="${this.EbObject.InputParams.$values[i].Column}-VLU"]`).val(this.EbObject.InputParams.$values[i].Value);
+        }
+    }
+
+    this.AppendInpuParams = function () {
+        $("#paraWinTab_" + tabNum + " tbody").empty();
+        for (let i = 0; i < this.InputParams.length; i++) {
+            $("#paraWinTab_" + tabNum + " tbody").append(`<tr>
+                            <td>${this.InputParams[i].Column}</td>
+                            <td>
+                                <select name="${this.InputParams[i].Column}-DBTYPE" class="form-control">
+                                    ${this.setDbType()}
+                                </select>
+                            </td>
+                            <td><input type="text" name="${this.InputParams[i].Column}-VLU" class="form-control"/></td>
+                        </tr>`);
+        }
+    };
+
+    this.setDbType = function () {
+        let d = [];
+        for (let k in EbDbType) {
+            d.push(`<option value="${EbDbType[k]}">${k}</option>`);
+        }
+        return d.join(",");
+    };
 
     this.GenerateButtons = function () {
         $("#obj_icons").empty();
         $("#obj_icons").append(`
             <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'> <i class='fa fa-play' aria-hidden='true'></i></button >
             `);
+
         $("#run").off("click").on("click", this.RunDs.bind(this));
+        if (this.ObjectType === 4)
+            $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle">P</button>`);
 
         //$(".adv-dsb-cont").hide(this.delay);
         $(".simple-dsb-cont").hide(this.delay);
@@ -115,7 +187,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (pname === "Name") {
             $("#objname").text(this.EbObject.Name);
         }
-		if (pname === "LinkRefid") {
+        if (pname === "LinkRefid") {
         }
     }.bind(this);
 
@@ -123,10 +195,10 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
         //this.relatedObjects += this.FilterDialogRefId;
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
-            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject) }, this.AppendFD.bind(this, callback));
+            $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + tabNum }, this.AppendFD.bind(this, callback));
     };
 
-	this.AppendFD = function (callback , result) {
+    this.AppendFD = function (callback, result) {
         $('#paramdiv' + tabNum).remove();
         $('#ds-page' + tabNum).prepend(`
                 <div id='paramdiv-Cont${tabNum}' class='param-div-cont'>
@@ -151,11 +223,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             label: "Parameters",
         });
 
-		if (callback)
+        if (callback)
             this.stickBtn.minimise();
         else
-			this.stickBtn.maximise();
-		this.filterDialog = FilterDialog;
+            this.stickBtn.maximise();
+        this.filterDialog = FilterDialog;
 
     };
 
@@ -262,37 +334,37 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.CountParameters();
     };
 
-	this.CountParameters = function () {
-		commonO.flagRun = false;
-		var result = window["editor" + tabNum].getValue().match(/\:\w+|\@\w+/g);
-		var filterparams = [];
-		if (result !== null) {
-			for (var i = 0; i < result.length; i++) {
-				result[i] = result[i].substr(1);
-				if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby" /*|| result[i] === "id"*/) {
-					//
-				}
-				else {
-					if ($.inArray(result[i], filterparams) === -1)
-						filterparams.push(result[i]);
-				}
-			}
-			filterparams.sort();
-			this.Filter_Params = filterparams;
-			this.Parameter_Count = filterparams.length;
-		}
-		else {
-			this.Parameter_Count = 0;
-		}
-		this.DrawTable();
-	};
+    this.CountParameters = function () {
+        commonO.flagRun = false;
+        var result = window["editor" + tabNum].getValue().match(/\:\w+|\@\w+/g);
+        var filterparams = [];
+        if (result !== null) {
+            for (var i = 0; i < result.length; i++) {
+                result[i] = result[i].substr(1);
+                if (result[i] === "search" || result[i] === "and_search" || result[i] === "search_and" || result[i] === "where_search" || result[i] === "limit" || result[i] === "offset" || result[i] === "orderby" /*|| result[i] === "id"*/) {
+                    //
+                }
+                else {
+                    if ($.inArray(result[i], filterparams) === -1)
+                        filterparams.push(result[i]);
+                }
+            }
+            filterparams.sort();
+            this.Filter_Params = filterparams;
+            this.Parameter_Count = filterparams.length;
+        }
+        else {
+            this.Parameter_Count = 0;
+        }
+        this.DrawTable();
+    };
 
-	this.CreateObjString = function () {
-		var ParamsArray = [];
-		if (this.FilterDialogRefId !== undefined)
+    this.CreateObjString = function () {
+        var ParamsArray = [];
+        if (this.FilterDialogRefId !== undefined)
             ParamsArray = getValsForViz(this.filterDialog.filterObj);
-		return ParamsArray;
-	};
+        return ParamsArray;
+    };
 
     this.DrawTable = function () {
         commonO.tabNum++;
@@ -329,7 +401,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 scrollY: "300px",
                 processing: true,
                 dom: "<lip>rt",
-                paging : true,
+                paging: true,
                 lengthChange: true,
                 ajax: {
                     //url: this.Ssurl + "/ds/data/" + this.Refid,

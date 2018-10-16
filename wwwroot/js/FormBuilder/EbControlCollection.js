@@ -6,8 +6,12 @@
         return this.$values;
     };
 
+    this.getParentId = function (ebsid) {
+        return $(`#cont_${ebsid}.Eb-ctrlContainer`).parents('.ebcont-ctrl:first').attr("ebsid");
+    };
+
     this.PopByName = function (_name) {
-        let parentId = $("#" + _name + ".Eb-ctrlContainer").parents('.ebcont-ctrl:first').attr("ebsid");
+        let parentId = this.getParentId(_name);
         let ele = this.GetByName(_name);
         console.log("parentId" + parentId);
         if ($(`[ebsid ="${parentId}"]`).attr("eb-form")) {
@@ -24,7 +28,7 @@
     };
 
     this.Append = function (newObject) {
-        let parentId = $("#" + newObject.EbSid).parents('.ebcont-ctrl:first').attr("ebsid");
+        let parentId = this.getParentId(newObject.EbSid);
         if (!$(`[ebsid ="${parentId}"]`).attr("eb-form")) {
             let parent = this.GetByName(parentId);
             parent.Controls.$values.push(newObject);
@@ -38,7 +42,7 @@
     };
 
     this.InsertAt = function (index, newObject) {
-        let parentId = $("#" + newObject.EbSid).parents('.ebcont-ctrl:first').attr("ebsid");
+        let parentId = this.getParentId(newObject.EbSid);
         if ($(`[ebsid ="${parentId}"]`).attr("eb-form")) {
             this.$values.splice(index, 0, newObject);
             return this.$values.length;

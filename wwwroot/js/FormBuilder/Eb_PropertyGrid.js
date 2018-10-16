@@ -595,7 +595,7 @@
                 //if ($(InpId).length === 0)
                 $('#' + this.wraperId).on("change", InpId, this.checkRequired);
             }
-            if (meta.MaskPattern) {
+            if (meta.MaskPattern && $inp.length) {
                 $inp.val($inp.val().toLowerCase());
                 $inp.inputmask({
                     alias: "Regex",

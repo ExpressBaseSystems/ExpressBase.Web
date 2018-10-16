@@ -699,7 +699,7 @@
         ServerEventUrl: 'https://se.eb-test.info',
         EnableTag: true,
         EnableCrop: true,
-        MaxSize:(("@ViewBag.Env" === "Production")? 10: 15),//in MegaBytes
+        MaxSize:(("@ViewBag.Env" === "Staging")? 15: 10),//in MegaBytes
         //Context: "dp",//if single and crop
         //ResizeViewPort: true //if single and crop
     });

@@ -65,7 +65,7 @@
         }.bind(this));
     }
 
-    getInputParams = function () {
+    getInputParams() {
         if (this.SqlTemp !== this.Sql.trim()) {
             this.Sql = this.SqlTemp.trim();
             $.ajax({
@@ -82,7 +82,7 @@
         }
     };
 
-    AppendInpuParams = function () {
+    AppendInpuParams() {
         $(`#${this.Option.Container}-IpEdw #paraWinTab_${this.Option.Container} tbody`).empty();
         for (let i = 0; i < this.InputParams.length; i++) {
             $(`#${this.Option.Container}-IpEdw #paraWinTab_${this.Option.Container} tbody`).append(`<tr>
@@ -97,7 +97,7 @@
         }
     };
 
-    setDbType = function () {
+    setDbType() {
         let d = [];
         for (let k in EbDbType) {
             d.push(`<option value="${EbDbType[k]}">${k}</option>`);
@@ -105,14 +105,14 @@
         return d.join(",");
     };
 
-    setValues = function () {
+    setValues() {
         for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
             $(`#${this.Option.Container}-IpEdw select[name="${this.EbObject.InputParams.$values[i].Column}-DBTYPE"]`).val(this.EbObject.InputParams.$values[i].Type);
             $(`#${this.Option.Container}-IpEdw input[name="${this.EbObject.InputParams.$values[i].Column}-VLU"]`).val(this.EbObject.InputParams.$values[i].Value);
         }
     }
 
-    SaveParamsetup = function (ev) {
+    SaveParamsetup(ev) {
         for (let i = 0; i < this.InputParams.length; i++) {
             this.InputParams[i].Type = eval($(`select[name="${this.InputParams[i].Column}-DBTYPE"]`).val());
             this.InputParams[i].Value = $(`input[name="${this.InputParams[i].Column}-VLU"]`).val();

@@ -335,7 +335,6 @@ class EbFileUpload {
             this.isDropZoneEmpty();
         }
         else {
-            document.getElementById("uploadtest-file-input").value = "";
             EbMessage("show", { Background: "red", Message: "Image size should not exceed " + this.MaxSize + " Mb" });
         }
     };

@@ -412,13 +412,13 @@ table.dataTable tbody td.dt-body-right {
 
 
 .div.dataTables_wrapper dataTables_scrollFoot .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
-    height: 22px;
+    height: 30px;
 }
 .div.dataTables_wrapper DTFC_LeftFootWrapper .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
-    height: 22px;
+    height: 30px;
 }
 .div.dataTables_wrapper DTFC_RightFootWrapper .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
-    height: 22px;
+    height: 30px;
 }
 
 .between-inp2 {

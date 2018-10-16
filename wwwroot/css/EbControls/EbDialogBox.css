@@ -1,0 +1,48 @@
+﻿.eb_dlogBox_container {
+    position: fixed;
+    z-index: 100;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family:open sans;
+}
+    .eb_dlogBox_container .cw {
+        padding: 30px;
+        min-width: 500px;
+        background: white;
+        border: 1px solid #ccc;
+        max-width: 50%;
+        border-radius: 4px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    .eb_dlogBox_container .msgbdy {
+        width: 100%;
+        padding: 5px 0 20px 0;
+        font-size: 16px;
+        line-height: 2em;
+    }
+    .eb_dlogBox_container .cnfrmBox-btnc {
+        width:100%;
+    }
+.eb_dlgMsk {
+    background: white;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 90;
+    top: 0;
+    left: 0;
+    opacity: .7;
+}
+.eb_dlogBox_container ._cls {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    font-size: 16px;
+}

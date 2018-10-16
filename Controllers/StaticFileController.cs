@@ -348,6 +348,9 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
                     }
                 }
             }
@@ -391,6 +394,9 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
                     }
                 }
             }
@@ -430,6 +436,9 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
                     }
                 }
             }
@@ -471,6 +480,9 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
                     }
                 }
             }
@@ -507,6 +519,9 @@ namespace ExpressBase.Web.Controllers
 
 
                 res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                if (res.FileRefId > 0)
+                    Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
             }
             catch (Exception e)
             {

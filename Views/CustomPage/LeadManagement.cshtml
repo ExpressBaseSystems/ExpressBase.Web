@@ -704,7 +704,7 @@
         ServerEventUrl: 'https://se.eb-test.info',
         EnableTag: true,
         EnableCrop: true,
-        MaxSize:4,//in MegaBytes
+        MaxSize:10,//in MegaBytes
         //Context: "dp",//if single and crop
         //ResizeViewPort: true //if single and crop
     });
@@ -717,4 +717,6 @@
         if (uploadedImgRefList.length > 0)
             EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
     }
+
+
 </script>

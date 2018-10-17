@@ -70,8 +70,8 @@
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
-            //valueHTML = '<span class="cxv-inp" for="' + elemId + '" editor="' + type + '">' + (value || "") + '</span>';
             valueHTML = '<input type="text" readonly class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
+            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';

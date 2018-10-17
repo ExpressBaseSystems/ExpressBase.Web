@@ -665,7 +665,7 @@
         if (!(Object.keys(this.CElistFromSrc[0]).includes("name")))//////////////////
             idField = "ColumnName";////////////////////////
         $.each(values, function (i, control) {
-            let name = (control.Name || control.name || control.ColumnName);
+            let name = (control.name ||control.Name ||  control.ColumnName);
             let type = control.$type.split(",")[0].split(".").pop();
             let tileHTML = `<div class="colTile" onclick="$(this).focus()"  ebsid="${control.EbSid}" is-customobj="${control["IsCustomColumn"] || false}" tabindex="1" id="` + name + '" eb-type="' + type + '" setSelColtiles>'
                 + '<button type="button" tabindex="-1" title="Deselect" class="coltile-left-arrow close"><i class="fa fa-arrow-circle-left"></i></button>'
@@ -852,14 +852,14 @@
         //let lastItemCount = (this.CElist.length === 0) ? -1 : parseInt(this.CElist[this.CElist.length - 1].EbSid.slice(-3).replace(/[^0-9]/g, ''));
         //let lastItemCount = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
         let lastItemCount = this.getMaxNumberFromItemName($(this.pgCXE_Cont_Slctr + " .CE-body .colTile"));
-        let ShortName = ($DD.text() + (lastItemCount + 1)).replace(/ /g, "");
+        let ShortName = ($DD.text() + (lastItemCount + 1)).replace(/ /g, "").toLowerCase();// toLowerCase tmp fix
         let EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
         obj = new EbObjects[SelType](EbSid);
         obj.Name = ShortName;
         this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
         if (this.editor === 26) {
-            if (!obj.name)
-                obj.name = ShortName;
+            //if (!obj.name)
+            obj.name = ShortName;
             obj.data = $(this.pgCXE_Cont_Slctr + " .CE-body .colTile").length;
             //obj[this.Dprop] = true;
             this.CEOnSelectFn(obj);

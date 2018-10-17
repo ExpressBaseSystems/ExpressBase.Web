@@ -581,11 +581,11 @@
         if (this.txtName.val() === "" || this.txtEmail.val() === "")
             this.isInfoValidEmail = false;
         if (!this.isInfoValidEmail || !this.isInfoValidEmail2) {
-            EbMessage("show", { Message: 'Validation Failed. Check all Fields', AutoHide: true, Backgorund: '#bf1e1e'});
+            EbMessage("show", { Message: 'Validation Failed. Check all Fields', AutoHide: true, Background: '#bf1e1e'});
             return;
         }
         if (this.pwdPassword.val().length < 8 && this.whichMode === 1 && this.itemId < 2) {
-            EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Backgorund: '#bf1e1e' });
+            EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Background: '#bf1e1e' });
             return;
         }    
         var dateRegex = /^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/;
@@ -697,13 +697,18 @@ var UserGroupJs = function (infoDict, usersList) {
     }
     this.clickbtnSaveAll = function () {
         var dict = new Object();
-        if (this.txtUserGroupName.val() === '' || this.txtUserGroupDescription.val()) {
-            EbMessage("show", { Message: 'Please Enter UserGroup Name/Description', AutoHide: true, Backgorund: '#bf1e1e' });
+        if (this.txtUserGroupName.val() === '' || this.txtUserGroupDescription.val() === '') {
+            EbMessage("show", { Message: 'Please Enter UserGroup Name/Description', AutoHide: true, Background: '#bf1e1e' });
             return;
         }            
         dict["name"] = this.txtUserGroupName.val();
         dict["description"] = this.txtUserGroupDescription.val();
         dict["users"] = this.usersTile.getItemIds();
+        dict["new_constraint_ip"] = this.ipAddTile.getExtendedJson();
+        dict["deleted_ipconst_id"] = this.ipAddTile.getDeletedObjIds();
+        dict["new_constraint_dt"] = this.timeAddTile.getExtendedJson();
+        dict["deleted_ipconst_dt"] = this.timeAddTile.getDeletedObjIds();
+
         this.btnSaveAll.attr("disabled","true");
         $.ajax({
             type: "POST",

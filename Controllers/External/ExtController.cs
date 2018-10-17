@@ -146,55 +146,55 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult StripeResponse()
-        {
-            var json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
-            var stripeEvent = StripeEventUtility.ParseEvent(json);
-            return View();
-        }
+        //[HttpPost]
+        //public IActionResult StripeResponse()
+        //{
+        //    var json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+        //    var stripeEvent = StripeEventUtility.ParseEvent(json);
+        //    return View();
+        //}
 
 
-        public ActionResult Charge(string stripeEmail, string stripeToken)
-        {
-            var req = this.HttpContext.Request.Form;
-            var customers = new StripeCustomerService();
-            var charges = new StripeChargeService();
+        //public ActionResult Charge(string stripeEmail, string stripeToken)
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    var customers = new StripeCustomerService();
+        //    var charges = new StripeChargeService();
 
-            var customer = customers.Create(new StripeCustomerCreateOptions
-            {
-                Email = stripeEmail,
-                SourceToken = stripeToken
-            });
+        //    var customer = customers.Create(new StripeCustomerCreateOptions
+        //    {
+        //        Email = stripeEmail,
+        //        SourceToken = stripeToken
+        //    });
 
-            var charge = charges.Create(new StripeChargeCreateOptions
-            {
-                Amount = 500,//charge in cents
-                Description = "Sample Charge",
-                Currency = "usd",
-                CustomerId = customer.Id
+        //    var charge = charges.Create(new StripeChargeCreateOptions
+        //    {
+        //        Amount = 500,//charge in cents
+        //        Description = "Sample Charge",
+        //        Currency = "usd",
+        //        CustomerId = customer.Id
 
-            });
+        //    });
 
-            StripeSubscriptionService subscriptionSvc = new StripeSubscriptionService();
-            subscriptionSvc.Create(customer.Id, "EBSystems");
+        //    StripeSubscriptionService subscriptionSvc = new StripeSubscriptionService();
+        //    subscriptionSvc.Create(customer.Id, "EBSystems");
 
-            var subscriptionOptions = new StripeSubscriptionUpdateOptions()
-            {
-                PlanId = "EBSystems",
-                Prorate = false,
-                TrialEnd = DateTime.Now.AddMinutes(2)
-            };
+        //    var subscriptionOptions = new StripeSubscriptionUpdateOptions()
+        //    {
+        //        PlanId = "EBSystems",
+        //        Prorate = false,
+        //        TrialEnd = DateTime.Now.AddMinutes(2)
+        //    };
 
-            var subscriptionService = new StripeSubscriptionService();
-            StripeSubscription subscription = subscriptionService.Update("sub_BlX0rziJyWis7k", subscriptionOptions);
+        //    var subscriptionService = new StripeSubscriptionService();
+        //    StripeSubscription subscription = subscriptionService.Update("sub_BlX0rziJyWis7k", subscriptionOptions);
 
-            //StripeSubscriptionService subscriptionSvc = new StripeSubscriptionService();
-            //subscriptionSvc.Create(customer.Id, "ebsystems_standard");
-            // further application specific code goes here
+        //    //StripeSubscriptionService subscriptionSvc = new StripeSubscriptionService();
+        //    //subscriptionSvc.Create(customer.Id, "ebsystems_standard");
+        //    // further application specific code goes here
 
-            return View();
-        }
+        //    return View();
+        //}
 
         [HttpPost]
         public async Task<IActionResult> TenantExtSignup()

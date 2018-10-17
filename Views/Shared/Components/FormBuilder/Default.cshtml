@@ -30,7 +30,7 @@
             }
             else
             {
-                <div id="WebForm1" ebsid="WebForm1" IsRenderMode='false' eb-form="true" ui-inp eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form ebcont-ctrl"></div>
+                <div id="placeholder" ebsid="placeholder" IsRenderMode='false' eb-form="true" ui-inp eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form ebcont-ctrl"></div>
             }
 
         }
@@ -55,7 +55,7 @@
     let formBuilderObj = null;
     let objid =$("#objid").val();
     let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
-    let FBid = editModeFormObj ? editModeFormObj.Name : "WebForm1";
+    let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm_" + Date.now().toString(36);
     let ToolBoxId = "form-buider-toolBox";
     let PGid = "form-buider-propGrid";
     let PGformId = "form-buider-propGrid";

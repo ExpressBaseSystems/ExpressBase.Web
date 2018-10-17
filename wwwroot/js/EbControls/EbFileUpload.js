@@ -101,6 +101,7 @@
 class EbFileUpload {
     constructor(options) {
         this.Options = $.extend({}, options);
+        this.MaxSize = this.Options.MaxSize || 5;
         this.Files = [];
         this.RefIds = [];
         this.IsCropFlow = false;
@@ -295,7 +296,8 @@ class EbFileUpload {
     }
 
     drawThumbNail(e, file) {
-        $(`#${this.Options.Container}-eb-upl-bdy`).append(`
+        if ((file.size / (1024)) < (this.MaxSize * 1024)) {
+            $(`#${this.Options.Container}-eb-upl-bdy`).append(`
                                                         <div class="file-thumb-wraper">
                                                             <div class="eb-upl_thumb" exact="${file.name}" file="${this.replceSpl(file.name)}">
                                                                 <div class="eb-upl-thumb-bdy">
@@ -318,19 +320,23 @@ class EbFileUpload {
                                                         </div>
                                                         `);
 
-        $(`#${this.replceSpl(file.name)}-del`).off("click").on("click", this.delThumb.bind(this));
-        $(`#${this.replceSpl(file.name)}-fullscreen`).off("click").on("click", this.setFullscreen.bind(this));
+            $(`#${this.replceSpl(file.name)}-del`).off("click").on("click", this.delThumb.bind(this));
+            $(`#${this.replceSpl(file.name)}-fullscreen`).off("click").on("click", this.setFullscreen.bind(this));
 
-        if (this.Options.EnableTag) {
-            $(`#${this.replceSpl(file.name)}-tags_input`).tagsinput();
-            $(`#${this.replceSpl(file.name)}-tag`).off("click").on("click", this.tagClick.bind(this));
+            if (this.Options.EnableTag) {
+                $(`#${this.replceSpl(file.name)}-tags_input`).tagsinput();
+                $(`#${this.replceSpl(file.name)}-tag`).off("click").on("click", this.tagClick.bind(this));
+            }
+
+            if (this.Options.EnableCrop)
+                $(`#${this.replceSpl(file.name)}-crop`).off("click").on("click", this.cropImg.bind(this));
+
+            this.Files.push(file);
+            this.isDropZoneEmpty();
         }
-
-        if (this.Options.EnableCrop)
-            $(`#${this.replceSpl(file.name)}-crop`).off("click").on("click", this.cropImg.bind(this));
-
-        this.Files.push(file);
-        this.isDropZoneEmpty();
+        else {
+            EbMessage("show", { Background: "red", Message: "Image size should not exceed " + this.MaxSize + " Mb" });
+        }
     };
 
     tagClick(e) {

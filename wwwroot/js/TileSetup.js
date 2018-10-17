@@ -36,14 +36,16 @@
     this.txtDtTitle = null;
     this.txtDtDescription = null;
     this.radType = null;
-    //this.divOneTimeOverlay = null;
-    //this.divRecurringOverlay = null;
+    this.divOneTimeOverlay = null;
+    this.divRecurringOverlay = null;
     this.txtStartDate = null;
     this.txtEndDate = null;
     this.divChkDay = null;
     this.txtStartTime = null;
     this.txtEndTime = null;
-    
+
+    //this.constraintIpObj = [];
+    //this.constraintDateTimeObj = [];
     this.profilePicStatus = null;
     this.readOnly = false;
     
@@ -150,7 +152,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label style="font-family: open sans; font-weight: 300;">To Time</label>
+                                                <label style="font-family: open sans; font-weight: 300;">End Time</label>
                                                 <input id="txtEndTime${t}" type="text" class="form-control" title="End Time">
                                             </div>
                                         </div>
@@ -230,8 +232,8 @@
             this.txtDtTitle = $('#txtDtTitle' + t);
             this.txtDtDescription = $('#txtDtDescription' + t);
             this.radType = 'radType' + t;
-            //this.divOneTimeOverlay = $('#divOneTimeOverlay' + t);
-            //this.divRecurringOverlay = $('#divRecurringOverlay' + t);
+            this.divOneTimeOverlay = $('#divOneTimeOverlay' + t);
+            this.divRecurringOverlay = $('#divRecurringOverlay' + t);
             this.txtStartDate = $('#txtStartDate' + t);
             this.txtEndDate = $('#txtEndDate' + t);
             this.divChkDay = $('#divChkDay' + t);
@@ -304,6 +306,31 @@
         itemid = itemid.substring(0, itemid.length - 1);
         return itemid;
     }
+    this.getExtendedJson = function () {
+        if (this.title === 'New IP' || this.title === 'New DateTime') {
+            let _ObjArr = [];
+            for (let i = 0; i < this.resultObject.length; i++) {
+                if (typeof (this.resultObject[i].Id) === 'string') {
+                    _ObjArr.push(this.resultObject[i]._ExtObj);
+                }
+            }
+            return JSON.stringify(_ObjArr);
+        }
+        return '';
+    }
+    this.getDeletedObjIds = function () {
+        let ids = '';
+        for (let i = 0; i < this.initObjectList; i++) {
+            let _present_item = $.grep(this.resultObject, function (a) {
+                if (a.Id === this.initObjectList[i].Id)
+                    return true;
+            });
+            if (_present_item.length === 0) {
+                ids += this.initObjectList[i].Id + ',';
+            }
+        }
+        return (ids.substring(0, ids.length - 1));
+    }
     //-------------------------------------------------------------------
 
     
@@ -341,17 +368,28 @@
             }
         });
     }
+
     this.onClickbtnClearDemoSearch = function () {
         $(this.txtDemoSearch).val("");
         this.keyUpTxtDemoSearch();
     }
 
-    
-
     this.initModal = function () {
         if (this.title === 'New IP') {
             this.txtIpAddress.val("");
             this.txtIpDescription.val("");
+        }
+        else if (this.title === 'New DateTime') {
+            this.txtDtTitle.val("");
+            this.txtDtDescription.val("");
+            this.addModal.find("input[value='OneTime']").prop("checked", true);
+            this.divOneTimeOverlay.hide();
+            this.divRecurringOverlay.show();
+            this.txtStartDate.val("");
+            this.txtEndDate.val("");
+            this.divChkDay.find("input[type=checkbox]").prop("checked", true);
+            this.txtStartTime.val("");
+            this.txtEndTime.val("");
         }
         else {
             this.divMessage.show();
@@ -359,13 +397,15 @@
             this.getSearchResult(false);
         }
     }
+
     this.finalizeModal = function () {
-        if (this.title !== 'New IP') {
+        if (this.title !== 'New IP' && this.title !== 'New DateTime') {
             $(this.txtSearch).val("");
             $(this.divSearchResults).children().remove();
         }
         
     }
+
     this.keyUptxtSearch = function (e) {
         $(this.divSearchResults).children().remove();
         this.divMessage.hide();
@@ -460,7 +500,41 @@
                     </div>`;
         $(divSearchResults).append(temp);
     }
+
     this.clickbtnModalOkAction = function () {
+        if (this.title === 'New IP') {
+            if (this.txtIpAddress.val().trim() === "" || this.txtIpDescription.val().trim() === "") {
+                EbMessage("show", { Message: 'Please Enter IP address/Description', AutoHide: true, Background: '#bf1e1e' });
+                return;
+            }
+            var regex = /((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}/;
+            if (!regex.test(this.txtIpAddress.val().trim())) {
+                EbMessage("show", { Message: 'Please Enter a valid IP address', AutoHide: true, Background: '#bf1e1e' });
+                return;
+            }
+        }
+        else if (this.title === 'New DateTime') {
+            if (this.txtDtTitle.val() === "" || this.txtDtDescription.val() === "") {
+                EbMessage("show", { Message: 'Please Enter Title/Description', AutoHide: true, Background: '#bf1e1e' });
+                return;
+            }
+            if ($("input:radio:checked[name='" + this.radType + "']").attr("value") === 'OneTime') {
+                if (this.txtStartDate.val() === "" || this.txtEndDate.val() === "") {
+                    EbMessage("show", { Message: 'Please Enter Start/End DateTime', AutoHide: true, Background: '#bf1e1e' });
+                    return;
+                }
+            }
+            else {
+                if (this.txtStartTime.val() === "" || this.txtEndTime.val() === "") {
+                    EbMessage("show", { Message: 'Please Enter Start/End Time', AutoHide: true, Background: '#bf1e1e' });
+                    return;
+                }
+                if (this.divChkDay.find("input:checked[type=checkbox]").length === 0) {
+                    EbMessage("show", { Message: 'Please check atleast one day', AutoHide: true, Background: '#bf1e1e' });
+                    return;
+                }
+            }
+        }
         this.drawSelected();
         $(this.addModal).modal('toggle');
         this.SortDiv(this.divSelectedDisplay);
@@ -476,23 +550,43 @@
     }
     this.drawSelected = function () {
         var t = title.replace(/\s/g, "_");
-
+        let _extendedObj = {};
         if (this.title === 'New IP') {
-            this.appendToSelected(this.divSelectedDisplay, { Id: this.txtIpAddress.val().trim(), Name: this.txtIpAddress.val(), Data1: this.txtIpDescription.val() });
+            _extendedObj = { Ip: this.txtIpAddress.val().trim(), Description: this.txtIpDescription.val()};
+            this.appendToSelected(this.divSelectedDisplay, { Id: "_" + this.txtIpAddress.val().trim(), Name: this.txtIpAddress.val(), Data1: this.txtIpDescription.val(), _ExtObj: _extendedObj });
             return;
         }
         else if (this.title === 'New DateTime') {
             let dscr = '';
-            if ($("input:radio:checked[name='" + this.radType + "']").attr("value") === 'OneTime')
+            if ($("input:radio:checked[name='" + this.radType + "']").attr("value") === 'OneTime') {
                 dscr = "One Time - " + this.txtStartDate.val() + " to " + this.txtEndDate.val();
+                _extendedObj = {
+                    Title: this.txtDtTitle.val().trim(),
+                    Description: this.txtDtDescription.val().trim(),
+                    Type: 1,
+                    Start: this.txtStartDate.val(),
+                    End: this.txtEndDate.val(),
+                    DaysCoded: 0
+                };
+            }
             else {
+                let _daysCode = 0;
                 dscr = "Recurring - " + this.txtStartTime.val() + " to " + this.txtEndTime.val() + "<br/>";
                 let $chkd = $(this.divChkDay.selector + " input:checkbox:checked");
-                for (let i = 0; i < $chkd.length; i++)
-                    dscr += $($chkd[i]).attr('data-label') + " "; 
+                for (let i = 0; i < $chkd.length; i++) {
+                    dscr += $($chkd[i]).attr('data-label') + " ";
+                    _daysCode += Math.pow(2, $($chkd[i]).attr('data-code'));
+                }
+                _extendedObj = {
+                    Title: this.txtDtTitle.val(),
+                    Description: this.txtDtDescription.val(),
+                    Type: 2,
+                    Start: this.txtStartTime.val(),
+                    End: this.txtEndTime.val(),
+                    DaysCoded: _daysCode 
+                };
             }
-            
-            this.appendToSelected(this.divSelectedDisplay, { Id: this.txtDtTitle.val().trim(), Name: this.txtDtTitle.val(), Data1: dscr });
+            this.appendToSelected(this.divSelectedDisplay, { Id: "_" + this.txtDtTitle.val().trim(), Name: this.txtDtTitle.val(), Data1: dscr, _ExtObj: _extendedObj });
             return;
         }
 

@@ -26,7 +26,7 @@
     this.del = function (eType, selector, action, originalEvent) {
         var $e = selector.$trigger;
         var id = $e.attr("ebsid");
-        var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
+        var ControlTile = $(`#cont_${id}`).closest(".Eb-ctrlContainer");
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
         var ctrl = this.rootContainerObj.Controls.PopByName(id);
         ControlTile.parent().focus();
@@ -290,7 +290,7 @@
 
     this.adjustPanesHeight = function ($target) {
         let parent = $target.attr("eb-form") ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($target.attr("ebsid"));
-        let = tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
+        let tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
         EbOnChangeUIfns.EbTabControl.adjustPanesHeightToHighest(tabControl.EbSid, tabControl);
     };
 

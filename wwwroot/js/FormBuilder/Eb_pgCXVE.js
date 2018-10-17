@@ -289,7 +289,7 @@
                 id: this.PGobj.wraperId + "_InnerPG",
                 IsInnerCall: true,
                 dependedProp: this.CurMeta.Dprop2
-            });
+            }, this.PGobj);
         }
     };
 

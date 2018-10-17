@@ -405,7 +405,7 @@
     };
 
     //fires when a property value changes through PG
-    this.OnInputchangedFn = function (e) {
+    this.OnInputchangedFn = function (e) { ////////// need optimization
         this.getvaluesFromPG();
         if (e) {
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);
@@ -413,8 +413,14 @@
         //var res = this.getvaluesFromPG();
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
         this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
-        if (this.CurProp === "Name")
+        if (this.CurProp === "Name" || this.CurProp === "name") {
             this.updateDD(this.PropsObj);
+            let $colTile = "";
+            if (this.ParentPG.isModalOpen)
+                $colTile = $(`#${e.target.defaultValue}.colTile`);
+            if ($colTile.length)
+                $colTile.attr("id", this.PropsObj[this.CurProp]).text(this.PropsObj[this.CurProp]);
+        }
         if (typeof EbOnChangeUIfns != "undefined" && this.CurMeta.UIChangefn) {
             let NS1 = this.CurMeta.UIChangefn.split(".")[0];
             let NS2 = this.CurMeta.UIChangefn.split(".")[1];

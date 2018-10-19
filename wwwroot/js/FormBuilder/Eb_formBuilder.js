@@ -21,8 +21,6 @@
     this.CurColCount = 2;
     this.movingObj = {};
 
-
-
     this.del = function (eType, selector, action, originalEvent) {
         var $e = selector.$trigger;
         var id = $e.attr("ebsid");

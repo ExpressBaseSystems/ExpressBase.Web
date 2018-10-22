@@ -235,7 +235,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 //this.call2FD();
                 //this.EbObject.rowGrouping.$values = [];
                 EbDialog("show", {
-                    Message: "Retain Custom Column..",
+                    Message: "Retain Custom Columns?",
                     Buttons: {
                         "Yes": {
                             Background: "green",

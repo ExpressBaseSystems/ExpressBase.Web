@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag, User _user, Eb_Solution _sol, string contextId)
+        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag, User _user, Eb_Solution _sol, string contextId, bool CustomColumn)
         {
             var dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -45,8 +45,12 @@ namespace ExpressBase.Web.Components
             if (dvobj != null)
             {
                 dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
-                EbDataVisualization TableVisObj = getDVObject(dvobj);
-                if(TableVisObj.EbDataSource.FilterDialog != null)
+                EbDataVisualization TableVisObj = null;
+                if (flag)
+                    TableVisObj = getDVObject(dvobj, CustomColumn);
+                else
+                    TableVisObj = dvobj;
+                if (TableVisObj.EbDataSource.FilterDialog != null)
                     EbControlContainer.SetContextId(TableVisObj.EbDataSource.FilterDialog, contextId);
                 //if (flag)
                 ViewBag.data = TableVisObj;
@@ -58,7 +62,7 @@ namespace ExpressBase.Web.Components
             return View();
         }
 
-        private EbDataVisualization getDVObject(EbDataVisualization dvobj)
+        private EbDataVisualization getDVObject(EbDataVisualization dvobj, bool CustomColumn)
         {
             //DataSourceColumnsResponse columnresp = null;
             try
@@ -107,7 +111,7 @@ namespace ExpressBase.Web.Components
                 if (dvobj.Columns == null || dvobj.Columns.Count == 0)
                     dvobj.Columns = Columns;
                 else
-                    dvobj.Columns = compareDVColumns(dvobj.Columns, Columns);
+                    dvobj.Columns = compareDVColumns(dvobj.Columns, Columns, CustomColumn);
                 dvobj.DSColumns = dvobj.Columns;
             }
             catch(Exception e)
@@ -117,8 +121,9 @@ namespace ExpressBase.Web.Components
             return dvobj;
         }
 
-        private DVColumnCollection compareDVColumns(DVColumnCollection OldColumns, DVColumnCollection CurrentColumns)
+        private DVColumnCollection compareDVColumns(DVColumnCollection OldColumns, DVColumnCollection CurrentColumns, bool CustomColumn)
         {
+            int _colindex = -1;
             var NewColumns = new DVColumnCollection();
             foreach (DVBaseColumn oldcol in OldColumns)
             {
@@ -133,7 +138,23 @@ namespace ExpressBase.Web.Components
             }
 
             foreach (DVBaseColumn curcol in CurrentColumns)
+            {
                 NewColumns.Add(curcol);
+                _colindex = curcol.Data;
+            }
+            if (CustomColumn)
+            {
+                _colindex = NewColumns.Count;
+                foreach (DVBaseColumn oldcol in OldColumns)
+                {
+                    if (oldcol.IsCustomColumn)
+                    {
+                        oldcol.Data = _colindex;
+                        NewColumns.Add(oldcol);
+                        _colindex++;
+                    }
+                }
+            }
 
             return NewColumns;
         }

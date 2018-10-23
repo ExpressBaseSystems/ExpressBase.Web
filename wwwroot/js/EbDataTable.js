@@ -80,7 +80,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.rowgroupFilter = [];
     this.CurrentRowGroup = null;
 
-    var split = new splitWindow("parent-div0", "contBox");    
+    var split = new splitWindow("parent-div0", "contBox");
 
     this.init = function () {
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
@@ -113,13 +113,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     }.bind(this);
 
-    this.call2FD = function () {
+    this.call2FD = function (value) {
+        var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
         this.relatedObjects = this.EbObject.DataSourceRefId;
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "unset", "margin-right": "unset" } }, maskLoader: false });
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom },
             success: this.ajaxSucc
         });
     };
@@ -205,7 +206,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         $(subDivId).focus();
 
-        this.PcFlag = "False";
+        this.PcFlag = false;
     }.bind(this);
 
     this.CloseParamDiv = function () {
@@ -219,9 +220,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.tmpPropertyChanged = function (obj, Pname) {
         //this.isSecondTime = true;
-        if (Pname == "DataSourceRefId") {
+        if (Pname === "DataSourceRefId") {
             if (obj[Pname] !== null) {
-                this.PcFlag = "True";
+                this.PcFlag = true;
                 this.stickBtn.hide();
                 this.filterValues = [];
                 this.isContextual = false;
@@ -231,16 +232,31 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.rowgroupCols = [];
                 this.EbObject.RowGroupCollection.$values = [];
                 this.orderColl = [];
-                this.call2FD();
+                //this.call2FD();
                 //this.EbObject.rowGrouping.$values = [];
-
+                EbDialog("show", {
+                    Message: "Retain Custom Columns?",
+                    Buttons: {
+                        "Yes": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        },
+                        "No": {
+                            Background: "red",
+                            Align: "left",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: this.dialogboxAction.bind(this)
+                });
             }
         }
-        else if (Pname == "Name") {
+        else if (Pname === "Name") {
             $("#objname").text(obj.Name);
             console.log(obj);
         }
-        else if (Pname == "Columns") {
+        else if (Pname === "Columns") {
             console.log(obj);
         }
         else if (Pname === "Formula") {
@@ -251,6 +267,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.rowgroupCols = [];
         }
     }.bind(this);
+
+    this.dialogboxAction = function (value) {
+        this.call2FD(value);
+    };
 
     this.compareAndModifyRowGroup = function () {
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
@@ -303,6 +323,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.init();
             this.call2FD();
         };
+
+        this.propGrid.CXVE.onAddToCE = function (prop, val, addedObj) {
+            if (addedObj.ObjType === "NumericColumn")
+                addedObj.className = "tdheight dt-body-right";
+        };
     };
 
     this.getColumnsSuccess = function (e) {
@@ -351,7 +376,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             else
                 this.stickBtn.hide();
-                //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+            //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
 
@@ -678,8 +703,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues();
         dq.Params = this.filterValues;
-       
-        dq.OrderBy  = this.getOrderByInfo();
+
+        dq.OrderBy = this.getOrderByInfo();
         if (this.columnSearch.length > 0) {
             this.filterFlag = true;
         }
@@ -703,7 +728,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.EbObject.OrderBy.$values.length > 0) {
             $.each(this.EbObject.OrderBy.$values, function (i, obj) {
-                if (tempArray.filter(e => e.Column === obj.name).length === 0) 
+                if (tempArray.filter(e => e.Column === obj.name).length === 0)
                     tempArray.push(new order_obj(obj.name, 1));
             });
         }
@@ -730,7 +755,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.filterObj);
-        if (this.isContextual && from !== "compare" ) {
+        if (this.isContextual && from !== "compare") {
             if (from === "filter" && prevfocusedId !== undefined) {
                 $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
                     var f = false;
@@ -2283,7 +2308,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         drptext = "<div class='input-group input-group-sm'>" +
             "<div class='input-group-btn'>" +
-            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> " + op+" </button>" +
+            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> " + op + " </button>" +
             " <ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
@@ -2314,7 +2339,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var coltype = "data-coltyp='date'";
         var filter = "<div class='input-group input-group-sm'>" +
             "<div class='input-group-btn'>" +
-            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> "+op+" </button>" +
+            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> " + op + " </button>" +
             "<ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
             " <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
@@ -2346,9 +2371,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var drptext = "";
         drptext = "<div class='input-group input-group-sm'>" +
             "<div class='input-group-btn'>" +// style='z-index:" + zidx.toString() + "'
-            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>"+op+"</button>" +
+            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>" + op + "</button>" +
             " <ul class='dropdown-menu'>" +
-            
+
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">x*</a></li>" +
             "  <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x</a></li>" +
             "  <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x*</a></li>" +

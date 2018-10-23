@@ -68,13 +68,13 @@
     this.selectLocale = $("#sellocale");
     this.divLocaleInfo = $("#divLocaleInfo");
     this.selectTimeZone = $("#seltimezone");
-   
+
     this.init = function () {
 
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
-        this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/) }.bind(this));
-        this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/) }.bind(this))
+        this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/); }.bind(this));
+        this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/); }.bind(this));
         this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
         this.btnChangePassword.on("click", this.initChangePwdModal.bind(this));
@@ -99,7 +99,7 @@
         if (this.whichMode === 2)
             this.setReadOnly();
         this.DpImageUpload();
-    }
+    };
 
 
     this.DpImageUpload = function () {
@@ -122,14 +122,14 @@
 
     this.onKeyUpPwdInModal = function (pwdThis) {
         if (this.validateInfo(pwdThis, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/)) {
-            if (this.pwdNewConfirm.val() === this.pwdNew.val() || pwdThis === this.pwdOld) 
+            if (this.pwdNewConfirm.val() === this.pwdNew.val() || pwdThis === this.pwdOld)
                 this.lblPwdChngMsg.text("");
-            else 
+            else
                 this.lblPwdChngMsg.text("Password Mismatch");
         }
-        else 
+        else
             this.lblPwdChngMsg.text("Minimum Length Should be 8");
-    }
+    };
 
     this.initForm = function () {
         this.chkboxHide.parent().hide();
@@ -146,14 +146,14 @@
             if (this.whichMode === 3) {
                 this.menuBarObj.setName("My Profile");
                 this.divChangePassword.css("display", "block");
-            }                
+            }
             if (this.whichMode === 1) {
                 this.chkboxHide.parent().show();
                 this.chkboxHide.parent().prev().show();
                 $("#divStatus").show();
                 this.divResetPassword.css("display", "block");
             }
-                
+
             this.isInfoValidEmail = true;
             this.initUserInfo();
             this.initFbConnect();
@@ -172,8 +172,8 @@
             this.txtPhPrimary.val(this.userinfo["PhoneNumber"]);
             if (this.userinfo["SocialID"].trim() !== "") {
                 $("#lblFbId").attr("data-id", this.userinfo["SocialID"]);
-                $("#userFbLink").text((this.userinfo["FullName"].trim().length > 0) ? this.userinfo["FullName"].trim() : "facebook");
-            }            
+                $("#userFbLink").text(this.userinfo["FullName"].trim().length > 0 ? this.userinfo["FullName"].trim() : "facebook");
+            }
             this.initFbConnect();
         }
         else {
@@ -183,7 +183,7 @@
             this.btnFbConnect.css("display", "none");
             $("#btnFbInvite").show();
         }
-    }
+    };
 
     this.initUserPreference = function () {
         this.selectLocale.children().remove();
@@ -208,7 +208,7 @@
             this.selectLocaleChangeAction();
             this.selectTimeZone.val("(UTC) Coordinated Universal Time");
         }
-    }
+    };
 
     this.setReadOnly = function () {
         this.txtName.attr("disabled", "true");
@@ -232,10 +232,10 @@
             this.rolesTile.setReadOnly();
         if (this.userGroupTile !== null)
             this.userGroupTile.setReadOnly();
-    }
+    };
 
     this.statusChangeAction = function () {
-        
+
         if ($("#divStatus input:radio[value='2']").prop("checked")) {
             this.chkboxHide.bootstrapToggle('off');
             this.chkboxHide.bootstrapToggle('enable');
@@ -244,7 +244,7 @@
             this.chkboxHide.bootstrapToggle('off');
             this.chkboxHide.bootstrapToggle('disable');
         }
-    }
+    };
 
     this.selectLocaleChangeAction = function (e) {
         var indx = this.selectLocale.prop('selectedIndex');
@@ -253,7 +253,7 @@
         this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>English Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].EnglishName}</label>`);
         this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Currency Format: </b>${this.culture[indx].NumberFormat}</label>`);
         this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Date Format: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].DateFormat}</label>`);
-    }
+    };
 
     this.initUserInfo = function () {
         this.txtName.val(this.userinfo["fullname"]);
@@ -265,10 +265,10 @@
         this.txtPhSecondary.val(this.userinfo["phnosecondary"]);
         this.txtLandPhone.val(this.userinfo["landline"]);
         this.txtExtension.val(this.userinfo["phextension"]);
-        var st = "#divGender input:radio[value='"+this.userinfo["sex"]+"']";
+        var st = "#divGender input:radio[value='" + this.userinfo["sex"] + "']";
         $(st).attr("checked", "checked");
         $("#lblFbId").attr("data-id", this.userinfo["fbid"]);
-        $("#userFbLink").text((this.userinfo["fbname"] == "") ? this.userinfo["fullname"] : this.userinfo["fbname"]);
+        $("#userFbLink").text(this.userinfo["fbname"] == "" ? this.userinfo["fullname"] : this.userinfo["fbname"]);
 
         $("#divStatus input:radio[value='" + this.userinfo["statusid"] + "']").attr("checked", "checked");
 
@@ -286,17 +286,17 @@
         //}
         //if (this.userinfo["hide"] === "yes")
         //    this.chkboxHide.prop("checked", "true");
-    }
+    };
 
     this.initFbConnect = function () {
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
             FB.init({
-                appId: (this.Environment === 'Development' ? '141908109794829' : (this.Environment === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
+                appId: this.Environment === 'Development' ? '141908109794829' : this.Environment === 'Staging' ? '1525758114176201' : '2202041803145524',//'141908109794829',//,'1525758114176201',//
                 cookie: true,  // enable cookies to allow the server to access
                 // the session
                 xfbml: true,  // parse social plugins on this page
-                version: (this.Environment === 'Development' ? 'v2.11' : (this.Environment === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
+                version: this.Environment === 'Development' ? 'v2.11' : this.Environment === 'Staging' ? 'v2.8' : 'v3.0' // use graph api version 2.8
             });
             FB.getLoginStatus(updateStatusCallback.bind(this));
         }.bind(this));
@@ -333,7 +333,7 @@
                     $("#userFbLink").show();
                 }
             }
-        };
+        }
         $('#btnFbConnect').off("click").on("click",
             function () {
                 FB.login(loginCallBack);
@@ -368,7 +368,7 @@
                 }
             );
         }
-    }
+    };
 
     this.findDependentRoles = function (dominant) {
         for (var i = 0; i < this.r2rList.length; i++) {
@@ -377,7 +377,7 @@
                 this.findDependentRoles(this.r2rList[i].Dependent);
             }
         }
-    }
+    };
 
     this.chkItemCustomFunc = function (_this, e) {
         _this.dependentList = [];
@@ -394,7 +394,7 @@
             var st = "";
             var itemid = [];
             $.each($(this.divSelectedDisplay).children(), function (i, ob) {
-                for (var i = 0; i < _this.dependentList.length; i++) {
+                for (let i = 0; i < _this.dependentList.length; i++) {
                     if (_this.dependentList[i] == $(ob).attr('data-id')) {
                         st += '\n' + $(ob).attr('data-name');
                         itemid.push($(ob).attr('data-id'));
@@ -421,7 +421,7 @@
             _this.findDependentRoles($(ob).attr('data-id'));
         });
         $.each($(this.divSearchResults).find('input'), function (i, ob) {
-            if ((_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) || (_this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1)) {
+            if (_this.dependentList.indexOf(parseInt($(ob).attr('data-id'))) !== -1 || _this.dominantList.indexOf(parseInt($(ob).attr('data-id'))) !== -1) {
                 $(ob).removeAttr("checked");
                 $(ob).attr("disabled", "true");
             }
@@ -433,14 +433,14 @@
                 $(ob).prop("checked", "true");
             }
         }.bind(this));
-    }
+    };
 
     this.initTiles = function () {
         //INIT ROLES
         var metadata1 = ['Id', 'Name', 'Description'];
         var initroles = [];
         if (this.U_Roles !== null)
-            for (var i = 0; i < this.customRoles.length; i++)
+            for (let i = 0; i < this.customRoles.length; i++)
                 if (this.U_Roles.indexOf(this.customRoles[i].Id) !== -1)
                     initroles.push(this.customRoles[i]);
         this.rolesTile = new TileSetupJs($("#menu1"), "Add Roles", initroles, this.customRoles, metadata1, null, this.chkItemCustomFunc, this);
@@ -448,7 +448,7 @@
         //INIT USER GROUPS
         var initgroups = [];
         if (this.U_Groups !== null)
-            for (var i = 0; i < this.userGroup.length; i++)
+            for (let i = 0; i < this.userGroup.length; i++)
                 if (this.U_Groups.indexOf(this.userGroup[i].Id) !== -1)
                     initgroups.push(this.userGroup[i]);
         this.userGroupTile = new TileSetupJs($("#menu3"), "Add User Group", initgroups, this.userGroup, metadata1, null, null, this);
@@ -457,7 +457,7 @@
             this.rolesTile.setReadOnly();
             this.userGroupTile.setReadOnly();
         }
-    }
+    };
 
     this.validateEmail = function () {
         clearTimeout(this.timer1);
@@ -469,7 +469,7 @@
             this.spanEmail.children().remove();
             this.spanEmail.append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true" style="padding: 9px;"></i>`);
             this.spanEmail.attr("title", "Validating...");
-            this.timer1 = setTimeout(function () { this.validateEmailAjaxCall() }.bind(this), 3000);
+            this.timer1 = setTimeout(function () { this.validateEmailAjaxCall(); }.bind(this), 3000);
         }
         else {
             this.txtEmail.css("border-color", "rgb(204, 0, 0)");
@@ -477,7 +477,7 @@
             this.spanEmail.append(`<i class="fa fa-times" aria-hidden="true" style="color:red; padding: 9px;"></i>`);
             this.spanEmail.attr("title", "Invalid Email ID");
         }
-    }
+    };
 
     this.validateEmailAjaxCall = function () {
         $.ajax({
@@ -499,7 +499,7 @@
                 }
             }.bind(this)
         });
-    }
+    };
 
     this.validateInfo = function (target, regex) {
         //target.off('keyup').on('keyup', function (evt) { this.validateInfo(target, regex)}.bind(this));
@@ -512,7 +512,7 @@
             target.css("border-color", "rgb(204, 0, 0)");
             return false;
         }
-    }
+    };
 
     this.initChangePwdModal = function () {
         this.pwdOld.val('');
@@ -523,12 +523,12 @@
         this.pwdNewConfirm.css("border-color", "rgb(204, 204, 204)");
         this.lblPwdChngMsg.text("");
         this.ChangePwdModal.modal('show');
-    }
+    };
     this.initResetPwdModal = function () {
         this.pwdResetNew.val('');
         this.pwdResetNewConfirm.val('');
         this.ResetPwdModal.modal('show');
-    }
+    };
 
     this.updatePassword = function () {
         if (this.pwdOld.val().length < 8 || this.pwdNew.val().length < 8 || this.pwdNewConfirm.val().length < 8 || this.pwdNew.val() !== this.pwdNewConfirm.val())
@@ -551,7 +551,7 @@
                 $(this.btnUpdatePwd.children()[0]).hide();
             }.bind(this)
         });
-    }
+    };
 
     this.resetPassword = function () {
         if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val() && this.pwdResetNew.val().length < 8) {
@@ -575,19 +575,19 @@
                 $(this.btnResetPwd.children()[0]).hide();
             }.bind(this)
         });
-    }
+    };
 
     this.clickbtnCreateUser = function () {
         if (this.txtName.val() === "" || this.txtEmail.val() === "")
             this.isInfoValidEmail = false;
         if (!this.isInfoValidEmail || !this.isInfoValidEmail2) {
-            EbMessage("show", { Message: 'Validation Failed. Check all Fields', AutoHide: true, Background: '#bf1e1e'});
+            EbMessage("show", { Message: 'Validation Failed. Check all Fields', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
         if (this.pwdPassword.val().length < 8 && this.whichMode === 1 && this.itemId < 2) {
             EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Background: '#bf1e1e' });
             return;
-        }    
+        }
         var dateRegex = /^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/;
         if (!dateRegex.test(this.txtDateOfBirth.val().trim())) {
             this.txtDateOfBirth.val('2000-01-01');
@@ -595,13 +595,13 @@
 
         this.btnCreateUser.attr("disabled", "true");
 
-        var oldstus = (this.itemId > 1) ? parseInt(this.userinfo["statusid"]) : -1;
+        var oldstus = this.itemId > 1 ? parseInt(this.userinfo["statusid"]) : -1;
         var newstus = $("#divStatus input:radio[name='status']:checked").val();
         if (oldstus === newstus)
             newstus = oldstus + 100;//Status not changed, so adding 100 to oldstus just to infirm that no change in stus
 
         var dict = new Object();
-        dict["anonymoususerid"] = (this.itemId == 1) ? this.anonymousUserId : 0;
+        dict["anonymoususerid"] = this.itemId == 1 ? this.anonymousUserId : 0;
         dict["fullname"] = this.txtName.val();
         dict["nickname"] = this.txtNickName.val();
         dict["email"] = this.txtEmail.val();
@@ -635,17 +635,19 @@
                 $("#btnCreateUser").removeAttr("disabled");
             }
         });
-    }
+    };
 
     this.init();
-}
+};
 
 //---------------------------------------------------------------USERGROUP-----------------------------------------------------------------------------
-var UserGroupJs = function (infoDict, usersList) {
+var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
     this.menuBarObj = $("#layout_div").data("EbHeader");
     this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.infoDict = infoDict;
     this.usersList = usersList;
+    this.ipconsList = ipconsList;//Constraint
+    this.dtconsList = dtconsList;//Constraint
     this.txtUserGroupName = $("#txtUserGroupName");
     this.txtUserGroupDescription = $("#txtUserGroupDescription");
     this.btnSaveAll = $("#btnSaveAll");
@@ -682,25 +684,25 @@ var UserGroupJs = function (infoDict, usersList) {
         //-----------------------------------------------
 
         //------------------INIT CONSTRAINTS TILE------------------
-
-        var metadata3 = ['_simpleClose'];
+               
+        var metadata3 = ['Id','Title','Description','_simpleClose'];
         if (this.ipAddTile === null) {
-            let options = { longTitle: "IP Address Whitelist", tileDivHeight: "200px"};
-            this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", null, null, metadata3, null, null, null, options);
+            let options = { longTitle: "IP Address Whitelist", tileDivHeight: "200px" };
+            this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", this.ipconsList, null, metadata3, null, null, null, options);
         }
         if (this.timeAddTile === null) {
             let options = { longTitle: "DateTime Whitelist", tileDivHeight: "200px" };
-            this.timeAddTile = new TileSetupJs($("#divTime"), "New DateTime", null, null, metadata3, null, null, null, options);
+            this.timeAddTile = new TileSetupJs($("#divTime"), "New DateTime", this.dtconsList, null, metadata3, null, null, null, options);
         }
 
         //--------------------------------------------------------
-    }
+    };
     this.clickbtnSaveAll = function () {
         var dict = new Object();
         if (this.txtUserGroupName.val() === '' || this.txtUserGroupDescription.val() === '') {
             EbMessage("show", { Message: 'Please Enter UserGroup Name/Description', AutoHide: true, Background: '#bf1e1e' });
             return;
-        }            
+        }
         dict["name"] = this.txtUserGroupName.val();
         dict["description"] = this.txtUserGroupDescription.val();
         dict["users"] = this.usersTile.getItemIds();
@@ -709,23 +711,23 @@ var UserGroupJs = function (infoDict, usersList) {
         dict["new_constraint_dt"] = this.timeAddTile.getExtendedJson();
         dict["deleted_ipconst_dt"] = this.timeAddTile.getDeletedObjIds();
 
-        this.btnSaveAll.attr("disabled","true");
+        this.btnSaveAll.attr("disabled", "true");
         $.ajax({
             type: "POST",
             url: "../Security/SaveUserGroup",
             data: { _id: this.infoDict['id'], _userGroupInfo: JSON.stringify(dict) },
             success: this.saveUserGroupSuccess.bind(this)
         });
-    }
+    };
     this.saveUserGroupSuccess = function (result) {
         if (result > 0) {
             alert("Saved Successfully");
             window.top.close();
-        }            
+        }
         else
-            EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e'});
+            EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e' });
         this.btnSaveAll.removeAttr("disabled");
-    }
+    };
 
     this.init();
-}
+};

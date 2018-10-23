@@ -114,7 +114,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.call2FD = function (value) {
-        var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : false;
+        var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
         this.relatedObjects = this.EbObject.DataSourceRefId;
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "unset", "margin-right": "unset" } }, maskLoader: false });
         $.ajax({
@@ -206,7 +206,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         $(subDivId).focus();
 
-        this.PcFlag = "False";
+        this.PcFlag = false;
     }.bind(this);
 
     this.CloseParamDiv = function () {
@@ -220,9 +220,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.tmpPropertyChanged = function (obj, Pname) {
         //this.isSecondTime = true;
-        if (Pname == "DataSourceRefId") {
+        if (Pname === "DataSourceRefId") {
             if (obj[Pname] !== null) {
-                this.PcFlag = "True";
+                this.PcFlag = true;
                 this.stickBtn.hide();
                 this.filterValues = [];
                 this.isContextual = false;
@@ -249,14 +249,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         }
                     },
                     CallBack: this.dialogboxAction.bind(this)
-                })
+                });
             }
         }
-        else if (Pname == "Name") {
+        else if (Pname === "Name") {
             $("#objname").text(obj.Name);
             console.log(obj);
         }
-        else if (Pname == "Columns") {
+        else if (Pname === "Columns") {
             console.log(obj);
         }
         else if (Pname === "Formula") {

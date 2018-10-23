@@ -45,8 +45,12 @@ namespace ExpressBase.Web.Components
             if (dvobj != null)
             {
                 dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
-                EbDataVisualization TableVisObj = getDVObject(dvobj, CustomColumn);
-                if(TableVisObj.EbDataSource.FilterDialog != null)
+                EbDataVisualization TableVisObj = null;
+                if (flag)
+                    TableVisObj = getDVObject(dvobj, CustomColumn);
+                else
+                    TableVisObj = dvobj;
+                if (TableVisObj.EbDataSource.FilterDialog != null)
                     EbControlContainer.SetContextId(TableVisObj.EbDataSource.FilterDialog, contextId);
                 //if (flag)
                 ViewBag.data = TableVisObj;

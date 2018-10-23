@@ -206,7 +206,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         $(subDivId).focus();
 
-        this.PcFlag = "False";
+        this.PcFlag = false;
     }.bind(this);
 
     this.CloseParamDiv = function () {
@@ -222,7 +222,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //this.isSecondTime = true;
         if (Pname === "DataSourceRefId") {
             if (obj[Pname] !== null) {
-                this.PcFlag = "True";
+                this.PcFlag = true;
                 this.stickBtn.hide();
                 this.filterValues = [];
                 this.isContextual = false;

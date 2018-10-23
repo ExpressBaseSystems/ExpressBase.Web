@@ -9,6 +9,8 @@
 
     var _infoDict = Html.Raw(ViewBag.SelectedUserGroupInfo);
     var _userList = Html.Raw(ViewBag.UsersList);
+    var _ipConsList = Html.Raw(ViewBag.IpConsList);
+    var _dtConsList = Html.Raw(ViewBag.DtConsList);
 }
 
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
@@ -101,7 +103,7 @@
 <script>
     $('document').ready(function () {
 
-        var obj = new UserGroupJs(@_infoDict, @_userList);
+        var obj = new UserGroupJs(@_infoDict, @_userList, @_ipConsList, @_dtConsList);
 
         //function newIpAddress(e) {
         //    $("#ulIpAddress").append(`<li class="list-group-item">${$("#txtIpAddress").val();}<i class="fa fa-times" aria-hidden="true" style="float: right;"></i></li>`);

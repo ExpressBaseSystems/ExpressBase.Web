@@ -321,6 +321,8 @@ namespace ExpressBase.Web.Controllers
 			var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, SolnId = ViewBag.cid });
 			ViewBag.SelectedUserGroupInfo = JsonConvert.SerializeObject(fr.SelectedUserGroupInfo);
 			ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
+			ViewBag.IpConsList = JsonConvert.SerializeObject(fr.IpConsList);
+			ViewBag.DtConsList = JsonConvert.SerializeObject(fr.DtConsList);
 			return View();
 		}
 
@@ -335,7 +337,11 @@ namespace ExpressBase.Web.Controllers
 				Id = _id,
 				Name = Dict["name"],
 				Description = Dict["description"],
-				Users = string.IsNullOrEmpty(Dict["users"]) ? string.Empty : Dict["users"]
+				Users = string.IsNullOrEmpty(Dict["users"]) ? string.Empty : Dict["users"],
+				IpConstraintNw = Dict["new_constraint_ip"],
+				IpConstraintOld = Dict["deleted_ipconst_id"],
+				DtConstraintNw = Dict["new_constraint_dt"],
+				DtConstraintOld =Dict["deleted_ipconst_dt"]
 			});
 			return res.id;
 		}

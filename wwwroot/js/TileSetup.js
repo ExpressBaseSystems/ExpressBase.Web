@@ -240,8 +240,8 @@
             this.txtStartTime = $('#txtStartTime' + t);
             this.txtEndTime = $('#txtEndTime' + t);
 
-            this.txtStartDate.datetimepicker({ datepicker: true, timepicker: true, format: "d/m/Y H:i" });
-            this.txtEndDate.datetimepicker({ datepicker: true, timepicker: true, format: "d/m/Y H:i" });
+            this.txtStartDate.datetimepicker({ datepicker: true, timepicker: true, format: "d-m-Y H:i" });
+            this.txtEndDate.datetimepicker({ datepicker: true, timepicker: true, format: "d-m-Y H:i" });
             this.txtStartTime.datetimepicker({ datepicker: false, timepicker: true, format: "H:i" });
             this.txtEndTime.datetimepicker({ datepicker: false, timepicker: true, format: "H:i" });
         }
@@ -320,11 +320,11 @@
     };
     this.getDeletedObjIds = function () {
         let ids = '';
-        for (let i = 0; i < this.initObjectList; i++) {
-            let _present_item = $.grep(this.resultObject, function (a) {
-                if (a.Id === this.initObjectList[i].Id)
+        for (let i = 0; i < this.initObjectList.length; i++) {
+            let _present_item = $.grep(this.resultObject, function (a, b) {
+                if (b.Id === this.initObjectList[i].Id)
                     return true;
-            });
+            }.bind(this,i));
             if (_present_item.length === 0) {
                 ids += this.initObjectList[i].Id + ',';
             }
@@ -605,8 +605,8 @@
         if ($(divSelected).find(`[data-id='${obj.Id}']`).length > 0) {
             return;
         }
-        var itempresent = $.grep(this.resultObject, function (a) {
-            if (a.Id === obj.Id)
+        var itempresent = $.grep(this.resultObject, function (a, b) {
+            if (b.Id === obj.Id)
                 return true;
         });
         if (itempresent.length === 0)

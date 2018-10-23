@@ -1,0 +1,207 @@
+﻿.pgGrphCont{
+
+}
+.grahpBoxblue {
+    position: absolute;
+    background: #3c6de0;
+    width: 650px;
+    height: 650px;
+    right: 0;
+    z-index: 1;
+    border-radius: 50px;
+    transform: rotate(30deg);
+    margin-right: -300px;
+    -webkit-box-shadow: -2px 3px 24px -1px rgb(177, 187, 255);
+    -moz-box-shadow: -2px 3px 24px -1px rgb(177, 187, 255);
+    box-shadow: -2px 3px 24px -1px rgb(177, 187, 255);
+    top: -100px;
+}
+.grahpBoxgrey {
+    position: absolute;
+    background: #ececec;
+    width: 400px;
+    height: 500px;
+    right: 0;
+    z-index: -2;
+    border-radius: 50px;
+    box-shadow: var(--eb-shadow2);
+    transform: rotate(45deg);
+    margin-right: -34px;
+    top: 25px;
+}
+.grahpBoxgrey-trans {
+    position: absolute;
+    background: #fbfbfb;
+    width: 160px;
+    height: 160px;
+    transform: rotate(45deg);
+    margin-top: 32px;
+    border-radius: 30px;
+    margin-left: -76px;
+}
+.grahpBoxgrey-trans1 {
+    position: absolute;
+    background: #FcFcFc;
+    width: 100px;
+    height: 100px;
+    transform: rotate(45deg);
+    margin-top: 0;
+    border-radius: 30px;
+    margin-left: 778px;
+    margin-top: -4px;
+}
+.grahpBoxgrey-trans2 {
+    position: absolute;
+    background: #fbfbfb;
+    width: 50px;
+    height: 50px;
+    transform: rotate(45deg);
+    margin-top: 15em;
+    border-radius: 10px;
+    margin-left: 40%;
+}
+.grahpBoxgrey-trans3 {
+    position: absolute;
+    background: #fbfbfb;
+    width: 50px;
+    height: 50px;
+    transform: rotate(45deg);
+    margin-top: 350px;
+    border-radius: 14px;
+    margin-left: 335px;
+}
+.trihuddiv {
+    position: absolute;
+    width: 100%;
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 1%, 0% 92%);
+    clip-path: polygon(0 0, 100% 0, 100% 1%, 0% 92%);
+    background: white;
+    height: 100px;
+    top: -1px;
+}
+.trihuddiv-b {
+    position: absolute;
+    width: 100%;
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 1%, 0% 92%);
+    clip-path: polygon(0 0, 100% 0, 100% 1%, 0% 92%);
+    background: #3c6de0;
+    height: 100px;
+    bottom: -99px;
+}
+.grahpBoxb-dbExp1 {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    transform: rotate(45deg);
+    background: #afc7ff;
+    margin-left: -50px;
+    border-radius: 10px;
+    top: 90px;
+}
+.grahpBoxb-dbExp2 {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    transform: rotate(45deg);
+    background: #f7f9ff;
+    margin-left: 40px;
+    border-radius: 10px;
+    top: 162px;
+}
+.grahpBoxb-dbExp3 {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    transform: rotate(45deg);
+    background: #f7f9ff;
+    border-radius: 10px;
+    top: 3px;
+    left: 37px;
+}
+.grahpBoxb-dbExp4 {
+    right: -250px;
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    transform: rotate(45deg);
+    background: #f7f9ff;
+    margin-left: 40px;
+    border-radius: 10px;
+}
+.grpAppTile1 {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    transform: rotate(45deg);
+    border-radius: 10px;
+    left: -20px;
+    top: -20px;
+    z-index: 1;
+}
+.bg-lb {
+    background: #f0f0ff;
+}
+.bg-lr {
+    background: #f9f5f5;
+}
+/* 
+  ##Device = Desktops
+  ##Screen = 1281px to higher resolution desktops
+*/
+@media (min-width: 1281px) {
+}
+
+/* 
+  ##Device = Laptops, Desktops
+  ##Screen = B/w 1025px to 1280px
+*/
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+
+   
+}
+
+/* 
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .grahpBoxblue {
+        width: 450px !important;
+        height: 580px !important;
+        margin-right: -212px !important;
+        top: 100px !important;
+    }
+    
+}
+
+/* 
+  ##Device = Tablets, Ipads (landscape)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+
+  
+}
+
+/* 
+  ##Device = Low Resolution Tablets, Mobiles (Landscape)
+  ##Screen = B/w 481px to 767px
+*/
+
+@media (min-width: 481px) and (max-width: 767px) {
+
+   
+}
+
+/* 
+  ##Device = Most of the Smartphones Mobiles (Portrait)
+  ##Screen = B/w 320px to 479px
+*/
+
+@media (min-width: 320px) and (max-width: 480px) {
+
+    
+}

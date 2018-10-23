@@ -2,30 +2,134 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     Html.RenderPartial("ExtPageHeader");
 }
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
 <script>$("#AppStore").remove();</script>
+
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
+<link rel="icon" href="~/images/favicon.ico">
+<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
+@*<link async href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">*@
+<link rel="stylesheet" type="text/css" href="~/css/webextstyle.1.1.css" asp-append-version="true" />
+<link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" asp-append-version="true" />
+<link rel="stylesheet" type="text/css" href="~/css/style-extended-1.1.css" asp-append-version="true" />
+<link rel="stylesheet" type="text/css" href="~/css/eb-pagegraphics.css" asp-append-version="true" />
 <style>
-    .comsoon-plcholder img {
-        max-height: 500px;
+    body {
+        overflow-x: hidden !important;
     }
-    .comsoon-plcholder .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .navbar-default {
+        border-color: none !important;
     }
 </style>
-@*<div class="row fd_As_hd navbar-fixed-top">
-    <div class="col-md-8 col-md-offset-2">
-        <h2 class="font_wmed mr-b-15">App Store</h2>
-        <div class="form-group">
-            <div class="input-group as_search_in">
-                <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search App" />
+<div class="row" style="background:white;font-family:Montserrat">
+    @{
+        Html.RenderPartial("ExtPageHeader");
+    }
+    <!--message box top-->
+    <section class="message-box-indexpage cookie" id="set_cookies">
+        <div class="cookie_container">
+            <span>
+                We use cookies to personalize our website content, provide social media features,
+                analyze how our site is used, <br /> and give you a better experience.
+            </span>
+            <span class="btn accept_cookies"><i class="fa fa-check"></i> Accept Cookies </span>
+            <i class="fa fa-close pull-right" id="close-msg" onclick="$('#set_cookies').hide();"></i>
+        </div>
+    </section>
+    <!--message box top end-->
+    @*<section class="comsoon-plcholder mt mb">
+            <div class="container">
+                <img src="~/images/underconstruct.jpg" />
+            </div>
+        </section>*@
+    <!--graphics-->
+    <div class="grahpBoxblue hidden-xs"></div>
+    <div class="grahpBoxgrey-trans"></div>
+    <div class="grahpBoxgrey-trans1"></div>
+    <div class="grahpBoxgrey-trans2"></div>
+    <div class="grahpBoxgrey-trans3"></div>
+
+    <!--graphics end-->
+    <section class="slider eb-banner">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd eb-banner-text-img-sec">
+                    <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner" style="margin-bottom: 100px;">
+                        <h2 class="cbl">Lorem ipsum dolor sit amet.</h2>
+                        <div class="spot"><div class="tick g"></div></div>
+                        <p class="cblk">
+                            Donec sed lacus vel neque ultricies vestibulum.
+                            Cras scelerisque ligula quis erat hendrerit, sit amet egestas turpis gravida.
+                        </p>
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs banner-img pull-right">
+                        <img src="~/images/svg/appbuildwall.svg" />
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>*@
-<section class="comsoon-plcholder mt mb">
-    <div class="container">
-        <img src="~/images/underconstruct.jpg" />
-    </div>
-</section>
+    </section>
+    <section class="apStrH">
+        <div class="container">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 fWsearchBar">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                    <span class="input-group-addon"><i class="fa fa-search"></i> Search</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="apStrH-bdy mt mb">
+        <div class="container">
+            <div class="dispRowWRpr">
+                <div class="coTBx-apStr-mnu">
+                    <ul class="catGlist-group">
+                        <li class="catGlist-item selDiv">Lorem Ipsum</li>
+                        <li class="catGlist-item">Lorem Ipsum</li>
+                        <li class="catGlist-item">Lorem Ipsum</li>
+                        <li class="catGlist-item">Lorem Ipsum</li>
+                        <li class="catGlist-item">Lorem Ipsum</li>
+                        <li class="catGlist-item">Lorem Ipsum</li>
+                        <li class="catGlist-item">Lorem Ipsum</li>
+                    </ul>
+                </div>
+                <div class="coTBx-apStr-bdy">
+                    @{
+                        var applist = ViewBag.StoreApps;
+                        string desc = string.Empty, grph = string.Empty;
+                        for (int i = 0; i < applist.Count; i++)
+                        {
+                            desc = (string.IsNullOrEmpty(applist[i].Description)) ? "No description" : applist[i].Description;
+
+                            grph = (i % 2 == 0) ? "bg-lb" : "bg-lr";
+
+                            <div class="apPtiLe">
+                                <div class="apTileInner">
+                                    <a href="/Ext/GoDetail?id=@applist[i].Id" class="apTileInner-bdy">
+                                        <div class="grpAppTile1 @grph"></div>
+                                        <div class="col1">
+                                            <i class="fa @applist[i].Icon"></i>
+                                        </div>
+                                        <div class="col2">
+                                            <h3>@applist[i].Name</h3>
+                                            <p>@desc</p>
+                                        </div>
+                                    </a>
+                                    <div class="apTileInner-bdy-footer">
+                                        <button class="btn-Apstr installbtn pull-right"><i class="fa fa-usd"></i> Buy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </section><!--partners/-->
+    @{
+        Html.RenderPartial("PageFooter");
+    }
+
+</div>

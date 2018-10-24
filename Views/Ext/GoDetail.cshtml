@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+<script>$("#AppStore").remove();</script>
+
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
+<link rel="icon" href="~/images/favicon.ico">
+<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
+@*<link async href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">*@
+<link rel="stylesheet" type="text/css" href="~/css/webextstyle.1.1.css" asp-append-version="true" />
+<link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" asp-append-version="true" />
+<link rel="stylesheet" type="text/css" href="~/css/style-extended-1.1.css" asp-append-version="true" />
+<link rel="stylesheet" type="text/css" href="~/css/eb-pagegraphics.css" asp-append-version="true" />
+<style>
+    body {
+        overflow-x: hidden !important;
+    }
+</style>
+
+@{ 
+    var wraper = ViewBag.StoreApps;
+    string desc = (string.IsNullOrEmpty(wraper.Description)) ? "Nothing to display" : wraper.Description;
+}
+<div class="row wCmn" style="background:white;font-family:Montserrat">
+    <div class="container">
+        <div class="dtWrapper-iconBx">
+            <div class="icBx">
+                <i class="fa fa-home"></i>
+            </div>
+            <div class="infBx">
+                <h2 class="appname">@wraper.Name</h2>
+                <p class="desc">@desc</p>
+                <p class="pByWho">Published on 04 October 2018 by amal-R&D</p>
+                <div class="AbCont4btn">
+                    <button class="ebbtn btn_try"><i class="fa fa-external-link" aria-hidden="true"></i> Try Now</button>
+                    <button class="ebbtn eb_btngreen btn_try pull-right"><i class="fa fa-external-link" aria-hidden="true"></i> Login To Buy</button>               
+                </div>
+            </div>
+            <div class="mInfo">
+                <div class="AppType"><i class="fa fa-mobile"></i> Mobile App</div>
+                <div class="cost">$ 67</div>
+            </div>
+        </div>
+    </div>
+</div>

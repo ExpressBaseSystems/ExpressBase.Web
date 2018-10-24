@@ -641,11 +641,13 @@
 };
 
 //---------------------------------------------------------------USERGROUP-----------------------------------------------------------------------------
-var UserGroupJs = function (infoDict, usersList) {
+var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
     this.menuBarObj = $("#layout_div").data("EbHeader");
     this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.infoDict = infoDict;
     this.usersList = usersList;
+    this.ipconsList = ipconsList;//Constraint
+    this.dtconsList = dtconsList;//Constraint
     this.txtUserGroupName = $("#txtUserGroupName");
     this.txtUserGroupDescription = $("#txtUserGroupDescription");
     this.btnSaveAll = $("#btnSaveAll");
@@ -682,15 +684,15 @@ var UserGroupJs = function (infoDict, usersList) {
         //-----------------------------------------------
 
         //------------------INIT CONSTRAINTS TILE------------------
-
-        var metadata3 = ['_simpleClose'];
+               
+        var metadata3 = ['Id','Title','Description','_simpleClose'];
         if (this.ipAddTile === null) {
             let options = { longTitle: "IP Address Whitelist", tileDivHeight: "200px" };
-            this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", null, null, metadata3, null, null, null, options);
+            this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", this.ipconsList, null, metadata3, null, null, null, options);
         }
         if (this.timeAddTile === null) {
             let options = { longTitle: "DateTime Whitelist", tileDivHeight: "200px" };
-            this.timeAddTile = new TileSetupJs($("#divTime"), "New DateTime", null, null, metadata3, null, null, null, options);
+            this.timeAddTile = new TileSetupJs($("#divTime"), "New DateTime", this.dtconsList, null, metadata3, null, null, null, options);
         }
 
         //--------------------------------------------------------

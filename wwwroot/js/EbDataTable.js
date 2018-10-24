@@ -710,11 +710,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         dq.Ispaging = this.EbObject.IsPaging;
         if (dq.length === -1)
-            dq.length = this.RowCount;
+            dq.length = this.RowCount ;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
-        //return dq;
+        return dq;
     };
 
     this.getOrderByInfo = function () {

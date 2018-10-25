@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.ServiceStack;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
@@ -47,6 +48,11 @@ namespace ExpressBase.Web.Controllers
             xx["AppName"] = "EXPRESSbase bot(Chatbot)";
             xx["DescApp"] = desc;
             var ds = this.ServiceClient.Get(new CreateApplicationRequest { Description = desc, appid = appid});
+        }
+
+        public void schedule()
+        {
+            var ds = this.ServiceClient.Post(new SchedulerMQRequest { Id =1});
         }
     }
 }

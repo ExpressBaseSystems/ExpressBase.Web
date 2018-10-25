@@ -31,7 +31,7 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Security/type")]
 		public IActionResult CommonList(string type, string show)
 		{
-			if(!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if(!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
 
 			IServiceClient client = this.ServiceClient;
@@ -63,34 +63,21 @@ namespace ExpressBase.Web.Controllers
 				return View();
 		}
 
-
-		//[HttpGet]
-		//public IActionResult UserPreferences()
-		//{
-		//	var res = this.ServiceClient.Post<EditUserPreferenceResponse>(new EditUserPreferenceRequest());
-		//	if (res.Data != null)
-		//	{
-		//		ViewBag.dateformat = res.Data["dateformat"];
-		//		ViewBag.timezone = res.Data["timezone"];
-		//		ViewBag.numformat = res.Data["numformat"];
-		//		ViewBag.timezoneabbre = res.Data["timezoneabbre"];
-		//		ViewBag.timezonefull = res.Data["timezonefull"];
-		//		ViewBag.locale = res.Data["locale"];
-
-		//	}
-
-		//	return View();
-		//}
-
-		//[HttpPost]
-		//public IActionResult UserPreferences(int i)
-		//{
-		//	var req = this.HttpContext.Request.Form;
-		//	var res = this.ServiceClient.Post<UserPreferenceResponse>(new UserPreferenceRequest { Colvalues = req.ToDictionary(dict => dict.Key, dict => (object)dict.Value) });
-		//	return View();
-		//}
+		private bool HasPemissionToSecurity()
+		{
+			if(ViewBag.wc == RoutingConstants.UC)
+			{
+				if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+					return true;
+				if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+					return true;
+			}			
+			return false;
+		}
 
 		//--------------MY PROFILE------------------------------------------
+
+		[EbBreadCrumbFilter("Security")]
 		public IActionResult MyProfile()
 		{
 			if (ViewBag.wc == RoutingConstants.TC)
@@ -147,7 +134,7 @@ namespace ExpressBase.Web.Controllers
 		[EbBreadCrumbFilter("Security")]
 		public IActionResult ManageUser(int itemid, int Mode, string AnonymousUserInfo)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) && Mode != 3)
+			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
 
 			//Mode - CreateEdit = 1, View = 2, MyProfileView = 3
@@ -220,12 +207,9 @@ namespace ExpressBase.Web.Controllers
 		{
 			Dictionary<string, string> Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(usrinfo);
 
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if (!HasPemissionToSecurity())
 			{
-				if (this.LoggedInUser.UserId == userid) ;
-				//Dict["roles"] = String.Join(",", this.LoggedInUser.Roles);//bug
-				else
-					return 0;
+				return 0;
 			}
 			else//temp fix
 			{
@@ -241,17 +225,7 @@ namespace ExpressBase.Web.Controllers
 					}
 				}
 			}
-
-			//var req = this.HttpContext.Request.Form;
-			
-			//Dictionary<string, object> Dict = new Dictionary<string, object>();
-			//Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
-			//Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
-
-			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
-
-			//var base64stng = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(Dict["preference"]));
-			 
+ 
 			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
 				Id = userid,
 				FullName = Dict["fullname"],
@@ -285,7 +259,7 @@ namespace ExpressBase.Web.Controllers
 				
 		public bool ResetUserPassword(int userid, string username, string NewPwd)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if (!HasPemissionToSecurity())
 				return false;
 			else
 			{
@@ -299,7 +273,7 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Security")]
         public IActionResult ManageAnonymousUser(int itemid)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
 
 			return View();
@@ -307,18 +281,24 @@ namespace ExpressBase.Web.Controllers
 
 		public string GetAnonymousUserInfo(int userid)
 		{
+			if (!HasPemissionToSecurity())
+				return string.Empty;
 			GetManageAnonymousUserResponse temp = this.ServiceClient.Post<GetManageAnonymousUserResponse>(new GetManageAnonymousUserRequest {Id = userid });
 			return JsonConvert.SerializeObject(temp.UserData);
 		}
 
 		public int UpdateAnonymousUserInfo(int itemid, string name, string email, string phone, string remarks)
 		{
+			if (!HasPemissionToSecurity())
+				return 0;
 			UpdateAnonymousUserResponse temp = this.ServiceClient.Post<UpdateAnonymousUserResponse>(new UpdateAnonymousUserRequest { Id = itemid, FullName = name.IsNullOrEmpty() ? "":name, EmailID = email.IsNullOrEmpty()?"":email, PhoneNumber = phone.IsNullOrEmpty()?"":phone, Remarks = remarks.IsNullOrEmpty()?"":remarks });
 			return temp.RowAffected;
 		}
 
 		public int ConvertAnonymousUserToUser(int itemid, string name, string email, string phone, string remarks)
 		{
+			if (!HasPemissionToSecurity())
+				return 0;
 			ConvertAnonymousUserResponse temp = this.ServiceClient.Post<ConvertAnonymousUserResponse>(new ConvertAnonymousUserRequest { Id = itemid, FullName = name, EmailID = email, PhoneNumber = phone, Remarks = remarks });
 			return temp.status;
 		}
@@ -335,61 +315,33 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Security")]
         public IActionResult ManageUserGroups(int itemid)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
-
-			//var req = this.HttpContext.Request.Form;
-			//if (itemid > 0)
-			//{
-			//	var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, TenantAccountId = ViewBag.cid });
-			//	List<int> userlist = fr.Data.ContainsKey("userslist") ? fr.Data["userslist"].ToString().Replace("[", "").Replace("]", "").Split(',').Select(int.Parse).ToList() : new List<int>();
-			//	ViewBag.UGName = fr.Data["name"];
-			//	ViewBag.UGDescription = fr.Data["description"];
-			//	ViewBag.itemid = itemid;
-			//	string html = "";
-			//	if (fr.Data.ContainsKey("userslist"))
-			//	{
-			//		foreach (var element in userlist)
-			//		{
-			//			html += "<div id ='@userid' class='alert alert-success columnDrag'>@users<button class='close' type='button' style='font-size: 15px;margin: 2px 0 0 4px;'>x</button></div>".Replace("@users", fr.Data[element.ToString()].ToString()).Replace("@userid", element.ToString());
-			//		}
-
-			//	}
-			//	ViewBag.UserList = html;
-
-			//}
-			//else
-			//{
-			//	//int groupid = string.IsNullOrEmpty(req["groupid"]) ? 0 : Convert.ToInt32(req["groupid"]);
-			//	Dictionary<string, object> Colval = new Dictionary<string, object>();
-			//	Colval.Add(itemid.ToString(),"");
-			//	GetManageUserGroupResponse res = this.ServiceClient.Post<GetManageUserGroupResponse>(new GetManageUserGroupRequest { Colvalues = Colval, id = itemid });
-			//}
 
 			var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, SolnId = ViewBag.cid });
 			ViewBag.SelectedUserGroupInfo = JsonConvert.SerializeObject(fr.SelectedUserGroupInfo);
 			ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
+			ViewBag.IpConsList = JsonConvert.SerializeObject(fr.IpConsList);
+			ViewBag.DtConsList = JsonConvert.SerializeObject(fr.DtConsList);
 			return View();
 		}
 
 		public int SaveUserGroup(int _id, string _userGroupInfo)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if (!HasPemissionToSecurity())
 				return 0;
 
-			//var req = this.HttpContext.Request.Form;
 			Dictionary<string, string> Dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(_userGroupInfo);
-			//Dictionary<string, object> Dict = new Dictionary<string, object>();
-			//Dict["roles"] = string.IsNullOrEmpty(roles) ? string.Empty : roles;
-			//Dict["group"] = string.IsNullOrEmpty(usergroups) ? string.Empty : usergroups;
-
-			//  IServiceClient client = this.EbConfig.GetServiceStackClient(ViewBag.token, ViewBag.rToken);
 			SaveUserGroupResponse res = this.ServiceClient.Post<SaveUserGroupResponse>(new SaveUserGroupRequest
 			{
 				Id = _id,
 				Name = Dict["name"],
 				Description = Dict["description"],
-				Users = string.IsNullOrEmpty(Dict["users"]) ? string.Empty : Dict["users"]
+				Users = string.IsNullOrEmpty(Dict["users"]) ? string.Empty : Dict["users"],
+				IpConstraintNw = Dict["new_constraint_ip"],
+				IpConstraintOld = Dict["deleted_ipconst_id"],
+				DtConstraintNw = Dict["new_constraint_dt"],
+				DtConstraintOld =Dict["deleted_ipconst_dt"]
 			});
 			return res.id;
 		}
@@ -398,26 +350,11 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Security")]
         public IActionResult ManageRoles(int itemid)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
-			//var fr = this.ServiceClient.Get<GetManageRolesResponse>(new GetManageRolesRequest { id = itemid, TenantAccountId = ViewBag.cid });
-			//ViewBag.AppCollection = JsonConvert.SerializeObject(fr.ApplicationCollection);
-			//ViewBag.SelectedRoleInfo = JsonConvert.SerializeObject(fr.SelectedRoleInfo);
-			//ViewBag.PermissionList = JsonConvert.SerializeObject(fr.PermissionList);
-			//ViewBag.RoleId = itemid;
-			//TempData["_dict"] = GetPermissionOperationsAsJs();
-			//ViewBag.RoleList = JsonConvert.SerializeObject(fr.RoleList);
-			//ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
-			//ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
 			ViewBag.itemid = itemid;
 			return View();
 		}
-
-		//public object GetObjectAndPermission(string roleId, int appId)
-		//{
-		//	var fr = this.ServiceClient.Get<GetObjectAndPermissionResponse>(new GetObjectAndPermissionRequest { RoleId = Convert.ToInt32(roleId), AppId = appId });
-		//	return JsonConvert.SerializeObject(fr);
-		//}
 
 		//GET  PERMISSION OPERATIONS AS JS
 		private string GetPermissionOperationsAsJs()
@@ -448,13 +385,15 @@ namespace ExpressBase.Web.Controllers
 
 		public object GetUserDetails(string srchTxt)
 		{
+			if (!HasPemissionToSecurity())
+				return string.Empty;
 			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText=srchTxt, SolnId = ViewBag.cid });
 			return fr.UserList;
 		}
 
 		public string SaveRole(int _roleId,string _roleName,string _roleDesc, bool _isAnonymous, int _appId,string _permission, string _role2role, string _users, string _locations)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			if (!HasPemissionToSecurity())
 				return "Failed";
 			try
 			{
@@ -495,6 +434,8 @@ namespace ExpressBase.Web.Controllers
 		{
 			try
 			{
+				if (!HasPemissionToSecurity())
+					return false;
 				Enum.Parse(typeof(SystemRoles), reqRoleName.ToLower(), true);
 				return true;//role name is already exists
 			}

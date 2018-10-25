@@ -65,9 +65,9 @@
     }
 
     .linkDiv {
-        padding-top: 10px;
         color: #339bb3;
         cursor: pointer;
+        display: inline-block;
     }
 
         .linkDiv:hover, .linkDiv:focus {
@@ -97,20 +97,24 @@
                     <img id="imgprofimage" src="~/images/proimg.jpg" style="border-radius: 50%;height: 135px; max-width: 135px; opacity: 0.3;" data-id="0" onerror="this.src = '/images/imagenotfound.svg';" />
                 </div>
             </div>
-            <div class="linkDiv" id="btnChngDp" style="text-align: right; padding-bottom: 25px; padding-top: 0px;"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</div>
+            <div style="margin-bottom: 25px; text-align: right;">
+                <div class="linkDiv" id="btnChngDp"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</div>
+            </div>
             <div class="form-group">
                 <label class="myLabel">Full Name</label>
                 <input id="txtFullName" type="text" class="form-control myTextField" title="Full Name" placeholder="Enter Full Name" autocomplete="off" onchange="this.title = 'Full Name : ' + this.value ;">
             </div>
             @*<div class="form-group">
-                <label class="myLabel">Nick Name</label>
-                <input id="txtNickName" type="text" class="form-control myTextField" title="Nick Name" placeholder="Enter Nick Name" autocomplete="off" onchange="this.title = 'Nick Name : ' + this.value ;">
-            </div>*@
+            <label class="myLabel">Nick Name</label>
+            <input id="txtNickName" type="text" class="form-control myTextField" title="Nick Name" placeholder="Enter Nick Name" autocomplete="off" onchange="this.title = 'Nick Name : ' + this.value ;">
+        </div>*@
             <div class="form-group">
                 <label class="myLabel">Email ID</label>
                 <input id="txtEmailPri" type="text" class="form-control myTextField" style="background: transparent;" title="Email ID" placeholder="Enter Email ID" autocomplete="off" onchange="this.title = 'Email ID : ' + this.value ;" disabled="disabled">
             </div>
-            <div class="linkDiv" onclick="$('#MU_ChangePwdModal').modal('show');">Change Password</div>
+            <div style="margin-top: 25px;">
+                <div class="linkDiv" onclick="$('#MU_ChangePwdModal').modal('show');"><i class="fa fa-key" aria-hidden="true"></i> Change Password</div>
+            </div>
         </div>
         <div class="col-md-9" style="padding-left: 50px;">
             <div class="sub-head" style="padding: 65px 0px 20px 0px;">Basic Details</div>

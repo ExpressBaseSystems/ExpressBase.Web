@@ -25,7 +25,7 @@
     // refresh and get object with new values from PG
     this.getvaluesFromPG = function () {
         // function that will update and return the values back from the property grid
-        for (var prop in this.getValueFuncs) {
+        for (let prop in this.getValueFuncs) {
             if (typeof this.getValueFuncs[prop] !== 'function') continue;
             this.PropsObj[prop] = ($('#' + this.wraperId + prop).length === 0) ? this.PropsObj[prop] : this.getValueFuncs[prop]();
         }
@@ -34,10 +34,10 @@
 
     //Builds property Grid rows
     this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf, IsCElimitEditor) {
-        var valueHTML;
-        var type = meta.editor;
-        var elemId = this.wraperId + name;
-        var subRow_html = '', subtypeOfAttr = '', req_html = '', arrow = '', isExpandedAttr = '';
+        let valueHTML;
+        let type = meta.editor;
+        let elemId = this.wraperId + name;
+        let subRow_html = '', subtypeOfAttr = '', req_html = '', arrow = '', isExpandedAttr = '';
         if (type === 0 || typeof value === 'boolean') {    // If boolean create checkbox
             valueHTML = '<input type="checkbox" class ="pg-inp-checkbox" id="' + elemId + '" value="' + (value || false) + '"' + (value ? ' checked' : '') + ' />';
             if (this.getValueFuncs)
@@ -53,7 +53,7 @@
                 this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
             else
                 this.getValueFuncs[name] = function () {
-                    var idx = parseInt($('#' + elemId).val()),
+                    let idx = parseInt($('#' + elemId).val()),
                         value = (idx !== 0) ? this.PropsObj[meta.source].$values[idx - 1] : null;
                     return value;
                 }.bind(this);
@@ -70,7 +70,8 @@
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
-            valueHTML = '<span class="cxv-inp" for="' + elemId + '" editor="' + type + '">' + (value || "") + '</span>';
+            valueHTML = '<input type="text" readonly class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
+            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 5) {    //  If string editor textbox
             valueHTML = '<input type="text" class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
@@ -85,7 +86,7 @@
         //}
         else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26) {//  If collection editor
             if ((meta.Limit === 1 && type === 25) || (meta.Limit === 1 && type === 8)) {
-                var _meta = jQuery.extend({}, meta);
+                let _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
                 if (!this.PropsObj[meta.source])
                     _meta.enumoptions = ["--none--"];
@@ -117,7 +118,7 @@
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
         else if (type === 14) {  //  If FontSlctrs
-            var _val = (value === "") ? "" : JSON.stringify(value).replace(/"/g, "'");
+            let _val = (value === "") ? "" : JSON.stringify(value).replace(/"/g, "'");
             valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (_val || "") + '" title="' + _val.replace(/{|}|'/g, "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
@@ -140,17 +141,17 @@
             });
         }
         else if (type === 23 || type === 15) {
-            var value23 = "";
+            let value23 = "";
             if (type === 23) {    // If Dictionary Editor
-                var _obj = this.getDictObj(value);
-                var _meta = this.getDictMeta(value);
-                var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                let _obj = this.getDictObj(value);
+                let _meta = this.getDictMeta(value);
+                let $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                 $subRows.attr("tr-for", type);
                 this.getValueFuncs[name] = function () {
-                    var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                    let $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                     $.each($subRows, function (i, row) {
-                        var key = $(row).attr("name").slice(0, -2);
-                        var val = ($(row).find(".pgCX-Editor-Btn").length > 0) ? value.$values[key] : $(row).find(".pgTdval input").val();
+                        let key = $(row).attr("name").slice(0, -2);
+                        let val = ($(row).find(".pgCX-Editor-Btn").length > 0) ? value.$values[key] : $(row).find(".pgTdval input").val();
                         value.$values[key] = val;
                     });
                     return value;
@@ -163,13 +164,13 @@
                     value23 = `(!No ${(meta.alias || name)} found)`;
             }
             else {  //  If expandable
-                var _meta = meta.submeta;
-                var _obj = value;
+                let _meta = meta.submeta;
+                let _obj = value;
                 this.getValueFuncs[name] = function () {
-                    var $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
+                    let $subRows = $("#" + this.wraperId + " [subtype-of=" + name + "]");
                     $.each($subRows, function (i, row) {
-                        var key = $(row).attr("name").slice(0, -2);
-                        var val = $(row).find(".pgTdval input").val();
+                        let key = $(row).attr("name").slice(0, -2);
+                        let val = $(row).find(".pgTdval input").val();
                         value[key] = val;
                     });
                     $('#' + elemId).val(JSON.stringify(value)).siblings().val(this.getExpandedValue(value));
@@ -197,9 +198,9 @@
 
     // gives expandable prop values as array
     this.getExpandedRows = function (_meta, _obj, name) {
-        var subRow_html = "";
+        let subRow_html = "";
         $.each(_obj, function (key, val) {
-            var CurMeta = getObjByval(_meta, "name", key);
+            let CurMeta = getObjByval(_meta, "name", key);
             if (CurMeta)
                 subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
         }.bind(this));
@@ -208,13 +209,13 @@
 
     // gives dict Editor SubObj
     this.getDictObj = function (value) {
-        var Obj = {};
-        var DictMetas = [];
-        var sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
-        var customFields = this.ParentPG.PropsObj[sourceProp].$values;
+        let Obj = {};
+        let DictMetas = [];
+        let sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
+        let customFields = this.ParentPG.PropsObj[sourceProp].$values;
         $.each(customFields, function (i, field) {
-            var objType = "Eb" + field.ObjType;
-            var _propName = field.Name;
+            let objType = "Eb" + field.ObjType;
+            let _propName = field.Name;
             Obj[_propName] = value.$values[_propName];
         }.bind(this));
         return Obj;
@@ -222,13 +223,13 @@
 
     // gives dict Editor Sub metas
     this.getDictMeta = function (value) {
-        var DictMetas = [];
-        var sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
-        var customFields = this.ParentPG.PropsObj[sourceProp].$values;
+        let DictMetas = [];
+        let sourceProp = getObjByval(this.ParentPG.Metas, "name", this.ParentPG.CurProp).source;
+        let customFields = this.ParentPG.PropsObj[sourceProp].$values;
         $.each(customFields, function (i, field) {
-            var fieldMeta = {};
-            var objType = "Eb" + field.ObjType;
-            var _propName = field.Name;
+            let fieldMeta = {};
+            let objType = "Eb" + field.ObjType;
+            let _propName = field.Name;
             Object.assign(fieldMeta, getObjByval(AllMetas[objType], "name", "FieldValue"));
             fieldMeta.name = _propName;
             fieldMeta.alias = null;
@@ -251,8 +252,10 @@
     // BootstrapSelect Html builder
     this.getBootstrapSelectHtml = function (id, selectedValue, options, IsCElimitEditor) {
         selectedValue = selectedValue || 0; // default value....optimize
-        var html = "<select class='selectpicker' >";
-        $.each(options, function (i, val) { html += `<option style='@color;' data-token='${i}'>${val}</option>`.replace("@color", (IsCElimitEditor && i === 0) ? "color:#777" : ""); });
+        let html = "<select class='selectpicker' >";
+        $.each(options, function (i, val) {
+            html += `<option style='@color;' data-token='${i}'>${val}</option>`.replace("@color", (IsCElimitEditor && i === 0) ? "color:#777" : "");
+        });
         html += "</select><input type='hidden' value='" + selectedValue + "' id='" + id + "'>";
         return html;
     };
@@ -269,7 +272,7 @@
 
     //checks an object is contained in array by name case insensitive
     this.isContains = function (obj, val) {
-        for (var i = 0; i < obj.length; i++)
+        for (let i = 0; i < obj.length; i++)
             if (obj[i].name.toLowerCase() === val.toLowerCase())
                 return true;
         return false;
@@ -278,7 +281,7 @@
     //Fn to call all property's postInitFn
     this.CallpostInitFns = function () {
         // Call the post init functions 
-        for (var prop in this.postCreateInitFuncs) {
+        for (let prop in this.postCreateInitFuncs) {
             if (typeof this.postCreateInitFuncs[prop] === 'function') {
                 this.postCreateInitFuncs[prop]();
                 this.postCreateInitFuncs[prop] = null;// just in case make sure we are not holding any reference to the functions
@@ -289,8 +292,8 @@
     //Fn to call all property's OnchangeExecFn
     this.callOnchangeExecFns = function () {
         // call OnChangeExec functions
-        for (var prop in this.OnChangeExec) {
-            var func = this.OnChangeExec[prop].bind(this.PropsObj, this);
+        for (let prop in this.OnChangeExec) {
+            let func = this.OnChangeExec[prop].bind(this.PropsObj, this);
             $("#" + this.wraperId + " [name=" + prop + "Tr]").off("change", "input, select").on("change", "input, select", func);
             func();
         }
@@ -329,8 +332,8 @@
     this.HideProperty = function (prop) {
         if (this.$hiddenProps[prop])
             return;
-        var $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
-        var isExpanded = $Tr.attr("is-showprop") === 'true';
+        let $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
+        let isExpanded = $Tr.attr("is-showprop") === 'true';
         $Tr.hide()
         $Tr.attr("is-showprop", false);
         this.$hiddenProps[prop] = { "$Tr": $Tr };
@@ -340,8 +343,8 @@
     this.ShowProperty = function (prop) {
         if (!this.$hiddenProps[prop])
             return;
-        var $Tr = this.$hiddenProps[prop].$Tr;
-        var isExpanded = $Tr.attr("is-showprop") === 'true';
+        let $Tr = this.$hiddenProps[prop].$Tr;
+        let isExpanded = $Tr.attr("is-showprop") === 'true';
         $Tr.show(300);
         $Tr.attr("is-showprop", true);
         this.$hiddenProps[prop] = null;
@@ -350,7 +353,7 @@
     //build PG table by Assembling property GroupHeaders, property rows ...
     this.buildGrid = function () {
         // Now we have all the html we need, just assemble it
-        for (var group in this.groupsHeaderRowHTML) {
+        for (let group in this.groupsHeaderRowHTML) {
             // Add the group row
             this.innerHTML += this.groupsHeaderRowHTML[group];
             // Add the group cells
@@ -362,7 +365,7 @@
             this.innerHTML += this.propertyRowsHTML[this.MISC_GROUP_NAME];
         }
         // Close the table and apply it to the div
-        var $innerHTML = $(this.innerHTML).hide();
+        let $innerHTML = $(this.innerHTML).hide();
         $innerHTML.css("transition-duration", "0.3s;");
         this.$PGcontainer.html($innerHTML);
         $innerHTML.fadeIn(300);
@@ -372,13 +375,13 @@
     this.buildRows = function () {
         if (this.PropsObj["IsCustomColumn"] !== true)
             delete this.PropsObj[this.dependedProp];
-        var propArray = Object.keys(this.PropsObj);
-        //for (var property in this.PropsObj) { propArray.push(property); }
+        let propArray = Object.keys(this.PropsObj);
+        //for (let property in this.PropsObj) { propArray.push(property); }
         propArray.sort();
-        var prop = null;
-        for (var i in propArray) {
+        let prop = null;
+        for (let i in propArray) {
             prop = propArray[i];
-            var _meta = getObjByval(this.Metas, "name", prop);
+            let _meta = getObjByval(this.Metas, "name", prop);
             // Skip if this is not a direct property, a function, or its meta says it's non browsable
             if (_meta === undefined || !this.PropsObj.hasOwnProperty(prop) || typeof this.PropsObj[prop] === 'function' || (this.wc === "uc" && _meta.HideForUser) ||
                 !this.isContains(this.Metas, prop) || ((_meta.MetaOnly === undefined) ? false : _meta.MetaOnly))
@@ -404,16 +407,22 @@
     };
 
     //fires when a property value changes through PG
-    this.OnInputchangedFn = function (e) {
+    this.OnInputchangedFn = function (e) { ////////// need optimization
         this.getvaluesFromPG();
         if (e) {
             this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);
         }
-        //var res = this.getvaluesFromPG();
+        //let res = this.getvaluesFromPG();
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
         this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
-        if (this.CurProp === "Name")
+        if (this.CurProp === "Name" || this.CurProp === "name") {
             this.updateDD(this.PropsObj);
+            let $colTile = "";
+            if (this.ParentPG.isModalOpen)
+                $colTile = $(`#${e.target.defaultValue}.colTile`);
+            if ($colTile.length)
+                $colTile.attr("id", this.PropsObj[this.CurProp]).text(this.PropsObj[this.CurProp]);
+        }
         if (typeof EbOnChangeUIfns != "undefined" && this.CurMeta.UIChangefn) {
             let NS1 = this.CurMeta.UIChangefn.split(".")[0];
             let NS2 = this.CurMeta.UIChangefn.split(".")[1];
@@ -423,41 +432,41 @@
     };
 
     ////Add a control name to Control DD
-    //this.addToDD = function (obj) {
-    //    //  this.AllObjects[obj.EbSid] = obj;
-    //    let $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
-    //    let ebsid = obj.EbSid;
-    //    let _name = (obj.Name || obj.name);
-    //    if (!this.isModalOpen) {
-    //        if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
-    //            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
-    //            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
-    //        }
-    //    }
-    //    if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
-    //        $MainCtrlsDDCont.find("select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
-    //        $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
-    //    }
-    //    $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
-    //};
-
-    //Add a control name to Control DD
     this.addToDD = function (obj) {
         //  this.AllObjects[obj.EbSid] = obj;
         let $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
+        let ebsid = obj.EbSid;
         let _name = (obj.Name || obj.name);
-        if ($(".pgCXEditor-bg").css("display") !== "none") {
-            if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
-                $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.EbSid + "'id='SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
+        if (this.isModalOpen) {
+            if ($(".pgCXEditor-Cont #SelOpt_" + obj.EbSid + "_" + this.wraperId).length === 0) { // need rework
+                $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
                 $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
             }
         }
         if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
-            $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.EbSid + "'id='M_SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
+            $MainCtrlsDDCont.find("select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
             $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
         }
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
     };
+
+    //Add a control name to Control DD
+    //this.addToDD = function (obj) {
+    //    //  this.AllObjects[obj.EbSid] = obj;
+    //    let $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
+    //    let _name = (obj.Name || obj.name);
+    //    if ($(".pgCXEditor-bg").css("display") !== "none") {
+    //        if ($(".pgCXEditor-Cont #SelOpt" + obj.EbSid + this.wraperId).length === 0) { // need rework
+    //            $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + obj.EbSid + "'id='SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
+    //            $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
+    //        }
+    //    }
+    //    if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
+    //        $MainCtrlsDDCont.find("select").append("<option data-name = '" + obj.EbSid + "'id='M_SelOpt" + _name + this.wraperId + "'>" + _name + "</option>");
+    //        $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
+    //    }
+    //    $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
+    //};
 
     this.updateDD = function (obj) {
         this.removeFromDD(obj.EbSid);
@@ -466,13 +475,13 @@
 
     //removes a control name to Control DD
     this.removeFromDD = function (EbSid) {
-        var slctr = EbSid + this.wraperId;
+        let slctr = EbSid + "_" + this.wraperId;
         if ($(".pgCXEditor-bg").css("display") !== "none")
             slctr = slctr + "_InnerPG";
-        if ($("#M_SelOpt" + slctr))
-            $("#M_SelOpt" + slctr).remove();
-        if ($("#SelOpt" + slctr))
-            $("#SelOpt" + slctr).remove();
+        if ($("#M_SelOpt_" + slctr).length)
+            $("#M_SelOpt_" + slctr).remove();
+        if ($("#SelOpt_" + slctr).length)
+            $("#SelOpt_" + slctr).remove();
         $(".controls-dd-cont" + " .selectpicker").selectpicker('refresh');
     };
     // PGclose fn
@@ -514,10 +523,10 @@
 
     //fires onChange of DDlisting all controls
     this.ctrlsDD_onchange = function (e) {
-        var SelItem = $(e.target).find("option:selected").attr("data-name");
-        $("#" + SelItem).focus();
+        let SelItem = $(e.target).find("option:selected").attr("data-name");
+        $(`[ebsid=${SelItem}]`).focus();
         SelObj = this.AllObjects[SelItem];
-        var type = SelObj.$type.split(",")[0].split(".")[2];
+        let type = SelObj.$type.split(",")[0].split(".")[2];
         this.setObject(SelObj, AllMetas[type]);
         this.DD_onChange(e);
     };
@@ -595,7 +604,7 @@
                 //if ($(InpId).length === 0)
                 $('#' + this.wraperId).on("change", InpId, this.checkRequired);
             }
-            if (meta.MaskPattern) {
+            if (meta.MaskPattern && $inp.length) {
                 $inp.val($inp.val().toLowerCase());
                 $inp.inputmask({
                     alias: "Regex",
@@ -607,7 +616,7 @@
 
     //Checks and alert if a property value is not unique in PG
     this.checkUnique = function (e) {
-        var $e = $(e.target);
+        let $e = $(e.target);
         //$e.removeClass("Eb-invalid");
         $.each(this.AllObjects, function (i, obj) {
             if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] !== undefined && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
@@ -626,7 +635,7 @@
 
     //Checks and alert if a required property is left blank
     this.checkRequired = function (e) {
-        var $e = $(e.target);
+        let $e = $(e.target);
         if ($e.val().trim() === "") {
             this.Ebalert.alert({
                 head: "This property is set as Required!",
@@ -648,18 +657,18 @@
     };
     // fires when a prop row is focused To show help text
     this.rowFocus = function (e) {
-        var $e = $(e.target);
-        var prop = $e.attr("name").slice(0, -2);
-        var ht = prop + " : &nbsp;&nbsp;" + ($e.closest("tr").attr("tr-for") === "23") ? "" : getObjByval(this.Metas, "name", prop).helpText;
+        let $e = $(e.target);
+        let prop = $e.attr("name").slice(0, -2);
+        let ht = prop + " : &nbsp;&nbsp;" + ($e.closest("tr").attr("tr-for") === "23") ? "" : getObjByval(this.Metas, "name", prop).helpText;
         $("#" + this.wraperId + "_HelpBox").html(ht);
     }.bind(this);
 
     //toggles a propGroup and set necessory flags as attribute
     this.togglePropGroup = function (e) {
-        var $GroupHeadRow = $(e.target).closest("[group-h]");
-        var isExpanded = $GroupHeadRow.attr("is-expanded") === 'true';
-        var groupName = $GroupHeadRow.attr("group-h");
-        var $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
+        let $GroupHeadRow = $(e.target).closest("[group-h]");
+        let isExpanded = $GroupHeadRow.attr("is-expanded") === 'true';
+        let groupName = $GroupHeadRow.attr("group-h");
+        let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
         if (groupName !== "All") {
             let delay = 100;
             if (isExpanded) {
@@ -677,12 +686,12 @@
     }.bind(this);
     //toggles subProperty rows
     this.toggleSubPropRows = function (e) {
-        var t = 0;
+        let t = 0;
         if (e.hasOwnProperty('originalEvent'))
             t = 200;
-        var $parentPropRow = $(e.target).closest("tr");
-        var isExpanded = $parentPropRow.attr("is-expanded") === 'true';
-        var subtype = $parentPropRow.attr("name").slice(0, -2);
+        let $parentPropRow = $(e.target).closest("tr");
+        let isExpanded = $parentPropRow.attr("is-expanded") === 'true';
+        let subtype = $parentPropRow.attr("name").slice(0, -2);
         if (isExpanded)
             $("#" + this.wraperId + " [subtype-of=" + subtype + "]").hide(t);
         else
@@ -692,7 +701,7 @@
 
     // fire when Name property changed
     this.nameChangedFn = function (e) {
-        var name = e.target.value;
+        let name = e.target.value;
         $("#M_SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
         $("#SelOpt" + this.PropsObj.EbSid + this.wraperId).text(name);
         // commented to prevent one error

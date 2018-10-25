@@ -297,8 +297,8 @@ namespace ExpressBase.Web.Controllers
                             uploadFileRequest.FileByte = myFileContent;
                         }
 
-                        uploadFileRequest.FileDetails.FileName = formFile.FileName;
-                        uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last();
+                        uploadFileRequest.FileDetails.FileName = formFile.FileName.ToLower();
+                        uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
                         uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
 
@@ -328,7 +328,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo = new ImageMeta();
                 foreach (var formFile in req.Files)
                 {
-                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower()))
                     {
                         byte[] myFileContent;
                         using (var memoryStream = new MemoryStream())
@@ -342,13 +342,18 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                         uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tags);
 
-                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
-                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last();
+                        uploadImageRequest.ImageInfo.FileName = formFile.FileName.ToLower();
+                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
                     }
                 }
             }
@@ -371,7 +376,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo = new ImageMeta();
                 foreach (var formFile in req.Files)
                 {
-                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower()))
                     {
                         byte[] myFileContent;
                         using (var memoryStream = new MemoryStream())
@@ -385,13 +390,18 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                         uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tags);
 
-                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
-                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last();
+                        uploadImageRequest.ImageInfo.FileName = formFile.FileName.ToLower();
+                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
                     }
                 }
             }
@@ -413,7 +423,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.ImageInfo = new ImageMeta();
                 foreach (var formFile in req.Files)
                 {
-                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower()))
                     {
                         byte[] myFileContent;
                         using (var memoryStream = new MemoryStream())
@@ -424,13 +434,18 @@ namespace ExpressBase.Web.Controllers
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
                             uploadImageRequest.ImageByte = myFileContent;
                         }
-                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
+                        uploadImageRequest.ImageInfo.FileName = formFile.FileName.ToLower();
                         uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Dp;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
                     }
                 }
             }
@@ -454,7 +469,7 @@ namespace ExpressBase.Web.Controllers
                 uploadImageRequest.SolutionId = req["SolnId"];
                 foreach (var formFile in req.Files)
                 {
-                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last()))
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower()))
                     {
                         byte[] myFileContent;
                         using (var memoryStream = new MemoryStream())
@@ -465,13 +480,18 @@ namespace ExpressBase.Web.Controllers
                             await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
                             uploadImageRequest.ImageByte = myFileContent;
                         }
-                        uploadImageRequest.ImageInfo.FileName = formFile.FileName;
+                        uploadImageRequest.ImageInfo.FileName = formFile.FileName.ToLower();
                         uploadImageRequest.ImageInfo.FileType = StaticFileConstants.PNG;
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.SolLogo;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
                     }
                 }
             }
@@ -508,6 +528,11 @@ namespace ExpressBase.Web.Controllers
 
 
                 res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                if (res.FileRefId > 0)
+                    Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                else
+                    Console.WriteLine("Exception: Img Upload Failure");
             }
             catch (Exception e)
             {

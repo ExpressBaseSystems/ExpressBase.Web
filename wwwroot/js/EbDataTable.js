@@ -80,7 +80,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.rowgroupFilter = [];
     this.CurrentRowGroup = null;
 
-    var split = new splitWindow("parent-div0", "contBox");    
+    var split = new splitWindow("parent-div0", "contBox");
 
     this.init = function () {
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
@@ -113,13 +113,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     }.bind(this);
 
-    this.call2FD = function () {
+    this.call2FD = function (value) {
+        var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
         this.relatedObjects = this.EbObject.DataSourceRefId;
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "unset", "margin-right": "unset" } }, maskLoader: false });
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom },
             success: this.ajaxSucc
         });
     };
@@ -205,7 +206,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         $(subDivId).focus();
 
-        this.PcFlag = "False";
+        this.PcFlag = false;
     }.bind(this);
 
     this.CloseParamDiv = function () {
@@ -219,9 +220,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.tmpPropertyChanged = function (obj, Pname) {
         //this.isSecondTime = true;
-        if (Pname == "DataSourceRefId") {
+        if (Pname === "DataSourceRefId") {
             if (obj[Pname] !== null) {
-                this.PcFlag = "True";
+                this.PcFlag = true;
                 this.stickBtn.hide();
                 this.filterValues = [];
                 this.isContextual = false;
@@ -231,16 +232,31 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.rowgroupCols = [];
                 this.EbObject.RowGroupCollection.$values = [];
                 this.orderColl = [];
-                this.call2FD();
+                //this.call2FD();
                 //this.EbObject.rowGrouping.$values = [];
-
+                EbDialog("show", {
+                    Message: "Retain Custom Columns?",
+                    Buttons: {
+                        "Yes": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        },
+                        "No": {
+                            Background: "red",
+                            Align: "left",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: this.dialogboxAction.bind(this)
+                });
             }
         }
-        else if (Pname == "Name") {
+        else if (Pname === "Name") {
             $("#objname").text(obj.Name);
             console.log(obj);
         }
-        else if (Pname == "Columns") {
+        else if (Pname === "Columns") {
             console.log(obj);
         }
         else if (Pname === "Formula") {
@@ -251,6 +267,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.rowgroupCols = [];
         }
     }.bind(this);
+
+    this.dialogboxAction = function (value) {
+        this.call2FD(value);
+    };
 
     this.compareAndModifyRowGroup = function () {
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
@@ -303,6 +323,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.init();
             this.call2FD();
         };
+
+        this.propGrid.CXVE.onAddToCE = function (prop, val, addedObj) {
+            if (addedObj.ObjType === "NumericColumn")
+                addedObj.className = "tdheight dt-body-right";
+        };
     };
 
     this.getColumnsSuccess = function (e) {
@@ -351,7 +376,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             else
                 this.stickBtn.hide();
-                //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+            //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
 
@@ -678,18 +703,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues();
         dq.Params = this.filterValues;
-       
-        dq.OrderBy  = this.getOrderByInfo();
+
+        dq.OrderBy = this.getOrderByInfo();
         if (this.columnSearch.length > 0) {
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
         if (dq.length === -1)
-            dq.length = this.RowCount;
+            dq.length = this.RowCount ;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
-        //return dq;
+        return dq;
     };
 
     this.getOrderByInfo = function () {
@@ -703,7 +728,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.EbObject.OrderBy.$values.length > 0) {
             $.each(this.EbObject.OrderBy.$values, function (i, obj) {
-                if (tempArray.filter(e => e.Column === obj.name).length === 0) 
+                if (tempArray.filter(e => e.Column === obj.name).length === 0)
                     tempArray.push(new order_obj(obj.name, 1));
             });
         }
@@ -730,7 +755,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.filterObj);
-        if (this.isContextual && from !== "compare" ) {
+        if (this.isContextual && from !== "compare") {
             if (from === "filter" && prevfocusedId !== undefined) {
                 $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
                     var f = false;
@@ -1325,9 +1350,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
             else {
-                $(textid).val("");
-                if ($(textid).next().length === 1)
-                    $(textid).next().val("");
+                if ($(textid).attr("type") === "checkbox")
+                    $(textid).prop('indeterminate', true);
+                else {
+                    $(textid).val("");
+                    if ($(textid).next().length === 1)
+                        $(textid).next().val("");
+                }
             }
         }.bind(this));
         //}
@@ -2013,7 +2042,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.each($(this.Api.columns().header()).parent().siblings().children().toArray(), this.setFilterboxValue.bind(this));
         $("." + this.tableId + "_htext").off("keyup").on("keyup", this.call_filter);
         $(".eb_fbool" + this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
-        $(".eb_fbool" + this.tableId).off("change").on("change", this.toggleInFilter.bind(this));
         $(".eb_selall" + this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
@@ -2280,7 +2308,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         drptext = "<div class='input-group input-group-sm'>" +
             "<div class='input-group-btn'>" +
-            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> " + op+" </button>" +
+            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> " + op + " </button>" +
             " <ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
@@ -2311,7 +2339,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var coltype = "data-coltyp='date'";
         var filter = "<div class='input-group input-group-sm'>" +
             "<div class='input-group-btn'>" +
-            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> "+op+" </button>" +
+            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> " + op + " </button>" +
             "<ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
             " <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
             " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
@@ -2343,9 +2371,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var drptext = "";
         drptext = "<div class='input-group input-group-sm'>" +
             "<div class='input-group-btn'>" +// style='z-index:" + zidx.toString() + "'
-            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>"+op+"</button>" +
+            " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>" + op + "</button>" +
             " <ul class='dropdown-menu'>" +
-            
+
             "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">x*</a></li>" +
             "  <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x</a></li>" +
             "  <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x*</a></li>" +
@@ -2361,7 +2389,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var filter = "";
         var id = tableId + "_" + colum + "_hdr_txt1";
         var cls = tableId + "_hchk";
-        filter = "<center><input type='checkbox' id='" + id + "' data-toggle='tooltip' title='' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool" + this.tableId + "' style='vertical-align: middle;'></center>";
+        filter = "<input type='checkbox' id='" + id + "' data-toggle='tooltip' title='' data-colum='" + colum + "' data-coltyp='boolean' data-table='" + tableId + "' class='" + cls + " " + tableId + "_htext eb_fbool" + this.tableId + "' style='margin-left: 50%;'></center>";
         return filter;
     };
 
@@ -2468,6 +2496,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else {
             $("[data-coltyp=date]").datepicker("hide");
             this.columnSearch = this.repopulate_filter_arr();
+            if (typeof (e.key) === "undefined") {
+                $('#' + this.tableId).DataTable().ajax.reload();
+                if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-filter"))
+                    $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-filter").addClass("fa-times");
+            }
         }
 
     }.bind(this);
@@ -2520,7 +2553,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.toggleInFilter = function (e) {
         var table = $(e.target).attr('data-table');
-        this.Api.ajax.reload();
+        this.call_filter({ keyCode: 10 });
+        //this.Api.ajax.reload();
     };
 
     this.toggleFilterdialog = function () {

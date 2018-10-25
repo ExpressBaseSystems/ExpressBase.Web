@@ -1,4 +1,4 @@
-﻿var MultiLanguageKeySelector = function (settings, curKey) {
+﻿const MultiLanguageKeySelector = function (settings, curKey) {
 
     this.ContID = settings.ContainerId;
     this.ToggleBtnId = settings.ToggleBtnId;

@@ -53,7 +53,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult AppDashBoard(int Id, EbApplicationTypes Type)
         {
-            Dictionary<int, string> _dict = new Dictionary<int, string>();            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            Dictionary<int, string> _dict = new Dictionary<int, string>();
+
+            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
             {
                 if (objectType.IsAvailableIn(Type))
                 {

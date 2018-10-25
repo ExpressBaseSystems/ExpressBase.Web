@@ -5,8 +5,8 @@
     this.title = title;
     this.options = options || {};
     this.resultObject = [];
-    this.initObjectList = (initObjList === null) ? [] : initObjList;
-    this.objectList = (searchObjList === null) ? [] : searchObjList;
+    this.initObjectList = initObjList === null ? [] : initObjList;
+    this.objectList = searchObjList === null ? [] : searchObjList;
     this.objectMetadata = objMetadata;
     this.searchAjaxUrl = searchAjax;
     this.doChkUnChkItemCustomFunc = chkUnChkItemCustomFunc;
@@ -36,26 +36,28 @@
     this.txtDtTitle = null;
     this.txtDtDescription = null;
     this.radType = null;
-    //this.divOneTimeOverlay = null;
-    //this.divRecurringOverlay = null;
+    this.divOneTimeOverlay = null;
+    this.divRecurringOverlay = null;
     this.txtStartDate = null;
     this.txtEndDate = null;
     this.divChkDay = null;
     this.txtStartTime = null;
     this.txtEndTime = null;
-    
+
+    //this.constraintIpObj = [];
+    //this.constraintDateTimeObj = [];
     this.profilePicStatus = null;
     this.readOnly = false;
-    
+
     this.init = function () {
         this.createBody.bind(this)(this.parentDiv, this.title);
-    }
+    };
 
     this.getPresetModalBody = function () {
         let t = this.title.replace(/\s/g, "_");
 
         if (this.title === 'New IP') {
-            return (`   
+            return `   
             <div class="modal fade" id="addModal${t}" role="dialog">
                 <div class="modal-dialog" style="width: 400px;">
                     <div class="modal-content">
@@ -79,10 +81,10 @@
                         </div>
                     </div>
                 </div>
-            </div>`);
+            </div>`;
         }
         else if (this.title === 'New DateTime') {
-            return (`   
+            return `   
             <div class="modal fade" id="addModal${t}" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -150,7 +152,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label style="font-family: open sans; font-weight: 300;">To Time</label>
+                                                <label style="font-family: open sans; font-weight: 300;">End Time</label>
                                                 <input id="txtEndTime${t}" type="text" class="form-control" title="End Time">
                                             </div>
                                         </div>
@@ -164,10 +166,10 @@
                         </div>
                     </div>
                 </div>
-            </div>`);
+            </div>`;
         }
         else {
-            return (`   
+            return `   
             <div class="modal fade" id="addModal${t}" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -191,10 +193,10 @@
                         </div>
                     </div>
                 </div>
-            </div>`);
+            </div>`;
         }
-    }
-        
+    };
+
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
         $(parent).append(`
@@ -210,17 +212,17 @@
             </div>
         </div>
         <div class="container">`
-        + this.getPresetModalBody() +
-        `</div>
-        <div id="divSelectedDisplay${t}" class="row tilediv1" style="Height: ${this.options.tileDivHeight || '500px'}"> </div>`);        
+            + this.getPresetModalBody() +
+            `</div>
+        <div id="divSelectedDisplay${t}" class="row tilediv1" style="Height: ${this.options.tileDivHeight || '500px'}"> </div>`);
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
         this.spanSrch = $('#spanSrch' + t);
-        this.spanRemv = $('#spanRemv'+ t);
+        this.spanRemv = $('#spanRemv' + t);
         this.btnAddModal = $('#btnAddModal' + t);
         this.addModal = $('#addModal' + t);
         this.btnModalOk = $('#btnModalOk' + t);
-        this.divSelectedDisplay = $('#divSelectedDisplay' + t);        
+        this.divSelectedDisplay = $('#divSelectedDisplay' + t);
 
         if (this.title === 'New IP') {
             this.txtIpAddress = $('#txtIpAddress' + t);
@@ -230,16 +232,16 @@
             this.txtDtTitle = $('#txtDtTitle' + t);
             this.txtDtDescription = $('#txtDtDescription' + t);
             this.radType = 'radType' + t;
-            //this.divOneTimeOverlay = $('#divOneTimeOverlay' + t);
-            //this.divRecurringOverlay = $('#divRecurringOverlay' + t);
+            this.divOneTimeOverlay = $('#divOneTimeOverlay' + t);
+            this.divRecurringOverlay = $('#divRecurringOverlay' + t);
             this.txtStartDate = $('#txtStartDate' + t);
             this.txtEndDate = $('#txtEndDate' + t);
             this.divChkDay = $('#divChkDay' + t);
             this.txtStartTime = $('#txtStartTime' + t);
             this.txtEndTime = $('#txtEndTime' + t);
 
-            this.txtStartDate.datetimepicker({ datepicker: true, timepicker: true, format: "d/m/Y H:i" });
-            this.txtEndDate.datetimepicker({ datepicker: true, timepicker: true, format: "d/m/Y H:i" });
+            this.txtStartDate.datetimepicker({ datepicker: true, timepicker: true, format: "d-m-Y H:i" });
+            this.txtEndDate.datetimepicker({ datepicker: true, timepicker: true, format: "d-m-Y H:i" });
             this.txtStartTime.datetimepicker({ datepicker: false, timepicker: true, format: "H:i" });
             this.txtEndTime.datetimepicker({ datepicker: false, timepicker: true, format: "H:i" });
         }
@@ -249,7 +251,7 @@
             this.loader = $('#loader' + t);
             this.divMessage = $('#message' + t);
             this.divSearchResults = $('#divSearchResults' + t);
-            
+
             $(this.parentDiv).on('keyup', '#txtSearch' + t, this.keyUptxtSearch.bind(this));
             $(this.parentDiv).on('click', '#btnSearch' + t, this.keyUptxtSearch.bind(this));
             $(this.divSearchResults).on('change', ".SearchCheckbox", this.OnChangeSearchCheckbox.bind(this));
@@ -268,7 +270,7 @@
         if (this.objectMetadata.indexOf('ProfilePicture') > -1)
             this.profilePicStatus = true;
 
-        if (this.initObjectList.length !== 0){
+        if (this.initObjectList.length !== 0) {
             for (var i = 0; i < this.initObjectList.length; i++) {
                 this.appendToSelected(this.divSelectedDisplay, { Id: this.initObjectList[i][this.objectMetadata[0]], Name: this.initObjectList[i][this.objectMetadata[1]], Data1: this.initObjectList[i][this.objectMetadata[2]] });
             }
@@ -276,26 +278,26 @@
         else {
             this.divSelectedDisplay.append(`<div style="text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
         }
-    }
+    };
 
     //FUNCTIONS FOR EXTERNAL USE--------------------------------------
     this.setObjectList = function (obj) {
         this.objectList = obj;
-    }
+    };
 
     this.setReadOnly = function () {
         this.btnAddModal.hide();
         this.readOnly = true;
-    }
+    };
 
     this.resetReadOnly = function () {
         this.btnAddModal.show();
         this.readOnly = false;
-    }
+    };
 
     this.clearItems = function () {
         this.divSelectedDisplay.children().remove();
-    }
+    };
 
     this.getItemIds = function () {
         var itemid = '';
@@ -303,13 +305,40 @@
             itemid += this.resultObject[i].Id + ',';
         itemid = itemid.substring(0, itemid.length - 1);
         return itemid;
-    }
+    };
+    this.getExtendedJson = function () {
+        if (this.title === 'New IP' || this.title === 'New DateTime') {
+            let _ObjArr = [];
+            for (let i = 0; i < this.resultObject.length; i++) {
+                if (typeof this.resultObject[i].Id === 'string') {
+                    _ObjArr.push(this.resultObject[i]._ExtObj);
+                }
+            }
+            return JSON.stringify(_ObjArr);
+        }
+        return '';
+    };
+    this.getDeletedObjIds = function () {
+        let ids = '';
+        for (let i = 0; i < this.initObjectList.length; i++) {
+            let _present_item = $.grep(this.resultObject, function (a, b) {
+                if (b.Id === this.initObjectList[i].Id)
+                    return true;
+            }.bind(this,i));
+            if (_present_item.length === 0) {
+                ids += this.initObjectList[i].Id + ',';
+            }
+        }
+        if(ids.length > 1)
+            return ids.substring(0, ids.length - 1);
+        return ids;
+    };
     //-------------------------------------------------------------------
 
-    
+
     this.onClickBtnAddModal = function () {
         $(this.addModal).modal('show');
-    }
+    };
 
     this.keyUpTxtDemoSearch = function () {
         var f = 1;
@@ -340,32 +369,45 @@
                 }
             }
         });
-    }
+    };
+
     this.onClickbtnClearDemoSearch = function () {
         $(this.txtDemoSearch).val("");
         this.keyUpTxtDemoSearch();
-    }
-
-    
+    };
 
     this.initModal = function () {
         if (this.title === 'New IP') {
             this.txtIpAddress.val("");
             this.txtIpDescription.val("");
         }
+        else if (this.title === 'New DateTime') {
+            this.txtDtTitle.val("");
+            this.txtDtDescription.val("");
+            this.addModal.find("input[value='OneTime']").prop("checked", true);
+            this.divOneTimeOverlay.hide();
+            this.divRecurringOverlay.show();
+            this.txtStartDate.val("");
+            this.txtEndDate.val("");
+            this.divChkDay.find("input[type=checkbox]").prop("checked", true);
+            this.txtStartTime.val("");
+            this.txtEndTime.val("");
+        }
         else {
             this.divMessage.show();
             this.txtSearch.focus();
             this.getSearchResult(false);
         }
-    }
+    };
+
     this.finalizeModal = function () {
-        if (this.title !== 'New IP') {
+        if (this.title !== 'New IP' && this.title !== 'New DateTime') {
             $(this.txtSearch).val("");
             $(this.divSearchResults).children().remove();
         }
-        
-    }
+
+    };
+
     this.keyUptxtSearch = function (e) {
         $(this.divSearchResults).children().remove();
         this.divMessage.hide();
@@ -375,8 +417,8 @@
             this.getSearchResult(true);
         else
             $(this).data('timer', setTimeout(this.getSearchResult.bind(this, false), 500));
-    }
-    
+    };
+
     this.getSearchResult = function (force) {
         var searchtext = $(this.txtSearch).val().trim();
         var Url = this.searchAjaxUrl;
@@ -389,7 +431,7 @@
             else {
                 this.divMessage.text("... Nothing Found ...");
                 this.divMessage.show();
-            } 
+            }
         }
         else if (!force && searchtext.length < 2) {
             this.loader.hide();
@@ -405,7 +447,7 @@
                 success: this.getItemdetailsSuccess.bind(this)
             });
         }
-    }
+    };
 
     this.getItemdetailsSuccess = function (data) {
         this.loader.hide();
@@ -416,7 +458,7 @@
         }
         this.drawSearchResults(data, "");
     };
-    
+
     this.drawSearchResults = function (objList, srchTxt) {
         var txt = srchTxt;
         var divSelectedDisplay = this.divSelectedDisplay;
@@ -424,27 +466,27 @@
         $(divSearchResults).children().remove();
         for (var i = 0; i < objList.length; i++) {
             var st = null;
-            if (objList[i][this.objectMetadata[1]].substr(0, txt.length).toLowerCase() === txt.toLowerCase() ) {
+            if (objList[i][this.objectMetadata[1]].substr(0, txt.length).toLowerCase() === txt.toLowerCase()) {
                 if ($(divSelectedDisplay).find(`[data-id='${objList[i][this.objectMetadata[0]]}']`).length > 0) {
                     st = 'checked disabled';
                 }
-                this.appendToSearchResult(divSearchResults, st, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });            
+                this.appendToSearchResult(divSearchResults, st, { Id: objList[i][this.objectMetadata[0]], Name: objList[i][this.objectMetadata[1]], Data1: objList[i][this.objectMetadata[2]] });
             }
         }
         if ($(this.divSearchResults).children().length === 0) {
             this.divMessage.text("... Nothing Found ...");
             this.divMessage.show();
         }
-    }
-    
+    };
+
     this.OnChangeSearchCheckbox = function (e) {
         if (this.doChkUnChkItemCustomFunc !== null) {
             this.doChkUnChkItemCustomFunc(parentThis, e);
         }
-    }
+    };
 
     this.appendToSearchResult = function (divSearchResults, st, obj) {
-        var temp= `<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id='${obj.Id}'>
+        var temp = `<div class='row searchRsulsItemsDiv' style='margin-left:5px; margin-right:5px' data-id='${obj.Id}'>
                         <div class='col-md-1' style="padding:10px">
                             <input type ='checkbox' class='SearchCheckbox' ${st} data-name = '${obj.Name}' data-id = '${obj.Id}' data-d1 = '${obj.Data1}' aria-label='...'>
                         </div>`;
@@ -453,18 +495,52 @@
             temp += `   <div class='col-md-2'>
                             <img class='img-thumbnail pull-right' src='/images/dp/${obj.Id}.png' onerror="this.src = '/images/imagenotfound.svg';" />
                         </div>`;
-        temp+=`         <div class='col-md-8'>
+        temp += `         <div class='col-md-8'>
                             <h5 name = 'head5' style='color:black;'>${obj.Name}</h5>
                             ${obj.Data1}
                         </div>
                     </div>`;
         $(divSearchResults).append(temp);
-    }
+    };
+
     this.clickbtnModalOkAction = function () {
+        if (this.title === 'New IP') {
+            if (this.txtIpAddress.val().trim() === "" || this.txtIpDescription.val().trim() === "") {
+                EbMessage("show", { Message: 'Please Enter IP address/Description', AutoHide: true, Background: '#bf1e1e' });
+                return;
+            }
+            var regex = /((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}/;
+            if (!regex.test(this.txtIpAddress.val().trim())) {
+                EbMessage("show", { Message: 'Please Enter a valid IP address', AutoHide: true, Background: '#bf1e1e' });
+                return;
+            }
+        }
+        else if (this.title === 'New DateTime') {
+            if (this.txtDtTitle.val() === "" || this.txtDtDescription.val() === "") {
+                EbMessage("show", { Message: 'Please Enter Title/Description', AutoHide: true, Background: '#bf1e1e' });
+                return;
+            }
+            if ($("input:radio:checked[name='" + this.radType + "']").attr("value") === 'OneTime') {
+                if (this.txtStartDate.val() === "" || this.txtEndDate.val() === "") {
+                    EbMessage("show", { Message: 'Please Enter Start/End DateTime', AutoHide: true, Background: '#bf1e1e' });
+                    return;
+                }
+            }
+            else {
+                if (this.txtStartTime.val() === "" || this.txtEndTime.val() === "") {
+                    EbMessage("show", { Message: 'Please Enter Start/End Time', AutoHide: true, Background: '#bf1e1e' });
+                    return;
+                }
+                if (this.divChkDay.find("input:checked[type=checkbox]").length === 0) {
+                    EbMessage("show", { Message: 'Please check atleast one day', AutoHide: true, Background: '#bf1e1e' });
+                    return;
+                }
+            }
+        }
         this.drawSelected();
         $(this.addModal).modal('toggle');
         this.SortDiv(this.divSelectedDisplay);
-    }
+    };
     this.SortDiv = function (mylist) {
         var listitems = mylist.children('div').get();
         listitems.sort(function (a, b) {
@@ -473,35 +549,55 @@
         $.each(listitems, function (index, item) {
             mylist.append(item);
         });
-    }
+    };
     this.drawSelected = function () {
         var t = title.replace(/\s/g, "_");
-
+        let _extendedObj = {};
         if (this.title === 'New IP') {
-            this.appendToSelected(this.divSelectedDisplay, { Id: this.txtIpAddress.val().trim(), Name: this.txtIpAddress.val(), Data1: this.txtIpDescription.val() });
+            _extendedObj = { Ip: this.txtIpAddress.val().trim(), Description: this.txtIpDescription.val() };
+            this.appendToSelected(this.divSelectedDisplay, { Id: "_" + this.txtIpAddress.val().trim(), Name: this.txtIpAddress.val(), Data1: this.txtIpDescription.val(), _ExtObj: _extendedObj });
             return;
         }
         else if (this.title === 'New DateTime') {
             let dscr = '';
-            if ($("input:radio:checked[name='" + this.radType + "']").attr("value") === 'OneTime')
+            if ($("input:radio:checked[name='" + this.radType + "']").attr("value") === 'OneTime') {
                 dscr = "One Time - " + this.txtStartDate.val() + " to " + this.txtEndDate.val();
+                _extendedObj = {
+                    Title: this.txtDtTitle.val().trim(),
+                    Description: this.txtDtDescription.val().trim(),
+                    Type: 1,
+                    Start: this.txtStartDate.val(),
+                    End: this.txtEndDate.val(),
+                    DaysCoded: 0
+                };
+            }
             else {
+                let _daysCode = 0;
                 dscr = "Recurring - " + this.txtStartTime.val() + " to " + this.txtEndTime.val() + "<br/>";
                 let $chkd = $(this.divChkDay.selector + " input:checkbox:checked");
-                for (let i = 0; i < $chkd.length; i++)
-                    dscr += $($chkd[i]).attr('data-label') + " "; 
+                for (let i = 0; i < $chkd.length; i++) {
+                    dscr += $($chkd[i]).attr('data-label') + " ";
+                    _daysCode += Math.pow(2, $($chkd[i]).attr('data-code'));
+                }
+                _extendedObj = {
+                    Title: this.txtDtTitle.val(),
+                    Description: this.txtDtDescription.val(),
+                    Type: 2,
+                    Start: this.txtStartTime.val(),
+                    End: this.txtEndTime.val(),
+                    DaysCoded: _daysCode
+                };
             }
-            
-            this.appendToSelected(this.divSelectedDisplay, { Id: this.txtDtTitle.val().trim(), Name: this.txtDtTitle.val(), Data1: dscr });
+            this.appendToSelected(this.divSelectedDisplay, { Id: "_" + this.txtDtTitle.val().trim(), Name: this.txtDtTitle.val(), Data1: dscr, _ExtObj: _extendedObj });
             return;
         }
 
         var checkedBoxList = $('.SearchCheckbox:checked');
         var _this = this;
         $(checkedBoxList).each(function () {
-            _this.appendToSelected(_this.divSelectedDisplay, { Id: $(this).attr('data-id'), Name: $(this).attr('data-name'), Data1: $(this).attr('data-d1')});
+            _this.appendToSelected(_this.divSelectedDisplay, { Id: $(this).attr('data-id'), Name: $(this).attr('data-name'), Data1: $(this).attr('data-d1') });
         });
-    }
+    };
     this.appendToSelected = function (divSelected, obj) {
         if (this.resultObject.length === 0)
             this.divSelectedDisplay.children().remove();
@@ -509,8 +605,8 @@
         if ($(divSelected).find(`[data-id='${obj.Id}']`).length > 0) {
             return;
         }
-        var itempresent = $.grep(this.resultObject, function (a) {
-            if (a.Id === obj.Id)
+        var itempresent = $.grep(this.resultObject, function (a, b) {
+            if (b.Id === obj.Id)
                 return true;
         });
         if (itempresent.length === 0)
@@ -533,22 +629,22 @@
             temp += `   <i class="fa fa-times dropDownRemoveClass" aria-hidden="true"></i>`;
         else if (this.objectMetadata.indexOf('_hideClose') > -1)
             temp += ``;
-        else{
-            temp+=`     <div class="dropdown">
+        else {
+            temp += `     <div class="dropdown">
                             <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
                             <ul class="dropdown-menu" style="left:-140px; width:160px;">`;
-        if (!this.readOnly)
-            temp +=             `<li><a href="#" class='dropDownViewClass'>View</a></li><li><a href="#" class='dropDownRemoveClass'>Remove</a></li>`;
-        temp += `           </ul>
-                        </div>`
+            if (!this.readOnly)
+                temp += `<li><a href="#" class='dropDownViewClass'>View</a></li><li><a href="#" class='dropDownRemoveClass'>Remove</a></li>`;
+            temp += `           </ul>
+                        </div>`;
         }
         temp += `   </div>
                 </div>
-            </div>`
+            </div>`;
         $(divSelected).append(temp);
-       
-    }
-   
+
+    };
+
     this.onClickRemoveFromSelected = function (e) {
         if (this.readOnly) {
             alert("Not Available in ReadOnly Mode");
@@ -566,8 +662,8 @@
             if (this.resultObject.length === 0)
                 this.divSelectedDisplay.append(`<div style="text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
         }
-    }
-    
+    };
+
     this.onClickViewFromSelected = function (e) {
         if (this.readOnly) {
             alert("Not Available in ReadOnly Mode");
@@ -602,7 +698,7 @@
         else if (this.title === 'Add User Group') {
             window.open("../Security/ManageUserGroups?itemid=" + id, "_blank");
         }
-    }
+    };
 
     this.init();
-}
+};

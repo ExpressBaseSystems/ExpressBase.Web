@@ -1,0 +1,208 @@
+﻿.eb-banner {
+    padding: 15px 15px 15px 15px;
+}
+
+.eb-banner-text-img-sec {
+    width: 100%;
+}
+
+.eb-banner .banner-img {
+    margin-top: 15rem;
+    position: absolute;
+    right: 0;
+    width: 449px;
+    bottom: -67px;
+    z-index: 2;
+}
+
+    .eb-banner .banner-img img {
+        width: 80%;
+    }
+
+.bg-color-banner {
+    margin-top: 100px;
+}
+
+    .bg-color-banner h2 {
+        color: white;
+        font-size: 40px;
+        font-family: Montserrat;
+        font-weight: 400;
+    }
+
+    .bg-color-banner p {
+        width: 90%;
+        font-size: 16px;
+        line-height: 3.2rem;
+        color: white;
+        font-family: Montserrat;
+        font-weight: 400;
+        padding-right: 5em;
+    }
+
+@media (min-width: 451px) and (max-width: 768px) {
+    .bg-color-banner h2 {
+        padding-bottom: 30px;
+    }
+}
+
+@media (min-width: 20px) and (max-width: 450px) {
+
+    .eb-banner2-img {
+        padding-left: 15px;
+        padding-right: 15px;
+        border: none;
+    }
+
+    .bg-color-banner h2 {
+        font-size: 35px;
+    }
+
+    .bg-color-banner p {
+        font-size: 14px;
+        line-height: 2.2rem !important;
+        padding-right: 0;
+    }
+
+    .bg-color-banner {
+        padding: 0 5px !important
+    }
+}
+
+bott line
+.spot {
+    width: 100%;
+    height: 5px;
+    margin: 10px 0px 15px 0px;
+    display: flex;
+}
+
+.spot .tick {
+    width: 40px;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.g {
+    background-color: #7dd27d;
+}
+
+.v {
+    background-color: #f55f44;
+}
+
+.spot-center {
+    justify-content: center;
+}
+
+eb font colors
+
+.cw {
+    color: white !important;
+}
+
+.cbl {
+    color: #042b88 !important;
+}
+
+.cblk {
+    color: #4c4848 !important;
+}
+
+/*Footer*/
+footer {
+    padding-top: 30px;
+    background-color: #1c3c4c;
+    color: white;
+    padding-bottom: 30px;
+    font-family: Montserrat;
+    font-weight: 300;
+}
+
+    footer h5 {
+        color: #a7a7a7;
+        margin-top: 0;
+    }
+
+    footer a {
+        text-decoration: none;
+        color: #a7a7a7;
+        font-size: 13px;
+        cursor: auto;
+    }
+
+        footer a:hover, footer a:focus {
+            color: #aaa;
+            cursor: pointer;
+        }
+
+    footer p {
+        color: #a7a7a7;
+        font-size: 12px;
+    }
+
+.txt_decor_none {
+    text-decoration: none !important;
+}
+
+footer .cmpny-details {
+    padding-left: 32px;
+}
+
+footer ul {
+    list-style-type: none;
+    padding: 0;
+    padding-left: 20px;
+}
+
+    footer ul li {
+        margin-bottom: 2px;
+    }
+
+.f_social {
+    background-color: #2e7dfd;
+    padding: 5px;
+    text-align: center;
+    border-radius: 50%;
+    margin: 6px;
+    float: left;
+    color: white;
+}
+
+    .f_social i {
+        width: 20px;
+    }
+
+.copyright {
+    background-color: #1c3c4c;
+}
+
+    .copyright p {
+        color: #d8cdcd;
+        padding: 10px 0px 0px 0px;
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+.heading7 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #3b5998;
+    margin-bottom: 10px;
+}
+.supportedBy {
+    float: left;
+    width: 100%;
+}
+
+.support_logos {
+    width: 25%;
+    float: left;
+    margin: 5% 7% 1% 0%;
+}
+
+    .support_logos img {
+        width: 100%;
+    }
+
+/*Footer*/

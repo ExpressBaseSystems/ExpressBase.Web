@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,20 +23,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DiffPlex" Version="1.4.1" />
+    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Flurl" Version="2.7.1" />
     <PackageReference Include="Flurl.Http" Version="2.3.2" />
     <PackageReference Include="FOSS.ServiceStack.Server.Core" Version="5.0.2" />
-    <PackageReference Include="DiffPlex" Version="1.4.1" />
-    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
-    <PackageReference Include="Jint" Version="2.11.58" />
     <PackageReference Include="JWT" Version="4.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.1.0-preview1-final" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.1.1" />
     <PackageReference Include="RestSharp.NetCore" Version="105.2.3" />
     <PackageReference Include="Stripe.net" Version="15.8.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,166 @@
+﻿.comsoon-plcholder img {
+    max-height: 500px;
+}
+.comsoon-plcholder .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/*appstore*/
+.dispRowWRpr{
+    display:flex;
+    flex-flow:row wrap;
+}
+.apStrH {
+    /*padding-top: 60px;*/
+}
+.fWsearchBar {
+    padding: 0;
+}
+.fWsearchBar  .form-control{
+    padding: 25px 15px;
+    font-size: 17px;
+}
+.coTBx-apStr-mnu{
+    width:20%;
+}
+.coTBx-apStr-bdy {
+    width: 80%;
+    display:flex;
+    flex-flow:row wrap;
+}
+.catGlist-group {
+    list-style: none;
+    line-height: 1.5em;
+    padding: 0;
+}
+    .catGlist-group .catGlist-item {
+        padding: 10px 0;
+        font-size: 16px;
+        position: relative;
+        font-weight: 500;
+        color: #737373;
+    }
+.input-group-addon {
+    background: #6c63ff;
+    color: white;
+    border-color: #6c63ff;
+    -webkit-box-shadow: -2px -1px 31px 5px rgba(108,99,255,0.51);
+    -moz-box-shadow: -2px -1px 31px 5px rgba(108,99,255,0.51);
+    box-shadow: -2px -1px 31px 5px rgba(108,99,255,0.51);
+}
+.apPtiLe {
+    width: 33.3%;
+    padding: 10px;
+    z-index: 10;
+}
+.apTileInner {
+    display: flex;
+    flex-flow: column nowrap;
+    -webkit-box-shadow: -2px -1px 31px 5px rgba(239,239,242,1);
+    -moz-box-shadow: -2px -1px 31px 5px rgba(239,239,242,1);
+    box-shadow: -2px -1px 31px 5px rgba(239,239,242,1);
+    border-radius: 6px;
+    border: 1px solid #f5f3f3;
+    background: white;
+    height: 100%;
+}
+.apTileInner-bdy {
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none !important;
+}
+.col1 {
+    width: 30%;
+    display: flex;
+    font-size: 25px;
+    color: #6c63ff;
+    padding: 10px;
+    z-index: 2;
+}
+.col2{
+    padding:10px;
+    max-width:70%;
+}
+    .col2 h3 {
+        margin: 0px 0px 10px 0px;
+        font-size: 17px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .col2 p {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+.apTileInner-bdy-footer {
+    padding: 15px 10px;
+}
+.btn-Apstr {
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+}
+.installbtn i {
+    color: #119c64;
+}
+
+/*detail of pub app*/
+.wCmn {
+    min-height: 100vh;
+    padding-top: 100px;
+}
+.dtWrapper-iconBx {
+    display: flex;
+    flex-flow: row wrap;
+}
+.dtWrapper-iconBx .appname {
+    margin-top:0;
+}
+    .dtWrapper-iconBx .icBx {
+        width: 100px;
+        display: flex;
+        justify-content: center;
+        font-size: 90px;
+        color: #62626d;
+    }
+    .dtWrapper-iconBx .infBx {
+        max-width: 60%;
+        padding-left: 50px;
+        width: 50%;
+    }
+    .dtWrapper-iconBx .mInfo {
+        width: 30%;
+    }
+        .dtWrapper-iconBx .mInfo .AppType {
+            font-size: 16px;
+        }
+            .dtWrapper-iconBx .mInfo .AppType i {
+                color: #6c63ff;
+                margin-right: 10px;
+                font-size: 30px;
+            }
+        .dtWrapper-iconBx .mInfo .cost {
+            margin-top: 12px;
+            font-size: 25px;
+            color: #e26962;
+        }
+.dtWrapper-iconBx .infBx .desc {
+}
+        .dtWrapper-iconBx .infBx .pByWho {
+            font-size: 13px;
+        }
+
+.AbCont4btn {
+    max-width: 350px;
+    margin-top: 3em;
+}
+.AbCont4btn .btn {
+    display: inline-block;
+}

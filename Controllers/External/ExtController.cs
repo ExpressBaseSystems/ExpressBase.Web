@@ -683,9 +683,19 @@ namespace ExpressBase.Web.Controllers
             return string.Empty;
         }
 
-        [HttpGet("Public/AppStore")]
+        [HttpGet("Store")]
         public IActionResult AppStorePublic()
         {
+            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreRequest { });
+            ViewBag.StoreApps = resp.Apps;
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GoDetail(int id)
+        {
+            GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest {Id=id });
+            ViewBag.StoreApps = resp.Wrapper;
             return View();
         }
     }

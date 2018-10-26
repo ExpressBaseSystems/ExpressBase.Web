@@ -29,25 +29,26 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(string refid)
         {
 
-            var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-            var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+            EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
 
-            EbWebForm WebForm = Obj as EbWebForm;
+            EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
             if (WebForm != null)
             {
+                
+                EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm ,this.ServiceClient);
 
-                foreach (EbControl control in WebForm.Controls.FlattenEbControls())
+                foreach (EbControl control in WebForm_L.Controls.FlattenEbControls())
                 {
                     if (control is EbSimpleSelect)
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
                     }
                 }
-                ViewBag.HtmlHead = WebForm.GetHead();
-                WebForm.IsRenderMode = true;
-                ViewBag.WebFormHtml = WebForm.GetHtml();
-                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(WebForm as EbControlContainer, BuilderType.WebForm);
-                ViewBag.WebFormObj = EbSerializers.Json_Serialize(WebForm);
+                ViewBag.HtmlHead = WebForm_L.GetHead();
+                WebForm_L.IsRenderMode = true;
+                ViewBag.WebFormHtml = WebForm_L.GetHtml();
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(WebForm_L as EbControlContainer, BuilderType.WebForm);
+                ViewBag.WebFormObj = EbSerializers.Json_Serialize(WebForm_L);
             }
 
             return View();

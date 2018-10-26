@@ -127,7 +127,7 @@ namespace ExpressBase.Web.Controllers
                 return Redirect("/StatusCode/404");
         }
 
-        public IActionResult TenantSignIn(string Email)
+        public IActionResult TenantSignIn(string Email,string reDir)
         {
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
@@ -143,6 +143,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.ErrorMsg = TempData["ErrorMessage"];
             ViewBag.Email = (Email != null) ? Email : null;
+            ViewBag.reDirectUrl = (reDir != null) ? reDir : null;
             return View();
         }
 
@@ -370,9 +371,10 @@ namespace ExpressBase.Web.Controllers
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
 			string _redirectUrl = null;
+            string _reDir = req["reDir"];
 
-			//var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
-			var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
+            //var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
+            var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
 			//Console.WriteLine("first ip" + ip);
 			//Console.WriteLine("second ip" + t.ToString());
 			Console.WriteLine("-------------------------------------------------");
@@ -493,7 +495,10 @@ namespace ExpressBase.Web.Controllers
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
 
-                        _redirectUrl = this.RouteToDashboard(whichconsole);
+                        if (string.IsNullOrEmpty(_reDir))
+                            _redirectUrl = this.RouteToDashboard(whichconsole);
+                        else
+                            _redirectUrl = this.B642S(_reDir);
                     }
                 }
             }
@@ -688,15 +693,56 @@ namespace ExpressBase.Web.Controllers
         {
             GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreRequest { });
             ViewBag.StoreApps = resp.Apps;
+
+            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+                ViewBag.AvailToken = true;
+
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("AppInfo/{id}")]
         public IActionResult GoDetail(int id)
         {
             GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest {Id=id });
             ViewBag.StoreApps = resp.Wrapper;
+            ViewBag.AppId = id;
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult BuyPubApp()
+        {
+            string _appid = this.HttpContext.Request.Form["AppId"];
+            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(CharConstants.DOT);
+
+            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];  
+
+            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+            {
+                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    return Redirect(RoutingConstants.PAYNOW);
+                else
+                    return Redirect(RoutingConstants.TENANTSIGNIN + "?reDir="+ this.S2B64("/AppInfo/" + _appid));
+            }
+            else
+            {
+                return Redirect(RoutingConstants.TENANTSIGNIN + "?reDir=" + this.S2B64("/AppInfo/" + _appid));
+            }
+        }
+
+        public string S2B64(string s)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(s));
+        }
+
+        public string B642S(string b64)
+        {
+            byte[] b = Convert.FromBase64String(b64);
+            return Encoding.UTF8.GetString(b);
         }
     }
 }

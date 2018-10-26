@@ -164,3 +164,30 @@
 .AbCont4btn .btn {
     display: inline-block;
 }
+
+/*paynow page*/
+.payNowRow {
+    min-height: 100vh;
+    height:100vh;
+}
+    .payNowRow .wraper {
+        height: 100%;
+        align-items:center;
+        justify-content:center;
+    }
+.payWrperOtr {
+    box-shadow: -2px -1px 31px 5px rgb(225, 225, 226);
+    font-family: Montserrat;
+    width: 500px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 35px 15px;
+    border-radius: 6px;
+}
+    .payWrperOtr .doller {
+        text-align: center;
+        margin: 30px 0;
+        font-size: 3em;
+        font-weight: 400;
+        color: #57585a;
+    }

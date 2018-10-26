@@ -24,9 +24,10 @@ Layout = "~/Views/Shared/LayoutInner.cshtml";
 
 
         string sso_dev = proto + ViewBag.SolutionInfo.EsolutionId + "-dev." + ViewBag.Domain + "/Ext/SwitchContext";
-string sso_user = proto + ViewBag.SolutionInfo.EsolutionId + "." + ViewBag.Domain + "/Ext/SwitchContext";
-string dbdefault = (EbConnections.DataDbConnection.IsDefault) ? "(Default)" : "";
-string filedefault = "";
+        string sso_user = proto + ViewBag.SolutionInfo.EsolutionId + "." + ViewBag.Domain + "/Ext/SwitchContext";
+
+        string dbdefault = (EbConnections.DataDbConnection.IsDefault) ? "(Default)" : "";
+        string filedefault = "";
         if (EbConnections.FilesDbConnection != null)
         {
             filedefault = (EbConnections.FilesDbConnection.IsDefault)? "(Default)" : "";
@@ -53,7 +54,7 @@ string filedefault = "";
                     </a>
                 </li>
                 <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
+                    <a class="t_a" href="/AppStore" target="_blank">
                         <span class="material-icons t__sidebar_icon">store</span>
                         <span class="t__sidebar_text">App Store</span>
                     </a>

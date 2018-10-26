@@ -22,11 +22,11 @@
     this.movingObj = {};
 
     this.del = function (eType, selector, action, originalEvent) {
-        var $e = selector.$trigger;
-        var id = $e.attr("ebsid");
-        var ControlTile = $(`#cont_${id}`).closest(".Eb-ctrlContainer");
+        let $e = selector.$trigger;
+        let id = $e.attr("ebsid");
+        let ControlTile = $(`#cont_${id}`).closest(".Eb-ctrlContainer");
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
-        var ctrl = this.rootContainerObj.Controls.PopByName(id);
+        let ctrl = this.rootContainerObj.Controls.PopByName(id);
         ControlTile.parent().focus();
         ControlTile.remove();
         this.PGobj.removeFromDD(id);
@@ -232,13 +232,13 @@
     };// start
 
     this.onDragendFn = function (el) {
-        var $sibling = $(el).next();
-        var $target = $(el).parent();
+        let $sibling = $(el).next();
+        let $target = $(el).parent();
         if (this.movingObj) {
             //Drag end with in the form
             if ($target.attr("id") !== "form-buider-toolBox") {
                 if ($sibling.attr("id")) {
-                    var idx = $sibling.index() - 1;
+                    let idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
@@ -265,7 +265,7 @@
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
                     $ctrl.insertBefore($sibling);
-                    var idx = $sibling.index() - 1;
+                    let idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, ctrlObj);
                 }
                 else {

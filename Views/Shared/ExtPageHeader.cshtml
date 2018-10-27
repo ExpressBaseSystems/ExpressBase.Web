@@ -15,6 +15,7 @@
         home = "https://expressbase.com";
         signinurl = "https://myaccount.expressbase.com";
     }
+    bool isLogined = (ViewBag.AvailToken == null) ? false : ViewBag.AvailToken;
 }
 <section class="ext-pageheader" id="pgheaderExt">
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -127,10 +128,13 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a class="hvr-underline-from-center" href="Public/AppStore" id="AppStore">App Store</a></li>
+                    <li><a class="hvr-underline-from-center" href="/Store" id="AppStore">App Store</a></li>
                     <li><a class="hvr-underline-from-center" href="@home/AboutUs" id="AboutUs">About Us</a></li>
                     <li><a class="hvr-underline-from-center" href="@home/Blog" id="Blog">Blog</a></li>
-                    <li id="signIn"><a class="hvr-underline-from-center" href=@signinurl>Sign in &#8594;</a></li>
+                    @if (!isLogined)
+                    {
+                        <li id="signIn"><a class="hvr-underline-from-center" href=@signinurl>Sign in &#8594;</a></li>
+                    }
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->

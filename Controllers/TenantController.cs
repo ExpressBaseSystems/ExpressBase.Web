@@ -142,8 +142,12 @@ namespace ExpressBase.Web.Controllers
                 this.obj_id = id;
                 this.TenantId = cid;
             }
-
         }
 
+        [HttpGet("PayNow")]
+        public IActionResult PayNow()
+        {
+            return View();
+        }
     }
 }

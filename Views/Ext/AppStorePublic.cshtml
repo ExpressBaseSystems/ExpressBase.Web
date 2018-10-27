@@ -24,9 +24,9 @@
     }
 </style>
 <div class="row" style="background:white;font-family:Montserrat">
-    @{
+    @*@{
         Html.RenderPartial("ExtPageHeader");
-    }
+    }*@
     <!--message box top-->
     <section class="message-box-indexpage cookie" id="set_cookies">
         <div class="cookie_container">
@@ -107,7 +107,7 @@
 
                             <div class="apPtiLe">
                                 <div class="apTileInner">
-                                    <a href="/Ext/GoDetail?id=@applist[i].Id" class="apTileInner-bdy">
+                                    <a href="/AppInfo/@applist[i].Id" class="apTileInner-bdy">
                                         <div class="grpAppTile1 @grph"></div>
                                         <div class="col1">
                                             <i class="fa @applist[i].Icon"></i>

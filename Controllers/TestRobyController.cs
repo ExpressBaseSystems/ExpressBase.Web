@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.ServiceStack;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;

@@ -349,13 +349,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.extraCol = [];
         this.ebSettings = this.EbObject;
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
-        this.tempColumns.sort(this.ColumnsComparer);
+        //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.ebSettings.DataSourceRefId;//not sure..
         this.dvName = this.ebSettings.Name;
         this.initCompleteflag = false;
 
         $("#objname").text(this.dvName);
-        this.propGrid.ClosePG()
+        this.propGrid.ClosePG();
 
         if (this.login === "dc") {
             if (this.FD)
@@ -755,48 +755,59 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.filterObj);
-        if (this.isContextual && from !== "compare") {
-            if (from === "filter" && prevfocusedId !== undefined) {
-                $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
-                    var f = false;
-                    $.each(fltr_collection, function (j, fObj) {
-                        if (fObj.Name === obj.Name)
-                            f = true;
-                    });
-                    if (!f)
-                        fltr_collection.push(obj);
-                });
-            }
-            else {
-                if (this.rowData !== null && this.rowData !== "") {
-                    if (this.Api !== null) {
-                        if (prevfocusedId === undefined)
-                            from = "link";
-                        $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection, from));
-                    }
-                }
-            }
-        }
+
+
+        //if (this.isContextual && from !== "compare") {
+        //    if (from === "filter" && prevfocusedId !== undefined) {
+        //        $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
+        //            var f = false;
+        //            $.each(fltr_collection, function (j, fObj) {
+        //                if (fObj.Name === obj.Name)
+        //                    f = true;
+        //            });
+        //            if (!f)
+        //                fltr_collection.push(obj);
+        //        });
+        //    }
+        //    else {
+        //        if (this.rowData !== null && this.rowData !== "") {
+        //            if (this.Api !== null) {
+        //                if (prevfocusedId === undefined)
+        //                    from = "link";
+        //                $.each(this.rowData, this.rowObj2filter.bind(this, fltr_collection, from));
+        //            }
+        //        }
+        //    }
+        //}
 
         return fltr_collection;
     };
 
     this.rowObj2filter = function (fltr_collection, from, i, data) {
-        if (i < this.tempColumns.length) {
+        if (i < this.EbObject.Columns.$values.length) {
             if (from === "link") {
-                var type = this.tempColumns[i].Type;
+                var type = this.EbObject.Columns.$values[i].Type;
                 //if (type === 5 || type === 6)
                 //    data = this.renderDateformat(data, "-");
                 if (data !== "")
-                    fltr_collection.push(new fltr_obj(type, this.tempColumns[i].name, data));
+                    fltr_collection.push(new fltr_obj(type, this.EbObject.Columns.$values[i].name, data));
             }
             else {
                 if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
-                    var type = dvcontainerObj.dvcol[prevfocusedId].tempColumns[i].Type;
-                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].tempColumns[i].name, data));
+                    var type = dvcontainerObj.dvcol[prevfocusedId].EbObject.Columns.$values[i].Type;
+                    fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].EbObject.Columns.$values[i].name, data));
                 }
             }
         }
+    };
+
+    this.getfilterFromRowdata = function () {
+        var filters = [];
+        $.each(this.EbObject.Columns.$values, function (i, col) {
+            if (this.rowData[col.data] !== "")
+                filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
+        }.bind(this));
+        return filters;
     };
 
     this.placefiltervalues = function () {
@@ -2662,7 +2673,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.rowData = [];
         }
 
-        this.filterValues = this.getFilterValues("link");
+        this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata());
 
         if ($(e.target).parent("b").attr("data-rowgroup") !== undefined) {
 
@@ -2716,7 +2727,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
             $(rows).eq(idx).next().show();
         }
-    }
+    };
 
     this.getRowGroupFilter = function ($elem) {
         let name = $elem.attr("data-colname");
@@ -2725,7 +2736,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (type === 5 || type === 6)
             val = val.split("/").join('-');
         this.rowgroupFilter.push(new fltr_obj(type, name, val));
-    }
+    };
 
     this.call2newDv = function (rows, idx, colindex) {
         $.ajax({
@@ -2745,7 +2756,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             data: param,
             success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex)
         });
-    }
+    };
 
     this.LoadInlineDv = function (rows, idx, Dvobj, colindex, result) {
         $(rows).eq(idx).next(".containerrow").remove();
@@ -2777,7 +2788,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
 
         $("#eb_common_loader").EbLoader("hide");
-    }
+    };
 
     this.Params4InlineTable = function (dsid) {
         var dq = new Object();
@@ -2787,7 +2798,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         dq.Start = 0;
         dq.Length = 500;
         return dq;
-    }
+    };
 
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");

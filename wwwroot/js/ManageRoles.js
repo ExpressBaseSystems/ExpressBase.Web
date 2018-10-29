@@ -373,8 +373,8 @@
     //    });
     //}
     this.tblColumnRender = function (data, type, row, meta) {
-        var perstr = data.substring(0, 14);
-        var title = data.substring(14);
+        var perstr = data.substring(0, 15);
+        var title = data.substring(15);
         var checked = '';
         if (this.permission.indexOf(perstr) !== -1)
             checked = 'checked';
@@ -426,7 +426,7 @@
                         obt.x0 = b.Obj_Name;
                         var appindex = $("#selectApp").find(":selected").attr("data-index");
                         for (y = 0; y < value.Operations.$values.length; y++) {
-                            var permissionString = this.appCollection[appindex].Id.toString().padStart(2, "0") + "-" + value.Op_Id.toString().padStart(2, "0") + "-" + b.Obj_Id.toString().padStart(5, "0") + "-" + y.toString().padStart(2, "0");
+                            var permissionString = this.appCollection[appindex].Id.toString().padStart(3, "0") + "-" + value.Op_Id.toString().padStart(2, "0") + "-" + b.Obj_Id.toString().padStart(5, "0") + "-" + y.toString().padStart(2, "0");
                             obt["x" + (y + 1)] = permissionString + b.Obj_Name + " -> " + value.Operations.$values[y] ;
                         }
                         tblData.push(obt);

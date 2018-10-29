@@ -27,7 +27,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult SendSMS(int i)
         {
             var req = this.HttpContext.Request.Form;
-            SMSSentRequest sMSSentRequest = new SMSSentRequest();
+            SMSInitialRequest sMSSentRequest = new SMSInitialRequest();
             //sMSSentRequest.To = req["to"];
             //sMSSentRequest.From = req["from"];
             //sMSSentRequest.Body = req["body"];
@@ -49,7 +49,7 @@ namespace ExpressBase.Web.Controllers
             var smsSid = Request.Form["SmsSid"];
             var messageStatus = Request.Form["MessageStatus"];
             string stsbody = req.ToJson();
-            SMSSentRequest sMSSentRequest = new SMSSentRequest();
+            SMSInitialRequest sMSSentRequest = new SMSInitialRequest();
           //  sMSSentRequest.To = "+919961596200";
           //  sMSSentRequest.Body = "SMS Id: "+smsSid.ToString()+"/nMessageStatus:" + messageStatus.ToString() +"/nFull Message:" + stsbody.ToString();
             string[] subdomain = this.HttpContext.Request.Host.Host.Split('.');

@@ -1,35 +1,37 @@
-﻿var FilterformBuilder = function (toolBoxid, formid, propGridId, builderType, Eb_objType, wc, cid, dsobj) {
-    this.wc = wc;
-    this.cid = cid;
-    this.Name = formid;
-    this.toolBoxid = toolBoxid;
+﻿const FilterformBuilder = function (options) {
+    this.wc = options.wc;
+    this.cid = options.cid;
+    this.formId = options.formId;
+    this.Name = this.formId;
+    this.toolBoxid = options.toolBoxId;
     this.rootContainerObj = null;
-    this.formId = formid;
-    this.$propGrid = $("#" + propGridId);
+    this.$propGrid = $("#" + options.PGId);
     this.$form = $("#" + this.formId);
-    this.EbObject = dsobj;
+    this.EbObject = options.objInEditMode;
+    this.tempArr = [];
+    this.isEditMode = false;
     commonO.Current_obj = this.EbObject;
 
 
-    // need to change
-    this.controlCounters = {
-        ComboBoxCounter: 0,
-        NumericCounter: 0,
-        DateCounter: 0,
-        ButtonCounter: 0,
-        TableLayoutCounter: 0,
-        TextBoxCounter: 0,
-        TableTdCounter: 0,
-        RadioButtonCounter: 0,
-        RadioGroupCounter: 0,
-        SimpleSelectCounter: 0,
-        CheckBoxGroupCounter: 0,
-        UserLocationCounter: 0
-    };
+
+    this.controlCounters = CtrlCounters;//Global
     this.currentProperty = null;
     this.CurRowCount = 2;
     this.CurColCount = 2;
     this.movingObj = {};
+
+    this.del = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let ebsid = $e.attr("ebsid");
+        let ControlTile = $(`#cont_${ebsid}`).closest(".Eb-ctrlContainer");
+        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(ebsid).EbSid);
+        let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
+        ControlTile.parent().focus();
+        ControlTile.remove();
+        this.PGobj.removeFromDD(ebsid);
+        this.saveObj();
+        return ctrl;
+    }.bind(this);
 
     this.controlOnFocus = function (e) {
         if (e.target.id === this.formId) {
@@ -43,46 +45,156 @@
         e.stopPropagation();
         this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
         //  this.PGobj.ReadOnly();
+    }.bind(this);
+
+    this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
+        if (ctrlObj.ObjType === "TableLayout") {
+            this.makeTdsDropable_Resizable();
+            let tds = $ctrl.find("td");
+            $.each(ctrlObj.Controls.$values, function (i, td) {
+                $(tds[i]).attr("ebsid", td.EbSid).attr("id", td.EbSid);
+            });
+        }
+        else if (ctrlObj.ObjType === "TabControl") {
+            let tapPanes = $ctrl.find(".tab-pane");
+            let tapBtns = $ctrl.find("ul.nav-tabs a");
+            $.each(ctrlObj.Controls.$values, function (i, pane) {
+                $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
+                $(tapBtns[0]).attr("href", "#" + pane.EbSid).text(pane.EbSid).closest("li").attr("li-of", pane.EbSid);
+            });
+            this.makeTabsDropable();
+        }
+        else if (ctrlObj.ObjType === "GroupBox") {
+            let el = $("#" + this.formId + " .group-box")[0];
+            this.makeGBDropable(el);
+        }
+    }
+
+    this.makeGBDropable = function (el) {
+        if (this.drake) {
+            if (!this.drake.containers.contains(el)) {
+                this.drake.containers.push(el);
+            }
+        }
+    }
+
+    this.makeTabsDropable = function () {
+        $.each($("#" + this.formId + " .tab-pane"), function (i, el) {
+            if (this.drake) {
+                if (!this.drake.containers.contains(el)) {
+                    this.drake.containers.push(el);
+                }
+            }
+        }.bind(this));
     };
+
+    this.makeTdsDropable_Resizable = function () {
+        $.each($(".tdDropable"), function (i, el) {
+            let $e = $(el);
+            this.pushToDragables($e);
+            if (($(".tdDropable").length - 1) !== i)
+                this.makeTdResizable($e);
+        }.bind(this));
+    };
+
+    this.makeTdResizable = function ($el) {
+        $el.resizable({
+            handles: 'e',
+            stop: this.tdDragStop.bind(this)
+        });
+    }.bind(this);
+
+    this.tdDragStop = function (event, ui) {
+        let $curTd = ui.element;
+        let $tbl = $curTd.closest("table");
+        let $tableCont = $tbl.closest(".Eb-ctrlContainer");
+        let tblWidth = $tbl.outerWidth();
+        let curTdWidth = $curTd.outerWidth();
+        let curTdWidthPerc = (curTdWidth / tblWidth) * 100;
+        let cuTdobj = this.rootContainerObj.Controls.GetByName($curTd.attr("ebsid"));
+        cuTdobj.WidthPercentage = curTdWidthPerc;
+    }
+
+    this.pushToDragables = function ($e) {
+        let el = $e[0];
+        if (this.drake) {
+            if (!this.drake.containers.contains(el)) {
+                this.drake.containers.push(el);
+            }
+        }
+    }
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
-        setTimeout(function () {
-            Proc(editModeObj, this.rootContainerObj);
-            this.renderCtrls();
-        }.bind(this), 1000);
-    };
-
-    this.initCtrl = function (ctrl) {
-        var $el = ctrl.$Control.clone();
-        var type = ctrl.ObjType;
-        $el.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
-        $el.on("focus", this.controlOnFocus.bind(this));
-        $el.attr("eb-type", type).attr("id", ctrl.EbSid);
-        if (this.controlCounters[type + "Counter"] <= parseInt(ctrl.EbSid.match(/\d+$/)[0])) {
-            this.controlCounters[type + "Counter"] = parseInt(ctrl.EbSid.match(/\d+$/)[0]);
-            ++(this.controlCounters[type + "Counter"]);
-        }
-        $(".eb-chatBox-dev").append($el);
-    };
-
-    this.renderCtrls = function () {
-        $.each(this.rootContainerObj.Controls.$values, function (i, ctrl) {
-            this.initCtrl(ctrl);
+        //setTimeout(function () {
+        Proc(editModeObj, this.rootContainerObj);
+        //}.bind(this), 1000);
+        $(".Eb-ctrlContainer").each(function (i, el) {
+            this.initCtrl(el);
         }.bind(this));
-        $(".Eb-ctrlContainer").contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
     };
 
+    this.initCtrl = function (el) {
+        this.tempArr.push(el);
+        let $el = $(el);
+        let type = $el.attr("ctype").trim();
+        let attrEbsid = parseInt($el.attr("ebsid").match(/\d+$/)[0]);
+        if (attrEbsid || attrEbsid === 0)
+            this.controlCounters[type + "Counter"] = attrEbsid;
+        else
+            this.controlCounters[type + "Counter"] = (this.controlCounters[type + "Counter"]);
+
+        //this.controlCounters[type + "Counter"] = parseInt($el.attr("ebsid").match(/\d+$/)[0]) || (this.controlCounters[type + "Counter"]);
+        let ebsid = type + this.controlCounters[type + "Counter"]++;// inc counter
+        $el.attr("tabindex", "1");
+        this.ctrlOnClickBinder($el, type);
+        $el.on("focus", this.controlOnFocus.bind(this));
+        $el.attr("eb-type", type);
+        $el.attr("eb-type", type).attr("ebsid", ebsid);
+        this.updateControlUI(ebsid);
+    };
+
+    this.ctrlOnClickBinder = function ($ctrl, type) {
+        if (type === "TabControl")
+            $ctrl.on("click", function myfunction() {
+                if (event.target.getAttribute("data-toggle") !== "tab")
+                    event.stopPropagation();
+                $(event.target).closest(".Eb-ctrlContainer").focus();
+            });
+        else
+            $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
+    }
+
+    this.updateControlUI = function (ebsid, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(ebsid);
+        let _type = obj.ObjType
+        $.each(obj, function (propName, propVal) {
+            let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
+            if (meta && meta.IsUIproperty)
+                this.updateUIProp(propName, ebsid, _type);
+        }.bind(this));
+    }
+
+    this.updateUIProp = function (propName, id, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(id);
+        let NSS = getObjByval(AllMetas["Eb" + type], "name", propName).UIChangefn;
+        if (NSS) {
+            let NS1 = NSS.split(".")[0];
+            let NS2 = NSS.split(".")[1];
+            EbOnChangeUIfns[NS1][NS2](id, obj);
+        }
+    }
+
+    //Edit mode
     if (this.EbObject) {
+        this.isEditMode = true;
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
         this.rootContainerObj = new EbObjects.EbFilterDialog(this.formId);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
-    }
-
-    //this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
+    };
 
     this.PGobj = new Eb_PropertyGrid({
         id: "pgWraper",
@@ -97,21 +209,15 @@
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");
-        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
-        $('#pgWraper table td').find("input").change(this.PGinputChange.bind(this));////////
+        this.SelectedCtrl = control;
+        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);////
     };
 
     this.saveObj = function () {
         this.PGobj.getvaluesFromPG();
     };
 
-    this.PGinputChange = function (e) {
-        this.currentProperty = $(e.target);
-        this.updateHTML(e);
-    };
-
     this.movesfn = function (el, source, handle, sibling) {
-        this.makeTdsDropable();
         return true;
     };
 
@@ -133,53 +239,37 @@
 
     };
 
-    this.makeTdsDropable = function () {
-        $.each($(".tdDropable"), this.tdIterFn.bind(this));
-    };
-
-    this.tdIterFn = function (i) {
-        if (this.drake) {
-            if (!this.drake.containers.contains(document.getElementsByClassName("tdDropable")[i])) {
-                this.drake.containers.push(document.getElementsByClassName("tdDropable")[i]);
-            }
-        }
-    };
-
     this.onDragFn = function (el, source) {
         //if drag start within the form
-        if ($(source).attr("id") !== "form-buider-toolBox") {
-            console.log("el poped");
-            this.movingObj = this.rootContainerObj.Controls.PopByName($(el).attr("id"));
+        let id = $(el).closest(".Eb-ctrlContainer").attr("ebsid");
+        let $source = $(source);
+        if ($source.attr("id") !== "form-buider-toolBox") {
+            this.movingObj = this.rootContainerObj.Controls.PopByName(id);
+            if ($source.closest(".ebcont-ctrl").attr("ctype") === "TabPane")
+                this.adjustPanesHeight($source);
         }
         else
             this.movingObj = null;
     };// start
 
     this.onDragendFn = function (el) {
-        var sibling = $(el).next();
-        var target = $(el).parent();
+        var $sibling = $(el).next();
+        var $target = $(el).parent();
         if (this.movingObj) {
-
             //Drag end with in the form
-            if (target.attr("id") !== "form-buider-toolBox") {
-                if (sibling.attr("id")) {
-                    console.log("sibling : " + sibling.id);
-                    var idx = sibling.index() - 1;
+            if ($target.attr("id") !== "form-buider-toolBox") {
+                if ($sibling.attr("id")) {
+                    var idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
-                    console.log("no sibling ");
                     this.rootContainerObj.Controls.Append(this.movingObj);
                 }
                 this.saveObj();
                 $(el).on("focus", this.controlOnFocus.bind(this));
             }
-
         }
-
     };
-
-
 
     this.onDropFn = function (el, target, source, sibling) {
         let $target = $(target);
@@ -231,137 +321,6 @@
         $ctrl.attr("eb-type", type);
     };
 
-    this.ctrlOnClickBinder = function ($ctrl, type) {
-        if (type === "TabControl")
-            $ctrl.on("click", function myfunction() {
-                if (event.target.getAttribute("data-toggle") !== "tab")
-                    event.stopPropagation();
-                $(event.target).closest(".Eb-ctrlContainer").focus();
-            });
-        else
-            $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
-    };
-
-    this.updateControlUI = function (ebsid, type) {
-        let obj = this.rootContainerObj.Controls.GetByName(ebsid);
-        let _type = obj.ObjType
-        $.each(obj, function (propName, propVal) {
-            let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
-            if (meta && meta.IsUIproperty)
-                this.updateUIProp(propName, ebsid, _type);
-        }.bind(this));
-    };
-
-    this.updateUIProp = function (propName, id, type) {
-        let obj = this.rootContainerObj.Controls.GetByName(id);
-        let NSS = getObjByval(AllMetas["Eb" + type], "name", propName).UIChangefn;
-        if (NSS) {
-            let NS1 = NSS.split(".")[0];
-            let NS2 = NSS.split(".")[1];
-            EbOnChangeUIfns[NS1][NS2](id, obj);
-        }
-    }
-
-    this.del = function (ce) {
-        var $e = $(ce.trigger.context);
-        var id = $e.attr("ebsid");
-        this.DelCtrl(id);
-    }.bind(this);
-
-    this.cut = function (ce) {
-        var $e = $(ce.trigger.context);
-        var id = $e.attr("id");
-        this.clipboard.$ctrl = $(`#${id}`)
-        this.clipboard.ctrl = this.DelCtrl(id);
-    }.bind(this);
-
-    this.paste = function (ce) {
-        var $e = $(ce.trigger.context);
-        var id = $e.attr("id");
-        var idx = $e.index() + 1;
-
-        this.clipboard.$ctrl.insertAfter($e);
-        $e.on("focus", this.controlOnFocus.bind(this));
-        this.clipboard.$ctrl.contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
-        this.rootContainerObj.Controls.InsertAt(idx, this.clipboard.ctrl);
-    }.bind(this);
-
-    this.DelCtrl = function (id) {
-        var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
-        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
-        var ctrl = this.rootContainerObj.Controls.PopByName(id);
-        ControlTile.parent().focus();
-        ControlTile.remove();
-        this.PGobj.removeFromDD(id);
-        this.saveObj();
-        return ctrl;
-    };
-
-
-    //this.controlCloseOnClick = function (e) {
-    //    var ControlTile = $(e.target).parent().parent();
-    //    var id = ControlTile.attr("id");
-    //    this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
-    //    this.PGobj.clear();
-    //    this.rootContainerObj.Controls.DelByName(id);
-    //    ControlTile.siblings().focus();
-    //    ControlTile.remove();
-    //    e.preventDefault();
-    //    this.saveObj();
-    //};
-
-    this.updateHTML = function (e) {
-        if (this.curControl.attr("id").toString().substr(0, 8) === "GridView") {
-            if (this.currentProperty.parent().prev().text() === "Columns") {
-                this.ChangeGridColNo(e);
-            }
-        }
-
-    };
-
-    this.ChangeGridColNo = function (e) {
-        var newVal = $("#propGrid td:contains(Columns)").next().children().val();
-        console.log("this.CurColCount: " + this.CurColCount + ", newVal " + newVal);
-        var noOfTds = this.curControl.children().children().children().children().length;
-
-        if (this.CurColCount < newVal)
-            for (var i = noOfTds; i < newVal; i++) {
-                console.log("this.CurColCount < newVal  ");//
-                console.log(">  " + i);
-                this.addTd(e);
-            }
-        else if (this.CurColCount > newVal) {
-            console.log("this.CurColCount > newVal  ");//
-            for (var j = noOfTds; j > newVal; j--) {
-                console.log(">  " + j);//
-                this.removeTd(e);
-            }
-        }
-    };
-
-    this.addTd = function (e) {
-        var id = this.curControl.attr("id");
-        var curTr = this.curControl.children().children().children();
-        var noOfTds = curTr.children().length;
-        this.rootContainerObj.Controls.GetByName(id).Controls.Append(new GridViewTdObj(id + "_Td" + noOfTds));
-        curTr.append("<td id='" + id + "_Td" + noOfTds + "' class='tdDropable'> </td>");
-        this.makeTdsDropable.bind(this);
-        this.CurColCount = $(e.target).val();//tmp
-    };
-
-    this.removeTd = function (e) {
-        var id = this.curControl.attr("id");
-        var noOfTds = this.curControl.children().children().children().children().length;
-        this.rootContainerObj.Controls.GetByName(id).Controls.Pop();
-        this.curControl.find("tr").find("td").last().remove();
-        this.makeTdsDropable.bind(this);
-        this.CurColCount = $(e.target).val();//tmp
-    };
-
-    this.onChangeGridRowNo = function () {
-
-    };
-
     //this.initCtrl = function (el) {
     //    var $EbCtrl = $(el);
     //    var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
@@ -375,16 +334,31 @@
     //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
     //};
 
-    this.GenerateButtons = function () {
-
-    };
+    this.CreateRelationString = function () { };
 
     this.Init = function () {
+
+        $.contextMenu({
+            selector: '.Eb-ctrlContainer',
+            autoHide: true,
+            build: function ($trigger, e) {
+                return {
+                    items: {
+                        "Delete": {
+                            "name": "Remove",
+                            icon: "fa-trash",
+                            callback: this.del
+                        },
+                    }
+                };
+            }.bind(this)
+        });
+
+
         this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formId)], {
             removeOnSpill: false,
             copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
             copySortSource: true,
-            //mirrorContainer: document.getElementById(this.formId),
             moves: this.movesfn.bind(this),
             accepts: this.acceptFn.bind(this)
         });
@@ -392,52 +366,61 @@
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
-        //$("#save").on("click", this.save.bind(this));
-        //$("#commit").on("click", this.commit.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
-        //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
+        //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" +r $(this).find("option:selected").val()).focus(); });
 
-        this.DSchangeCallBack = function (PropsObj) {
+        this.addTabPane = function (SelectedCtrl, prop, val, addedObj) {
+            let id = SelectedCtrl.EbSid;
+            let $ctrl = $("#" + id);
+            let $tabMenu = $(`<li li-of="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}">${addedObj.Name}</a></li>`);
+            let $tabPane = $(`<div id="${addedObj.EbSid}" ebsid="${addedObj.EbSid}" class="tab-pane fade  ebcont-ctrl"></div>`);
+            $ctrl.closestInner(".nav-tabs").append($tabMenu);
+            $ctrl.closestInner(".tab-content").append($tabPane);
+            this.drake.containers.push($tabPane[0]);
+        };
+
+        this.RemoveTabPane = function (SelectedCtrl, prop, val, delobj) {
+            let id = SelectedCtrl.EbSid;
+            let $ctrl = $("#" + id);
+            let $tabMenu = $ctrl.find(`[li-of=${delobj.EbSid}]`).remove();
+            let $tabPane = $(`#${delobj.Name}`).remove();
+        };
+
+        this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
+            if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls") {
+                let $tblTr = $(`#${this.PGobj.CurObj.EbSid}>table>tbody>tr`);
+                let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='width:auto'; class='form-render-table-Td tdDropable ebcont-ctrl'></td>`);
+                $tblTr.append($td);
+            }
+            else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls") {
+                //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
+                this.addTabPane(this.SelectedCtrl, prop, val, addedObj);
+            }
+        }.bind(this);
+
+        this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
+            if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
+                alert();
+            else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls")
+                this.RemoveTabPane(this.SelectedCtrl, prop, val, delobj);
         }.bind(this);
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-            //RefreshControl(PropsObj);
-            console.log("PropsObj: " + JSON.stringify(PropsObj));
-            console.log("CurProp: " + CurProp);
-
             if (CurProp === 'DataSourceId') {
                 this.PGobj.PGHelper.dataSourceInit(this.DSchangeCallBack);
             }
 
-
         }.bind(this);
+        this.$form.click();
+        if (this.isEditMode) {
+            this.makeTdsDropable_Resizable();
+            this.makeTabsDropable();
+        }
     };
 
-    this.CtxMenu = [{
-        name: 'copy',
-        img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAE5SURBVGhD7dqvSgRhFIbx0apRMOwdmEwWvQAtbhKDVQRvwD/NC/AKlC2iRTDaBYuIFovXoAajTX2+dsKBGb45Z3ThfeAXlhnm27fsht1GKdW7bdziKcEyBukMP4nWkN4Y3uGRBhlyCe/wSIMMuYM99BxbwRaQ3j3skH1MZRry3+o6ZBYbOMBhoB3Mo3ddhozwDHtfpDf0/mRrGzKDB9h7MnxiEdW1DVmFvZ7pGNW1DdmFvf6B6yAvsM++QHVtQ8pre73cH9UR7LOvUJ2GBKQhXhoSkIZ4aUhAGuKlIQFpiJeGBKQhXhoSUOiQTewZS7BNzZC2NKRDGlKThnToT4e8wvsxp0Z54/bZqUPKx7M9LNMp0prDO7yDI31jBamV30W+4L2BKCcYpPKNP8EjvD8F1LrBOpRSvWuaX5uuctVnE+66AAAAAElFTkSuQmCC`,
-        title: 'Copy this control',
-        fun: function () {
-            alert('i am update button')
-        }
-    }, {
-        name: 'Cut',
-        img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPFSURBVGhD7dpXiFVHHMfxtfcGasCAJmJHfBFExBYDoj5FbNgFGxawgA19ULCHgARRoqBgoiEWFFGxKwo+iVjig2DDFiMhkii2YPn+dvd/mYxzz9kVxBnwBx9Yzpl79/zvPdPObkkE6Yo6ZT+ml+qYjKv4E1WQXPpABbwt9xuSSjWswGtYETINyURFbINbgOmIZLIFoSL+QDIZhVAR8iuSyJd4jFARMhVJZANCBZj2iD718RShAuQ+ksgwhAow25FE8m4rzexJxJ29Q9og+jTHG4QKkLtIInn942ckkfUIFWAmIIlcQagA8xWiT1Nk9Y9bSCJDESrAbMVHT0ssxmFcx194AN0qWoZrAVgLWfkRoQLMOHxItItshW+hPcwPOIDT0I6zNNovrMZ/CP1yl26NfiiWiwi9TvT+Gpqz8gV6YSJWYQ8u4TlC7zkThRTbLxTzEt/AT2P4O0DXUVjU4UdjGbScP49/EHpdMb+jBkrTH+5JVa8qu6MDumAAvse/sHY3UfhKyzMI7nv5RsJyCqE2FfUCurZCfoGdPIRChYFoW/oE1t6/xVbCzvluwwpvh6yRLY9eq2/zf3HvaX07edFtYO1n64CTs7BzvvGw/IRQm4pQEbPwXq7BGul2yssmWPu1OlCe2ijWIXUb2bOrr6E+FmqXR3fDYARzAtZwgQ5kRKObOpi118MD9R+lJ3TsBnT/Wpu/oWHTchB2rjL2I3NHuRDWWJ/oDOjT9aNRZjfcNxfrJ3qfeWU/lnSCFeN+gkPgvz6Lrke/Uw/1ctMMj+C+gS5CfecYzkCTo3veaF6oB0WfdOeyH0uj12hzZWmIewi9jybdc9gBDRhToIsPfaCZ6QE9gw39kiwa+5Wq0NOSvdC3MQdaFWhesUzCTqhfTYduSQ3vlb7YvGjGXYfKFKT2isZz/9xyfNJorNeFjYA6/xJo+bII6j9j0RvqMzbn6LhfSBJbWT/u3GLy1lRRRntwvxANIHrko76RxB9yNMH5RfhUaDdEHa15Qhfv08TYGtFGw6l7wbql5kKDxRo8g52L+uniEdiFvoLmETffwc5rjVUXUeYO7EK1QfOjxaI7o/dFlHEXiGN0IJDjsDbDdSC2NIJdoGjJEcpJWBs9wIguWku5hTRBKJdhbQbqQGypCbcQraT9aFHoPp2JdgjW5souMrRvcB/YPUS0/+WwC3ahenihXaSlAdwd5UZEG+0r7ELlArSEXwr3eYDmmOhXxPvgFhMyH9FHnX4zQk8ZNZuriKT+A6gttI3VXl39Qc+9WuBzKpaSknc0xTqzn9t8uAAAAABJRU5ErkJggg==`,
-        title: 'Cut this control',
-        fun: this.cut
-    }, {
-        name: 'Paste',
-        img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFgSURBVGhD7Zg9SkNBFEafCIKVrSAICiIIEsHCDWjlBlyBoOtwA/a27sBKySastUsX8AfFxt/vyr1wGZ7mzbwZX2K+A6eYmTfJnJAhkIoQ0hlrcA8uf48mkCXYh5/Oc7gAJ4Z5eA19hHkJZ2AnyMG2IzyBdvBXeAPf3dwxrNv3k7MwC5vQDhGjHH4HCgew7pkmZvs6poYMoCGfat0zTSwS8gHvnDK2tUedM+WeePya+ARt75vOifc6ZxYJeZAJh4xtTZ6LYR/aXh8tB7d5kSEhUxcS3pFR+jsyViFtZEgMv4Vswbpf41g3oNFJSAkYMoqpDlmEq4n2oA+Rsa3NwWRSQi6gP0wu5SzJMKSAnYYcyUQL5D3ttRgiMERliMKQEIaoDFEYEsIQlSEKQ0L+ZcgLPGyg/E9le8YyJEWGKNlCVuBVpENob34Kd1v4DLOEpOAve04ZksoZvC3gOiTkb6mqL4ZAWsBK7e3QAAAAAElFTkSuQmCC`,
-        title: 'Paste control',
-        fun: this.paste
-    }, {
-        name: 'Remove',
-        img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAF7SURBVGhD7dnBboJAEMZx7u2zeGmxB5uYAL7/a8iVpde2OzCfYsMCwiw7TeafbGIsZfsrK5o1syzLsqw9q8/nV34Yre/L4YUfxsmV71Vb5HVTfXzyU+LRudsyv7oqL/kp2QjhiuNXWx5//EQuBoYRDc1Bc4ljHhEYspghAqPD+Ln5kG3ReqVLPZzgPmQwY4jb8EtZ7DXTXN5OwYk2YiYRMZbwDKZZM+HuCCSJSYZAEpjkCLQFowaB1mDUIdAzGLUItASjHoGmMfTu/PdTAcaym8OuTf/Xx4ZCBFqOUYxAPSa0lPwHQf8z9QiK/sjwa6Ib+iH91fjnS2s5AsNj/N2Of11HUwheZuHbrxbM9JXol9DsMakxSxB86PyxqTDPIJA6zBoEUoPZgkDJMRIIlAwjiUC7Y2IgEJ/bBc8thZnZoNuEQDOYq9gGHe3BjmyZiiDQGEZ0yxQ9YmQRaIiJgkCEoUsdA4E6TJHX0RAo+pcwvj2+TLIsy7Kse1n2C9LWR7iAvc9TAAAAAElFTkSuQmCC`,
-        title: 'Remove this control',
-        fun: this.del
-    }];
+    this.DSchangeCallBack = function () {
 
-    this.CreateRelationString = function () { };
+    };
 
     this.Init();
 };

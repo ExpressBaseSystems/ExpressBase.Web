@@ -631,7 +631,7 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             var smsSid = Request.Form["SmsSid"];
             var messageStatus = Request.Form["MessageStatus"];
-            SMSSentRequest sMSSentRequest = new SMSSentRequest();
+            SMSInitialRequest sMSSentRequest = new SMSInitialRequest();
            // sMSSentRequest.To = req["to"];
           //  sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
             this.ServiceClient.Post(sMSSentRequest);

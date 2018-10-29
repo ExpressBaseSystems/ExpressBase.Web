@@ -79,6 +79,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.rowgroupCols = []
     this.rowgroupFilter = [];
     this.CurrentRowGroup = null;
+    this.permission = [];
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -710,10 +711,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         dq.Ispaging = this.EbObject.IsPaging;
         if (dq.length === -1)
-            dq.length = this.RowCount ;
+            dq.length = this.RowCount;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
+        dq.dvRefId = this.Refid;
         return dq;
     };
 
@@ -943,6 +945,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //return dd.data;
         this.unformatedData = dd.data;
         this.Levels = dd.levels;
+        this.permission = dd.permission;
         return dd.formattedData;
     };
 
@@ -2107,7 +2110,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
         if ($("#" + this.tableId).children().length > 0) {
-            if (this.login == "dc") {
+            if (this.login === "dc") {
                 $("#obj_icons").append("<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +
                     "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
                     "<div class='btn-group'>" +
@@ -2128,9 +2131,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     "</div>" +
                     "</div>");
             }
-            //if (this.FD)
-            //    $("#obj_icons").append("<button id='btnToggleFD" + this.tableId + "' class='btn'>F</button>");
             $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
+
+            if (this.login === "uc") {
+                $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
+                $.each(this.permission, function (i, obj) {
+                    if (obj === "Excel")
+                        $("#" + this.tableId + "_fileBtns .btn-group").append("<button id = 'btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data - toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
+                }.bind(this));
+            }
 
             if (this.login == "uc") {
                 dvcontainerObj.modifyNavigation();
@@ -2749,7 +2758,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.GetData4InlineDv = function (rows, idx, colindex, result) {
         var Dvobj = JSON.parse(result).DsObj;
-        var param = this.Params4InlineTable(Dvobj.DataSourceRefId);
+        var param = this.Params4InlineTable(Dvobj);
         $.ajax({
             type: "POST",
             url: "../DV/getData4Inline",
@@ -2784,19 +2793,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(".containerrow .close").off("click").on("click", function () {
             $(this).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
             $(this).parents().closest(".containerrow").remove();
-
         });
 
         $("#eb_common_loader").EbLoader("hide");
     };
 
-    this.Params4InlineTable = function (dsid) {
+    this.Params4InlineTable = function (Dvobj) {
         var dq = new Object();
-        dq.RefId = dsid;
+        dq.RefId = Dvobj.DataSourceRefId;
         dq.TFilters = [];
         dq.Params = this.filterValues;
         dq.Start = 0;
         dq.Length = 500;
+        dq.DataVizObjString = JSON.stringify(Dvobj);
         return dq;
     };
 

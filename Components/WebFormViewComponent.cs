@@ -26,16 +26,21 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(string refid)
+        public async Task<IViewComponentResult> InvokeAsync(string[] arr)
         {
+			string refid = arr[0];
+			string Locale = arr[1];
 
-            EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+			EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
 
             EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);// form object without localization
             if (WebForm != null)
             {
-                
-                EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm ,this.ServiceClient);
+
+				List<string> Keys = EbControlContainer.GetKeyValueDict(WebForm);
+				Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest {Keys = Keys, Locale =Locale }).Dict;				
+
+				EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
 
                 foreach (EbControl control in WebForm_L.Controls.FlattenEbControls())
                 {

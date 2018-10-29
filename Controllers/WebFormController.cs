@@ -21,7 +21,7 @@ namespace ExpressBase.Web.Controllers
         {
             ViewBag.editModeObj = _params ?? "false";
             ViewBag.formRefId = refId;
-            return ViewComponent("WebForm", refId);
+            return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale} );
         }
 
 		public object getRowdata(string refid, int rowid)

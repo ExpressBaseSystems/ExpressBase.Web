@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 namespace ExpressBase.Web.Components
 {
     public class FormBuilderViewComponent : ViewComponent
-    {        
-            public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl)
+    {
+        public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl)
+        {
+            ViewBag.dsObj = dsobj;
+            if (dsobj != "null")
             {
-                ViewBag.dsObj = dsobj;
-            if (dsobj != "null") { 
                 ViewBag.Html = EbSerializers.Json_Deserialize(dsobj).GetHtml();
             }
             ViewBag.tabnum = tabnum;
-                ViewBag.ObjType = type;
-                ViewBag.Refid = refid;
-                return View();
-            }
+            ViewBag.ObjType = type;
+            ViewBag.Refid = refid;
+            return View();
+        }
     }
 }

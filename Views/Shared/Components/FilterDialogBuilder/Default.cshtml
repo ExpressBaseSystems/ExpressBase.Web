@@ -40,16 +40,24 @@
         </div>
     </div>
     <div class="form-save-wraper">
+        @{
+            if (ViewBag.Html != null)
+            {
+                @Html.Raw(ViewBag.Html)
+            }
+            else
+            {
+                <div id="placeholder" ebsid="placeholder" IsRenderMode='false' eb-form="true" ui-inp eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form ebcont-ctrl"></div>
+            }
 
+        }
 
-        <div class="dev-chat-cont">
+        @*<div class="dev-chat-cont">
             <div class="eb-chat-head"><span>Filter Dialog <i class="fa fa-comment pull-right" aria-hidden="true"></i></span></div>
-            <div id="FilterForm1" ebsid="FilterForm1" IsRenderMode='false' eb-form="true" ui-inp eb-form="true" eb-type="@_builderType" tabindex="1" class="eb-chatBox-dev ebcont-ctrl">
+                <div id="FilterForm1" ebsid="FilterForm1" IsRenderMode='false' eb-form="true"  ui-inp eb-type="@_builderType" tabindex="1" class="eb-chatBox-dev ebcont-ctrl">
                 @Html.Raw(@ViewBag.html)
-                @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
-                @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
             </div>
-        </div>
+        </div>*@
 
     </div>
     <input type="hidden" id="objtype" value="@type" />
@@ -67,20 +75,20 @@
     @Html.Raw(_toolBox.TypeRegister);
     @Html.Raw(_toolBox.EbOnChangeUIfns);
 
-    var formBuilderObj = null;
-    var objid =$("#objid").val();
-    let FBid = editModeFormObj ? editModeFormObj.EbSid : "FilterForm1";
-    var editModeFormObj = null;
-    var ToolBoxId = "form-buider-toolBox";
-    var PGid = "form-buider-propGrid";
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new FilterformBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
-    // if edit mode
-    @*if(objid){
-        var editModeObj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(@ViewBag.Json));
-        //$.each(editModeFormObj, funcion(i, obj) {  });
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");
-        formBuilderObj.InitEditModeCtrls(JSON.parse(editModeObj));
-    }
-    else
-        formBuilderObj= new formBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid");*@
+    let formBuilderObj = null;
+    let objid = $("#objid").val();
+    let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
+    let FBid = editModeFormObj ? editModeFormObj.EbSid : "FilterForm_" + Date.now().toString(36);
+    let ToolBoxId = "form-buider-toolBox";
+    let PGid = "form-buider-propGrid";
+    //commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new FilterformBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new FilterformBuilder({
+        toolBoxId: ToolBoxId,
+        formId: FBid,
+        PGId: PGid,
+        builderType: @((int)_builderType),
+        Eb_objType: @typeInt,
+        wc: "@ViewBag.wc",
+        cid: "@ViewBag.cid",
+        objInEditMode : editModeFormObj});
 </script>

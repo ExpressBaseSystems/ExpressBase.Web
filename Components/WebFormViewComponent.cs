@@ -37,7 +37,7 @@ namespace ExpressBase.Web.Components
             if (WebForm != null)
             {
 
-				List<string> Keys = EbControlContainer.GetKeyValueDict(WebForm);
+				List<string> Keys = EbControlContainer.GetKeysList(WebForm);
 				Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest {Keys = Keys, Locale =Locale }).Dict;				
 
 				EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);

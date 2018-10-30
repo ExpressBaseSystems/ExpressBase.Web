@@ -80,6 +80,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.rowgroupFilter = [];
     this.CurrentRowGroup = null;
     this.permission = [];
+    this.isCustomColumnExist = false;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -233,24 +234,29 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.rowgroupCols = [];
                 this.EbObject.RowGroupCollection.$values = [];
                 this.orderColl = [];
+                this.check4Customcolumn();
                 //this.call2FD();
                 //this.EbObject.rowGrouping.$values = [];
-                EbDialog("show", {
-                    Message: "Retain Custom Columns?",
-                    Buttons: {
-                        "Yes": {
-                            Background: "green",
-                            Align: "right",
-                            FontColor: "white;"
+                if (this.isCustomColumnExist) {
+                    EbDialog("show", {
+                        Message: "Retain Custom Columns?",
+                        Buttons: {
+                            "Yes": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            },
+                            "No": {
+                                Background: "red",
+                                Align: "left",
+                                FontColor: "white;"
+                            }
                         },
-                        "No": {
-                            Background: "red",
-                            Align: "left",
-                            FontColor: "white;"
-                        }
-                    },
-                    CallBack: this.dialogboxAction.bind(this)
-                });
+                        CallBack: this.dialogboxAction.bind(this)
+                    });
+                }
+                else
+                    this.call2FD();
             }
         }
         else if (Pname === "Name") {
@@ -323,7 +329,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             this.init();
             this.call2FD();
-        };
+        }
 
         this.propGrid.CXVE.onAddToCE = function (prop, val, addedObj) {
             if (addedObj.ObjType === "NumericColumn")
@@ -331,7 +337,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         };
     };
 
-    this.getColumnsSuccess = function (e) {
+    this.getColumnsSuccess = function (e) {        
         if (this.isContextual) {
             if (this.isSecondTime) {
                 if (!this.validateFD())
@@ -366,18 +372,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             if (this.FD) {
-                //$.each(dvcontainerObj.dvcol, function (i, obj) {
-                //    if (focusedId === "sub_window_" + obj.tableId)
-                //        obj.stickBtn.minimise();
-                //    else
-                //        obj.stickBtn.hide();
-                //});
                 this.stickBtn.minimise();
             }
 
             else
                 this.stickBtn.hide();
-            //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
 
@@ -423,12 +422,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     };
 
+    this.check4Customcolumn = function () {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) {return obj.IsCustomColumn;});
+        if (temp.length === 0)
+            this.isCustomColumnExist = false;
+        else
+            this.isCustomColumnExist = true;
+    };
+
     this.InitializeColumns = function () {
         $.each(this.EbObject.Columns.$values, function (i, col) {
             if (col.HideDataIfRowMoreThan === null)
                 col.HideDataIfRowMoreThan = { "$type": "ExpressBase.Objects.Objects.DVRelated.HideColumnData, ExpressBase.Objects", "Enable": false, "UnRestrictedRowCount": 0, "ReplaceByCharacter": "", "ReplaceByText": "" };
         }.bind(this));
-    }
+    };
 
     this.validateFD = function () {
         var isValid = true;

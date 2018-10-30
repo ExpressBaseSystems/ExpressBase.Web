@@ -131,7 +131,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag, login: this.login, contextId: this.ContextId },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId },
             success: this.ajaxSucc
         });
 
@@ -218,7 +218,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         else
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-        this.PcFlag = "False";
+        this.PcFlag = false;
     }.bind(this);
 
     this.start = function () {
@@ -294,7 +294,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
-                this.PcFlag = "True";
+                this.PcFlag = true;
                 this.EbObject.Columns.$values = [];
                 this.EbObject.DSColumns.$values = [];
                 this.EbObject.Xaxis.$values = [];
@@ -372,7 +372,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $.ajax({
                     type: 'POST',
                     url: "../DV/getdata",
-                    data: { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues },
+                    data: { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues, dvRefId: this.Refid },
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("Authorization", "Bearer " + getToken());
                     },

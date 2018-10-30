@@ -30,8 +30,8 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog FilterDialogObj, User _user, Eb_Solution _sol)
         {
             if (FilterDialogObj != null)
-            {              
-
+            {
+                FilterDialogObj.IsRenderMode = true;
                 foreach (EbControl control in FilterDialogObj.Controls)
                 {
                     if (control is EbSimpleSelect)

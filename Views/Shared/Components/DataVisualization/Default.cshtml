@@ -7,7 +7,7 @@
     @using System.Runtime.Serialization;
     var dvobj = EbSerializers.Json_Serialize(ViewBag.data);
     //var dvobj = JsonConvert.SerializeObject(ViewBag.data);
-    var filterDialogObj = ViewBag.data.EbDataSource.FilterDialog;
+    EbFilterDialog filterDialogObj = ViewBag.data.EbDataSource.FilterDialog;
 }
 
 @{

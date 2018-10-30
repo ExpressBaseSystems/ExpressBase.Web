@@ -191,12 +191,12 @@
             <tr>
 
             <td style="padding: 0px;">
-            <div class="CE-controls-head">${this.CurProplabel}</div>
+            <div class="CE-controls-head"> All </div>
             <div id="${this.CE_all_ctrlsContId}" class="CE-all-ctrlsCont"></div>
             </td>
 
             <td style="padding: 0px;">
-            <div class="CE-controls-head" > Selected </div>
+            <div class="CE-controls-head" > ${this.CurProplabel} </div>
             <div id="${this.CEctrlsContId}" class="CEctrlsCont"></div>
             </td>
 
@@ -665,7 +665,7 @@
         if (!(Object.keys(this.CElistFromSrc[0]).includes("name")))//////////////////
             idField = "ColumnName";////////////////////////
         $.each(values, function (i, control) {
-            let name = (control.name ||control.Name ||  control.ColumnName);
+            let name = (control.name || control.Name || control.ColumnName);
             let type = control.$type.split(",")[0].split(".").pop();
             let tileHTML = `<div class="colTile" onclick="$(this).focus()"  ebsid="${control.EbSid}" is-customobj="${control["IsCustomColumn"] || false}" tabindex="1" id="` + name + '" eb-type="' + type + '" setSelColtiles>'
                 + '<button type="button" tabindex="-1" title="Deselect" class="coltile-left-arrow close"><i class="fa fa-arrow-circle-left"></i></button>'

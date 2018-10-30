@@ -28,7 +28,8 @@
     EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
     int typeInt = Convert.ToInt32(ViewBag.ObjType);
 
-    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
+    string builderType_S = type.ToString();
+    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), builderType_S, true);
     var _toolBox = new EbToolbox(_builderType);
 }
 
@@ -75,6 +76,7 @@
     @Html.Raw(_toolBox.TypeRegister);
     @Html.Raw(_toolBox.EbOnChangeUIfns);
 
+    let BuilderType = '@builderType_S';
     let formBuilderObj = null;
     let objid = $("#objid").val();
     let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
@@ -82,11 +84,11 @@
     let ToolBoxId = "form-buider-toolBox";
     let PGid = "form-buider-propGrid";
     //commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new FilterformBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj));
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new FilterformBuilder({
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder({
         toolBoxId: ToolBoxId,
         formId: FBid,
         PGId: PGid,
-        builderType: @((int)_builderType),
+        builderType: BuilderType,
         Eb_objType: @typeInt,
         wc: "@ViewBag.wc",
         cid: "@ViewBag.cid",

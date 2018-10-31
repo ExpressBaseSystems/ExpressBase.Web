@@ -188,7 +188,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else
             this.EbObject = dvcontainerObj.currentObj;
 
-        if ($("#" + this.ContextId + " #filterBox").children().not("button").length == 0) {
+        if ($("#" + this.ContextId).children("#filterBox").length === 0) {
             this.FD = false;
             this.FDCont.hide();
             if (this.login === "dc") {
@@ -329,17 +329,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             else {
                 if (this.FD) {
-                    //$.each(dvcontainerObj.dvcol, function (i, obj) {
-                    //    if (focusedId === "sub_window_" + obj.tableId)
-                    //        obj.stickBtn.minimise();
-                    //    else
-                    //        obj.stickBtn.hide();
-                    //});
                     this.stickBtn.minimise();
                 }
                 else
                     this.stickBtn.hide();
-                    //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
             }
             
             filterChanged = false;
@@ -411,7 +404,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $(ctrl).css("border-color", "rgba(34, 36, 38, .15)");
         });
         return isValid;
-    }
+    };
 
     this.placefiltervalues = function () {
        
@@ -584,7 +577,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $("#measure" + tid).empty();
             }
             $.each(colsAll_XY, function (i, obj) {
-                if (obj.data != undefined) {
+                if (obj.data !== undefined) {
                     if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime") {
                         if (gettypefromNumber(obj.Type) === "String")
                             $("#diamension" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-font'></i></span>${obj.name}</li>`);
@@ -1051,15 +1044,23 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $(el).append("<button class='close' type='button'>x</button>");
             if ($(target).attr("id") === "X_col_name" + this.tableId) {
                 temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; });
-                alert();
+                let index = this.EbObject.Xaxis.$values.findIndex(x => x.name === temp[0].name);
+                if (index > -1)
+                    this.EbObject.Xaxis.$values.splice(index, 1);
                 this.EbObject.Xaxis.$values.push(temp[0]);
             }
             else if($(target).attr("id") === "Y_col_name" + this.tableId) {
                 temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; });
-                alert();
+                let index = this.EbObject.Yaxis.$values.findIndex(x => x.name === temp[0].name);
+                if (index > -1)
+                    this.EbObject.Yaxis.$values.splice(index, 1);
                 this.EbObject.Yaxis.$values.push(temp[0]);
-                if (this.type !== "googlemap")
+                if (this.type !== "googlemap") {
+                    index = this.EbObject.LegendColor.$values.findIndex(x => x.name === temp[0].name);
+                    if (index > -1)
+                        this.EbObject.LegendColor.$values.splice(index, 1);
                     this.EbObject.LegendColor.$values.push(new ChartColor(name, randomColor()));
+                }
             }
 
             if ($("#X_col_name" + this.tableId + " li").length === 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
@@ -1076,6 +1077,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     };
 
+    this.colDropRef = function (el, target, source, sibling) {
+        this.colDrop(el, target, source, sibling);
+    };
     this.colAllowDrop = function (e) {
         e.preventDefault();
     };
@@ -1247,9 +1251,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.drake)
                 this.drake.destroy();
             this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
-                accepts: this.acceptDrop.bind(this)
+                accepts: this.acceptDrop.bind(this),
+                drop: function (el, source) {
+                }
             });
-            this.drake.off("drop").on("drop", this.colDrop.bind(this));
+            this.drake.off("drop").on("drop", this.colDropRef.bind(this));
             if (this.type === "")
                 this.type = "bar";
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
@@ -1261,7 +1267,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
                 accepts: this.acceptDrop1.bind(this)
             });
-            this.drake.off("drop").on("drop", this.colDrop.bind(this));
+            this.drake.off("drop").on("drop", this.colDropRef.bind(this));
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         }
 

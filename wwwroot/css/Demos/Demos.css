@@ -70,3 +70,61 @@ input[type=number]{
 .input-group-addon {
     padding: 4px 12px;
 }
+
+/*demo sso page*/
+.dmssrw {
+    padding-top: 60px;
+    font-family: Montserrat;
+}
+.ssowrpHs h2 {
+    margin-top: 2em;
+    font-weight: 400;
+    margin-bottom: .7em;
+    color: #6f6f6f;
+}
+.ssowrpHs p {
+    font-size: 16px;
+    margin-bottom: 3em;
+}
+.SdemWraperOuter {
+    display: flex;
+    flex-flow: row wrap;
+    padding-top: 30px;
+}
+    .SdemWraperOuter .ssoWrpr-uc {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+    }
+    .SdemWraperOuter .ssoWrpr-dc {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+    }
+    .SdemWraperOuter .ssoWrpr-uc .ssoUcBdy {
+        background: white;
+        max-width: 100%;
+        text-align: center;
+        min-width: 65%;
+        padding: 20px;
+        border-radius: 6px;
+        -webkit-box-shadow: -1px 2px 26px -1px rgba(161,161,163,1);
+        -moz-box-shadow: -1px 2px 26px -1px rgba(161,161,163,1);
+        box-shadow: -1px 2px 26px -1px rgba(161,161,163,1);
+    }
+    .SdemWraperOuter .ssoWrpr-dc .ssoDcBdy {
+        background: white;
+        max-width: 100%;
+        text-align: center;
+        min-width: 65%;
+        padding: 20px;
+        border-radius: 6px;
+        -webkit-box-shadow: -1px 2px 26px -1px rgba(161,161,163,1);
+        -moz-box-shadow: -1px 2px 26px -1px rgba(161,161,163,1);
+        box-shadow: -1px 2px 26px -1px rgba(161,161,163,1);
+    }
+    .SdemWraperOuter .wall-img {
+        height: 100px;
+        margin-bottom: 3em;
+        width: auto;
+    }

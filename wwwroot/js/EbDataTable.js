@@ -103,7 +103,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 style: { top: "112px" }
             });
         }
-    }
+    };
 
     split.windowOnFocus = function (ev) {
         $("#Relateddiv").hide();
@@ -182,7 +182,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.PcFlag === "True")
             this.compareAndModifyRowGroup();
 
-        if ($("#" + this.ContextId + " #filterBox").children().not("button").length == 0) {
+        if ($("#" + this.ContextId).children("#filterBox").length === 0) {
             this.FD = false;
             this.FDCont.hide();
             if (this.login === "dc") {
@@ -235,8 +235,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.EbObject.RowGroupCollection.$values = [];
                 this.orderColl = [];
                 this.check4Customcolumn();
-                //this.call2FD();
-                //this.EbObject.rowGrouping.$values = [];
+                this.EbObject.OrderBy.$values = [];
                 if (this.isCustomColumnExist) {
                     EbDialog("show", {
                         Message: "Retain Custom Columns?",
@@ -2232,7 +2231,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             });
         }
-    }
+    };
 
     this.orderingEvent = function (e) {
         //var col = $(e.target).children('span').text();

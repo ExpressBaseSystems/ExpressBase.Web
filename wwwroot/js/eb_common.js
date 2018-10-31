@@ -233,7 +233,7 @@ function getAverage(_array) {
 function gettypefromNumber(num) {
     if (num == 16)
         return "String";
-    else if (num == 6)
+    else if (num == 6 || num == 5)
         return "DateTime";
     else if (num == 3)
         return "Boolean";

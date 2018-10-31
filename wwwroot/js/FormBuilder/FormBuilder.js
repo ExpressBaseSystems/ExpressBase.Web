@@ -1,10 +1,11 @@
-﻿const WebFormBuilder = function (options) {
+﻿const formBuilder = function (options) {
     this.wc = options.wc;
     this.cid = options.cid;
     this.formId = options.formId;
     this.Name = this.formId;
     this.toolBoxid = options.toolBoxId;
     this.rootContainerObj = null;
+    this.builderType = options.builderType
     this.$propGrid = $("#" + options.PGId);
 
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
@@ -192,7 +193,7 @@
         this.InitEditModeCtrls(this.EbObject);
     }
     if (this.EbObject === null) {
-        this.rootContainerObj = new EbObjects.EbWebForm(this.formId);
+        this.rootContainerObj = new EbObjects["Eb" + this.builderType](this.formId);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
     };

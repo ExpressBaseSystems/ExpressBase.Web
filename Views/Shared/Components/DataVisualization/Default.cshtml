@@ -7,20 +7,12 @@
     @using System.Runtime.Serialization;
     var dvobj = EbSerializers.Json_Serialize(ViewBag.data);
     //var dvobj = JsonConvert.SerializeObject(ViewBag.data);
-    var filterDialogObj = ViewBag.data.EbDataSource.FilterDialog;
+    EbFilterDialog filterDialogObj = ViewBag.data.EbDataSource.FilterDialog;
 }
 
 @{
     if (ViewBag.data.EbDataSource.FilterDialogRefId != null && ViewBag.data.EbDataSource.FilterDialogRefId != "" && ViewBag.forWrap != "wrap")
-    {
-        //foreach (EbControl control in ViewBag.data.EbDataSource.FilterDialog.Controls)
-        //{
-        //    if (control is EbSimpleSelect)
-        //    {
-        //        (control as EbSimpleSelect).InitFromDataBase(ViewBag.serviceclient as JsonServiceClient);
-        //    }
-        //}
-        //@filterDialogObj.EbSid_CtxId = ViewBag.ContextId;
+    {       
         @await Component.InvokeAsync("ParameterDiv", new { FilterDialogObj = filterDialogObj, _user = ViewBag.currentUser, _sol = ViewBag.solution });
 
     }

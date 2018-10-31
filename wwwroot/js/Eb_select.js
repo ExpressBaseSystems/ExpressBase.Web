@@ -352,8 +352,8 @@ var EbSelect = function (ctrl, options) {
         var row = datatable.row(cell.index().row);
         var $tr = $(row.nodes());
         var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
-        var vmValue = this.datatable.Api.row($(this.DTSelector + " tr.selected-row")).data()[idx];
-        this.$curEventTarget = $(this.DTSelector + " tr.selected-row");
+        var vmValue = this.datatable.Api.row($(this.DTSelector + " tr.selected")).data()[idx];
+        this.$curEventTarget = $(this.DTSelector + " tr.selected");
         this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
     }
@@ -383,7 +383,7 @@ var EbSelect = function (ctrl, options) {
             else if (this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(vmValue);
                 $.each(this.dmNames, this.setDmValues.bind(this));
-                $(this.DTSelector + " tr.selected-row").find('[type=checkbox]').prop('checked', true);
+                $(this.DTSelector + " tr.selected").find('[type=checkbox]').prop('checked', true);
             }
         }
     };
@@ -617,14 +617,14 @@ var EbSelect = function (ctrl, options) {
 
     this.ApplyRowFocusStyle = function ($tr) {
         $tr.find('.focus').removeClass('focus');
-        $tr.addClass('selected-row');
+        $tr.addClass('selected');
         $tr.find('td').css("border-color", "transparent");
     };
 
     this.RemoveRowFocusStyle = function ($tr) {
-        var $tr = $(this.DTSelector + " tr.selected-row, " + this.DTSelector + " tr.selected");
+        var $tr = $(this.DTSelector + " tr.selected");
         $tr.find('td').css("border-color", "#ddd");
-        $tr.removeClass('selected-row selected');
+        $tr.removeClass('selected');
     };
 
     this.tagCloseBtnHand = function (e) {

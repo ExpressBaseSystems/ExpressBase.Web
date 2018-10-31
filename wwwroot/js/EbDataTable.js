@@ -182,7 +182,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.PcFlag === "True")
             this.compareAndModifyRowGroup();
 
-        if ($("#" + this.ContextId + " #filterBox").children().not("button").length == 0) {
+        if ($("#" + this.ContextId).children("#filterBox").length === 0) {
             this.FD = false;
             this.FDCont.hide();
             if (this.login === "dc") {

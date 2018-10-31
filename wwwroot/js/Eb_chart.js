@@ -584,7 +584,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $("#measure" + tid).empty();
             }
             $.each(colsAll_XY, function (i, obj) {
-                if (obj.data != undefined) {
+                if (obj.data !== undefined) {
                     if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime") {
                         if (gettypefromNumber(obj.Type) === "String")
                             $("#diamension" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-font'></i></span>${obj.name}</li>`);
@@ -1076,6 +1076,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     };
 
+    this.colDropRef = function (el, target, source, sibling) {
+        this.colDrop(el, target, source, sibling);
+    };
     this.colAllowDrop = function (e) {
         e.preventDefault();
     };
@@ -1247,9 +1250,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.drake)
                 this.drake.destroy();
             this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
-                accepts: this.acceptDrop.bind(this)
+                accepts: this.acceptDrop.bind(this),
+                drop: function (el, source) {
+                }
             });
-            this.drake.off("drop").on("drop", this.colDrop.bind(this));
+            this.drake.off("drop").on("drop", this.colDropRef.bind(this));
             if (this.type === "")
                 this.type = "bar";
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
@@ -1261,7 +1266,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
                 accepts: this.acceptDrop1.bind(this)
             });
-            this.drake.off("drop").on("drop", this.colDrop.bind(this));
+            this.drake.off("drop").on("drop", this.colDropRef.bind(this));
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         }
 

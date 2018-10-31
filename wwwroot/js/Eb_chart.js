@@ -329,17 +329,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             else {
                 if (this.FD) {
-                    //$.each(dvcontainerObj.dvcol, function (i, obj) {
-                    //    if (focusedId === "sub_window_" + obj.tableId)
-                    //        obj.stickBtn.minimise();
-                    //    else
-                    //        obj.stickBtn.hide();
-                    //});
                     this.stickBtn.minimise();
                 }
                 else
                     this.stickBtn.hide();
-                    //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
             }
             
             filterChanged = false;
@@ -411,7 +404,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $(ctrl).css("border-color", "rgba(34, 36, 38, .15)");
         });
         return isValid;
-    }
+    };
 
     this.placefiltervalues = function () {
        
@@ -1051,15 +1044,23 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $(el).append("<button class='close' type='button'>x</button>");
             if ($(target).attr("id") === "X_col_name" + this.tableId) {
                 temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; });
-                alert();
+                let index = this.EbObject.Xaxis.$values.findIndex(x => x.name === temp[0].name);
+                if (index > -1)
+                    this.EbObject.Xaxis.$values.splice(index, 1);
                 this.EbObject.Xaxis.$values.push(temp[0]);
             }
             else if($(target).attr("id") === "Y_col_name" + this.tableId) {
                 temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; });
-                alert();
+                let index = this.EbObject.Yaxis.$values.findIndex(x => x.name === temp[0].name);
+                if (index > -1)
+                    this.EbObject.Yaxis.$values.splice(index, 1);
                 this.EbObject.Yaxis.$values.push(temp[0]);
-                if (this.type !== "googlemap")
+                if (this.type !== "googlemap") {
+                    index = this.EbObject.LegendColor.$values.findIndex(x => x.name === temp[0].name);
+                    if (index > -1)
+                        this.EbObject.LegendColor.$values.splice(index, 1);
                     this.EbObject.LegendColor.$values.push(new ChartColor(name, randomColor()));
+                }
             }
 
             if ($("#X_col_name" + this.tableId + " li").length === 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {

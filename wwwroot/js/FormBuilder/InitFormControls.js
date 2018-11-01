@@ -522,43 +522,43 @@
                     $input.val(val);
                 }, 1);
             }
-            // containes '.' and no selection
-            if (val.includes('.') && cs === ce) {
-                setTimeout(function () {
-                    var pi = val.indexOf('.');
-                    //prevents exceeding decimal part length when containes '.'
-                    if ((val.length - pi) === (ctrl.DecimalPlaces + 1) && (e.which >= 48) && (e.which <= 57) && ce > pi)
-                        $input.val(val);
-                    //prevents exceeding integer part length when containes '.'
-                    if (pi === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
-                        $input.val(val);
-                }, 1);
-            }
-            //prevents exceeding integer-part length when no '.'
-            if (!(val.includes('.')) && val.length === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57)) {
-                setTimeout(function () {
-                    $input.val(val + '.' + String.fromCharCode(e.which));
+            //// containes '.' and no selection
+            //if (val.includes('.') && cs === ce) {
+            //    setTimeout(function () {
+            //        var pi = val.indexOf('.');
+            //        //prevents exceeding decimal part length when containes '.'
+            //        if ((val.length - pi) === (ctrl.DecimalPlaces + 1) && (e.which >= 48) && (e.which <= 57) && ce > pi)
+            //            $input.val(val);
+            //        //prevents exceeding integer part length when containes '.'
+            //        if (pi === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
+            //            $input.val(val);
+            //    }, 1);
+            //}
+            ////prevents exceeding integer-part length when no '.'
+            //if (!(val.includes('.')) && val.length === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57)) {
+            //    setTimeout(function () {
+            //        $input.val(val + '.' + String.fromCharCode(e.which));
 
-                }, 1);
-            }
-            //prevents del before '.'if it leads to exceed integerpart limit
-            if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === val.indexOf('.') && e.which === 0) {
-                setTimeout(function () {
-                    $input.val(val);
-                }, 1);
-            }
-            //prevents <- after '.' if it leads to exceed integerpart limit
-            if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === (val.indexOf('.') + 1) && e.which === 8) {
-                setTimeout(function () {
-                    $input.val(val);
-                }, 1);
-            }
-            //prevents deletion of selection when containes '.' if it leads to exceed integerpart limit
-            if ((val.includes('.') && val.length - (ce - cs)) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs <= val.indexOf('.') && ce > val.indexOf('.')) {
-                setTimeout(function () {
-                    $input.val(val);
-                }, 1);
-            }
+            //    }, 1);
+            //}
+            ////prevents del before '.'if it leads to exceed integerpart limit
+            //if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === val.indexOf('.') && e.which === 0) {
+            //    setTimeout(function () {
+            //        $input.val(val);
+            //    }, 1);
+            //}
+            ////prevents <- after '.' if it leads to exceed integerpart limit
+            //if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === (val.indexOf('.') + 1) && e.which === 8) {
+            //    setTimeout(function () {
+            //        $input.val(val);
+            //    }, 1);
+            //}
+            ////prevents deletion of selection when containes '.' if it leads to exceed integerpart limit
+            //if ((val.includes('.') && val.length - (ce - cs)) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs <= val.indexOf('.') && ce > val.indexOf('.')) {
+            //    setTimeout(function () {
+            //        $input.val(val);
+            //    }, 1);
+            //}
         });
 
         $input.mask('SZZZZZZZZZZZ', {

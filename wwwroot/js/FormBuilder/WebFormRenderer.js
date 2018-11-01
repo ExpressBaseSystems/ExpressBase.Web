@@ -32,15 +32,23 @@
             }
         });
     };
-
-    this.checkRequired = function (control) {
-        let $ctrl = $("#" + control.EbSid_CtxId);
-        if ($ctrl.length !== 0 && control.Required && $ctrl.val().trim() === "")
-            EbMakeInvalid(`#cont_${control.EbSid_CtxId}`, `.${control.EbSid_CtxId}Wraper`);
+    // checks a control value is emptyString
+    this.isRequiredOK = function (ctrl) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        if ($ctrl.length !== 0 && ctrl.Required && isNaNOrEmpty(ctrl.getValue())) {
+            this.addInvalidStyle(ctrl);
+            return false;
+        }
+        else
+            return true;
     };
 
-    this.removeReqFm = function (control) {
-        EbMakeValid(`#cont_${control.EbSid_CtxId}`, `.${control.EbSid_CtxId}Wraper`);
+    this.addInvalidStyle = function (ctrl, msg, type) {
+        EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+    };
+
+    this.removeInvalidStyle = function (ctrl) {
+        EbMakeValid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
     };
 
     this.init = function () {
@@ -75,60 +83,62 @@
     };
 
     this.bindValidators = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.checkValidations.bind(this, control));
+        $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
     };
 
     this.bindRequired = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.checkRequired.bind(this, control)).on("focus", this.removeReqFm.bind(this, control));
+        $("#" + control.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
     };
 
     this.bindUniqueCheck = function (control) {
         $("#" + control.EbSid_CtxId).on("blur", this.checkUnique.bind(this, control));
     };
 
-    this.checkValidations = function (Obj) {
-        Obj.Validators.$values = sortByProp(Obj.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
-        $.each(Obj.Validators.$values, function (i, Validator) {
-            EbMakeValid(`#cont_${Obj.EbSid_CtxId}`, `#${Obj.EbSid_CtxId}Wraper`);// reset EbMakeValid
-            this.formValidationflag = true;// reset formValidationflag
+    // check all validations in a control
+    this.isValidationsOK = function (ctrl) {
+        let formValidationflag = true;
+        ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
+        $.each(ctrl.Validators.$values, function (i, Validator) {
+            this.removeInvalidStyle(ctrl);// reset EbMakeValid
             if (Validator.IsDisabled)
                 return true;// continue; from loop if current validation IsDisabled
             let func = new Function("form", atob(Validator.JScode));
             this.updateFormValues();
             if (!func(this.formValues)) {
-                EbMakeInvalid(`#cont_${Obj.EbSid_CtxId}`, `#${Obj.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
+                //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
+                this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
                 if (!Validator.IsWarningOnly) {
-                    this.formValidationflag = false;
+                    formValidationflag = false;
                     return false;// break; from loop if one validation failed
                 }
             }
-
         }.bind(this));
+        return formValidationflag;
     };
 
     this.updateFormValues = function () {
-        $.each(this.flatControls, function (i, obj) {
-            this.formValues[obj.Name] = obj.getValue();
+        $.each(this.flatControls, function (i, ctrl) {
+            this.formValues[ctrl.Name] = ctrl.getValue();
         }.bind(this));
     };
 
-    this.checkUnique = function (Obj) {
-        let val = Obj.getValue();
-        if ((typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === ""))
+    this.checkUnique = function (ctrl) {
+        let val = ctrl.getValue();
+        if (isNaNOrEmpty(val))
             return;
         this.showLoader();
         $.ajax({
             type: "POST",
             url: "../WebForm/DoUniqueCheck",
             data: {
-                TableName: this.FormObj.TableName, Field: Obj.Name, Value: Obj.getValue(), type: "Eb" + Obj.ObjType
+                TableName: this.FormObj.TableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
             },
             success: function (isUnique) {
                 this.hideLoader();
                 if (!isUnique)
-                    EbMakeInvalid(`#cont_${Obj.EbSid_CtxId}`, `#${Obj.EbSid_CtxId}Wraper`, "This field is unique, try another value");
+                    this.addInvalidStyle(ctrl, "This field is unique, try another value");
                 else
-                    EbMakeValid(`#cont_${Obj.EbSid_CtxId}`, `#${Obj.EbSid_CtxId}Wraper`);
+                    this.removeInvalidStyle()
             }.bind(this),
         });
     }
@@ -206,7 +216,7 @@
     };
 
     this.saveForm = function () {
-        if (!this.submitReqCheck() || !this.formValidationflag)
+        if (!this.AllRequired_valid_Check())
             return;
         this.showLoader();
         $.ajax({
@@ -232,23 +242,21 @@
         $("#eb_common_loader").EbLoader("hide");
     }
 
-    this.submitReqCheck = function () {
-        let $firstCtrl = null;
+    this.AllRequired_valid_Check = function () {
+        let required_valid_flag = true;
+        let $notOk1stCtrl = null;
         $.each(this.flatControls, function (i, control) {
             let $ctrl = $("#" + control.EbSid_CtxId);
-            if ($ctrl.length !== 0 && control.Required && $ctrl.val().trim() === "") {
-                if (!$firstCtrl)
-                    $firstCtrl = $ctrl;
-                this.checkRequired(control);
+            if (!this.isRequiredOK(control) || !this.isValidationsOK(control)) {
+                required_valid_flag = false;
+                if (!$notOk1stCtrl)
+                    $notOk1stCtrl = $ctrl;
             }
         }.bind(this));
 
-        if ($firstCtrl) {
-            $firstCtrl.select();
-            return false
-        }
-        else
-            return true;
+        if ($notOk1stCtrl)
+            $notOk1stCtrl.select();
+        return required_valid_flag;
     };
 
     this.init();

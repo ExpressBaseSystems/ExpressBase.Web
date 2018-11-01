@@ -156,9 +156,10 @@ function sortByProp(arr, prop) {
 
 
 function EbMakeValid(contSel, _ctrlCont) {
-    //var contSel = `[for=${name}]`;
-    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
-    $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
+    //setTimeout(function () {
+        $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+        $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
+    //},400);
 };
 
 
@@ -325,6 +326,10 @@ function getValsFromForm(formObj) {
     });
     return fltr_collection;
 }
+
+function isNaNOrEmpty(val) {
+    return (typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "")
+};
 
 function getValsForViz(formObj) {
     let fltr_collection = [];

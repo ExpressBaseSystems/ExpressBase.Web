@@ -729,16 +729,22 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var tempArray = [];
         if (this.CurrentRowGroup !== null) {
             if (this.CurrentRowGroup.RowGrouping.$values.length > 0) {
-                for (var i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
+                for (let i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
                     tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 1));
+            }            
+            if (this.CurrentRowGroup.OrderBy.$values.length > 0) {
+                for (let i = 0; i < this.CurrentRowGroup.OrderBy.$values.length; i++)
+                    tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 1));
             }
         }
 
-        if (this.EbObject.OrderBy.$values.length > 0) {
-            $.each(this.EbObject.OrderBy.$values, function (i, obj) {
-                if (tempArray.filter(e => e.Column === obj.name).length === 0)
-                    tempArray.push(new order_obj(obj.name, 1));
-            });
+        if (tempArray.length === 0) {
+            if (this.EbObject.OrderBy.$values.length > 0) {
+                $.each(this.EbObject.OrderBy.$values, function (i, obj) {
+                    if (tempArray.filter(e => e.Column === obj.name).length === 0)
+                        tempArray.push(new order_obj(obj.name, 1));
+                });
+            }
         }
 
         $.each(this.orderColl, function (i, obj) {

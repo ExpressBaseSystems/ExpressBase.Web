@@ -1,4 +1,4 @@
-﻿const formBuilder = function (options) {
+﻿const WebFormBuilder = function (options) {
     this.wc = options.wc;
     this.cid = options.cid;
     this.formId = options.formId;
@@ -23,13 +23,13 @@
 
     this.del = function (eType, selector, action, originalEvent) {
         let $e = selector.$trigger;
-        let id = $e.attr("ebsid");
-        let ControlTile = $(`#cont_${id}`).closest(".Eb-ctrlContainer");
-        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
-        let ctrl = this.rootContainerObj.Controls.PopByName(id);
+        let ebsid = $e.attr("ebsid");
+        let ControlTile = $(`#cont_${ebsid}`).closest(".Eb-ctrlContainer");
+        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(ebsid).EbSid);
+        let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
         ControlTile.parent().focus();
         ControlTile.remove();
-        this.PGobj.removeFromDD(id);
+        this.PGobj.removeFromDD(ebsid);
         this.saveObj();
         return ctrl;
     }.bind(this);

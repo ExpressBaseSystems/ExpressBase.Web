@@ -10,9 +10,11 @@
 @{
     //int typeInt = 0//(string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
     EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
-    int typeInt = Convert.ToInt32(ViewBag.ObjType);
 
-    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
+    string builderType_S = type.ToString();
+    int typeInt = Convert.ToInt32(ViewBag.ObjType);
+    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), builderType_S, true);
+
     EbToolbox _toolBox = new EbToolbox(_builderType);
 }
 <div id="con" class="web-form-buider-cont">
@@ -34,8 +36,6 @@
             }
 
         }
-        @*<textarea id="txtValues" rows="15" cols="40"></textarea>*@
-        @*<textarea id="code" name="code" rows="50" cols="40"></textarea>*@
     </div>
     <input type="hidden" id="objtype" value="@type" />
     <input type="hidden" id="objid" value="@ViewBag.Refid" />
@@ -51,7 +51,9 @@
     @Html.Raw(_toolBox.JsonToJsObjectFuncs);
     @Html.Raw(_toolBox.TypeRegister);
     @Html.Raw(_toolBox.EbOnChangeUIfns);
+    
 
+    let BuilderType = '@builderType_S';
     let formBuilderObj = null;
     let objid =$("#objid").val();
     let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
@@ -63,7 +65,7 @@
         toolBoxId: ToolBoxId,
         formId: FBid,
         PGId: PGid,
-        builderType: @((int)_builderType),
+        builderType: BuilderType,
         Eb_objType: @typeInt,
         wc: "@ViewBag.wc",
         cid: "@ViewBag.cid",

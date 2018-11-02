@@ -14,20 +14,26 @@
     };
 
     this.LogoImageUpload = function () {
-        var logoCrp = new cropfy({
-            Container: 'onboarding_logo',
-            Toggle: '#log-upload-btn',
-            isUpload: true,  //upload to cloud
-            enableSE: true, //enable server event
-            Browse: true,  //browse image
-            Result: 'base64',
-            Type: 'logo',
-            Tid: _tid, //if type is logo
-            Preview: "#oB_logo-prev"
+        var d = new EbFileUpload({
+            Type: "image",
+            Toggle: "#log-upload-btn",
+            TenantId: "@ViewBag.cid",
+            SolutionId: "@ViewBag.SolnId",
+            Container: "onboarding_logo",
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.info',
+            EnableTag: false,
+            EnableCrop: true,
+            Context: "logo",//if single and crop
+            ResizeViewPort: false //if single and crop
         });
-        logoCrp.getFile = function (file) {
 
-        }.bind(this);
+        d.uploadSuccess = function (fileid) {
+            EbMessage("show", { Message: "Upload done" });
+        }
+        d.windowClose = function () {
+            //EbMessage("show", { Message: "window closed", Background: "red" });
+        }
     };
 
     this.validateProfileInfo = function () {

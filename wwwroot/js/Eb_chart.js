@@ -51,7 +51,7 @@ var informaion = function (nam, val) {
 }
 var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData, PGobj) {
     this.propGrid = PGobj;
-    this.columnInfo = null;
+    this.EbObject = null;
     this.data = null;
     this.ssurl = ssurl;
     this.XLabel = [];
@@ -131,7 +131,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag, login: this.login, contextId: this.ContextId },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId },
             success: this.ajaxSucc
         });
 
@@ -188,7 +188,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         else
             this.EbObject = dvcontainerObj.currentObj;
 
-        if ($("#" + this.ContextId + " #filterBox").children().not("button").length == 0) {
+        if ($("#" + this.ContextId).children("#filterBox").length === 0) {
             this.FD = false;
             this.FDCont.hide();
             if (this.login === "dc") {
@@ -218,7 +218,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         else
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-        this.PcFlag = "False";
+        this.PcFlag = false;
     }.bind(this);
 
     this.start = function () {
@@ -287,14 +287,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             $("#map" + this.tableId).remove();
-            this.columnInfo = this.EbObject;
+            this.EbObject = this.EbObject;
 
             this.updateDragula("Changed");
 
         }
         if (Pname == "DataSourceRefId") {
             if (obj[Pname] !== null) {
-                this.PcFlag = "True";
+                this.PcFlag = true;
                 this.EbObject.Columns.$values = [];
                 this.EbObject.DSColumns.$values = [];
                 this.EbObject.Xaxis.$values = [];
@@ -308,7 +308,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     }.bind(this);
 
     this.init = function () {
-        this.columnInfo = this.EbObject;
+        this.EbObject = this.EbObject;
         if (this.EbObject.Type !== "")
             this.type = this.EbObject.Type;
         this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
@@ -329,17 +329,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             else {
                 if (this.FD) {
-                    //$.each(dvcontainerObj.dvcol, function (i, obj) {
-                    //    if (focusedId === "sub_window_" + obj.tableId)
-                    //        obj.stickBtn.minimise();
-                    //    else
-                    //        obj.stickBtn.hide();
-                    //});
                     this.stickBtn.minimise();
                 }
                 else
                     this.stickBtn.hide();
-                    //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
             }
             
             filterChanged = false;
@@ -372,14 +365,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $.ajax({
                     type: 'POST',
                     url: "../DV/getdata",
-                    data: { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues },
+                    data: { DataVizObjString: JSON.stringify(this.EbObject), draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues, dvRefId: this.Refid },
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("Authorization", "Bearer " + getToken());
                     },
                     success: this.getDataSuccess.bind(this),
                     error: function () { }
                 });
-                //$.post(this.ssurl + '/ds/data/' + this.columnInfo.DataSourceRefId, { draw: 1, RefId: this.columnInfo.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(getFilterValues()) }, this.getDataSuccess.bind(this));
+                //$.post(this.ssurl + '/ds/data/' + this.EbObject.DataSourceRefId, { draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(getFilterValues()) }, this.getDataSuccess.bind(this));
             }
         }
         this.GenerateButtons();
@@ -411,7 +404,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $(ctrl).css("border-color", "rgba(34, 36, 38, .15)");
         });
         return isValid;
-    }
+    };
 
     this.placefiltervalues = function () {
        
@@ -422,7 +415,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     }
 
     this.createChartDivs = function () {
-        //if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
+        //if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1) {
         $("#content_" + this.tableId).empty();
         $("#content_" + this.tableId).append(
             `<div id='graphcontainer_tab${this.tableId}' style='height:inherit;' class='chartCont'>
@@ -459,7 +452,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.GenerateButtons = function () {
-        $("#objname").text(this.columnInfo.Name);
+        $("#objname").text(this.EbObject.Name);
         $("#obj_icons").empty();
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
@@ -556,7 +549,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.appendColumns = function () {
         var colsAll_XY = [], Xcol = [], Ycol = [], colsAll_X = [];
         var tid = this.tableId;
-        $.each(this.columnInfo.Columns.$values, function (i, obj) {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.RenderAs.toString() === EbEnums.StringRenderType.Marker) {
                 this.type = "googlemap";
                 this.bot = true;
@@ -570,21 +563,21 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
         }.bind(this));
         if (!this.bot) {
-            if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
-                $.each(this.columnInfo.Xaxis.$values, this.AddXcolumns.bind(this, Xcol));
-                $.each(this.columnInfo.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
-                $.each(this.columnInfo.Yaxis.$values, this.AddYcolumns.bind(this, Ycol));
+            if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0) {
+                $.each(this.EbObject.Xaxis.$values, this.AddXcolumns.bind(this, Xcol));
+                $.each(this.EbObject.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
+                $.each(this.EbObject.Yaxis.$values, this.AddYcolumns.bind(this, Ycol));
                 $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
                 $("#diamension" + tid).empty();
                 $("#measure" + tid).empty();
             }
             else {
-                colsAll_XY = this.columnInfo.Columns.$values;
+                colsAll_XY = this.EbObject.Columns.$values;
                 $("#diamension" + tid).empty();
                 $("#measure" + tid).empty();
             }
             $.each(colsAll_XY, function (i, obj) {
-                if (obj.data != undefined) {
+                if (obj.data !== undefined) {
                     if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime") {
                         if (gettypefromNumber(obj.Type) === "String")
                             $("#diamension" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-font'></i></span>${obj.name}</li>`);
@@ -622,14 +615,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.appendXandYAxis = function () {
         var tid = this.tableId;
-        if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
+        if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0) {
             $("#X_col_name" + tid).empty();
             $("#Y_col_name" + tid).empty();
-            $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
+            $.each(this.EbObject.Xaxis.$values, function (i, obj) {
                 $("#X_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "' data-type='" + obj.Type + "'>" + obj.name + "<button class='close' type='button'>x</button></li>");
                 //this.Xindx.push(obj.data);
             });
-            $.each(this.columnInfo.Yaxis.$values, function (i, obj) {
+            $.each(this.EbObject.Yaxis.$values, function (i, obj) {
                 $("#Y_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "' data-type='" + obj.Type +"'>" + obj.name + "<button class='close' type='button'>x</button></li>");
                 //this.Yindx.push(obj.data);
             });
@@ -700,7 +693,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.drawGraphHelper = function (datain) {
         this.data = datain;
-        if (this.columnInfo.Xaxis.$values.length >= 1 && this.columnInfo.Yaxis.$values.length >= 1)
+        if (this.EbObject.Xaxis.$values.length >= 1 && this.EbObject.Yaxis.$values.length >= 1)
             this.drawGeneralGraph();
     };
 
@@ -711,13 +704,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.XLabel = [];
         this.YLabel = [];
         var xdx = [], ydx = [], ml = [], info = [];
-        if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
+        if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0) {
 
-            $.each(this.columnInfo.Xaxis.$values, function (i, obj) {
+            $.each(this.EbObject.Xaxis.$values, function (i, obj) {
                 xdx.push(obj.data);
             });
 
-            $.each(this.columnInfo.Yaxis.$values, function (i, obj) {
+            $.each(this.EbObject.Yaxis.$values, function (i, obj) {
                 ydx.push(obj.data);
             });
 
@@ -730,17 +723,17 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 if (this.type !== "googlemap") {
                     if (this.type !== "pie") {
                         this.piedataFlag = false;
-                        this.dataset.push(new datasetObj(this.columnInfo.Yaxis.$values[k].name, this.YLabel, this.columnInfo.LegendColor.$values[k].color, this.columnInfo.LegendColor.$values[k].color, false));
+                        this.dataset.push(new datasetObj(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].color, this.EbObject.LegendColor.$values[k].color, false));
                     }
                     else {
-                        this.dataset.push(new datasetObj4Pie(this.columnInfo.Yaxis.$values[k].name, this.YLabel, this.columnInfo.LegendColor.$values[k].color, this.columnInfo.LegendColor.$values[k].color, false));
+                        this.dataset.push(new datasetObj4Pie(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].color, this.EbObject.LegendColor.$values[k].color, false));
                         this.piedataFlag = true;
                     }
                 }
             }
 
             if (this.type === "googlemap") {
-                $.each(this.columnInfo.MarkerLabel.$values, function (i, obj) {
+                $.each(this.EbObject.MarkerLabel.$values, function (i, obj) {
                     if (i === 0)
                         ml.push(obj.data);
                 });
@@ -751,7 +744,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                     });
                 }
                 Inform = [];
-                $.each(this.columnInfo.InfoWindow.$values, function (i, obj) {
+                $.each(this.EbObject.InfoWindow.$values, function (i, obj) {
                     info = [];
                     $.each(this.data, function (k, value) {
                         info.push(value[obj.data]);
@@ -808,14 +801,14 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 labels: this.XLabel,
                 datasets: this.dataset,
             };
-            //this.animateOPtions = (this.columnInfo.ShowValue) ? new animateObj(0) : false;
+            //this.animateOPtions = (this.EbObject.ShowValue) ? new animateObj(0) : false;
             this.goptions = {
                 scales: {
                     yAxes: [{
                         scaleLabel: {
                             display: (this.type !== "pie") ? true : false,
-                            labelString: (this.columnInfo.YaxisTitle !== "") ? this.columnInfo.YaxisTitle : "YLabel",
-                            fontColor: (this.columnInfo.YaxisTitleColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.YaxisTitleColor : "#000000"
+                            labelString: (this.EbObject.YaxisTitle !== "") ? this.EbObject.YaxisTitle : "YLabel",
+                            fontColor: (this.EbObject.YaxisTitleColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.YaxisTitleColor : "#000000"
                         },
                         stacked: false,
                         gridLines: {
@@ -823,22 +816,22 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                         },
                         ticks: {
                             fontSize: 10,
-                            fontColor: (this.columnInfo.YaxisLabelColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.YaxisLabelColor : "#000000"
+                            fontColor: (this.EbObject.YaxisLabelColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.YaxisLabelColor : "#000000"
                         },
                         display: (this.type !== "pie") ? true : false
                     }],
                     xAxes: [{
                         scaleLabel: {
                             display: (this.type !== "pie") ? true : false,
-                            labelString: (this.columnInfo.XaxisTitle !== "") ? this.columnInfo.XaxisTitle : "XLabel",
-                            fontColor: (this.columnInfo.XaxisTitleColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.XaxisTitleColor : "#000000"
+                            labelString: (this.EbObject.XaxisTitle !== "") ? this.EbObject.XaxisTitle : "XLabel",
+                            fontColor: (this.EbObject.XaxisTitleColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.XaxisTitleColor : "#000000"
                         },
                         gridLines: {
                             display: (this.type !== "pie") ? true : false
                         },
                         ticks: {
                             fontSize: 10,
-                            fontColor: (this.columnInfo.XaxisLabelColor !== null && this.columnInfo.YaxisTitleColor !== "#ffffff") ? this.columnInfo.XaxisLabelColor : "#000000"
+                            fontColor: (this.EbObject.XaxisLabelColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.XaxisLabelColor : "#000000"
                         },
                         display: (this.type !== "pie") ? true : false
                     }]
@@ -863,18 +856,18 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 //legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>",
 
                 tooltips: {
-                    enabled: this.columnInfo.ShowTooltip,
+                    enabled: this.EbObject.ShowTooltip,
                     callbacks: {
                         label: this.toolTipCallback
                     }
                 },
-                segmentShowStroke: this.columnInfo.ShowValue && this.type === "pie",
+                segmentShowStroke: this.EbObject.ShowValue && this.type === "pie",
                 segmentStrokeWidth: 2,
                 animation: {
                     animateRotate :true,
                     duration: 1,
-                    //onProgress: (this.columnInfo.ShowValue && this.type === "pie") ? this.animationOnProgress : null,
-                    onComplete: (this.columnInfo.ShowValue && this.type !== "pie") ? this.animationOnComplete : null
+                    //onProgress: (this.EbObject.ShowValue && this.type === "pie") ? this.animationOnProgress : null,
+                    onComplete: (this.EbObject.ShowValue && this.type !== "pie") ? this.animationOnComplete : null
                 },
             };
             if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
@@ -939,13 +932,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //    this.goptions = null;
         //    this.type = "doughnut";
         //}
-        //if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0) {
-        //    if (this.columnInfo.Type == null || this.columnInfo.Type == "") {
+        //if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0) {
+        //    if (this.EbObject.Type == null || this.EbObject.Type == "") {
         //        $("#graphDropdown_tab" + this.tableId + " button:first-child").html("Bar" + "&nbsp;<span class = 'caret'></span>")
-        //        this.columnInfo.Type = "bar";
+        //        this.EbObject.Type = "bar";
         //    }
         //    else
-        //        this.columnInfo.Type = this.type;
+        //        this.EbObject.Type = this.type;
         //}
 
         $("#canvasDiv" + this.tableId).children("iframe").remove();
@@ -953,7 +946,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //$("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
         $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
 
-        if (this.columnInfo.Xaxis.$values.length > 0 && this.columnInfo.Yaxis.$values.length > 0)
+        if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0)
             this.drawGraph();
 
 
@@ -973,11 +966,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     }
 
     this.drawGraph = function () {
-        this.columnInfo.Type = this.type;
+        this.EbObject.Type = this.type;
         var canvas = document.getElementById("myChart" + this.tableId);
 
         this.chartApi = new Chart(canvas, {
-            type: this.columnInfo.Type.trim(),
+            type: this.EbObject.Type.trim(),
             data: this.gdata,
             options: this.goptions,
         });
@@ -994,7 +987,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.type = $(e.target).parent().parent().next().text().toLowerCase();
         $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons[this.type]}'></i>&nbsp;<span class = 'caret'></span>`);
         if (this.type.trim() !== "googlemap") {
-            if (this.columnInfo.$type.indexOf("EbGoogleMap") !== -1) {
+            if (this.EbObject.$type.indexOf("EbGoogleMap") !== -1) {
                 $("#canvasDiv" + this.tableId).children("#map").remove();
                 var refid = this.EbObject.DataSourceRefId;
                 var columns = JSON.parse(JSON.stringify(this.EbObject.Columns));
@@ -1006,7 +999,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 this.EbObject.Pippedfrom = pipe;
 
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-                this.columnInfo = this.EbObject;
+                this.EbObject = this.EbObject;
                 this.gdata = null;
                 this.updateDragula();
             }
@@ -1027,7 +1020,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.EbObject.Columns = columns;
             this.EbObject.Pippedfrom = pipe;
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-            this.columnInfo = this.EbObject;
+            this.EbObject = this.EbObject;
 
             this.updateDragula();
         }
@@ -1044,39 +1037,49 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if ($(target).attr("id") === "X_col_name" + this.tableId || $(target).attr("id") === "Y_col_name" + this.tableId) {
             $(el).addClass("columnDrag");
             $(el).children("span").remove();
+            $(el).children(".close").remove();
             var temp;
             $(el).css("display", "inline-block");
             var name = $(el).text();
             $(el).append("<button class='close' type='button'>x</button>");
-            if ($(target).attr("id") == "X_col_name" + this.tableId) {
-                //this.columnInfo.Xaxis.$values.push(new axis($(el).attr("data-id"), name));
-                temp = $.grep(this.columnInfo.Columns.$values, function (obj) { return obj.name === name });
-                this.columnInfo.Xaxis.$values.push(temp[0]);
-                //this.Xindx.push(temp[0].data);
+            if ($(target).attr("id") === "X_col_name" + this.tableId) {
+                temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; });
+                let index = this.EbObject.Xaxis.$values.findIndex(x => x.name === temp[0].name);
+                if (index > -1)
+                    this.EbObject.Xaxis.$values.splice(index, 1);
+                this.EbObject.Xaxis.$values.push(temp[0]);
             }
-            if ($(target).attr("id") == "Y_col_name" + this.tableId) {
-                //this.columnInfo.Yaxis.$values.push(new axis($(el).attr("data-id"), name));
-                temp = $.grep(this.columnInfo.Columns.$values, function (obj) { return obj.name === name });
-                this.columnInfo.Yaxis.$values.push(temp[0]);
-                //this.Yindx.push(temp[0].data);
-                if (this.type !== "googlemap")
-                    this.columnInfo.LegendColor.$values.push(new ChartColor(name, randomColor()));
+            else if($(target).attr("id") === "Y_col_name" + this.tableId) {
+                temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; });
+                let index = this.EbObject.Yaxis.$values.findIndex(x => x.name === temp[0].name);
+                if (index > -1)
+                    this.EbObject.Yaxis.$values.splice(index, 1);
+                this.EbObject.Yaxis.$values.push(temp[0]);
+                if (this.type !== "googlemap") {
+                    index = this.EbObject.LegendColor.$values.findIndex(x => x.name === temp[0].name);
+                    if (index > -1)
+                        this.EbObject.LegendColor.$values.splice(index, 1);
+                    this.EbObject.LegendColor.$values.push(new ChartColor(name, randomColor()));
+                }
             }
 
-            if ($("#X_col_name" + this.tableId + " li").length == 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
+            if ($("#X_col_name" + this.tableId + " li").length === 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
                 this.drawGeneralGraph();
             }
             else {
                 $("#myChart" + this.tableId).remove();
                 $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
             }
-            console.log(this.columnInfo.Xaxis); console.log(this.columnInfo.Yaxis);
+            console.log(this.EbObject.Xaxis); console.log(this.EbObject.Yaxis);
             $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
             $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         }
 
     };
 
+    this.colDropRef = function (el, target, source, sibling) {
+        this.colDrop(el, target, source, sibling);
+    };
     this.colAllowDrop = function (e) {
         e.preventDefault();
     };
@@ -1127,11 +1130,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         //$("#columns4Drag" + this.tableId + " .list-group").append("<li class='alert alert-success columnDrag' id='" + $(e.target).parent().attr("id") + "' draggable='true' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "</li>");
         $(e.target).parent().remove();
         //$("#columns4Drag" + this.tableId + " .columnDrag").off("dragstart").on("dragstart", this.colDrag.bind(this));
-        this.columnInfo.Xaxis.$values = $.grep(this.columnInfo.Xaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
-        this.columnInfo.Yaxis.$values = $.grep(this.columnInfo.Yaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
+        this.EbObject.Xaxis.$values = $.grep(this.EbObject.Xaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
+        this.EbObject.Yaxis.$values = $.grep(this.EbObject.Yaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
         if (this.type !== "googlemap")
-            this.columnInfo.LegendColor.$values = $.grep(this.columnInfo.LegendColor.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
-        //this.columnInfo.Xaxis = this.
+            this.EbObject.LegendColor.$values = $.grep(this.EbObject.LegendColor.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
+        //this.EbObject.Xaxis = this.
         //this.Xindx = $.grep(this.Xindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
         //this.Yindx = $.grep(this.Yindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
 
@@ -1169,9 +1172,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     }
 
     this.reloadChart = function (legendItem) {
-        $.each(this.columnInfo.LegendColor.$values, function (i, obj) {
+        $.each(this.EbObject.LegendColor.$values, function (i, obj) {
             if (legendItem.text === obj.name)
-                this.columnInfo.LegendColor.$values[i].color = $("#fontSel").val();
+                this.EbObject.LegendColor.$values[i].color = $("#fontSel").val();
         }.bind(this));
         if (this.type !== "pie") {
             if (this.gdata.datasets[0].fill === true)
@@ -1195,7 +1198,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.reloadChart4pie = function (legendItem, i, obj) {
         this.gdata.datasets[i].backgroundColor[legendItem.index] = $("#fontSel").val();
         this.gdata.datasets[i].borderColor[legendItem.index] = $("#fontSel").val();
-    }
+    };
 
     this.animationOnComplete = function () {
         var chartInstance = this.chart,
@@ -1248,9 +1251,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.drake)
                 this.drake.destroy();
             this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
-                accepts: this.acceptDrop.bind(this)
+                accepts: this.acceptDrop.bind(this),
+                drop: function (el, source) {
+                }
             });
-            this.drake.on("drop", this.colDrop.bind(this));
+            this.drake.off("drop").on("drop", this.colDropRef.bind(this));
             if (this.type === "")
                 this.type = "bar";
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
@@ -1262,7 +1267,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
                 accepts: this.acceptDrop1.bind(this)
             });
-            this.drake.on("drop", this.colDrop.bind(this));
+            this.drake.off("drop").on("drop", this.colDropRef.bind(this));
             this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
         }
 
@@ -1281,7 +1286,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0) {
                 if (this.type !== "googlemap") {
                     $.each(this.EbObject.Yaxis.$values, function (i, obj) {
-                        this.columnInfo.LegendColor.$values.push(new ChartColor(obj.name, randomColor()));
+                        this.EbObject.LegendColor.$values.push(new ChartColor(obj.name, randomColor()));
                     }.bind(this));
                 }
                 this.drawGeneralGraph();
@@ -1390,17 +1395,17 @@ function initMap() {
 }
 
 {
-    //var eb_chart111 = function (columnInfo, ssurl, data, tableId) {
+    //var eb_chart111 = function (EbObject, ssurl, data, tableId) {
     //    this.data = data;
-    //    this.columnInfo = columnInfo;
-    //    //this.type = (this.columnInfo.options === null || this.columnInfo.options === undefined) ? "bar" : this.columnInfo.options.type.trim().toLowerCase();
+    //    this.EbObject = EbObject;
+    //    //this.type = (this.EbObject.options === null || this.EbObject.options === undefined) ? "bar" : this.EbObject.options.type.trim().toLowerCase();
     //    this.ssurl = ssurl;
     //    this.chartJs = null;
     //    this.tableId = tableId;
     //    // functions
 
     //    this.init = function () {
-    //        if (this.columnInfo.$type.indexOf("EbChartVisualization") !== -1) {
+    //        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1) {
     //            $("#Toolbar").children(":not(.commonControls)").remove();
     //            $("#content_" + this.tableId).append("<div id='graphcontainer_tab" + this.tableId + "'>" +
     //                "<table>" +
@@ -1435,12 +1440,12 @@ function initMap() {
     //                "</table>" +
     //                "</div>");
     //            this.createButtons();
-    //            this.chartJs = new Eb_chartJSgraph( this.data, this.columnInfo, this.ssurl, tableId);
+    //            this.chartJs = new Eb_chartJSgraph( this.data, this.EbObject, this.ssurl, tableId);
     //        }
     //    };
 
     //    this.createButtons = function () {
-    //        $("#Toolbar").append("<label class='dvname' style='color: #333;'>" + this.columnInfo.Name + "</label>" +
+    //        $("#Toolbar").append("<label class='dvname' style='color: #333;'>" + this.EbObject.Name + "</label>" +
     //            "<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
     //            "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
     //            "<span class='caret'></span>" +

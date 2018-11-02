@@ -79,6 +79,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.rowgroupCols = []
     this.rowgroupFilter = [];
     this.CurrentRowGroup = null;
+    this.permission = [];
+    this.isCustomColumnExist = false;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -101,7 +103,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 style: { top: "112px" }
             });
         }
-    }
+    };
 
     split.windowOnFocus = function (ev) {
         $("#Relateddiv").hide();
@@ -180,7 +182,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.PcFlag === "True")
             this.compareAndModifyRowGroup();
 
-        if ($("#" + this.ContextId + " #filterBox").children().not("button").length == 0) {
+        if ($("#" + this.ContextId).children("#filterBox").length === 0) {
             this.FD = false;
             this.FDCont.hide();
             if (this.login === "dc") {
@@ -232,24 +234,28 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.rowgroupCols = [];
                 this.EbObject.RowGroupCollection.$values = [];
                 this.orderColl = [];
-                //this.call2FD();
-                //this.EbObject.rowGrouping.$values = [];
-                EbDialog("show", {
-                    Message: "Retain Custom Columns?",
-                    Buttons: {
-                        "Yes": {
-                            Background: "green",
-                            Align: "right",
-                            FontColor: "white;"
+                this.check4Customcolumn();
+                this.EbObject.OrderBy.$values = [];
+                if (this.isCustomColumnExist) {
+                    EbDialog("show", {
+                        Message: "Retain Custom Columns?",
+                        Buttons: {
+                            "Yes": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            },
+                            "No": {
+                                Background: "red",
+                                Align: "left",
+                                FontColor: "white;"
+                            }
                         },
-                        "No": {
-                            Background: "red",
-                            Align: "left",
-                            FontColor: "white;"
-                        }
-                    },
-                    CallBack: this.dialogboxAction.bind(this)
-                });
+                        CallBack: this.dialogboxAction.bind(this)
+                    });
+                }
+                else
+                    this.call2FD();
             }
         }
         else if (Pname === "Name") {
@@ -322,7 +328,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             this.init();
             this.call2FD();
-        };
+        }
 
         this.propGrid.CXVE.onAddToCE = function (prop, val, addedObj) {
             if (addedObj.ObjType === "NumericColumn")
@@ -330,7 +336,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         };
     };
 
-    this.getColumnsSuccess = function (e) {
+    this.getColumnsSuccess = function (e) {        
         if (this.isContextual) {
             if (this.isSecondTime) {
                 if (!this.validateFD())
@@ -365,18 +371,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             if (this.FD) {
-                //$.each(dvcontainerObj.dvcol, function (i, obj) {
-                //    if (focusedId === "sub_window_" + obj.tableId)
-                //        obj.stickBtn.minimise();
-                //    else
-                //        obj.stickBtn.hide();
-                //});
                 this.stickBtn.minimise();
             }
 
             else
                 this.stickBtn.hide();
-            //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
 
@@ -422,12 +421,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     };
 
+    this.check4Customcolumn = function () {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) {return obj.IsCustomColumn;});
+        if (temp.length === 0)
+            this.isCustomColumnExist = false;
+        else
+            this.isCustomColumnExist = true;
+    };
+
     this.InitializeColumns = function () {
         $.each(this.EbObject.Columns.$values, function (i, col) {
             if (col.HideDataIfRowMoreThan === null)
                 col.HideDataIfRowMoreThan = { "$type": "ExpressBase.Objects.Objects.DVRelated.HideColumnData, ExpressBase.Objects", "Enable": false, "UnRestrictedRowCount": 0, "ReplaceByCharacter": "", "ReplaceByText": "" };
         }.bind(this));
-    }
+    };
 
     this.validateFD = function () {
         var isValid = true;
@@ -710,10 +717,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         dq.Ispaging = this.EbObject.IsPaging;
         if (dq.length === -1)
-            dq.length = this.RowCount ;
+            dq.length = this.RowCount;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
+        dq.dvRefId = this.Refid;
         return dq;
     };
 
@@ -721,33 +729,45 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var tempArray = [];
         if (this.CurrentRowGroup !== null) {
             if (this.CurrentRowGroup.RowGrouping.$values.length > 0) {
-                for (var i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
+                for (let i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
                     tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 1));
+            }
+            if (this.orderColl.length > 0) {
+                $.each(this.orderColl, function (i, obj) {
+                    tempArray.push(obj);
+                });
+            }
+            else {
+                if (this.CurrentRowGroup.OrderBy.$values.length > 0) {
+                    for (let i = 0; i < this.CurrentRowGroup.OrderBy.$values.length; i++)
+                        tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 1));
+                }
             }
         }
 
-        if (this.EbObject.OrderBy.$values.length > 0) {
-            $.each(this.EbObject.OrderBy.$values, function (i, obj) {
-                if (tempArray.filter(e => e.Column === obj.name).length === 0)
-                    tempArray.push(new order_obj(obj.name, 1));
+        if (tempArray.length === 0) {
+            if (this.EbObject.OrderBy.$values.length > 0) {
+                $.each(this.EbObject.OrderBy.$values, function (i, obj) {
+                    if (tempArray.filter(e => e.Column === obj.name).length === 0)
+                        tempArray.push(new order_obj(obj.name, 1));
+                });
+            }
+
+            $.each(this.orderColl, function (i, obj) {
+                var index = tempArray.findIndex(x => x.Column === obj.Column);
+                if (index === -1)
+                    tempArray.push(obj);
+                else {
+                    tempArray.splice(index, 1);
+                    obj.Direction = (obj.Direction === 1) ? 2 : 1;
+                    tempArray.push(obj);
+                }
+
             });
         }
 
-        $.each(this.orderColl, function (i, obj) {
-            var index = tempArray.findIndex(x => x.Column == obj.Column)
-            if (index === -1)
-                tempArray.push(obj);
-            else {
-                tempArray.splice(index, 1);
-                obj.Direction = (obj.Direction === 1) ? 2 : 1;
-                tempArray.push(obj);
-            }
-
-        });
-
         return tempArray;
-
-    }
+    };
 
     this.getFilterValues = function (from) {
         //this.filterChanged = false;
@@ -943,6 +963,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //return dd.data;
         this.unformatedData = dd.data;
         this.Levels = dd.levels;
+        this.permission = dd.permission;
         return dd.formattedData;
     };
 
@@ -1486,6 +1507,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.rowGroupHandler = function (e) {
+        this.orderColl = [];
         let name = $(e.target).val().trim();
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             if (obj.Name === name) {
@@ -1493,7 +1515,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.getColumnsSuccess(e);
             }
         }.bind(this));
-    }
+    };
 
     this.visibilityCheck = function () {
         this.RGIndex = [];
@@ -2107,7 +2129,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
         if ($("#" + this.tableId).children().length > 0) {
-            if (this.login == "dc") {
+            if (this.login === "dc") {
                 $("#obj_icons").append("<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +
                     "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
                     "<div class='btn-group'>" +
@@ -2128,9 +2150,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     "</div>" +
                     "</div>");
             }
-            //if (this.FD)
-            //    $("#obj_icons").append("<button id='btnToggleFD" + this.tableId + "' class='btn'>F</button>");
             $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
+
+            if (this.login === "uc") {
+                $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
+                $.each(this.permission, function (i, obj) {
+                    if (obj === "Excel")
+                        $("#" + this.tableId + "_fileBtns .btn-group").append("<button id = 'btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data - toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
+                }.bind(this));
+            }
 
             if (this.login == "uc") {
                 dvcontainerObj.modifyNavigation();
@@ -2216,7 +2244,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             });
         }
-    }
+    };
 
     this.orderingEvent = function (e) {
         //var col = $(e.target).children('span').text();
@@ -2749,7 +2777,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.GetData4InlineDv = function (rows, idx, colindex, result) {
         var Dvobj = JSON.parse(result).DsObj;
-        var param = this.Params4InlineTable(Dvobj.DataSourceRefId);
+        var param = this.Params4InlineTable(Dvobj);
         $.ajax({
             type: "POST",
             url: "../DV/getData4Inline",
@@ -2784,19 +2812,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(".containerrow .close").off("click").on("click", function () {
             $(this).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
             $(this).parents().closest(".containerrow").remove();
-
         });
 
         $("#eb_common_loader").EbLoader("hide");
     };
 
-    this.Params4InlineTable = function (dsid) {
+    this.Params4InlineTable = function (Dvobj) {
         var dq = new Object();
-        dq.RefId = dsid;
+        dq.RefId = Dvobj.DataSourceRefId;
         dq.TFilters = [];
         dq.Params = this.filterValues;
         dq.Start = 0;
         dq.Length = 500;
+        dq.DataVizObjString = JSON.stringify(Dvobj);
         return dq;
     };
 

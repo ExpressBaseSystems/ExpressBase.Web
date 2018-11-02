@@ -155,12 +155,18 @@ namespace ExpressBase.Web.Controllers
             return resultlist1;
         }
 
-        public DataSourceDataResponse getData4Inline(InlineTableDataRequest request)
+        public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)
         {
+            InlineTableDataRequest request = new InlineTableDataRequest();
+            request = _request;
+            if (request.DataVizObjString != null)
+                request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+            request.DataVizObjString = null;
+            request.UserInfo = this.LoggedInUser;
             DataSourceDataResponse resultlist1 = null;
             try
             {
-                resultlist1 = this.ServiceClient.Get(request);
+                resultlist1 = this.ServiceClient.Post(request);
             }
             catch (Exception e)
             {

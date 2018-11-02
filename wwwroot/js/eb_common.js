@@ -128,23 +128,38 @@ function getEbObjectTypes() {
 }
 
 
-function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required") {
-    //var contSel = `[for=${name}]`;//
+function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+    let shadowColor = "rgb(174, 0, 0)";
+    if (type === "warning")
+        shadowColor = "rgb(236, 151, 31)";
     if ($(`${contSel} .req-cont`).length !== 0)
         return;
     //var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
     var $ctrlCont = $(`${contSel}  ${_ctrlCont}`);
-    $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-danger'></label></div>`);
-    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "0 0 3px 1px rgb(174, 0, 0)").siblings("[name=ctrlsend]").css('disabled', true);
-    $(`${contSel}  .text-danger`).text(msg).show().animate({ opacity: "1" }, 300);
+    $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
+    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", `0 0 3px 1px ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
+    $(`${contSel}  .text-${type}`).text(msg).show().animate({ opacity: "1" }, 300);
 }
+
+function sortByProp(arr, prop) {
+
+    arr.sort(function (a, b) {
+        if (a[prop] < b[prop])
+            return -1;
+        if (a[prop] > b[prop])
+            return 1;
+        return 0;
+    });
+    return arr;
+};
 
 
 
 function EbMakeValid(contSel, _ctrlCont) {
-    //var contSel = `[for=${name}]`;
-    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
-    $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
+    //setTimeout(function () {
+        $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+        $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
+    //},400);
 };
 
 
@@ -219,7 +234,7 @@ function getAverage(_array) {
 function gettypefromNumber(num) {
     if (num == 16)
         return "String";
-    else if (num == 6)
+    else if (num == 6 || num == 5)
         return "DateTime";
     else if (num == 3)
         return "Boolean";
@@ -311,6 +326,10 @@ function getValsFromForm(formObj) {
     });
     return fltr_collection;
 }
+
+function isNaNOrEmpty(val) {
+    return (typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "")
+};
 
 function getValsForViz(formObj) {
     let fltr_collection = [];

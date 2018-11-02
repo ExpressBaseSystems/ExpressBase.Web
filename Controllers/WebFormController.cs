@@ -24,6 +24,30 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale} );
         }
 
+		public string AuditTrail(string refid, int rowid)
+		{
+			//sourc == dest == type == src id == src verid == dst id == dst verid
+			//ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-0-2257-2976-2257-2976
+			try
+			{
+				string[] refidparts = refid.Split("-");
+				if (refidparts[1].Equals(ViewBag.cid))
+				{
+					if(this.LoggedInUser.EbObjectIds.Contains(refidparts[5].PadLeft(5, '0')) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+					{
+						GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
+						return JsonConvert.SerializeObject(Resp.Logs);
+					}
+				}
+				return string.Empty;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
+				return string.Empty;
+			}
+		}
+
 		public object getRowdata(string refid, int rowid)
 		{
 			try

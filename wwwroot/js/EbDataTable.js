@@ -729,33 +729,45 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var tempArray = [];
         if (this.CurrentRowGroup !== null) {
             if (this.CurrentRowGroup.RowGrouping.$values.length > 0) {
-                for (var i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
+                for (let i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
                     tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 1));
+            }
+            if (this.orderColl.length > 0) {
+                $.each(this.orderColl, function (i, obj) {
+                    tempArray.push(obj);
+                });
+            }
+            else {
+                if (this.CurrentRowGroup.OrderBy.$values.length > 0) {
+                    for (let i = 0; i < this.CurrentRowGroup.OrderBy.$values.length; i++)
+                        tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 1));
+                }
             }
         }
 
-        if (this.EbObject.OrderBy.$values.length > 0) {
-            $.each(this.EbObject.OrderBy.$values, function (i, obj) {
-                if (tempArray.filter(e => e.Column === obj.name).length === 0)
-                    tempArray.push(new order_obj(obj.name, 1));
+        if (tempArray.length === 0) {
+            if (this.EbObject.OrderBy.$values.length > 0) {
+                $.each(this.EbObject.OrderBy.$values, function (i, obj) {
+                    if (tempArray.filter(e => e.Column === obj.name).length === 0)
+                        tempArray.push(new order_obj(obj.name, 1));
+                });
+            }
+
+            $.each(this.orderColl, function (i, obj) {
+                var index = tempArray.findIndex(x => x.Column === obj.Column);
+                if (index === -1)
+                    tempArray.push(obj);
+                else {
+                    tempArray.splice(index, 1);
+                    obj.Direction = (obj.Direction === 1) ? 2 : 1;
+                    tempArray.push(obj);
+                }
+
             });
         }
 
-        $.each(this.orderColl, function (i, obj) {
-            var index = tempArray.findIndex(x => x.Column == obj.Column)
-            if (index === -1)
-                tempArray.push(obj);
-            else {
-                tempArray.splice(index, 1);
-                obj.Direction = (obj.Direction === 1) ? 2 : 1;
-                tempArray.push(obj);
-            }
-
-        });
-
         return tempArray;
-
-    }
+    };
 
     this.getFilterValues = function (from) {
         //this.filterChanged = false;
@@ -1495,6 +1507,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.rowGroupHandler = function (e) {
+        this.orderColl = [];
         let name = $(e.target).val().trim();
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             if (obj.Name === name) {
@@ -1502,7 +1515,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.getColumnsSuccess(e);
             }
         }.bind(this));
-    }
+    };
 
     this.visibilityCheck = function () {
         this.RGIndex = [];

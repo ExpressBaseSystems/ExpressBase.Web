@@ -10,6 +10,11 @@ using ServiceStack;
 using ServiceStack.Redis;
 using Newtonsoft.Json;
 using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
+using ExpressBase.Common.Objects;
+using ExpressBase.Common.Extensions;
+using System.Reflection;
+using ExpressBase.Common.Objects.Attributes;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -36,6 +41,29 @@ namespace ExpressBase.Web.Controllers
 					if(this.LoggedInUser.EbObjectIds.Contains(refidparts[5].PadLeft(5, '0')) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
 					{
 						GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
+						//----------------------This code should be changed
+
+						EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+						EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
+						if (WebForm != null)
+						{
+							string[] Keys = EbControlContainer.GetKeys(WebForm);
+							Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = this.LoggedInUser.Preference.Locale }).Dict;							
+							EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
+
+							Dictionary<string, string> MLPair = GetMLPair(WebForm_L);
+
+							foreach (KeyValuePair<int, FormTransaction> item in Resp.Logs)
+							{
+								foreach (FormTransactionLine initem in item.Value.Details)
+								{
+									if (MLPair.ContainsKey(initem.FieldName))
+										initem.FieldName = MLPair[initem.FieldName];
+								}
+							}
+						}
+
+						//--------------------------------
 						return JsonConvert.SerializeObject(Resp.Logs);
 					}
 				}
@@ -46,6 +74,25 @@ namespace ExpressBase.Web.Controllers
 				Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
 				return string.Empty;
 			}
+		}
+
+		private Dictionary<string, string> GetMLPair(EbWebForm WebForm_L)
+		{
+			Dictionary<string, string> MLPair = new Dictionary<string, string>();
+			EbControl[] controls = (WebForm_L as EbControlContainer).Controls.FlattenAllEbControls();
+			foreach (EbControl control in controls)
+			{
+				PropertyInfo[] props = control.GetType().GetProperties();
+				foreach (PropertyInfo prop in props)
+				{
+					if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == PropertyEditorType.MultiLanguageKeySelector)
+					{
+						if(prop.Name == "Label")
+							MLPair.Add(control.Name, control.GetType().GetProperty(prop.Name).GetValue(control, null) as String);
+					}
+				}
+			}
+			return MLPair;
 		}
 
 		public object getRowdata(string refid, int rowid)

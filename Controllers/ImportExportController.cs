@@ -35,7 +35,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("AppStore")]
         public IActionResult AppStore()
         {
-            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreRequest { });
+            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreInternalRequest { });
             ViewBag.StoreApps = resp.Apps;
             return View();
         }

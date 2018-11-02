@@ -77,8 +77,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.MainData = (data === undefined) ? null : data;
     this.isPipped = false;
     this.isContextual = false;
-    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(filterValues) : [];
-    this.rowData = (rowData !== undefined) ? rowData : null;
+    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(atob(filterValues)) : [];
+    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(filterValues)) : null;
     this.isTagged = false;
     //this.filterChanged = false;
     this.bot = false;

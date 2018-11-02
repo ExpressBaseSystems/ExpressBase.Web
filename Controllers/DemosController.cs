@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Auth;
@@ -31,18 +33,25 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("GoToDemos")]
         public IActionResult DemoSSO()
         {
+            string host = HttpContext.Request.Host.Host;
+            if (host.Contains("-dev"))
+                ViewBag.wc = "dc";
+            else
+                ViewBag.wc = "uc";
+
             return View();
         }
 
-        public IActionResult DemoAuth(string Context,string FbId, string Name, string Email, string Cid)
+        public string DemoAuth(string Context, string FbId, string Name, string Email, string Cid)
         {
             Dictionary<string, string> _Meta = new Dictionary<string, string> {
-                    { TokenConstants.WC, "bc" },
+                    { TokenConstants.WC, Context },
                     { TokenConstants.CID, Cid },
                     { TokenConstants.SOCIALID, FbId },
                     { "emailId", Email },
                     { "anonymous", "true" },
-                    { "user_name", Name }
+                    { "user_name", Name },
+                    { "appid", "0" }
             };
 
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
@@ -54,11 +63,26 @@ namespace ExpressBase.Web.Controllers
             });
             if (authResponse != null)
             {
-                this.ServiceClient.BearerToken = authResponse.BearerToken;
-                this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+                CookieOptions options = new CookieOptions();
+
+                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+
                 Console.WriteLine("demo fb auth success");
 
-                return Redirect("/");
+                if (Context == RoutingConstants.DC)
+                {
+                    return RoutingConstants.MYAPPLICATIONS;
+                }
+                else if (Context == RoutingConstants.UC)
+                {
+                    return RoutingConstants.USERDASHBOARD;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {

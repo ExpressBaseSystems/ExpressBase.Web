@@ -36,7 +36,7 @@
                 <button type="button" class="close" onclick="$('#ML_Modal_${this.ContID} .imgup-bg').hide(500);" >&times;</button>
                 <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Multi Language Key Settings.</h4> </div>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="height: 420px;">
                 <ul id="ultabs_${this.ContID}" class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#menusearch_${this.ContID}">Search</a></li>
                     <li><a data-toggle="tab" href="#menuadd_${this.ContID}">Add/Update</a></li>
@@ -55,7 +55,7 @@
                                     <i>Key Suggestions</i>
                                 </div>
                                 <div id="lstkeysuggestion_${this.ContID}" class="list-group" style=" height:220px; overflow-y:auto; border:1px solid #ccc; margin-top:3px; margin-bottom:0px;">
-                                    <div id="loader_${this.ContID}" style=" margin-left:165px; margin-top:80px ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
+                                    <div id="loader_${this.ContID}" style=" text-align: center; margin-top:80px ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
                                 </div>
                                 <div id="divMLPagination_${this.ContID}" style="margin-top:5px; float: right;">
                                     <ul id="ulMLPagination_${this.ContID}" class="pagination" style="margin:0px;">
@@ -99,7 +99,7 @@
                                         <th class="col-md-9">Key Value</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody1_${this.ContID}" style="height:230px; overflow:auto; position:absolute"></tbody>
+                                <tbody id="tbody1_${this.ContID}" style="height:240px; overflow:auto; position:absolute"></tbody>
                             </table>
                         </div>
                     </div>
@@ -319,7 +319,8 @@
         var t = this.txtsearch.val().trim();
         var v = this.txtsearch.attr("data-value");
         if (t === "" || v !== "") {
-            alert("Invalid Key Value !");
+            EbMessage("show", { Message: 'Invalid Key Value !', AutoHide: true, Background: '#aa0000' });
+            //alert("Invalid Key Value !");
             return;
         }
         this.txtaddkey.val(t);
@@ -333,7 +334,8 @@
         var t = this.txtsearch.val().trim();
         var v = this.txtsearch.attr("data-value");
         if (t === "" || v === "") {
-            alert("Invalid Key Value !");
+            EbMessage("show", { Message: 'Invalid Key Value !', AutoHide: true, Background: '#aa0000' });
+            //alert("Invalid Key Value !");
             return;
         }
         this.txtaddkey.val(t);
@@ -433,7 +435,8 @@
         var i = this.txtaddkey.attr("data-id");
         var dict = new Array();
         if (t !== v) {
-            alert("First Load the key value !");
+            EbMessage("show", { Message: 'First Load the key value !', AutoHide: true, Background: '#aa0000' });
+            //alert("First Load the key value !");
             return;
         }
         $.each(this.divtable.find("tbody tr"), function (j, obj) {
@@ -461,13 +464,15 @@
     this.updatekeyvaluesuccess = function (data) {
         this.loader2.hide();
         this.divtable.show();
-        alert(data + " Value(s) Successfully Updated ");
+        EbMessage("show", { Message: data + " Value(s) Successfully Updated ", AutoHide: true, Background: '#00aa00' });
+        //alert(data + " Value(s) Successfully Updated ");
     };
 
     this.onclickbtnadd = function () {
         var key = this.txtaddkey.val().trim();
         if (key !== this.txtaddkey.attr("data-value")) {
-            alert("Load values then click Add");
+            EbMessage("show", { Message: 'Load values then click Add', AutoHide: true, Background: '#aa0000' });
+            //alert("Load values then click Add");
             return;
         }
         var dict = new Array();
@@ -495,7 +500,8 @@
         this.lblloadkeyresult.hide();
         this.btnadd.hide();
         this.btnupdate.show();
-        alert("Key Added Successfully");
+        EbMessage("show", { Message: 'Key Added Successfully', AutoHide: true, Background: '#00aa00' });
+        //alert("Key Added Successfully");
     }
     //-----------------------------------------------------------------------------------------
 

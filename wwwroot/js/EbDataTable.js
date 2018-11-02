@@ -48,8 +48,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined && rowData !== null) ? rowData.split(",") : null;
-    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(filterValues) : [];
+    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(rowData)) : null;
+    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(atob(filterValues)) : [];
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
     this.drake = null;
@@ -1188,7 +1188,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.copyCellData = function (key, opt, event) {
 
-    }
+    };
 
     this.OpeninNewTab = function (key, opt, event) {
         var cData = opt;
@@ -1227,7 +1227,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //}
         }
         else if (splitarray[2] === "0") {
-            var url = "../WEBFORM/index?refid=" + this.linkDV;
+            let url = "../WEBFORM/index?refid=" + this.linkDV;
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
             _form.setAttribute("action", url);
@@ -1236,7 +1236,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_params";
-            input.value = JSON.stringify(this.filterValues);
+            input.value =btoa(JSON.stringify(this.filterValues));
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -1245,30 +1245,30 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             this.tabNum++;
-            var url = "../DV/dv?refid=" + this.linkDV;
+            let url = "../DV/dv?refid=" + this.linkDV;
 
-            var _form = document.createElement("form");
+            let _form = document.createElement("form");
             _form.setAttribute("method", "post");
             _form.setAttribute("action", url);
             _form.setAttribute("target", "_blank");
 
-            var input = document.createElement('input');
+            let input = document.createElement('input');
             input.type = 'hidden';
             input.name = "rowData";
-            input.value = this.rowData.toString();
+            input.value = btoa(JSON.stringify(this.rowData));
             _form.appendChild(input);
 
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "filterValues";
-            input.value = JSON.stringify(this.filterValues);
-            _form.appendChild(input);
+            let input1 = document.createElement('input');
+            input1.type = 'hidden';
+            input1.name = "filterValues";
+            input1.value = btoa(JSON.stringify(this.filterValues));
+            _form.appendChild(input1);
 
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "tabNum";
-            input.value = this.tabNum;
-            _form.appendChild(input);
+            let input2 = document.createElement('input');
+            input2.type = 'hidden';
+            input2.name = "tabNum";
+            input2.value = this.tabNum;
+            _form.appendChild(input2);
 
             document.body.appendChild(_form);
 
@@ -1278,8 +1278,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             _form.submit();
             document.body.removeChild(_form);
         }
-
-    }
+    };
 
     this.arrangeFooterWidth = function () {
         var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');
@@ -2734,7 +2733,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             if (this.login === "uc")
-                dvcontainerObj.drawdvFromTable(this.rowData.toString(), JSON.stringify(this.filterValues), cData.toString());//, JSON.stringify(this.filterValues)
+                dvcontainerObj.drawdvFromTable(btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), cData.toString());//, JSON.stringify(this.filterValues)
             else
                 this.OpeninNewTab(idx, cData);
         }

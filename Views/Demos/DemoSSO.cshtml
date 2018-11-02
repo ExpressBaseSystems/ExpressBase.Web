@@ -24,7 +24,7 @@
                 FbId: id,
                 Name: name,
                 Email: email,
-                Cid: "north_wind_demo"
+                Cid: ('@ViewBag.Env' === 'Production' ? 'demo' : 'north_wind_demo' )
             },
             success: function (res) {
                 $(".commonLoader").EbLoader("hide");
@@ -62,7 +62,7 @@
             <h2 class="text-center">Live Demo</h2>
             <h4 class="text-center">Explore & Experience the platform</h4>
             <p class="text-center">
-                Checkout HR Management, Order Management & Inventory Control demo apps created 
+                Checkout HR Management, Order Management & Inventory Control demo apps created
                 using the famous Northwind sample database.
             </p>
         </div>

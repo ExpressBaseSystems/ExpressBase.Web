@@ -6,22 +6,29 @@
     this.bottom = settings.bottom;
     this.possition = settings.possition;
     this.width = settings.width;
+    this.alertCount = 0;
+
+    this.clearAlert = function (alertUid) {
+        $("#" + alertUid).remove();
+    };
 
     this.alert = function (alert) {
+        this.alertUid = alert.id || "ebalert_" + this.alertCount;
         this.head = alert.head;
         this.body = alert.body;
         this.type = alert.type || "danger";
         this.delay = alert.delay || 1e7;
-        this.$CurAlert = $('<div class="alert alert-' + this.type + ' alert-dismissable fade in">'
+        this.$CurAlert = $('<div id=' + this.alertUid + ' class="alert alert-' + this.type + ' alert-dismissable fade in">'
             + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
             + '<strong>' + alert.head + '</strong> &nbsp;' + alert.body
-            + '</div> ');
+            + '</div>');
         $('#' + this.id).append(this.$CurAlert);
         setTimeout(function () {
             this.fadeTo(600, 0).slideUp(600, function () {
                 this.remove();
             });
         }.bind(this.$CurAlert), this.delay);
+        this.alertCount++;
     };
     this.Init = function () {
         if (this.possition) {

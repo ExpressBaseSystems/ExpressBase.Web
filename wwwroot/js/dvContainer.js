@@ -282,6 +282,7 @@ var DvContainerObj = function (settings) {
                 document.body.appendChild(_form);
                 _form.submit();
                 document.body.removeChild(_form);
+                $("#eb_common_loader").EbLoader("hide");
             }
             else {
                 $.ajax({

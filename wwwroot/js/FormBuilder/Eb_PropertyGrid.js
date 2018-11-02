@@ -633,22 +633,25 @@
         let curObj = this.PropsObj;
         let curVal = $e.val();
         this.CurProp = $e.attr("for");
-        $e.removeClass("Eb-invalid");// clear previuos invalid style if there
+        if ($e.attr("not-uniq") === "true" && $e.attr("not-req") !== "true") {
+            $e.removeClass("Eb-invalid");// clear previuos invalid style if there
+        }
         $.each(this.AllObjects, function (i, iterObj) {
             if (iterObj.EbSid === curObj.EbSid) // skip iteration if same object
                 return true;
 
             if (iterObj[this.CurProp] !== undefined && iterObj[this.CurProp].trim() === curVal.trim()) {
-                let alerId = iterObj.EbSid + this.CurProp;
+                let alerId = iterObj.EbSid + this.CurProp + "uniq";
                 this.EbAlert.clearAlert(alerId);
                 this.EbAlert.alert({
                     id: alerId,
                     head: "This property is set as Unique.",
                     body: iterObj.Name + "'s " + this.CurProp + " property has the same value.",
-                    type: "danger",
+                    type: "info",
                     delay: 5000
                 });
                 $e.focus().select().addClass("Eb-invalid");
+                $e.attr("not-uniq", "true");
                 return true;
             }
         }.bind(this));
@@ -658,7 +661,7 @@
     this.checkRequired = function (e) {
         let $e = $(e.target);
         this.CurProp = $e.attr("for");
-        let alerId = this.PropsObj.EbSid + this.CurProp;
+        let alerId = this.PropsObj.EbSid + this.CurProp + "req";
         this.EbAlert.clearAlert(alerId);
         if ($e.val().trim() === "") {
             this.EbAlert.alert({
@@ -669,9 +672,14 @@
                 delay: 3000
             });
             $e.focus().select().addClass("Eb-invalid");
+            $e.attr("not-req", "true");
         }
-        else
-            $e.removeClass("Eb-invalid");
+        else {
+            if ($e.attr("not-req") === "true" && $e.attr("not-uniq") !== "true") {
+                $e.removeClass("Eb-invalid");
+                $e.attr("not-req", "false");
+            }
+        }
     }.bind(this);
 
     //??

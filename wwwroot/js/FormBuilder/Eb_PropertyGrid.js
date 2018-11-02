@@ -70,11 +70,11 @@
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
-            valueHTML = '<input type="text" readonly class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
+            valueHTML = '<input type="text" readonly class="pg-inp" id="' + elemId + '" for = "' + name +'" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 5) {    //  If string editor textbox
-            valueHTML = '<input type="text" class="pg-inp" id="' + elemId + '" value="' + (value || "") + '"style="width:100%"></div>';
+            valueHTML = '<input type="text" class="pg-inp" id="' + elemId + '" for = "' + name +'" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 6) {    //  If date&time date
@@ -418,7 +418,7 @@
         if (this.CurProp === "Name" || this.CurProp === "name") {
             this.updateDD(this.PropsObj);
             let $colTile = "";
-            if (this.ParentPG.isModalOpen)
+            if (this.ParentPG && this.ParentPG.isModalOpen)
                 $colTile = $(`#${e.target.defaultValue}.colTile`);
             if ($colTile.length)
                 $colTile.attr("id", this.PropsObj[this.CurProp]).text(this.PropsObj[this.CurProp]);
@@ -597,12 +597,12 @@
             if (meta.IsUnique) {
                 this.uniqueProps.push(Name);
                 //if ($(InpId).length === 0)
-                $('#' + this.wraperId).on("change", InpId, this.checkUnique);
+                $('#' + this.wraperId).on("blur", InpId, this.checkUnique);
             }
             if (meta.IsRequired) {
                 this.requiredProps.push(Name);
                 //if ($(InpId).length === 0)
-                $('#' + this.wraperId).on("change", InpId, this.checkRequired);
+                $('#' + this.wraperId).on("blur", InpId, this.checkRequired);
             }
             if (meta.MaskPattern && $inp.length) {
                 $inp.val($inp.val().toLowerCase());
@@ -617,10 +617,10 @@
     //Checks and alert if a property value is not unique in PG
     this.checkUnique = function (e) {
         let $e = $(e.target);
+        this.CurProp = $e.attr("for");
         //$e.removeClass("Eb-invalid");
         $.each(this.AllObjects, function (i, obj) {
             if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] !== undefined && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
-
                 this.Ebalert.alert({
                     head: "This property is set as Unique.",
                     body: obj.Name + "'s " + this.CurProp + " property has the same value.",
@@ -628,7 +628,7 @@
                     delay: 5000
                 });
                 $e.focus().select().addClass("Eb-invalid");
-                return false;
+                return true;
             }
         }.bind(this));
     }.bind(this);
@@ -643,7 +643,7 @@
                 type: "info",
                 delay: 3000
             });
-            $e.focus().addClass("Eb-invalid");
+            $e.focus().select().addClass("Eb-invalid");
         }
         else
             $e.removeClass("Eb-invalid");

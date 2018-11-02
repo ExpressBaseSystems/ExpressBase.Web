@@ -691,7 +691,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("Store")]
         public IActionResult AppStorePublic()
         {
-            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreRequest { });
+            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreExternalRequest { });
             ViewBag.StoreApps = resp.Apps;
 
             string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];

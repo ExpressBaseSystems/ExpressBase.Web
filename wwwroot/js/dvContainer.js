@@ -243,7 +243,7 @@ var DvContainerObj = function (settings) {
                         $('.splitdiv_parent').slick('slickAdd', `<div class='sub-windows' id='sub_window_dv${id}' tabindex= '1' style='height: calc(100vh - 60px) !important;'>
                              <div class='split-inner'>
                              <div class='wrapper-cont' id='content_dv' style='width:100%;height:100%;'>
-                             <iframe id="reportIframe_${copycelldata}" class="reportIframe" name="reportIframe_${copycelldata}" src='../ReportRender/Renderlink?refid=${this.dvRefid}&_params=${btoa(this.filterValues)}'>    
+                             <iframe id="reportIframe_${copycelldata}" class="reportIframe" name="reportIframe_${copycelldata}" src='../ReportRender/Renderlink?refid=${this.dvRefid}&_params=${this.filterValues}'>    
                             </iframe>
                              </div>
                              </div>
@@ -265,6 +265,24 @@ var DvContainerObj = function (settings) {
                     $("#obj_icons .btn").prop("disabled", false);
                 }
                 //$("#" + focusedId).css("width", window.outerWidth);
+            }
+            else if (this.dvRefid.split("-")[2] === "0") {
+                let url = "../WEBFORM/index?refid=" + this.dvRefid;
+                var _form = document.createElement("form");
+                _form.setAttribute("method", "post");
+                _form.setAttribute("action", url);
+                _form.setAttribute("target", "_blank");
+
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "_params";
+                input.value = this.filterValues;
+                _form.appendChild(input);
+
+                document.body.appendChild(_form);
+                _form.submit();
+                document.body.removeChild(_form);
+                $("#eb_common_loader").EbLoader("hide");
             }
             else {
                 $.ajax({

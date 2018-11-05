@@ -6,8 +6,6 @@
 <link href="~/css/Demos/Demos.css" rel="stylesheet" type="text/css" />
 
 <script>
-    context = "uc";
-
     $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
         FB.init({
             appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),
@@ -15,21 +13,22 @@
             cookie: true,
             xfbml: true,
         });
-            FB.getLoginStatus(updateStatusCallback);
+            //FB.getLoginStatus(updateStatusCallback);
     });
 
     function authFbId(id,name,email) {
         $.ajax({
             url: "../Demos/DemoAuth",
             data: {
-                Context: context,
+                Context: '@ViewBag.wc',
                 FbId: id,
                 Name: name,
                 Email: email,
-                Cid: "hairocraft_stagging"
+                Cid: ('@ViewBag.Env' === 'Production' ? 'demo' : 'north_wind_demo' )
             },
             success: function (res) {
                 $(".commonLoader").EbLoader("hide");
+                location.replace(res);
             }
         });
     }
@@ -53,38 +52,51 @@
     }
 
     function FBlogin() {
-        context = $(event.target).attr("_context");
+        //context = $(event.target).attr("_context");
         FB.login(loginCallBack, { scope: 'email' });
     }
 </script>
 <div class="row dmssrw">
     <div class="container">
         <div class="ssowrpHs">
-            <h2 class="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+            <h2 class="text-center">Live Demo</h2>
+            <h4 class="text-center">Explore & Experience the platform</h4>
             <p class="text-center">
-                Quisque eget neque lectus. Maecenas nunc metus,
-                convallis in libero vitae, feugiat viverra erat. Proin malesuada velit quis
+                Checkout HR Management, Order Management & Inventory Control demo apps created
+                using the famous Northwind sample database.
             </p>
         </div>
         <div class="SdemWraperOuter">
-            <div class="ssoWrpr-uc">
-                <div class="ssoUcBdy">
-                    <img class="wall-img" src="~/images/svg/userloginwall.svg" />
-                    <button _context="uc" class="ebbtn eb_btnblue w-100 loginbutton">
-                        <i class="fa fa-facebook pull-left" style="font-size: 19px;"></i>
-                        Login as User
-                    </button>
-                </div>
-            </div>
-            <div class="ssoWrpr-dc">
-                <div class="ssoDcBdy">
-                    <img class="wall-img" src="~/images/svg/devloginwall.svg" />
-                    <button _context="uc" class="ebbtn eb_btnblue w-100 loginbutton">
-                        <i class="fa fa-facebook pull-left" style="font-size: 19px;"></i>
-                        Login as Dev
-                    </button>
-                </div>
-            </div>
+            @{
+                if (ViewBag.wc == "uc")
+                {
+                    <div class="ssoWrpr-uc">
+                        <div class="ssoUcBdy">
+                            <h4 class="text-center">User Expierence</h4>
+                            <p style="margin-bottom: 20px;">Forms, PDF Reports Table and Chart Vis.</p>
+                            <img class="wall-img" src="~/images/svg/userloginwall.svg" />
+                            <button _context="uc" class="ebbtn eb_btnblue w-100 loginbutton">
+                                <i class="fa fa-facebook pull-left" style="font-size: 19px;"></i>
+                                Login with Facebook
+                            </button>
+                        </div>
+                    </div>
+                }
+                else if (ViewBag.wc == "dc")
+                {
+                    <div class="ssoWrpr-dc">
+                        <div class="ssoDcBdy">
+                            <h4 class="text-center">Developer Experience</h4>
+                            <p style="margin-bottom: 20px;">Web based Drag-n-Drop builders <br />Install one-click apps from appstore</p>
+                            <img class="wall-img" src="~/images/svg/devloginwall.svg" />
+                            <button _context="dc" class="ebbtn eb_btnblue w-100 loginbutton">
+                                <i class="fa fa-facebook pull-left" style="font-size: 19px;"></i>
+                                Login with Facebook
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
         </div>
     </div>
 </div>

@@ -70,11 +70,11 @@
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 4) {    // If label (for read-only) span
-            valueHTML = '<input type="text" readonly class="pg-inp" id="' + elemId + '" for = "' + name +'" value="' + (value || "") + '"style="width:100%"></div>';
+            valueHTML = '<input type="text" readonly class="pg-inp" id="' + elemId + '" for = "' + name + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 5) {    //  If string editor textbox
-            valueHTML = '<input type="text" class="pg-inp" id="' + elemId + '" for = "' + name +'" value="' + (value || "") + '"style="width:100%"></div>';
+            valueHTML = '<input type="text" class="pg-inp" id="' + elemId + '" for = "' + name + '" value="' + (value || "") + '"style="width:100%"></div>';
             this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
         }
         else if (type === 6) {    //  If date&time date
@@ -514,7 +514,7 @@
         this.PGHelper = new PGHelper(this);
         $("#" + this.wraperId + " .pgHead").on("click", "[name=sort]", this.SortFn.bind(this));
         $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
-        this.Ebalert = new EbAlert({
+        this.EbAlert = new EbAlert({
             id: this.wraperId + "PGalertCont",
             top: 24,
             right: 24,
@@ -594,15 +594,22 @@
             let InpId = '#' + this.wraperId + Name;
             let $inp = $('#' + this.wraperId + " " + InpId);
             $('#' + this.wraperId).off("change", InpId);
-            if (meta.IsUnique) {
+            if (meta.IsUnique && meta.IsRequired) {
                 this.uniqueProps.push(Name);
                 //if ($(InpId).length === 0)
-                $('#' + this.wraperId).on("blur", InpId, this.checkUnique);
+                $('#' + this.wraperId).off("blur", InpId).on("blur", InpId, this.check_Unique_Required);
             }
-            if (meta.IsRequired) {
-                this.requiredProps.push(Name);
-                //if ($(InpId).length === 0)
-                $('#' + this.wraperId).on("blur", InpId, this.checkRequired);
+            else {
+                if (meta.IsUnique) {
+                    this.uniqueProps.push(Name);
+                    //if ($(InpId).length === 0)
+                    $('#' + this.wraperId).off("blur", InpId).on("blur", InpId, this.checkUnique);
+                }
+                if (meta.IsRequired) {
+                    this.requiredProps.push(Name);
+                    //if ($(InpId).length === 0)
+                    $('#' + this.wraperId).on("blur", InpId, this.checkRequired);
+                }
             }
             if (meta.MaskPattern && $inp.length) {
                 $inp.val($inp.val().toLowerCase());
@@ -613,21 +620,38 @@
             }
         }.bind(this));
     };
+    // to check in order
+    this.check_Unique_Required = function (e) {
+        this.checkRequired(e);
+        this.checkUnique(e);
+    }.bind(this);
 
     //Checks and alert if a property value is not unique in PG
     this.checkUnique = function (e) {
+        console.log("checkUnique called");
         let $e = $(e.target);
+        let curObj = this.PropsObj;
+        let curVal = $e.val();
         this.CurProp = $e.attr("for");
-        //$e.removeClass("Eb-invalid");
-        $.each(this.AllObjects, function (i, obj) {
-            if (obj.EbSid !== this.PropsObj.EbSid && obj[this.CurProp] !== undefined && obj[this.CurProp].trim() === this.PropsObj[this.CurProp].trim()) {
-                this.Ebalert.alert({
+        if ($e.attr("not-uniq") === "true" && $e.attr("not-req") !== "true") {
+            $e.removeClass("Eb-invalid");// clear previuos invalid style if there
+        }
+        $.each(this.AllObjects, function (i, iterObj) {
+            if (iterObj.EbSid === curObj.EbSid) // skip iteration if same object
+                return true;
+
+            if (iterObj[this.CurProp] !== undefined && iterObj[this.CurProp].trim() === curVal.trim()) {
+                let alerId = iterObj.EbSid + this.CurProp + "uniq";
+                this.EbAlert.clearAlert(alerId);
+                this.EbAlert.alert({
+                    id: alerId,
                     head: "This property is set as Unique.",
-                    body: obj.Name + "'s " + this.CurProp + " property has the same value.",
-                    type: "danger",
+                    body: iterObj.Name + "'s " + this.CurProp + " property has the same value.",
+                    type: "info",
                     delay: 5000
                 });
                 $e.focus().select().addClass("Eb-invalid");
+                $e.attr("not-uniq", "true");
                 return true;
             }
         }.bind(this));
@@ -636,17 +660,26 @@
     //Checks and alert if a required property is left blank
     this.checkRequired = function (e) {
         let $e = $(e.target);
+        this.CurProp = $e.attr("for");
+        let alerId = this.PropsObj.EbSid + this.CurProp + "req";
+        this.EbAlert.clearAlert(alerId);
         if ($e.val().trim() === "") {
-            this.Ebalert.alert({
+            this.EbAlert.alert({
+                id: alerId,
                 head: "This property is set as Required!",
-                body: "This field cannot be left blank.",
-                type: "info",
+                body: "This field cannot left blank.",
+                type: "danger",
                 delay: 3000
             });
             $e.focus().select().addClass("Eb-invalid");
+            $e.attr("not-req", "true");
         }
-        else
-            $e.removeClass("Eb-invalid");
+        else {
+            if ($e.attr("not-req") === "true" && $e.attr("not-uniq") !== "true") {
+                $e.removeClass("Eb-invalid");
+                $e.attr("not-req", "false");
+            }
+        }
     }.bind(this);
 
     //??

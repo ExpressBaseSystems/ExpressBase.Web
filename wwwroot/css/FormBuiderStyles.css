@@ -171,6 +171,10 @@
     border: none;
 }
 
+.grid-cont input[type=checkbox] {
+    min-height: inherit !important;
+}
+
 .Eb-ctrlContainer .tab-content {
     border: 1px solid #ddd;
     border-top: none;

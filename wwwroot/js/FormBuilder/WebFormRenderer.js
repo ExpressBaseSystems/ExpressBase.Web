@@ -80,6 +80,13 @@
         }.bind(this));
         if (this.isEditMode)
             this.populateControls();
+        // temp
+        let contControls = getFlatContControls(this.FormObj);
+        $.each(contControls, function (k, Obj) {
+            if (Obj.ObjType === "DataGrid") {
+                this.initControls.init(Obj);
+            }
+        }.bind(this));
     };
 
     this.bindValidators = function (control) {

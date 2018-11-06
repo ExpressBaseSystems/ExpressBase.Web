@@ -142,17 +142,23 @@
             position: uluru,
             map: map
         });
-    }
+    };
+
+    this.DataGrid = function (ctrl, ctrlOpts) {
+        let ebsid = ctrl.EbSid_CtxId;
+
+        let DataGrid = new EbDataGrid(ctrl, {
+
+        });
+    };
 
     this.ComboBox = function (ctrl, ctrlOpts) {
-
         Vue.component('v-select', VueSelect.VueSelect);
         Vue.config.devtools = true;
 
         $(`#${ctrl.EbSid_CtxId}_loading-image`).hide();
 
-
-        var EbCombo = new EbSelect(ctrl, {
+        let EbCombo = new EbSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
             wc: this.Wc
         });

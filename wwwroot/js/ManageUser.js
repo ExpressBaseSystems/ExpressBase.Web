@@ -540,14 +540,14 @@
             data: { OldPwd: this.pwdOld.val(), NewPwd: this.pwdNew.val() },
             success: function (status) {
                 if (status) {
-                    alert("Password Updated Successfully");
+                    EbMessage("show", { Message: 'Password Updated Successfully', AutoHide: true, Background: '#1ebf1e' });
                     this.pwdOld.val("");
                     this.pwdNew.val("");
                     this.pwdNewConfirm.val("");
                     this.ChangePwdModal.modal('hide');
                 }
                 else
-                    alert("Something went wrong");
+                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
                 $(this.btnUpdatePwd.children()[0]).hide();
             }.bind(this)
         });
@@ -555,7 +555,7 @@
 
     this.resetPassword = function () {
         if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val() && this.pwdResetNew.val().length < 8) {
-            alert("Password mismach or length too short");
+            EbMessage("show", { Message: 'Password mismach or length too short', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
         $(this.btnResetPwd.children()[0]).show();
@@ -565,13 +565,13 @@
             data: { userid: this.itemId, username: this.userinfo["email"], NewPwd: this.pwdResetNew.val() },
             success: function (status) {
                 if (status) {
-                    alert("Password Changed Successfully");
+                    EbMessage("show", { Message: 'Password Changed Successfully', AutoHide: true, Background: '#1ebf1e' });
                     this.pwdResetNew.val("");
                     this.pwdResetNewConfirm.val("");
                     this.ResetPwdModal.modal('hide');
                 }
                 else
-                    alert("Something went wrong");
+                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
                 $(this.btnResetPwd.children()[0]).hide();
             }.bind(this)
         });
@@ -627,11 +627,23 @@
             data: { userid: this.itemId, usrinfo: JSON.stringify(dict) },
             success: function (result) {
                 if (result > -1) {
-                    alert("Saved Successfully");
-                    window.top.close();
+                    EbDialog("show",
+                        {
+                            Message: "Saved Successfully",
+                            Buttons: {
+                                "Ok": {
+                                    Background: "green",
+                                    Align: "right",
+                                    FontColor: "white;"
+                                }
+                            },
+                            CallBack: function (name) {
+                                window.top.close();
+                            }
+                        });
                 }
                 else
-                    alert("Something went wrong");
+                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
                 $("#btnCreateUser").removeAttr("disabled");
             }
         });
@@ -721,8 +733,20 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
     };
     this.saveUserGroupSuccess = function (result) {
         if (result > 0) {
-            alert("Saved Successfully");
-            window.top.close();
+            EbDialog("show",
+                {
+                    Message: "Saved Successfully",
+                    Buttons: {
+                        "Ok": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: function (name) {
+                        window.top.close();
+                    }
+                });
         }
         else
             EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e' });

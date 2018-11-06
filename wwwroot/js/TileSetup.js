@@ -647,26 +647,45 @@
 
     this.onClickRemoveFromSelected = function (e) {
         if (this.readOnly) {
-            alert("Not Available in ReadOnly Mode");
+            EbMessage("show", { Message: 'Not Available in ReadOnly Mode', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
-        if (confirm("Click OK to Remove")) {
-            var parent = $(e.target).parents("div.col-md-4");
-            for (var i = 0; i < this.resultObject.length; i++) {
-                if (this.resultObject[i].Id == parent.attr('data-id')) {
-                    this.resultObject.splice(i, 1);
-                    parent.remove();
-                    break;
-                }
-            }
-            if (this.resultObject.length === 0)
-                this.divSelectedDisplay.append(`<div style="text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
-        }
+
+        EbDialog("show",
+            {
+                Message: "Click OK to Remove",
+                Buttons: {
+                    "OK": {
+                        Background: "green",
+                        Align: "left",
+                        FontColor: "white;"
+                    },
+                    "Cancel": {
+                        Background: "violet",
+                        Align: "right",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function (name) {
+                    if (name === "OK") {
+                        var parent = $(e.target).parents("div.col-md-4");
+                        for (var i = 0; i < this.resultObject.length; i++) {
+                            if (this.resultObject[i].Id == parent.attr('data-id')) {
+                                this.resultObject.splice(i, 1);
+                                parent.remove();
+                                break;
+                            }
+                        }
+                        if (this.resultObject.length === 0)
+                            this.divSelectedDisplay.append(`<div style="text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: #bbb; "> Nothing to Display </div>`);
+                    }
+                }.bind(this)
+            });
     };
 
     this.onClickViewFromSelected = function (e) {
         if (this.readOnly) {
-            alert("Not Available in ReadOnly Mode");
+            EbMessage("show", { Message: 'Not Available in ReadOnly Mode', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
         var id = $(e.target).parents("div.col-md-4").attr('data-id');
@@ -693,7 +712,7 @@
             if (id > 100)
                 window.open("../Security/ManageRoles?itemid=" + id, "_blank");
             else
-                alert("SYSTEM ROLE");
+                EbMessage("show", { Message: 'SYSTEM ROLE', AutoHide: true, Background: '#1e1ebf' });
         }
         else if (this.title === 'Add User Group') {
             window.open("../Security/ManageUserGroups?itemid=" + id, "_blank");

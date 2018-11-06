@@ -392,14 +392,15 @@
         }.bind(this));
     };
     this.spliceCardArray = function (cardid) {
+        cardid = cardid.toString();
         for (var i = 0; i < this.SelectedCards.length; i++) {
-            if (this.SelectedCards[i]['cardid'] == cardid) {
+            if (this.SelectedCards[i]['cardid'] === cardid) {
                 this.SelectedCards.splice(i, 1);
                 break;
             }
         }
         for (var i = 0; i < this.Bot.curCtrl.SelectedCards.length; i++) {
-            if (this.Bot.curCtrl.SelectedCards[i] == cardid) {
+            if (this.Bot.curCtrl.SelectedCards[i] === cardid) {
                 this.Bot.curCtrl.SelectedCards.splice(i, 1);
                 break;
             }
@@ -488,7 +489,7 @@
             var val = $(this).val().toString();
             var l = 'SZZZZZZZZZZZ'.length - 1;
             var ndp = ctrl.DecimalPlaces;
-            if (val == 0 || val === '' || val === '.')
+            if (val === "0" || val === '' || val === '.')
                 $(this).val('');
             else {
                 if (ndp !== 0) {
@@ -498,7 +499,7 @@
                         var pi = val.indexOf('.');
                         var lmt = pi + ndp;
                         for (pi; pi <= l; pi++) {
-                            if (val[pi] == null)
+                            if (val[pi] === null)
                                 val += '0';
                             if (pi === lmt)
                                 break;
@@ -517,7 +518,7 @@
             var val = $input.val();
             var cs = document.getElementById(id).selectionStart;
             var ce = document.getElementById(id).selectionEnd;
-            if (e.which == 46 && val.includes('.')) {
+            if (e.which === 46 && val.includes('.')) {
                 setTimeout(function () {
                     $input.val(val);
                 }, 1);

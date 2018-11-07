@@ -396,7 +396,7 @@
 	};
 
 	this.UpdateCreateVersionDD = function () {
-		$("#objname").text(this.Current_obj.Name);
+		$("#objname").text(this.Current_obj.DisplayName);
 		$('#create li').remove();
 		var arr = this.Current_obj.VersionNumber.split(".")
 		var vNumMajor = ("v." + (parseInt(major) + 1) + ".0.0.w");

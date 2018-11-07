@@ -540,9 +540,9 @@ var DvContainerObj = function (settings) {
         }
         
         if (this.dvcol[focusedId].cellData !== null && this.dvcol[focusedId].cellData !== "")
-            $("#objname").text(this.currentObj.Name + " - " + this.dvcol[focusedId].cellData);
+            $("#objname").text(this.currentObj.DisplayName + " - " + this.dvcol[focusedId].cellData);
         else
-            $("#objname").text(this.currentObj.Name);
+			$("#objname").text(this.currentObj.DisplayName);
         this.focusDot();
     };
     this.pgChanged = function (obj, Pname, CurDTobj) {
@@ -562,7 +562,7 @@ var DvContainerObj = function (settings) {
                 }
             }
             else if (Pname == "Name") {
-                $("#objname").text(obj.Name);
+				$("#objname").text(obj.DisplayName);
                 console.log(obj);
             }
             else if (Pname == "Columns") {

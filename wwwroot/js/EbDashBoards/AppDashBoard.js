@@ -44,7 +44,7 @@
                 $listContaner.append(`<div class='col-md-4 col-lg-4 col-sm-4 objitems' name='objBox'>
                     <a class="object_container" href='../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}'>
                         <div class='col-md-11 col-lg-11 col-sm-11 pd-0'>
-                            <h4 class='head4'>${_obj.ObjName}</h4>
+                            <h4 class='head4'>${_obj.DisplayName}</h4>
                             <p class='text-justify'>${_obj.Description || 'no description'}</p>
                             <div class="label_container">
                                 <span name="Version" class="label">V.${_obj.VersionNumber}</span>

@@ -129,7 +129,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.ajaxSucc = function (text) {
         var flag = false;
-        $("#objname").text(this.EbObject.Name);
         if (this.MainData !== null) {
             this.isPipped = true;
             $("#Pipped").show();
@@ -259,7 +258,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }
         else if (Pname === "Name") {
-            $("#objname").text(obj.Name);
+            $("#objname").text(obj.DisplayName);
             console.log(obj);
         }
         else if (Pname === "Columns") {
@@ -360,7 +359,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.dvName = this.ebSettings.Name;
         this.initCompleteflag = false;
 
-        $("#objname").text(this.dvName);
         this.propGrid.ClosePG();
 
         if (this.login === "dc") {
@@ -1558,8 +1556,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td></tr>`);
         $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" style="display:inline-block;"> </select></td>`);
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
-            if (obj.RowGrouping.$values.length > 0) {
-                $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.Name.trim()}</option>`);
+			if (obj.RowGrouping.$values.length > 0) {
+				$(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
             }
         }.bind(this));
 
@@ -2117,9 +2115,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
     };
 
-    this.GenerateButtons = function () {
+	this.GenerateButtons = function () {
+		$("#objname").text(this.EbObject.DisplayName);
         $(".toolicons").show();
-        $("#objname").text(this.dvName);
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
 
@@ -2788,7 +2786,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.LoadInlineDv = function (rows, idx, Dvobj, colindex, result) {
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name + "</div><table id='tbl" + idx + "'></table></td></tr>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "'></table></td></tr>");
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -2800,7 +2798,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.datatable = new EbBasicDataTable(o);
         }
         else {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr>");
+			$(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr>");
             var o = new Object();
             o.tableId = "chart" + idx;
             o.dvObject = Dvobj;

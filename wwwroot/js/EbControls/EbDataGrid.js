@@ -22,8 +22,7 @@
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
 
         }.bind(this));
-        tr += "<td><div class='check-row'><span class='fa fa-check'></span></div><div class='del-row'><span class='fa fa-minus'></span></div></td>";
-        tr += "</tr>";
+        tr += "<td><div class='check-row'><span class='fa fa-check'></span></div><div class='del-row'><span class='fa fa-minus'></span></div></td></tr>";
         return tr;
     };
 
@@ -41,22 +40,25 @@
         }.bind(this));
     }
 
-    //this.addBtn_click = function (e) {
-    //    $btn = $(e.target).closest(".btn");
-    //    if ($btn.attr("state") === "add") {
-    //        this.addRow(e);
-    //        this.initRowCtrls();
-    //        $btn.attr("state", "cancel");
-    //        $btn.find(".add-div").hide();
-    //        $btn.find(".cancel-div").show();
-    //    }
-    //    else {
-    //        $(`#tbl_${this.ctrl.EbSid_CtxId} tbody [added=true]`).remove();
-    //        $btn.attr("state", "add");
-    //        $btn.find(".add-div").show();
-    //        $btn.find(".cancel-div").hide();
-    //    }
-    //}.bind(this);
+    this.getValues = function () {
+        this.FVWTObjColl = [];
+        $.each(this.rowCtrls, function (rowid, ctrls) {
+            let rowObjs = {};
+            rowObjs[0] = [];
+            $.each(ctrls, function (i, obj) {
+                let colObj = {};
+                colObj.Name = obj.Name;
+                _type = obj.EbDbType;
+                colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();
+                colObj.Type = _type;
+                colObj.AutoIncrement = obj.AutoIncrement || false;
+                rowObjs[0].push(colObj);
+            }.bind(this));
+            this.FVWTObjColl.push(rowObjs);
+        }.bind(this));
+    }.bind(this);
+
+    t = this.getValues;
 
     this.ctrlToSpan_row = function (rowid) {
         let $tr = $(`#tbl_${this.ctrl.EbSid_CtxId}`).find(`[rowid=${rowid}]`);
@@ -108,7 +110,6 @@
     }.bind(this);
 
     this.init = function () {
-        //$(`#add_${this.ctrl.EbSid_CtxId}`).off("click").on("click", this.addBtn_click);
         if (this.ctrl.IsAddable) {
             this.addRow();
         }

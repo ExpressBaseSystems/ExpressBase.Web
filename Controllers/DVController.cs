@@ -146,6 +146,7 @@ namespace ExpressBase.Web.Controllers
             DataSourceDataResponse resultlist1 = null;
             try
             {
+                this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
                 resultlist1 = this.ServiceClient.Post(request);
             }
             catch (Exception e)

@@ -58,9 +58,11 @@
 .containerrow .Obj_title {
     font-size: 12px;
     font-weight: bold;
+    background-color: #c5c9cc;
 }
 .containerrow .close {
-    margin-top: -5px;
+    margin-top: -4px;
     float: left;
     padding-right: 12px;
+    font-size: 20px;
 }

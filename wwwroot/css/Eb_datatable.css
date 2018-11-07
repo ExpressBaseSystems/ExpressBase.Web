@@ -497,3 +497,6 @@ table.dataTable tbody td.dt-body-right {
 table.dataTable tr.group td {
     font-weight: unset !important;
 }
+.inlinetable {
+    border: 1px solid;
+}

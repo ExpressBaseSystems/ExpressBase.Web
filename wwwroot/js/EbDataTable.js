@@ -953,7 +953,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.receiveAjaxData = function (dd) {
         this.isRun = true;
-        if (this.login == "uc") {
+        if (this.login === "uc") {
             dvcontainerObj.currentObj.data = dd;
             this.MainData = dd;
         }
@@ -963,10 +963,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Levels = dd.levels;
         this.permission = dd.permission;
         return dd.formattedData;
+
     };
 
     this.compareFilterValues = function (filter) {
-        var filter = this.getFilterValues("compare");
+        let filter = this.getFilterValues("compare");
         if (focusedId !== undefined) {
             $.each(filter, function (i, obj) {
                 if (obj.Value !== dvcontainerObj.dvcol[focusedId].filterValues[i].Value) {
@@ -978,7 +979,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else
             filterChanged = true;
-    }
+    };
 
     this.fixedColumnCount = function () {
         var count = this.ebSettings.LeftFixedColumn;
@@ -2784,9 +2785,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.LoadInlineDv = function (rows, idx, Dvobj, colindex, result) {
+        let colspan = Dvobj.Columns.$values.length;
+        let str = "";
+        $.each(this.rowgroupCols, function (k, obj) {
+            str += "<td>&nbsp;</td>";
+        });
+        $.each(this.extraCol, function (k, obj) {
+            if (obj.bVisible)
+                str += "<td>&nbsp;</td>";
+        });
+
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "'></table></td></tr>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "'></table></td></tr></div>");
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -2794,11 +2805,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.showCheckboxColumn = false;
             o.scrollHeight = "200px";
             o.dvObject = Dvobj;
-            o.data = result.data;
+            o.data = result.formattedData;
             this.datatable = new EbBasicDataTable(o);
         }
         else {
-			$(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'><td colspan='21'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
             var o = new Object();
             o.tableId = "chart" + idx;
             o.dvObject = Dvobj;

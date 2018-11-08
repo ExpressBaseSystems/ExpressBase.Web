@@ -80,6 +80,13 @@
         }.bind(this));
         if (this.isEditMode)
             this.populateControls();
+        // temp
+        let contControls = getFlatContControls(this.FormObj);
+        $.each(contControls, function (k, Obj) {
+            if (Obj.ObjType === "DataGrid") {
+                this.initControls.init(Obj);
+            }
+        }.bind(this));
     };
 
     this.bindValidators = function (control) {
@@ -195,11 +202,36 @@
 
     };
 
+    this.getDG_FVWTObjColl = function () {
+
+    };
+
     this.getFormValuesObjWithTypeColl = function () {
         let FVWTObjColl = {};
-        FVWTObjColl[this.FormObj.TableName] = []
+        let DG_FVWTObjColl = getDG_FVWTObjColl();
+        //{
+        //    "tblName1":
+        //        [
+        //            { "rowid1": [{ name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //        ],
+        //    "tblName2":
+        //        [
+        //            { "rowid1": [{ name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //        ]
+        //};
+
+        FVWTObjColl[this.FormObj.TableName] = [];
         this.ProcRecurForVal(this.FormObj, FVWTObjColl);
-        return JSON.stringify(FVWTObjColl);
+
+        let fval = {
+            "nfv": FVWTObjColl,
+            "dgv": DG_FVWTObjColl
+        }
+        return JSON.stringify(fval);
     };
 
     this.ajaxsuccess = function (rowAffected) {

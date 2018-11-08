@@ -38,6 +38,7 @@
 <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/EbControls/EbDataGrid.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
@@ -50,6 +51,7 @@
     <script>
     @Html.Raw(_toolBox.EbOnChangeUIfns);
     @Html.Raw(_toolBox.AllMetas);
+    @Html.Raw(_toolBox.AllControlls);
     </script>
 }
 
@@ -70,6 +72,7 @@
     .form-buider-form {
         height: 100%;
         border: none;
+        padding: 0 10px;
     }
 
     .Eb-ctrlContainer .input-group-addon {
@@ -151,7 +154,7 @@
         $saveBtn: _$saveBtn,
         formRefId: _formRefId,
         editModeObj: _editModeObj
-    });          
+    });
 
     $("#webformaudittrail").on("click", function () {
         $("#AuditHistoryModal").modal("show");
@@ -198,6 +201,6 @@
             }
         });
 
-        
+
     });
 </script>

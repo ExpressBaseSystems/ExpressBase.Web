@@ -49,7 +49,7 @@ namespace ExpressBase.Web.Controllers
                     foreach (EbObjectWrapper element in objectlist)
                     {
                         ViewBag.IsNew = "false";
-                        ViewBag.ObjectName = element.Name;
+                        ViewBag.ObjectName = element.DisplayName;
                         ViewBag.ObjectDesc = element.Description;
                         ViewBag.Status = element.Status;
                         ViewBag.VersionNumber = element.VersionNumber;
@@ -67,6 +67,7 @@ namespace ExpressBase.Web.Controllers
                             ViewBag.dsObj = dsobj;
                             dsobj.Status = element.Status;
                             dsobj.VersionNumber = element.VersionNumber;
+                            dsobj.DisplayName = element.DisplayName;
                             ViewBag.Workingcopy = element.Wc_All;
                         }
                         else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
@@ -76,6 +77,7 @@ namespace ExpressBase.Web.Controllers
                             ViewBag.dsObj = dsobj;
                             dsobj.Status = element.Status;
                             dsobj.VersionNumber = element.VersionNumber;
+                            dsobj.DisplayName = element.DisplayName;
                             ViewBag.Workingcopy = element.Wc_All;
                         }
                     }

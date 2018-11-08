@@ -146,15 +146,44 @@
     animation-duration: 0.3s;
 }
 
-#filterBox .Eb-ctrlContainer .dataTables_scroll {
-    height: 100% !important;
-}
+    #filterBox .Eb-ctrlContainer .dataTables_scroll {
+        height: 100% !important;
+    }
 
 .Eb-ctrlContainer [type="RadioGroup"] {
     padding: 5px;
 }
+
 .Eb-ctrlContainer .input-group-addon {
     border: 0 !important;
+}
+
+.del-row {
+    display: none;
+}
+
+.tdtxt {
+    display: none;
+}
+
+.ctrl-edit {
+    position: absolute;
+    right: 0;
+    opacity: 0.35;
+    top: 0;
+    border-radius: 0 0 0 100%;
+    background-color: white;
+    padding: 1px 1px 6px 6px;
+    box-shadow: 0px 1px 2px 0 #00000082;
+}
+
+    .ctrl-edit:hover {
+        opacity: 0.85;
+        box-shadow: 0px 1px 2px 0 #0000082;
+    }
+
+.dgtbl td {
+    position: relative;
 }
 
 .Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
@@ -169,6 +198,10 @@
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
     border: none;
+}
+
+.grid-cont input[type=checkbox] {
+    min-height: inherit !important;
 }
 
 .Eb-ctrlContainer .tab-content {
@@ -321,14 +354,17 @@
     top: -11px;
     left: 8px;
 }
+
 .gb-wraper {
     padding: 2px;
     padding-top: 8px;
 }
+
 .gb-border {
     border: dashed 1px rgba(0, 0, 0, 0.19);
     border-radius: 2px;
 }
+
 .gb-label {
     position: absolute;
     top: 0.5px;

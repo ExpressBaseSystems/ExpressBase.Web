@@ -54,8 +54,6 @@ function getObjByval(ObjArray, key, val) {
         console.error("ObjArray undefined");
         return false;
     }
-    if (!ObjArray[0])
-        console.log(4);
     if (ObjArray.length === 0)
         return false;
     if (key === "name" && !(Object.keys(ObjArray[0]).includes("name")))

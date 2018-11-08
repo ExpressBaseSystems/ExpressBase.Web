@@ -538,6 +538,10 @@
             type: "POST",
             url: "../Security/ChangeUserPassword",
             data: { OldPwd: this.pwdOld.val(), NewPwd: this.pwdNew.val() },
+            error: function () {
+                EbMessage("show", { Message: 'Something unexpected occurred', AutoHide: true, Background: '#bf1e1e' });
+                $(this.btnUpdatePwd.children()[0]).hide();
+            }.bind(this),
             success: function (status) {
                 if (status) {
                     EbMessage("show", { Message: 'Password Updated Successfully', AutoHide: true, Background: '#1ebf1e' });
@@ -563,6 +567,10 @@
             type: "POST",
             url: "../Security/ResetUserPassword",
             data: { userid: this.itemId, username: this.userinfo["email"], NewPwd: this.pwdResetNew.val() },
+            error: function () {
+                EbMessage("show", { Message: 'Something unexpected occurred', AutoHide: true, Background: '#bf1e1e' });
+                $(this.btnResetPwd.children()[0]).hide();
+            }.bind(this),
             success: function (status) {
                 if (status) {
                     EbMessage("show", { Message: 'Password Changed Successfully', AutoHide: true, Background: '#1ebf1e' });
@@ -594,6 +602,7 @@
         }
 
         this.btnCreateUser.attr("disabled", "true");
+        $("#eb_common_loader").EbLoader("show");
 
         var oldstus = this.itemId > 1 ? parseInt(this.userinfo["statusid"]) : -1;
         var newstus = $("#divStatus input:radio[name='status']:checked").val();
@@ -625,6 +634,11 @@
             type: "POST",
             url: "../Security/SaveUser",
             data: { userid: this.itemId, usrinfo: JSON.stringify(dict) },
+            error: function (xhr, ajaxOptions, thrownError) {
+                EbMessage("show", { Message: 'Something unexpected occurred', AutoHide: true, Background: '#bf1e1e' });
+                $("#btnCreateUser").removeAttr("disabled");
+                $("#eb_common_loader").EbLoader("hide");
+            }.bind(this),
             success: function (result) {
                 if (result > -1) {
                     EbDialog("show",
@@ -645,6 +659,7 @@
                 else
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
                 $("#btnCreateUser").removeAttr("disabled");
+                $("#eb_common_loader").EbLoader("hide");
             }
         });
     };
@@ -724,10 +739,16 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
         dict["deleted_ipconst_dt"] = this.timeAddTile.getDeletedObjIds();
 
         this.btnSaveAll.attr("disabled", "true");
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: "POST",
             url: "../Security/SaveUserGroup",
             data: { _id: this.infoDict['id'], _userGroupInfo: JSON.stringify(dict) },
+            error: function (xhr, ajaxOptions, thrownError) {
+                EbMessage("show", { Message: 'Something unexpected occurred', AutoHide: true, Background: '#bf1e1e' });
+                this.btnSaveAll.removeAttr("disabled");
+                $("#eb_common_loader").EbLoader("hide");
+            }.bind(this),
             success: this.saveUserGroupSuccess.bind(this)
         });
     };
@@ -749,8 +770,9 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
                 });
         }
         else
-            EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#bf1e1e' });
+            EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
         this.btnSaveAll.removeAttr("disabled");
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.init();

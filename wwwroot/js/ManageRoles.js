@@ -549,14 +549,20 @@
         strSelectedLocs = this.selectedLocations.indexOf('-1') === -1 ? strSelectedLocs : "-1";
 
         if (roleName === "" || roleDescription === "") {
-            EbMessage("show", { Message: 'Fill Role Name/Description', AutoHide: true, Backgorund: '#bf1e1e' });
+            EbMessage("show", { Message: 'Fill Role Name/Description', AutoHide: true, Background: '#bf1e1e' });
             return false;
         }
         $(this.btnSaveAll).attr("disabled", "true");
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: "POST",
             url: "../Security/SaveRole",
             data: { _roleId: rid, _roleName: roleName, _roleDesc: roleDescription, _isAnonymous: isAnonymous, _appId: appId, _permission: permissionlist, _role2role: role2rolelist, _users: userslist, _locations: strSelectedLocs },
+            error: function () {
+                EbMessage("show", { Message: 'Something unexpected occurred', AutoHide: true, Background: '#bf1e1e' });
+                $(this.btnSaveAll).removeAttr("disabled");
+                $("#eb_common_loader").EbLoader("hide");
+            }.bind(this),
             success: this.saveRoleSuccess.bind(this)
         });
     };
@@ -581,6 +587,7 @@
         else
             EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
         $(this.btnSaveAll).removeAttr("disabled");
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     //this.alertFunc = function tempAlert(msg, duration) {

@@ -239,7 +239,7 @@
                 <div class='col-md-6 objitems' name='objBox'>
                     <a class="object_container" href='${this.decideUrl(_obj)}'>
                     <div class='col-md-12 col-lg-12 col-sm-12 pd-0'>
-                        <h4 class='head4'>${_obj.ObjName}</h4>
+                        <h4 class='head4'>${_obj.DisplayName}</h4>
                         <p class='text-justify'>${_obj.Description || 'no description'}</p>
                         <div class="label_container">
                                 <span name="Version" class="label">V.${_obj.VersionNumber}</span>

@@ -142,7 +142,6 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.login == "uc") {
             $("#ppcont").hide();
         }
-        $("#objname").text(this.EbObject.Name);
         if (this.MainData !== null) {
             $("#Pipped").show();
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
@@ -303,7 +302,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
         }
         else if (Pname == "Name") {
-            $("#objname").text(obj.Name);
+			$("#objname").text(obj.DisplayName);
         }
     }.bind(this);
 
@@ -452,7 +451,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.GenerateButtons = function () {
-        $("#objname").text(this.EbObject.Name);
+		$("#objname").text(this.EbObject.DisplayName);
         $("#obj_icons").empty();
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");

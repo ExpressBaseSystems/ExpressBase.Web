@@ -201,9 +201,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             }
         }
         if (pname === "Name") {
-            $("#objname").text(this.EbObject.Name);
-        }
-        if (pname === "LinkRefid") {
+			$("#objname").text(this.EbObject.DisplayName);
         }
     }.bind(this);
 

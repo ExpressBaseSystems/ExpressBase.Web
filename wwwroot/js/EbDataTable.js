@@ -129,7 +129,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.ajaxSucc = function (text) {
         var flag = false;
-        $("#objname").text(this.EbObject.Name);
         if (this.MainData !== null) {
             this.isPipped = true;
             $("#Pipped").show();
@@ -200,6 +199,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.placefiltervalues();
                 $("#btnGo" + this.tabNum).trigger("click");
             }
+            else if (this.FilterDialog.filterObj.AutoRun) {
+                $("#btnGo" + this.tabNum).trigger("click");
+            }
             else {
                 this.FDCont.show();
                 this.FDCont.css("visibility", "visible");
@@ -259,7 +261,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }
         else if (Pname === "Name") {
-            $("#objname").text(obj.Name);
+            $("#objname").text(obj.DisplayName);
             console.log(obj);
         }
         else if (Pname === "Columns") {
@@ -360,7 +362,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.dvName = this.ebSettings.Name;
         this.initCompleteflag = false;
 
-        $("#objname").text(this.dvName);
         this.propGrid.ClosePG();
 
         if (this.login === "dc") {
@@ -457,7 +458,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.Init = function () {
         //this.MainData = null;
         $.event.props.push('dataTransfer');
-        //this.updateRenderFunc();
+        this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
@@ -1559,8 +1560,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td></tr>`);
         $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" style="display:inline-block;"> </select></td>`);
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
-            if (obj.RowGrouping.$values.length > 0) {
-                $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.Name.trim()}</option>`);
+			if (obj.RowGrouping.$values.length > 0) {
+				$(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
             }
         }.bind(this));
 
@@ -1718,6 +1719,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.collapseAllGroup = function (e) {
         if (!$(e.target).is("select")) {
             var $elems = $(e.target).parents().closest(".group-All").nextAll("[role=row]");
+            var $Groups = $(e.target).parents().closest(".group-All").nextAll(".group")
             var $target = $(e.target);
             if ($target.is("td")) {
                 if ($target.children().is("I"))
@@ -1727,13 +1729,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             if ($target.hasClass("fa-plus-square-o")) {
                 $elems.show();
+                $(".group").show();
+                $(".group-sum").show();
                 this.collapseRelated($target, "show");
-                $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
+                $Groups.children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
             }
             else {
                 $elems.hide();
                 this.collapseRelated($target, "hide");
-                $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
+                $Groups.children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
             }
             this.Api.columns.adjust();
         }
@@ -1743,20 +1747,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.collapseGroup = function (e) {
-        var $elems = [];
-        var group = $(e.target).parents().closest(".group").attr("group");
-        if ($(e.target).parents().closest(".group").siblings(".group-sum").length > 0)
-            $elems = $(e.target).parents().closest(".group").nextUntil("[group=" + group + "]");
-        else
-            $elems = $(e.target).parents().closest(".group").nextUntil("[group=" + group + "]");
+        var $group = $(e.target).parents().closest(".group");
+        var groupnum = $group.attr("group");
+        var $elems = $group.nextUntil("[group=" + groupnum + "]");
+        
         if ($elems.css("display") === "none") {
             $elems.show();
             this.collapseRelated($(e.target), "show");
+            $elems.filter(".group").children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
         }
         else {
             $elems.hide();
             this.collapseRelated($(e.target), "hide");
+            $elems.filter(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
         }
+        this.checkHeaderCollapse($group, groupnum );
 
         $(".containerrow").hide();
         $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
@@ -1781,6 +1786,27 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
     }
+
+    this.checkHeaderCollapse = function ($group, groupnum) {
+        var headergroup = parseInt(groupnum) - 1;
+        var nextSiblings = $group.nextUntil("[group=" + headergroup + "]").filter(".group[group=" + groupnum+"]").next();
+        var prevSiblings = $group.prevUntil("[group=" + headergroup + "]").filter(".group[group=" + groupnum+"]").next();
+        var $ElemtoChange = $group.prevAll(".group[group=" + headergroup + "]").first().children().find("I");
+        var nextproperty = nextSiblings.map(function () { return $(this).css("display"); }).get();
+        var prevproperty = prevSiblings.map(function () { return $(this).css("display"); }).get();
+        var property = nextproperty.concat(prevproperty);
+        if (property.contains("none")) {
+            var flag = property.every(function (value) {
+                return value === property[0];
+            });
+            if (flag)
+                $ElemtoChange.removeAttr("class").attr("class", "fa fa-plus-square-o");
+            else
+                $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");
+        }
+        else
+            $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");
+    };
 
     this.multiplelevelRowgrouping = function () {
         var rows = this.Api.rows().nodes();
@@ -2118,9 +2144,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
     };
 
-    this.GenerateButtons = function () {
+	this.GenerateButtons = function () {
+		$("#objname").text(this.EbObject.DisplayName);
         $(".toolicons").show();
-        $("#objname").text(this.dvName);
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
 
@@ -2799,7 +2825,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name + "</div><table id='tbl" + idx + "'></table></td></tr></div>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "'></table></td></tr></div>");
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -2811,7 +2837,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.datatable = new EbBasicDataTable(o);
         }
         else {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.Name + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
             var o = new Object();
             o.tableId = "chart" + idx;
             o.dvObject = Dvobj;

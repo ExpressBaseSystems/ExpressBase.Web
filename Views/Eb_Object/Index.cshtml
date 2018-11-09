@@ -54,7 +54,7 @@
     <div class="tab-content tab-cont-common" id="versionTab">
         <div id="vernav0" class="tab-pane fade in active code_edit" data-id="new">
             @{
-                if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
+                if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter|| ViewBag.ObjType == (int)EbObjectTypes.SqlFunction)
                 {
                     @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
                 }

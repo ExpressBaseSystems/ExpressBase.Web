@@ -4,6 +4,43 @@
     this.rowCtrls = {};
     this.newRowCounter = 0;
 
+
+    ctrl.ChangedRowObject = function () {
+        return this.changedRowWT();
+    }.bind(this);
+
+    this.getRowWTs = function (inpCtrls) {
+        let RowWT = [];
+        $.each(inpCtrls, function (i, obj) {
+            let colObj = {};
+            colObj.Name = obj.Name;
+            _type = obj.EbDbType;
+            colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();
+            colObj.Type = _type;
+            colObj.AutoIncrement = obj.AutoIncrement || false;
+            RowWT.push(colObj);
+        }.bind(this));
+        return RowWT;
+    };
+
+    this.changedRowWT = function () {
+        let RowsWT = [];
+        //    "tblName1":
+        //        [
+        //            { "rowid1": [{ name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
+        //        ]
+        $.each(this.rowCtrls, function (rowId, inpCtrls) {
+            let row = {};
+            if (rowId < 0)
+                rowId = "0";
+            row[rowId] = this.getRowWTs(inpCtrls);
+            RowsWT.push(row);
+        }.bind(this));
+        return RowsWT;
+    };
+
     this.getNewTrHTML = function (rowid) {
         let tr = `<tr added='true' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];

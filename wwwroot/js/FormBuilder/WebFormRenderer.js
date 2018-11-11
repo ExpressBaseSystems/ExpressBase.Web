@@ -203,12 +203,12 @@
     };
 
     this.getDG_FVWTObjColl = function () {
-
+        let DGs = getFlatObjOfType("DataGrid");
     };
 
     this.getFormValuesObjWithTypeColl = function () {
         let FVWTObjColl = {};
-        let DG_FVWTObjColl = getDG_FVWTObjColl();
+        let DG_FVWTObjColl = this.getDG_FVWTObjColl();
         //{
         //    "tblName1":
         //        [

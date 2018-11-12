@@ -220,7 +220,8 @@ namespace ExpressBase.Web.Controllers
                         Apps = _apps,
                         SourceSolutionId = ViewBag.cid,
                         SourceObjId = "0",
-                        SourceVerID = "0"
+                        SourceVerID = "0",
+                        DisplayName = obj.DisplayName
                     };
                     EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                     if (res.ExceptionMessage != string.Empty && res.RefId == null)
@@ -242,7 +243,8 @@ namespace ExpressBase.Web.Controllers
                     RefId = _refid,
                     ChangeLog = _changeLog,
                     Tags = _tags,
-                    Apps = _apps
+                    Apps = _apps,
+                    DisplayName = obj.DisplayName
                 };
                 EbObject_CommitResponse res = ServiceClient.Post(ds);
                 refid = res.RefId;
@@ -277,7 +279,8 @@ namespace ExpressBase.Web.Controllers
                         Apps = _apps,
                         SourceSolutionId = ViewBag.cid,
                         SourceObjId = "0",
-                        SourceVerID = "0"
+                        SourceVerID = "0",
+                        DisplayName = obj.DisplayName
                     };
 
                     EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
@@ -295,7 +298,8 @@ namespace ExpressBase.Web.Controllers
                     Json = _json,
                     Relations = _rel_obj,
                     Tags = _tags,
-                    Apps = _apps
+                    Apps = _apps,
+                    DisplayName = obj.DisplayName
                 };
 
                 EbObject_SaveResponse res = ServiceClient.Post(ds);

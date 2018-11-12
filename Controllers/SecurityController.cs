@@ -318,7 +318,7 @@ namespace ExpressBase.Web.Controllers
 			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
 
-			var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, SolnId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetManageUserGroupResponse>(new GetManageUserGroupRequest { id = itemid, SolnId = ViewBag.cid, Timezone = this.LoggedInUser.Preference.TimeZone });
 			ViewBag.SelectedUserGroupInfo = JsonConvert.SerializeObject(fr.SelectedUserGroupInfo);
 			ViewBag.UsersList = JsonConvert.SerializeObject(fr.UsersList);
 			ViewBag.IpConsList = JsonConvert.SerializeObject(fr.IpConsList);
@@ -341,7 +341,8 @@ namespace ExpressBase.Web.Controllers
 				IpConstraintNw = Dict["new_constraint_ip"],
 				IpConstraintOld = Dict["deleted_ipconst_id"],
 				DtConstraintNw = Dict["new_constraint_dt"],
-				DtConstraintOld =Dict["deleted_ipconst_dt"]
+				DtConstraintOld = Dict["deleted_ipconst_dt"],
+				UsersTimezone = this.LoggedInUser.Preference.TimeZone
 			});
 			return res.id;
 		}

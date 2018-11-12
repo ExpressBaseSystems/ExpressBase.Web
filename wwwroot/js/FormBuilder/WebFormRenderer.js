@@ -191,6 +191,7 @@
             }
             else {
                 let colObj = {};
+                colObj.$type = "ExpressBase.Common.SingleRecordField, ExpressBase.Common";
                 colObj.Name = obj.Name;
                 _type = obj.EbDbType;
                 colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();

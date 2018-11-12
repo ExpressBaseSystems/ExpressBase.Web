@@ -16,6 +16,18 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     const _DataReader = "DataReader";
     const _DataWriter = "DataWriter";
+    const _SqlFunction = "SqlFunction";
+    const _SqlFuncSyntax = `CREATE OR REPLACE FUNCTION function_name 
+    (parameter_name[IN | OUT | IN OUT]type [, ...])
+
+    RETURN return_datatype
+    { IS | AS }
+
+    BEGIN
+
+        <function_body>
+
+    END[function_name];`;
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
@@ -64,10 +76,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             dsType = _DataReader;
         else if (this.ObjectType === 4)
             dsType = _DataWriter;
+        else if (this.ObjectType === 5)
+            dsType = _SqlFunction;
 
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["Eb" + dsType](dsType + "1");
             commonO.Current_obj = this.EbObject;
+            if (this.ObjectType === 5)
+                this.EbObject.Sql = btoa(_SqlFuncSyntax);
             // this.FD = false;
         }
         else {

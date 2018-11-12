@@ -148,7 +148,7 @@
                     this.removeInvalidStyle()
             }.bind(this),
         });
-    }
+    };
 
     this.getWebFormVals = function () {
         return getValsFromForm(this.filterObj);
@@ -203,12 +203,11 @@
     };
 
     this.getDG_FVWTObjColl = function () {
-
-    };
-
-    this.getFormValuesObjWithTypeColl = function () {
         let FVWTObjColl = {};
-        let DG_FVWTObjColl = getDG_FVWTObjColl();
+        let DGs = getFlatObjOfType(this.FormObj, "DataGrid");
+        $.each(DGs, function (i, ctrl) {
+            FVWTObjColl[ctrl.TableName] = ctrl.ChangedRowObject();
+        });
         //{
         //    "tblName1":
         //        [
@@ -223,6 +222,12 @@
         //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
         //        ]
         //};
+        return FVWTObjColl;
+    };
+
+    this.getFormValuesObjWithTypeColl = function () {
+        let FVWTObjColl = {};
+        let DG_FVWTObjColl = this.getDG_FVWTObjColl();
 
         FVWTObjColl[this.FormObj.TableName] = [];
         this.ProcRecurForVal(this.FormObj, FVWTObjColl);

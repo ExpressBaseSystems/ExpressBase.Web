@@ -199,6 +199,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.placefiltervalues();
                 $("#btnGo" + this.tabNum).trigger("click");
             }
+            else if (this.FilterDialog.filterObj.AutoRun) {
+                $("#btnGo" + this.tabNum).trigger("click");
+            }
             else {
                 this.FDCont.show();
                 this.FDCont.css("visibility", "visible");
@@ -455,7 +458,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.Init = function () {
         //this.MainData = null;
         $.event.props.push('dataTransfer');
-        //this.updateRenderFunc();
+        this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.copybtn = $("#btnCopy" + this.tableId);
         this.printbtn = $("#btnPrint" + this.tableId);
@@ -1716,6 +1719,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.collapseAllGroup = function (e) {
         if (!$(e.target).is("select")) {
             var $elems = $(e.target).parents().closest(".group-All").nextAll("[role=row]");
+            var $Groups = $(e.target).parents().closest(".group-All").nextAll(".group")
             var $target = $(e.target);
             if ($target.is("td")) {
                 if ($target.children().is("I"))
@@ -1725,13 +1729,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             if ($target.hasClass("fa-plus-square-o")) {
                 $elems.show();
+                $(".group").show();
+                $(".group-sum").show();
                 this.collapseRelated($target, "show");
-                $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
+                $Groups.children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
             }
             else {
                 $elems.hide();
                 this.collapseRelated($target, "hide");
-                $(e.target).parents().closest(".group-All").nextAll(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
+                $Groups.children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
             }
             this.Api.columns.adjust();
         }
@@ -1741,20 +1747,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.collapseGroup = function (e) {
-        var $elems = [];
-        var group = $(e.target).parents().closest(".group").attr("group");
-        if ($(e.target).parents().closest(".group").siblings(".group-sum").length > 0)
-            $elems = $(e.target).parents().closest(".group").nextUntil("[group=" + group + "]");
-        else
-            $elems = $(e.target).parents().closest(".group").nextUntil("[group=" + group + "]");
+        var $group = $(e.target).parents().closest(".group");
+        var groupnum = $group.attr("group");
+        var $elems = $group.nextUntil("[group=" + groupnum + "]");
+        
         if ($elems.css("display") === "none") {
             $elems.show();
             this.collapseRelated($(e.target), "show");
+            $elems.filter(".group").children().find("I").removeAttr("class").attr("class", "fa fa-minus-square-o");
         }
         else {
             $elems.hide();
             this.collapseRelated($(e.target), "hide");
+            $elems.filter(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
         }
+        this.checkHeaderCollapse($group, groupnum );
 
         $(".containerrow").hide();
         $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
@@ -1779,6 +1786,27 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
     }
+
+    this.checkHeaderCollapse = function ($group, groupnum) {
+        var headergroup = parseInt(groupnum) - 1;
+        var nextSiblings = $group.nextUntil("[group=" + headergroup + "]").filter(".group[group=" + groupnum+"]").next();
+        var prevSiblings = $group.prevUntil("[group=" + headergroup + "]").filter(".group[group=" + groupnum+"]").next();
+        var $ElemtoChange = $group.prevAll(".group[group=" + headergroup + "]").first().children().find("I");
+        var nextproperty = nextSiblings.map(function () { return $(this).css("display"); }).get();
+        var prevproperty = prevSiblings.map(function () { return $(this).css("display"); }).get();
+        var property = nextproperty.concat(prevproperty);
+        if (property.contains("none")) {
+            var flag = property.every(function (value) {
+                return value === property[0];
+            });
+            if (flag)
+                $ElemtoChange.removeAttr("class").attr("class", "fa fa-plus-square-o");
+            else
+                $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");
+        }
+        else
+            $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");
+    };
 
     this.multiplelevelRowgrouping = function () {
         var rows = this.Api.rows().nodes();

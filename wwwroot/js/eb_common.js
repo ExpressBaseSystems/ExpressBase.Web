@@ -157,8 +157,8 @@ function sortByProp(arr, prop) {
 
 function EbMakeValid(contSel, _ctrlCont) {
     //setTimeout(function () {
-        $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
-        $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
+    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+    $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
     //},400);
 };
 
@@ -329,6 +329,16 @@ function getValsFromForm(formObj) {
 
 function isNaNOrEmpty(val) {
     return (typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "")
+};
+
+function getFlatObjOfType(ContObj, type) {
+    let ctrls = [];
+    let flat = getFlatContControls(ContObj);
+    $.each(flat, function (i, ctrl) {
+        if (ctrl.ObjType === type)
+            ctrls.push(ctrl);
+    })
+    return ctrls;
 };
 
 function getValsForViz(formObj) {

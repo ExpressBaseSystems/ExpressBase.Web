@@ -157,9 +157,26 @@
 .Eb-ctrlContainer .input-group-addon {
     border: 0 !important;
 }
+.check-row {
+    position: absolute;
+    left: 10px;
+    top: 5px;
+    color: green;
+}
+
+.del-row, .edit-row {
+    display: none;
+    position: absolute;
+    top: 5px;
+}
 
 .del-row {
-    display: none;
+    left: 22px;
+    color: red;
+}
+.edit-row {
+    left: 3px;
+    color: rgb(192, 110, 3);
 }
 
 .tdtxt {
@@ -167,16 +184,39 @@
     padding: 5px;
 }
 
-.ctrl-edit {
-    position: absolute;
-    right: 0;
-    opacity: 0.35;
-    top: 0;
-    border-radius: 0 0 0 100%;
-    background-color: white;
-    padding: 2px 2px 8px 8px;
-    box-shadow: 0px 1px 2px 0 #00000082;
+.rowc {
+    width: 50%;
+    text-align: center;
+    border-radius: 50%;
 }
+
+    .rowc:focus{
+        box-shadow:0 0 5px 0;
+    }
+
+    .rowc:hover{
+        box-shadow:0 0 1px 0 green;
+    }
+
+    .edit-row:hover{
+        box-shadow:0 0 1px 0 orange;
+    }
+
+    .del-row:hover{
+        box-shadow:0 0 1px 0 red;
+    }
+
+    .ctrl-edit {
+        position: absolute;
+        right: 0;
+        opacity: 0.35;
+        top: 0;
+        border-radius: 0 0 0 100%;
+        background-color: white;
+        padding: 2px 2px 8px 8px;
+        box-shadow: 0px 1px 2px 0 #00000082;
+    }
+
 
     .ctrl-edit:hover {
         opacity: 0.85;
@@ -185,6 +225,10 @@
 
 .dgtbl td {
     position: relative;
+}
+
+.dgtbl tr th:last-child {
+    text-align: center;
 }
 
 .Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {

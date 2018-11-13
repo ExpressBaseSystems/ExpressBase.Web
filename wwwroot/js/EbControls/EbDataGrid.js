@@ -59,7 +59,11 @@
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
 
         }.bind(this));
-        tr += "<td><div class='check-row'><span class='fa fa-check'></span></div><div class='del-row'><span class='fa fa-minus'></span></div></td></tr>";
+        tr += `<td>
+                    <span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>
+                    <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
+                    <span class='del-row rowc' tabindex='1'><span class='fa fa-minus'></span></span>
+                </td></tr>`;
         return tr;
     };
 
@@ -118,19 +122,43 @@
         $td.find(".tdtxt").show();
     }.bind(this);
 
+    this.editRow_click = function (e) {
+        $td = $(e.target).closest("td");
+        $td.find(".del-row").hide();
+        $td.find(".edit-row").hide();
+        $td.find(".check-row").show();
+        let $tr = $td.closest("tr");
+        let rowid = $tr.attr("rowid");
+        this.spanToCtrl_row($tr);
+    }.bind(this);
+
     this.checkRow_click = function (e) {
         $td = $(e.target).closest("td");
         $td.find(".check-row").hide();
         $td.find(".del-row").show();
+        $td.find(".edit-row").show();
         let $tr = $td.closest("tr");
         let rowid = $tr.attr("rowid");
         this.ctrlToSpan_row(rowid);
-        this.addRow($tr);
+        if ($tr.attr("is-checked") !== "true")
+            this.addRow($tr);
+        $tr.attr("is-checked", "true");
     }.bind(this);
 
     this.delRow_click = function (e) {
         $td = $(e.target).closest("td");
         $td.closest("tr").remove();
+    }.bind(this);
+
+    this.spanToCtrl_row = function ($tr) {
+        $tds = $tr.find("td[ctrltdidx]");
+        $.each($tds, function (i, td) {
+            let $td = $(td);
+            let ctrlTdIdx = $td.attr("ctrltdidx");
+            if (this.ctrl.Controls.$values[ctrlTdIdx].IsEditable)
+                this.spanToCtrl_td($td);
+
+        }.bind(this));
     }.bind(this);
 
     this.spanToCtrl_td = function ($td) {
@@ -152,6 +180,7 @@
         }
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".check-row", this.checkRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".del-row", this.delRow_click);
+        $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".edit-row", this.editRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".ctrl-edit", this.ctrlEdit_click);
     };
 

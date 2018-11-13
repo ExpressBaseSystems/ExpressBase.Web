@@ -107,7 +107,7 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
 .dataTables_scrollHead {
     padding-bottom: 150px !important;
     margin-bottom: -150px !important;
-    /*width: calc( 100% - 17px ) !important;*/
+    /*width: calc( 100% - 17px ) !important;*/    
 }
 
 .dataTables_scrollFoot {
@@ -340,7 +340,7 @@ table.dataTable tbody td.dt-body-right {
 
 .containerrow .dataTables_wrapper {
     height: 250px;
-    padding: 10px 10px 10px 10px;
+    padding-bottom: 20px;
 }
 
 .dataTable tbody tr td {
@@ -497,6 +497,7 @@ table.dataTable tbody td.dt-body-right {
 table.dataTable tr.group td {
     font-weight: unset !important;
 }
-.inlinetable {
-    border: 1px solid;
+.inlinetable .dataTables_scrollHead {
+    /*border: 1px solid;*/
+    border-bottom: 2px solid #ccc !important;
 }

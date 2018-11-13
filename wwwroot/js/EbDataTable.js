@@ -2140,7 +2140,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
         });
-
+        $("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         this.Api.columns.adjust();
     };
 
@@ -2193,6 +2193,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.isSecondTime) {
             this.addFilterEventListeners();
         }
+
+        $("#obj_icons").append("<button id='siwtch" + this.tableId + "' class='btn commonControl'>S</button>");
 
     };
 
@@ -2825,7 +2827,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "'></table></td></tr></div>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "' class='table display table-bordered compact'></table></td></tr></div>");
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -2897,6 +2899,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.printAll = function (e) {
         $('#' + this.tableId + '_wrapper').find('.buttons-print')[0].click();
+    };
+
+    this.SwitchToChart = function () {
+        let chartobj = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
     };
 
     this.collapseFilter = function () {

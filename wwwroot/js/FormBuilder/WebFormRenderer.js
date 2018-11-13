@@ -191,7 +191,6 @@
             }
             else {
                 let colObj = {};
-                colObj.$type = "ExpressBase.Common.SingleRecordField, ExpressBase.Common";
                 colObj.Name = obj.Name;
                 _type = obj.EbDbType;
                 colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();
@@ -234,8 +233,8 @@
         this.ProcRecurForVal(this.FormObj, FVWTObjColl);
 
         let fval = {
-            "nfv": FVWTObjColl,
-            "dgv": DG_FVWTObjColl
+            "FormData": FVWTObjColl,
+            "GridData": DG_FVWTObjColl
         }
         return JSON.stringify(fval);
     };

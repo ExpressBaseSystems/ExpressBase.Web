@@ -1,4 +1,66 @@
-﻿var default_colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC']
+﻿$.fn.extend({
+    treed: function (o) {
+        var openedClass = 'fa-minus-square-o';
+        var closedClass = 'fa-plus-square-o';
+        var ic = o || 'fa-plus-square-o';
+
+        if (typeof o !== 'undefined') {
+            if (typeof o.openedClass !== 'undefined') {
+                //openedClass = o.openedClass;
+            }
+            if (typeof o.closedClass !== 'undefined') {
+                //closedClass = o.closedClass;
+            }
+        }
+        var tree = $(this);
+        tree.addClass("tree");
+        tree.find('li').has("ul").each(function () {
+            var branch = $(this);
+            branch.prepend("<i class='indicator fa " + ic + "'></i>");
+            branch.addClass('branch');
+            branch.off("click").on('click', function (e) {
+                if (this === e.target) {
+                    var icon = $(this).children('i:first');
+                    icon.toggleClass(openedClass + " " + closedClass);
+                    $(this).children().children().toggle();
+                }
+            });
+            branch.children().children().toggle();
+        });
+        tree.find('.branch .indicator').each(function () {
+            $(this).off("click").on('click', function (e) {
+                $(this).closest('li').click();
+            });
+        });
+        tree.find('.branch>a').each(function () {
+            $(this).off("click").on('click', function (e) {
+                $(this).closest('li').click();
+                e.preventDefault();
+            });
+        });
+        tree.find('.branch>button').each(function () {
+            $(this).off("off").on('click', function (e) {
+                $(this).closest('li').click();
+                e.preventDefault();
+            });
+        });
+    }
+});
+
+$.fn.extend({
+    killTree: function (o) {
+        var tree = $(this);
+        tree.removeClass("tree");
+        tree.find('li').has("ul").each(function () {
+            var branch = $(this);
+            branch.children().children().show();
+            branch.children("i").remove();
+            branch.removeClass('branch');
+            branch.off("click");
+        });
+    }
+});
+var default_colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC']
 var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
     this.label = label;
     this.data = data;
@@ -78,7 +140,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.isPipped = false;
     this.isContextual = false;
     this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(atob(filterValues)) : [];
-    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(filterValues)) : null;
+    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(rowData)) : null;
     this.isTagged = false;
     //this.filterChanged = false;
     this.bot = false;
@@ -123,7 +185,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 style: { top: "112px" }
             });
         }
-    }
+    };
 
     this.call2FD = function () {
         this.relatedObjects = this.EbObject.DataSourceRefId;
@@ -146,7 +208,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             $("#Pipped").show();
             $("#Pipped").text("Pipped From: " + this.EbObject.Pippedfrom);
             this.isPipped = true;
-            this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
+            //this.filterValues = dvcontainerObj.dvcol[prevfocusedId].filterValues;
         }
         else if (this.rowData !== null && this.rowData !== "") {
             this.isContextual = true;
@@ -241,21 +303,18 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         }
         else {
             if (this.MainData !== null)
-                split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization", prevfocusedId);
+                split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization", prevfocusedId);
             else
                 split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
-            if (this.login === "dc") {
-                //this.propGrid = new Eb_PropertyGrid("pp_inner");
-
+            if (this.login === "dc" && this.propGrid === null) {
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
                     $extCont: $(".ppcont")
                 });
-
-                this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
+            this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             else
@@ -316,7 +375,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         this.appendColumns();
         if (!this.bot) {
             this.appendXandYAxis();
-            if (this.login === "uc") {
+            if (this.login === "uc" && this.EbObject.Xaxis.$values.length >= 1 && this.EbObject.Yaxis.$values.length >= 1) {
                 this.collapseGraph();
             }
             this.propGrid.ClosePG();
@@ -335,10 +394,10 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             }
             
             filterChanged = false;
-            if (!this.isTagged)
-                f = this.compareFilterValues();
-            if (this.MainData !== null && this.login === "uc" && !filterChanged) {
-                dvcontainerObj.currentObj.data = this.MainData;
+            //if (!this.isTagged)
+            //    f = this.compareFilterValues();
+            if (this.MainData !== null ) {
+                //dvcontainerObj.currentObj.data = this.MainData;
                 this.drawGraphHelper(this.MainData.data);
             }
             else {
@@ -379,12 +438,13 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     };
 
     this.CloseParamDiv = function () {
-        if (this.login === "dc") {
-            this.stickBtn.minimise();
-        }
-        else {
-            dvcontainerObj.dvcol[focusedId].stickBtn.minimise();
-        }
+        //if (this.login === "dc") {
+        //    this.stickBtn.minimise();
+        //}
+        //else {
+        //    dvcontainerObj.dvcol[focusedId].stickBtn.minimise();
+        //}
+        this.stickBtn.minimise();
     };
 
     this.validateFD = function () {
@@ -520,6 +580,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.login == "uc") {
             dvcontainerObj.modifyNavigation();
         }
+        $("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
         this.bindEvents();
 
         if (this.type !== "googlemap")
@@ -543,7 +604,8 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
-    }
+        $("#switch" + this.tableId).off("click").on("click", this.SwitchToTable.bind(this));
+    };
 
     this.appendColumns = function () {
         var colsAll_XY = [], Xcol = [], Ycol = [], colsAll_X = [];
@@ -1079,6 +1141,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
     this.colDropRef = function (el, target, source, sibling) {
         this.colDrop(el, target, source, sibling);
     };
+
     this.colAllowDrop = function (e) {
         e.preventDefault();
     };
@@ -1329,7 +1392,11 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             return data.datasets[item.datasetIndex].label + ": " + data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index];
 	}.bind(this);
 
-	this.CreateRelationString = function () { };
+    this.CreateRelationString = function () { };
+
+    this.SwitchToTable = function () {
+
+    };
 
     this.start();
 };

@@ -11,6 +11,15 @@
 
     this.getRowWTs = function (inpCtrls) {
         let RowWT = [];
+        {// rowIdcolObj pushing
+            let rowIdcolObj = {};
+            rowIdcolObj.Name = "id";
+            rowIdcolObj.Value = 0;
+            rowIdcolObj.Type = EbEnums.EbDbTypes.Int32;
+            rowIdcolObj.AutoIncrement = false;
+            RowWT.push(rowIdcolObj);
+        }
+
         $.each(inpCtrls, function (i, obj) {
             let colObj = {};
             colObj.Name = obj.Name;
@@ -32,11 +41,7 @@
         //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
         //        ]
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            let row = {};
-            if (rowId < 0)
-                rowId = "0";
-            row[rowId] = this.getRowWTs(inpCtrls);
-            RowsWT.push(row);
+            RowsWT.push(this.getRowWTs(inpCtrls));
         }.bind(this));
         return RowsWT;
     };

@@ -210,11 +210,11 @@
         });
         //{
         //    "tblName1":
-        //        [
-        //            { "rowid1": [{ name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //        ],
+        //            [
+        //              [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },],
+        //              [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },],
+        //              [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },],
+        //             ]
         //    "tblName2":
         //        [
         //            { "rowid1": [{ name: 1, val: 100 }, { name: 10, val: 100 },] },
@@ -236,8 +236,10 @@
             "FormData": FVWTObjColl,
             "GridData": DG_FVWTObjColl
         }
-        //return JSON.stringify(fval);
-        return JSON.stringify(FVWTObjColl);
+        DG_FVWTObjColl["__masterTableName"] = [[{ Name: this.FormObj.TableName}]];
+        DG_FVWTObjColl["dgftbl2"] = [FVWTObjColl.dgftbl2];
+        return JSON.stringify(DG_FVWTObjColl);
+        //return JSON.stringify(FVWTObjColl);
     };
 
     this.ajaxsuccess = function (rowAffected) {

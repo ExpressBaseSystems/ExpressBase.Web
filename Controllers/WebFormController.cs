@@ -109,12 +109,18 @@ namespace ExpressBase.Web.Controllers
 			}
 		}
 
-		public int InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
+		//public int InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
+  //      {
+  //          WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
+  //          //InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, Values = Values, RowId = RowId });
+  //          //return Resp.RowAffected;
+  //          return 0;
+  //      }
+        public int InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
         {
-            WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
-            //InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, Values = Values, RowId = RowId });
-            //return Resp.RowAffected;
-            return 0;
+            Dictionary<string, List<SingleRecordField>> Values = JsonConvert.DeserializeObject<Dictionary<string, List<SingleRecordField>>>(ValObj);
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, Values = Values, RowId = RowId });
+            return Resp.RowAffected;
         }
 
         public bool DoUniqueCheck(string TableName, string Field, string Value, string type)

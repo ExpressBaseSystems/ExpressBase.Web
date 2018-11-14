@@ -236,7 +236,8 @@
             "FormData": FVWTObjColl,
             "GridData": DG_FVWTObjColl
         }
-        return JSON.stringify(fval);
+        //return JSON.stringify(fval);
+        return JSON.stringify(FVWTObjColl);
     };
 
     this.ajaxsuccess = function (rowAffected) {

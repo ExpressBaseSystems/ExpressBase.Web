@@ -214,12 +214,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.CloseParamDiv = function () {
-        if (this.login === "dc") {
-            this.stickBtn.minimise();
-        }
-        else {
-            dvcontainerObj.dvcol[focusedId].stickBtn.minimise();
-        }
+        //if (this.login === "dc") {
+        //    this.stickBtn.minimise();
+        //}
+        //else {
+        //    dvcontainerObj.dvcol[focusedId].stickBtn.minimise();
+        //}
+        this.stickBtn.minimise();
     };
 
     this.tmpPropertyChanged = function (obj, Pname) {
@@ -590,7 +591,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.createTblObject = function () {
         var o = new Object();
-        o.scrollY = "inherit";
+        //o.scrollY = "inherit";
         o.scrollX = "100%";
         //o.scrollXInner = "110%";
         o.scrollCollapse = true;
@@ -958,8 +959,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.isRun = true;
         if (this.login === "uc") {
             dvcontainerObj.currentObj.data = dd;
-            this.MainData = dd;
         }
+        this.MainData = dd;
         this.RowCount = dd.recordsFiltered;
         //return dd.data;
         this.unformatedData = dd.data;
@@ -2150,7 +2151,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#obj_icons").empty();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
 
-        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("Lead Details") !== -1)
+        if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
             $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
 
         $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
@@ -2194,7 +2195,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.addFilterEventListeners();
         }
 
-        $("#obj_icons").append("<button id='siwtch" + this.tableId + "' class='btn commonControl'>S</button>");
+        $("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
 
     };
 
@@ -2783,6 +2784,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
             $(rows).eq(idx).next().show();
         }
+        this.Api.columns.adjust();
     };
 
     this.getRowGroupFilter = function ($elem) {
@@ -2847,12 +2849,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.chartApi = new EbBasicChart(o);
             $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
         }
-        $(".containerrow .close").off("click").on("click", function () {
-            $(this).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
-            $(this).parents().closest(".containerrow").remove();
-        });
+        $(".containerrow .close").off("click").on("click", function (e) {
+            $(e.target).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
+            $(e.target).parents().closest(".containerrow").remove();
+            this.Api.columns.adjust();
+        }.bind(this));
 
         $("#eb_common_loader").EbLoader("hide");
+        this.Api.columns.adjust();
     };
 
     this.Params4InlineTable = function (Dvobj) {
@@ -2902,14 +2906,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.SwitchToChart = function () {
+        $('#' + this.tableId).parents().find(".sub-windows").hide();
+        this.stickBtn.hide();
         let chartobj = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
+        chartobj.Columns = JSON.parse(JSON.stringify(this.EbObject.Columns));
+        chartobj.DSColumns = JSON.parse(JSON.stringify(this.EbObject.DSColumns));
+        chartobj.DataSourceRefId = this.EbObject.DataSourceRefId;
+        chartobj.Pippedfrom = this.EbObject.Name;
+        let chartapi = eb_chart(chartobj.DataSourceRefId, null, null, chartobj, null, this.tabNum, this.ssurl, this.login, counter, this.MainData, btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), this.cellData, this.propGrid);
     };
 
     this.collapseFilter = function () {
         this.filterBox.toggle();
         if (this.filterBox.css("display") == "none") {
             $("#btnCollapse" + this.tableId).children().remove();
-            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-down' aria-hidden='true'></i>")
+            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-down' aria-hidden='true'></i>");
         }
         else {
             $("#btnCollapse" + this.tableId).children().remove();

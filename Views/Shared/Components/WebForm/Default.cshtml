@@ -142,13 +142,15 @@
     let _editModeObj =  '@Html.Raw(ViewBag.editModeObj)';
     let _formRefId=  "@Html.Raw(ViewBag.formRefId)";
     let _$saveBtn = $("#webformsave");
+    var d = new EbHeader();
     if (_editModeObj === "false") {
         _editModeObj = false;
     }
     else {
-        new EbHeader().insertButton('<button class="btn" id="webformaudittrail"><i class="fa fa-history" aria-hidden="true"></i></button>');
+        d.insertButton('<button class="btn" id="webformaudittrail"><i class="fa fa-history" aria-hidden="true"></i></button>');
         _editModeObj = JSON.parse(atob(_editModeObj));
     }
+    d.setName(_formObj.DisplayName);
     const renderer = new WebFormRender({
         formObj: _formObj,
         $saveBtn: _$saveBtn,

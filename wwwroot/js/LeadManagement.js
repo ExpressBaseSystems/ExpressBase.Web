@@ -193,8 +193,8 @@
         this.$CostCenter.children().remove();
         this.$SrgyBranch.children().remove();
         $.each(this.CostCenterInfo, function (key, val) {
-            this.$CostCenter.append(`<option value='${key}'">${val}</option>`);
-            this.$SrgyBranch.append(`<option value='${key}'">${val}</option>`);
+            this.$CostCenter.append(`<option value='${key}'>${val}</option>`);
+            this.$SrgyBranch.append(`<option value='${key}'>${val}</option>`);
         }.bind(this));
 
         this.$Doctor.children().remove();
@@ -202,30 +202,34 @@
         this.$SrgyImplantBy.children().remove();
         this.$SrgyConsentBy.children().remove();
         this.$SrgyAnasthBy.children().remove();
+        this.$SrgyExtrDnBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyImplantBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyConsentBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyAnasthBy.append(`<option value='0'>- Select -</option>`);
+
         $.each(this.DoctorInfo, function (key, val) {
-            this.$Doctor.append(`<option value='${val}'">${key}</option>`);
-            this.$SrgyExtrDnBy.append(`<option value='${val}'">${key}</option>`);
-            this.$SrgyImplantBy.append(`<option value='${val}'">${key}</option>`);
-            this.$SrgyConsentBy.append(`<option value='${val}'">${key}</option>`);
-            this.$SrgyAnasthBy.append(`<option value='${val}'">${key}</option>`);
+            this.$Doctor.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyExtrDnBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyImplantBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyConsentBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyAnasthBy.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
         this.$LeadOwner.children().remove();
         this.$Closing.children().remove();
-        this.$SrgyPostBrfBy.children().remove();
-        this.$SrgyNurse.children().remove();
+
         $.each(this.StaffInfo, function (key, val) {
-            this.$LeadOwner.append(`<option value='${val}'">${key}</option>`);
-            this.$Closing.append(`<option value='${val}'">${key}</option>`);
-            this.$SrgyPostBrfBy.append(`<option value='${val}'">${key}</option>`);
-            this.$SrgyNurse.append(`<option value='${val}'">${key}</option>`);
+            this.$LeadOwner.append(`<option value='${val}'>${key}</option>`);
+            this.$Closing.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
         this.$SrgyPostBrfBy.children().remove();
         this.$SrgyNurse.children().remove();
+        this.$SrgyPostBrfBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyNurse.append(`<option value='0'>- Select -</option>`);
         $.each(this.NurseInfo, function (key, val) {
-            this.$SrgyPostBrfBy.append(`<option value='${val}'">${key}</option>`);
-            this.$SrgyNurse.append(`<option value='${val}'">${key}</option>`);
+            this.$SrgyPostBrfBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyNurse.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
                 
@@ -684,6 +688,15 @@
             });
         }.bind(this));
 
+        $.each(this.SurgeryList, function (i, obj) {
+            obj["Extract_By"] = this.getKeyByValue(this.DoctorInfo, obj["Extract_By"]);
+            obj["Implant_By"] = this.getKeyByValue(this.DoctorInfo, obj["Implant_By"]);
+            obj["Consent_By"] = this.getKeyByValue(this.DoctorInfo, obj["Consent_By"]);
+            obj["Anaesthesia_By"] = this.getKeyByValue(this.DoctorInfo, obj["Anaesthesia_By"]);
+            obj["Post_Brief_By"] = this.getKeyByValue(this.NurseInfo, obj["Post_Brief_By"]);
+            obj["Nurse"] = this.getKeyByValue(this.NurseInfo, obj["Nurse"]);
+        }.bind(this));
+
         new ListViewCustom(this.divSrgy, this.SurgeryList, function (id, data) {
             this.$MdlSurgery.attr("data-id", id);
             var tempObj = JSON.parse(window.atob(data));
@@ -877,6 +890,9 @@
             this.OutDataList.push({ Key: _key, Value: _val });
     };
 
+    this.getKeyByValue = function (object, value) {
+        return Object.keys(object).find(key => object[key] === value) || "";
+    };
 
     this.init();
 };
@@ -898,7 +914,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
             this.metadata = ["9", "Id", "Date", "Total_Amount", "Amount_Received", "Balance_Amount", "Cash_Paid", "Payment_Mode", "Narration", "Created_By", "_billing"];
         }
         else if (this.ParentDivId === "divSrgy") {
-            this.metadata = ["5", "Id", "Date", "Branch", "Created_By", "Created_Date", "_surgery"];
+            this.metadata = ["11", "Id", "Created_Date", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Created_By", "_surgery"];
         }
         this.setTable();
 
@@ -913,7 +929,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         tblcols.push({ data: null, title: "Serial No", searchable: false, orderable: false, className: "text-center" });
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });//for id
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
-            tblcols.push({ data: i, title: this.metadata[i].replace("_", " "), orderable: true, className: "MyTempColStyle" });
+            tblcols.push({ data: i, title: this.metadata[i].replace("_", " ").replace("_", " "), orderable: true, className: "MyTempColStyle" });
         //tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
@@ -926,7 +942,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         }
         else if (this.metadata.indexOf("_surgery") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]] });
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]], 10: this.itemList[i][this.metadata[10]], 11: this.itemList[i][this.metadata[11]] });
         }
 
         this.table = $("#" + this.TableId).DataTable({

@@ -321,7 +321,7 @@
             <!-- Billing Menu -->
             <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
                 <div style="text-align:right; padding: 15px 15px;">
-                    <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                    <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>                    
                 </div>
                 <div class="lm-form-inline">
                     <div id="divBilling"></div>
@@ -331,7 +331,16 @@
             <!-- Surgery Menu -->
             <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
                 <div style="text-align:right; padding: 15px 15px;">
-                    <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                    @{
+                        if (ViewBag.Permission)
+                        {
+                            <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                        }
+                        else
+                        {
+                            <div></div>
+                        }
+                    }
                 </div>
                 <div class="lm-form-inline">
                     <div id="divSrgy"></div>

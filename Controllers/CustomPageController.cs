@@ -40,6 +40,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.CostCenter = fr.CostCenterDict;
 			ViewBag.DocDict = fr.DoctorDict;
 			ViewBag.StaffDict = fr.StaffDict;
+			ViewBag.NurseDict = fr.NurseDict;
 			ViewBag.CrntCityList = fr.CrntCityList;
 			ViewBag.CrntCountryList = fr.CrntCountryList;
 			ViewBag.CityList = fr.CityList;

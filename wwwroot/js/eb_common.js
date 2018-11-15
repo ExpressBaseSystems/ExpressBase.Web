@@ -356,6 +356,16 @@ function getValsForViz(formObj) {
     return fltr_collection;
 }
 
+
+function getSinglColumn(obj) {
+    let SinglColumn = {};
+    SinglColumn.Name = obj.Name;
+    SinglColumn.Value = obj.getValue();
+    SinglColumn.Type = obj.EbDbType;
+    SinglColumn.AutoIncrement = obj.AutoIncrement || false;
+    return SinglColumn;
+}
+
 //JQuery extends
 (function ($) {
     $.fn.closestInner = function (filter) {

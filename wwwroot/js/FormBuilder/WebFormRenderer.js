@@ -179,67 +179,58 @@
         });
     };
 
-    this.ProcRecurForVal = function (src_obj, FVWTObjColl) {
-        let _val = null;
-        $.each(src_obj.Controls.$values, function (i, obj) {
-            if (obj.IsContainer) {
-                if (obj.TableName === "" || obj.TableName === null)
-                    obj.TableName = src_obj.TableName;
-                if (FVWTObjColl[obj.TableName] === undefined)
-                    FVWTObjColl[obj.TableName] = [];
-                this.ProcRecurForVal(obj, FVWTObjColl);
-            }
-            else {
-                let colObj = {};
-                colObj.Name = obj.Name;
-                _type = obj.EbDbType;
-                colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();
-                colObj.Type = _type;
-                colObj.AutoIncrement = obj.AutoIncrement || false;
-                FVWTObjColl[src_obj.TableName].push(colObj);
-            }
-        }.bind(this));
-
-    };
-
     this.getDG_FVWTObjColl = function () {
         let FVWTObjColl = {};
         let DGs = getFlatObjOfType(this.FormObj, "DataGrid");
         $.each(DGs, function (i, ctrl) {
             FVWTObjColl[ctrl.TableName] = ctrl.ChangedRowObject();
         });
-        //{
-        //    "tblName1":
-        //            [
-        //              [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },],
-        //              [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },],
-        //              [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },],
-        //             ]
-        //    "tblName2":
-        //        [
-        //            { "rowid1": [{ name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //        ]
-        //};
         return FVWTObjColl;
     };
 
+    this.ProcRecurForVal = function (src_obj, FVWTObjColl) {
+        let _val = null;
+        $.each(src_obj.Controls.$values, function (i, obj) {
+            if (obj.IsContainer) {
+                if (obj.IsSpecialContainer)
+                    return true;
+                if (obj.TableName === "" || obj.TableName === null)
+                    obj.TableName = src_obj.TableName;
+                if (FVWTObjColl[obj.TableName] === undefined)
+                    FVWTObjColl[obj.TableName] = [{
+                        RowId: 0,
+                        IsUpdate: false,
+                        Columns: [],
+                    }];
+                this.ProcRecurForVal(obj, FVWTObjColl);
+            }
+            else {
+                FVWTObjColl[src_obj.TableName][0].Columns.push(getSinglColumn(obj));
+            }
+        }.bind(this));
+
+    };
+
+    this.getFormTables = function () {
+        let FormTables = {};
+        FormTables[this.FormObj.TableName] = [{
+            RowId: this.rowId,
+            IsUpdate: false,
+            Columns: [],
+        }];
+        this.ProcRecurForVal(this.FormObj, FormTables);
+        return FormTables;
+    };
+
     this.getFormValuesObjWithTypeColl = function () {
-        let FVWTObjColl = {};
-        let DG_FVWTObjColl = this.getDG_FVWTObjColl();
+        let WebformData = {};
+        WebformData.MasterTable = this.FormObj.TableName;
 
-        FVWTObjColl[this.FormObj.TableName] = [];
-        this.ProcRecurForVal(this.FormObj, FVWTObjColl);
+        let formTables = this.getFormTables();
+        let gridTables = this.getDG_FVWTObjColl();
 
-        let fval = {
-            "FormData": FVWTObjColl,
-            "GridData": DG_FVWTObjColl
-        }
-        DG_FVWTObjColl["__masterTableName"] = [[{ Name: this.FormObj.TableName}]];
-        DG_FVWTObjColl["dgftbl2"] = [FVWTObjColl.dgftbl2];
-        return JSON.stringify(DG_FVWTObjColl);
-        //return JSON.stringify(FVWTObjColl);
+        WebformData.MultipleTables = $.extend(formTables, gridTables);
+        return JSON.stringify(WebformData);
     };
 
     this.ajaxsuccess = function (rowAffected) {

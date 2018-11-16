@@ -239,6 +239,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.orderColl = [];
                 this.check4Customcolumn();
                 this.EbObject.OrderBy.$values = [];
+                this.MainData = null;
                 if (this.isCustomColumnExist) {
                     EbDialog("show", {
                         Message: "Retain Custom Columns?",

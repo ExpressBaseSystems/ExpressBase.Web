@@ -656,11 +656,11 @@
                 Id: id,
                 Date: this.$SrgyDate.val(),
                 Branch: this.$SrgyBranch.val(),
-                ExtractBy: this.$SrgyExtrDnBy.val(),
-                ImplantBy: this.$SrgyImplantBy.val(),
-                ConsentBy: this.$SrgyConsentBy.val(),
-                AnaesthesiaBy: this.$SrgyAnasthBy.val(),
-                PostBriefBy: this.$SrgyPostBrfBy.val(),
+                Extract_By: this.$SrgyExtrDnBy.val(),
+                Implant_By: this.$SrgyImplantBy.val(),
+                Consent_By: this.$SrgyConsentBy.val(),
+                Anaesthesia_By: this.$SrgyAnasthBy.val(),
+                Post_Brief_By: this.$SrgyPostBrfBy.val(),
                 Nurse: this.$SrgyNurse.val(),
                 Account_Code: this.AccId
             };
@@ -831,7 +831,7 @@
             EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
             return false;
         }
-        if (!this.isPhoneUnique) {
+        if (!this.isPhoneUnique && this.$Phone.val().trim() !== "") {
             EbMessage("show", { Message: 'Entered Phone Number is Already Exists', AutoHide: true, Background: '#aa0000' });
             return false;
         }

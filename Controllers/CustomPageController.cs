@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Common;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
@@ -40,6 +41,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.CostCenter = fr.CostCenterDict;
 			ViewBag.DocDict = fr.DoctorDict;
 			ViewBag.StaffDict = fr.StaffDict;
+			ViewBag.NurseDict = fr.NurseDict;
 			ViewBag.CrntCityList = fr.CrntCityList;
 			ViewBag.CrntCountryList = fr.CrntCountryList;
 			ViewBag.CityList = fr.CityList;
@@ -50,6 +52,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.ServiceList = fr.ServiceList;
 
 			ViewBag.ImageIdList = fr.ImageIdList;
+			ViewBag.Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
 
 			if (mode == 1)
 			{
@@ -79,6 +82,8 @@ namespace ExpressBase.Web.Controllers
 		}
 		public int SaveSurgeryDtls(string SurgeryInfo)
 		{
+			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+				return 0;
 			SaveSurgeryDetailsResponse res = this.ServiceClient.Post<SaveSurgeryDetailsResponse>(new SaveSurgeryDetailsRequest { Data = SurgeryInfo, UserName = this.LoggedInUser.FullName });
 			return res.Status;
 		}

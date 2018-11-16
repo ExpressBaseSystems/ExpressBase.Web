@@ -580,7 +580,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         if (this.login == "uc") {
             dvcontainerObj.modifyNavigation();
         }
-        $("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
+        //$("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
         this.bindEvents();
 
         if (this.type !== "googlemap")

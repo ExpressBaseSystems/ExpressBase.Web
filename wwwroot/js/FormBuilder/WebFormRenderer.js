@@ -79,11 +79,9 @@
 
         }.bind(this));
         // temp
-        let contControls = getInnerFlatContControls(this.FormObj);
-        $.each(contControls, function (k, Obj) {
-            if (Obj.ObjType === "DataGrid") {
-                this.initControls.init(Obj);
-            }
+        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
+        $.each(this.DGs, function (k, DG) {
+            this.initControls.init(DG);
         }.bind(this));
 
         if (this.isEditMode)
@@ -193,6 +191,10 @@
         let FormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames(FormData);
         //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
+        $.each(this.DGs, function (k, DG) {
+            let SingleTable = FormData[DG.TableName];
+            DG.addEditModeRows(SingleTable);
+        }.bind(this));
 
         let NCCSingleColumns_flat = this.getNCCSingleColumns_flat(FormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat);
@@ -216,9 +218,8 @@
 
     this.getDG_FVWTObjColl = function () {
         let FVWTObjColl = {};
-        let DGs = getFlatObjOfType(this.FormObj, "DataGrid");
-        $.each(DGs, function (i, ctrl) {
-            FVWTObjColl[ctrl.TableName] = ctrl.ChangedRowObject();
+        $.each(this.DGs, function (i, DG) {
+            FVWTObjColl[DG.TableName] = DG.ChangedRowObject();
         });
         return FVWTObjColl;
     };

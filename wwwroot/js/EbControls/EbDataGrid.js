@@ -15,9 +15,13 @@
         SingleRow.IsUpdate = (rowId !== 0);
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
-            SingleRow.Columns.push(getSinglColumn(obj));
+            SingleRow.Columns.push(getSingleColumn(obj));
         }.bind(this));
         return SingleRow;
+    };
+
+    this.addEditModeRows = function (SingleTable) {
+
     };
 
     this.changedRowWT = function () {

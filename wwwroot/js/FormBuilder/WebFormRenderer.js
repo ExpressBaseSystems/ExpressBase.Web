@@ -56,7 +56,7 @@
         this.initWebFormCtrls();
         if (this.isEditMode)
             this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        let allFlatControls = getFlatContControls(this.FormObj).concat(this.flatControls);
+        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
         $.each(allFlatControls, function (k, Obj) {
             this.updateCtrlUI(Obj);
         }.bind(this));
@@ -78,15 +78,14 @@
                 this.bindValidators(Obj);
 
         }.bind(this));
+        // temp
+        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
+        $.each(this.DGs, function (k, DG) {
+            this.initControls.init(DG);
+        }.bind(this));
+
         if (this.isEditMode)
             this.populateControls();
-        // temp
-        let contControls = getFlatContControls(this.FormObj);
-        $.each(contControls, function (k, Obj) {
-            if (Obj.ObjType === "DataGrid") {
-                this.initControls.init(Obj);
-            }
-        }.bind(this));
     };
 
     this.bindValidators = function (control) {
@@ -157,10 +156,51 @@
 
     this.populateControls = function () {
         this.rowId = getObjByval(this.editModeObj, "Name", "id").Value;
-        this.setEditModevalues(this.rowId);
-    }
+        this.getEditModeFormData(this.rowId);
+    };
 
-    this.setEditModevalues = function (rowId) {
+    this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
+        $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
+            if (SingleColumn.name === "id")
+                return true;
+            let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.name);
+            ctrl.setValue(SingleColumn.value);
+        }.bind(this));
+    };
+
+    this.getNCCTblNames = function (FormData) {
+        let NCCTblNames = [];
+        let FlatContControls = getFlatContControls(this.FormObj);
+        $.each(FlatContControls, function (i, CC) {
+            if (!CC.IsSpecialContainer)
+                NCCTblNames.push(CC.TableName);
+        });
+        return NCCTblNames;
+    };
+
+    this.getNCCSingleColumns_flat = function (FormData, NCCTblNames) {
+        let NCCSingleColumns_flat = [];
+        $.each(NCCTblNames, function (i, TblName) {
+            let SingleRowColums = FormData[TblName][0].columns;
+            NCCSingleColumns_flat = NCCSingleColumns_flat.concat(SingleRowColums);
+        });
+        return NCCSingleColumns_flat;
+    };
+
+    this.setEditModeCtrls = function () {
+        let FormData = this.EditModeFormData;
+        let NCCTblNames = this.getNCCTblNames(FormData);
+        //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
+        $.each(this.DGs, function (k, DG) {
+            let SingleTable = FormData[DG.TableName];
+            DG.addEditModeRows(SingleTable);
+        }.bind(this));
+
+        let NCCSingleColumns_flat = this.getNCCSingleColumns_flat(FormData, NCCTblNames);
+        this.setNCCSingleColumns(NCCSingleColumns_flat);
+    };
+
+    this.getEditModeFormData = function (rowId) {
         this.showLoader();
         $.ajax({
             type: "POST",
@@ -169,11 +209,8 @@
                 refid: this.formRefId, rowid: parseInt(rowId)
             },
             success: function (data) {
-                this.EditModevalues = data.rowValues;
-                $.each(this.flatControls, function (i, Obj) {
-                    Obj.setValue(this.EditModevalues[i]);
-                }.bind(this));
-                console.log(data);
+                this.EditModeFormData = data.formData.multipleTables;
+                this.setEditModeCtrls();
                 this.hideLoader();
             }.bind(this),
         });
@@ -181,9 +218,8 @@
 
     this.getDG_FVWTObjColl = function () {
         let FVWTObjColl = {};
-        let DGs = getFlatObjOfType(this.FormObj, "DataGrid");
-        $.each(DGs, function (i, ctrl) {
-            FVWTObjColl[ctrl.TableName] = ctrl.ChangedRowObject();
+        $.each(this.DGs, function (i, DG) {
+            FVWTObjColl[DG.TableName] = DG.ChangedRowObject();
         });
         return FVWTObjColl;
     };
@@ -205,7 +241,7 @@
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }
             else {
-                FVWTObjColl[src_obj.TableName][0].Columns.push(getSinglColumn(obj));
+                FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
             }
         }.bind(this));
 

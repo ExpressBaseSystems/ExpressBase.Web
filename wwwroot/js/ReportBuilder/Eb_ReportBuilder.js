@@ -40,7 +40,18 @@
     this.pages = this.RbCommon.pages;
     this.TextAlign = EbEnums["EbTextAlign"];
     this.rulerTypesObj = this.RbCommon.EbRuler;
-    this.GenerateButtons = function () { };
+    this.GenerateButtons = function () { 
+		$("#obj_icons").empty();
+		$("#obj_icons").append(`
+			<button class='btn run' id='scheduler_init' data-toggle='tooltip' data-placement='bottom' title= 'Schedule'> <i class='fa fa-clock-o' aria-hidden='true'></i></button >
+			`);
+		$("#scheduler_init").off("click").on("click", this.DrawScheduler.bind(this));
+	};
+
+	this.DrawScheduler = function(){
+		$('#SchedulerModal').modal('show');
+	};
+
     this.TableCollection = {};
 
     this.RefreshControl = function (obj) {
@@ -604,8 +615,8 @@
         if (container)
             this.containerId = $("#page-reportLayer");
         this.containerId.append($control.$Control.outerHTML());
-        this.repExtern.replaceProp($control, editControl);
-        $control.EbSid = Objid; $control.Name = Objid;
+		this.repExtern.replaceProp($control, editControl);
+		$control.EbSid = Objid; $control.Name = editControl.Name;
         this.objCollection[Objid] = $control;
         this.RefreshControl($control);
         this.pg.addToDD(this.objCollection[Objid]);
@@ -686,6 +697,7 @@
     };
 
     this.init = function () {
+		this.GenerateButtons();
         if (this.EbObject === null || this.EbObject === "undefined")
             this.newReport();
         else

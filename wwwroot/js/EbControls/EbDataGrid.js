@@ -5,6 +5,14 @@
     this.newRowCounter = 0;
 
 
+    this.addEditModeRows = function (SingleTable) {
+        console.log(SingleTable);
+    };
+
+    ctrl.addEditModeRows = function (SingleTable) {
+        return this.addEditModeRows(SingleTable);
+    }.bind(this);
+
     ctrl.ChangedRowObject = function () {
         return this.changedRowWT();
     }.bind(this);
@@ -15,7 +23,7 @@
         SingleRow.IsUpdate = (rowId !== 0);
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
-            SingleRow.Columns.push(getSinglColumn(obj));
+            SingleRow.Columns.push(getSingleColumn(obj));
         }.bind(this));
         return SingleRow;
     };

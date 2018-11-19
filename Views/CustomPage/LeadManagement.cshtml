@@ -193,7 +193,6 @@
                                     }
                                 }
                             </select>
-                            @*<input id="txtService" type="text" class="form-control">*@
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -604,42 +603,7 @@
                             <select id="selSrgyNurse" class="form-control"></select>
                         </div>
                     </div>
-
                 </div>
-                @*<div class="lm-form-inline">
-                    <div class="col-md-4">
-                        <div class="lm-form-group">
-                            <label class="tag-title">Zone</label>
-                            <input id="txtSrgyZone" type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="lm-form-group">
-                            <label class="tag-title">Grafts</label>
-                            <input id="txtSrgyGrafts" type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="lm-form-group">
-                            <label class="tag-title">Density</label>
-                            <input id="txtSrgyDensity" type="text" class="form-control">
-                        </div>
-                    </div>
-                </div>
-                <div class="lm-form-inline">
-                    <div class="col-md-6">
-                        <div class="lm-form-group">
-                            <label class="tag-title">Patients Instructions</label>
-                            <textarea id="txaPatientInstr" class="form-control" style="height: 100px !important; resize:none;"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="lm-form-group">
-                            <label class="tag-title">Doctors Instructions</label>
-                            <textarea id="txaDoctorInstr" class="form-control" style="height: 100px !important; resize:none;"></textarea>
-                        </div>
-                    </div>
-                </div>*@
             </div>
             <div class="modal-footer">
                 <button id="btnSrgySave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
@@ -648,30 +612,6 @@
         </div>
     </div>
 </div>
-
-
-<!-- Attach Modal -->
-@*<div class="modal fade" id="mdlAttach" role="dialog">
-    <div class="modal-dialog" style="width:68%">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Upload Images</h4>
-            </div>
-            <div class="modal-body pd-0">
-                <div class="image_up_container_outer_body display-flex pd-0">
-                    <div class="col-md-12" style="padding:30px;height:100%;">
-                        <input id="image_up_input" type='file' data-preview-file-type='text' multiple />
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="ebbtn eb_btn-sm eb_btnblue" data-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>*@
-
 
 <!-- ViewImage Modal -->
 <div class="modal fade" id="mdlViewImage" role="dialog" data-id="">
@@ -701,24 +641,15 @@
         </div>
     </div>
 </div>
+
 <style>
     .MyTempColStyle {
-        /*white-space: nowrap;
-        overflow: hidden;*/
         overflow: visible;
         white-space: normal !important;
-        /*text-overflow: ellipsis;*/
         max-width: 350px;
         height: 30px !important;
     }
-    /*.MyTempColStyle:hover {
-            overflow: visible;
-            white-space: normal;
-        }*/
 </style>
-
-
-
 
 @{
     @using Newtonsoft.Json;
@@ -731,9 +662,7 @@
     var CCityList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CrntCityList));
     var CCountryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CrntCountryList));
     var CityList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CityList));
-    //var DistrictList = Html.Raw(JsonConvert.SerializeObject(ViewBag.DistrictList));
 
-    //var SourceCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SourceCategoryList));
     var SubCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SubCategoryList));
 
     var ImageIdList = Html.Raw(JsonConvert.SerializeObject(ViewBag.ImageIdList));
@@ -747,10 +676,7 @@
 
 <script>
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList, @ImageIdList );
-    @*var imgup = new ImageRender({
-        TenantId:'@ViewBag.cid'
-    })*@
-
+    
     var imgup = new EbFileUpload({
         Type:"image",
         Toggle: "#btnUploadImg",

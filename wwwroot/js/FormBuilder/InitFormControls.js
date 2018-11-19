@@ -147,9 +147,7 @@
     this.DataGrid = function (ctrl, ctrlOpts) {
         let ebsid = ctrl.EbSid_CtxId;
 
-        let DataGrid = new EbDataGrid(ctrl, {
-
-        });
+        let DataGrid = new EbDataGrid(ctrl, ctrlOpts);
     };
 
     this.ComboBox = function (ctrl, ctrlOpts) {

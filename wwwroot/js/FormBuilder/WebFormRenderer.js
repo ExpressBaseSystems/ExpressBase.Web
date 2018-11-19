@@ -81,7 +81,7 @@
         // temp
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
         $.each(this.DGs, function (k, DG) {
-            this.initControls.init(DG);
+            this.initControls.init(DG, { isEditMode: this.isEditMode});
         }.bind(this));
 
         if (this.isEditMode)
@@ -193,7 +193,7 @@
         //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
         $.each(this.DGs, function (k, DG) {
             let SingleTable = FormData[DG.TableName];
-            DG.addEditModeRows(SingleTable);
+            DG.setEditModeRows(SingleTable);
         }.bind(this));
 
         let NCCSingleColumns_flat = this.getNCCSingleColumns_flat(FormData, NCCTblNames);

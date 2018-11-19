@@ -2,15 +2,31 @@
     this.ctrl = ctrl;
     this.initControls = new InitControls(this);
     this.rowCtrls = {};
+    this.isEditMode = options.isEditMode;
     this.newRowCounter = 0;
 
 
-    this.addEditModeRows = function (SingleTable) {
-        console.log(SingleTable);
+    this.setEditModeRows = function (SingleTable) {
+        this.addEditModeRows(SingleTable);
     };
 
-    ctrl.addEditModeRows = function (SingleTable) {
-        return this.addEditModeRows(SingleTable);
+    this.addEditModeRows = function (SingleTable) {
+        let html = ``;
+        $.each(SingleTable, function (i, SingleRow) {
+            let rowid = SingleRow.rowId;
+            this.addRow(rowid);
+            $.each(SingleRow.columns, function (j, SingleColumn) {
+                if (j === 0)
+                    return true;
+                let ctrl = this.rowCtrls[rowid][(j - 1)];
+                ctrl.setValue(SingleColumn.value);
+                ctrl.Name = SingleColumn.name;
+            }.bind(this));
+        }.bind(this));
+    };
+
+    ctrl.setEditModeRows = function (SingleTable) {
+        return this.setEditModeRows(SingleTable);
     }.bind(this);
 
     ctrl.ChangedRowObject = function () {
@@ -78,8 +94,8 @@
         return tr;
     };
 
-    this.addRow = function (e) {
-        let rowid = --this.newRowCounter;
+    this.addRow = function (rowid) {
+        rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid);
         let $tr = $(tr);
         $(`#tbl_${this.ctrl.EbSid_CtxId} tbody`).append($tr);
@@ -187,7 +203,8 @@
 
     this.init = function () {
         if (this.ctrl.IsAddable) {
-            this.addRow();
+            if (!this.isEditMode)
+                this.addRow();
         }
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".check-row", this.checkRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".del-row", this.delRow_click);

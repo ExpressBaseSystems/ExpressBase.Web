@@ -1,0 +1,148 @@
+﻿@{
+    @using  ExpressBase.Common
+    var taskType = JobTypes.ReportTask;
+}
+<script type="text/javascript" src="~/src/jquery-cron-quartz.js"></script>
+<link rel="stylesheet" type="text/css" href="~/src/jquery-cron-quartz.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.non-rec').hide();
+        $('#cron').cronBuilder({
+            onChange: function (expression) {
+                $('#result').text(expression);
+                console.log(expression);
+            }
+        });
+
+        $('#datetimepicker').datetimepicker({
+            onChangeDateTime: function (dp, $input) {
+                var expression = "0 "; //Seconds
+                expression = expression + dp.getMinutes() + " "; //Minutes
+                expression = expression + dp.getHours() + " "; //Hours
+                expression = expression + dp.getDate() + " "; //Day - of - Month
+                expression = expression + parseInt(dp.getMonth() + 1) + " "; //Month
+                expression = expression + " ? "; //Day - of - Week
+                expression = expression + dp.getFullYear(); //Year(optional field)
+                $('#result').text(expression);
+                console.log(expression);
+            }
+        });
+
+        $('#schedule').on('click', function () {
+            $.post("../Scheduler/Schedule", {
+                "expression": $('#result').text(),
+                "objId": window.location.search.split("&")[0].split("=")[1],
+                "type": '@taskType'
+            }, function () {
+            }
+            );
+        });
+
+        $('input[type=radio][name=sch-type]').change(function () {
+            if (this.value === 'reccur') {
+                $('.recur').show();
+                $('.non-rec').hide();
+            }
+            else if (this.value === 'nonreccur') {
+                $('.recur').hide();
+                $('.non-rec').show();
+            }
+        });
+    });
+</script>
+
+<div class="modal fade" id="SchedulerModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Schedule</h4>
+            </div>
+            <div class="modal-body">
+                <div class="scheduler">
+                    <div class="form-check form-check-inline col-md-6">
+                        <input class="form-check-input" type="radio" name="sch-type" id="sch-type1" value="reccur" checked>
+                        <label class="form-check-label" for="sch-type1">
+                            Recurring
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline col-md-6">
+                        <input class="form-check-input" type="radio" name="sch-type" id="sch-type2" value="nonreccur">
+                        <label class="form-check-label" for="sch-type2">
+                            Non Recurring
+                        </label>
+                    </div>
+                    <div class="sch_content">
+                        <div class="recur">
+                            <div id="cron" class="cron-builder"></div>
+                            <span id="result" hidden></span>
+                        </div>
+
+                        <div class="non-rec">
+                            <div class="input-group col-md-3 col-md-offset-6">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                <input id="datetimepicker" type="text" class="form-control" placeholder="Date Time">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="schedule" class="btn btn-success" data-dismiss="modal">Schedule</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .scheduler {
+        padding-top: 10px;
+        padding-bottom: 30px;
+    }
+
+
+    .cron-period-select {
+        background-color: white;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .sch_content {
+        padding-top: 50px;
+    }
+
+    select {
+        width: 20%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    .modal-dialog {
+        width: 1200px;
+    }
+
+    .modal-body {
+        height: calc(100vh - 400px);
+        overflow-y: auto;
+    }
+
+    .non-rec {
+        margin-top: 20px;
+    }
+</style>

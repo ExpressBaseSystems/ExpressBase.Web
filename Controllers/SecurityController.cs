@@ -230,7 +230,7 @@ namespace ExpressBase.Web.Controllers
 				Id = userid,
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],
-				EmailPrimary = Dict["email"],
+				EmailPrimary = Dict["email"].Trim().ToLower(),
 				Password = Dict["pwd"],
 				EmailSecondary = Dict["alternateemail"],
 				DateOfBirth = Dict["dob"],
@@ -253,7 +253,7 @@ namespace ExpressBase.Web.Controllers
 
 		public bool isValidEmail(string reqEmail)
 		{
-            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail });
+            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail.Trim().ToLower() });
             return temp.unrespose;
 		}
 				

@@ -52,36 +52,6 @@ namespace ExpressBase.Web.Controllers
             var ds = this.ServiceClient.Get(new CreateApplicationRequest { Description = desc, appid = appid });
         }
 
-        public void schedule()
-        {
-            int _objId = 2236;
-            int val = 1332423;
-            string _solnId = "al_arz_sales";
-            List<Param> _param = new List<Param> { new Param { Name = "ids", Type = ((int)EbDbTypes.Int32).ToString(), Value = val.ToString() } };
-
-            EbTask _emailtask = new EbTask
-            {
-                Expression = "0 * * * * ?",
-                JobType = JobTypes.EmailTask,
-                Params = _param,
-                ObjId = _objId,
-                SolnId = _solnId
-            };
-
-            EbTask _smstask = new EbTask
-            {
-                Expression = "0/20 * * * * ?",
-                JobType = JobTypes.SmsTask,
-                Params = _param,
-                ObjId = _objId,
-                SolnId = _solnId
-            };
-            EbTask _testtask = new EbTask
-            {
-                Expression = "0/5 * * * * ?",
-                JobType = JobTypes.MyJob
-            };
-            var ds = this.ServiceClient.Post(new SchedulerMQRequest { Task = _smstask });
-        }
+     
     }
 }

@@ -321,7 +321,7 @@
             <!-- Billing Menu -->
             <div id="menuBilling" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
                 <div style="text-align:right; padding: 15px 15px;">
-                    <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                    <button id="btnNewBilling" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>                    
                 </div>
                 <div class="lm-form-inline">
                     <div id="divBilling"></div>
@@ -331,7 +331,16 @@
             <!-- Surgery Menu -->
             <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
                 <div style="text-align:right; padding: 15px 15px;">
-                    <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                    @{
+                        if (ViewBag.Permission)
+                        {
+                            <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
+                        }
+                        else
+                        {
+                            <div></div>
+                        }
+                    }
                 </div>
                 <div class="lm-form-inline">
                     <div id="divSrgy"></div>
@@ -427,7 +436,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Billing Details</h4>
             </div>
-            <div class="modal-body" style="height: 270px;">
+            <div class="modal-body" style="height: 290px;">
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
@@ -476,6 +485,7 @@
                                 <option>Cheque</option>
                                 <option>Credit Card</option>
                                 <option>RTGS</option>
+                                <option>Third Party Finance</option>
                             </select>
                         </div>
                     </div>
@@ -486,6 +496,19 @@
                         </div>
                     </div>
                 </div>
+                <div class="lm-form-inline">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label class="tag-title">PDC</label>
+                            <select id="selBlngPDC" class="form-control" disabled>
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
@@ -520,11 +543,11 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Surgery Details</h4>
             </div>
-            <div class="modal-body" style="height: 270px;">
+            <div class="modal-body" style="height: 240px;">
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
-                            <label class="tag-title">Date</label>
+                            <label class="tag-title">Date of Surgery</label>
                             <div class="input-group">
                                 <input id="txtSrgyDate" type="text" class="form-control" autocomplete="off">
                                 <span class="input-group-addon" onclick="$('#txtSrgyDate').focusin();"><i class="fa fa-calendar"></i></span>
@@ -541,11 +564,49 @@
                                 <option>Trivandrum</option>
                                 <option>Coimbatore</option>
                             </select>
-                            @*<input id="txtSrgyBranch" type="text" class="form-control">*@
                         </div>
                     </div>
                 </div>
                 <div class="lm-form-inline">
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label class="tag-title">Extraction Done By</label>
+                            <select id="selSrgyExtrDnBy" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label class="tag-title">Implantation By</label>
+                            <select id="selSrgyImplantBy" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label class="tag-title">Consent By</label>
+                            <select id="selSrgyConsentBy" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label class="tag-title">Anaesthesia By</label>
+                            <select id="selSrgyAnasthBy" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label class="tag-title">Post Briefing By</label>
+                            <select id="selSrgyPostBrfBy" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lm-form-group">
+                            <label class="tag-title">Nurse</label>
+                            <select id="selSrgyNurse" class="form-control"></select>
+                        </div>
+                    </div>
+
+                </div>
+                @*<div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
                             <label class="tag-title">Zone</label>
@@ -578,7 +639,7 @@
                             <textarea id="txaDoctorInstr" class="form-control" style="height: 100px !important; resize:none;"></textarea>
                         </div>
                     </div>
-                </div>
+                </div>*@
             </div>
             <div class="modal-footer">
                 <button id="btnSrgySave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
@@ -665,6 +726,7 @@
     var CenterInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.CostCenter));
     var DocInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.DocDict));
     var StaffInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.StaffDict));
+    var NurseInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.NurseDict));
 
     var CCityList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CrntCityList));
     var CCountryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.CrntCountryList));
@@ -684,7 +746,7 @@
 }
 
 <script>
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList, @ImageIdList );
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList, @ImageIdList );
     @*var imgup = new ImageRender({
         TenantId:'@ViewBag.cid'
     })*@

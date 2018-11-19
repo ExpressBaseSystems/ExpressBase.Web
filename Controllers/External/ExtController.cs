@@ -37,7 +37,7 @@ namespace ExpressBase.Web.Controllers
         public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc)
             : base(_client, _redis, _cxtacc) { }
 
-		[HttpGet]
+        [HttpGet]
         public IActionResult ResetPassword()
         {
 
@@ -75,7 +75,8 @@ namespace ExpressBase.Web.Controllers
             UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
             if (!result.isUniq)
             {
-                this.ServiceClient.Post(new ResetPasswordMqRequest() {
+                this.ServiceClient.Post(new ResetPasswordMqRequest()
+                {
                     Refid = "expressbase-expressbase-15-26-26",
                     Email = email
                 });
@@ -127,7 +128,7 @@ namespace ExpressBase.Web.Controllers
                 return Redirect("/StatusCode/404");
         }
 
-        public IActionResult TenantSignIn(string Email,string reDir)
+        public IActionResult TenantSignIn(string Email, string reDir)
         {
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
@@ -216,7 +217,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     return RedirectToAction("TenantSignIn", new { Email = reqEmail });
                 }
-                    
+
             }
             catch (WebServiceException e)
             {
@@ -361,35 +362,35 @@ namespace ExpressBase.Web.Controllers
             return false;
         }
 
-		
 
-		[HttpPost]
+
+        [HttpPost]
         public async Task<IActionResult> TenantSignin(int i)
         {
             var host = this.HttpContext.Request.Host;
             string[] hostParts = host.Host.Split(CharConstants.DOT);
             string whichconsole = null;
             var req = this.HttpContext.Request.Form;
-			string _redirectUrl = null;
+            string _redirectUrl = null;
             string _reDir = req["reDir"];
 
             //var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
             var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
-			//Console.WriteLine("first ip" + ip);
-			//Console.WriteLine("second ip" + t.ToString());
-			Console.WriteLine("-------------------------------------------------");
-			IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
-			foreach(var ttt in heserver.AddressList)
-				Console.WriteLine("From IP AddressList  ---> " + ttt.ToString());
-			Console.WriteLine("-------------------------------------------------");
+            //Console.WriteLine("first ip" + ip);
+            //Console.WriteLine("second ip" + t.ToString());
+            Console.WriteLine("-------------------------------------------------");
+            IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ttt in heserver.AddressList)
+                Console.WriteLine("From IP AddressList  ---> " + ttt.ToString());
+            Console.WriteLine("-------------------------------------------------");
 
-			Console.WriteLine(this.httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
-			//var ipt = heserver.AddressList[2].ToString();
-			foreach (var zzz in this.HttpContext.Request.Headers)
-				Console.WriteLine("Key : " + zzz.Key + "Value : " + zzz.Value);
+            Console.WriteLine(this.httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
+            //var ipt = heserver.AddressList[2].ToString();
+            foreach (var zzz in this.HttpContext.Request.Headers)
+                Console.WriteLine("Key : " + zzz.Key + "Value : " + zzz.Value);
 
-			//CHECK WHETHER SOLUTION ID IS VALID
-			bool bOK2AttemptLogin = true;
+            //CHECK WHETHER SOLUTION ID IS VALID
+            bool bOK2AttemptLogin = true;
 
             this.DecideConsole(hostParts[0], out whichconsole);
 
@@ -632,8 +633,8 @@ namespace ExpressBase.Web.Controllers
             var smsSid = Request.Form["SmsSid"];
             var messageStatus = Request.Form["MessageStatus"];
             SMSInitialRequest sMSSentRequest = new SMSInitialRequest();
-           // sMSSentRequest.To = req["to"];
-          //  sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
+            // sMSSentRequest.To = req["to"];
+            //  sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
             this.ServiceClient.Post(sMSSentRequest);
         }
 
@@ -705,7 +706,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("AppInfo/{id}")]
         public IActionResult GoDetail(int id)
         {
-            GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest {Id=id });
+            GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = id });
             ViewBag.StoreApps = resp.Wrapper;
             ViewBag.AppId = id;
             return View();
@@ -719,14 +720,14 @@ namespace ExpressBase.Web.Controllers
             string[] hostParts = host.Split(CharConstants.DOT);
 
             string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
-            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];  
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
 
             if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
             {
                 if (IsTokensValid(sRToken, sBToken, hostParts[0]))
                     return Redirect(RoutingConstants.PAYNOW);
                 else
-                    return Redirect(RoutingConstants.TENANTSIGNIN + "?reDir="+ this.S2B64("/AppInfo/" + _appid));
+                    return Redirect(RoutingConstants.TENANTSIGNIN + "?reDir=" + this.S2B64("/AppInfo/" + _appid));
             }
             else
             {
@@ -743,6 +744,17 @@ namespace ExpressBase.Web.Controllers
         {
             byte[] b = Convert.FromBase64String(b64);
             return Encoding.UTF8.GetString(b);
+        }
+
+        [HttpGet("/Api")]
+        public IActionResult ApiConsole()
+        {
+            //string _json = @"{'Tables':{'tablename1':[{'RowId':0,'isUpdate':false,'Columns':[{'Name':'col1','Value':'colval1','OldValue':'','Type':16,'AutoIncrement':false}]}]}}";
+
+            var res = this.ServiceClient.Post<FormDataJsonResponse>(new FormDataJsonRequest {
+                //JsonData = _json
+            });
+            return View();
         }
     }
 }

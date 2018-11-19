@@ -5,45 +5,51 @@
     this.newRowCounter = 0;
 
 
+    this.addEditModeRows = function (SingleTable) {
+        console.log(SingleTable);
+    };
+
+    ctrl.addEditModeRows = function (SingleTable) {
+        return this.addEditModeRows(SingleTable);
+    }.bind(this);
+
     ctrl.ChangedRowObject = function () {
         return this.changedRowWT();
     }.bind(this);
 
-    this.getRowWTs = function (inpCtrls) {
-        let RowWT = [];
-        {// rowIdcolObj pushing
-            let rowIdcolObj = {};
-            rowIdcolObj.Name = "id";
-            rowIdcolObj.Value = 0;
-            rowIdcolObj.Type = EbEnums.EbDbTypes.Int32;
-            rowIdcolObj.AutoIncrement = false;
-            RowWT.push(rowIdcolObj);
-        }
-
+    this.getRowWTs = function (rowId, inpCtrls) {
+        let SingleRow = {};
+        SingleRow.RowId = rowId;
+        SingleRow.IsUpdate = (rowId !== 0);
+        SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
-            let colObj = {};
-            colObj.Name = obj.Name;
-            _type = obj.EbDbType;
-            colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();
-            colObj.Type = _type;
-            colObj.AutoIncrement = obj.AutoIncrement || false;
-            RowWT.push(colObj);
+            SingleRow.Columns.push(getSingleColumn(obj));
         }.bind(this));
-        return RowWT;
+        return SingleRow;
     };
 
     this.changedRowWT = function () {
-        let RowsWT = [];
-        //    "tblName1":
-        //        [
-        //            { "rowid1": [{ name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //        ]
+        let SingleTable = [];
+        //            [
+        //              { RowId: 1,
+        //                IsUpdate: true,
+        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
+        //              },
+        //              {
+        //                RowId: 0,
+        //                IsUpdate: false,
+        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
+        //              },
+        //              {
+        //                RowId: 0,
+        //                IsUpdate: false,
+        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
+        //              },
+        //            ]
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            RowsWT.push(this.getRowWTs(inpCtrls));
+            SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
-        return RowsWT;
+        return SingleTable;
     };
 
     this.getNewTrHTML = function (rowid) {

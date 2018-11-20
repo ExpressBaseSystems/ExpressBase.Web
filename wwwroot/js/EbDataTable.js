@@ -971,20 +971,20 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     };
 
-    this.compareFilterValues = function (filter) {
-        let filter = this.getFilterValues("compare");
-        if (focusedId !== undefined) {
-            $.each(filter, function (i, obj) {
-                if (obj.Value !== dvcontainerObj.dvcol[focusedId].filterValues[i].Value) {
-                    filterChanged = true;
-                    return false;
-                }
+    //this.compareFilterValues = function (filter) {
+    //    let filter = this.getFilterValues("compare");
+    //    if (focusedId !== undefined) {
+    //        $.each(filter, function (i, obj) {
+    //            if (obj.Value !== dvcontainerObj.dvcol[focusedId].filterValues[i].Value) {
+    //                filterChanged = true;
+    //                return false;
+    //            }
 
-            }.bind(this));
-        }
-        else
-            filterChanged = true;
-    };
+    //        }.bind(this));
+    //    }
+    //    else
+    //        filterChanged = true;
+    //};
 
     this.fixedColumnCount = function () {
         var count = this.ebSettings.LeftFixedColumn;

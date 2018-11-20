@@ -8,13 +8,15 @@
 
     this.setEditModeRows = function (SingleTable) {
         this.addEditModeRows(SingleTable);
+        if (this.ctrl.IsAddable)
+            this.addRow();
     };
 
     this.addEditModeRows = function (SingleTable) {
         let html = ``;
         $.each(SingleTable, function (i, SingleRow) {
             let rowid = SingleRow.rowId;
-            this.addRow(rowid);
+            this.addRow(rowid, false);
             $.each(SingleRow.columns, function (j, SingleColumn) {
                 if (j === 0)
                     return true;
@@ -22,6 +24,10 @@
                 ctrl.setValue(SingleColumn.value);
                 ctrl.Name = SingleColumn.name;
             }.bind(this));
+            {// call checkRow_click() pass event.target indirectly
+                let td = $(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowid}] td:last`)[0];
+                this.checkRow_click({ target: td });
+            }
         }.bind(this));
     };
 
@@ -68,8 +74,8 @@
         return SingleTable;
     };
 
-    this.getNewTrHTML = function (rowid) {
-        let tr = `<tr added='true' rowid='${rowid}'>`;
+    this.getNewTrHTML = function (rowid, isAdded = true) {
+        let tr = `<tr is-added='${isAdded}' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
         let editBtn = "";
         $.each(this.ctrl.Controls.$values, function (i, col) {
@@ -94,9 +100,9 @@
         return tr;
     };
 
-    this.addRow = function (rowid) {
+    this.addRow = function (rowid, isAdded) {
         rowid = rowid || --this.newRowCounter;
-        let tr = this.getNewTrHTML(rowid);
+        let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
         $(`#tbl_${this.ctrl.EbSid_CtxId} tbody`).append($tr);
         this.initRowCtrls(rowid);
@@ -167,8 +173,8 @@
         let $tr = $td.closest("tr");
         let rowid = $tr.attr("rowid");
         this.ctrlToSpan_row(rowid);
-        if ($tr.attr("is-checked") !== "true")
-            this.addRow($tr);
+        if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
+            this.addRow();
         $tr.attr("is-checked", "true");
     }.bind(this);
 

@@ -234,9 +234,9 @@
                     obj.TableName = src_obj.TableName;
                 if (FVWTObjColl[obj.TableName] === undefined)
                     FVWTObjColl[obj.TableName] = [{
-                        RowId: 0,
+                        RowId: this.EditModeFormData[obj.TableName][0].rowId,
                         IsUpdate: false,
-                        Columns: [],
+                        Columns: []
                     }];
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }

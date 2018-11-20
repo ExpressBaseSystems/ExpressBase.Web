@@ -274,6 +274,17 @@ function JsonToEbControls(ctrlsContainer) {
 
 function getFlatContControls(formObj) {
     let coll = [];
+    if (formObj.IsContainer)
+        coll.push(formObj);
+
+    RecurFlatContControls(formObj, coll);
+    return coll;
+};
+
+
+function getInnerFlatContControls(formObj) {
+    let coll = [];
+
     RecurFlatContControls(formObj, coll);
     return coll;
 };
@@ -287,7 +298,6 @@ function RecurFlatContControls(src_obj, dest_coll) {
     });
 };
 
-
 function getFlatCtrlObjs(formObj) {
     let coll = [];
     RecurFlatCtrlObjs(formObj, coll);
@@ -296,6 +306,8 @@ function getFlatCtrlObjs(formObj) {
 
 function RecurFlatCtrlObjs(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
+        if (obj.IsSpecialContainer)
+            return true;
         if (obj.IsContainer)
             RecurFlatCtrlObjs(obj, dest_coll);
         else
@@ -354,6 +366,16 @@ function getValsForViz(formObj) {
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
     });
     return fltr_collection;
+}
+
+
+function getSingleColumn(obj) {
+    let SingleColumn = {};
+    SingleColumn.Name = obj.Name;
+    SingleColumn.Value = obj.getValue();
+    SingleColumn.Type = obj.EbDbType;
+    SingleColumn.AutoIncrement = obj.AutoIncrement || false;
+    return SingleColumn;
 }
 
 //JQuery extends

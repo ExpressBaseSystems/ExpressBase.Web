@@ -131,12 +131,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
     };
 
-    this.setValues = function () {
-        for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
-            $(`select[name="${this.EbObject.InputParams.$values[i].Column}-DBTYPE"]`).val(this.EbObject.InputParams.$values[i].Type);
-            $(`input[name="${this.EbObject.InputParams.$values[i].Column}-VLU"]`).val(this.EbObject.InputParams.$values[i].Value);
-        }
-    }
+	this.setValues = function () {
+		for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
+			$(`select[name="${this.EbObject.InputParams.$values[i].Column}-DBTYPE"]`).val(this.EbObject.InputParams.$values[i].Type);
+			$(`input[name="${this.EbObject.InputParams.$values[i].Column}-VLU"]`).val(this.EbObject.InputParams.$values[i].Value);
+		}
+	};
 
     this.AppendInpuParams = function () {
         $("#paraWinTab_" + tabNum + " tbody").empty();

@@ -2,47 +2,80 @@
     this.ctrl = ctrl;
     this.initControls = new InitControls(this);
     this.rowCtrls = {};
+    this.isEditMode = options.isEditMode;
     this.newRowCounter = 0;
 
+
+    this.setEditModeRows = function (SingleTable) {
+        this.addEditModeRows(SingleTable);
+        if (this.ctrl.IsAddable)
+            this.addRow();
+    };
+
+    this.addEditModeRows = function (SingleTable) {
+        let html = ``;
+        $.each(SingleTable, function (i, SingleRow) {
+            let rowid = SingleRow.rowId;
+            this.addRow(rowid, false);
+            $.each(SingleRow.columns, function (j, SingleColumn) {
+                if (j === 0)
+                    return true;
+                let ctrl = this.rowCtrls[rowid][(j - 1)];
+                ctrl.setValue(SingleColumn.value);
+                ctrl.Name = SingleColumn.name;
+            }.bind(this));
+            {// call checkRow_click() pass event.target indirectly
+                let td = $(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowid}] td:last`)[0];
+                this.checkRow_click({ target: td });
+            }
+        }.bind(this));
+    };
+
+    ctrl.setEditModeRows = function (SingleTable) {
+        return this.setEditModeRows(SingleTable);
+    }.bind(this);
 
     ctrl.ChangedRowObject = function () {
         return this.changedRowWT();
     }.bind(this);
 
-    this.getRowWTs = function (inpCtrls) {
-        let RowWT = [];
+    this.getRowWTs = function (rowId, inpCtrls) {
+        let SingleRow = {};
+        SingleRow.RowId = rowId;
+        SingleRow.IsUpdate = (rowId !== 0);
+        SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
-            let colObj = {};
-            colObj.Name = obj.Name;
-            _type = obj.EbDbType;
-            colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();
-            colObj.Type = _type;
-            colObj.AutoIncrement = obj.AutoIncrement || false;
-            RowWT.push(colObj);
+            SingleRow.Columns.push(getSingleColumn(obj));
         }.bind(this));
-        return RowWT;
+        return SingleRow;
     };
 
     this.changedRowWT = function () {
-        let RowsWT = [];
-        //    "tblName1":
-        //        [
-        //            { "rowid1": [{ name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //            { "0": [{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 }, { name: 1, val: 100 }, { name: 10, val: 100 },] },
-        //        ]
+        let SingleTable = [];
+        //            [
+        //              { RowId: 1,
+        //                IsUpdate: true,
+        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
+        //              },
+        //              {
+        //                RowId: 0,
+        //                IsUpdate: false,
+        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
+        //              },
+        //              {
+        //                RowId: 0,
+        //                IsUpdate: false,
+        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
+        //              },
+        //            ]
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            let row = {};
-            if (rowId < 0)
-                rowId = "0";
-            row[rowId] = this.getRowWTs(inpCtrls);
-            RowsWT.push(row);
+            SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
-        return RowsWT;
+        return SingleTable;
     };
 
-    this.getNewTrHTML = function (rowid) {
-        let tr = `<tr added='true' rowid='${rowid}'>`;
+    this.getNewTrHTML = function (rowid, isAdded = true) {
+        let tr = `<tr is-added='${isAdded}' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
         let editBtn = "";
         $.each(this.ctrl.Controls.$values, function (i, col) {
@@ -67,9 +100,9 @@
         return tr;
     };
 
-    this.addRow = function (e) {
-        let rowid = --this.newRowCounter;
-        let tr = this.getNewTrHTML(rowid);
+    this.addRow = function (rowid, isAdded) {
+        rowid = rowid || --this.newRowCounter;
+        let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
         $(`#tbl_${this.ctrl.EbSid_CtxId} tbody`).append($tr);
         this.initRowCtrls(rowid);
@@ -140,8 +173,8 @@
         let $tr = $td.closest("tr");
         let rowid = $tr.attr("rowid");
         this.ctrlToSpan_row(rowid);
-        if ($tr.attr("is-checked") !== "true")
-            this.addRow($tr);
+        if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
+            this.addRow();
         $tr.attr("is-checked", "true");
     }.bind(this);
 
@@ -176,7 +209,8 @@
 
     this.init = function () {
         if (this.ctrl.IsAddable) {
-            this.addRow();
+            if (!this.isEditMode)
+                this.addRow();
         }
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".check-row", this.checkRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".del-row", this.delRow_click);

@@ -1,4 +1,4 @@
-﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SubCategoryList, ImageIdList) {
+﻿var LeadManagementObj = function (AccId, MC_Mode, C_Info, Center_Info, Doc_Info, Staff_Info, Nurse_Info, F_List, B_List, S_List, CCityList, CCountryList, CityList, SubCategoryList, ImageIdList) {
     //INCOMMING DATA
     //ManageCustomer_Mode=0 -> new customer
     this.AccId = AccId;
@@ -7,11 +7,10 @@
     this.CostCenterInfo = Center_Info;
     this.DoctorInfo = Doc_Info;
     this.StaffInfo = Staff_Info;
+    this.NurseInfo = Nurse_Info;
     this.CCityList = CCityList || [];
     this.CCountryList = CCountryList || [];
     this.CityList = CityList || [];
-    //this.DistrictList = DistrictList || [];
-    //this.SourceCategoryList = SourceCategoryList || [];
     this.SubCategoryList = SubCategoryList || [];
 
     this.ImageIdList = ImageIdList || [];
@@ -51,7 +50,7 @@
     this.$FeePaid = $("#selFeePaid");
     this.$Closing = $("#selClosing");
     this.$Nature = $("#selNature");
-    
+
     //FOLLOWUP
     this.divFeedback = "divFdbk";
     this.$btnNewFeedBack = $("#btnNewFeedBack");
@@ -72,6 +71,7 @@
     this.$BlngPaid = $("#txtBlngPaid");
     this.$BlngMode = $("#selBlngMode");
     this.$BlngBank = $("#txtBlngBank");
+    this.$BlngPDC = $("#selBlngPDC");
     this.$BlngClrDate = $("#txtBlngClrDate");
     this.$BlngNarr = $("#txtBlngNarr");
     this.$BlngSave = $("#btnBlngSave");
@@ -81,25 +81,27 @@
     this.$MdlSurgery = $("#mdlSurgery");
     this.$SrgyDate = $("#txtSrgyDate");
     this.$SrgyBranch = $("#selSrgyBranch");
-    this.$SrgyZone = $("#txtSrgyZone");
-    this.$SrgyGrafts = $("#txtSrgyGrafts");
-    this.$SrgyDensity = $("#txtSrgyDensity");
-    this.$PatientInstr = $("#txaPatientInstr");
-    this.$DoctorInstr = $("#txaDoctorInstr");
-    this.$SrgySave = $("#btnSrgySave");  
+    this.$SrgyExtrDnBy = $("#selSrgyExtrDnBy");
+    this.$SrgyImplantBy = $("#selSrgyImplantBy");
+    this.$SrgyConsentBy = $("#selSrgyConsentBy");
+    this.$SrgyAnasthBy = $("#selSrgyAnasthBy");
+    this.$SrgyPostBrfBy = $("#selSrgyPostBrfBy");
+    this.$SrgyNurse = $("#selSrgyNurse");
+    this.$SrgySave = $("#btnSrgySave");
     //ATTACH
     this.$FirstImgPage = $("#btnFirstImgPage");
     this.$PrevImgPage = $("#btnPrevImgPage");
     this.$ImgPageNo = $("#lblImgPage");
     this.$NextImgPage = $("#btnNextImgPage");
     this.$LastImgPage = $("#btnLastImgPage");
-    
+
     //DECLARED DATA
     this.OutDataList = [];
     this.drake = null;
     this.imgCrntPage = 0;//current page
     this.imgPageSize = 10;//page size const
     this.isMobileUnique = null;
+    this.isPhoneUnique = null;
     this.isSlickInit = false;
 
     this.init = function () {
@@ -109,21 +111,19 @@
 
         this.$CrntCity.autocomplete({ source: this.CCityList });
         this.$CrntCountry.autocomplete({ source: this.CCountryList });
-        this.$HomeCity.autocomplete({ source: this.CityList }); 
-        //this.$HomeDistrict.autocomplete({ source: this.DistrictList });
-        //this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
+        this.$HomeCity.autocomplete({ source: this.CityList });
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
 
         $(document).bind('keypress', function (event) {
             if (event.which === 19 && event.ctrlKey && event.shiftKey) {
-                if(!($("#btnSave").prop("disabled")))
+                if (!($("#btnSave").prop("disabled")))
                     this.onClickBtnSave();
             }
         }.bind(this));
 
         $("#eb_common_loader").EbLoader("hide");
-    }
-    
+    };
+
     this.initMenuBarObj = function () {
         var menuBarObj = $("#layout_div").data("EbHeader");
         menuBarObj.setName("Lead Management");
@@ -136,10 +136,9 @@
         $("#btnSave").on("click", this.onClickBtnSave.bind(this));
         $("#btnNew").on("click", function () {
             if (confirm("Unsaved data will be lost!\n\nClick OK to Continue"))
-                //window.location.search = '';
                 window.location = window.origin + "/leadmanagement";
         }.bind(this));
-    }
+    };
 
     this.initForm = function () {
 
@@ -156,57 +155,63 @@
                 this.$Dob.val("01-01-" + (moment().year() - parseInt(this.$Age.val())));
         }.bind(this));
 
-        //=============================================================
-       
-        
-
-        //$('#modal-imgs-cont').on("dblclick", function () {
-        //    $("#mdlViewImage").modal('hide');
-        //});
-
-        //$('.img-in-viewer').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
-        //    console.log(nextSlide);
-        //});
-        //===============================================================
-
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
-        
+
         //FEEDBACK  BILLING  SURGERY 
         this.initFeedBackModal();
         this.initBillingModal();
         this.initSurgeryModal();
-        //this.initAttachModal();
-
         this.initAttachTab();
         this.initDrake();
 
         this.$CostCenter.children().remove();
-        $.each(this.CostCenterInfo, function (key, val) {            
-            this.$CostCenter.append(`<option value='${key}'">${val}</option>`);
+        this.$SrgyBranch.children().remove();
+        $.each(this.CostCenterInfo, function (key, val) {
+            this.$CostCenter.append(`<option value='${key}'>${val}</option>`);
+            this.$SrgyBranch.append(`<option value='${key}'>${val}</option>`);
         }.bind(this));
 
         this.$Doctor.children().remove();
+        this.$SrgyExtrDnBy.children().remove();
+        this.$SrgyImplantBy.children().remove();
+        this.$SrgyConsentBy.children().remove();
+        this.$SrgyAnasthBy.children().remove();
+        this.$SrgyExtrDnBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyImplantBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyConsentBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyAnasthBy.append(`<option value='0'>- Select -</option>`);
         $.each(this.DoctorInfo, function (key, val) {
-            this.$Doctor.append(`<option value='${val}'">${key}</option>`);
+            this.$Doctor.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyExtrDnBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyImplantBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyConsentBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyAnasthBy.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
         this.$LeadOwner.children().remove();
-        $.each(this.StaffInfo, function (key, val) {
-            this.$LeadOwner.append(`<option value='${val}'">${key}</option>`);
-        }.bind(this));
-
         this.$Closing.children().remove();
         $.each(this.StaffInfo, function (key, val) {
-            this.$Closing.append(`<option value='${val}'">${key}</option>`);
+            this.$LeadOwner.append(`<option value='${val}'>${key}</option>`);
+            this.$Closing.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
+        this.$SrgyPostBrfBy.children().remove();
+        this.$SrgyNurse.children().remove();
+        this.$SrgyPostBrfBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyNurse.append(`<option value='0'>- Select -</option>`);
+        $.each(this.NurseInfo, function (key, val) {
+            this.$SrgyPostBrfBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyNurse.append(`<option value='${val}'>${key}</option>`);
+        }.bind(this));
+                        
         this.$Mobile.on("change", function (e) {
             let newMob = $(e.target).val().trim();
             if (this.Mode === 1 && this.CustomerInfo["genurl"] === newMob) {
                 this.isMobileUnique = true;
             }
             else {
+                this.isMobileUnique = false;
                 $.ajax({
                     type: "POST",
                     url: "../CustomPage/UniqueCheck",
@@ -220,21 +225,46 @@
                             this.isMobileUnique = true;
                     }.bind(this)
                 });
-            }           
+            }
+        }.bind(this));
+
+        this.$Phone.on("change", function (e) {
+            let newMob = $(e.target).val().trim();
+            if (this.Mode === 1 && this.CustomerInfo["genphoffice"] === newMob) {
+                this.isPhoneUnique = true;
+            }
+            else {
+                this.isPhoneUnique = false;
+                $.ajax({
+                    type: "POST",
+                    url: "../CustomPage/UniqueCheck",
+                    data: { Key: "genurl", Value: newMob },
+                    success: function (result) {
+                        if (!result) {
+                            EbMessage("show", { Message: 'Entered Phone Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+                            this.isPhoneUnique = false;
+                        }
+                        else
+                            this.isPhoneUnique = true;
+                    }.bind(this)
+                });
+            }
         }.bind(this));
 
         if (this.Mode === 1) {
             this.fillCustomerData();
             this.isMobileUnique = true;
+            this.isPhoneUnique = true;
         }
         else if (this.Mode === 0) {
             this.$EnDate.val(moment(new Date()).format("DD-MM-YYYY"));
             this.$Closing.val("");
-            this.$Doctor.val("");  
+            this.$Doctor.val("");
             this.$LeadOwner.val("");
             this.isMobileUnique = false;
+            this.isPhoneUnique = false;
         }
-    }
+    };
 
     this.onClickSmallImage = function (evt) {
         $("#mdlViewImage").modal('show');
@@ -246,18 +276,18 @@
                 prevArrow: "<button class='img-prevArrow'><i class='fa fa-angle-left fa-4x' aria-hidden='true'></i></button>",
                 nextArrow: "<button class='img-nextArrow'><i class='fa fa-angle-right fa-4x' aria-hidden='true'></i></button>"
             });
-            
+
             $('#modal-imgs-cont').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
                 $(currentSlide).attr('src', '/images/imagenotfound.svg');
             });
         }
         let idx = parseInt($(evt.target).attr("data-idx"));
         $('#modal-imgs-cont').slick('slickGoTo', idx);
-    }.bind(this)
+    }.bind(this);
 
     this.initAttachTab = function () {
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            var target = $(e.target).attr("href") // activated tab
+            var target = $(e.target).attr("href"); // activated tab
             if (target === "#menuAttach" && this.ImageIdList.length !== 0) {
                 this.drawImagePage();
             }
@@ -272,29 +302,29 @@
 
         this.$PrevImgPage.on("click", function (evt) {
             if (this.imgCrntPage !== 0) {
-                this.imgCrntPage-- ;
+                this.imgCrntPage--;
                 this.drawImagePage();
             }
         }.bind(this));
 
         this.$NextImgPage.on("click", function (evt) {
-            if (this.imgCrntPage !== parseInt((this.ImageIdList.length-1) / this.imgPageSize)) {
-                this.imgCrntPage++ ;
+            if (this.imgCrntPage !== parseInt((this.ImageIdList.length - 1) / this.imgPageSize)) {
+                this.imgCrntPage++;
                 this.drawImagePage();
             }
         }.bind(this));
 
         this.$LastImgPage.on("click", function (evt) {
-            if (this.imgCrntPage !== parseInt((this.ImageIdList.length-1) / this.imgPageSize)) {
-                this.imgCrntPage = parseInt((this.ImageIdList.length-1) / this.imgPageSize);
+            if (this.imgCrntPage !== parseInt((this.ImageIdList.length - 1) / this.imgPageSize)) {
+                this.imgCrntPage = parseInt((this.ImageIdList.length - 1) / this.imgPageSize);
                 this.drawImagePage();
             }
         }.bind(this));
-    }
+    };
 
     this.drawImagePage = function () {
         $("#divAllImg").children().remove();
-        for (let i = this.imgCrntPage * this.imgPageSize; i < this.ImageIdList.length && i < (this.imgCrntPage+1) * this.imgPageSize; i++) {
+        for (let i = this.imgCrntPage * this.imgPageSize; i < this.ImageIdList.length && i < (this.imgCrntPage + 1) * this.imgPageSize; i++) {
             this.appendSmallImage(i, this.ImageIdList[i]);
         }
         $("#divAllImg").children().find('.Eb_Image').Lazy();
@@ -311,7 +341,7 @@
             }
         });
 
-    }
+    };
 
     this.appendSmallImage = function (indx, imgid) {
         $("#divAllImg").append(`
@@ -320,12 +350,12 @@
                     <img src="/images/spin.gif" data-src="/images/small/${imgid}.jpg" data-idx="${indx}" data-id="${imgid}" class="img-responsive list-item-img" />
                 </div>
             </div>`);
-    }
+    };
 
     this.initDrake = function () {
         this.drake = new dragula([document.getElementById("divAllImg"), document.getElementById("divCustomerDp")], {
-            
-            accepts: function (el, target, source, sibling) { 
+
+            accepts: function (el, target, source, sibling) {
                 if ($(target)[0] === $("#divCustomerDp")[0] && $(source)[0] === $("#divAllImg")[0]) {
                     $("#divCustomerDp").children().hide();
                     return true;
@@ -333,7 +363,7 @@
                 else {
                     $("#divCustomerDp").children().show();
                     return false;
-                }                    
+                }
             },
             copy: true
         });
@@ -345,10 +375,10 @@
                 $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
                         <img src="/images/small/${id}.jpg" data-id="${id}" style="max-height: 135px; max-width: 130px;" />
-                    </div>`);                
-            }            
+                    </div>`);
+            }
         });
-    }
+    };
 
     this.initFeedBackModal = function () {
         this.$btnNewFeedBack.on("click", function () {
@@ -417,7 +447,6 @@
         this.$MdlFeedBack.on('shown.bs.modal', function (e) {
             if (this.$MdlFeedBack.attr("data-id") === "") {
                 this.$FlUpDate.val(moment(new Date()).format("DD-MM-YYYY"));
-                //this.$FlUpStatus.val("");
                 this.$FlUpFolDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$FlUpComnt.val("");
                 this.$FlUpSave.children().hide();
@@ -429,8 +458,8 @@
         this.$MdlFeedBack.on('hidden.bs.modal', function (e) {
             this.$MdlFeedBack.attr("data-id", "");
         }.bind(this));
-    }
-       
+    };
+
     this.initBillingModal = function () {
         this.$btnNewBilling.on("click", function () {
             if (this.AccId === 0) {
@@ -452,6 +481,13 @@
             else {
                 this.$BlngBank.prop("disabled", false);
             }
+            if ($(evt.target).val() === "Cheque") {
+                this.$BlngPDC.prop("disabled", false);
+            }
+            else {
+                this.$BlngPDC.val('false');
+                this.$BlngPDC.prop("disabled", true);
+            }
         }.bind(this));
 
         this.$BlngSave.on("click", function () {
@@ -469,7 +505,7 @@
             this.$BlngSave.prop("disabled", true);
             if (this.$MdlBilling.attr("data-id") !== '')
                 id = parseInt(this.$MdlBilling.attr("data-id"));
-             
+
             var billingObj = {
                 Id: id,
                 Date: this.$BlngDate.val(),
@@ -479,6 +515,7 @@
                 Cash_Paid: this.$BlngPaid.val(),
                 Payment_Mode: this.$BlngMode.val(),
                 Bank: this.$BlngBank.val(),
+                PDC: this.$BlngPDC.val(),
                 Clearence_Date: this.$BlngClrDate.val(),
                 Narration: this.$BlngNarr.val(),
                 Account_Code: this.AccId
@@ -497,7 +534,6 @@
                     this.$BlngSave.children().hide();
                     if (result) {
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
-                        //this.$BlngSave.prop("disabled", false);
                         this.$MdlFeedBack.modal('hide');
                         location.reload();////////
                     }
@@ -518,6 +554,7 @@
             this.$BlngPaid.val(tempObj.Cash_Paid);
             this.$BlngMode.val(tempObj.Payment_Mode);
             this.$BlngBank.val(tempObj.Bank);
+            this.$BlngPDC.val(tempObj.PDC);
             this.$BlngClrDate.val(tempObj.Clearence_Date);
             this.$BlngNarr.val(tempObj.Narration);
             this.$MdlBilling.modal('show');
@@ -532,13 +569,14 @@
                 this.$BlngPaid.val("");
                 //this.$BlngMode.val("");
                 this.$BlngBank.val("");
+                this.$BlngPDC.val("false");
                 this.$BlngClrDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$BlngNarr.val("");
                 this.$BlngSave.prop("disabled", false);
                 this.$BlngSave.children().hide();
                 this.$BlngTotal.prop("disabled", false);
                 this.$BlngRcvd.prop("disabled", true);
-                this.$BlngBal.prop("disabled", true);   
+                this.$BlngBal.prop("disabled", true);
             }
             if (this.BillingList.length !== 0) {
                 let total = parseInt(this.BillingList[0]["Total_Amount"]);
@@ -562,45 +600,71 @@
         this.$MdlBilling.on('hidden.bs.modal', function (e) {
             this.$MdlBilling.attr("data-id", "");
         }.bind(this));
-    }
+    };
 
     this.initSurgeryModal = function () {
         this.$btnNewSurgeryDtls.on("click", function () {
-            EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
-            //if (this.AccId === 0) {
-            //    EbMessage("show", { Message: 'Save Customer Information then try to add Surgery Details', AutoHide: true, Background: '#aa0000' });
-            //}
-            //else {
-            //    this.$MdlSurgery.modal('show');
-            //}
+            //EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
+            if (this.AccId === 0) {
+                EbMessage("show", { Message: 'Save Customer Information then try to add Surgery Details', AutoHide: true, Background: '#aa0000' });
+            }
+            else {
+                this.$MdlSurgery.modal('show');
+            }
         }.bind(this));
 
         this.$SrgyDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
 
         this.$SrgySave.on("click", function () {
-            EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
-            //var id = 0;
-            //this.$SrgySave.children().show();
-            //this.$SrgySave.prop("disabled", true);
-            //if (this.$MdlSurgery.attr("data-id") !== '')
-            //    id = parseInt(this.$MdlSurgery.attr("data-id"));
-            //var SrgyObj = { Id: id, Date: this.$SrgyDate.val(), Branch: this.$SrgyBranch.val(), Account_Code: this.AccId };
-            //$.ajax({
-            //    type: "POST",
-            //    url: "../CustomPage/SaveSurgeryDtls",
-            //    data: { SurgeryInfo: JSON.stringify(SrgyObj) },
-            //    success: function (result) {
-            //        this.$SrgySave.prop("disabled", false);
-            //        this.$SrgySave.children().hide();
-            //        if (result) {
-            //            EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#0b851a' });
-            //            this.$MdlSurgery.modal('hide');
-            //        }
-            //        else {
-            //            EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#a40000' });
-            //        }
-            //    }.bind(this)
-            //});
+            //EbMessage("show", { Message: 'Sorry, This feature is not Activated.', AutoHide: true, Background: '#0000aa' });
+            var id = 0;
+            this.$SrgySave.children().show();
+            this.$SrgySave.prop("disabled", true);
+            if (this.$MdlSurgery.attr("data-id") !== '')
+                id = parseInt(this.$MdlSurgery.attr("data-id"));
+            var SrgyObj = {
+                Id: id,
+                Date: this.$SrgyDate.val(),
+                Branch: this.$SrgyBranch.val(),
+                Extract_By: this.$SrgyExtrDnBy.val(),
+                Implant_By: this.$SrgyImplantBy.val(),
+                Consent_By: this.$SrgyConsentBy.val(),
+                Anaesthesia_By: this.$SrgyAnasthBy.val(),
+                Post_Brief_By: this.$SrgyPostBrfBy.val(),
+                Nurse: this.$SrgyNurse.val(),
+                Account_Code: this.AccId
+            };
+            $.ajax({
+                type: "POST",
+                url: "../CustomPage/SaveSurgeryDtls",
+                data: { SurgeryInfo: JSON.stringify(SrgyObj) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    this.$SrgySave.prop("disabled", false);
+                    this.$SrgySave.children().hide();
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
+                success: function (result) {
+                    this.$SrgySave.prop("disabled", false);
+                    this.$SrgySave.children().hide();
+                    if (result) {
+                        EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Backgorund: '#0b851a' });
+                        this.$MdlSurgery.modal('hide');
+                        location.reload();////////
+                    }
+                    else {
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Backgorund: '#a40000' });
+                    }
+                }.bind(this)
+            });
+        }.bind(this));
+
+        $.each(this.SurgeryList, function (i, obj) {
+            obj["Extract_By"] = this.getKeyByValue(this.DoctorInfo, obj["Extract_By"]);
+            obj["Implant_By"] = this.getKeyByValue(this.DoctorInfo, obj["Implant_By"]);
+            obj["Consent_By"] = this.getKeyByValue(this.DoctorInfo, obj["Consent_By"]);
+            obj["Anaesthesia_By"] = this.getKeyByValue(this.DoctorInfo, obj["Anaesthesia_By"]);
+            obj["Post_Brief_By"] = this.getKeyByValue(this.NurseInfo, obj["Post_Brief_By"]);
+            obj["Nurse"] = this.getKeyByValue(this.NurseInfo, obj["Nurse"]);
         }.bind(this));
 
         new ListViewCustom(this.divSrgy, this.SurgeryList, function (id, data) {
@@ -623,40 +687,15 @@
         this.$MdlSurgery.on('hidden.bs.modal', function (e) {
             this.$MdlSurgery.attr("data-id", "");
         }.bind(this));
-    }
-
-    //this.initAttachModal = function () {
-
-        //$("#mdlAttach").on('shown.bs.modal', function (e) {
-        //    this.ImgRefdiff = [];
-        //    for (let i = 0; i < imgup.ImageRefIds.length; i++)
-        //        this.ImgRefdiff.push(imgup.ImageRefIds[i]);
-        //}.bind(this));
-
-        //$("#mdlAttach").on('hidden.bs.modal', function (e) {
-        //    let ImgRefNew = [];
-        //    for (let i = 0; i < imgup.ImageRefIds.length; i++) {
-        //        if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
-        //            $("#menuAttach").append(`<div class="img_wrapper">
-        //                                        <div class="img_wrapper_img">
-        //                                            <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
-        //                                        </div>
-        //                                    </div>`);
-        //        }
-        //    }
-        //}.bind(this));
-
-    //}
-
+    };
+    
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["firmcode"]);
         this.$EnDate.val(this.CustomerInfo["trdate"]);
         this.$Mobile.val(this.CustomerInfo["genurl"]);
-        //this.$Id.val(this.CustomerInfo[""]);
         this.$Name.val(this.CustomerInfo["name"]);
         this.$Dob.val(this.CustomerInfo["dob"]);
         this.$Dob.trigger("change");
-        //this.$Age.val(this.CustomerInfo["age"]);
         this.$Sex.val(this.CustomerInfo["sex"]);///////////
         this.$Phone.val(this.CustomerInfo["genphoffice"]);
         this.$Profession.val(this.CustomerInfo["profession"]);
@@ -678,7 +717,7 @@
             $("#divCustomerDp").append(`
                     <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
                         <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive" style="max-height: 135px; max-width: 130px;" onerror="this.src = '/images/imagenotfound.svg';" />
-                    </div>`);  
+                    </div>`);
         }
 
         this.$ConsultedDate.val(this.CustomerInfo["consdate"]);
@@ -690,12 +729,7 @@
         this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
         this.$Closing.val(this.CustomerInfo["closing"]);
         this.$Nature.val(this.CustomerInfo["nature"]);
-
-        //this.$CostCenter.prop("disabled", true);
-        //this.$EnDate.prop("disabled", true);
-        //this.$Mobile.prop("disabled", true);
-
-    }
+    };
 
     this.onClickBtnSave = function () {
         if (this.validateAndPrepareData()) {
@@ -715,7 +749,6 @@
                         uploadedImgRefList = [];//cleared Image ref id list
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
                         if (this.Mode === 0)
-                            //window.location.search = 'ac=' + result;
                             window.location = window.origin + "/leadmanagement/" + result;
                     }
                     else {
@@ -726,7 +759,7 @@
                 }.bind(this)
             });
         }
-    }
+    };
 
     this.validateAndPrepareData = function () {
         if (this.$Name.val() === "" || this.$Mobile.val() === "") {
@@ -737,18 +770,19 @@
             EbMessage("show", { Message: 'Entered Mobile Number is Already Exists', AutoHide: true, Background: '#aa0000' });
             return false;
         }
-            
-
+        if (!this.isPhoneUnique && this.$Phone.val().trim() !== "") {
+            EbMessage("show", { Message: 'Entered Phone Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+            return false;
+        }
+        
         this.OutDataList = [];
         this.OutDataList.push({ Key: "accountid", Value: this.AccId });
         //Data to customer vendor
-        this.pushToList("firmcode", (this.$CostCenter.val() || "0"));
+        this.pushToList("firmcode", this.$CostCenter.val() || "0");
         this.pushToList("trdate", this.$EnDate.val());
         this.pushToList("genurl", this.$Mobile.val());
-        //this.pushToList("", this.$Id.val());
         this.pushToList("name", this.$Name.val());
         this.pushToList("dob", this.$Dob.val());
-        //this.pushToList("age", this.$Age.val());
         this.pushToList("sex", this.$Sex.val());////////////
         this.pushToList("genphoffice", this.$Phone.val());
         this.pushToList("profession", this.$Profession.val());
@@ -778,23 +812,26 @@
         //this.OutDataList.push({ Key: "imagerefids", Value: JSON.stringify(imgup.ImageRefIds) });  
 
         let dprefid = $("#divCustomerDp").find("img").attr('data-id');
-        if(dprefid !== "0")
+        if (dprefid !== "0")
             this.pushToList("dprefid", dprefid);
         return true;
-    }
+    };
 
     this.pushToList = function (_key, _val) {
         if (_val === null || _val === undefined)
             return;
-        if (typeof (_val) === "string")
+        if (typeof _val === "string")
             _val = _val.trim();
         if (_val !== "")
             this.OutDataList.push({ Key: _key, Value: _val });
-    }
+    };
 
-    
+    this.getKeyByValue = function (object, value) {
+        return Object.keys(object).find(key => object[key] === value) || "";
+    };
+
     this.init();
-}
+};
 
 
 
@@ -813,12 +850,12 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
             this.metadata = ["9", "Id", "Date", "Total_Amount", "Amount_Received", "Balance_Amount", "Cash_Paid", "Payment_Mode", "Narration", "Created_By", "_billing"];
         }
         else if (this.ParentDivId === "divSrgy") {
-            this.metadata = ["5", "Id", "Date", "Branch", "Created_By", "Created_Date", "_surgery"];
+            this.metadata = ["11", "Id", "Created_Date", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Created_By", "_surgery"];
         }
         this.setTable();
 
-        $("#"+this.ParentDivId).on("click", ".editclass" + this.ParentDivId, this.onClickEdit.bind(this));
-    }
+        $("#" + this.ParentDivId).on("click", ".editclass" + this.ParentDivId, this.onClickEdit.bind(this));
+    };
 
     this.setTable = function () {
         $("#" + this.ParentDivId).append(`<table id="${this.TableId}" class="table-striped" style="width: 100%;"></table>`);
@@ -828,12 +865,12 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         tblcols.push({ data: null, title: "Serial No", searchable: false, orderable: false, className: "text-center" });
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });//for id
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
-            tblcols.push({ data: i, title: this.metadata[i].replace("_", " "), orderable: true, className: "MyTempColStyle"});
+            tblcols.push({ data: i, title: this.metadata[i].replace("_", " ").replace("_", " "), orderable: true, className: "MyTempColStyle" });
         //tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]]  });
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
         }
         else if (this.metadata.indexOf("_billing") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
@@ -841,7 +878,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         }
         else if (this.metadata.indexOf("_surgery") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]]});
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]], 10: this.itemList[i][this.metadata[10]], 11: this.itemList[i][this.metadata[11]] });
         }
 
         this.table = $("#" + this.TableId).DataTable({
@@ -860,29 +897,28 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
                 cell.innerHTML = i + 1;
             });
         }.bind(this)).draw();
-        
-    }
+
+    };
 
     this.tblEditColumnRender = function (data, type, row, meta) {
         var myObj = this.findObjectByKey(this.itemList, 'Id', data[1]);
         return `<i class="fa fa-pencil fa-2x editclass${this.ParentDivId}" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]} data-json=${window.btoa(JSON.stringify(myObj))}></i>`;
-    }.bind(this)
+    }.bind(this);
 
-    this.findObjectByKey = function(array, key, value) {
+    this.findObjectByKey = function (array, key, value) {
         for (var i = 0; i < array.length; i++) {
             if (array[i][key] === value) {
                 return array[i];
             }
         }
         return null;
-    }
+    };
 
     this.onClickEdit = function (e) {
         var id = $(e.target).attr("data-id");
         var data = $(e.target).attr("data-json");
         this.editFunction(id, data);
-    }
-
+    };
 
     this.init();
-}
+};

@@ -27,7 +27,7 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog FilterDialogObj, User _user, Eb_Solution _sol)
+        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog FilterDialogObj, User _user, Eb_Solution _sol, string ParentRefid)
         {
             if (FilterDialogObj != null)
             {
@@ -40,7 +40,7 @@ namespace ExpressBase.Web.Components
                     }
                     else if (control is EbUserLocation)
                     {
-                        (control as EbUserLocation).InitFromDataBase(this.ServiceClient, _user, _sol);
+                        (control as EbUserLocation).InitFromDataBase(this.ServiceClient, _user, _sol, ParentRefid);
                     }
                 }
                 ViewBag.HtmlHead = FilterDialogObj.GetHead();

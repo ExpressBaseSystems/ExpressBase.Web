@@ -861,8 +861,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     o.value = $(ctrl).find("input").val();
                 else if (ctype === "RadioGroup")
                     o.value = $(ctrl).children().find("[type=radio]:checked").val();
-                else if (ctype === "SimpleSelect" || ctype === "UserLocation")
+                else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
+                else if (ctype === "UserLocation")
+                    o.value = $(ctrl).next(".open").children().find(".active").text().trim().replace(" ", ",");
                 else
                     o.value = $($(ctrl).children()[1]).val();
 

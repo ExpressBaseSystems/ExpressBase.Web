@@ -13,7 +13,6 @@
     };
 
     this.addEditModeRows = function (SingleTable) {
-        let html = ``;
         $.each(SingleTable, function (i, SingleRow) {
             let rowid = SingleRow.rowId;
             this.addRow(rowid, false);
@@ -21,7 +20,9 @@
                 if (j === 0)
                     return true;
                 let ctrl = this.rowCtrls[rowid][(j - 1)];
-                ctrl.setValue(SingleColumn.value);
+                let val = SingleColumn.value;
+                console.log(val);
+                ctrl.setValue(val);
                 ctrl.Name = SingleColumn.name;
             }.bind(this));
             {// call checkRow_click() pass event.target indirectly
@@ -71,6 +72,7 @@
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
             SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
+        console.log(SingleTable);
         return SingleTable;
     };
 
@@ -84,6 +86,7 @@
             if (col.IsEditable)
                 editBtn = `<div class="fa fa-pencil ctrl-edit" aria-hidden="true"></div>`;
             let inpCtrl = new EbObjects[inpCtrlType]("ctrl_" + Date.now());
+            inpCtrl.Name = col.Name;
             inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td ctrltdidx='${i}'>

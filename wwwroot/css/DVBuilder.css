@@ -1,0 +1,14 @@
+﻿#columns-list {
+    height: 300px;
+}
+
+#orderby-list {
+    height: 200px;
+}
+
+.dv-divs {
+    border: 1px solid #ccc;
+    margin-top:3px;
+    background-color:white;
+}
+

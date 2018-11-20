@@ -971,21 +971,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     };
 
-    //this.compareFilterValues = function (filter) {
-    //    let filter = this.getFilterValues("compare");
-    //    if (focusedId !== undefined) {
-    //        $.each(filter, function (i, obj) {
-    //            if (obj.Value !== dvcontainerObj.dvcol[focusedId].filterValues[i].Value) {
-    //                filterChanged = true;
-    //                return false;
-    //            }
-
-    //        }.bind(this));
-    //    }
-    //    else
-    //        filterChanged = true;
-    //};
-
     this.fixedColumnCount = function () {
         var count = this.ebSettings.LeftFixedColumn;
         var visCount = 0;
@@ -1017,7 +1002,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double"))) && col.name !== "serial") {
+        if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || parseInt(gettypefromString("Numeric"))) && col.name !== "serial") {
             _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces));
             this.NumericIndex.push(col.data);
         }
@@ -2935,7 +2920,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
-        if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64"))) {
+        if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.ProgressBar) {
                 this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
                 this.ebSettings.Columns.$values[i].mRender = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);

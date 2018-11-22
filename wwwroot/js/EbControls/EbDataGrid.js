@@ -85,7 +85,8 @@
             editBtn = "";
             if (col.IsEditable)
                 editBtn = `<div class="fa fa-pencil ctrl-edit" aria-hidden="true"></div>`;
-            let inpCtrl = new EbObjects[inpCtrlType]("ctrl_" + Date.now());
+            let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid);
             inpCtrl.Name = col.Name;
             inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);

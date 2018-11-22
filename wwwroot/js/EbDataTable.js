@@ -2923,16 +2923,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.updateRenderFunc_Inner = function (i, col) {
         if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.ProgressBar) {
-                this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-                this.ebSettings.Columns.$values[i].mRender = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-            }
-            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.Link) {
-                this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
-                this.ebSettings.Columns.$values[i].render = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-                this.ebSettings.Columns.$values[i].mRender = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-                //alert(this.linkDV);
-            }
+            //if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.ProgressBar) {
+            //    this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
+            //    this.ebSettings.Columns.$values[i].mRender = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
+            //}
+            //else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.Link) {
+            //    this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
+            //    this.ebSettings.Columns.$values[i].render = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
+            //    this.ebSettings.Columns.$values[i].mRender = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
+            //    //alert(this.linkDV);
+            //}
             //else if (this.ebSettings.Columns.$values[i].DecimalPlaces > 0) {
             //    var deci = this.ebSettings.Columns.$values[i].DecimalPlaces;
             //    this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) {
@@ -2969,21 +2969,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }
         if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
-                //this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
-                this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
-                //this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
-                //this.ebSettings.Columns.$values[i].mRender = this.renderlink4NewTable.bind(this);
-                //alert(this.linkDV);
-            }
-            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
+            //if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
+            //    //this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
+            //    this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
+            //    //this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
+            //    //this.ebSettings.Columns.$values[i].mRender = this.renderlink4NewTable.bind(this);
+            //    //alert(this.linkDV);
+            //}
+             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
             }
-            else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Marker) {
-                this.ebSettings.Columns.$values[i].render = this.renderMarker.bind(this);
-                this.ebSettings.Columns.$values[i].mRender = this.renderMarker.bind(this);
-            }
+            //else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Marker) {
+            //    this.ebSettings.Columns.$values[i].render = this.renderMarker.bind(this);
+            //    this.ebSettings.Columns.$values[i].mRender = this.renderMarker.bind(this);
+            //}
             else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
                 this.ebSettings.Columns.$values[i].render = this.renderFBImage.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.renderFBImage.bind(this);
@@ -2998,11 +2998,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //}
         }
         if (col.Type == parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
-            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
-                this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
-                //this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
-                //this.ebSettings.Columns.$values[i].mRender = this.renderlink4NewTable.bind(this);
-            }
+            //if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
+            //    this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
+            //    //this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
+            //    //this.ebSettings.Columns.$values[i].mRender = this.renderlink4NewTable.bind(this);
+            //}
             //else {
             //    this.ebSettings.Columns.$values[i].render = this.renderDateformat.bind(this);
             //    this.ebSettings.Columns.$values[i].mRender = this.renderDateformat.bind(this);

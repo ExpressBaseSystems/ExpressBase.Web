@@ -11,8 +11,6 @@
     this.CCityList = CCityList || [];
     this.CCountryList = CCountryList || [];
     this.CityList = CityList || [];
-    //this.DistrictList = DistrictList || [];
-    //this.SourceCategoryList = SourceCategoryList || [];
     this.SubCategoryList = SubCategoryList || [];
 
     this.ImageIdList = ImageIdList || [];
@@ -83,11 +81,6 @@
     this.$MdlSurgery = $("#mdlSurgery");
     this.$SrgyDate = $("#txtSrgyDate");
     this.$SrgyBranch = $("#selSrgyBranch");
-    //this.$SrgyZone = $("#txtSrgyZone");
-    //this.$SrgyGrafts = $("#txtSrgyGrafts");
-    //this.$SrgyDensity = $("#txtSrgyDensity");
-    //this.$PatientInstr = $("#txaPatientInstr");
-    //this.$DoctorInstr = $("#txaDoctorInstr");
     this.$SrgyExtrDnBy = $("#selSrgyExtrDnBy");
     this.$SrgyImplantBy = $("#selSrgyImplantBy");
     this.$SrgyConsentBy = $("#selSrgyConsentBy");
@@ -119,8 +112,6 @@
         this.$CrntCity.autocomplete({ source: this.CCityList });
         this.$CrntCountry.autocomplete({ source: this.CCountryList });
         this.$HomeCity.autocomplete({ source: this.CityList });
-        //this.$HomeDistrict.autocomplete({ source: this.DistrictList });
-        //this.$SourceCategory.autocomplete({ source: this.SourceCategoryList });
         this.$SubCategory.autocomplete({ source: this.SubCategoryList });
 
         $(document).bind('keypress', function (event) {
@@ -145,7 +136,6 @@
         $("#btnSave").on("click", this.onClickBtnSave.bind(this));
         $("#btnNew").on("click", function () {
             if (confirm("Unsaved data will be lost!\n\nClick OK to Continue"))
-                //window.location.search = '';
                 window.location = window.origin + "/leadmanagement";
         }.bind(this));
     };
@@ -165,19 +155,6 @@
                 this.$Dob.val("01-01-" + (moment().year() - parseInt(this.$Age.val())));
         }.bind(this));
 
-        //=============================================================
-
-
-
-        //$('#modal-imgs-cont').on("dblclick", function () {
-        //    $("#mdlViewImage").modal('hide');
-        //});
-
-        //$('.img-in-viewer').on('lazyLoadError', function (event, slick, currentSlide, nextSlide) {
-        //    console.log(nextSlide);
-        //});
-        //===============================================================
-
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
         this.$ProbableMonth.MonthPicker({ Button: this.$ProbableMonth.next().removeAttr("onclick") });
 
@@ -185,8 +162,6 @@
         this.initFeedBackModal();
         this.initBillingModal();
         this.initSurgeryModal();
-        //this.initAttachModal();
-
         this.initAttachTab();
         this.initDrake();
 
@@ -206,7 +181,6 @@
         this.$SrgyImplantBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyConsentBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyAnasthBy.append(`<option value='0'>- Select -</option>`);
-
         $.each(this.DoctorInfo, function (key, val) {
             this.$Doctor.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyExtrDnBy.append(`<option value='${val}'>${key}</option>`);
@@ -217,7 +191,6 @@
 
         this.$LeadOwner.children().remove();
         this.$Closing.children().remove();
-
         $.each(this.StaffInfo, function (key, val) {
             this.$LeadOwner.append(`<option value='${val}'>${key}</option>`);
             this.$Closing.append(`<option value='${val}'>${key}</option>`);
@@ -231,8 +204,7 @@
             this.$SrgyPostBrfBy.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyNurse.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
-
-                
+                        
         this.$Mobile.on("change", function (e) {
             let newMob = $(e.target).val().trim();
             if (this.Mode === 1 && this.CustomerInfo["genurl"] === newMob) {
@@ -315,7 +287,7 @@
 
     this.initAttachTab = function () {
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            var target = $(e.target).attr("href") // activated tab
+            var target = $(e.target).attr("href"); // activated tab
             if (target === "#menuAttach" && this.ImageIdList.length !== 0) {
                 this.drawImagePage();
             }
@@ -475,7 +447,6 @@
         this.$MdlFeedBack.on('shown.bs.modal', function (e) {
             if (this.$MdlFeedBack.attr("data-id") === "") {
                 this.$FlUpDate.val(moment(new Date()).format("DD-MM-YYYY"));
-                //this.$FlUpStatus.val("");
                 this.$FlUpFolDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$FlUpComnt.val("");
                 this.$FlUpSave.children().hide();
@@ -563,7 +534,6 @@
                     this.$BlngSave.children().hide();
                     if (result) {
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
-                        //this.$BlngSave.prop("disabled", false);
                         this.$MdlFeedBack.modal('hide');
                         location.reload();////////
                     }
@@ -718,39 +688,14 @@
             this.$MdlSurgery.attr("data-id", "");
         }.bind(this));
     };
-
-    //this.initAttachModal = function () {
-
-    //$("#mdlAttach").on('shown.bs.modal', function (e) {
-    //    this.ImgRefdiff = [];
-    //    for (let i = 0; i < imgup.ImageRefIds.length; i++)
-    //        this.ImgRefdiff.push(imgup.ImageRefIds[i]);
-    //}.bind(this));
-
-    //$("#mdlAttach").on('hidden.bs.modal', function (e) {
-    //    let ImgRefNew = [];
-    //    for (let i = 0; i < imgup.ImageRefIds.length; i++) {
-    //        if (this.ImgRefdiff.indexOf(imgup.ImageRefIds[i]) === -1) {
-    //            $("#menuAttach").append(`<div class="img_wrapper">
-    //                                        <div class="img_wrapper_img">
-    //                                            <img src="${(imgup.ImageBase64[imgup.ImageRefIds[i]] === undefined) ? "/images/spin.gif" : imgup.ImageBase64[imgup.ImageRefIds[i]]}" class="img-responsive" />
-    //                                        </div>
-    //                                    </div>`);
-    //        }
-    //    }
-    //}.bind(this));
-
-    //}
-
+    
     this.fillCustomerData = function () {
         this.$CostCenter.val(this.CustomerInfo["firmcode"]);
         this.$EnDate.val(this.CustomerInfo["trdate"]);
         this.$Mobile.val(this.CustomerInfo["genurl"]);
-        //this.$Id.val(this.CustomerInfo[""]);
         this.$Name.val(this.CustomerInfo["name"]);
         this.$Dob.val(this.CustomerInfo["dob"]);
         this.$Dob.trigger("change");
-        //this.$Age.val(this.CustomerInfo["age"]);
         this.$Sex.val(this.CustomerInfo["sex"]);///////////
         this.$Phone.val(this.CustomerInfo["genphoffice"]);
         this.$Profession.val(this.CustomerInfo["profession"]);
@@ -784,11 +729,6 @@
         this.$FeePaid.val(this.CustomerInfo["consultingfeepaid"]);
         this.$Closing.val(this.CustomerInfo["closing"]);
         this.$Nature.val(this.CustomerInfo["nature"]);
-
-        //this.$CostCenter.prop("disabled", true);
-        //this.$EnDate.prop("disabled", true);
-        //this.$Mobile.prop("disabled", true);
-
     };
 
     this.onClickBtnSave = function () {
@@ -809,7 +749,6 @@
                         uploadedImgRefList = [];//cleared Image ref id list
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
                         if (this.Mode === 0)
-                            //window.location.search = 'ac=' + result;
                             window.location = window.origin + "/leadmanagement/" + result;
                     }
                     else {
@@ -835,18 +774,15 @@
             EbMessage("show", { Message: 'Entered Phone Number is Already Exists', AutoHide: true, Background: '#aa0000' });
             return false;
         }
-
-
+        
         this.OutDataList = [];
         this.OutDataList.push({ Key: "accountid", Value: this.AccId });
         //Data to customer vendor
-        this.pushToList("firmcode", (this.$CostCenter.val() || "0"));
+        this.pushToList("firmcode", this.$CostCenter.val() || "0");
         this.pushToList("trdate", this.$EnDate.val());
         this.pushToList("genurl", this.$Mobile.val());
-        //this.pushToList("", this.$Id.val());
         this.pushToList("name", this.$Name.val());
         this.pushToList("dob", this.$Dob.val());
-        //this.pushToList("age", this.$Age.val());
         this.pushToList("sex", this.$Sex.val());////////////
         this.pushToList("genphoffice", this.$Phone.val());
         this.pushToList("profession", this.$Profession.val());
@@ -884,7 +820,7 @@
     this.pushToList = function (_key, _val) {
         if (_val === null || _val === undefined)
             return;
-        if (typeof (_val) === "string")
+        if (typeof _val === "string")
             _val = _val.trim();
         if (_val !== "")
             this.OutDataList.push({ Key: _key, Value: _val });
@@ -984,6 +920,5 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         this.editFunction(id, data);
     };
 
-
     this.init();
-}
+};

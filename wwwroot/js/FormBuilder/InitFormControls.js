@@ -53,6 +53,13 @@
         //$input.selectpicker();
     };
 
+    this.UserLocation = function (ctrl) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        $input.multiselect({
+            includeSelectAllOption: true
+        });
+    };
+
     this.InputGeoLocation = function (ctrl) {
         navigator.geolocation.getCurrentPosition(function (position) {
             this.Bot.userLoc.lat = position.coords.latitude;
@@ -147,9 +154,7 @@
     this.DataGrid = function (ctrl, ctrlOpts) {
         let ebsid = ctrl.EbSid_CtxId;
 
-        let DataGrid = new EbDataGrid(ctrl, {
-
-        });
+        let DataGrid = new EbDataGrid(ctrl, ctrlOpts);
     };
 
     this.ComboBox = function (ctrl, ctrlOpts) {

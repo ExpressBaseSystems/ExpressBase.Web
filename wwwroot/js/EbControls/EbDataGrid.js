@@ -2,8 +2,39 @@
     this.ctrl = ctrl;
     this.initControls = new InitControls(this);
     this.rowCtrls = {};
+    this.isEditMode = options.isEditMode;
     this.newRowCounter = 0;
 
+
+    this.setEditModeRows = function (SingleTable) {
+        this.addEditModeRows(SingleTable);
+        if (this.ctrl.IsAddable)
+            this.addRow();
+    };
+
+    this.addEditModeRows = function (SingleTable) {
+        $.each(SingleTable, function (i, SingleRow) {
+            let rowid = SingleRow.rowId;
+            this.addRow(rowid, false);
+            $.each(SingleRow.columns, function (j, SingleColumn) {
+                if (j === 0)
+                    return true;
+                let ctrl = this.rowCtrls[rowid][(j - 1)];
+                let val = SingleColumn.value;
+                console.log(val);
+                ctrl.setValue(val);
+                ctrl.Name = SingleColumn.name;
+            }.bind(this));
+            {// call checkRow_click() pass event.target indirectly
+                let td = $(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowid}] td:last`)[0];
+                this.checkRow_click({ target: td });
+            }
+        }.bind(this));
+    };
+
+    ctrl.setEditModeRows = function (SingleTable) {
+        return this.setEditModeRows(SingleTable);
+    }.bind(this);
 
     ctrl.ChangedRowObject = function () {
         return this.changedRowWT();
@@ -15,7 +46,7 @@
         SingleRow.IsUpdate = (rowId !== 0);
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
-            SingleRow.Columns.push(getSinglColumn(obj));
+            SingleRow.Columns.push(getSingleColumn(obj));
         }.bind(this));
         return SingleRow;
     };
@@ -41,11 +72,12 @@
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
             SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
+        console.log(SingleTable);
         return SingleTable;
     };
 
-    this.getNewTrHTML = function (rowid) {
-        let tr = `<tr added='true' rowid='${rowid}'>`;
+    this.getNewTrHTML = function (rowid, isAdded = true) {
+        let tr = `<tr is-added='${isAdded}' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
         let editBtn = "";
         $.each(this.ctrl.Controls.$values, function (i, col) {
@@ -53,7 +85,9 @@
             editBtn = "";
             if (col.IsEditable)
                 editBtn = `<div class="fa fa-pencil ctrl-edit" aria-hidden="true"></div>`;
-            let inpCtrl = new EbObjects[inpCtrlType]("ctrl_" + Date.now());
+            let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid);
+            inpCtrl.Name = col.Name;
             inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td ctrltdidx='${i}'>
@@ -70,9 +104,9 @@
         return tr;
     };
 
-    this.addRow = function (e) {
-        let rowid = --this.newRowCounter;
-        let tr = this.getNewTrHTML(rowid);
+    this.addRow = function (rowid, isAdded) {
+        rowid = rowid || --this.newRowCounter;
+        let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
         $(`#tbl_${this.ctrl.EbSid_CtxId} tbody`).append($tr);
         this.initRowCtrls(rowid);
@@ -143,8 +177,8 @@
         let $tr = $td.closest("tr");
         let rowid = $tr.attr("rowid");
         this.ctrlToSpan_row(rowid);
-        if ($tr.attr("is-checked") !== "true")
-            this.addRow($tr);
+        if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
+            this.addRow();
         $tr.attr("is-checked", "true");
     }.bind(this);
 
@@ -179,7 +213,8 @@
 
     this.init = function () {
         if (this.ctrl.IsAddable) {
-            this.addRow();
+            if (!this.isEditMode)
+                this.addRow();
         }
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".check-row", this.checkRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".del-row", this.delRow_click);

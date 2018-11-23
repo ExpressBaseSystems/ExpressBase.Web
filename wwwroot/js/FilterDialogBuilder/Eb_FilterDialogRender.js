@@ -1,4 +1,4 @@
-﻿var Eb_FilterDialogRender = function (fObj) {
+﻿var Eb_FilterDialogRender = function (fObj, wc, curloc) {
     console.log("kitty--------------------------------------------");
     this.filterObj = fObj;
     this.formObject = {};
@@ -97,6 +97,16 @@
                 else
                     $("body input[name='" + cObj.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
                 return false;
+            }
+            else if (cObj.ObjType === 'UserLocation') {
+                if (wc === "dc")
+                    $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+                else if (wc === "uc") {
+                    if (cObj.LoadCurrentLocation)
+                        $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + curloc + ']').trigger('click');
+                    else 
+                        $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+                }
             }
         });
         //if (this.filterObj.Width > 150)

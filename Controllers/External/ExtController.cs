@@ -749,10 +749,10 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("/Api")]
         public IActionResult ApiConsole()
         {
-            //string _json = @"{'Tables':{'tablename1':[{'RowId':0,'isUpdate':false,'Columns':[{'Name':'col1','Value':'colval1','OldValue':'','Type':16,'AutoIncrement':false}]}]}}";
+            string _json = @"{'MasterTable':'dg3f','MultipleTables':{'dg3f':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'textbox0','Value':'abhilasha','Type':16,'AutoIncrement':false}]}],'dg3c':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'date0','Value':'2018-11-17','Type':5,'AutoIncrement':false},{'Name':'textbox1','Value':'pushpam','Type':16,'AutoIncrement':false}]}]}}";
 
             var res = this.ServiceClient.Post<FormDataJsonResponse>(new FormDataJsonRequest {
-                //JsonData = _json
+                JsonData = _json
             });
             return View();
         }

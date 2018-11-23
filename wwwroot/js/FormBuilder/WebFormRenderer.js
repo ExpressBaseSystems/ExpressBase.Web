@@ -232,12 +232,14 @@
                     return true;
                 if (obj.TableName === "" || obj.TableName === null)
                     obj.TableName = src_obj.TableName;
-                if (FVWTObjColl[obj.TableName] === undefined)
-                    FVWTObjColl[obj.TableName] = [{
-                        RowId: this.EditModeFormData[obj.TableName][0].rowId,
+                if (FVWTObjColl[obj.TableName] === undefined) {
+                    let rowId = this.isEditMode ? this.EditModeFormData[obj.TableName][0].rowId : 0;
+                        FVWTObjColl[obj.TableName] = [{
+                            RowId: rowId,
                         IsUpdate: false,
                         Columns: []
                     }];
+                }
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }
             else {

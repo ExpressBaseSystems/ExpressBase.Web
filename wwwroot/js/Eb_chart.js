@@ -111,8 +111,8 @@ var informaion = function (nam, val) {
     this.name = nam;
     this.value = val;
 }
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData, PGobj) {
-    this.propGrid = PGobj;
+var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData, PGobj, TenantId, UserId) {
+    this.propGrid = PGobj || null;
     this.EbObject = null;
     this.data = null;
     this.ssurl = ssurl;
@@ -193,7 +193,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, _curloc: store.get("Eb_Loc-" + TenantId + UserId) },
             success: this.ajaxSucc
         });
 

@@ -154,7 +154,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         "area": "fa fa-area-chart",
         "horizontalBar": "fa fa-bar-chart"
     };
-    var split = new splitWindow("parent-div" + this.tabNum, "contBox");
+    var split = new splitWindow("parent-div0", "contBox");
 
     split.windowOnFocus = function (ev) {
         $("#Relateddiv").hide();

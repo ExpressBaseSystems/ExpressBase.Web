@@ -5,6 +5,32 @@
     this.isEditMode = options.isEditMode;
     this.newRowCounter = 0;
 
+    ctrl.setEditModeRows = function (SingleTable) {
+        return this.setEditModeRows(SingleTable);
+    }.bind(this);
+
+    ctrl.ChangedRowObject = function () {
+        return this.changedRowWT();
+    }.bind(this);
+
+    ctrl.isValid = function () {
+        return this.isValid() && this.isFinished();
+    }.bind(this);
+
+    this.isFinished = function () {
+        let isEditing = false;
+        $.each(this.rowCtrls, function (rowId, inpCtrls) {
+            if ($(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowId}]`).attr("is-editing") === "true") {
+                isEditing = true;
+                EbMessage("show", { Message: "Finish DataGrid editing before Saving", Background: "#ee7700" })
+            }
+        }.bind(this));
+        return !isEditing;
+    };
+
+    this.isValid = function () {
+        return true;
+    };
 
     this.setEditModeRows = function (SingleTable) {
         this.addEditModeRows(SingleTable);
@@ -31,14 +57,6 @@
             }
         }.bind(this));
     };
-
-    ctrl.setEditModeRows = function (SingleTable) {
-        return this.setEditModeRows(SingleTable);
-    }.bind(this);
-
-    ctrl.ChangedRowObject = function () {
-        return this.changedRowWT();
-    }.bind(this);
 
     this.getRowWTs = function (rowId, inpCtrls) {
         let SingleRow = {};
@@ -80,12 +98,9 @@
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let tr = `<tr is-added='${isAdded}' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
-        let editBtn = "";
         $.each(this.ctrl.Controls.$values, function (i, col) {
             let inpCtrlType = col.InputControlType;
             editBtn = "";
-            if (col.IsEditable)
-                editBtn = `<div class="fa fa-pencil ctrl-edit" aria-hidden="true"></div>`;
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid);
             inpCtrl.Name = col.Name;
@@ -93,7 +108,7 @@
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td ctrltdidx='${i}'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${inpCtrl.BareControlHtml}</div>
-                        <div class='tdtxt'><span></span>${editBtn}</div>                        
+                        <div class='tdtxt'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
 
         }.bind(this));
@@ -166,6 +181,7 @@
         $td.find(".edit-row").hide();
         $td.find(".check-row").show();
         let $tr = $td.closest("tr");
+        $tr.attr("is-editing", "true");
         let rowid = $tr.attr("rowid");
         this.spanToCtrl_row($tr);
     }.bind(this);
@@ -176,6 +192,7 @@
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
         let $tr = $td.closest("tr");
+        $tr.attr("is-editing", "false");
         let rowid = $tr.attr("rowid");
         this.ctrlToSpan_row(rowid);
         if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
@@ -207,11 +224,6 @@
         $td.find(".ctrl-cover").show();
     }.bind(this);
 
-    this.ctrlEdit_click = function (e) {
-        $td = $(e.target).closest("td");
-        this.spanToCtrl_td($td);
-    }.bind(this);
-
     this.init = function () {
         if (this.ctrl.IsAddable) {
             if (!this.isEditMode)
@@ -220,7 +232,6 @@
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".check-row", this.checkRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".del-row", this.delRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".edit-row", this.editRow_click);
-        $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".ctrl-edit", this.ctrlEdit_click);
     };
 
     this.init();

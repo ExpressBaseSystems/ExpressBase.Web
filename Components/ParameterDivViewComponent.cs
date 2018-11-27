@@ -50,6 +50,7 @@ namespace ExpressBase.Web.Components
                 ViewBag.FilterObj = Common.EbSerializers.Json_Serialize(FilterDialogObj);
                 ViewBag.wc = wc;
                 ViewBag.curloc = curloc;
+                ViewBag.userObj = Common.EbSerializers.Json_Serialize(_user);
                 var serializerSettings = new JsonSerializerSettings();
                 serializerSettings.TypeNameHandling = TypeNameHandling.All;
                 serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

@@ -1,4 +1,4 @@
-﻿var Eb_FilterDialogRender = function (fObj, wc, curloc) {
+﻿var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj) {
     console.log("kitty--------------------------------------------");
     this.filterObj = fObj;
     this.formObject = {};
@@ -99,13 +99,18 @@
                 return false;
             }
             else if (cObj.ObjType === 'UserLocation') {
-                if (wc === "dc")
-                    $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-                else if (wc === "uc") {
-                    if (cObj.LoadCurrentLocation)
-                        $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + curloc + ']').trigger('click');
-                    else 
+                if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+                    $('#' + cObj.EbSid_CtxId).next('div').children().find('[value=multiselect-all]').trigger('click');
+                }
+                else {
+                    if (wc === "dc")
                         $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+                    else if (wc === "uc") {
+                        if (cObj.LoadCurrentLocation)
+                            $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + curloc + ']').trigger('click');
+                        else
+                            $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+                    }
                 }
             }
         });

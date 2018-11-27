@@ -55,7 +55,7 @@
     //$(document).ready(function () {
     @Html.Raw(ViewBag.ControlOperations);
     var fobj = @Html.Raw(ViewBag.FilterObj);
-    var FilterDialog = new Eb_FilterDialogRender(fobj, '@ViewBag.wc','@ViewBag.curloc');
+    var FilterDialog = new Eb_FilterDialogRender(fobj, '@ViewBag.wc', '@ViewBag.curloc', @Html.Raw(ViewBag.userObj));
 
     //});
 </script>

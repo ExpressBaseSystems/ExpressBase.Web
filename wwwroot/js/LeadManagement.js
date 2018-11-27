@@ -189,6 +189,11 @@
             this.$SrgyAnasthBy.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
+        //this.$SrgyExtrDnBy.multiselect({
+        //    maxHeight: 200,
+        //    numberDisplayed: 2
+        //});////////////////////////////
+
         this.$LeadOwner.children().remove();
         this.$Closing.children().remove();
         $.each(this.StaffInfo, function (key, val) {
@@ -690,7 +695,7 @@
     };
     
     this.fillCustomerData = function () {
-        this.$CostCenter.val(this.CustomerInfo["firmcode"]);
+        this.$CostCenter.val(this.CustomerInfo["eb_loc_id"]);
         this.$EnDate.val(this.CustomerInfo["trdate"]);
         this.$Mobile.val(this.CustomerInfo["genurl"]);
         this.$Name.val(this.CustomerInfo["name"]);
@@ -778,7 +783,7 @@
         this.OutDataList = [];
         this.OutDataList.push({ Key: "accountid", Value: this.AccId });
         //Data to customer vendor
-        this.pushToList("firmcode", this.$CostCenter.val() || "0");
+        this.pushToList("eb_loc_id", this.$CostCenter.val() || "0");
         this.pushToList("trdate", this.$EnDate.val());
         this.pushToList("genurl", this.$Mobile.val());
         this.pushToList("name", this.$Name.val());

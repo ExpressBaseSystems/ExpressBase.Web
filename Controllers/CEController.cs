@@ -130,7 +130,7 @@ namespace ExpressBase.Web.Controllers
             Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             if(dsObject.FilterDialog != null)
                 EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
-            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu });
+            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc= "dc"});
         }
 
         public List<EbObjectWrapper> GetStatusHistory(string _refid)

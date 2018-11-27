@@ -169,7 +169,9 @@
             DvList:@Html.Raw(ViewBag.DvList),
             DvTagList:@Html.Raw(ViewBag.DvTaggedList),
             url: '@ViewBag.BrowserURLContext',
-            datePattern:'@datePattern'
+            datePattern: '@datePattern',
+            TenantId: '@ViewBag.cid',
+            UserId:'@ViewBag.uid',
         });
 
         $(document).ready(function () {

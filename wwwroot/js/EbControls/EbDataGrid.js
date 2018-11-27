@@ -70,7 +70,8 @@
         //              },
         //            ]
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            SingleTable.push(this.getRowWTs(rowId, inpCtrls));
+            if ($(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true")
+                SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
         console.log(SingleTable);
         return SingleTable;

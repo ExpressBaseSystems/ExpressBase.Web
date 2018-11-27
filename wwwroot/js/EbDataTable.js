@@ -3,7 +3,7 @@
 const arrayColumn = (arr, n) => arr.map(x => x[n]);
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url, cellData, PGobj, datePattern) {
+var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url, cellData, PGobj, datePattern, TenantId, UserId) {
     this.propGrid = PGobj;
     this.Api = null;
     this.order_info = new Object();
@@ -122,7 +122,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: store.get("Eb_Loc-" + TenantId + UserId) },
             success: this.ajaxSucc
         });
     };
@@ -864,7 +864,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
                 else if (ctype === "UserLocation")
-                    o.value = $(ctrl).next(".open").children().find(".active").text().trim().replace(" ", ",");
+                    o.value = $(ctrl).children().find(".active").text().trim().replace(" ", ",");
                 else
                     o.value = $($(ctrl).children()[1]).val();
 
@@ -2818,6 +2818,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
             $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "' class='table display table-bordered compact'></table></td></tr></div>");
+
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -2827,6 +2828,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.dvObject = Dvobj;
             o.data = result.formattedData;
             this.datatable = new EbBasicDataTable(o);
+            if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
+                $(".inlinetable").css("width", $(window).width()-90);
+            else
+                $(".inlinetable").css("width", $(window).width() - 130);
         }
         else {
             $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
@@ -2835,7 +2840,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.dvObject = Dvobj;
             o.data = result.data;
             this.chartApi = new EbBasicChart(o);
+            $(".inlinetable").css("height", "380px");
             $("#canvasDivchart" + idx).css("width", $(window).width() - 100);
+            $("#canvasDivchart" + idx).css("height", "inherit");
         }
         $(".containerrow .close").off("click").on("click", function (e) {
             $(e.target).parents().closest(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");

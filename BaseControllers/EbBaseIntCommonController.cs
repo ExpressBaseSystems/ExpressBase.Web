@@ -124,7 +124,11 @@ namespace ExpressBase.Web.BaseControllers
                     this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
 
                     if (controller.ViewBag.wc== TokenConstants.UC)
+                    {
                         ViewBag.Locations = GetAccessLoc(controller.ViewBag.cid);
+                        controller.ViewBag.CurrentLocation = this.LoggedInUser.Preference.DefaultLocation;
+                    }
+                        
                 }
                 catch (System.ArgumentNullException ane)
                 {

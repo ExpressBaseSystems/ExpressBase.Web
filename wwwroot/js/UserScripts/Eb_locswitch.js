@@ -10,8 +10,9 @@
 
     this.Tid = options.Tid || null;
     this.Uid = options.Uid || null;
-    this.CurrentLoc = JSON.parse(options.Location) || [];
 
+    this.Locations = JSON.parse(options.Location) || [];
+    this.CurrentLoc = (["0", "-1", 0, -1].indexOf(options.Current) > 0) ? 1 : options.Current;
 
     this.trigger = function () {
         //$(document).bind('keypress', function (event) {
@@ -26,11 +27,11 @@
     };
 
     this.drawLocs = function () {
-        if (this.CurrentLoc.length > 0) {
-            for (let i = 0; i < this.CurrentLoc.length; i++) {
+        if (this.Locations.length > 0) {
+            for (let i = 0; i < this.Locations.length; i++) {
                 $(container + " .locs_bdy").append(`<div class="locationwrapper display-flex">
                                     <div class="col-md-2 flex-center">
-                                        <div class="md-radio_wrapr" ischecked="false" LocId="${this.CurrentLoc[i].LocId}">
+                                        <div class="md-radio_wrapr" ischecked="false" LocId="${this.Locations[i].LocId}">
                                             <i class="material-icons checked">
                                                 radio_button_checked
                                             </i>
@@ -43,8 +44,8 @@
                                         <img src="~/images/EB_Logo.png" class="w-100" />
                                     </div>
                                     <div class="col-md-6 loc_info display-flex">
-                                        <h5 class="mr-0">${this.CurrentLoc[i].LongName}</h5>
-                                        <p class="mr-0">${this.CurrentLoc[i].ShortName}</p>
+                                        <h5 class="mr-0">${this.Locations[i].LongName}</h5>
+                                        <p class="mr-0">${this.Locations[i].ShortName}</p>
                                     </div>
                                 </div>`);
             }
@@ -52,14 +53,12 @@
         else {
             $(EmptyLocs).show();
         }
-
     };
 
     this.setDeafault = function () {
-        $(".locationwrapper").find("div[LocId='1']").find(".checked").show();
-        $(".locationwrapper").find("div[LocId='1']").find(".unchecked").hide();
+        $(".locationwrapper").find(`div[LocId='${this.CurrentLoc}']`).find(".checked").show();
+        $(".locationwrapper").find(`div[LocId='${this.CurrentLoc}']`).find(".unchecked").hide();
         //this.uncheckOthers($(".locationwrapper"));
-        this.CurrentLoc = 1;
         store.clearAll();
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
     };

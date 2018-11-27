@@ -324,6 +324,9 @@ namespace ExpressBase.Web.Controllers
             {
                 var req = this.HttpContext.Request.Form;
                 List<string> tags = req["Tags"].ToList<string>();
+
+                List<string> catogory = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
+
                 UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new ImageMeta();
                 foreach (var formFile in req.Files)
@@ -341,6 +344,8 @@ namespace ExpressBase.Web.Controllers
                         }
                         uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                         uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tags);
+                        if (catogory.Count>0)
+                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Category", catogory);
 
                         uploadImageRequest.ImageInfo.FileName = formFile.FileName.ToLower();
                         uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();

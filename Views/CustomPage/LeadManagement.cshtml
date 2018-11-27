@@ -40,6 +40,9 @@
 @*<link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" />
 <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript"></script>*@
 
+@*<link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>*@
+
 <div class="form-cont">
     <div class="container" style="padding: 50px 0px 0px 0px;">
         <div class="lm-form-inline">
@@ -637,7 +640,6 @@
                     }
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -667,7 +669,6 @@
 
     var ImageIdList = Html.Raw(JsonConvert.SerializeObject(ViewBag.ImageIdList));
 
-
     var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
     var BillingList = (Html.Raw(ViewBag.BillingList).ToString() == "") ? "null" : Html.Raw(ViewBag.BillingList);
     var SurgeryList = (Html.Raw(ViewBag.SurgeryList).ToString() == "") ? "null" : Html.Raw(ViewBag.SurgeryList);
@@ -678,7 +679,9 @@
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList, @ImageIdList );
     
     var imgup = new EbFileUpload({
-        Type:"image",
+        Type: "image",
+        PreviewWraper: "#divAllImg",
+        //Categories: ["cat1","cat2"],
         Toggle: "#btnUploadImg",
         TenantId:"@ViewBag.cid",
         SolutionId: "@ViewBag.SolnId",

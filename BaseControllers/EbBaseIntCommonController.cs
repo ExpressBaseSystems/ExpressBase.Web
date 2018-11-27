@@ -1,12 +1,15 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using ExpressBase.Web.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Messaging;
 using ServiceStack.Redis;
@@ -119,6 +122,9 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
 
                     this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
+
+                    if (controller.ViewBag.wc== TokenConstants.UC)
+                        ViewBag.Locations = GetAccessLoc(controller.ViewBag.cid);
                 }
                 catch (System.ArgumentNullException ane)
                 {
@@ -146,6 +152,24 @@ namespace ExpressBase.Web.BaseControllers
             }
 
             base.OnActionExecuted(context);
+        }
+
+        public string GetAccessLoc(string cid)
+        {
+            string _json = string.Empty;
+            List<EbLocation> list = new List<EbLocation>();
+            var s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
+            if (this.LoggedInUser.LocationIds.Contains(-1))
+                list = s_obj.Locations.Values.ToList<EbLocation>();
+            else
+            {
+                foreach (int id in this.LoggedInUser.LocationIds)
+                {
+                    list.Add(s_obj.Locations[id]);
+                }
+            }
+            _json = JsonConvert.SerializeObject(list);
+            return _json;
         }
     }
 }

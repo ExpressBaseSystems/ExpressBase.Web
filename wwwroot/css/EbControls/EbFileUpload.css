@@ -171,10 +171,20 @@
         color: #929292;
     }
 
+    .upl-container-outer .eb-upl_thumb .eb-upl-thumb-footer .ebfup_catogories {
+        width: 100%;
+        height: 28px;
+        margin: 2px;
+        font-size: 11px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        color: #6b6666;
+    }
     /*full screen*/
-.upl-fullscreen .modal-dialog {
-    width: 85%;
-}
+    .upl-fullscreen .modal-dialog {
+        width: 85%;
+    }
 .upl-fullscreen .modal-body {
     min-height: 500px;
     display: flex;

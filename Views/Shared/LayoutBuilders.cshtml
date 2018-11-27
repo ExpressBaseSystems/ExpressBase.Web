@@ -134,14 +134,39 @@
     <script src="~/lib/codemirror/mode/clike/clike.js" asp-append-version=@bApnd></script>
     <script src="~/lib/codemirror/addon/edit/matchbrackets.js" asp-append-version=@bApnd></script>
     <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
+
+    @if (ViewBag.wc == "uc")
+    {
+        <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    }
 </head>
 <body>
     <div id="tenatDtls" class="container-fluid">
 
-            @if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-            {
-                Html.RenderPartial("EbQuickMenu");
-            }
+        @if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+        {
+            Html.RenderPartial("EbQuickMenu");
+        }
+        @if (ViewBag.wc == "uc")
+        {
+            <div class="loc_switchModal_fade"></div>
+            <div class="loc_switchModal" id="loc_switchModal">
+                <div class="loc_switchModal_outer">
+                    <div class="loc_switchModal_box">
+                        <div class="locs_head">
+                            <h4>Switch Location</h4>
+                        </div>
+                        <div class="locs_bdy">
+
+                        </div>
+                        <div class="locs_foot">
+                            <button class="ebbtn eb_btn-sm eb_btngreen pull-right" id="setLocSub">Ok</button>
+                        </div>
+                        <div class="no_loc_config">No Locations.</div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
     <div id="layout_div" class="container-fluid main-cont">
         @RenderBody()
@@ -154,3 +179,14 @@
     $("#layout_div").data("menu", menu);
     $('.Eb_Image').Lazy();
 </script>
+
+@if (ViewBag.wc == "uc")
+{
+    <script>
+        let loc__ = new LocSwitch({
+            Location: '@Html.Raw(ViewBag.Locations)',
+            Tid: '@ViewBag.cid',
+            Uid:'@ViewBag.UId'
+        });
+    </script>
+}

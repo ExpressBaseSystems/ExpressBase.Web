@@ -656,3 +656,8 @@
     height: 36px;
     padding-top: 4px;
 }
+
+.userloc-checkbox{
+    vertical-align: middle;
+    margin-right: 5px !important;
+}

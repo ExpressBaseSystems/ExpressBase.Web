@@ -416,7 +416,7 @@ namespace ExpressBase.Web.Controllers
             if (bOK2AttemptLogin)
             {
                 string token = req["g-recaptcha-response"];
-                Recaptcha data = await RecaptchaResponse("6LcQuxgUAAAAAD5dzks7FEI01sU61-vjtI6LMdU4", token);
+                Recaptcha data = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
                 if (!data.Success)
                 {
                     if (data.ErrorCodes.Count <= 0)

@@ -415,7 +415,7 @@ namespace ExpressBase.Web.Controllers
                     EnableSsl = Convert.ToBoolean(req["IsSSL"]),
                     IsDefault = false
                 };
-                if (solutionConnections.EBSolutionConnections.EmailConnections.Capacity == 0)
+                if (solutionConnections.EBSolutionConnections.EmailConnections == null || solutionConnections.EBSolutionConnections.EmailConnections.Capacity == 0)
                     smtpcon.Preference = ConPreferences.PRIMARY;
                 //if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
                 //{

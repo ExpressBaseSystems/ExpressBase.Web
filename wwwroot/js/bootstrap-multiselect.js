@@ -1368,7 +1368,7 @@
 
             var justVisible = typeof justVisible === 'undefined' ? true : justVisible;
             var allLis = $("li:not(.divider):not(.disabled):not(.multiselect-group)", this.$ul);
-            var visibleLis = $("li:not(.divider):not(.disabled):not(.multiselect-group):not(.multiselect-filter-hidden):not(.multiselect-collapisble-hidden)", this.$ul).filter(':visible');
+            var visibleLis = $("li:not(.divider):not(.disabled):not(.multiselect-group):not(.multiselect-filter-hidden):not(.multiselect-collapisble-hidden)", this.$ul);//.filter(':visible')
 
             if (justVisible) {
                 $('input[type="checkbox"]:enabled', visibleLis).prop('checked', false);

@@ -107,7 +107,7 @@
     };
 
     this.startSE = function () {
-        this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.info", Channels: ["file-upload"] });
+        this.ss = new EbServerEvents({ ServerEventUrl: "https://se.eb-test.xyz", Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (obj, e) {
             $(".fileinput-remove-button").click();
             $(".upload_sec").toggle("slide", { direction: "down" }, 300);

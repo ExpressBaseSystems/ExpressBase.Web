@@ -94,9 +94,9 @@ namespace ExpressBase.Web.Controllers
             string sid = this.HttpContext.Request.Form["Sid"];
             string Env = "";
             if (ViewBag.Env == "Development")
-                Env = "https://myaccount.eb-test.info";
+                Env = "https://myaccount.eb-test.xyz";
             else if (ViewBag.Env == "Staging")
-                Env = "https://myaccount.eb-test.info";
+                Env = "https://myaccount.eb-test.xyz";
             else if (ViewBag.Env == "Production")
                 Env = "https://myaccount.expressbase.com";
 

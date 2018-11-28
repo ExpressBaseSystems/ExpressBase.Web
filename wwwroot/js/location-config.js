@@ -105,7 +105,7 @@
             SolutionId: "",
             Container: container,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.info',
+            ServerEventUrl: 'https://se.eb-test.xyz',
             EnableTag: false,
             EnableCrop: true,
             ExtraData: extra,//extra data for location optional for other

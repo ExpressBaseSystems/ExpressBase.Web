@@ -21,7 +21,7 @@
             SolutionId: "@ViewBag.SolnId",
             Container: "onboarding_logo",
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.info',
+            ServerEventUrl: 'https://se.eb-test.xyz',
             EnableTag: false,
             EnableCrop: true,
             Context: "logo",//if single and crop

@@ -36,44 +36,58 @@
                             <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" autocomplete="off" required>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LcQuxgUAAAAAKHLgQZU6TcadxgZhcKBEUWaEZeV" data-callback='onSubmit'>
-                            Sign In <i class="fa fa-spinner fa-spin login_spiner"></i>
-                        </button>
-                    </div>
+                    @{
+                        if (ViewBag.Env != "Development")
+                        {
+                            <div class="form-group">
+                                <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="6LfRoH0UAAAAAJsvG-wqOpDROfRD5gdabrXH2XOQ" data-callback='onSubmit'>
+                                    Sign In <i class="fa fa-spinner fa-spin login_spiner"></i>
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                <button type="submit" id="logNow" class="btn signin-btn" data-callback='onSubmit'>
+                                    Sign In <i class="fa fa-spinner fa-spin login_spiner"></i>
+                                </button>
+                            </div>
+                        }
+                    }
+
                     @*<div class="text-center">Or Sign In by</div>
-                        <div style="padding-left: 34px;">
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
-                                    <i class="fa fa-facebook"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="#" class="btn btn-lg btn-block">
-                                    <i class="fa fa-twitter text-info"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="#" class="btn btn-lg btn-block">
-                                    <i class="fa fa-google-plus text-danger"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="#" class="btn btn-lg btn-block">
-                                    <i class="fa fa-linkedin"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                            <div class="col-xs-2 col-sm-2">
-                                <a href="#" class="btn btn-lg btn-block">
-                                    <i class="fa fa-github text-muted"></i>
-                                    <span class="hidden-xs"></span>
-                                </a>
-                            </div>
-                        </div>*@
+        <div style="padding-left: 34px;">
+            <div class="col-xs-2 col-sm-2">
+                <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
+                    <i class="fa fa-facebook"></i>
+                    <span class="hidden-xs"></span>
+                </a>
+            </div>
+            <div class="col-xs-2 col-sm-2">
+                <a href="#" class="btn btn-lg btn-block">
+                    <i class="fa fa-twitter text-info"></i>
+                    <span class="hidden-xs"></span>
+                </a>
+            </div>
+            <div class="col-xs-2 col-sm-2">
+                <a href="#" class="btn btn-lg btn-block">
+                    <i class="fa fa-google-plus text-danger"></i>
+                    <span class="hidden-xs"></span>
+                </a>
+            </div>
+            <div class="col-xs-2 col-sm-2">
+                <a href="#" class="btn btn-lg btn-block">
+                    <i class="fa fa-linkedin"></i>
+                    <span class="hidden-xs"></span>
+                </a>
+            </div>
+            <div class="col-xs-2 col-sm-2">
+                <a href="#" class="btn btn-lg btn-block">
+                    <i class="fa fa-github text-muted"></i>
+                    <span class="hidden-xs"></span>
+                </a>
+            </div>
+        </div>*@
                 </form>
             </div>
         </div>

@@ -43,7 +43,7 @@
         }
     };
 
-    var periodOpts=arrayToOptions(["Minutes", "Hourly", "Daily", "Weekly", "Monthly", "Yearly"]);
+    var periodOpts=arrayToOptions([/*"Minutes", "Hourly", */"Daily", "Weekly", "Monthly", "Yearly"]);
     var minuteOpts=rangeToOptions(1, 60);
     var hourOpts=rangeToOptions(1, 24);
     var dayOpts=rangeToOptions(1, 100);

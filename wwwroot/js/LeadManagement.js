@@ -208,6 +208,8 @@
         $.each(this.NurseInfo, function (key, val) {
             this.$SrgyPostBrfBy.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyNurse.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyConsentBy.append(`<option value='${val + 1000}'>${key}</option>`);//
+            this.$SrgyAnasthBy.append(`<option value='${val + 1000}'>${key}</option>`);//
         }.bind(this));
                         
         this.$Mobile.on("change", function (e) {
@@ -666,8 +668,8 @@
         $.each(this.SurgeryList, function (i, obj) {
             obj["Extract_By"] = this.getKeyByValue(this.DoctorInfo, obj["Extract_By"]);
             obj["Implant_By"] = this.getKeyByValue(this.DoctorInfo, obj["Implant_By"]);
-            obj["Consent_By"] = this.getKeyByValue(this.DoctorInfo, obj["Consent_By"]);
-            obj["Anaesthesia_By"] = this.getKeyByValue(this.DoctorInfo, obj["Anaesthesia_By"]);
+            obj["Consent_By"] = this.getKeyByValue(this.DoctorInfo, obj["Consent_By"]) || this.getKeyByValue(this.NurseInfo, obj["Consent_By"] - 1000);
+            obj["Anaesthesia_By"] = this.getKeyByValue(this.DoctorInfo, obj["Anaesthesia_By"]) || this.getKeyByValue(this.NurseInfo, obj["Anaesthesia_By"] - 1000);
             obj["Post_Brief_By"] = this.getKeyByValue(this.NurseInfo, obj["Post_Brief_By"]);
             obj["Nurse"] = this.getKeyByValue(this.NurseInfo, obj["Nurse"]);
         }.bind(this));

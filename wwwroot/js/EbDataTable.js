@@ -863,8 +863,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     o.value = $(ctrl).children().find("[type=radio]:checked").val();
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
-                else if (ctype === "UserLocation")
-                    o.value = $(ctrl).children().find(".active").text().trim().replace(" ", ",");
+                else if (ctype === "UserLocation") {
+                    if ($(ctrl).children().find("[type=checkbox]").prop("checked"))
+                        o.value = "Global";
+                    else
+                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join( ",");
+                }
                 else
                     o.value = $($(ctrl).children()[1]).val();
 
@@ -969,6 +973,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.unformatedData = dd.data;
         this.Levels = dd.levels;
         this.permission = dd.permission;
+        this.summary = dd.summary;
         return dd.formattedData;
 
     };
@@ -1005,7 +1010,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.getAgginfo_inner = function (_ls, i, col) {
         if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || parseInt(gettypefromString("Numeric"))) && col.name !== "serial") {
-            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces));
+            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces, col.data));
             this.NumericIndex.push(col.data);
         }
     };
@@ -2011,18 +2016,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var summary_val = 0;
 
                 if (opScroll === '∑' || opLF === '∑' || opRF === '∑')
-                    summary_val = col.data().sum();
+                    summary_val = this.summary[agginfo.data][0];
                 if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
-                    summary_val = col.data().average();
+                    summary_val = this.summary[agginfo.data][1];
                 }
                 if (opScroll !== "")
-                    $(ftrtxtScroll).val(summary_val.toFixed(agginfo.deci_val));
+                    $(ftrtxtScroll).val(summary_val);
                 if (opLF !== "")
-                    $(ftrtxtLF).val(summary_val.toFixed(agginfo.deci_val));
+                    $(ftrtxtLF).val(summary_val);
                 if (opRF !== "")
-                    $(ftrtxtRF).val(summary_val.toFixed(agginfo.deci_val));
+                    $(ftrtxtRF).val(summary_val);
             }
-        });
+        }.bind(this));
     };
 
     this.createFilterRowHeader = function () {
@@ -2629,7 +2634,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var decip = $(e.target).attr('data-decip');
         var col = this.Api.column(colum + ':name');
         var ftrtxt;
-
+        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; });
         ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
         if ($(ftrtxt).length === 0)
             ftrtxt = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
@@ -2637,11 +2642,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
 
         if (selValue === '∑')
-            pageTotal = col.data().sum();
+            pageTotal =this.summary[agginfo[0].data][0];
         else if (selValue === 'x̄')
-            pageTotal = col.data().average();
+            pageTotal = this.summary[agginfo[0].data][1];
 
-        $(ftrtxt).val(pageTotal.toFixed(decip));
+        $(ftrtxt).val(pageTotal);
         e.preventDefault();
         //e.stopPropagation();
     };
@@ -3317,9 +3322,10 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
-var Agginfo = function (col, deci) {
+var Agginfo = function (col, deci, index) {
     this.colname = col;
     this.deci_val = deci;
+    this.data = index;
 };
 
 var displayFilter = function (col, oper, val, Loper) {

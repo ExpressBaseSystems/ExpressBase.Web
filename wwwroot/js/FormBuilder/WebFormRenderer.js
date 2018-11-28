@@ -67,7 +67,7 @@
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
-            if (Obj.ObjType === "ComboBox")
+            if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             this.initControls.init(Obj, opt);
             if (Obj.Required)

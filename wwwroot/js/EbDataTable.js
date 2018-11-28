@@ -855,7 +855,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var ctype = $(ctrl).attr("ctype");
                 o.name = $($(ctrl).children()[0]).text();
                 o.operator = "=";
-                if (ctype === "ComboBox")
+                if (ctype === "PowerSelect")
                     o.value = $(ctrl).find("input").attr("display-members");
                 else if (ctype === "Date")
                     o.value = $(ctrl).find("input").val();

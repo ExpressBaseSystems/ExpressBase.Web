@@ -81,7 +81,7 @@
         // temp
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
         $.each(this.DGs, function (k, DG) {
-            this.initControls.init(DG, { isEditMode: this.isEditMode});
+            this.initControls.init(DG, { isEditMode: this.isEditMode });
         }.bind(this));
 
         if (this.isEditMode)
@@ -234,8 +234,8 @@
                     obj.TableName = src_obj.TableName;
                 if (FVWTObjColl[obj.TableName] === undefined) {
                     let rowId = this.isEditMode ? this.EditModeFormData[obj.TableName][0].rowId : 0;
-                        FVWTObjColl[obj.TableName] = [{
-                            RowId: rowId,
+                    FVWTObjColl[obj.TableName] = [{
+                        RowId: rowId,
                         IsUpdate: false,
                         Columns: []
                     }];
@@ -325,7 +325,14 @@
 
         if ($notOk1stCtrl)
             $notOk1stCtrl.select();
-        return required_valid_flag;
+
+        // isDGsValid
+            let isDGsValid = true;
+            $.each(this.DGs, function (i, DG) {
+                if (DG.isValid() === false)
+                    isDGsValid = false;
+            });
+        return required_valid_flag && isDGsValid;
     };
 
     this.init();

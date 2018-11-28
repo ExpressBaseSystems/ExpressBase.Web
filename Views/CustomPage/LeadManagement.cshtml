@@ -640,7 +640,6 @@
                     }
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -670,7 +669,6 @@
 
     var ImageIdList = Html.Raw(JsonConvert.SerializeObject(ViewBag.ImageIdList));
 
-
     var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
     var BillingList = (Html.Raw(ViewBag.BillingList).ToString() == "") ? "null" : Html.Raw(ViewBag.BillingList);
     var SurgeryList = (Html.Raw(ViewBag.SurgeryList).ToString() == "") ? "null" : Html.Raw(ViewBag.SurgeryList);
@@ -681,7 +679,9 @@
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList, @ImageIdList );
     
     var imgup = new EbFileUpload({
-        Type:"image",
+        Type: "image",
+        PreviewWraper: "#divAllImg",
+        //Categories: ["cat1","cat2"],
         Toggle: "#btnUploadImg",
         TenantId:"@ViewBag.cid",
         SolutionId: "@ViewBag.SolnId",

@@ -180,7 +180,10 @@
 	};
 
 	this.BeforeSave = function () {
-
+		this.EbObject.To = $("#mail_to" + tabNum).val();
+		this.EbObject.Cc = $("#cc_to" + tabNum).val();
+		this.EbObject.Bcc = $("#bcc_to" + tabNum).val();
+		this.EbObject.Subject = $("#sub_to" + tabNum).val();
 		$('.note-editable').children().find('span').each(function (i, obj) {
 			var text = $(obj).text();
 			$(obj).replaceWith(text);

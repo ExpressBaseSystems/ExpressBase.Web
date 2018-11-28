@@ -7,6 +7,7 @@ using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
+using System;
 using System.Collections.Generic;
 
 namespace ExpressBase.Web.Controllers
@@ -22,11 +23,12 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void Schedule(string expression, int objId, JobTypes type)
+        public void Schedule(string expression, int objId, JobTypes type, string users, string groups)
         {
             //int _objId = 2236;
-            int val = 1332423;
-            List<Param> _param = new List<Param> { new Param { Name = "ids", Type = ((int)EbDbTypes.Int32).ToString(), Value = val.ToString() } };
+            //int val = 1332423;
+            List<Param> _param = new List<Param> { new Param { Name = "FromDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() },
+            new Param{ Name = "ToDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() } };
 
             EbTask task = new EbTask
             {
@@ -38,7 +40,9 @@ namespace ExpressBase.Web.Controllers
                     ObjId = objId,
                     SolnId = ViewBag.cid,
                     UserId = ViewBag.UId,
-                    UserAuthId = ViewBag.UAuthId
+                    UserAuthId = ViewBag.UAuthId,
+                    ToUserIds = users,
+                    ToUserGroupIds = groups
                 }
             };
 

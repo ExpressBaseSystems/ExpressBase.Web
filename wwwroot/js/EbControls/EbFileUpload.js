@@ -356,6 +356,16 @@ class EbFileUpload {
 
         if (this.Options.EnableCrop)
             html.push(` <button class="upl-thumb-btn _crop" fname="${file.name}" id="${this.replceSpl(file.name)}-crop"><i class="fa fa-crop"></i></button>`);
+        if (this.Options.Categories)
+            html.push(`<select class="ebfup_catogories" id="${this.replceSpl(file.name)}-category">${this.getCategory()}</select>`);
+        return html.join("");
+    }
+
+    getCategory() {
+        let html = new Array(`<option val="Default">Category</option>`);
+        for (let i = 0; i < this.Options.Categories.length; i++) {
+            html.push(`<option val="${this.Options.Categories[i]}">${this.Options.Categories[i]}</option>`);
+        }
         return html.join("");
     }
 
@@ -439,6 +449,9 @@ class EbFileUpload {
             formData.append("File", this.Files[k]);
             formData.append("Tags", this.getTag(this.Files[k]));
 
+            if (this.Options.Categories)
+                formData.append("Category", this.readCategory(this.Files[k]));
+
             $.ajax({
                 url: "../StaticFile/UploadImageAsync",
                 type: "POST",
@@ -477,11 +490,16 @@ class EbFileUpload {
         return $(`#${f}-tags_input`).tagsinput("items");
     }
 
+    readCategory(file) {
+        let f = this.replceSpl(file.name);
+        return $(`#${f}-category`).val().split();
+    }
+
     successOper(thumb, refid) {
         thumb.find(".eb-upl-loader").hide();
         if (refid > 0) {
             thumb.find(".success").show();
-            thumb.find(".error").hide()
+            thumb.find(".error").hide();
             thumb.closest('file-thumb-wraper').remove();
             for (let i = 0; i < this.Files.length; i++) {
                 if (this.Files[i].name === thumb.attr("exact")) {

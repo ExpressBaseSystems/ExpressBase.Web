@@ -14,6 +14,15 @@
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-7 pd-0">
             <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
+            
+            @if (ViewBag.wc == "uc")
+            {
+            <button class="btn loc_switchbtn pull-left" id="switch_loc">
+                <i class="fa fa-code-fork fa-rotate-180" aria-hidden="true"></i>
+                <i class="fa fa-code-fork fa-rotate-180 fa-flip-vertical _neg_icon-left" aria-hidden="true"></i>
+            </button>
+            }
+
             <div class="solution_logo_cont pull-left">
                 <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
             </div>

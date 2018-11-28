@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.ServiceList = fr.ServiceList;
 
 			ViewBag.ImageIdList = fr.ImageIdList;
-			ViewBag.Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
+            ViewBag.Permission = true;// this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
 
 			if (mode == 1)
 			{
@@ -82,8 +82,8 @@ namespace ExpressBase.Web.Controllers
 		}
 		public int SaveSurgeryDtls(string SurgeryInfo)
 		{
-			if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
-				return 0;
+			//if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+			//	return 0;
 			SaveSurgeryDetailsResponse res = this.ServiceClient.Post<SaveSurgeryDetailsResponse>(new SaveSurgeryDetailsRequest { Data = SurgeryInfo, UserName = this.LoggedInUser.FullName });
 			return res.Status;
 		}

@@ -23,32 +23,10 @@ namespace ExpressBase.Web2.Controllers
     {
         public TenantUserController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-        public string GetAccessLoc()
-        {
-            string _json = string.Empty;
-            List<EbLocation> list = new List<EbLocation>();
-            var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
-            var user = this.LoggedInUser;
-
-            if (this.LoggedInUser.LocationIds.Contains(-1))
-                list = resp.Locations.Values.ToList<EbLocation>();
-            else
-            {
-                foreach (int id in this.LoggedInUser.LocationIds)
-                {
-                    list.Add(resp.Locations[id]);
-                }
-            }
-
-            _json = JsonConvert.SerializeObject(list);
-            return _json;
-        }
-
         [EbBreadCrumbFilter()]
         [HttpGet("UserDashBoard")]
         public IActionResult UserDashboard()
         {
-            ViewBag.Locations = GetAccessLoc();
             return View();
         }
 
@@ -87,7 +65,6 @@ namespace ExpressBase.Web2.Controllers
             var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
             ViewBag.Config = JsonConvert.SerializeObject(resp.Config);
             ViewBag.LocList = resp.Locations;
-            ViewBag.Locations = GetAccessLoc();
             return View();
         }
 

@@ -25,12 +25,12 @@
 
     @* EB CSS *@
     <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version=@bApnd />@*amal*@
-    <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version=@bApnd/>
+    <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version=@bApnd />
     <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version=@bApnd />
-    <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" asp-append-version=@bApnd/>
-    <link rel="stylesheet" href="~/css/EbOnBoarding/eb-assets.style.css" asp-append-version=@bApnd/>
-    <link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" asp-append-version=@bApnd/>@*amal*@
-    <link href="~/css/EbControls/EbDialogBox.css" rel="stylesheet" asp-append-version=@bApnd/>@*amal*@
+    <link rel="stylesheet" href="~/css/EbOnBoarding/EbOnBoarding.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/EbOnBoarding/eb-assets.style.css" asp-append-version=@bApnd />
+    <link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" asp-append-version=@bApnd />@*amal*@
+    <link href="~/css/EbControls/EbDialogBox.css" rel="stylesheet" asp-append-version=@bApnd />@*amal*@
 
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -116,7 +116,8 @@
         let loc__ = new LocSwitch({
             Location: '@Html.Raw(ViewBag.Locations)',
             Tid: '@ViewBag.cid',
-            Uid:'@ViewBag.UId'
+            Uid:'@ViewBag.UId',
+            Current:@ViewBag.CurrentLocation
         });
     </script>
 }

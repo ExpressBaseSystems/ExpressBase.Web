@@ -32,14 +32,39 @@
         });
 
         $('#schedule').on('click', function () {
+
+
             $.post("../Scheduler/Schedule", {
                 "expression": $('#result').text(),
                 "objId": window.location.search.split("&")[0].split("=")[1],
-                "type": '@taskType'
+                "type": '@taskType',
+                "users": geUsers(),
+                "groups": geUserGroups(),
             }, function () {
             }
             );
         });
+
+        function geUsers() {
+            var checkedValue = "";
+            var inputElements = $('.user:checked');
+            for (var i = 0; inputElements[i]; ++i) {
+                if (inputElements[i].checked) {
+                    checkedValue = checkedValue + "," + inputElements[i].value;
+                }
+            }
+            return checkedValue.substring(1, checkedValue.length);
+        }
+        function geUserGroups() {
+            var checkedValue =  "";
+            var inputElements = $('.usergrp:checked');
+            for (var i = 0; inputElements[i]; ++i) {
+                if (inputElements[i].checked) {
+                    checkedValue = checkedValue + "," + inputElements[i].value;
+                }
+            }
+            return checkedValue.substring(1, checkedValue.length);
+        }
 
         $('input[type=radio][name=sch-type]').change(function () {
             if (this.value === 'reccur') {
@@ -63,32 +88,90 @@
             </div>
             <div class="modal-body">
                 <div class="scheduler">
-                    <div class="form-check form-check-inline col-md-6">
+                    <div class="form-check form-check-inline top_pad">
                         <input class="form-check-input" type="radio" name="sch-type" id="sch-type1" value="reccur" checked>
                         <label class="form-check-label" for="sch-type1">
                             Recurring
                         </label>
                     </div>
-                    <div class="form-check form-check-inline col-md-6">
+                    <div class="recur">
+                        <div id="cron" class="cron-builder"></div>
+                        <span id="result" hidden></span>
+                    </div>
+                    <div class="form-check form-check-inline top_pad">
                         <input class="form-check-input" type="radio" name="sch-type" id="sch-type2" value="nonreccur">
                         <label class="form-check-label" for="sch-type2">
                             Non Recurring
                         </label>
                     </div>
-                    <div class="sch_content">
-                        <div class="recur">
-                            <div id="cron" class="cron-builder"></div>
-                            <span id="result" hidden></span>
-                        </div>
-
-                        <div class="non-rec">
-                            <div class="input-group col-md-3 col-md-offset-6">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                <input id="datetimepicker" type="text" class="form-control" placeholder="Date Time">
-                            </div>
+                    <div class="non-rec">
+                        <div class="input-group col-md-3">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                            <input id="datetimepicker" type="text" class="form-control" placeholder="Date Time">
                         </div>
                     </div>
 
+                    <div class="del_mech top_pad ">
+                        <label class="form-check-label col-md-2 row">
+                            Delivery Mechanism
+                        </label>
+                        <div class="row">
+                            <div class="form-check col-md-1">
+                                <input class="form-check-input" type="radio" name="delivery" id="delivery1" value="email" checked>
+                                Email
+                            </div>
+                            <div class="form-check disabled col-md-1">
+                                <input class="form-check-input" type="radio" name="delivery" id="delivery2" value="sms" disabled>
+                                Sms
+                            </div>
+                            <div class="form-check disabled col-md-1">
+                                <input class="form-check-input" type="radio" name="delivery" id="delivery3" value="slack" disabled>
+                                Slack
+                            </div>
+                            <div class="form-check disabled col-md-2">
+                                <input class="form-check-input" type="radio" name="delivery" id="delivery4" value="noti" disabled>
+                                Notifications
+                            </div>
+                        </div>
+                    </div>
+                    <div class="del-to">
+                        <label class="form-check-label row col-md-2">
+                            Deliver To
+                        </label>
+
+                        <div class="col-md-3">
+                            <label class="form-check-label usr">
+                                Users
+                            </label>
+                            <div class="user-common">
+                                @{
+                                    Dictionary<int, string> Users = ViewBag.users;
+                                    foreach (KeyValuePair<int, string> user in Users)
+                                    {
+                                        <div class="form-check form-check-inline user-line">
+                                            <input class="form-check-input user" type="checkbox" id="user+@user.Key" value="@user.Key">
+                                            <label class="form-check-label" for="inlineCheckbox1">@user.Value</label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-check-label usr">
+                                UserGroups
+                            </label>
+                            <div class="user-common">
+                                @{ Dictionary<int, string> UserGroups = ViewBag.usergroups; foreach (KeyValuePair<int, string> userg in UserGroups)
+                                    { <div class="form-check form-check-inline user-line">
+                                            <input class="form-check-input usergrp" type="checkbox" id="usergrp+@userg.Key" value="@userg.Key">
+                                            <label class="form-check-label" for="inlineCheckbox1">@userg.Value</label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -100,8 +183,7 @@
 
 <style>
     .scheduler {
-        padding-top: 10px;
-        padding-bottom: 30px;
+        padding-bottom: 10px;
     }
 
 
@@ -111,12 +193,14 @@
         padding-bottom: 4px;
     }
 
-    .sch_content {
-        padding-top: 50px;
+    .top_pad {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e5e5;
     }
 
     select {
-        width: 20%;
+        width: 11%;
         height: 34px;
         padding: 6px 12px;
         font-size: 14px;
@@ -138,11 +222,43 @@
     }
 
     .modal-body {
-        height: calc(100vh - 400px);
+        height: calc(100vh - 200px);
         overflow-y: auto;
     }
 
     .non-rec {
-        margin-top: 20px;
+        padding-top: 10px;
+        padding-bottom: 15px;
     }
+
+    .del-to {
+        /*margin-top: 15px;*/
+    }
+
+    .recur {
+        height: 190px;
+    }
+
+    .user-common {
+        height: calc(100vh - 500px);
+        overflow: auto;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .usr {
+        background-color: #e6e6e6;
+        box-shadow: 0 2px 3px 0 #0000003b;
+        padding: 6px;
+        width: 256px;
+        text-align: center;
+    }
+
+    .user-line {
+        padding: 5px;
+    }
+
+        .user-line:hover {
+            background-color: #e6e6e6;
+        }
 </style>

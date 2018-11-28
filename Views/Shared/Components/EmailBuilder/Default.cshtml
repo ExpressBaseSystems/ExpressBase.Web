@@ -2,6 +2,10 @@
     @using ExpressBase.Common;
     var dsObj = EbSerializers.Json_Deserialize(ViewBag.dsObj);
     var body = (dsObj != null) ? dsObj.Body : String.Empty;
+    var to = (dsObj != null) ? dsObj.To : String.Empty;
+    var sub = (dsObj != null) ? dsObj.Subject : String.Empty;
+    var cc = (dsObj != null) ? dsObj.Cc : String.Empty;
+    var bcc = (dsObj != null) ? dsObj.Bcc : String.Empty;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -42,8 +46,14 @@
             padding-bottom: 0 !important;
         }
         .panel-body {
-            height: calc(100vh - 116px) !important;
+            height: calc(100vh - 280px) !important;
             overflow-y: auto !important;
+        }
+        .to {
+            background: #316396;
+            color: white;
+            width: 73px;
+            text-align:left;
         }
     </style>
 </head>
@@ -61,7 +71,32 @@
                 </div>
             </div>
         </div>
+
         <div class="page-outer-cont" id="summernot_container@(ViewBag.tabnum)">
+            <div class="input-group ">
+                <div class="input-group-btn">
+                    <label class="btn btn-default to" type="submit">To</label>
+                </div>
+                <input id="mail_to@(ViewBag.tabnum)" class="form-control" value="@to" />
+            </div>
+            <div class="input-group ">
+                <div class="input-group-btn">
+                    <label class="btn btn-default to" type="submit">Cc</label>
+                </div>
+                <input id="cc_to@(ViewBag.tabnum)" class="form-control" value="@cc" />
+            </div>
+            <div class="input-group ">
+                <div class="input-group-btn">
+                    <label class="btn btn-default to" type="submit">Bcc</label>
+                </div>
+                <input id="bcc_to@(ViewBag.tabnum)" class="form-control" value="@bcc" />
+            </div>
+            <div class="input-group ">
+                <div class="input-group-btn">
+                    <label class="btn btn-default to" type="submit">Subject</label>
+                </div>
+                <input id="sub_to@(ViewBag.tabnum)" class="form-control" value="@sub" />
+            </div>
             <div id="summernote@(ViewBag.tabnum)">
                 @Html.Raw(body)
             </div>
@@ -81,7 +116,7 @@
             var w = $('.col-md-10').css("width");
             $('#summernote@(ViewBag.tabnum)').summernote({
                 width: w,
-                height: 300,                 // set editor height
+                height: 200,                 // set editor height
                 minHeight: null,             // set minimum height of editor
                 maxHeight: null,             // set maximum height of editor
                 focus: true,                  // set focus to editable area after initializing summernote

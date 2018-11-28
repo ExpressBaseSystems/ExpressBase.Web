@@ -157,6 +157,7 @@
 .Eb-ctrlContainer .input-group-addon {
     border: 0 !important;
 }
+
 .check-row {
     position: absolute;
     left: 7.5px;
@@ -181,6 +182,7 @@
     color: red;
     border-radius: 0 50px 50px 0;
 }
+
 .edit-row {
     left: 7.5px;
     color: rgb(192, 110, 3);
@@ -217,7 +219,7 @@
 .ctrl-edit {
     position: absolute;
     right: 0;
-    opacity: 0.35;
+    opacity: 0.14;
     top: 0;
     border-radius: 0 0 0 100%;
     background-color: white;
@@ -231,14 +233,23 @@
         box-shadow: 0px 1px 2px 0 #0000082;
     }
 
-.dgtbl td {
-    position: relative;
-    border: 1px dotted #cccccc9c !important;
+.dgtbl {
+    /*width: auto !important;
+    max-width: inherit !important;*/
 }
 
-.dgtbl tr th:last-child {
-    text-align: center;
-}
+    .dgtbl td {
+        position: relative;
+        border: 1px dotted #cccccc9c !important;
+    }
+
+    .dgtbl tr th:last-child {
+        text-align: center;
+    }
+
+    .dgtbl tr td:last-child {
+        width: 50px;
+    }
 
 .Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
@@ -252,6 +263,10 @@
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
     border: none;
+}
+
+.grid-cont {
+    overflow: auto;
 }
 
 .grid-cont input[type=checkbox] {

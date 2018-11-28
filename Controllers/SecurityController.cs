@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Objects;
 using ExpressBase.Common.Singletons;
 using ExpressBase.Common.Structures;
@@ -86,7 +87,31 @@ namespace ExpressBase.Web.Controllers
 			if (isTenant())
 				mode = "tenant";
 			var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { WC = ViewBag.wc });
-			ViewBag.UserData = fr.UserData;
+
+            Eb_Solution _solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
+
+            Dictionary<string, int> _locs = new Dictionary<string, int>();
+
+            if (this.LoggedInUser.LocationIds.Contains(-1))
+            {
+                foreach(KeyValuePair<int, EbLocation> entry in _solu.Locations)
+                {
+                    _locs.Add(entry.Value.ShortName + " - " + entry.Value.LongName, entry.Key);
+                }
+            }
+            else
+            {
+                foreach (int id in this.LoggedInUser.LocationIds)
+                {
+                    if (_solu.Locations.ContainsKey(id))
+                    {
+                        _locs.Add(_solu.Locations[id].ShortName + " - " + _solu.Locations[id].LongName, id);
+                    }
+                }
+            }           
+
+            ViewBag.LocsData = _locs;
+            ViewBag.UserData = fr.UserData;
 			ViewBag.Mode = mode;
 			return View();
 		}
@@ -230,7 +255,7 @@ namespace ExpressBase.Web.Controllers
 				Id = userid,
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],
-				EmailPrimary = Dict["email"],
+				EmailPrimary = Dict["email"].Trim().ToLower(),
 				Password = Dict["pwd"],
 				EmailSecondary = Dict["alternateemail"],
 				DateOfBirth = Dict["dob"],
@@ -253,7 +278,7 @@ namespace ExpressBase.Web.Controllers
 
 		public bool isValidEmail(string reqEmail)
 		{
-            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail });
+            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail.Trim().ToLower() });
             return temp.unrespose;
 		}
 				

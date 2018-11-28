@@ -81,7 +81,7 @@
         // temp
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
         $.each(this.DGs, function (k, DG) {
-            this.initControls.init(DG);
+            this.initControls.init(DG, { isEditMode: this.isEditMode });
         }.bind(this));
 
         if (this.isEditMode)
@@ -193,7 +193,7 @@
         //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
         $.each(this.DGs, function (k, DG) {
             let SingleTable = FormData[DG.TableName];
-            DG.addEditModeRows(SingleTable);
+            DG.setEditModeRows(SingleTable);
         }.bind(this));
 
         let NCCSingleColumns_flat = this.getNCCSingleColumns_flat(FormData, NCCTblNames);
@@ -232,12 +232,14 @@
                     return true;
                 if (obj.TableName === "" || obj.TableName === null)
                     obj.TableName = src_obj.TableName;
-                if (FVWTObjColl[obj.TableName] === undefined)
+                if (FVWTObjColl[obj.TableName] === undefined) {
+                    let rowId = this.isEditMode ? this.EditModeFormData[obj.TableName][0].rowId : 0;
                     FVWTObjColl[obj.TableName] = [{
-                        RowId: 0,
+                        RowId: rowId,
                         IsUpdate: false,
-                        Columns: [],
+                        Columns: []
                     }];
+                }
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }
             else {
@@ -323,7 +325,14 @@
 
         if ($notOk1stCtrl)
             $notOk1stCtrl.select();
-        return required_valid_flag;
+
+        // isDGsValid
+            let isDGsValid = true;
+            $.each(this.DGs, function (i, DG) {
+                if (DG.isValid() === false)
+                    isDGsValid = false;
+            });
+        return required_valid_flag && isDGsValid;
     };
 
     this.init();

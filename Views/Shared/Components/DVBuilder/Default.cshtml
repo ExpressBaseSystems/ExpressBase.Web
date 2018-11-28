@@ -1,0 +1,160 @@
+﻿
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<link rel="stylesheet" type="text/css" href="~/css/ReportBuilder/Eb_ReportBuilder2.css" />
+<link rel="stylesheet" type="text/css" href="~/css/ReportBuilder/Eb_ReportBuilder.css" />
+<link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" />
+<link rel="stylesheet" type="text/css" href="~/css/DVBuilder.css" />
+<script type="text/javascript" src="~/js/DVBuilder.js" asp-append-version=@bApnd></script>
+
+<script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.ReportSections);
+    @Html.Raw(ViewBag.EbObjectTypes);
+    $.fn.extend({
+        treed: function (o) {
+            var openedClass = 'fa-minus-square-o';
+            var closedClass = 'fa-plus-square-o';
+            var ic = o || 'fa-plus-square-o';
+
+            if (typeof o !== 'undefined') {
+                if (typeof o.openedClass !== 'undefined') {
+                    //openedClass = o.openedClass;
+                }
+                if (typeof o.closedClass !== 'undefined') {
+                    //closedClass = o.closedClass;
+                }
+            }
+            var tree = $(this);
+            tree.addClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this);
+                branch.prepend("<i class='indicator fa " + ic + "'></i>");
+                branch.addClass('branch');
+                branch.off("click").on('click', function (e) {
+                    if (this === e.target) {
+                        var icon = $(this).children('i:first');
+                        icon.toggleClass(openedClass + " " + closedClass);
+                        $(this).children().children().toggle();
+                    }
+                });
+                branch.children().children().toggle();
+            });
+            tree.find('.branch .indicator').each(function () {
+                $(this).off("click").on('click', function (e) {
+                    $(this).closest('li').click();
+                });
+            });
+            tree.find('.branch>a').each(function () {
+                $(this).off("click").on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+            tree.find('.branch>button').each(function () {
+                $(this).off("off").on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+        }
+    });
+    $.fn.extend({
+        killTree: function (o) {
+            var tree = $(this);
+            tree.removeClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this);
+                branch.children().children().show();
+                branch.children("i").remove();
+                branch.removeClass('branch');
+                branch.off("click");
+            });
+        }
+    });
+
+
+</script>
+
+<div class="container-fluid">
+    <div class="max-pg" id="max-pg"><i class="fa fa-wrench" aria-hidden="true"></i> Properties</div>
+    <div class="row pgB eb-rpt-container" id="eb-rpt-container">
+        <div class="side-toolbar" id="side-toolbar">
+            <div class="toolbox eb-toolBoxReport">
+                <div class="get_ScreenDpi_div"></div>
+                <div class="Data tool_items">
+                    <div class="tool_item_head">
+                        <i class="fa fa-caret-down"></i> Data
+                    </div>
+                    <div class="tool_item_body">
+                        <div style="position:relative;">
+                            <ul id="data-table-list" class="tool-box-items">
+                                <li>
+                                    <a>Data Source</a>
+                                    <ul id="dataSource"></ul>
+                                </li>
+                            </ul>
+                            <a class="btn_calcfield_new add_summarry" id="get-col-loader" style="display:none;"><i class="fa fa-spinner fa-spin fa-lg"></i></a>
+                        </div>
+                        <ul id="ds_parameter_list" class="tool-box-items">
+                            <li>
+                                <a>Data Source Parameters</a>
+                                <ul id="ds_parameters"></ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="toolbox_footer"></div>
+            </div>
+        </div>
+        <div class="page-outer-cont" id="page-outer-cont">
+            <div id="columns-list" class="dv-divs">
+                <div class="tool_item_head">
+                    <i class="fa fa-caret-down"></i> Columns
+                </div>
+            </div>
+            <div id="orderby-list" class="dv-divs">
+                <div class="tool_item_head">
+                    <i class="fa fa-caret-down"></i> OrderBy
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="PGgrid" id="PGgrid-dv">
+    <div class="pGreportBuilder">
+        <div id="propGrid"></div>
+    </div>
+</div>
+
+<script>
+    $('#data-table-list').treed();
+    $('#ds_parameter_list').treed();
+
+    if (@ViewBag.tabnum === 0) {
+        var commonO = $("#layout_div").data("commonObj");
+    }
+
+    var DVobj = new DvBuilder({
+        RefId: '@ViewBag.Refid',
+        Version: '@ViewBag.VersionNumber',
+        ObjType: @ViewBag.ObjType,
+        DsObj: '@Html.Raw(ViewBag.dsObj)',
+        Status: '@ViewBag.Status',
+        TabNum: @ViewBag.tabnum,
+        ServiceUrl: '@ViewBag.ServiceUrl',
+        Wc: '@ViewBag.wc',
+        Cid: '@ViewBag.cid'
+    });
+
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = DVobj;
+</script>

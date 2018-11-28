@@ -16,6 +16,8 @@ var DvContainerObj = function (settings) {
     this.RelatedDvlist = settings.DvList;
     this.TaggedDvlist = settings.DvTagList;
     this.url = settings.url;
+    this.TenantId = settings.TenantId;
+    this.UserId = settings.UserId;
     this.dvcol = {};
     this.MainData = null;
     this.UniqueId = null;
@@ -100,7 +102,9 @@ var DvContainerObj = function (settings) {
                 url = this.url,
                 cellData = this.cellData,
                 PGobj = this.PGobj,
-                datePattern = settings.datePattern
+                datePattern = settings.datePattern,
+                TenantId = this.TenantId,
+                UserId = this.UserId
             );
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
@@ -118,7 +122,9 @@ var DvContainerObj = function (settings) {
                 rowData = this.rowData,
                 filterValues = this.filterValues,
                 cellData = this.cellData,
-                PGobj = this.PGobj
+                PGobj = this.PGobj,
+                TenantId = this.TenantId,
+                UserId = this.UserId
             );
         }
         console.log("xxxxx", this.dvcol[focusedId]);

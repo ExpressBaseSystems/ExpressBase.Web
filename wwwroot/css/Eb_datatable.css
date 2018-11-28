@@ -346,7 +346,8 @@ table.dataTable tbody td.dt-body-right {
 .dataTable tbody tr td {
     height: 15px; /* or whatever height you need to make them all consistent */
     white-space: nowrap;
-    padding: 3px 4px !important
+    padding: 3px 4px !important;
+    -webkit-tap-highlight-color: white;
 }
 
 

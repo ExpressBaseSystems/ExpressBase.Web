@@ -109,7 +109,7 @@
                     $('#' + cObj.EbSid_CtxId+"_checkbox").trigger('click');
                 }
                 else {
-                    $('#' + cObj.EbSid_CtxId + "_checkbox").hide();
+                    $('#' + cObj.EbSid_CtxId + "_checkbox_div").hide();
                     if (wc === "dc")
                         $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
                     else if (wc === "uc") {

@@ -76,6 +76,12 @@
                 else if (cObj.ObjType === 'UserLocation') {
                     this.onChangeExeFlag = true;
                     $("body").on("change", "#" + cObj.EbSid_CtxId, this.ctrlValueChanged.bind(this, cObj.Name));
+                    $("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
+                }
+            }
+            else {
+                if (cObj.ObjType === 'UserLocation') {
+                    $("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
                 }
             }
         }.bind(this));
@@ -100,9 +106,10 @@
             }
             else if (cObj.ObjType === 'UserLocation') {
                 if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
-                    $('#' + cObj.EbSid_CtxId).next('div').children().find('[value=multiselect-all]').trigger('click');
+                    $('#' + cObj.EbSid_CtxId+"_checkbox").trigger('click');
                 }
                 else {
+                    $('#' + cObj.EbSid_CtxId + "_checkbox").hide();
                     if (wc === "dc")
                         $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
                     else if (wc === "uc") {
@@ -116,7 +123,20 @@
         });
         //if (this.filterObj.Width > 150)
         //    this.$filterBox.parent().css("width", this.filterObj.Width + "px");
-    }
+    };
+
+    this.UserLocationCheckboxChanged = function (cObj) {
+        if ($(event.target).prop("checked")) {
+            $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+            $('#' + cObj.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
+        }
+        else {
+            $('#' + cObj.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
+            if ($('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
+                $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+
+        }
+    };
 
     this.init();
 }

@@ -641,7 +641,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             inpVal = $checkedCB.val();
             this.curDispValue = $checkedCB.next().text();
         }
-        else if (this.curCtrl.ObjType === "ComboBox") {
+        else if (this.curCtrl.ObjType === "PowerSelect") {
             //inpVal = this.curCtrl.tempValue;
             inpVal = this.curCtrl.selectedRow;
             console.log("inp");
@@ -693,11 +693,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             //this.formValues[id] = this.curVal;// last value set from outer fn
             //this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
         }
-        else if (this.curCtrl.ObjType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.ObjType === "ComboBox") {
+        else if (this.curCtrl.ObjType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.ObjType === "PowerSelect") {
             if (!this.checkRequired()) { return; }
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
-            if (this.curCtrl.ObjType === "ComboBox")//////////////////////////-------////////////
+            if (this.curCtrl.ObjType === "PowerSelect")//////////////////////////-------////////////
                 this.formValuesWithType[id] = [this.curCtrl.tempValue, this.curCtrl.ebDbType];
             else
                 this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
@@ -1071,7 +1071,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 var name = control.Name;
 
                 this.formValues[name] = curval;
-                if (control.ObjType === "ComboBox")
+                if (control.ObjType === "PowerSelect")
                     this.formValuesWithType[name] = [control.tempValue, control.ebDbType];
                 else
                     this.formValuesWithType[name] = [curval, control.ebDbType];

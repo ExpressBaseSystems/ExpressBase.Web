@@ -15,7 +15,7 @@
         JsonToEbControls(this.filterObj);
         $.each(this.filterObj.Controls.$values, function (k, cObj) {
             let opt = {};
-            if (cObj.ObjType === "ComboBox")
+            if (cObj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getFilterVals;
             this.initControls.init(cObj, opt);
         }.bind(this));

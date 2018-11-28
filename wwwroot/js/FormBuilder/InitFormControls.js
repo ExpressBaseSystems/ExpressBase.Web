@@ -157,7 +157,7 @@
         let DataGrid = new EbDataGrid(ctrl, ctrlOpts);
     };
 
-    this.ComboBox = function (ctrl, ctrlOpts) {
+    this.PowerSelect = function (ctrl, ctrlOpts) {
         Vue.component('v-select', VueSelect.VueSelect);
         Vue.config.devtools = true;
 

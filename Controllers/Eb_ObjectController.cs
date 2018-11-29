@@ -182,6 +182,16 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+            else if (type.Equals(EbObjectTypes.UserControl))
+            {
+                Type[] typeArray = typeof(EbUserControl).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.UserControl, typeof(EbUserControl));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis, ServiceClient);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
             ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;
             ViewBag.EbObjectTypes = _c2js.EbObjectTypes;

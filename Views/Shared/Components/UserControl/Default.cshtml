@@ -1,0 +1,73 @@
+﻿@using ExpressBase.Common.Objects;
+@using ExpressBase.Common.Structures;
+@using ExpressBase.Objects;
+@using ExpressBase.Common.Objects.Attributes;
+
+<script src="~/js/Eb_FontEditor.js"></script>
+@*<script src="~/js/FormBuilder/contextMenu.min.js"></script>*@
+<link rel="stylesheet" href="/css/FormBuilder/contextMenu.css">
+
+@{
+    //int typeInt = 0//(string.IsNullOrEmpty(ViewBag.Objtype)) ? Convert.ToInt32(Context.Request.Query["objtype"]) : Convert.ToInt32(ViewBag.Objtype);
+    EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
+
+    string builderType_S = type.ToString();
+    int typeInt = Convert.ToInt32(ViewBag.ObjType);
+    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), builderType_S, true);
+
+    EbToolbox _toolBox = new EbToolbox(_builderType);
+}
+<div id="con" class="web-form-buider-cont">
+    <div id="toolbox_cont" class='formB-box toolbox-cont'>
+        <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-times pin" onclick="slideLeft ('.web-form-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
+        <div id="form-buider-toolBox" class="form-buider-toolBox">
+            @Html.Raw(_toolBox.html)
+        </div>
+    </div>
+    <div class="web-form-wraper">
+        @{
+            if (ViewBag.Html != null)
+            {
+                @Html.Raw(ViewBag.Html)
+            }
+            else
+            {
+                <div id="placeholder" ebsid="placeholder" IsRenderMode='false' eb-form="true" ui-inp eb-type="@_builderType" tabindex="1" class="formB-box form-buider-form ebcont-ctrl"></div>
+            }
+
+        }
+    </div>
+    <input type="hidden" id="objtype" value="@type" />
+    <input type="hidden" id="objid" value="@ViewBag.Refid" />
+    <div id='form-buider-propGrid' class='formB-box property-grid-cont'>
+        <div id='pgWraper'></div>
+    </div>
+</div>
+
+<script>
+    @Html.Raw(_toolBox.EbObjectTypes);
+    @Html.Raw(_toolBox.AllControlls);
+    @Html.Raw(_toolBox.AllMetas);
+    @Html.Raw(_toolBox.JsonToJsObjectFuncs);
+    @Html.Raw(_toolBox.TypeRegister);
+    @Html.Raw(_toolBox.EbOnChangeUIfns);
+
+
+    let BuilderType = '@builderType_S';
+    let formBuilderObj = null;
+    let objid =$("#objid").val();
+    let editModeFormObj = @Html.Raw(ViewBag.dsObj) || null;
+    let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm_" + Date.now().toString(36);
+    let ToolBoxId = "form-buider-toolBox";
+    let PGid = "form-buider-propGrid";
+    let PGformId = "form-buider-propGrid";
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder({
+        toolBoxId: ToolBoxId,
+        formId: FBid,
+        PGId: PGid,
+        builderType: BuilderType,
+        Eb_objType: @typeInt,
+        wc: "@ViewBag.wc",
+        cid: "@ViewBag.cid",
+        objInEditMode : editModeFormObj});
+</script>

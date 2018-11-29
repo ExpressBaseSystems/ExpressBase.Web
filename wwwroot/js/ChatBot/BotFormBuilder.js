@@ -345,7 +345,7 @@
         $.each(this.rootContainerObj.Controls.$values, function (indx, ctrl) {
             if (ctrl.ObjType === 'SimpleSelect' && ctrl.DataSourceId !== '') 
                 relObjs += ctrl.DataSourceId + ',';
-            else if (ctrl.ObjType === 'ComboBox' && ctrl.DataSourceId !== '')
+            else if (ctrl.ObjType === 'PowerSelect' && ctrl.DataSourceId !== '')
                 relObjs += ctrl.DataSourceId + ',';
             else if (ctrl.ObjType === 'DynamicCardSet' && ctrl.DataSourceId !== '')
                 relObjs += ctrl.DataSourceId + ',';
@@ -470,7 +470,7 @@
             if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm") {
                 this.RefreshControl(PropsObj);
             }
-            if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'ComboBox') {
+            if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'PowerSelect') {
                 this.refreshCombo(PropsObj.Name, PropsObj, CurProp);
             }
             else if (PropsObj.Name.substr(0, PropsObj.Name.length - 1) === 'Labels') {

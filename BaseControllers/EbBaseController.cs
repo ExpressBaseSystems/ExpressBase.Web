@@ -98,6 +98,7 @@ namespace ExpressBase.Web.BaseControllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+            ViewBag.ReCaptchaKey = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_KEY);
             base.OnActionExecuting(context);
         }
 

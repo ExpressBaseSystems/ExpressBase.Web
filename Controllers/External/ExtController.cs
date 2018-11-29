@@ -415,16 +415,8 @@ namespace ExpressBase.Web.Controllers
 
             if (bOK2AttemptLogin)
             {
-                Recaptcha data = new Recaptcha();
-                if (ViewBag.Env != "Development")
-                {
-                    string token = req["g-recaptcha-response"];
-                    data = await RecaptchaResponse("6LfRoH0UAAAAACUiU4vtkcdNGgRXQMAOwezg4aGH", token);
-                }
-                else
-                {
-                    data.Success = true;
-                }
+                string token = req["g-recaptcha-response"];
+                Recaptcha data = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
                 if (!data.Success)
                 {
                     if (data.ErrorCodes.Count <= 0)

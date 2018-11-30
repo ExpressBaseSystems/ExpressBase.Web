@@ -140,14 +140,15 @@
         this.tempArr.push(el);
         let $el = $(el);
         let type = $el.attr("ctype").trim();
-        let attrEbsid = parseInt($el.attr("ebsid").match(/\d+$/)[0]);
-        if (attrEbsid || attrEbsid === 0)
-            this.controlCounters[type + "Counter"] = attrEbsid;
-        else
-            this.controlCounters[type + "Counter"] = (this.controlCounters[type + "Counter"]);
+        let attr_ebsid = $el.attr("ebsid");
+        let attrEbsid_Dgt = parseInt(attr_ebsid.match(/\d+$/)[0]);
+        let attrEbsid_Except_Dgt = attr_ebsid.substring(0, attr_ebsid.length - attrEbsid_Dgt.toString().length);
+
+        if (attrEbsid_Dgt || attrEbsid_Dgt === 0)
+            this.controlCounters[type + "Counter"] = attrEbsid_Dgt;
 
         //this.controlCounters[type + "Counter"] = parseInt($el.attr("ebsid").match(/\d+$/)[0]) || (this.controlCounters[type + "Counter"]);
-        let ebsid = type + this.controlCounters[type + "Counter"]++;// inc counter
+        let ebsid = attrEbsid_Except_Dgt + this.controlCounters[type + "Counter"]++;// inc counter
         $el.attr("tabindex", "1");
         this.ctrlOnClickBinder($el, type);
         $el.on("focus", this.controlOnFocus.bind(this));

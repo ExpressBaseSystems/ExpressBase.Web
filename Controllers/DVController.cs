@@ -42,10 +42,11 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
 
-            var resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid = null });
-            var dsobj = resultlist.Dsobj;
+            EbObjectWithRelatedDVResponse resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid = null });
+            EbDataVisualization dsobj = resultlist.Dsobj;
             dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
             ViewBag.dvObject = dsobj;
+            ViewBag.DispName = dsobj.DisplayName;
             ViewBag.dvRefId = refid;
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;

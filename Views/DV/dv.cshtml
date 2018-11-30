@@ -48,6 +48,7 @@
     var datePattern = (_user_culture as CultureInfo).DateTimeFormat.ShortDatePattern;
 }
 <script>
+     $('title').text('@ViewBag.DispName');
     $.fn.extend({
         treed: function (o) {
             var openedClass = 'fa-minus-square-o';

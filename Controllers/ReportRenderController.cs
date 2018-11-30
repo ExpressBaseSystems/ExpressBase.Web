@@ -29,10 +29,8 @@ namespace ExpressBase.Web.Controllers
             EbReport Report = EbSerializers.Json_Deserialize<EbReport>(resultlist.Data[0].Json);
             Report.AfterRedisGet(this.Redis, this.ServiceClient);
             ViewBag.Fd = Report;
-            {
-                ViewBag.Fd = Report;
-            }
             ViewBag.RenderLimit = renderLimit;
+            ViewBag.DispName = Report.DisplayName;
             return View();
         }
 

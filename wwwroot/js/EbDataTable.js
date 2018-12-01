@@ -2016,9 +2016,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var summary_val = 0;
 
                 if (opScroll === '∑' || opLF === '∑' || opRF === '∑')
-                    summary_val = this.summary[agginfo.data][0];
+                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0]: 0;
                 if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
-                    summary_val = this.summary[agginfo.data][1];
+                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
                 }
                 if (opScroll !== "")
                     $(ftrtxtScroll).val(summary_val);
@@ -2642,9 +2642,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
 
         if (selValue === '∑')
-            pageTotal =this.summary[agginfo[0].data][0];
+            pageTotal = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
         else if (selValue === 'x̄')
-            pageTotal = this.summary[agginfo[0].data][1];
+            pageTotal = (typeof this.summary[agginfo.data] !== "undefined") ?  this.summary[agginfo[0].data][1] : 0;
 
         $(ftrtxt).val(pageTotal);
         e.preventDefault();

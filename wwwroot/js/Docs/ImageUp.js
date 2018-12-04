@@ -27,16 +27,16 @@
     }
 
     this.makeFup = function () {
-        _input.fileinput({
-            uploadUrl: "../StaticFile/UploadImageAsync",
-            maxFileCount: 5,
-            uploadAsync: false,
-            uploadExtraData: this.uploadtag.bind(this)
-        }).on('fileuploaded', this.fileUploadSuccess.bind(this))
-          .on('fileloaded', this.addCustbtn.bind(this))
-          .on('filepreajax', this.filepreajax.bind(this));
+        //_input.fileinput({
+        //    uploadUrl: "../StaticFile/UploadImageAsync",
+        //    maxFileCount: 5,
+        //    uploadAsync: false,
+        //    uploadExtraData: this.uploadtag.bind(this)
+        //}).on('fileuploaded', this.fileUploadSuccess.bind(this))
+        //  .on('fileloaded', this.addCustbtn.bind(this))
+        //  .on('filepreajax', this.filepreajax.bind(this));
 
-        $(".file-drop-zone").css({ "height": '95%', "overflow-y": "auto" });
+        //$(".file-drop-zone").css({ "height": '95%', "overflow-y": "auto" });
 
         //this.cropfy = new cropfy({
         //    Container: 'container',
@@ -75,9 +75,9 @@
         let contentType = block[0].split(":")[1];
         let realData = block[1].split(",")[1];
         let blob = this.b64toBlob(realData, contentType);
-        let sf = _input.fileinput('getFileStack')[_i];
+        //let sf = _input.fileinput('getFileStack')[_i];
         let file = new File([blob], sf.name, { type: contentType, lastModified: Date.now() });
-        _input.fileinput('updateStack', _i, file);
+        //_input.fileinput('updateStack', _i, file);
     };
 
     this.uploadtag = function () {
@@ -146,7 +146,7 @@
     };
 
     this._saveTag = function (e) {       
-        var f = _input.fileinput('getFileStack')[_i];
+        //var f = _input.fileinput('getFileStack')[_i];
         _tag[f.name.toLowerCase()] = _tImg.tagsinput('items');
         this.tagImg();
     };

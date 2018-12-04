@@ -30,7 +30,7 @@
             $("#" + this.PGobj.wraperId + " [name=" + _CurProp + "Tr] .pgTdval").attr("title", value);
         }
         else if (this.editor === 17) {
-            value = this.PGobj.ImgSlctrs[_CurProp].getId();
+            value = this.PGobj.ImgSlctrs[_CurProp].getFileRef();
             PropsObj[_CurProp] = value;
             $curRowInp.val(value);
         }
@@ -125,6 +125,9 @@
         //this.CurProplabel = this.CurMeta.alias || this.PGobj.CurProp;
         if (!(this.editor === 17 || this.editor === 14 || this.editor === 21))
             $(this.modalBg_Slctr).show(450, this.pgCXEshowCallback.bind(this));
+        if (this.editor === 17)
+            this.PGobj.ImgSlctrs[this.PGobj.CurProp].toggleM();
+
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         //this.CurEditor = this.CurMeta.editor;
         if (this.editor > 6 && this.editor < 11 || this.editor === 22 || this.editor === 24 || this.editor === 26)

@@ -172,8 +172,9 @@
         let NCCTblNames = [];
         let FlatContControls = getFlatContControls(this.FormObj);
         $.each(FlatContControls, function (i, CC) {
-            if (!CC.IsSpecialContainer)
-                NCCTblNames.push(CC.TableName);
+            let TableName = CC.TableName.trim();
+            if (!CC.IsSpecialContainer && TableName !== '')
+                NCCTblNames.push(TableName);
         });
         return NCCTblNames;
     };
@@ -327,11 +328,11 @@
             $notOk1stCtrl.select();
 
         // isDGsValid
-            let isDGsValid = true;
-            $.each(this.DGs, function (i, DG) {
-                if (DG.isValid() === false)
-                    isDGsValid = false;
-            });
+        let isDGsValid = true;
+        $.each(this.DGs, function (i, DG) {
+            if (DG.isValid() === false)
+                isDGsValid = false;
+        });
         return required_valid_flag && isDGsValid;
     };
 

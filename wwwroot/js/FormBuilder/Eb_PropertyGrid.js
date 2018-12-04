@@ -133,12 +133,35 @@
         else if (type === 17) {  //  If imageUploader
             valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
-            this.ImgSlctrs[name] = new imageUploader({
-                Container: "mb_" + this.wraperId,
-                Console: this.wc,
+
+            //this.ImgSlctrs[name] = new imageUploader({
+            //    Container: "mb_" + this.wraperId,
+            //    Console: this.wc,
+            //    TenantId: this.cid,
+            //    toggleId: "pgCXbtn_" + elemId
+            //});
+
+            this.ImgSlctrs[name] = new EbFileUpload({
+                Type: "image",
+                //PreviewWraper: "#divAllImg1",
+                //Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],
+                //FilesUrl: "/FilesOf/@ViewBag.AccId",
+                Console:this.wc,
+                Toggle: "#pgCXbtn_" + elemId,
                 TenantId: this.cid,
-                toggleId: "pgCXbtn_" + elemId
+                SolutionId: "@ViewBag.SolnId",
+                Container: "mb_" + this.wraperId,
+                Multiple: false,
+                ServerEventUrl: 'https://se.eb-test.xyz',
+                EnableTag: false,
+                EnableCrop: false,
+                MaxSize:  2,//in MegaBytes
+                //Context: "dp",//if single and crop
+                //ResizeViewPort: true //if single and crop
             });
+            this.ImgSlctrs[name].windowClose = function () {
+                this.CXVE.CXE_OKclicked();
+            }.bind(this);
         }
         else if (type === 23 || type === 15) {
             let value23 = "";

@@ -123,12 +123,12 @@ namespace ExpressBase.Web.BaseControllers
 
                     this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
 
-                    if (controller.ViewBag.wc== TokenConstants.UC)
+                    if (controller.ViewBag.wc == TokenConstants.UC)
                     {
-                        ViewBag.Locations = GetAccessLoc(controller.ViewBag.cid);
+                        ViewBag.Locations = GetAccessLoc(controller);
                         controller.ViewBag.CurrentLocation = this.LoggedInUser.Preference.DefaultLocation;
                     }
-                        
+
                 }
                 catch (System.ArgumentNullException ane)
                 {
@@ -158,22 +158,40 @@ namespace ExpressBase.Web.BaseControllers
             base.OnActionExecuted(context);
         }
 
-        public string GetAccessLoc(string cid)
+        public string GetAccessLoc(Controller contrlr)
         {
             string _json = string.Empty;
             List<EbLocation> list = new List<EbLocation>();
-            var s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
-            if (this.LoggedInUser.LocationIds.Contains(-1))
-                list = s_obj.Locations.Values.ToList<EbLocation>();
-            else
+            try
             {
-                foreach (int id in this.LoggedInUser.LocationIds)
+                Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", contrlr.ViewBag.cid));
+
+                if (s_obj == null)
                 {
-                    list.Add(s_obj.Locations[id]);
+                    this.ServiceClient.Post(new UpdateSolutionRequest() { SolnId = contrlr.ViewBag.cid, DbName = contrlr.ViewBag.cid });
+                    s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", contrlr.ViewBag.cid));
                 }
+                if (this.LoggedInUser.LocationIds.Contains(-1))
+                    list = s_obj.Locations.Values.ToList();
+                else
+                {
+                    Console.WriteLine("==============Solution Obj Location Ids: ");
+                    foreach (int key in s_obj.Locations.Keys)
+                        Console.WriteLine(key + "====");
+                    Console.WriteLine("================ User Object Location Ids: ");
+                    foreach (int id in this.LoggedInUser.LocationIds)
+                    {
+                        Console.WriteLine(id + "====");
+                        list.Add(s_obj.Locations[id]);
+                    }
+                }
+                _json = JsonConvert.SerializeObject(list);
             }
-            _json = JsonConvert.SerializeObject(list);
-            return _json;
-        }
+            catch(Exception e)
+            {
+                Console.WriteLine("Error GetAccessLoc :" + e.StackTrace + "\n"+ e.Message);
+            }
+                return _json;
+            }
     }
-}
+    }

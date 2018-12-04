@@ -56,7 +56,7 @@
 
 @section EbHead {
     <script>
-
+        $('title').text('@ViewBag.DispName');
         new EbHeader().insertButton(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
     <button class="btn run" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div"><i class="fa fa-filter" aria-hidden="true"></i></button>`);
       if ('@fd' === 'True') {

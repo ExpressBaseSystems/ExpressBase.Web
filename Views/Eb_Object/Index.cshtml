@@ -14,6 +14,7 @@
 
     $(document).ready(function () {
         commonObj.init();
+    $('title').text('@ViewBag.ObjectName');
     });
 
     var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl');
@@ -59,11 +60,11 @@
                     @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
                 }
                 @*else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization || ViewBag.ObjType == (int)EbObjectTypes.ChartVisualization)
-                {
-                    object o = null;
-                    @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
+            {
+                object o = null;
+                @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
 
-                }*@
+            }*@
                 else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization)
                 {
                     object o = null;
@@ -105,6 +106,11 @@
                 else if (ViewBag.ObjType == (int)EbObjectTypes.SmsBuilder)
                 {
                     @await Component.InvokeAsync("Smsbuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                }
+                else if (ViewBag.ObjType == (int)EbObjectTypes.UserControl)
+                {
+                    @await Component.InvokeAsync("UserControl", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                 }
             }

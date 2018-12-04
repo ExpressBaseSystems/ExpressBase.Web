@@ -864,7 +864,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 else if (ctype === "SimpleSelect")
                     o.value = $(ctrl).children().find("option:selected").text();
                 else if (ctype === "UserLocation") {
-                    if ($(ctrl).children().find("[type=checkbox]").prop("checked"))
+                    if ($(ctrl).children().find("[type=checkbox][class=userloc-checkbox]").prop("checked"))
                         o.value = "Global";
                     else
                         o.value = $(ctrl).children().find(".active").text().trim().split(" ").join( ",");
@@ -1405,15 +1405,30 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.arrangeWindowHeight = function () {
         var filterId = "#filterDisplay_" + this.tableId;
         if (this.login === "uc") {
-            if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
-                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 54px)", "important");
+            if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader)
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 60px)", "important");
             else {
-                if ($(filterId).children().length === 0)
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 82px)", "important");
-                else if (!this.ebSettings.IsPaging)
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
-                else
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 105px)", "important");
+                if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging && this.EbObject.AllowMultilineHeader) {//multilineonly
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 77px)", "important");
+                }
+                else if ($(filterId).children().length === 0 && this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader) {//pagingonly
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 86px)", "important");
+                }
+                else if ($(filterId).children().length !== 0 && !this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader) {//filteronly
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 84px)", "important");
+                }
+                else if ($(filterId).children().length === 0 && this.ebSettings.IsPaging && this.EbObject.AllowMultilineHeader) {//paging & multiline
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 102px)", "important");
+                }
+                else if ($(filterId).children().length !== 0 && !this.ebSettings.IsPaging && this.EbObject.AllowMultilineHeader) {//filter & multiline
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 100px)", "important");
+                }
+                else if ($(filterId).children().length !== 0 && this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader) {//filetr & paging
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 110px)", "important");
+                }
+                else {
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
+                }                       
             }
             this.stickBtn.$stickBtn.css("top", "46px");
         }
@@ -1769,6 +1784,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else if ($elem.siblings().children().is("I"))
                 $elem = $elem.siblings().children("I");
         }
+        else if ($elem.is("b")) {
+            $elem = $elem.closest("td").prev().children("I");
+        }
 
         if (type === "show") {
             $elem.removeClass("fa-plus-square-o");
@@ -1794,6 +1812,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 return value === property[0];
             });
             if (flag)
+                $ElemtoChange.removeAttr("class").attr("class", "fa fa-plus-square-o");
+            else
+                $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");
+        }
+        else if (property.length === 0) {
+            if ($group.nextUntil("[group=" + headergroup + "]").css("display") === "none")
                 $ElemtoChange.removeAttr("class").attr("class", "fa fa-plus-square-o");
             else
                 $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");
@@ -2016,9 +2040,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var summary_val = 0;
 
                 if (opScroll === '∑' || opLF === '∑' || opRF === '∑')
-                    summary_val = this.summary[agginfo.data][0];
+                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0]: 0;
                 if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
-                    summary_val = this.summary[agginfo.data][1];
+                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
                 }
                 if (opScroll !== "")
                     $(ftrtxtScroll).val(summary_val);
@@ -2204,6 +2228,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (tempobj.length > 0)
             var idx = tempobj[0].data;
         var data = arrayColumn(this.unformatedData, idx);
+        data = data.filter(function (elem, pos) {
+            return data.indexOf(elem) === pos;
+        });
         if ($(obj).children('div').children('.eb_finput').attr("data-coltyp") === "string") {
             this.setFilterboxValueInner(obj, data);
         }
@@ -2642,9 +2669,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
 
         if (selValue === '∑')
-            pageTotal =this.summary[agginfo[0].data][0];
+            pageTotal = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
         else if (selValue === 'x̄')
-            pageTotal = this.summary[agginfo[0].data][1];
+            pageTotal = (typeof this.summary[agginfo.data] !== "undefined") ?  this.summary[agginfo[0].data][1] : 0;
 
         $(ftrtxt).val(pageTotal);
         e.preventDefault();
@@ -2833,10 +2860,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.dvObject = Dvobj;
             o.data = result.formattedData;
             this.datatable = new EbBasicDataTable(o);
-            if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
-                $(".inlinetable").css("width", $(window).width()-90);
-            else
-                $(".inlinetable").css("width", $(window).width() - 130);
+            //if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
+            //    $(".inlinetable").css("width", $(window).width()-90);
+            //else
+            //    $(".inlinetable").css("width", $(window).width() - 151);
+            this.datatable.Api.columns.adjust();
         }
         else {
             $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");

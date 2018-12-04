@@ -56,7 +56,7 @@
             html.push(`<button name="${key}" class="btn dlgBoxBtn-cust pull-${settings.Buttons[key].Align}"
                 style="background:${settings.Buttons[key].Background};color:${settings.Buttons[key].FontColor}">${key}</button>`);
         }
-        return html.join(",")
+        return html.join(" ");
     }
 
     if (operation === "show")

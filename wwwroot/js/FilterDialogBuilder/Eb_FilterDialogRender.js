@@ -102,7 +102,6 @@
                     $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
                 else
                     $("body input[name='" + cObj.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
-                return false;
             }
             else if (cObj.ObjType === 'UserLocation') {
                 if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {

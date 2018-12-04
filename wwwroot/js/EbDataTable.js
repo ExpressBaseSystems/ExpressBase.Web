@@ -1784,6 +1784,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else if ($elem.siblings().children().is("I"))
                 $elem = $elem.siblings().children("I");
         }
+        else if ($elem.is("b")) {
+            $elem = $elem.closest("td").prev().children("I");
+        }
 
         if (type === "show") {
             $elem.removeClass("fa-plus-square-o");
@@ -1809,6 +1812,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 return value === property[0];
             });
             if (flag)
+                $ElemtoChange.removeAttr("class").attr("class", "fa fa-plus-square-o");
+            else
+                $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");
+        }
+        else if (property.length === 0) {
+            if ($group.nextUntil("[group=" + headergroup + "]").css("display") === "none")
                 $ElemtoChange.removeAttr("class").attr("class", "fa fa-plus-square-o");
             else
                 $ElemtoChange.removeAttr("class").attr("class", "fa fa-minus-square-o");

@@ -2669,9 +2669,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
 
         if (selValue === '∑')
-            pageTotal = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
+            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
         else if (selValue === 'x̄')
-            pageTotal = (typeof this.summary[agginfo.data] !== "undefined") ?  this.summary[agginfo[0].data][1] : 0;
+            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ?  this.summary[agginfo[0].data][1] : 0;
 
         $(ftrtxt).val(pageTotal);
         e.preventDefault();

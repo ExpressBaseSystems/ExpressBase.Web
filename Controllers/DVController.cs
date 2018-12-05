@@ -63,12 +63,12 @@ namespace ExpressBase.Web.Controllers
             string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
             return RedirectToAction("dv", new { refid = _refid, rowData = "", filterValues = returnValue, tabNum = 0 });
         }
-        public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag, string wc, string contextId, bool customcolumn, string _curloc)
+        public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag, string wc, string contextId, bool customcolumn, string _curloc, string submitId)
         {
             EbDataVisualization dvObject = EbSerializers.Json_Deserialize(dvobj);
             dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
             Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = solu, contextId = contextId, CustomColumn = customcolumn,wc= ViewBag.wc, curloc = _curloc  });
+            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = solu, contextId = contextId, CustomColumn = customcolumn, wc = ViewBag.wc, curloc = _curloc, submitId = submitId });
         }
 
 

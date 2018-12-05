@@ -13,7 +13,7 @@
 @{
     if (ViewBag.data.EbDataSource.FilterDialogRefId != null && ViewBag.data.EbDataSource.FilterDialogRefId != "" && ViewBag.forWrap != "wrap")
     {       
-        @await Component.InvokeAsync("ParameterDiv", new { FilterDialogObj = filterDialogObj, _user = ViewBag.currentUser, _sol = ViewBag.solution, ParentRefid = ViewBag.dvRefId, wc = ViewBag.wc, curloc = ViewBag.curloc });
+        @await Component.InvokeAsync("ParameterDiv", new { FilterDialogObj = filterDialogObj, _user = ViewBag.currentUser, _sol = ViewBag.solution, ParentRefid = ViewBag.dvRefId, wc = ViewBag.wc, curloc = ViewBag.curloc, submitId = ViewBag.submitId });
 
     }
 }

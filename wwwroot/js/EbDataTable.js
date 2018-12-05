@@ -122,7 +122,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: store.get("Eb_Loc-" + TenantId + UserId) },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: store.get("Eb_Loc-" + TenantId + UserId), submitId: this.submitId },
             success: this.ajaxSucc
         });
     };
@@ -140,10 +140,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else
             this.isTagged = true;
-
-        $("#obj_icons").empty();
-        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
         var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter).empty();
         this.filterHtml = text;
@@ -169,6 +165,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.getColumnsSuccess.bind(this));
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
+        
+        $("#obj_icons").empty();
+        this.submitId = "btnGo" + this.tableId;
+        this.$submit= $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#obj_icons").append(this.$submit);
+        this.$submit.click(this.getColumnsSuccess.bind(this));
 
         if (text !== "") {
             if (typeof commonO !== "undefined")
@@ -191,16 +193,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dvcontainerObj.dvcol[focusedId].stickBtn.hide();
             }
             $("#eb_common_loader").EbLoader("hide");
-            $("#btnGo" + this.tabNum).trigger("click");
+            this.$submit.trigger("click");
         }
         else {
             this.FD = true;
             if (this.isPipped || this.isContextual) {
                 this.placefiltervalues();
-                $("#btnGo" + this.tabNum).trigger("click");
+                this.$submit.trigger("click");
             }
             else if (this.FilterDialog.filterObj.AutoRun) {
-                $("#btnGo" + this.tabNum).trigger("click");
+                this.$submit.trigger("click");
             }
             else {
                 this.FDCont.show();
@@ -2166,12 +2168,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 		$("#objname").text(this.EbObject.DisplayName);
         $(".toolicons").show();
         $("#obj_icons").empty();
-        $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        this.submitId = "btnGo" + this.tableId;
+        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#obj_icons").append(this.$submit);
+        this.$submit.click(this.getColumnsSuccess.bind(this));
+
 
         if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
             $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
 
-        $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
         if ($("#" + this.tableId).children().length > 0) {
             if (this.login === "dc") {
                 $("#obj_icons").append("<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +

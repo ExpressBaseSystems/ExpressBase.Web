@@ -9,6 +9,9 @@
     this.formValues = {};
     this.rowId = 0;
     this.formValidationflag = true;
+    this.FRC = new FormRenderCommon({
+        FO: this
+    });
 
     this.updateCtrlUI = function (cObj) {
         $.each(cObj, function (prop, val) {
@@ -31,24 +34,6 @@
                 }
             }
         });
-    };
-    // checks a control value is emptyString
-    this.isRequiredOK = function (ctrl) {
-        let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if ($ctrl.length !== 0 && ctrl.Required && isNaNOrEmpty(ctrl.getValue())) {
-            this.addInvalidStyle(ctrl);
-            return false;
-        }
-        else
-            return true;
-    };
-
-    this.addInvalidStyle = function (ctrl, msg, type) {
-        EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
-    };
-
-    this.removeInvalidStyle = function (ctrl) {
-        EbMakeValid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
     };
 
     this.init = function () {
@@ -89,46 +74,18 @@
     };
 
     this.bindValidators = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
+        $("#" + control.EbSid_CtxId).on("blur", this.FRC.isValidationsOK.bind(this.FRC, control));
     };
 
     this.bindRequired = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
+        $("#" + control.EbSid_CtxId).on("blur", this.FRC.isRequiredOK.bind(this.FRC, control)).on("focus", this.FRC.removeInvalidStyle.bind(this, control));
     };
 
     this.bindUniqueCheck = function (control) {
         $("#" + control.EbSid_CtxId).on("blur", this.checkUnique.bind(this, control));
     };
 
-    // check all validations in a control
-    this.isValidationsOK = function (ctrl) {
-        let formValidationflag = true;
-        ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
-        $.each(ctrl.Validators.$values, function (i, Validator) {
-            this.removeInvalidStyle(ctrl);// reset EbMakeValid
-            if (Validator.IsDisabled)
-                return true;// continue; from loop if current validation IsDisabled
-            let func = new Function("form", atob(Validator.JScode));
-            this.updateFormValues();
-            if (!func(this.formValues)) {
-                //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
-                this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
-                if (!Validator.IsWarningOnly) {
-                    formValidationflag = false;
-                    return false;// break; from loop if one validation failed
-                }
-            }
-        }.bind(this));
-        return formValidationflag;
-    };
-
-    this.updateFormValues = function () {
-        $.each(this.flatControls, function (i, ctrl) {
-            this.formValues[ctrl.Name] = ctrl.getValue();
-        }.bind(this));
-    };
-
-    this.checkUnique = function (ctrl) {
+    this.checkUnique = function (ctrl) {/////////////// move
         let val = ctrl.getValue();
         if (isNaNOrEmpty(val))
             return;
@@ -142,9 +99,9 @@
             success: function (isUnique) {
                 this.hideLoader();
                 if (!isUnique)
-                    this.addInvalidStyle(ctrl, "This field is unique, try another value");
+                    this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
                 else
-                    this.removeInvalidStyle()
+                    this.FRC.removeInvalidStyle()
             }.bind(this),
         });
     };
@@ -286,7 +243,7 @@
     };
 
     this.saveForm = function () {
-        if (!this.AllRequired_valid_Check())
+        if (!this.FRC.AllRequired_valid_Check())
             return;
         this.showLoader();
         $.ajax({
@@ -310,30 +267,6 @@
 
     this.hideLoader = function () {
         $("#eb_common_loader").EbLoader("hide");
-    }
-
-    this.AllRequired_valid_Check = function () {
-        let required_valid_flag = true;
-        let $notOk1stCtrl = null;
-        $.each(this.flatControls, function (i, control) {
-            let $ctrl = $("#" + control.EbSid_CtxId);
-            if (!this.isRequiredOK(control) || !this.isValidationsOK(control)) {
-                required_valid_flag = false;
-                if (!$notOk1stCtrl)
-                    $notOk1stCtrl = $ctrl;
-            }
-        }.bind(this));
-
-        if ($notOk1stCtrl)
-            $notOk1stCtrl.select();
-
-        // isDGsValid
-        let isDGsValid = true;
-        $.each(this.DGs, function (i, DG) {
-            if (DG.isValid() === false)
-                isDGsValid = false;
-        });
-        return required_valid_flag && isDGsValid;
     };
 
     this.init();

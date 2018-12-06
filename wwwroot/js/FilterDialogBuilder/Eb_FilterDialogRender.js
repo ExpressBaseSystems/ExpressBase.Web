@@ -1,6 +1,7 @@
-﻿var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj) {
+﻿var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId) {
     console.log("kitty--------------------------------------------");
     this.filterObj = fObj;
+    this.submitId = submitId;
     this.formObject = {};
     this.onChangeExeFuncs = {};
     this.initControls = new InitControls();

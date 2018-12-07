@@ -22,6 +22,7 @@
 <script src="https://rawgit.com/digitalBush/jquery.maskedinput/1.4.1/dist/jquery.maskedinput.min.js"></script>
 <script src="~/js/Eb_Basic_DataTable.js"></script>
 <script src="~/js/FilterDialogBuilder/Eb_FilterDialogRender.js"></script>
+<script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js"></script>
 
 <style>
     .ds-cont .filter-box {
@@ -55,7 +56,7 @@
     //$(document).ready(function () {
     @Html.Raw(ViewBag.ControlOperations);
     var fobj = @Html.Raw(ViewBag.FilterObj);
-    var FilterDialog = new Eb_FilterDialogRender(fobj, '@ViewBag.wc', '@ViewBag.curloc', @Html.Raw(ViewBag.userObj));
+    var FilterDialog = new Eb_FilterDialogRender(fobj, '@ViewBag.wc', '@ViewBag.curloc', @Html.Raw(ViewBag.userObj), '@ViewBag.submitId');
 
     //});
 </script>

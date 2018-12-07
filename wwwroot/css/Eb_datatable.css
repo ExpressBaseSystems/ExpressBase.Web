@@ -335,12 +335,23 @@ table.dataTable tbody td.dt-body-right {
     height: 100% !important;
 }
 .containerrow .dataTables_scrollBody {
-    height: calc(100% - 18px) !important;
+    /*height: calc(100% - 18px) !important;*/
+    height: 84% !important;
+}
+.containerrow .dataTables_scrollHead {
+    padding-bottom: 0px !important;
+    margin-bottom: -0px !important;
+}
+.containerrow .dataTables_scrollFoot {
+    padding-top: 0px !important;
+    margin-top: 0px !important;
 }
 
 .containerrow .dataTables_wrapper {
-    height: 250px;
-    padding-bottom: 20px;
+    max-height: 250px;
+    height: auto;
+    overflow: auto;
+    border: 1px solid #ccc;
 }
 
 .dataTable tbody tr td {
@@ -501,4 +512,8 @@ table.dataTable tr.group td {
 .inlinetable .dataTables_scrollHead {
     /*border: 1px solid;*/
     border-bottom: 2px solid #ccc !important;
+}
+.inlinetable {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }

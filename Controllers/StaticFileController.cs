@@ -574,5 +574,15 @@ namespace ExpressBase.Web.Controllers
         {
             return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
         }
+
+        [HttpPost]
+        public bool ChangeCategory(string Category,string FileRefs)
+        {
+            FileCategoryChangeResponse resp = this.FileClient.Post(new FileCategoryChangeRequest {
+                Category = Category,
+                FileRefId = FileRefs.Split(CharConstants.COMMA).Select(n => int.Parse(n)).ToArray()
+        });
+            return resp.Status;
+        }
     }
 }

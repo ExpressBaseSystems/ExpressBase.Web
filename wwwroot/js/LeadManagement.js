@@ -296,35 +296,35 @@
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var target = $(e.target).attr("href"); // activated tab
             if (target === "#menuAttach" && this.ImageIdList.length !== 0) {
-                this.drawImagePage();
+                //this.drawImagePage();
             }
         }.bind(this));
 
         this.$FirstImgPage.on("click", function (evt) {
             if (this.imgCrntPage !== 0) {
                 this.imgCrntPage = 0;
-                this.drawImagePage();
+                //this.drawImagePage();
             }
         }.bind(this));
 
         this.$PrevImgPage.on("click", function (evt) {
             if (this.imgCrntPage !== 0) {
                 this.imgCrntPage--;
-                this.drawImagePage();
+                //this.drawImagePage();
             }
         }.bind(this));
 
         this.$NextImgPage.on("click", function (evt) {
             if (this.imgCrntPage !== parseInt((this.ImageIdList.length - 1) / this.imgPageSize)) {
                 this.imgCrntPage++;
-                this.drawImagePage();
+                //this.drawImagePage();
             }
         }.bind(this));
 
         this.$LastImgPage.on("click", function (evt) {
             if (this.imgCrntPage !== parseInt((this.ImageIdList.length - 1) / this.imgPageSize)) {
                 this.imgCrntPage = parseInt((this.ImageIdList.length - 1) / this.imgPageSize);
-                this.drawImagePage();
+                //this.drawImagePage();
             }
         }.bind(this));
     };

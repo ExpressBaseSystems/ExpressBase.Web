@@ -843,8 +843,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    });
         //}
         $.each(getFlatControls(this.FilterDialog.filterObj), function (i, obj) {
-            let val = getObjByval(this.filterValues, "Name", obj.Name).Value;
-            obj.setValue(val);
+            var mapobj = getObjByval(this.filterValues, "Name", obj.Name);
+            if (typeof mapobj !== "undefined") {
+                let val = mapobj.Value;
+                obj.setValue(val);
+            }
         }.bind(this));
     }
 

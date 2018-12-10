@@ -12,6 +12,23 @@
     }
 };
 
+Array.prototype.Contains = function (item) {
+    let stat = false;
+    for (let i = 0; i < this.length; i++) {
+        if (this[i] === item) {
+            stat = true;
+            break;
+        } 
+    }
+    return stat;
+}
+
+function is_cached(src) {
+    var image = new Image();
+    image.src = src;
+    return image.complete;
+}
+
 class EbFupStaticData {
     constructor() {
         this.SpinImage = `data:image/gif;base64,R0lGODlhyADIAPcAABw+cR0/ch0/ch0/ch0/ch0/ch0/ch0/ch0/ch0/ch0/ch0/ch0/ch0/ciRHeTpejlR7qGaOuHObxIKs04+53pW/5JbC5pjD5
@@ -195,6 +212,7 @@ class EbFileUpload extends EbFupStaticData {
         this.SingleRefid = null;
         this.FileList = [];
         this.IsCropFlow = false;
+        this.CurrentFimg = null;
         this.Multiple = (this.Options.Multiple) ? "multiple" : "";
         if (this.validateOpt())
             this.init();
@@ -282,6 +300,7 @@ class EbFileUpload extends EbFupStaticData {
             this.Gallery = this.appendGallery();
             this.GalleryFS = this.appendFSHtml();
             this.pullFile();
+            $(".prevImgrout,.nextImgrout").off("click").on("click", this.fscreenN_P.bind(this));
         }
 
         if (this.Options.EnableCrop) {
@@ -299,13 +318,23 @@ class EbFileUpload extends EbFupStaticData {
         this.Modal.find('.eb-upl-bdy').on("drop", this.handleFileSelect.bind(this));
     };
 
+    fscreenN_P(ev) {
+        let action = $(ev.target).closest("button").attr("action");
+        if (action === "next" && this.CurrentFimg.next('.trggrFprev').length>0) {
+            this.galleryFullScreen({ target: this.CurrentFimg.next('.trggrFprev')});
+        }
+        else if (action === "prev" && this.CurrentFimg.prev('.trggrFprev').length > 0){
+            this.galleryFullScreen({ target: this.CurrentFimg.prev('.trggrFprev') });
+        }
+    };
+
     appendGallery() {
         let $div = null;
         if ($(this.Options.PreviewWraper).length <= 0)
             $div = $('body');
         else
             $div = $(this.Options.PreviewWraper);
-        return ($div.append(`<div id="${this.Options.Container}_GalleryUnq" class="ebFupGalleryOt">
+        $div.append(`<div id="${this.Options.Container}_GalleryUnq" class="ebFupGalleryOt">
                         <div class="ClpsGalItem_Sgl" Catogory="DEFAULT" alt="Default">
                             <div class="Col_head" data-toggle="collapse" data-target="#DEFAULT_ColBdy">DEFAULT <span class="FcnT"></span></div>
                             <div class="Col_apndBody collapse" id="DEFAULT_ColBdy">
@@ -313,19 +342,26 @@ class EbFileUpload extends EbFupStaticData {
                             </div>
                         </div>
                         ${this.getCatHtml()}
-                    </div>`));
+                    </div>`);
+        return $(`#${this.Options.Container}_GalleryUnq`);
     }
 
     appendFSHtml() {
-        return $("body").append(`
-                        <div class="ebFupGFscreen_wraper-fade"></div>
-                            <div class="ebFupGFscreen_wraper">
-                            <button class="prevImgrout roundstyledbtn"><i class="fa fa-chevron-left"></i></button>
-                            <button class="nextImgrout roundstyledbtn"><i class="fa fa-chevron-right"></i></button>
-                            <div class="ebFupGFscreen_inner">
-                        <img src="~/images/web.png" class="FupimgIcon" />
-                        </div>
+        $("body").append(`<div class="ebFupGFscreen_wraper-fade"></div>
+                             <div class="ebFupGFscreen_wraper">
+                                 <button class="FsClse" onclick="$('.ebFupGFscreen_wraper,.ebFupGFscreen_wraper-fade').hide();">
+                                    <i class="fa fa-close"></i></button>
+                                <button class="prevImgrout roundstyledbtn" action="prev"><i class="fa fa-chevron-left"></i></button>
+                                <button class="nextImgrout roundstyledbtn" action="next"><i class="fa fa-chevron-right"></i></button>
+                                <div class="ebFupGFscreen_inner">
+                                <img src="~/images/web.png" class="FupimgIcon" />
+                                <div class="ebFupGFscreen_footr">
+                                    <h1 class="Fname"></h1>
+                                    <h3 class="Tags"></h3>
+                                </div>
+                            </div>
                         </div>`);
+        return $(".ebFupGFscreen_wraper,.ebFupGFscreen_wraper-fade");
     }
 
     getCatHtml() {
@@ -374,28 +410,61 @@ class EbFileUpload extends EbFupStaticData {
             else {
                 for (let k = 0; k < this.FileList[i].Meta.Category.length; k++) {
                     let $portcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_apndBody_apndPort`);
-                    let $countcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_head .FcnT`);
-
+                    let $countcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_head .FcnT`);             
                     $portcat.append(this.thumbNprevHtml(this.FileList[i]));
                     $countcat.text("(" + $portcat.children().length + ")");
                 }
             }
+            $(`#prev-thumb${this.FileList[i].FileRefId}`).data("meta", JSON.stringify(this.FileList[i]));
         }
-        $('.EbFupThumbLzy').Lazy();
-        $(".eb_uplGal_thumbO").off("click").on("click", this.galleryFullScreen.bind(this));
+
+        $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
+        $(".trggrFprev").off("click").on("click", this.galleryFullScreen.bind(this));
+        $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
+        this.contextMenu();
     }
 
     thumbNprevHtml(o) {
-        return (`<div class="eb_uplGal_thumbO">
+        return (`<div class="eb_uplGal_thumbO trggrFprev" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                 <div class="eb_uplGal_thumbO_img">
                     <img src="${this.SpinImage}" data-src="/images/small/${o.FileRefId}.jpg" class="EbFupThumbLzy" style="display: block;">
-                <div><p class="fnamethumb text-center">${o.FileName}</p> 
+                <div><p class="fnamethumb text-center">${o.FileName}</p>
+                <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                 </div>
             </div>`);
     }
 
-    galleryFullScreen() {
+    galleryFullScreen(ev) {
+        let fileref = $(ev.target).closest(".trggrFprev").attr("filref");
+        this.GalleryFS.show();
+        let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
 
+        if (is_cached(location.origin + `/images/large/${fileref}.jpg`)) {
+            this.GalleryFS.eq(1).find('img').attr("src", `/images/large/${fileref}.jpg`);
+        }
+        else {
+            this.GalleryFS.eq(1).find('img').attr("src", `/images/small/${fileref}.jpg`);
+            this.GalleryFS.eq(1).find('img').attr("data-src", `/images/large/${fileref}.jpg`);
+        }
+
+        this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Fname").text(o.FileName);
+        this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Tags").html(this.getTagsHtml(o));
+        this.GalleryFS.eq(1).find('img').Lazy({
+            onError: function (element) {
+               console.log('error loading ' + element.data('src'));
+           }
+        });
+        this.CurrentFimg = $(ev.target).closest(".trggrFprev");
+    }
+
+    getTagsHtml(o) {
+        let html = new Array();
+        if ("Tags" in o.Meta) {
+            for (let i = 0; i < o.Meta.Tags.length; i++) {
+                html.push(`<span class="tagno-t">${o.Meta.Tags[i]}</span>`);
+            }
+        }
+        return html.join("");
     }
 
     initCropy() {
@@ -826,4 +895,73 @@ class EbFileUpload extends EbFupStaticData {
             return s.replace(".", "").replace(/\s/g, "");
         }
     };
+
+    contextMenu() {
+        $.contextMenu({
+            selector: ".eb_uplGal_thumbO",
+            autoHide: true,
+            build: function ($trigger, e) {
+                return {
+                    items: {
+                        "fold2": {
+                            "name": "Move to Category", icon: "fa-list",
+                            "items": this.getCateryLinks()
+                        }
+                    }
+                };
+            }.bind(this)
+        });
+    }
+
+    getCateryLinks() {
+        let o = {};
+        for (let i = 0; i < this.Options.Categories.length; i++) {
+            o[this.Options.Categories[i]] = {
+                name: this.Options.Categories[i],
+                icon: "",
+                callback: this.contextMcallback.bind(this)
+            };
+        }
+        return o;
+    }
+
+    contextMcallback(eType, selector, action, originalEvent) {
+        let refids = [eval($(selector.$trigger).attr("filref"))];
+        this.Gallery.find(`.mark-thumb:checkbox:checked`).each(function (i, o) {
+            if (!refids.Contains(eval($(o).attr("refid"))))
+                refids.push(eval($(o).attr("refid")));
+        }.bind(this));
+        this.changeCatAjax(eType, refids);
+    }
+
+    changeCatAjax(cat, fileref) {
+
+        let formData = new FormData();
+        formData.append("Category", cat);
+        formData.append("FileRefs", fileref.join(","));
+
+        $.ajax({
+            url: "../StaticFile/ChangeCategory",
+            type: "POST",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function (evt) {
+
+            }.bind(this)
+        }).done(function (status) {
+            if (status)
+                this.redrawCategry(fileref, cat);
+        }.bind(this));
+    }
+    redrawCategry(fileref, cat) {
+        let $t;
+        for (let i = 0; i < fileref.length; i++) {
+            $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).append(this.Gallery.find(`div[filref="${fileref[i]}"]`));
+            $t = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_head .FcnT`);
+            $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
+        }
+        this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked",false)
+    }
 };

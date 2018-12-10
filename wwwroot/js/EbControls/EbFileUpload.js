@@ -368,7 +368,7 @@ class EbFileUpload extends EbFupStaticData {
         return (`<div class="eb_uplGal_thumbO trggrFprev" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                 <div class="eb_uplGal_thumbO_img">
                     <img src="${this.SpinImage}" data-src="/images/small/${o.FileRefId}.jpg" class="EbFupThumbLzy" style="display: block;">
-                <div><p class="fnamethumb text-center">${o.FileName}</p>
+                <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                 </div>
             </div>`);

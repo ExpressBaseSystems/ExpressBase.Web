@@ -360,17 +360,26 @@
                 flex-direction: column;
                 height: 100%;
             }
+                .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO_img img{
+                    max-width:100%;
+                }
 
-            .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO:hover {
-                box-shadow: 2px 2px 5px 3px #a2958a;
-                transform: translateY(-2px) scale(1.01);
-            }
+                .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO:hover {
+                    box-shadow: 2px 2px 5px 3px #a2958a;
+                    transform: translateY(-2px) scale(1.01);
+                }
+.widthfull{
+    width:100%;
+}
 
 .fnamethumb {
     margin-top: 10px;
     margin-bottom: 0;
     font-family: open sans;
     font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /*gallery fscreen*/

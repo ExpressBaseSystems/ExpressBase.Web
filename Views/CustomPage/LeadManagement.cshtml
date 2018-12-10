@@ -343,25 +343,24 @@
             </div>
 
             <!-- Attach Menu -->
-            <div id="menuAttach" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
-                <div style="padding: 15px 15px; display:inline-block; width:79%;">
+            <div id="menuAttach" class="tab-pane fade" style="min-height: 200px; ">
+                @*<div style="padding: 15px 15px; display:inline-block; width:79%;">
                     <button id="btnFirstImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-step-backward"></i> First</button>
                     <button id="btnPrevImgPage" class="ebbtn eb_btn-sm "><i class="fa fa-chevron-left"></i> Prev</button>
                     <label id="lblImgPage">Page 0 of 0</label>
                     <button id="btnNextImgPage" class="ebbtn eb_btn-sm ">Next <i class="fa fa-chevron-right"></i></button>
                     <button id="btnLastImgPage" class="ebbtn eb_btn-sm ">Last <i class="fa fa-step-forward"></i></button>
-                </div>
-				<div style="text-align:right; padding: 15px 15px; display:inline-block; width:20%;">
+                </div>*@
+				<div style="text-align:right; padding: 15px 15px 5px 15px; display:inline-block; width:100%;">
 					<button id="btnUploadImg" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
 				</div>
                 <div id="divAllImg"> </div>
-                <div id="divAllImg1"> </div>
+                <div id="divAllImg1" style="padding: 0 15px;"> </div>
                 @*<div style="text-align: center; padding-top: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>*@
             </div>
         </div>
     </div>
 </div>
-
 
 <!-- Add Followup Details Modal -->
 <div class="modal fade" id="mdlFeedBack" role="dialog" data-id="">
@@ -674,9 +673,9 @@
     
     var imgup = new EbFileUpload({
         Type: "image",
-        //PreviewWraper: "#divAllImg1",
+        PreviewWraper: "#divAllImg1",
         Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],
-        //FilesUrl: "/FilesOf/@ViewBag.AccId",
+        FilesUrl: "/FilesOf/@ViewBag.AccId",
         Toggle: "#btnUploadImg",
         TenantId:"@ViewBag.cid",
         SolutionId: "@ViewBag.SolnId",

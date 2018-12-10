@@ -325,6 +325,7 @@
             font-weight: 600;
             background: #e4e4e4;
             cursor: pointer;
+            border-radius: 4px;
         }
 
         .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody {

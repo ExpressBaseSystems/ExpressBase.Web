@@ -182,15 +182,25 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
-            else if (type.Equals(EbObjectTypes.UserControl))
+            if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
             {
-                Type[] typeArray = typeof(EbUserControl).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.UserControl, typeof(EbUserControl));
-                if (dsobj != null)
+                EbUsrCtrlObjLisAllVerResponse result = this.ServiceClient.Get<EbUsrCtrlObjLisAllVerResponse>(new EbUsrCtrlObjLisAllVerRequest { EbObjectRefId = ViewBag.Refid });
+                string UserControlsHtml = string.Empty;
+                foreach(KeyValuePair<string, List<EbObjectWrapper>> _object in result.Data)
                 {
-                    dsobj.AfterRedisGet(Redis, ServiceClient);
-                    ViewBag.dsObj = dsobj;
+                    EbObjectWrapper _objverL = null;
+                    string versionHtml = "<select>";
+                    foreach(EbObjectWrapper _objver in _object.Value)
+                    {
+                        versionHtml += "<option>"+ _objver.VersionNumber + "</option>";
+                           _objverL = _objver;
+                    }
+                    versionHtml += "</select>";
+                     UserControlsHtml += string.Concat("<div eb-type='UserControl' class='tool'>", _objverL.DisplayName,
+                            versionHtml,
+                         "</div>");
                 }
+                ViewBag.UserControlHtml = UserControlsHtml;
             }
             ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;

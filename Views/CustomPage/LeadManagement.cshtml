@@ -687,6 +687,7 @@
         MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes
         //Context: "dp",//if single and crop
         //ResizeViewPort: true //if single and crop
+        CustomMenu: [{ name: "Set as DP", icon: "fa-user",multiple:true }]
     });
     var uploadedImgRefList = [];
     imgup.uploadSuccess = function (fileid) {
@@ -696,6 +697,9 @@
     imgup.windowClose = function () {
         if (uploadedImgRefList.length > 0)
             EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+    }
+    imgup.customTrigger = function (name,refids) {
+
     }
 
 </script>

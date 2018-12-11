@@ -21,7 +21,20 @@
     <div id="toolbox_cont" class='formB-box toolbox-cont'>
         <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-times pin" onclick="slideLeft ('.web-form-wraper', '#toolbox_cont')" aria-hidden="true"></i></div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
-            @Html.Raw(_toolBox.html)
+            
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#div-primitive-tools" style="padding: 2px 15px; font-weight: 600;">Primitive</a></li>
+                <li><a data-toggle="tab" href="#div-custom-tools" style="padding: 2px 15px; font-weight: 600;">Custom</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="div-primitive-tools" class="tab-pane fade in active div-primitive-tools">
+                    @Html.Raw(_toolBox.ToolsHtml)
+                </div>
+                <div id="div-custom-tools" class="tab-pane fade div-custom-tools">
+                    @Html.Raw(ViewBag.UserControlHtml)
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="web-form-wraper">
@@ -59,10 +72,14 @@
     let editModeFormObj =  @Html.Raw(ViewBag.dsObj) || null;
     let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm_" + Date.now().toString(36);
     let ToolBoxId = "form-buider-toolBox";
+    const PrimitiveToolsId = "div-primitive-tools";
+    const CustomToolsId = "div-custom-tools";
     let PGid = "form-buider-propGrid";
     let PGformId = "form-buider-propGrid";
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder({
         toolBoxId: ToolBoxId,
+        primitiveToolsId: PrimitiveToolsId,
+        customToolsId: CustomToolsId,
         formId: FBid,
         PGId: PGid,
         builderType: BuilderType,

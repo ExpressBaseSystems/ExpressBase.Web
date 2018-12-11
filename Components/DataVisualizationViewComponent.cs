@@ -35,13 +35,14 @@ namespace ExpressBase.Web.Components
             this.Redis = _redis as RedisClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag, User _user, Eb_Solution _sol, string contextId, bool CustomColumn, string wc, string curloc)
+        public async Task<IViewComponentResult> InvokeAsync(string dvobjt, string dvRefId, bool flag, User _user, Eb_Solution _sol, string contextId, bool CustomColumn, string wc, string curloc, string submitId)
         {
             var dvobj = EbSerializers.Json_Deserialize(dvobjt);
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.serviceclient = this.ServiceClient;
             ViewBag.currentUser = _user;
             ViewBag.solution = _sol;
+            ViewBag.submitId = submitId;
             if (dvobj != null)
             {
                 dvobj.AfterRedisGet(this.Redis, this.ServiceClient);

@@ -27,7 +27,7 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog FilterDialogObj, User _user, Eb_Solution _sol, string ParentRefid, string wc, string curloc)
+        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog FilterDialogObj, User _user, Eb_Solution _sol, string ParentRefid, string wc, string curloc, string submitId)
         {
             if (FilterDialogObj != null)
             {
@@ -54,6 +54,7 @@ namespace ExpressBase.Web.Components
                 var serializerSettings = new JsonSerializerSettings();
                 serializerSettings.TypeNameHandling = TypeNameHandling.All;
                 serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                ViewBag.submitId = submitId;
             }
 
             return View();

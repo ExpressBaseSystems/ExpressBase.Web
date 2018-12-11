@@ -116,13 +116,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.call2FD = function (value) {
+        this.submitId = "btnGo" + this.tableId;
         var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
         this.relatedObjects = this.EbObject.DataSourceRefId;
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "unset", "margin-right": "unset" } }, maskLoader: false });
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: store.get("Eb_Loc-" + TenantId + UserId) },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: store.get("Eb_Loc-" + TenantId + UserId), submitId: this.submitId },
             success: this.ajaxSucc
         });
     };
@@ -140,10 +141,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else
             this.isTagged = true;
-
-        $("#obj_icons").empty();
-        $("#obj_icons").append("<button id='btnGo" + this.tabNum + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#btnGo" + this.tabNum).click(this.getColumnsSuccess.bind(this));
         var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter).empty();
         this.filterHtml = text;
@@ -159,6 +156,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 style: { position: "absolute", top: "46px" }
             });
         }
+        $("#obj_icons").empty();
+        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#obj_icons").append(this.$submit);
+        this.$submit.click(this.getColumnsSuccess.bind(this));
 
         this.FDCont = $("#filterWindow_" + this.tableId);
         $("#filterWindow_" + this.tableId).empty();
@@ -169,6 +170,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.getColumnsSuccess.bind(this));
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
+        
+        
 
         if (text !== "") {
             if (typeof commonO !== "undefined")
@@ -191,16 +194,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dvcontainerObj.dvcol[focusedId].stickBtn.hide();
             }
             $("#eb_common_loader").EbLoader("hide");
-            $("#btnGo" + this.tabNum).trigger("click");
+            this.$submit.trigger("click");
         }
         else {
             this.FD = true;
             if (this.isPipped || this.isContextual) {
                 this.placefiltervalues();
-                $("#btnGo" + this.tabNum).trigger("click");
+                this.$submit.trigger("click");
             }
-            else if (this.FilterDialog.filterObj.AutoRun) {
-                $("#btnGo" + this.tabNum).trigger("click");
+            else if (this.FilterDialog.FormObj.AutoRun) {
+                this.$submit.trigger("click");
             }
             else {
                 this.FDCont.show();
@@ -545,7 +548,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         });
 
-        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        //this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
         //this.table_jQO.on('length.dt', function (e, settings, len) {
         //    console.log('New page length: ' + len);
@@ -559,7 +562,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//, 
-        var serialObj = (JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
+        var serialObj = (JSON.parse('{ "data":'+this.EbObject.Columns.$values.length+', "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
         this.extraCol.push(serialObj);
         this.addcheckbox();
     }
@@ -777,7 +780,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var fltr_collection = [];
 
         if (this.FD)
-            fltr_collection = getValsForViz(this.FilterDialog.filterObj);
+            fltr_collection = getValsForViz(this.FilterDialog.FormObj);
 
 
         //if (this.isContextual && from !== "compare") {
@@ -840,8 +843,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //    });
         //}
         $.each(getFlatControls(this.FilterDialog.filterObj), function (i, obj) {
-            let val = getObjByval(this.filterValues, "Name", obj.Name).Value;
-            obj.setValue(val);
+            var mapobj = getObjByval(this.filterValues, "Name", obj.Name);
+            if (typeof mapobj !== "undefined") {
+                let val = mapobj.Value;
+                obj.setValue(val);
+            }
         }.bind(this));
     }
 
@@ -2166,12 +2172,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 		$("#objname").text(this.EbObject.DisplayName);
         $(".toolicons").show();
         $("#obj_icons").empty();
-        $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        this.submitId = "btnGo" + this.tableId;
+        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#obj_icons").append(this.$submit);
+        this.$submit.click(this.getColumnsSuccess.bind(this));
+
 
         if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
             $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
 
-        $("#btnGo" + this.tableId).click(this.getColumnsSuccess.bind(this));
         if ($("#" + this.tableId).children().length > 0) {
             if (this.login === "dc") {
                 $("#obj_icons").append("<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +
@@ -2669,9 +2678,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
 
         if (selValue === '∑')
-            pageTotal = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
+            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
         else if (selValue === 'x̄')
-            pageTotal = (typeof this.summary[agginfo.data] !== "undefined") ?  this.summary[agginfo[0].data][1] : 0;
+            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ?  this.summary[agginfo[0].data][1] : 0;
 
         $(ftrtxt).val(pageTotal);
         e.preventDefault();

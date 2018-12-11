@@ -391,15 +391,12 @@ class EbFileUpload extends EbFupStaticData {
         else {
             this.GalleryFS.eq(1).find('img').attr("src", `/images/small/${fileref}.jpg`);
             this.GalleryFS.eq(1).find('img').attr("data-src", `/images/large/${fileref}.jpg`);
+            this.GalleryFS.eq(1).find('img').Lazy({
+                onError: function (element) {}
+            });
         }
-
         this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Fname").text(o.FileName);
         this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Tags").html(this.getTagsHtml(o));
-        this.GalleryFS.eq(1).find('img').Lazy({
-            onError: function (element) {
-               console.log('error loading ' + element.data('src'));
-           }
-        });
         this.CurrentFimg = $(ev.target).closest(".trggrFprev");
     }
 
@@ -931,5 +928,11 @@ class EbFileUpload extends EbFupStaticData {
             $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
         }
         this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked",false)
+    }
+
+    deleteFromGallery(filerefs) {
+        for (let i = 0; i < filerefs.length;i++) {
+            this.Gallery.find(`div[filref="${filerefs[i]}"]`).remove();
+        }
     }
 };

@@ -126,9 +126,10 @@
 
     this.initMenuBarObj = function () {
         var menuBarObj = $("#layout_div").data("EbHeader");
-        menuBarObj.setName("Lead Management");
-        if (this.Mode === 0)
-            menuBarObj.setName("Lead Management - New Customer");
+        let nametxt = this.CustomerInfo["name"] || "New Customer";
+        menuBarObj.setName("Lead Management - " + nametxt);
+        document.title = "Lead Management - " + nametxt;
+
         menuBarObj.insertButton(`
             <button id="btnSave" class='btn' title='Save (Ctrl+Shift+S)'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
             <button id="btnNew" class='btn' title='New'><i class="fa fa-user-plus" aria-hidden="true"></i></button>`);

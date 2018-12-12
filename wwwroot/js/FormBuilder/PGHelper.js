@@ -1,7 +1,7 @@
 ﻿const PGHelper = function (pgObj) {
     this.PGobj = pgObj;
 
-    this.dataSourceInit = function (fun) {
+    this.dataSourceInit = function () {
         $.LoadingOverlay('show');
         $.ajax({
             type: "POST",
@@ -11,7 +11,6 @@
                 this.clearDependantProps("Columns");
                 this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
                 this.PGobj.refresh();
-                fun(this.PGobj.PropsObj);
                 $.LoadingOverlay('hide');
             }.bind(this)
         });

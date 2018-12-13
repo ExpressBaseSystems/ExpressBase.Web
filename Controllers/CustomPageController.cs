@@ -70,9 +70,9 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeObject(this.ServiceClient.Get(new GetImageInfoRequest { CustomerId = ac }).Data);
         }
 
-		public int SaveCustomer(int Mode, string CustomerInfo)
+		public int SaveCustomer(int Mode, string CustomerInfo, string ImgRefId)
 		{
-			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode, UserName = this.LoggedInUser.FullName });
+			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode, ImgRefId = ImgRefId, UserName = this.LoggedInUser.FullName });
 			return res.Status;
 		}
 

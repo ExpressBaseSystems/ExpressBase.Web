@@ -223,6 +223,11 @@ namespace ExpressBase.Web.Controllers
                 bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
                 if (ContainsRestricted) return "RestrictedStatementinQuerry";
             }
+            else if(obj is EbSqlFunction)
+            {
+                bool ContainsRestricted = CheckSqlFuncRestricted((obj as EbSqlFunction).Sql);
+                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+            }
             if (string.IsNullOrEmpty(_refid))
             {
                 UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
@@ -280,6 +285,16 @@ namespace ExpressBase.Web.Controllers
             if (obj is EbDataReader)
             {
                 bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
+                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+            }
+            else if (obj is EbDataWriter)
+            {
+                bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
+                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+            }
+            else if (obj is EbSqlFunction)
+            {
+                bool ContainsRestricted = CheckSqlFuncRestricted((obj as EbSqlFunction).Sql);
                 if (ContainsRestricted) return "RestrictedStatementinQuerry";
             }
             if (string.IsNullOrEmpty(_refid))
@@ -552,6 +567,11 @@ namespace ExpressBase.Web.Controllers
         public bool CheckDataWriterRestricted(string sql)
         {
             return Regex.IsMatch(sql.ToLower(), @"\b(create\s|delete\s|alter\s|truncate\s|drop\s)");
+        }
+
+        public bool CheckSqlFuncRestricted(string sql)
+        {
+            return Regex.IsMatch(sql.ToLower(), @"\b(delete\s|alter\s|truncate\s|drop\s)");
         }
     }
 }

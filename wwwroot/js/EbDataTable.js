@@ -2857,21 +2857,22 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "' class='table display table-bordered compact'></table></td></tr></div>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "' class='table display table-bordered compact'></table></td></tr></div>");
 
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
-            o.showSerialColumn = false;
+            o.showSerialColumn = true;
             o.showCheckboxColumn = false;
+            o.source = "inline";
             o.scrollHeight = "200px";
             o.dvObject = Dvobj;
             o.data = result.formattedData;
             this.datatable = new EbBasicDataTable(o);
-            //if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
-            //    $(".inlinetable").css("width", $(window).width()-90);
-            //else
-            //    $(".inlinetable").css("width", $(window).width() - 151);
+            if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
+                $(".inlinetable").css("width", $(window).width()-115);
+            else
+                $(".inlinetable").css("width", $(window).width() - 175);
             this.datatable.Api.columns.adjust();
         }
         else {

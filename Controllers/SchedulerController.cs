@@ -48,6 +48,18 @@ namespace ExpressBase.Web.Controllers
 
             var ds = this.ServiceClient.Post(new SchedulerMQRequest { Task = task });
         }
+        [HttpGet]
+        public IActionResult SchedulesList()
+        {
+
+            return View();
+        }
+        [HttpPost]
+        public void Unschedule(string triggerkey)
+        {
+            var ds = this.ServiceClient.Post(new UnschedulerMQRequest { TriggerKey = triggerkey });
+        }
+
 
     }
 }

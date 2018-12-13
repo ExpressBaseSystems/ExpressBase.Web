@@ -451,6 +451,9 @@
             let NS2 = this.CurMeta.UIChangefn.split(".")[1];
             EbOnChangeUIfns[NS1][NS2](this.PropsObj.EbSid, this.PropsObj);
         }
+        if (this.CurProp === 'DataSourceId') {
+            this.PGHelper.dataSourceInit();
+        }
         this.PropertyChanged(this.PropsObj, this.CurProp);
     };
 

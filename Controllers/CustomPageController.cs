@@ -51,7 +51,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.StatusList = fr.StatusList;
 			ViewBag.ServiceList = fr.ServiceList;
 
-			ViewBag.ImageIdList = fr.ImageIdList;
+			//ViewBag.ImageIdList = fr.ImageIdList;
             ViewBag.Permission = true;// this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
 
 			if (mode == 1)
@@ -70,9 +70,9 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeObject(this.ServiceClient.Get(new GetImageInfoRequest { CustomerId = ac }).Data);
         }
 
-		public int SaveCustomer(int Mode, string CustomerInfo, string ImgRefId)
+		public int SaveCustomer(int Mode, string CustomerInfo)
 		{
-			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode, ImgRefId = ImgRefId, UserName = this.LoggedInUser.FullName });
+			SaveCustomerResponse res = this.ServiceClient.Post<SaveCustomerResponse>(new SaveCustomerRequest { CustomerData = CustomerInfo, RequestMode = Mode, UserName = this.LoggedInUser.FullName });
 			return res.Status;
 		}
 
@@ -100,7 +100,11 @@ namespace ExpressBase.Web.Controllers
 			return res.Status;
 		}
 
-
-
-	}
+        public int DeleteImages(int CustId, string ImgRefIds)
+        {
+            LmDeleteImageResponse res = this.ServiceClient.Post<LmDeleteImageResponse>(new LmDeleteImageRequest { CustId = CustId, ImgRefIds = ImgRefIds });
+            return res.RowsAffected;
+        }
+               
+    }
 }

@@ -354,7 +354,7 @@
 				<div style="text-align:right; padding: 15px 15px 5px 15px; display:inline-block; width:100%;">
 					<button id="btnUploadImg" class="ebbtn eb_btn-sm eb_btngreen"><i class="fa fa-upload"></i> Upload</button>
 				</div>
-                <div id="divAllImg"> </div>
+                @*<div id="divAllImg"> </div>*@
                 <div id="divAllImg1" style="padding: 0 15px;"> </div>
                 @*<div style="text-align: center; padding-top: 13%; font-size: 32px; color: #bbb; "> Coming Soon </div>*@
             </div>
@@ -610,7 +610,7 @@
 </div>
 
 <!-- ViewImage Modal -->
-<div class="modal fade" id="mdlViewImage" role="dialog" data-id="">
+@*<div class="modal fade" id="mdlViewImage" role="dialog" data-id="">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -635,7 +635,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>*@
 
 <style>
     .MyTempColStyle {
@@ -660,7 +660,7 @@
 
     var SubCategoryList = Html.Raw(JsonConvert.SerializeObject(ViewBag.SubCategoryList));
 
-    var ImageIdList = Html.Raw(JsonConvert.SerializeObject(ViewBag.ImageIdList));
+    //var ImageIdList = Html.Raw(JsonConvert.SerializeObject(ViewBag.ImageIdList));
 
     var FeedbackList = (Html.Raw(ViewBag.FeedbackList).ToString() == "") ? "null" : Html.Raw(ViewBag.FeedbackList);
     var BillingList = (Html.Raw(ViewBag.BillingList).ToString() == "") ? "null" : Html.Raw(ViewBag.BillingList);
@@ -669,7 +669,7 @@
 }
 
 <script>
-    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList, @ImageIdList );
+    var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
     
     var imgup = new EbFileUpload({
         Type: "image",
@@ -687,18 +687,50 @@
         MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes
         //Context: "dp",//if single and crop
         //ResizeViewPort: true //if single and crop
-        CustomMenu: [{ name: "Set as DP", icon: "fa-user"}]
-    });
-    var uploadedImgRefList = [];
-    imgup.uploadSuccess = function (fileid) {
-        if (uploadedImgRefList.indexOf(fileid) === -1)
-            uploadedImgRefList.push(fileid);
-    }
-    imgup.windowClose = function () {
-        if (uploadedImgRefList.length > 0)
-            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-    }
-    imgup.customTrigger = function (name,refids) {
+        CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }]
+    }); 
 
+    //var uploadedImgRefList = [];
+    //imgup.uploadSuccess = function (fileid) {
+    //    if (uploadedImgRefList.indexOf(fileid) === -1)
+    //        uploadedImgRefList.push(fileid);
+    //}
+    //imgup.windowClose = function () {
+    //    if (uploadedImgRefList.length > 0)
+    //        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+    //}
+    
+    imgup.customTrigger = function (name,refids) {
+        if (name === "Set as DP") {
+            let id = refids[0];
+            $("#divCustomerDp").children().remove();
+            $("#divCustomerDp").append(`
+                    <div style="width:100%; height:100%; display:flex; align-items: center; justify-content: center;">
+                        <img src="/images/small/${id}.jpg" data-id="${id}" class="img-responsive" style="max-height: 135px; max-width: 130px;" onerror="this.src = '/images/imagenotfound.svg';" />
+                    </div>`);
+            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+        }
+        else if (name === "Delete") {
+            $("#eb_common_loader").EbLoader("show");
+            $.ajax({
+                type: "POST",
+                url: "../CustomPage/DeleteImages",
+                data: { CustId: @ViewBag.AccId, ImgRefIds: JSON.stringify(refids) },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                    $("#eb_common_loader").EbLoader("hide");
+                },
+                success: function (result) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    if (result) {
+                        EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' }); 
+                        imgup.deleteFromGallery(refids);                       
+                    }
+                    else {
+                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                    }
+                }.bind(this)
+            });
+        }
     }
 </script>

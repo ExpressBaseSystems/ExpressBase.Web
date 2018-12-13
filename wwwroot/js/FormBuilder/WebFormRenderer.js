@@ -107,7 +107,7 @@
     };
 
     this.getWebFormVals = function () {
-        return getValsFromForm(this.filterObj);
+        return getValsFromForm(this.FormObj);
     }.bind(this);
 
 

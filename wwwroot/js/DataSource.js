@@ -376,7 +376,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.CreateObjString = function () {
         var ParamsArray = [];
         if (this.FilterDialogRefId !== undefined)
-            ParamsArray = getValsForViz(this.filterDialog.filterObj);
+            ParamsArray = getValsForViz(this.filterDialog.FormObj);
         return ParamsArray;
     };
 

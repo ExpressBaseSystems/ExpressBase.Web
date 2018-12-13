@@ -749,8 +749,36 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("/Api")]
         public IActionResult ApiConsole()
         {
-            string _json = @"{'MasterTable':'dg3f','MultipleTables':{'dg3f':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'textbox0','Value':'abhilasha','Type':16,'AutoIncrement':false}]}],'dg3c':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'date0','Value':'2018-11-17','Type':5,'AutoIncrement':false},{'Name':'textbox1','Value':'pushpam','Type':16,'AutoIncrement':false}]}]}}";
-
+            //string _json = @"{'Name':'Form1','MasterTable':'dg3f','MultipleTables':{'dg3f':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'textbox0','Value':'abhilasha','Type':16,'AutoIncrement':false}]}],'dg3c':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'date0','Value':'2018-11-17','Type':5,'AutoIncrement':false},{'Name':'textbox1','Value':'pushpam','Type':16,'AutoIncrement':false}]}]}}";
+            string _json = @"{
+'FormName':'Form1',
+'Tables':[
+{'TableName':'t1',
+'Colums':[
+	{'ColumName':'c1','EbDbType':16},
+	{'ColumName':'c2','EbDbType':16},
+	{'ColumName':'c3','EbDbType':16},
+	{'ColumName':'c4','EbDbType':16},
+	{'ColumName':'c5','EbDbType':16}
+	]},
+{'TableName':'t2',
+'Colums':[
+	{'ColumName':'c1','EbDbType':16},
+	{'ColumName':'c2','EbDbType':16},
+	{'ColumName':'c3','EbDbType':16},
+	{'ColumName':'c4','EbDbType':16},
+	{'ColumName':'c5','EbDbType':16}
+	]},
+	{'TableName':'t3',
+'Colums':[
+	{'ColumName':'c1','EbDbType':16},
+	{'ColumName':'c2','EbDbType':16},
+	{'ColumName':'c3','EbDbType':16},
+	{'ColumName':'c4','EbDbType':16},
+	{'ColumName':'c5','EbDbType':16}
+	]}
+]
+}";
             var res = this.ServiceClient.Post<FormDataJsonResponse>(new FormDataJsonRequest {
                 JsonData = _json
             });

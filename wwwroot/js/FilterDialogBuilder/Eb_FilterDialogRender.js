@@ -1,10 +1,25 @@
-﻿var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId) {
+﻿var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
     console.log("kitty--------------------------------------------");
-    this.filterObj = fObj;
+    this.FormObj = fObj;
     this.submitId = submitId;
     this.formObject = {};
     this.onChangeExeFuncs = {};
     this.initControls = new InitControls();
+    this.$submitBtn = $("#" + this.submitId);
+    JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
+    this.flatControls = getFlatCtrlObjs(this.FormObj);// objectcoll with functions
+    this.onSubmitFn = onSubmitFn;
+    this.FRC = new FormRenderCommon({
+        FO: this
+    });
+
+    this.submit = function () {
+        console.log("111111111111111111111111111111");
+        if (!this.FRC.AllRequired_valid_Check())
+            return;
+        if (this.onSubmitFn)
+            this.onSubmitFn();
+    }.bind(this);
 
     this.init = function () {
         this.initFilterDialogCtrls();
@@ -13,8 +28,8 @@
     }
 
     this.initFilterDialogCtrls = function () {
-        JsonToEbControls(this.filterObj);
-        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+        JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
+        $.each(this.FormObj.Controls.$values, function (k, cObj) {
             let opt = {};
             if (cObj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getFilterVals;
@@ -23,11 +38,11 @@
     };
 
     this.getFilterVals = function () {
-        return getValsFromForm(this.filterObj);
+        return getValsFromForm(this.FormObj);
     }.bind(this);
 
     this.initFormObject2 = function () {
-        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+        $.each(this.FormObj.Controls.$values, function (k, cObj) {
             this.formObject[cObj.Name] = cObj;
 
             Object.defineProperty(this.formObject, cObj.Name, {
@@ -39,15 +54,15 @@
     };
 
     this.initFormObject = function () {
-        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+        $.each(this.FormObj.Controls.$values, function (k, cObj) {
             this.formObject[cObj.Name] = cObj;
 
             Object.defineProperty(this.formObject, cObj.Name, {
                 get: function () {
-                    return this.getValue(this.filterObj.Controls.$values[k]);
+                    return this.getValue(this.FormObj.Controls.$values[k]);
                 }.bind(this),
                 set: function (val) {
-                    this.setValue(this.filterObj.Controls.$values[k], val);
+                    this.setValue(this.FormObj.Controls.$values[k], val);
                 }.bind(this)
             });
         }.bind(this));
@@ -63,7 +78,8 @@
 
     this.bindFuncsToDom = function () {
         this.onChangeExeFlag = false;
-        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+        this.$submitBtn.on("click", this.submit);
+        $.each(this.FormObj.Controls.$values, function (k, cObj) {
             //creating onChangeExeFuncs and binding to dom elements
             if (cObj.OnChange && cObj.OnChange !== '') {
                 this.onChangeExeFuncs[cObj.Name] = new Function("form", atob(cObj.OnChange));
@@ -97,7 +113,7 @@
     }
 
     this.initialLoad = function () {
-        $.each(this.filterObj.Controls.$values, function (k, cObj) {
+        $.each(this.FormObj.Controls.$values, function (k, cObj) {
             if (cObj.ObjType === 'RadioGroup' && cObj.OnChange && cObj.OnChange !== '') {
                 if (cObj.DefaultValue !== "")
                     $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
@@ -106,7 +122,7 @@
             }
             else if (cObj.ObjType === 'UserLocation') {
                 if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
-                    $('#' + cObj.EbSid_CtxId+"_checkbox").trigger('click');
+                    $('#' + cObj.EbSid_CtxId + "_checkbox").trigger('click');
                 }
                 else {
                     $('#' + cObj.EbSid_CtxId + "_checkbox_div").hide();
@@ -121,8 +137,8 @@
                 }
             }
         });
-        //if (this.filterObj.Width > 150)
-        //    this.$filterBox.parent().css("width", this.filterObj.Width + "px");
+        //if (this.FormObj.Width > 150)
+        //    this.$filterBox.parent().css("width", this.FormObj.Width + "px");
     };
 
     this.UserLocationCheckboxChanged = function (cObj) {

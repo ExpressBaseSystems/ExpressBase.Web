@@ -4,8 +4,10 @@
     this.formId = options.formId;
     this.Name = this.formId;
     this.toolBoxid = options.toolBoxId;
+    this.primitiveToolsId = options.primitiveToolsId;
+    this.customToolsId = options.customToolsId;
     this.rootContainerObj = null;
-    this.builderType = options.builderType
+    this.builderType = options.builderType;
     this.$propGrid = $("#" + options.PGId);
 
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
@@ -224,7 +226,7 @@
         //if drag start within the form
         let id = $(el).closest(".Eb-ctrlContainer").attr("ebsid");
         let $source = $(source);
-        if ($source.attr("id") !== "form-buider-toolBox") {
+        if ($source.attr("id") !== this.primitiveToolsId && $source.attr("id") !== this.customToolsId) {
             this.movingObj = this.rootContainerObj.Controls.PopByName(id);
             if ($source.closest(".ebcont-ctrl").attr("ctype") === "TabPane")
                 this.adjustPanesHeight($source);
@@ -238,7 +240,7 @@
         let $target = $(el).parent();
         if (this.movingObj) {
             //Drag end with in the form
-            if ($target.attr("id") !== "form-buider-toolBox") {
+            if ($target.attr("id") !== this.primitiveToolsId && $target.attr("id") !== this.customToolsId) {
                 if ($sibling.attr("id")) {
                     let idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
@@ -256,7 +258,7 @@
         let $target = $(target);
         if (target) {
             //drop from toolbox to form
-            if ($(source).attr("id") === "form-buider-toolBox") {
+            if ($(source).attr("id") === this.primitiveToolsId || $(source).attr("id") === this.customToolsId) {
                 let $el = $(el);
                 let type = $el.attr("eb-type").trim();
                 let ebsid = type + (this.controlCounters[type + "Counter"])++;
@@ -334,26 +336,31 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") === "form-buider-toolBox") {
-            return false;
-        }
-        // allow copy except toolbox
-        if ($(source).attr("id") === "form-buider-toolBox" && $(target).attr("id") !== "form-buider-toolBox") {
+
+        if ($(target).attr("id") !== this.primitiveToolsId && $(target).attr("id") !== this.customToolsId)
             return true;
-        }
-        // sortable with in the container
-        if ($(source).attr("id") !== "form-buider-toolBox" && source === target) {
-            return true;
-        }
-        else {
-            return true;
-        }
+        return false;
+        
+        //if ($(source).attr("id") === this.primitiveToolsId && $(target).attr("id") === this.primitiveToolsId) {
+        //    return false;
+        //}
+        //// allow copy except toolbox
+        //if ($(source).attr("id") === this.primitiveToolsId && $(target).attr("id") !== this.primitiveToolsId) {
+        //    return true;
+        //}
+        //// sortable with in the container
+        //if ($(source).attr("id") !== this.primitiveToolsId && source === target) {
+        //    return true;
+        //}
+        //else {
+        //    return true;
+        //}
 
     };
 
-    this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formId)], {
+    this.drake = new dragula([document.getElementById(this.primitiveToolsId), document.getElementById(this.customToolsId), document.getElementById(this.formId)], {
         removeOnSpill: false,
-        copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
+        copy: function (el, source) { return (source.className.includes('div-primitive-tools') || source.className.includes('div-custom-tools')); },
         copySortSource: true,
         moves: this.movesfn.bind(this),
         accepts: this.acceptFn.bind(this)
@@ -391,9 +398,7 @@
     }.bind(this);
 
     this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-        if (CurProp === 'DataSourceId') {
-            this.PGobj.PGHelper.dataSourceInit(this.DSchangeCallBack);
-        }
+        
     }.bind(this);
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {

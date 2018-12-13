@@ -83,8 +83,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("Billing")]
         public IActionResult Billing()
-        {
-           
+        {           
             return View();
         }
 

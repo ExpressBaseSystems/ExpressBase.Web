@@ -116,6 +116,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }.bind(this);
 
     this.call2FD = function (value) {
+        this.submitId = "btnGo" + this.tableId;
         var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
         this.relatedObjects = this.EbObject.DataSourceRefId;
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "unset", "margin-right": "unset" } }, maskLoader: false });
@@ -155,6 +156,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 style: { position: "absolute", top: "46px" }
             });
         }
+        $("#obj_icons").empty();
+        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#obj_icons").append(this.$submit);
+        this.$submit.click(this.getColumnsSuccess.bind(this));
 
         this.FDCont = $("#filterWindow_" + this.tableId);
         $("#filterWindow_" + this.tableId).empty();
@@ -166,11 +171,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
         
-        $("#obj_icons").empty();
-        this.submitId = "btnGo" + this.tableId;
-        this.$submit= $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#obj_icons").append(this.$submit);
-        this.$submit.click(this.getColumnsSuccess.bind(this));
+        
 
         if (text !== "") {
             if (typeof commonO !== "undefined")
@@ -201,7 +202,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.placefiltervalues();
                 this.$submit.trigger("click");
             }
-            else if (this.FilterDialog.filterObj.AutoRun) {
+            else if (this.FilterDialog.FormObj.AutoRun) {
                 this.$submit.trigger("click");
             }
             else {
@@ -779,7 +780,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var fltr_collection = [];
 
         if (this.FD)
-            fltr_collection = getValsForViz(this.FilterDialog.filterObj);
+            fltr_collection = getValsForViz(this.FilterDialog.FormObj);
 
 
         //if (this.isContextual && from !== "compare") {

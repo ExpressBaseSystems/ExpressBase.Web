@@ -344,7 +344,7 @@ class EbFileUpload extends EbFupStaticData {
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
 
-            if (this.FileList[i].Meta.Category.length <= 0) {
+            if (this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] ==="Category"  ) {
                 $portdef.append(this.thumbNprevHtml(this.FileList[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
             }
@@ -571,7 +571,7 @@ class EbFileUpload extends EbFupStaticData {
     }
 
     getCategory() {
-        let html = new Array(`<option val="Default">Category</option>`);
+        let html = new Array(`<option val="Category">Category</option>`);
         for (let i = 0; i < this.Options.Categories.length; i++) {
             html.push(`<option val="${this.Options.Categories[i]}">${this.Options.Categories[i]}</option>`);
         }

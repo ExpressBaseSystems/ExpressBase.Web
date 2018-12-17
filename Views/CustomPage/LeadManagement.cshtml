@@ -690,16 +690,16 @@
         CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }]
     });
 
-    //var uploadedImgRefList = [];
-    //imgup.uploadSuccess = function (fileid) {
-    //    if (uploadedImgRefList.indexOf(fileid) === -1)
-    //        uploadedImgRefList.push(fileid);
-    //}
-    //imgup.windowClose = function () {
-    //    if (uploadedImgRefList.length > 0)
-    //        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-    //}
-
+    var uploadedImgRefList = [];
+    imgup.uploadSuccess = function (fileid) {
+        if (uploadedImgRefList.indexOf(fileid) === -1)
+            uploadedImgRefList.push(fileid);
+    }
+    imgup.windowClose = function () {
+        if (uploadedImgRefList.length > 0)
+            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+    }
+    
     imgup.customTrigger = function (name,refids) {
         if (name === "Set as DP") {
             let id = refids[0];

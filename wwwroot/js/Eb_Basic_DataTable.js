@@ -34,6 +34,7 @@ var EbBasicDataTable = function (Option) {
     this.data = Option.data || null;
     this.headerDisplay = Option.headerDisplay;
     this.getFilterValues = Option.getFilterValuesFn;
+    this.source = Option.source || "";
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -42,6 +43,7 @@ var EbBasicDataTable = function (Option) {
     this.isRun = false;
 
     this.orderColl = [];
+    this.eb_agginfo = [];
 
     this.init = function () {
         if(this.EbObject === null)
@@ -167,8 +169,8 @@ var EbBasicDataTable = function (Option) {
 
             return sum / data.length;
         });
-
-        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        if (this.source === "")
+            this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
 
         this.table_jQO.on('length.dt', function (e, settings, len) {
             console.log('New page length: ' + len);
@@ -187,8 +189,11 @@ var EbBasicDataTable = function (Option) {
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//"sWidth":"10px", 
         var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
-        if (this.showSerialColumn)
+        if (this.showSerialColumn) {
             this.extraCol.push(serialObj);
+            if (this.source !== "")
+                serialObj.data = this.ebSettings.Columns.$values.length;
+        }
         this.addcheckbox();
     }
 
@@ -407,7 +412,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.bVisible && (col.type == parseInt(gettypefromString("Int32")) || col.type == parseInt(gettypefromString("Decimal")) || col.type == parseInt(gettypefromString("Int64")) || col.type == parseInt(gettypefromString("Double"))) && col.name !== "serial")
+        if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double"))) && col.name !== "serial")
             _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces));
     };
 
@@ -493,9 +498,9 @@ var EbBasicDataTable = function (Option) {
     this.initCompleteFunc = function (settings, json) {
         this.GenerateButtons();
         if (this.eb_agginfo.length > 0) {
-            this.createFooter(0);
-            this.createFooter(1);
-            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
+            //this.createFooter(0);
+            //this.createFooter(1);
+            //$("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
         }
         if (this.login == "uc") {
             this.initCompleteflag = true;

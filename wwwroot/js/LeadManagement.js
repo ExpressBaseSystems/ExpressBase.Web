@@ -746,7 +746,7 @@
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveCustomer",
-                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList) },
+                data: { Mode: this.Mode, CustomerInfo: JSON.stringify(this.OutDataList), ImgRefId: JSON.stringify(uploadedImgRefList) },
                 error: function (xhr, ajaxOptions, thrownError) {
                     EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                     $("#btnSave").prop("disabled", false);
@@ -754,7 +754,7 @@
                 },
                 success: function (result) {
                     if (result) {
-                        //uploadedImgRefList = [];//cleared Image ref id list
+                        uploadedImgRefList = [];//cleared Image ref id list
                         EbMessage("show", { Message: 'Saved Successfully', AutoHide: true, Background: '#00aa00' });
                         if (this.Mode === 0)
                             window.location = window.origin + "/leadmanagement/" + result;

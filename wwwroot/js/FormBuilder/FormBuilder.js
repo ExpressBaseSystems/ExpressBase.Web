@@ -403,9 +403,7 @@
     }.bind(this);
 
     this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-        if (CurProp === 'DataSourceId') {
-            this.PGobj.PGHelper.dataSourceInit(this.DSchangeCallBack);
-        }
+        
     }.bind(this);
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {

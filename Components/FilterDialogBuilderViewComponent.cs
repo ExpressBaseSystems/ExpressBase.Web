@@ -1,4 +1,7 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.Extensions;
+using ExpressBase.Common.Objects;
+using ExpressBase.Objects;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,11 +14,24 @@ namespace ExpressBase.Web.Components
     {
         public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl)
         {
-            ViewBag.dsObj = dsobj;
-            if (dsobj != "null")
+            EbFilterDialog Form = EbSerializers.Json_Deserialize(dsobj);
+            List<EbUserControl> AllUserControls = new List<EbUserControl>();
+            if (dsobj != "null")//  if not edit mode
             {
-                ViewBag.Html = EbSerializers.Json_Deserialize(dsobj).GetHtml();
+                foreach (EbControl ctrl in Form.Controls.FlattenAllEbControls())
+                {
+                    if (ctrl is EbUserControl)
+                        AllUserControls.Add(ctrl as EbUserControl);
+                }
+                ViewBag.Html = Form.GetHtml();
             }
+            foreach (EbUserControl UserControls in AllUserControls)
+            {
+                UserControls.Controls.Clear();
+            }
+
+            ViewBag.dsObj = EbSerializers.Json_Serialize(Form);
+
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;
             ViewBag.Refid = refid;

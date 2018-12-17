@@ -842,7 +842,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //        $("#" + this.ContextId + ' #' + param.Name).val(param.Value);
         //    });
         //}
-        $.each(getFlatControls(this.FilterDialog.filterObj), function (i, obj) {
+        $.each(getFlatControls(this.FilterDialog.FormObj), function (i, obj) {
             var mapobj = getObjByval(this.filterValues, "Name", obj.Name);
             if (typeof mapobj !== "undefined") {
                 let val = mapobj.Value;

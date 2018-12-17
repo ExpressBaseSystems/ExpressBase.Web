@@ -22,6 +22,7 @@ using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
 using ExpressBase.Web.Filters;
 using ExpressBase.Objects.Objects.SmsRelated;
+using ExpressBase.Common.Extensions;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -189,18 +190,37 @@ namespace ExpressBase.Web.Controllers
                 foreach(KeyValuePair<string, List<EbObjectWrapper>> _object in result.Data)
                 {
                     EbObjectWrapper _objverL = null;
-                    string versionHtml = "<select>";
+                    string versionHtml = "<select style = 'float: right; border: none;'>";
                     foreach(EbObjectWrapper _objver in _object.Value)
                     {
-                        versionHtml += "<option>"+ _objver.VersionNumber + "</option>";
-                           _objverL = _objver;
+                        versionHtml += "<option refid='" + _objver.RefId + "'>"+ _objver.VersionNumber + "</option>";
+                        _objverL = _objver;
                     }
                     versionHtml += "</select>";
-                     UserControlsHtml += string.Concat("<div eb-type='UserControl' class='tool'>", _objverL.DisplayName,
-                            versionHtml,
-                         "</div>");
+                    UserControlsHtml += string.Concat("<div eb-type='UserControl' class='tool'>", _objverL.DisplayName, versionHtml, "</div>");
                 }
                 ViewBag.UserControlHtml = UserControlsHtml;
+
+                if (dsobj is EbWebForm)
+                {
+                    EbWebForm _dsobj = dsobj as EbWebForm;
+                    _dsobj.AfterRedisGet(Redis, this.ServiceClient);
+
+                    //List<EbUserControl> AllUserControls = new List<EbUserControl>();
+                    //foreach (EbControl ctrl in _dsobj.Controls.FlattenAllEbControls())
+                    //{
+                    //    if (ctrl is EbUserControl)
+                    //        AllUserControls.Add(ctrl as EbUserControl);
+                    //}
+
+                    ViewBag.dsObj = _dsobj;
+                }
+                else if(dsobj is EbUserControl)
+                {
+                    EbUserControl _dsobj = dsobj as EbUserControl;
+                    _dsobj.AfterRedisGet(Redis, this.ServiceClient);
+                    ViewBag.dsObj = _dsobj;
+                }
             }
             ViewBag.Meta = _c2js.AllMetas;
             ViewBag.JsObjects = _c2js.JsObjects;

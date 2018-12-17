@@ -467,7 +467,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
 
     this.placefiltervalues = function () {
        
-        $.each(getFlatControls(this.FilterDialog.filterObj), function (i, obj) {
+        $.each(getFlatControls(this.FilterDialog.FormObj), function (i, obj) {
             let val = getObjByval(this.filterValues, "Name", obj.Name).Value;
             obj.setValue(val);
         }.bind(this));
@@ -719,7 +719,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
         var fltr_collection = [];
 
         if (this.FD)
-            fltr_collection = getValsForViz(this.FilterDialog.filterObj);
+            fltr_collection = getValsForViz(this.FilterDialog.FormObj);
 
         return fltr_collection;
     };

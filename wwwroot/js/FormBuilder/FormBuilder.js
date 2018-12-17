@@ -14,7 +14,6 @@
 
     this.$form = $("#" + this.formId);
     this.EbObject = options.objInEditMode;
-    this.tempArr = [];
     this.isEditMode = false;
     commonO.Current_obj = this.EbObject;
 
@@ -134,12 +133,13 @@
         Proc(editModeObj, this.rootContainerObj);
         //}.bind(this), 1000);
         $(".Eb-ctrlContainer").each(function (i, el) {
+            if (el.getAttribute("childOf") === 'EbUserControl')
+                return true;
             this.initCtrl(el);
         }.bind(this));
     };
 
     this.initCtrl = function (el) {
-        this.tempArr.push(el);
         let $el = $(el);
         let type = $el.attr("ctype").trim();
         let attr_ebsid = $el.attr("ebsid");
@@ -155,7 +155,7 @@
         this.ctrlOnClickBinder($el, type);
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
-        $el.attr("eb-type", type).attr("ebsid", ebsid);
+        $el.attr("ebsid", ebsid);
         this.updateControlUI(ebsid);
     };
 
@@ -266,6 +266,11 @@
                 let $sibling = $(sibling);
                 $el.remove();
                 let ctrlObj = new EbObjects["Eb" + type](ebsid);
+
+                if (type === "UserControl") {///user control refid set on ctrlobj
+                    ctrlObj["RefId"] = $(el).find("option:selected").attr('refid');
+                }
+
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
                     $ctrl.insertBefore($sibling);
@@ -340,7 +345,7 @@
         if ($(target).attr("id") !== this.primitiveToolsId && $(target).attr("id") !== this.customToolsId)
             return true;
         return false;
-        
+
         //if ($(source).attr("id") === this.primitiveToolsId && $(target).attr("id") === this.primitiveToolsId) {
         //    return false;
         //}

@@ -676,3 +676,9 @@
     vertical-align: middle;
     margin-right: 5px !important;
 }
+
+.user-ctrl {
+    padding: 5px;
+    border: solid 1px rgba(96, 98, 185, 0.2);
+    border-radius: 6px;
+}

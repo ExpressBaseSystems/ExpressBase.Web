@@ -70,7 +70,7 @@
     let formBuilderObj = null;
     let objid =$("#objid").val();
     let editModeFormObj = @Html.Raw(ViewBag.dsObj) || null;
-    let FBid = editModeFormObj ? editModeFormObj.EbSid : "UserControl_" + Date.now().toString(36);
+    let FBid = editModeFormObj ? editModeFormObj.EbSid : "UserControl_" + Date.now();
     const ToolBoxId = "form-buider-toolBox";
     const PrimitiveToolsId = "div-primitive-tools";
     const CustomToolsId = "div-custom-tools";

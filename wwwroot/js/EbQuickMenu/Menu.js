@@ -122,7 +122,7 @@
                                                 </div>
                                             </div>`);
                 this.apndOTypeContainer($(".Eb_quick_menu #obtype_container" + otype), _obj);
-                if (this.login == "dc") {
+                if (this.login === "dc") {
                     $(`.Eb_quick_menu #obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
                                                             <i class="material-icons" style="pointer-events:none;">add</i></a>`);
                 }
@@ -203,15 +203,15 @@
         $(".Eb_quick_menu .modal-body #objList").empty();
         var srch = $(e.target).val().toLowerCase();
         if (srch !== "") {
-            $.each(this.resultObj.Data, function (i, Types) {
-                $.each(Types.Types, function (i, _obj) {
-                    _obj.Objects.forEach(function (obItem) {
-                        if (obItem.ObjName.toLowerCase().indexOf(srch) !== -1) {
-                            this.code4AppendList(obItem, $(".Eb_quick_menu .modal-body #objList"));
-                        }
+                $.each(this.resultObj.Data, function (i, Types) {
+                    $.each(Types.Types, function (i, _obj) {
+						_obj.Objects.forEach(function (obItem) {
+							if (obItem.DisplayName.toLowerCase().indexOf(srch) !== -1) {
+                                this.code4AppendList(obItem, $(".Eb_quick_menu .modal-body #objList"));
+                            }
+                        }.bind(this));
                     }.bind(this));
-                }.bind(this));
-            }.bind(this));
+                }.bind(this));           
         }
     };
 

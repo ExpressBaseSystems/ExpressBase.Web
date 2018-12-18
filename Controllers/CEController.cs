@@ -128,9 +128,9 @@ namespace ExpressBase.Web.Controllers
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
             dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
             Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if(dsObject.FilterDialog != null)
+            if (dsObject.FilterDialog != null)
                 EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
-            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc= "dc"});
+            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc" });
         }
 
         public List<EbObjectWrapper> GetStatusHistory(string _refid)
@@ -182,27 +182,30 @@ namespace ExpressBase.Web.Controllers
         public int Email(int val)
         {
             List<Param> _param = new List<Param> { new Param { Name = "ids", Type = ((int)EbDbTypes.Int32).ToString(), Value = val.ToString() } };
-            ServiceClient.Post(new PdfCreateServiceMqRequest {
-                ObjId = /*"ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2174-2909-2174-2909"*/2174 ,
+            ServiceClient.Post(new PdfCreateServiceMqRequest
+            {
+                ObjId = /*"ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-15-2174-2909-2174-2909"*/2174,
                 Params = _param
             });
             return 0;
         }
 
-        public string DataWriterSqlEval(string sql)
+        [HttpPost]
+        public string ExecSqlFunction(string fname,string _params)
         {
-            //List<object> _inputParams = new List<object>();
-            //Regex r = new Regex(@"insert\sinto\s([\w]*)");
-            //string[] _qrys = sql.Split(CharConstants.SEMI_COLON);
-            //foreach (string q in _qrys)
-            //{
-            //    Match match = r.Match(q);
-            //    string _tname = match.Groups[1].Value;
-            //}
-
-            if (!string.IsNullOrEmpty(sql))
+            return JsonConvert.SerializeObject(this.ServiceClient.Post(new SqlFuncTestRequest
             {
-                List<InputParam> param = new List<InputParam>();
+                FunctionName = fname,
+                Parameters = JsonConvert.DeserializeObject<List<InputParam>>(_params)
+            }));
+        }
+
+        public string DataWriterSqlEval(string sql, int obj_type)
+        {
+            sql = Base64Decode(sql);
+            List<InputParam> param = new List<InputParam>();
+            if (!string.IsNullOrEmpty(sql) && obj_type == EbObjectTypes.DataWriter)
+            {
                 List<string> _temp = new List<string>();
                 Regex r = new Regex(@"\:\w+|\@\w+g");
 
@@ -220,8 +223,31 @@ namespace ExpressBase.Web.Controllers
                 }
                 return JsonConvert.SerializeObject(param);
             }
+            else if (!string.IsNullOrEmpty(sql) && obj_type == EbObjectTypes.SqlFunction)
+            {
+                Regex r = new Regex(@"(\w+)(\s+|)\(.*?\)");
+                Regex r1 = new Regex(@"\(.*?\)");
+                string _func = r.Match(sql.Replace("\n", "")).Groups[1].Value;
+                string _params = r.Match(sql.Replace("\n", "")).Groups[0].Value;
+                string[] _arguments = r1.Match(_params).Groups[0].Value.Replace("(", "").Replace(")", "").Split(",");
+
+                foreach (string _arg in _arguments)
+                {
+                    param.Add(new InputParam
+                    {
+                        Column = _arg.Split(" ")[0],
+                    });
+                }
+                return JsonConvert.SerializeObject(new SqlFunParamWrapper { FunctionName = _func, Arguments = param });
+            }
             else
                 return null;
+        }
+
+        private string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
     }
 }

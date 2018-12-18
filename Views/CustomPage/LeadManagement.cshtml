@@ -670,7 +670,7 @@
 
 <script>
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
-    
+
     var imgup = new EbFileUpload({
         Type: "image",
         PreviewWraper: "#divAllImg1",
@@ -688,17 +688,17 @@
         //Context: "dp",//if single and crop
         //ResizeViewPort: true //if single and crop
         CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }]
-    }); 
+    });
 
-    //var uploadedImgRefList = [];
-    //imgup.uploadSuccess = function (fileid) {
-    //    if (uploadedImgRefList.indexOf(fileid) === -1)
-    //        uploadedImgRefList.push(fileid);
-    //}
-    //imgup.windowClose = function () {
-    //    if (uploadedImgRefList.length > 0)
-    //        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
-    //}
+    var uploadedImgRefList = [];
+    imgup.uploadSuccess = function (fileid) {
+        if (uploadedImgRefList.indexOf(fileid) === -1)
+            uploadedImgRefList.push(fileid);
+    }
+    imgup.windowClose = function () {
+        if (uploadedImgRefList.length > 0)
+            EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+    }
     
     imgup.customTrigger = function (name,refids) {
         if (name === "Set as DP") {
@@ -711,26 +711,46 @@
             EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
         }
         else if (name === "Delete") {
-            $("#eb_common_loader").EbLoader("show");
-            $.ajax({
-                type: "POST",
-                url: "../CustomPage/DeleteImages",
-                data: { CustId: @ViewBag.AccId, ImgRefIds: JSON.stringify(refids) },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
-                    $("#eb_common_loader").EbLoader("hide");
-                },
-                success: function (result) {
-                    $("#eb_common_loader").EbLoader("hide");
-                    if (result) {
-                        EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' }); 
-                        imgup.deleteFromGallery(refids);                       
+            EbDialog("show",
+                {
+                    Message: "Are you sure?",
+                    Buttons: {
+                        "Yes": {
+                            Background: "green",
+                            Align: "left",
+                            FontColor: "white;"
+                        },
+                        "No": {
+                            Background: "violet",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: function (name) {
+                        if (name === "Yes"){
+                            $("#eb_common_loader").EbLoader("show");
+                            $.ajax({
+                                type: "POST",
+                                url: "../CustomPage/DeleteImages",
+                                data: { CustId: @ViewBag.AccId, ImgRefIds: JSON.stringify(refids) },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                                    $("#eb_common_loader").EbLoader("hide");
+                                },
+                                success: function (result) {
+                                    $("#eb_common_loader").EbLoader("hide");
+                                    if (result) {
+                                        EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
+                                        imgup.deleteFromGallery(refids);
+                                    }
+                                    else {
+                                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                                    }
+                                }
+                            });
+                        }
                     }
-                    else {
-                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
-                    }
-                }.bind(this)
-            });
+                });
         }
     }
 </script>

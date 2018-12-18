@@ -100,19 +100,36 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
         //$(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
         //$('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
-        if (this.ObjectType === 4) {
+        if (this.ObjectType === 4 || this.ObjectType === 5) {
             $("#paramsModal-toggle").on("show.bs.modal", this.getInputParams.bind(this));
             $("#parmSetupSave").off("click").on("click", this.SaveParamsetup.bind(this));
         }
     }
 
     this.SaveParamsetup = function (ev) {
-        for (let i = 0; i < this.InputParams.length; i++) {
-            this.InputParams[i].Type = eval($(`select[name="${this.InputParams[i].Column}-DBTYPE"]`).val());
-            this.InputParams[i].Value = $(`input[name="${this.InputParams[i].Column}-VLU"]`).val();
+        if (this.ObjectType === 4) {
+            this.EbObject.InputParams.$values = this.getParamVal(this.InputParams);
         }
-        this.EbObject.InputParams.$values = this.InputParams;
+        else if (this.ObjectType === 5) {
+            $.ajax({
+                type: 'POST',
+                url: "../CE/ExecSqlFunction",
+                data: { "fname": this.InputParams.FunctionName, "_params": JSON.stringify(this.getParamVal(this.InputParams.Arguments)) },
+                beforeSend: function () {
+                }
+            }).done(function (data) {
+                
+            }.bind(this));
+        }
     };
+
+    this.getParamVal = function (_params) {
+        for (let i = 0; i < _params.length; i++) {
+            _params[i].Type = eval($(`select[name="${_params[i].Column}-DBTYPE"]`).val());
+            _params[i].Value = $(`input[name="${_params[i].Column}-VLU"]`).val();
+        }
+        return _params;
+    } 
 
     this.getInputParams = function () {
         if (this.Sql !== window["editor" + tabNum].getValue().trim()) {
@@ -120,16 +137,26 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $.ajax({
                 type: 'GET',
                 url: "../CE/DataWriterSqlEval",
-                data: { "sql": this.Sql },
+                data: { "sql": btoa(this.Sql), "obj_type": this.ObjectType },
                 beforeSend: function () {
                 }
             }).done(function (data) {
                 this.InputParams = JSON.parse(data);
-                this.AppendInpuParams();
-                this.setValues();
+                if (this.ObjectType === 4) {
+                    this.AppendInpuParams();
+                    this.setValues();
+                }
+                else if (this.ObjectType === 5) {
+                    this.AppendInpuParams();
+                    this.configParamWindo();
+                }
             }.bind(this));
         }
     };
+
+    this.configParamWindo = function () {
+        $("#parmSetupSave").html(`Run <i class="fa fa-play" aria-hidden="true"></i>`);
+    }
 
 	this.setValues = function () {
 		for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
@@ -139,16 +166,22 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 	};
 
     this.AppendInpuParams = function () {
+        let param_list = [];
+        if (this.ObjectType === 4)
+            param_list = this.InputParams;
+        else if (this.ObjectType === 5) 
+            param_list = this.InputParams.Arguments;
+
         $("#paraWinTab_" + tabNum + " tbody").empty();
-        for (let i = 0; i < this.InputParams.length; i++) {
+        for (let i = 0; i < param_list.length; i++) {
             $("#paraWinTab_" + tabNum + " tbody").append(`<tr>
-                            <td>${this.InputParams[i].Column}</td>
+                            <td>${param_list[i].Column}</td>
                             <td>
-                                <select name="${this.InputParams[i].Column}-DBTYPE" class="form-control">
+                                <select name="${param_list[i].Column}-DBTYPE" class="form-control">
                                     ${this.setDbType()}
                                 </select>
                             </td>
-                            <td><input type="text" name="${this.InputParams[i].Column}-VLU" class="form-control"/></td>
+                            <td><input type="text" name="${param_list[i].Column}-VLU" class="form-control"/></td>
                         </tr>`);
         }
     };
@@ -168,7 +201,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             `);
 
         $("#run").off("click").on("click", this.RunDs.bind(this));
-        if (this.ObjectType === 4)
+        if (this.ObjectType === 4 || this.ObjectType === 5)
             $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle">P</button>`);
 
         //$(".adv-dsb-cont").hide(this.delay);
@@ -376,7 +409,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.CreateObjString = function () {
         var ParamsArray = [];
         if (this.FilterDialogRefId !== undefined)
-            ParamsArray = getValsForViz(this.filterDialog.filterObj);
+            ParamsArray = getValsForViz(this.filterDialog.FormObj);
         return ParamsArray;
     };
 

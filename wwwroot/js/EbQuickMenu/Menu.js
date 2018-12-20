@@ -1,4 +1,4 @@
-﻿var menujs = function (login,Tid,Uid) {
+﻿var menujs = function (login, Tid, Uid) {
     this.login = login;
     this.resultObj = null;
     this.objTypes = null;
@@ -11,7 +11,7 @@
             if (event.which === 10 && event.ctrlKey)
                 this.showModal();
         }.bind(this));
-        $('#quik_menu').off("click").on("click",this.showModal.bind(this));    
+        $('#quik_menu').off("click").on("click", this.showModal.bind(this));
         $(".Eb_quick_menu #searchobj").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $(".Eb_quick_menu").off("keyup").on("keyup", ".obj_search_input", this.searchObjects.bind(this));
         $('.Eb_quick_menu').on('hide.bs.collapse', ".sub-menuObj", function () { $(".breadcrumb_wrapper").empty() });
@@ -23,6 +23,7 @@
     this.toggleSearch = function (e) {
         let ip = $(e.target).closest(".searchBox");
         ip.toggleClass("expandedip");
+        $("#searchobj").focus();
     };
 
     this.refreshMenu = function () {
@@ -31,7 +32,7 @@
         $(".Eb_quick_menu .modal-body #objList").children(".objContainer_f_app").remove();
         this.showModal();
     };
-    
+
     this.searchObjects = function (e) {
         var srchBody = $(e.target).attr("search_body");
         var srch = $(e.target).val().toLowerCase();
@@ -62,7 +63,7 @@
                 type: "GET",
                 data: {
                     LocId: locId
-                },beforeSend: function () {
+                }, beforeSend: function () {
                     $("#quick_menu_load").EbLoader("show");
                 }
             }).done(function (result) {
@@ -74,7 +75,7 @@
                 $(".Obj_link").off("click").on("click", this.appendObType.bind(this));
                 $(".menuApp").off("click").on("click", this.appendAppList.bind(this));
                 this.login === "dc" ? this.newBuilderMenu() : null;
-                }.bind(this));
+            }.bind(this));
         }
         else {
             $("#ObjModal").modal('show');
@@ -121,7 +122,7 @@
                                                 </div>
                                             </div>`);
                 this.apndOTypeContainer($(".Eb_quick_menu #obtype_container" + otype), _obj);
-                if (this.login == "dc") {
+                if (this.login === "dc") {
                     $(`.Eb_quick_menu #obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
                                                             <i class="material-icons" style="pointer-events:none;">add</i></a>`);
                 }
@@ -204,8 +205,8 @@
         if (srch !== "") {
                 $.each(this.resultObj.Data, function (i, Types) {
                     $.each(Types.Types, function (i, _obj) {
-                        _obj.Objects.forEach(function (obItem) {
-                            if (obItem.ObjName.toLowerCase().indexOf(srch) !== -1) {
+						_obj.Objects.forEach(function (obItem) {
+							if (obItem.DisplayName.toLowerCase().indexOf(srch) !== -1) {
                                 this.code4AppendList(obItem, $(".Eb_quick_menu .modal-body #objList"));
                             }
                         }.bind(this));
@@ -225,14 +226,14 @@
             }
             else if (_obj.EbType == "WebForm") {
                 _url = "../WebForm/Index?refid=" + _obj.Refid;
-            }            
+            }
         }
         return _url;
     };
 
     this.code4AppendList = function (_obj, $container) {
         var appname = "Not Selected..";
-        var icon = this.login === "uc" ? `<i class="material-icons">open_in_new</i>`:`<i class="fa fa-pencil" aria-hidden="true"></i>`;
+        var icon = this.login === "uc" ? `<i class="material-icons">open_in_new</i>` : `<i class="fa fa-pencil" aria-hidden="true"></i>`;
         if (_obj.AppId > 0)
             appname = this.resultObj.AppList[_obj.AppId].AppName;
         $container.append(`

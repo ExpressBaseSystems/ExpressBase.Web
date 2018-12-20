@@ -365,9 +365,11 @@
 
     this.acceptFn = function (el, target, source, sibling) {
 
-        if ($(target).attr("id") !== this.primitiveToolsId && $(target).attr("id") !== this.customToolsId)
+        let _id = $(target).attr("id");
+        if (_id !== this.primitiveToolsId && _id !== this.customToolsId)
             return true;
-        return false;
+        else
+            return false;
 
         //if ($(source).attr("id") === this.primitiveToolsId && $(target).attr("id") === this.primitiveToolsId) {
         //    return false;

@@ -53,8 +53,10 @@ var EbBasicDataTable = function (Option) {
         this.$dtLoaderCont.insertBefore($("#" + this.contId));
         if (this.data === null)
             this.call2FD();
-        else
+        else {
+            this.EbObject.Columns.$values = this.columns;
             this.getColumnsSuccess();
+        }
     }
 
     this.showLoader = function () {

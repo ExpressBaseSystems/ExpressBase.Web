@@ -25,6 +25,7 @@ using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Constants;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using ExpressBase.Objects.Objects.DVRelated;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -191,13 +192,23 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public string ExecSqlFunction(string fname,string _params)
+        public SqlFuncDataTable ExecSqlFunction(string fname,string _params)
         {
-            return JsonConvert.SerializeObject(this.ServiceClient.Post(new SqlFuncTestRequest
+            SqlFuncDataTable _table = new SqlFuncDataTable();
+            EbDataTable _data = this.ServiceClient.Post<SqlFuncTestResponse>(new SqlFuncTestRequest
             {
                 FunctionName = fname,
                 Parameters = JsonConvert.DeserializeObject<List<InputParam>>(_params)
-            }));
+            }).Data;
+
+            DVColumnCollection _columns = new DVColumnCollection();
+            foreach (EbDataColumn column in _data.Columns)
+            {
+                _columns.Add(new DVBaseColumn {Data= column.ColumnIndex,sTitle = column.ColumnName,Name = column.ColumnName,bVisible = true});
+            }
+            _table.Colums = _columns;
+            _table.Rows = _data.Rows;
+            return _table;
         }
 
         public string DataWriterSqlEval(string sql, int obj_type)
@@ -227,16 +238,19 @@ namespace ExpressBase.Web.Controllers
             {
                 Regex r = new Regex(@"(\w+)(\s+|)\(.*?\)");
                 Regex r1 = new Regex(@"\(.*?\)");
-                string _func = r.Match(sql.Replace("\n", "")).Groups[1].Value;
-                string _params = r.Match(sql.Replace("\n", "")).Groups[0].Value;
+                string _func = r.Match(sql.Replace("\n", "").Replace("\r", "").Replace("\t", "")).Groups[1].Value;
+                string _params = r.Match(sql.Replace("\n", "").Replace("\r","").Replace("\t","")).Groups[0].Value;
                 string[] _arguments = r1.Match(_params).Groups[0].Value.Replace("(", "").Replace(")", "").Split(",");
 
                 foreach (string _arg in _arguments)
                 {
-                    param.Add(new InputParam
+                    if (!string.IsNullOrEmpty(_arg))
                     {
-                        Column = _arg.Split(" ")[0],
-                    });
+                        param.Add(new InputParam
+                        {
+                            Column = _arg.Split(" ")[0],
+                        });
+                    }
                 }
                 return JsonConvert.SerializeObject(new SqlFunParamWrapper { FunctionName = _func, Arguments = param });
             }

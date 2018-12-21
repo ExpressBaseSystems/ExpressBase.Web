@@ -17,17 +17,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     const _DataReader = "DataReader";
     const _DataWriter = "DataWriter";
     const _SqlFunction = "SqlFunction";
-    const _SqlFuncSyntax = `CREATE OR REPLACE FUNCTION function_name 
-    (parameter_name[IN | OUT | IN OUT]type [, ...])
-
-    RETURN return_datatype
-    { IS | AS }
-
-    BEGIN
-
-        <function_body>
-
-    END[function_name];`;
+    const _SqlFuncSyntax = `CREATE OR REPLACE FUNCTION function_name(parameter_name...)
+RETURN return_datatype
+{ IS | AS }
+BEGIN
+    <function_body>
+END;`;
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
@@ -107,20 +102,45 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     }
 
     this.SaveParamsetup = function (ev) {
-        if (this.ObjectType === 4) {
-            this.EbObject.InputParams.$values = this.getParamVal(this.InputParams);
+        if (commonO.ver_Refid !== "" && commonO.ver_Refid !== null) {
+            if (this.ObjectType === 4) {
+                this.EbObject.InputParams.$values = this.getParamVal(this.InputParams);
+            }
+            else if (this.ObjectType === 5) {
+                $.ajax({
+                    type: 'POST',
+                    url: "../CE/ExecSqlFunction",
+                    data: { "fname": this.InputParams.FunctionName, "_params": JSON.stringify(this.getParamVal(this.InputParams.Arguments)) },
+                    beforeSend: function () {
+                    }
+                }).done(function (data) {
+                    this.DrawDataTable(data);
+                }.bind(this));
+            }
         }
-        else if (this.ObjectType === 5) {
-            $.ajax({
-                type: 'POST',
-                url: "../CE/ExecSqlFunction",
-                data: { "fname": this.InputParams.FunctionName, "_params": JSON.stringify(this.getParamVal(this.InputParams.Arguments)) },
-                beforeSend: function () {
-                }
-            }).done(function (data) {
-                
-            }.bind(this));
+        else {
+            EbMessage("show", { Background: "red", Message: "!Save before run." });
         }
+    };
+
+    //duplicated for sql function need to change.
+    this.DrawDataTable = function (_table) {
+        commonO.tabNum++;
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
+        this.AddVerNavTab(navitem, tabitem);
+        $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
+            "<table class='table table-striped table-bordered' id='sample" + commonO.tabNum + "'></table>" +
+            "</div>");
+        var o = {};
+        o.tableId = "sample" + commonO.tabNum;
+        o.data = _table.rows;
+        o.columns = _table.colums;
+        o.showFilterRow = false;
+        o.showSerialColumn = false;
+        o.showCheckboxColumn = false;
+        let res = new EbBasicDataTable(o);
+        res.Api.columns.adjust();
     };
 
     this.getParamVal = function (_params) {
@@ -173,8 +193,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             param_list = this.InputParams.Arguments;
 
         $("#paraWinTab_" + tabNum + " tbody").empty();
-        for (let i = 0; i < param_list.length; i++) {
-            $("#paraWinTab_" + tabNum + " tbody").append(`<tr>
+        if (param_list.length <= 0) {
+
+        }
+        else {
+            for (let i = 0; i < param_list.length; i++) {
+                $("#paraWinTab_" + tabNum + " tbody").append(`<tr>
                             <td>${param_list[i].Column}</td>
                             <td>
                                 <select name="${param_list[i].Column}-DBTYPE" class="form-control">
@@ -183,6 +207,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                             </td>
                             <td><input type="text" name="${param_list[i].Column}-VLU" class="form-control"/></td>
                         </tr>`);
+            }
         }
     };
 
@@ -196,13 +221,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.GenerateButtons = function () {
         $("#obj_icons").empty();
-        $("#obj_icons").append(`
-            <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'> <i class='fa fa-play' aria-hidden='true'></i></button >
+        if (this.ObjectType !== 5 && this.ObjectType !== 4) {
+            $("#obj_icons").append(`
+            <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'><i class='fa fa-play' aria-hidden='true'></i></button >
             `);
-
-        $("#run").off("click").on("click", this.RunDs.bind(this));
+            $("#run").off("click").on("click", this.RunDs.bind(this));
+        }
         if (this.ObjectType === 4 || this.ObjectType === 5)
-            $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle">P</button>`);
+            $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle"><i class='fa fa-play' aria-hidden='true'></i></button>`);
 
         //$(".adv-dsb-cont").hide(this.delay);
         $(".simple-dsb-cont").hide(this.delay);

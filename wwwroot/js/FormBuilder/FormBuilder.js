@@ -156,7 +156,8 @@
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
         $el.attr("ebsid", ebsid);
-        this.updateControlUI(ebsid);
+        if(type !== "UserControl")
+            this.updateControlUI(ebsid);
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -269,6 +270,7 @@
 
                 if (type === "UserControl") {///user control refid set on ctrlobj
                     ctrlObj["RefId"] = $(el).find("option:selected").attr('refid');
+                    this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]); 
                 }
 
                 this.dropedCtrlInit($ctrl, type, ebsid);
@@ -293,6 +295,27 @@
             if ($parent.attr("ctype") === "TabPane")
                 this.adjustPanesHeight($parent);
         }
+    };
+
+    this.onClonedFn = function (clone, original, type) {
+        if ($(original).attr("eb-type") === "UserControl" && type === "copy") {
+            $(clone).find("select").val($(original).find("option:selected").val());
+        }
+    };
+
+    this.AsyncLoadHtml = function (refId, divId) {
+        setTimeout(function () {
+            $("#" + divId).append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
+        }, 500);
+
+        $.ajax({
+            type: "POST",
+            url: "../WebForm/getDesignHtml",
+            data: { refId: refId },
+            success: function (html) {
+                $("#" + divId).html(html);
+            }
+        });
     };
 
     this.adjustPanesHeight = function ($target) {
@@ -342,9 +365,11 @@
 
     this.acceptFn = function (el, target, source, sibling) {
 
-        if ($(target).attr("id") !== this.primitiveToolsId && $(target).attr("id") !== this.customToolsId)
+        let _id = $(target).attr("id");
+        if (_id !== this.primitiveToolsId && _id !== this.customToolsId)
             return true;
-        return false;
+        else
+            return false;
 
         //if ($(source).attr("id") === this.primitiveToolsId && $(target).attr("id") === this.primitiveToolsId) {
         //    return false;
@@ -433,6 +458,7 @@
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));
+        this.drake.on("cloned", this.onClonedFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         this.$form.click();
         if (this.isEditMode) {

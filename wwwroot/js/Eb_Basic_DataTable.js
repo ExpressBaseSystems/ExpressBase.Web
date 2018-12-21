@@ -54,7 +54,8 @@ var EbBasicDataTable = function (Option) {
         if (this.data === null)
             this.call2FD();
         else {
-            this.EbObject.Columns.$values = this.columns;
+            if (this.columns !== null)
+                this.EbObject.Columns.$values = this.columns;
             this.getColumnsSuccess();
         }
     }
@@ -76,7 +77,7 @@ var EbBasicDataTable = function (Option) {
             });
         }
         else {
-            this.EbObject.Columns.$values = this.columns;
+            this.EbObject.Columns = this.columns;
             this.getColumnsSuccess();
         }
     };
@@ -92,12 +93,6 @@ var EbBasicDataTable = function (Option) {
         this.showLoader();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
-
-        /// temporary for filterdialog
-        if (this.ebSettings.Columns.$values.$values)
-            this.ebSettings.Columns.$values = this.ebSettings.Columns.$values.$values;
-        console.log("this.ebSettings.Columns =" , this.ebSettings.Columns);
-
 
         this.dvName = this.ebSettings.Name;
         this.initCompleteflag = false;
@@ -171,8 +166,9 @@ var EbBasicDataTable = function (Option) {
 
             return sum / data.length;
         });
-        if (this.source === "")
-            this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        this.table_jQO.off('order.dt').on('order.dt', this.doSerial.bind(this));
+        //this.table_jQO.off('init.dt').on('init.dt', this.doSerial.bind(this));
 
         this.table_jQO.on('length.dt', function (e, settings, len) {
             console.log('New page length: ' + len);
@@ -193,8 +189,8 @@ var EbBasicDataTable = function (Option) {
         var serialObj = (JSON.parse('{"sWidth":"10px", "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
         if (this.showSerialColumn) {
             this.extraCol.push(serialObj);
-            if (this.source !== "")
-                serialObj.data = this.ebSettings.Columns.$values.length;
+            //if (this.source !== "")
+            //    serialObj.data = this.ebSettings.Columns.$values.length;
         }
         this.addcheckbox();
     }
@@ -498,12 +494,12 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.initCompleteFunc = function (settings, json) {
+        this.doSerial();
         this.GenerateButtons();
         if (this.eb_agginfo.length > 0) {
-            //this.createFooter(0);
-            //this.createFooter(1);
-            //$("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
+            this.createFooter(0);
         }
+
         if (this.login == "uc") {
             this.initCompleteflag = true;
             if (this.isSecondTime) { }
@@ -694,8 +690,8 @@ var EbBasicDataTable = function (Option) {
 
     this.doSerial = function () {
         if (this.showSerialColumn)
-            this.Api.column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
-        this.Api.columns.adjust();
+            $('#' + this.tableId).DataTable().column(0).nodes().each(function (cell, i) { cell.innerHTML = i + 1; });
+        $('#' + this.tableId).DataTable().columns.adjust();
     };
 
     this.createFooter = function (pos) {
@@ -711,13 +707,24 @@ var EbBasicDataTable = function (Option) {
         if (scrollfoot !== null)
             var eb_footer_controls_scrollfoot = this.GetAggregateControls(pos, 1);
         if (pos == 0) {
-            $.each(this.Api.settings().init().aoColumns, function (i, col) {
-                if (col.Aggregate) {
-                    $('#' + tid + '_btntotalpage').css("display", "inline");
-                    aggFlag = true;
-                    return false;
-                }
-            });
+            if (this.Api !== null) {
+                $.each(this.Api.settings().init().aoColumns, function (i, col) {
+                    if (col.Aggregate) {
+                        $('#' + tid + '_btntotalpage').css("display", "inline");
+                        aggFlag = true;
+                        return false;
+                    }
+                });
+            }
+            else {
+                $.each(this.ebSettings.Columns.$values, function (i, col) {
+                    if (col.Aggregate) {
+                        $('#' + tid + '_btntotalpage').css("display", "inline");
+                        aggFlag = true;
+                        return false;
+                    }
+                });
+            }
 
             if (!aggFlag)
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
@@ -753,7 +760,7 @@ var EbBasicDataTable = function (Option) {
             j++;
         });
 
-        this.summarize2();
+        //this.summarize2();
     };
 
     this.GetAggregateControls = function (footer_id, zidx) {
@@ -761,7 +768,10 @@ var EbBasicDataTable = function (Option) {
         var ResArray = [];
         var tableId = this.tableId;
         //$.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
-        $.each(this.Api.settings().init().aoColumns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        if (this.Api !== null)
+            $.each(this.Api.settings().init().aoColumns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+        else
+            $.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
         return ResArray;
     };
 

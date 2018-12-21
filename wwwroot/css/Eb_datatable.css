@@ -333,6 +333,7 @@ table.dataTable tbody td.dt-body-right {
 
 .containerrow .dataTables_scroll {
     height: 100% !important;
+    float:left;
 }
 .containerrow .dataTables_scrollBody {
     /*height: calc(100% - 18px) !important;*/

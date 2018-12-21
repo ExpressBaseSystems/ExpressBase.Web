@@ -54,7 +54,8 @@ var EbBasicDataTable = function (Option) {
         if (this.data === null)
             this.call2FD();
         else {
-            this.EbObject.Columns.$values = this.columns;
+            if (this.columns !== null)
+                this.EbObject.Columns.$values = this.columns;
             this.getColumnsSuccess();
         }
     }
@@ -76,7 +77,7 @@ var EbBasicDataTable = function (Option) {
             });
         }
         else {
-            this.EbObject.Columns.$values = this.columns;
+            this.EbObject.Columns = this.columns;
             this.getColumnsSuccess();
         }
     };
@@ -92,12 +93,6 @@ var EbBasicDataTable = function (Option) {
         this.showLoader();
         this.extraCol = [];
         this.ebSettings = this.EbObject;
-
-        /// temporary for filterdialog
-        if (this.ebSettings.Columns.$values.$values)
-            this.ebSettings.Columns.$values = this.ebSettings.Columns.$values.$values;
-        console.log("this.ebSettings.Columns =" , this.ebSettings.Columns);
-
 
         this.dvName = this.ebSettings.Name;
         this.initCompleteflag = false;

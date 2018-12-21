@@ -102,12 +102,13 @@
             let inpCtrlType = col.InputControlType;
             editBtn = "";
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
-            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid);
-            inpCtrl.Name = col.Name;
+            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid,col);
+            //inpCtrl.EbSid = ctrlEbSid;
+            //inpCtrl.Name = col.Name;
             inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td ctrltdidx='${i}'>
-                        <div id='@ebsid@Wraper' class='ctrl-cover'>${inpCtrl.BareControlHtml}</div>
+                        <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                         <div class='tdtxt'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
 
@@ -130,7 +131,12 @@
 
     this.initRowCtrls = function (rowid) {
         $.each(this.rowCtrls[rowid], function (i, inpCtrl) {
-            this.initControls.init(inpCtrl, name);
+            let opt = {};
+            if (inpCtrl.ObjType === "PowerSelect" || inpCtrl.ObjType === "DGPowerSelectColumn")
+                opt.getAllCtrlValuesFn = function () {
+                    return [];//getValsFromForm(this.FormObj);
+                }.bind(this);
+            this.initControls.init(inpCtrl, opt);
         }.bind(this));
     }
 

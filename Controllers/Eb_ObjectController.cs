@@ -185,7 +185,7 @@ namespace ExpressBase.Web.Controllers
             }
             if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
             {
-                EbUsrCtrlObjLisAllVerResponse result = this.ServiceClient.Get<EbUsrCtrlObjLisAllVerResponse>(new EbUsrCtrlObjLisAllVerRequest { EbObjectRefId = ViewBag.Refid });
+                EbObjAllVerWithoutCircularRefResp result = this.ServiceClient.Get<EbObjAllVerWithoutCircularRefResp>(new EbObjAllVerWithoutCircularRefRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode});
                 string UserControlsHtml = string.Empty;
                 foreach(KeyValuePair<string, List<EbObjectWrapper>> _object in result.Data)
                 {
@@ -205,14 +205,6 @@ namespace ExpressBase.Web.Controllers
                 {
                     EbWebForm _dsobj = dsobj as EbWebForm;
                     _dsobj.AfterRedisGet(Redis, this.ServiceClient);
-
-                    //List<EbUserControl> AllUserControls = new List<EbUserControl>();
-                    //foreach (EbControl ctrl in _dsobj.Controls.FlattenAllEbControls())
-                    //{
-                    //    if (ctrl is EbUserControl)
-                    //        AllUserControls.Add(ctrl as EbUserControl);
-                    //}
-
                     ViewBag.dsObj = _dsobj;
                 }
                 else if(dsobj is EbUserControl)

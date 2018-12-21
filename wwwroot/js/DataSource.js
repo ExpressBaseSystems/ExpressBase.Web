@@ -17,17 +17,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     const _DataReader = "DataReader";
     const _DataWriter = "DataWriter";
     const _SqlFunction = "SqlFunction";
-    const _SqlFuncSyntax = `CREATE OR REPLACE FUNCTION function_name 
-    (parameter_name[IN | OUT | IN OUT]type [, ...])
-
-    RETURN return_datatype
-    { IS | AS }
-
-    BEGIN
-
-        <function_body>
-
-    END[function_name];`;
+    const _SqlFuncSyntax = `CREATE OR REPLACE FUNCTION function_name(parameter_name...)
+RETURN return_datatype
+{ IS | AS }
+BEGIN
+    <function_body>
+END;`;
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
@@ -100,19 +95,61 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
         //$(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
         //$('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
-        if (this.ObjectType === 4) {
+        if (this.ObjectType === 4 || this.ObjectType === 5) {
             $("#paramsModal-toggle").on("show.bs.modal", this.getInputParams.bind(this));
             $("#parmSetupSave").off("click").on("click", this.SaveParamsetup.bind(this));
         }
     }
 
     this.SaveParamsetup = function (ev) {
-        for (let i = 0; i < this.InputParams.length; i++) {
-            this.InputParams[i].Type = eval($(`select[name="${this.InputParams[i].Column}-DBTYPE"]`).val());
-            this.InputParams[i].Value = $(`input[name="${this.InputParams[i].Column}-VLU"]`).val();
+        if (commonO.ver_Refid !== "" && commonO.ver_Refid !== null) {
+            if (this.ObjectType === 4) {
+                this.EbObject.InputParams.$values = this.getParamVal(this.InputParams);
+            }
+            else if (this.ObjectType === 5) {
+                $.ajax({
+                    type: 'POST',
+                    url: "../CE/ExecSqlFunction",
+                    data: { "fname": this.InputParams.FunctionName, "_params": JSON.stringify(this.getParamVal(this.InputParams.Arguments)) },
+                    beforeSend: function () {
+                    }
+                }).done(function (data) {
+                    this.DrawDataTable(data);
+                }.bind(this));
+            }
         }
-        this.EbObject.InputParams.$values = this.InputParams;
+        else {
+            EbMessage("show", { Background: "red", Message: "!Save before run." });
+        }
     };
+
+    //duplicated for sql function need to change.
+    this.DrawDataTable = function (_table) {
+        commonO.tabNum++;
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
+        this.AddVerNavTab(navitem, tabitem);
+        $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
+            "<table class='table table-striped table-bordered' id='sample" + commonO.tabNum + "'></table>" +
+            "</div>");
+        var o = {};
+        o.tableId = "sample" + commonO.tabNum;
+        o.data = _table.rows;
+        o.columns = _table.colums;
+        o.showFilterRow = false;
+        o.showSerialColumn = false;
+        o.showCheckboxColumn = false;
+        let res = new EbBasicDataTable(o);
+        res.Api.columns.adjust();
+    };
+
+    this.getParamVal = function (_params) {
+        for (let i = 0; i < _params.length; i++) {
+            _params[i].Type = eval($(`select[name="${_params[i].Column}-DBTYPE"]`).val());
+            _params[i].Value = $(`input[name="${_params[i].Column}-VLU"]`).val();
+        }
+        return _params;
+    } 
 
     this.getInputParams = function () {
         if (this.Sql !== window["editor" + tabNum].getValue().trim()) {
@@ -120,16 +157,26 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $.ajax({
                 type: 'GET',
                 url: "../CE/DataWriterSqlEval",
-                data: { "sql": this.Sql },
+                data: { "sql": btoa(this.Sql), "obj_type": this.ObjectType },
                 beforeSend: function () {
                 }
             }).done(function (data) {
                 this.InputParams = JSON.parse(data);
-                this.AppendInpuParams();
-                this.setValues();
+                if (this.ObjectType === 4) {
+                    this.AppendInpuParams();
+                    this.setValues();
+                }
+                else if (this.ObjectType === 5) {
+                    this.AppendInpuParams();
+                    this.configParamWindo();
+                }
             }.bind(this));
         }
     };
+
+    this.configParamWindo = function () {
+        $("#parmSetupSave").html(`Run <i class="fa fa-play" aria-hidden="true"></i>`);
+    }
 
 	this.setValues = function () {
 		for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
@@ -139,17 +186,28 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 	};
 
     this.AppendInpuParams = function () {
+        let param_list = [];
+        if (this.ObjectType === 4)
+            param_list = this.InputParams;
+        else if (this.ObjectType === 5) 
+            param_list = this.InputParams.Arguments;
+
         $("#paraWinTab_" + tabNum + " tbody").empty();
-        for (let i = 0; i < this.InputParams.length; i++) {
-            $("#paraWinTab_" + tabNum + " tbody").append(`<tr>
-                            <td>${this.InputParams[i].Column}</td>
+        if (param_list.length <= 0) {
+
+        }
+        else {
+            for (let i = 0; i < param_list.length; i++) {
+                $("#paraWinTab_" + tabNum + " tbody").append(`<tr>
+                            <td>${param_list[i].Column}</td>
                             <td>
-                                <select name="${this.InputParams[i].Column}-DBTYPE" class="form-control">
+                                <select name="${param_list[i].Column}-DBTYPE" class="form-control">
                                     ${this.setDbType()}
                                 </select>
                             </td>
-                            <td><input type="text" name="${this.InputParams[i].Column}-VLU" class="form-control"/></td>
+                            <td><input type="text" name="${param_list[i].Column}-VLU" class="form-control"/></td>
                         </tr>`);
+            }
         }
     };
 
@@ -163,13 +221,14 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.GenerateButtons = function () {
         $("#obj_icons").empty();
-        $("#obj_icons").append(`
-            <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'> <i class='fa fa-play' aria-hidden='true'></i></button >
+        if (this.ObjectType !== 5 && this.ObjectType !== 4) {
+            $("#obj_icons").append(`
+            <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'><i class='fa fa-play' aria-hidden='true'></i></button >
             `);
-
-        $("#run").off("click").on("click", this.RunDs.bind(this));
-        if (this.ObjectType === 4)
-            $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle">P</button>`);
+            $("#run").off("click").on("click", this.RunDs.bind(this));
+        }
+        if (this.ObjectType === 4 || this.ObjectType === 5)
+            $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle"><i class='fa fa-play' aria-hidden='true'></i></button>`);
 
         //$(".adv-dsb-cont").hide(this.delay);
         $(".simple-dsb-cont").hide(this.delay);

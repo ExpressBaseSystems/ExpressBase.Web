@@ -177,6 +177,10 @@
     margin: 3px 0 2px;
     color: black;
     font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 15px;
 }
 .objitems p {
     margin: 0;

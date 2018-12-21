@@ -34,6 +34,7 @@ namespace ExpressBase.Web.Components
 			EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
 
             EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);// form object without localization
+            WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             if (WebForm != null)
             {
 

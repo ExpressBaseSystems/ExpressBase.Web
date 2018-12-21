@@ -670,7 +670,7 @@
 
 <script>
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
-    
+
     var imgup = new EbFileUpload({
         Type: "image",
         PreviewWraper: "#divAllImg1",
@@ -688,7 +688,7 @@
         //Context: "dp",//if single and crop
         //ResizeViewPort: true //if single and crop
         CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }]
-    }); 
+    });
 
     var uploadedImgRefList = [];
     imgup.uploadSuccess = function (fileid) {

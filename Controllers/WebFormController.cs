@@ -136,5 +136,11 @@ namespace ExpressBase.Web.Controllers
                 return 0;
             }
         }
+
+        public string getDesignHtml(string refId)
+        {
+            GetDesignHtmlResponse resp = ServiceClient.Post<GetDesignHtmlResponse>(new GetDesignHtmlRequest { RefId = refId });
+            return resp.Html;
+        }
 	}
 }

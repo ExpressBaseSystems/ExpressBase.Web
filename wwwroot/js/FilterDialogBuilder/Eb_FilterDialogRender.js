@@ -83,8 +83,9 @@
             //creating onChangeExeFuncs and binding to dom elements
             if (cObj.OnChange && cObj.OnChange !== '') {
                 this.onChangeExeFuncs[cObj.Name] = new Function("form", atob(cObj.OnChange));
-                if (cObj.ObjType === 'TextBox') {
-                    $("body").on("change", ('#' + cObj.EbSid_CtxId), this.ctrlValueChanged.bind(this, cObj.Name));
+                if (cObj.ObjType === 'TextBox' || cObj.ObjType === 'Date') {
+                    this.onChangeExeFlag = true;
+                    $("body #" + cObj.EbSid_CtxId).on("change", this.ctrlValueChanged.bind(this, cObj.Name));
                 }
                 else if (cObj.ObjType === 'RadioGroup') {
                     this.onChangeExeFlag = true;

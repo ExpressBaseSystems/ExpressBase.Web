@@ -364,7 +364,7 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-
+        
         let _id = $(target).attr("id");
         if (_id !== this.primitiveToolsId && _id !== this.customToolsId)
             return true;
@@ -389,7 +389,8 @@
     };
 
     this.drake = new dragula([document.getElementById(this.primitiveToolsId), document.getElementById(this.customToolsId), document.getElementById(this.formId)], {
-        removeOnSpill: false,
+        removeOnSpill: true,
+        revertOnSpill: true,
         copy: function (el, source) { return (source.className.includes('div-primitive-tools') || source.className.includes('div-custom-tools')); },
         copySortSource: true,
         moves: this.movesfn.bind(this),

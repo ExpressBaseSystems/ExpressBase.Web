@@ -230,10 +230,10 @@ END;`;
         if (this.ObjectType === 4 || this.ObjectType === 5)
             $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle"><i class='fa fa-play' aria-hidden='true'></i></button>`);
 
-        //$(".adv-dsb-cont").hide(this.delay);
-        $(".simple-dsb-cont").hide(this.delay);
-        //$("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
-    }
+		//$(".adv-dsb-cont").hide(this.delay);
+		$(".simple-dsb-cont").hide(this.delay);
+		//$("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
+	};
 
     this.SetCode = function (e) {
         try {
@@ -318,13 +318,13 @@ END;`;
     //    }
     //};
 
-    this.AddVerNavTab = function (navitem, tabitem) {
-        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        $('#versionNav').append(navitem);
-        $('#versionTab').append(tabitem);
-        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-    }
+	this.AddVerNavTab = function (navitem, tabitem) {
+		$("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+		$('#versionNav').append(navitem);
+		$('#versionTab').append(tabitem);
+		$("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+		$('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+	};
 
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");
@@ -504,6 +504,9 @@ END;`;
         return dq;
     };
 
+	this.AfterCommit = function () {
+		window["editor" + tabNum].options.readOnly = true;
+	};
     this.SetSqlFnName = function () {
         var result = this.EbObject.Sql.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
         if (result.length > 0) {

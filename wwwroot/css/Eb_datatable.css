@@ -11,8 +11,8 @@
     display: none;
 }
 
-.numericcol {
-    float: right;
+.text-center {
+    text-align:center;
 }
 
 .toolbar {
@@ -271,7 +271,7 @@ div.dataTables_wrapper div.dataTables_processing {
     height: inherit !important;
     padding: 7px 0px;
     border: none !important;
-    direction: rtl;
+    /*direction: rtl;*/
     border-radius: 0 !important;
     box-shadow: none !important;
     font-size: 10px;

@@ -16,6 +16,10 @@
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
+        //    let fun = new Function(atob(ctrl.OnChange));
+        //    $input.MonthPicker({
+        //        OnAfterChooseMonth: fun
+        //});
         }
         else {
 

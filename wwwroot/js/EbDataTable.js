@@ -3006,6 +3006,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
                 }
             }
+            if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                this.ebSettings.Columns.$values[i].className += " tdheight text-center";
         }
         if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {

@@ -3066,7 +3066,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderIconCol = function (data) {
-        return (data === true || data === "Yes") ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
+        return (data === true || data === "Yes" || data === "true") ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
     };
 
     this.renderEbVoidCol = function (data) {

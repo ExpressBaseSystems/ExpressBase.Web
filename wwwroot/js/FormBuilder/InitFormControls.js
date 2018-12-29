@@ -177,8 +177,6 @@
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
     };
 
-    this.DGPowerSelectColumn = this.PowerSelect;
-
     this.Survey = function (ctrl) {
         new EbSurveyRender($('#' + ctrl.Name), this.Bot);
     }

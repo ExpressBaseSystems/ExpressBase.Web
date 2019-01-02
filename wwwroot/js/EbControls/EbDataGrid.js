@@ -172,13 +172,13 @@
         let rowid = $td.closest("tr").attr("rowid");
         let ctrlTdIdx = $td.attr("ctrltdidx");
         return this.rowCtrls[rowid][ctrlTdIdx];
-    }
+    };
 
     this.ctrlToSpan_td = function ($td) {
         let ctrl = this.getCtrlByTd($td);
         $td.find(".ctrl-cover").hide();
-        let val = ctrl.getValue();
-        $td.find(".tdtxt span").text(val)
+        let val = ctrl.getDisplayMember() || ctrl.getValue();
+        $td.find(".tdtxt span").text(val);
         $td.find(".tdtxt").show();
     }.bind(this);
 

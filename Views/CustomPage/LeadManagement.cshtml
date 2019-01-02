@@ -325,17 +325,8 @@
 
             <!-- Surgery Menu -->
             <div id="menuSurgery" class="tab-pane fade" style="height: calc(100vh - 256px); min-height: 200px; ">
-                <div style="text-align:right; padding: 15px 15px;">
-                    @{
-                        if (ViewBag.Permission)
-                        {
-                            <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>
-                        }
-                        else
-                        {
-                            <div></div>
-                        }
-                    }
+                <div style="text-align:right; padding: 15px 15px;">                    
+                    <button id="btnNewSurgeryDtls" class="ebbtn btn eb_btn-sm eb_btngreen"><i class="fa fa-plus"></i> New</button>                   
                 </div>
                 <div class="lm-form-inline">
                     <div id="divSrgy"></div>
@@ -669,6 +660,7 @@
 }
 
 <script>
+    var intSpecialPermission = '@ViewBag.Permission';
     var leadObject = new LeadManagementObj(@ViewBag.AccId, @ViewBag.MC_Mode, @CInfo, @CenterInfo, @DocInfo, @StaffInfo, @NurseInfo, @FeedbackList, @BillingList, @SurgeryList, @CCityList, @CCountryList, @CityList, @SubCategoryList );
 
     var imgup = new EbFileUpload({

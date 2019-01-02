@@ -8,18 +8,19 @@
         if (this[control.ObjType] !== undefined) {
             this[control.ObjType](control, ctrlOpts);
         }
-    }
+    };
 
-    this.Date = function (ctrl) {
+    this.Date = function (ctrl, ctrlOpts) {
+        let formObject = ctrlOpts.formObject;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-        //    let fun = new Function(atob(ctrl.OnChange));
-        //    $input.MonthPicker({
-        //        OnAfterChooseMonth: fun
-        //});
+                let fun = new Function("form", atob(ctrl.OnChange));
+            $input.MonthPicker({
+                OnAfterChooseMonth: fun.bind(this, formObject )
+                });
         }
         else {
 

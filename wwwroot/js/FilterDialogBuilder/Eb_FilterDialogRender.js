@@ -32,12 +32,15 @@
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
             let opt = {};
             if (cObj.ObjType === "PowerSelect")
-                opt.getAllCtrlValuesFn = this.getFilterVals;
+                opt.getAllCtrlValuesFn = this.getFormVals;
+            else if (cObj.ObjType === "Date")
+                opt.formObject = this.formObject;
+
             this.initControls.init(cObj, opt);
         }.bind(this));
     };
 
-    this.getFilterVals = function () {
+    this.getFormVals = function () {
         return getValsFromForm(this.FormObj);
     }.bind(this);
 

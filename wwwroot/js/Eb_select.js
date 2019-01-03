@@ -179,15 +179,19 @@ var EbSelect = function (ctrl, options) {
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
 
-    }
+    };
 
     this.initComplete4SetVal = function () {
         if (this.setvaluesColl) {
-            $.each(this.setvaluesColl, function (i, val) {
-                $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`).click();
-            }.bind(this));
+            if (this.ComboObj.MultiSelect) {
+                $.each(this.setvaluesColl, function (i, val) {
+                    $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`).click();
+                }.bind(this));
+            }
+            else
+                $(this.DTSelector + ` tbody tr[role="row"]`).trigger("dblclick");
         }
-    }
+    };
 
 
 
@@ -332,7 +336,7 @@ var EbSelect = function (ctrl, options) {
 
     this.xxx = function (e, dt, type, indexes) {
         console.log("keysssss");
-    }
+    };
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
         console.log(5);
@@ -343,13 +347,13 @@ var EbSelect = function (ctrl, options) {
             if (originalEvent.target.type !== "checkbox")
                 this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
         }
-    }
+    };
 
     this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
         var row = datatable.row(cell.index().row);
         var $tr = $(row.nodes());
         $tr.dblclick();
-    }
+    };
 
     this.DDEnterKeyPress = function (e, datatable, key, cell, originalEvent) {
         var row = datatable.row(cell.index().row);
@@ -359,7 +363,7 @@ var EbSelect = function (ctrl, options) {
         this.$curEventTarget = $(this.DTSelector + " tr.selected");
         this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
-    }
+    };
 
     this.initDTpost = function (data) {
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
@@ -625,7 +629,7 @@ var EbSelect = function (ctrl, options) {
     };
 
     this.RemoveRowFocusStyle = function ($tr) {
-        var $tr = $(this.DTSelector + " tr.selected");
+        $tr = $(this.DTSelector + " tr.selected");/////////
         $tr.find('td').css("border-color", "#ddd");
         $tr.removeClass('selected');
     };

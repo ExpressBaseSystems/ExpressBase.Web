@@ -112,18 +112,21 @@ var EbSelect = function (ctrl, options) {
 
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
+        if (!isPrintable(e) && e.which !== 8)
+            return;
+
         var $e = $(e.target);
         var searchVal = $e.val();
 
         var mapedField = $e.closest(".searchable").attr("maped-column");
         var mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
+        var searchBy = " = ";
+        if (mapedFieldType === "string")
+            searchBy = "x*";
         if (!this.IsDatatableInit) {
             if (this.ComboObj.MinSeachLength > searchVal.length)
                 return;
-            var searchBy = " = ";
-            if (mapedFieldType === "string")
-                searchBy = "x*";
             var filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
             this.InitDT();
@@ -136,7 +139,7 @@ var EbSelect = function (ctrl, options) {
             if (searchVal.trim() === "" || this.ComboObj.MinSeachLength > searchVal.length)
                 return;
             this.datatable.columnSearch = [];
-            this.datatable.columnSearch.push(new filter_obj(mapedField, "x*", searchVal, mapedFieldType));
+            this.datatable.columnSearch.push(new filter_obj(mapedField, searchBy, searchVal, mapedFieldType));
             this.datatable.Api.ajax.reload();
         }
     };
@@ -162,11 +165,11 @@ var EbSelect = function (ctrl, options) {
                 this.V_showDD();
             }
         }
-        
+
     }.bind(this);
 
     this.getValues = function () {
-        
+
     };
 
     this.clearValues = function () {
@@ -258,7 +261,7 @@ var EbSelect = function (ctrl, options) {
         o.containerId = this.name + "DDdiv";
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
-        o.showSerialColumn = true;
+        o.showSerialColumn = false;
         o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
         o.scrollHeight = this.ComboObj.DropdownHeight + "px";

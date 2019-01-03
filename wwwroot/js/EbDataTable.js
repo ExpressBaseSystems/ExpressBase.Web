@@ -3340,12 +3340,6 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
-var Agginfo = function (col, deci, index) {
-    this.colname = col;
-    this.deci_val = deci;
-    this.data = index;
-};
-
 var displayFilter = function (col, oper, val, Loper) {
     this.name = col;
     this.operator = oper;

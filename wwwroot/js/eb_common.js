@@ -52,6 +52,12 @@ function getCookieVal(a) {
     return b ? b.pop() : '';
 }
 
+var Agginfo = function (col, deci, index) {
+    this.colname = col;
+    this.deci_val = deci;
+    this.data = index;
+};
+
 function fltr_obj(type, name, value) {
     this.Type = type;
     this.Name = name;

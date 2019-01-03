@@ -521,7 +521,7 @@
 .form-buider-form .Eb-ctrlContainer table td {
     border: 1px dashed #cccccc;
     padding: 0px;
-    background: #eee;
+    /*background: #eee;*/
     vertical-align: initial;
 }
 

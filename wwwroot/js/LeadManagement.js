@@ -130,14 +130,40 @@
         menuBarObj.setName("Lead Management - " + nametxt);
         document.title = "Lead Management - " + nametxt;
 
-        menuBarObj.insertButton(`
+        if (intSpecialPermission === "True" && this.AccId > 0) {
+            menuBarObj.insertButton(`
+            <button id="btnSave" class='btn' title='Save (Ctrl+Shift+S)'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+            <button id="btnNew" class='btn' title='New'><i class="fa fa-user-plus" aria-hidden="true"></i></button>
+            <button id="btnDel" class='btn' title='Delete'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
+        }
+        else {
+            menuBarObj.insertButton(`
             <button id="btnSave" class='btn' title='Save (Ctrl+Shift+S)'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
             <button id="btnNew" class='btn' title='New'><i class="fa fa-user-plus" aria-hidden="true"></i></button>`);
+        }
 
         $("#btnSave").on("click", this.onClickBtnSave.bind(this));
         $("#btnNew").on("click", function () {
             if (confirm("Unsaved data will be lost!\n\nClick OK to Continue"))
                 window.location = window.origin + "/leadmanagement";
+        }.bind(this));
+        $("#btnDel").on("click", function () {
+            if (intSpecialPermission === "True" && this.AccId > 0) {
+                if (confirm("Are you sure!\n\nClick OK to Continue"))
+                    $.ajax({
+                        type: "POST",
+                        url: "../CustomPage/DeleteCustomer",
+                        data: { CustId: this.AccId },
+                        success: function (status) {
+                            if (status) {
+                                alert("Deleted Successfully");
+                                window.close();
+                            }
+                            else
+                                EbMessage("show", { Message: 'Failed', AutoHide: true, Background: '#aa0000' });
+                        }.bind(this)
+                    });
+            }            
         }.bind(this));
     };
 
@@ -446,9 +472,9 @@
             var tempObj = JSON.parse(window.atob(data));
             this.$FlUpDate.val(tempObj.Date);
             this.$FlUpStatus.val(tempObj.Status);
-            this.$FlUpFolDate.val(tempObj.Followup_Date);
+            this.$FlUpFolDate.val(tempObj.Fup_Date);
             this.$FlUpComnt.val(tempObj.Comments);
-            this.$FlUpDate.prop("disabled", true);
+            //this.$FlUpDate.prop("disabled", true);
             this.$MdlFeedBack.modal('show');
         }.bind(this));
 
@@ -459,7 +485,7 @@
                 this.$FlUpComnt.val("");
                 this.$FlUpSave.children().hide();
                 this.$FlUpSave.prop("disabled", false);
-                this.$FlUpDate.prop("disabled", false);
+                //this.$FlUpDate.prop("disabled", false);
             }
         }.bind(this));
 
@@ -874,7 +900,8 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });//for id
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
             tblcols.push({ data: i, title: this.metadata[i].replace("_", " ").replace("_", " "), orderable: true, className: "MyTempColStyle" });
-        //tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
+        if (intSpecialPermission === "True" && this.metadata.indexOf("_feedback") !== -1)
+            tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)

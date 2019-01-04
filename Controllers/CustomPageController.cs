@@ -51,10 +51,10 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.StatusList = fr.StatusList;
 			ViewBag.ServiceList = fr.ServiceList;
 
-			//ViewBag.ImageIdList = fr.ImageIdList;
-            ViewBag.Permission = true;// this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
+            //ViewBag.ImageIdList = fr.ImageIdList;
+            ViewBag.Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
 
-			if (mode == 1)
+            if (mode == 1)
 			{
 				ViewBag.FeedbackList = JsonConvert.SerializeObject(fr.FeedbackList);
 				ViewBag.BillingList = JsonConvert.SerializeObject(fr.BillingList);
@@ -78,7 +78,12 @@ namespace ExpressBase.Web.Controllers
 
 		public int SaveFollowup(string FollowupInfo)
 		{
-			SaveCustomerFollowupResponse res = this.ServiceClient.Post<SaveCustomerFollowupResponse>(new SaveCustomerFollowupRequest { Data = FollowupInfo, UserName = this.LoggedInUser.FullName });
+			SaveCustomerFollowupResponse res = this.ServiceClient.Post<SaveCustomerFollowupResponse>(
+                new SaveCustomerFollowupRequest {
+                    Data = FollowupInfo,
+                    UserName = this.LoggedInUser.FullName,
+                    Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString())
+                });
 			return res.Status;
 		}
 		public int SaveBilling(string BillingInfo)
@@ -105,6 +110,18 @@ namespace ExpressBase.Web.Controllers
             LmDeleteImageResponse res = this.ServiceClient.Post<LmDeleteImageResponse>(new LmDeleteImageRequest { CustId = CustId, ImgRefIds = ImgRefIds });
             return res.RowsAffected;
         }
-               
+
+        public bool DeleteCustomer(int CustId)
+        {
+            LmDeleteCustomerResponse res = null;
+            if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+            {
+                res = this.ServiceClient.Post<LmDeleteCustomerResponse>(new LmDeleteCustomerRequest { CustId = CustId });
+                return res.Status;
+            }                
+            return false;
+        }
+
+
     }
 }

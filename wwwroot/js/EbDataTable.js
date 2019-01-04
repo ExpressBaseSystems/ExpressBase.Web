@@ -170,8 +170,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.getColumnsSuccess.bind(this));
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
-        
-        
+
+
 
         if (text !== "") {
             if (typeof commonO !== "undefined")
@@ -343,7 +343,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         };
     };
 
-    this.getColumnsSuccess = function (e) {        
+    this.getColumnsSuccess = function (e) {
         if (this.isContextual) {
             if (this.isSecondTime) {
                 if (!this.validateFD())
@@ -428,7 +428,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.check4Customcolumn = function () {
-        var temp = $.grep(this.EbObject.Columns.$values, function (obj) {return obj.IsCustomColumn;});
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.IsCustomColumn; });
         if (temp.length === 0)
             this.isCustomColumnExist = false;
         else
@@ -562,7 +562,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//, 
-        var serialObj = (JSON.parse('{ "data":'+this.EbObject.Columns.$values.length+', "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
+        var serialObj = (JSON.parse('{ "data":' + this.EbObject.Columns.$values.length + ', "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
         this.extraCol.push(serialObj);
         this.addcheckbox();
     }
@@ -873,7 +873,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     if ($(ctrl).children().find("[type=checkbox][class=userloc-checkbox]").prop("checked"))
                         o.value = "Global";
                     else
-                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join( ",");
+                        o.value = $(ctrl).children().find(".active").text().trim().split(" ").join(",");
                 }
                 else
                     o.value = $($(ctrl).children()[1]).val();
@@ -1238,7 +1238,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_params";
-            input.value =btoa(JSON.stringify(this.filterValues));
+            input.value = btoa(JSON.stringify(this.filterValues));
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -1434,7 +1434,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
                 else {
                     $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
-                }                       
+                }
             }
             this.stickBtn.$stickBtn.css("top", "46px");
         }
@@ -1575,8 +1575,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td></tr>`);
         $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" style="display:inline-block;"> </select></td>`);
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
-			if (obj.RowGrouping.$values.length > 0) {
-				$(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
+            if (obj.RowGrouping.$values.length > 0) {
+                $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
             }
         }.bind(this));
 
@@ -1765,7 +1765,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var $group = $(e.target).parents().closest(".group");
         var groupnum = $group.attr("group");
         var $elems = $group.nextUntil("[group=" + groupnum + "]");
-        
+
         if ($elems.css("display") === "none") {
             $elems.show();
             this.collapseRelated($(e.target), "show");
@@ -1776,7 +1776,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.collapseRelated($(e.target), "hide");
             $elems.filter(".group").children().find("I").removeAttr("class").attr("class", "fa fa-plus-square-o");
         }
-        this.checkHeaderCollapse($group, groupnum );
+        this.checkHeaderCollapse($group, groupnum);
 
         $(".containerrow").hide();
         $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
@@ -1807,8 +1807,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.checkHeaderCollapse = function ($group, groupnum) {
         var headergroup = parseInt(groupnum) - 1;
-        var nextSiblings = $group.nextUntil("[group=" + headergroup + "]").filter(".group[group=" + groupnum+"]").next();
-        var prevSiblings = $group.prevUntil("[group=" + headergroup + "]").filter(".group[group=" + groupnum+"]").next();
+        var nextSiblings = $group.nextUntil("[group=" + headergroup + "]").filter(".group[group=" + groupnum + "]").next();
+        var prevSiblings = $group.prevUntil("[group=" + headergroup + "]").filter(".group[group=" + groupnum + "]").next();
         var $ElemtoChange = $group.prevAll(".group[group=" + headergroup + "]").first().children().find("I");
         var nextproperty = nextSiblings.map(function () { return $(this).css("display"); }).get();
         var prevproperty = prevSiblings.map(function () { return $(this).css("display"); }).get();
@@ -2006,6 +2006,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var data_table = "data-table=" + this.tableId;
                 var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
                 var data_decip = "data-decip=" + this.Api.settings().init().aoColumns[i].DecimalPlaces;
+                var style = "";
+                if (col.Align.toString() === EbEnums.Align.Left)
+                    style = "text-align: left;";
+                else if (col.Align.toString() === EbEnums.Align.Right || col.Align.toString() === EbEnums.Align.Auto)
+                    style = "text-align: right;";
+                else
+                    style = "text-align: center;";
 
                 _ls = "<div class='input-group input-group-sm'>" +
                     "<div class='input-group-btn dropup'>" +
@@ -2015,7 +2022,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     "  <li><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}>x&#772;</a></li>" +
                     " </ul>" +
                     " </div>" +
-                    " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='z-index:" + zidx.toString() + "'>" +
+                    " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='z-index:" + zidx.toString() + ";" + style + "'>" +
                     " </div>";
             }
             else
@@ -2046,7 +2053,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 var summary_val = 0;
 
                 if (opScroll === '∑' || opLF === '∑' || opRF === '∑')
-                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0]: 0;
+                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
                 if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
                     summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
                 }
@@ -2168,8 +2175,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.Api.columns.adjust();
     };
 
-	this.GenerateButtons = function () {
-		$("#objname").text(this.EbObject.DisplayName);
+    this.GenerateButtons = function () {
+        $("#objname").text(this.EbObject.DisplayName);
         $(".toolicons").show();
         $("#obj_icons").empty();
         this.submitId = "btnGo" + this.tableId;
@@ -2680,7 +2687,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (selValue === '∑')
             pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
         else if (selValue === 'x̄')
-            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ?  this.summary[agginfo[0].data][1] : 0;
+            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][1] : 0;
 
         $(ftrtxt).val(pageTotal);
         e.preventDefault();
@@ -2871,13 +2878,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.data = result.formattedData;
             this.datatable = new EbBasicDataTable(o);
             if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
-                $(".inlinetable").css("width", $(window).width()-115);
+                $(".inlinetable").css("width", $(window).width() - 115);
             else
                 $(".inlinetable").css("width", $(window).width() - 175);
             this.datatable.Api.columns.adjust();
         }
         else {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan +"'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable'><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='canvasDivchart" + idx + "' ></div></td></tr></div>");
             var o = new Object();
             o.tableId = "chart" + idx;
             o.dvObject = Dvobj;
@@ -2972,31 +2979,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
+        this.ebSettings.Columns.$values[i].sClass = "";
+        this.ebSettings.Columns.$values[i].className = "";
+
         if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
-            //if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.ProgressBar) {
-            //    this.ebSettings.Columns.$values[i].render = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-            //    this.ebSettings.Columns.$values[i].mRender = this.renderProgressCol.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-            //}
-            //else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.NumericRenderType.Link) {
-            //    this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
-            //    this.ebSettings.Columns.$values[i].render = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-            //    this.ebSettings.Columns.$values[i].mRender = this.renderlinkandDecimal.bind(this, this.ebSettings.Columns.$values[i].DecimalPlaces);
-            //    //alert(this.linkDV);
-            //}
-            //else if (this.ebSettings.Columns.$values[i].DecimalPlaces > 0) {
-            //    var deci = this.ebSettings.Columns.$values[i].DecimalPlaces;
-            //    this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) {
-            //        return parseFloat(data).toFixed(deci);
-            //    }
-            //    this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) {
-            //        return parseFloat(data).toFixed(deci);
-            //    }
-            //}
-            //else {
-            //    this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) { return data; };
-            //    this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
-            //}
-            this.ebSettings.Columns.$values[i].sClass = this.ebSettings.Columns.$values[i].className;
+
+            if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
         }
         if (col.Type == parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
@@ -3017,23 +3006,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
                 }
             }
+            if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                this.ebSettings.Columns.$values[i].className += " tdheight text-center";
         }
         if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
-            //if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
-            //    //this.ebSettings.Columns.$values[i].LinkRefId = "eb_roby_dev-eb_roby_dev-16-846-1551"; 
-            //    this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
-            //    //this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
-            //    //this.ebSettings.Columns.$values[i].mRender = this.renderlink4NewTable.bind(this);
-            //    //alert(this.linkDV);
-            //}
-             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
+            if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
             }
-            //else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Marker) {
-            //    this.ebSettings.Columns.$values[i].render = this.renderMarker.bind(this);
-            //    this.ebSettings.Columns.$values[i].mRender = this.renderMarker.bind(this);
-            //}
             else if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
                 this.ebSettings.Columns.$values[i].render = this.renderFBImage.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.renderFBImage.bind(this);
@@ -3042,23 +3022,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.ebSettings.Columns.$values[i].render = this.renderIconCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.renderIconCol.bind(this);
             }
-            //else {
-            //    this.ebSettings.Columns.$values[i].render = function (data, type, row, meta) { return data; };
-            //    this.ebSettings.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
-            //}
+
+            if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
         if (col.Type == parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
-            //if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Link) {
-            //    this.linkDV = this.ebSettings.Columns.$values[i].LinkRefId;
-            //    //this.ebSettings.Columns.$values[i].render = this.renderlink4NewTable.bind(this);
-            //    //this.ebSettings.Columns.$values[i].mRender = this.renderlink4NewTable.bind(this);
-            //}
-            //else {
-            //    this.ebSettings.Columns.$values[i].render = this.renderDateformat.bind(this);
-            //    this.ebSettings.Columns.$values[i].mRender = this.renderDateformat.bind(this);
-            //}
+            if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
-
 
         if (col.Font !== null) {
             var style = document.createElement('style');
@@ -3068,9 +3039,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 style.innerHTML = "." + array.join("_") + "{font-family: " + col.Font.Font + "!important; font-size: " + col.Font.Size + "px!important; color: " + col.Font.color + "!important; }";
                 document.getElementsByTagName('body')[0].appendChild(style);
             }
-            this.ebSettings.Columns.$values[i].className = array.join("_") + " tdheight";
-            this.ebSettings.Columns.$values[i].sClass = array.join("_") + " tdheight";
+            this.ebSettings.Columns.$values[i].className = array.join("_");
+            this.ebSettings.Columns.$values[i].sClass = array.join("_");
         }
+
+        if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Left)
+            this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
+        else if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Right)
+            this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
+        else if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Center)
+            this.ebSettings.Columns.$values[i].className += " tdheight text-center";
+
+        this.ebSettings.Columns.$values[i].sClass = this.ebSettings.Columns.$values[i].className;
     };
 
     this.renderProgressCol = function (deci, data, type, row, meta) {
@@ -3086,7 +3066,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderIconCol = function (data) {
-        return (data === true || data === "Yes") ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
+        return (data === true || data === "Yes" || data === "true") ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
     };
 
     this.renderEbVoidCol = function (data) {
@@ -3358,12 +3338,6 @@ Array.prototype.max = function () {
 
 Array.prototype.min = function () {
     return Math.min.apply(null, this);
-};
-
-var Agginfo = function (col, deci, index) {
-    this.colname = col;
-    this.deci_val = deci;
-    this.data = index;
 };
 
 var displayFilter = function (col, oper, val, Loper) {

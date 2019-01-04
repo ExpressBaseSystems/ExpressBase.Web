@@ -102,9 +102,10 @@
             let inpCtrlType = col.InputControlType;
             editBtn = "";
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
-            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid,col);
+            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+            inpCtrl.EbSid_CtxId = ctrlEbSid;
             //inpCtrl.EbSid = ctrlEbSid;
-            //inpCtrl.Name = col.Name;
+            inpCtrl.ObjType = inpCtrlType.substr(2);
             inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td ctrltdidx='${i}'>
@@ -132,7 +133,7 @@
     this.initRowCtrls = function (rowid) {
         $.each(this.rowCtrls[rowid], function (i, inpCtrl) {
             let opt = {};
-            if (inpCtrl.ObjType === "PowerSelect" || inpCtrl.ObjType === "DGPowerSelectColumn")
+            if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
                 opt.getAllCtrlValuesFn = function () {
                     return [];//getValsFromForm(this.FormObj);
                 }.bind(this);
@@ -171,13 +172,13 @@
         let rowid = $td.closest("tr").attr("rowid");
         let ctrlTdIdx = $td.attr("ctrltdidx");
         return this.rowCtrls[rowid][ctrlTdIdx];
-    }
+    };
 
     this.ctrlToSpan_td = function ($td) {
         let ctrl = this.getCtrlByTd($td);
         $td.find(".ctrl-cover").hide();
-        let val = ctrl.getValue();
-        $td.find(".tdtxt span").text(val)
+        let val = ctrl.getDisplayMember() || ctrl.getValue();
+        $td.find(".tdtxt span").text(val);
         $td.find(".tdtxt").show();
     }.bind(this);
 

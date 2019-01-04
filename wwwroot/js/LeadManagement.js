@@ -474,7 +474,7 @@
             this.$FlUpStatus.val(tempObj.Status);
             this.$FlUpFolDate.val(tempObj.Fup_Date);
             this.$FlUpComnt.val(tempObj.Comments);
-            this.$FlUpDate.prop("disabled", true);
+            //this.$FlUpDate.prop("disabled", true);
             this.$MdlFeedBack.modal('show');
         }.bind(this));
 
@@ -485,7 +485,7 @@
                 this.$FlUpComnt.val("");
                 this.$FlUpSave.children().hide();
                 this.$FlUpSave.prop("disabled", false);
-                this.$FlUpDate.prop("disabled", false);
+                //this.$FlUpDate.prop("disabled", false);
             }
         }.bind(this));
 

@@ -83,6 +83,8 @@
                 if (!this.FlagSave) {
                     this.Current_obj.VersionNumber = this.Current_obj.VersionNumber.replace(/.w/g, '');
                     this.alertMsg = "Commit Success";
+                    if (this.ObjectType === 2)
+                        this.AfterCommit();
                 }
                 else {
                     this.alertMsg = "Save Success";
@@ -98,6 +100,8 @@
                 else {
                     this.Current_obj.VersionNumber = "1.0.0";
                     this.alertMsg = "Commit Success";
+                    if (this.ObjectType === 2)
+                        this.AfterCommit();
                 }
             }
             this.ObjCollection[target].EbObject = this.Current_obj;
@@ -418,6 +422,10 @@
             return true;
         else
             return false;
+    };
+
+    this.AfterCommit = function () {
+        this.ObjCollection[this.target].AfterCommit();
     };
 
     this.UpdateCreateVersionDD = function () {

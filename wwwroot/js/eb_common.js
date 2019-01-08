@@ -144,7 +144,7 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
     var $ctrlCont = $(`${contSel}  ${_ctrlCont}`);
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
     $(`${contSel}  ${_ctrlCont}`).css("box-shadow", `0 0 3px 1px ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
-    $(`${contSel}  .text-${type}`).text(msg).show().animate({ opacity: "1" }, 300);
+    $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
 }
 
 function sortByProp(arr, prop) {

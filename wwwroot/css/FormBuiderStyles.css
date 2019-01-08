@@ -457,6 +457,7 @@
     float: right;
     font-size: 12px;
     margin-top: 3px;
+    animation-duration: 0.3s;
 }
 
 .form-buider-form .Eb-ctrlContainer {

@@ -78,6 +78,7 @@ var EbSelect = function (ctrl, options) {
 
     this.$curEventTarget = null;
     this.IsDatatableInit = false;
+    this.IsSearchBoxFocused = false;
 
     $.each(this.dmNames, function (i, name) { this.localDMS[name] = [] }.bind(this));
 
@@ -100,6 +101,7 @@ var EbSelect = function (ctrl, options) {
         this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
         this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
         this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
+        this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
 
         //set id for searchBox
         $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
@@ -110,20 +112,27 @@ var EbSelect = function (ctrl, options) {
         $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
     };
 
+    this.searchBoxFocus = function () {
+        this.IsSearchBoxFocused = true;
+    }.bind(this);
+
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
+        if (!isPrintable(e) && e.which !== 8)
+            return;
+
         var $e = $(e.target);
         var searchVal = $e.val();
 
         var mapedField = $e.closest(".searchable").attr("maped-column");
         var mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
+        var searchBy = " = ";
+        if (mapedFieldType === "string")
+            searchBy = "x*";
         if (!this.IsDatatableInit) {
             if (this.ComboObj.MinSeachLength > searchVal.length)
                 return;
-            var searchBy = " = ";
-            if (mapedFieldType === "string")
-                searchBy = "x*";
             var filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
             this.InitDT();
@@ -136,7 +145,7 @@ var EbSelect = function (ctrl, options) {
             if (searchVal.trim() === "" || this.ComboObj.MinSeachLength > searchVal.length)
                 return;
             this.datatable.columnSearch = [];
-            this.datatable.columnSearch.push(new filter_obj(mapedField, "x*", searchVal, mapedFieldType));
+            this.datatable.columnSearch.push(new filter_obj(mapedField, searchBy, searchVal, mapedFieldType));
             this.datatable.Api.ajax.reload();
         }
     };
@@ -162,11 +171,11 @@ var EbSelect = function (ctrl, options) {
                 this.V_showDD();
             }
         }
-        
+
     }.bind(this);
 
     this.getValues = function () {
-        
+
     };
 
     this.clearValues = function () {
@@ -176,15 +185,19 @@ var EbSelect = function (ctrl, options) {
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
 
-    }
+    };
 
     this.initComplete4SetVal = function () {
         if (this.setvaluesColl) {
-            $.each(this.setvaluesColl, function (i, val) {
-                $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`).click();
-            }.bind(this));
+            if (this.ComboObj.MultiSelect) {
+                $.each(this.setvaluesColl, function (i, val) {
+                    $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`).click();
+                }.bind(this));
+            }
+            else
+                $(this.DTSelector + ` tbody tr[role="row"]`).trigger("dblclick");
         }
-    }
+    };
 
 
 
@@ -258,7 +271,7 @@ var EbSelect = function (ctrl, options) {
         o.containerId = this.name + "DDdiv";
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
-        o.showSerialColumn = true;
+        o.showSerialColumn = false;
         o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
         o.scrollHeight = this.ComboObj.DropdownHeight + "px";
@@ -329,7 +342,7 @@ var EbSelect = function (ctrl, options) {
 
     this.xxx = function (e, dt, type, indexes) {
         console.log("keysssss");
-    }
+    };
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
         console.log(5);
@@ -340,13 +353,13 @@ var EbSelect = function (ctrl, options) {
             if (originalEvent.target.type !== "checkbox")
                 this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
         }
-    }
+    };
 
     this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
         var row = datatable.row(cell.index().row);
         var $tr = $(row.nodes());
         $tr.dblclick();
-    }
+    };
 
     this.DDEnterKeyPress = function (e, datatable, key, cell, originalEvent) {
         var row = datatable.row(cell.index().row);
@@ -356,7 +369,7 @@ var EbSelect = function (ctrl, options) {
         this.$curEventTarget = $(this.DTSelector + " tr.selected");
         this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
-    }
+    };
 
     this.initDTpost = function (data) {
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
@@ -622,7 +635,7 @@ var EbSelect = function (ctrl, options) {
     };
 
     this.RemoveRowFocusStyle = function ($tr) {
-        var $tr = $(this.DTSelector + " tr.selected");
+        $tr = $(this.DTSelector + " tr.selected");/////////
         $tr.find('td').css("border-color", "#ddd");
         $tr.removeClass('selected');
     };
@@ -671,11 +684,13 @@ var EbSelect = function (ctrl, options) {
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
+                if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
+                    EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
-                    EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`);
+                    if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
+                        EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`);
                 }
                 else {
                     EbMakeValid(`#${_name}Container`, `#${_name}Wraper`);

@@ -21,10 +21,11 @@
     };
 
     this.get = function () {
-        if (this.txtsearch.val().trim() === this.txtsearch.attr("data-value")) {
-            return this.txtsearch.attr("data-value");
-        }
-        return null;
+        //if (this.txtsearch.val().trim() === this.txtsearch.attr("data-value")) {
+        //    return this.txtsearch.attr("data-value");
+        //}
+        //return null;
+        return this.txtsearch.val().trim();
     }
 
     this.createModal = function () {

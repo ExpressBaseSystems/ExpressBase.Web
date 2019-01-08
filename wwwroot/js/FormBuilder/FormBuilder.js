@@ -364,10 +364,12 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-
-        if ($(target).attr("id") !== this.primitiveToolsId && $(target).attr("id") !== this.customToolsId)
+        
+        let _id = $(target).attr("id");
+        if (_id !== this.primitiveToolsId && _id !== this.customToolsId)
             return true;
-        return false;
+        else
+            return false;
 
         //if ($(source).attr("id") === this.primitiveToolsId && $(target).attr("id") === this.primitiveToolsId) {
         //    return false;
@@ -387,7 +389,8 @@
     };
 
     this.drake = new dragula([document.getElementById(this.primitiveToolsId), document.getElementById(this.customToolsId), document.getElementById(this.formId)], {
-        removeOnSpill: false,
+        removeOnSpill: true,
+        revertOnSpill: true,
         copy: function (el, source) { return (source.className.includes('div-primitive-tools') || source.className.includes('div-custom-tools')); },
         copySortSource: true,
         moves: this.movesfn.bind(this),

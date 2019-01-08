@@ -24,9 +24,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpPost]
         public void Schedule(string expression, int objId, JobTypes type, string users, string groups)
-        {
-            //int _objId = 2236;
-            //int val = 1332423;
+        {           
             List<Param> _param = new List<Param> { new Param { Name = "FromDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() },
             new Param{ Name = "ToDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() } };
 
@@ -51,13 +49,14 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult SchedulesList()
         {
-
+            GetSchedulesOfSolutionResponse ds = this.ServiceClient.Get(new GetSchedulesOfSolutionRequest { });
+            ViewBag.schedules = ds.Schedules;
             return View();
         }
-        [HttpPost]
-        public void Unschedule(string triggerkey)
+       // [HttpPost]
+        public void Unschedule(/*string triggerkey*/)
         {
-            var ds = this.ServiceClient.Post(new UnschedulerMQRequest { TriggerKey = triggerkey });
+            var ds = this.ServiceClient.Post(new UnschedulerMQRequest { TriggerKey = /*triggerkey*/"JobTrigger11/30/2018 12:04:14 PM" });
         }
 
 

@@ -457,6 +457,7 @@
     float: right;
     font-size: 12px;
     margin-top: 3px;
+    animation-duration: 0.3s;
 }
 
 .form-buider-form .Eb-ctrlContainer {
@@ -521,7 +522,7 @@
 .form-buider-form .Eb-ctrlContainer table td {
     border: 1px dashed #cccccc;
     padding: 0px;
-    background: #eee;
+    /*background: #eee;*/
     vertical-align: initial;
 }
 

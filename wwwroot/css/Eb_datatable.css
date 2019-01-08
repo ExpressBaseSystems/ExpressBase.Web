@@ -11,8 +11,8 @@
     display: none;
 }
 
-.numericcol {
-    float: right;
+.text-center {
+    text-align:center;
 }
 
 .toolbar {
@@ -271,7 +271,7 @@ div.dataTables_wrapper div.dataTables_processing {
     height: inherit !important;
     padding: 7px 0px;
     border: none !important;
-    direction: rtl;
+    /*direction: rtl;*/
     border-radius: 0 !important;
     box-shadow: none !important;
     font-size: 10px;
@@ -333,6 +333,7 @@ table.dataTable tbody td.dt-body-right {
 
 .containerrow .dataTables_scroll {
     height: 100% !important;
+    float:left;
 }
 .containerrow .dataTables_scrollBody {
     /*height: calc(100% - 18px) !important;*/

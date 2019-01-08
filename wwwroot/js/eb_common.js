@@ -52,6 +52,12 @@ function getCookieVal(a) {
     return b ? b.pop() : '';
 }
 
+var Agginfo = function (col, deci, index) {
+    this.colname = col;
+    this.deci_val = deci;
+    this.data = index;
+};
+
 function fltr_obj(type, name, value) {
     this.Type = type;
     this.Name = name;
@@ -138,7 +144,7 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
     var $ctrlCont = $(`${contSel}  ${_ctrlCont}`);
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
     $(`${contSel}  ${_ctrlCont}`).css("box-shadow", `0 0 3px 1px ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
-    $(`${contSel}  .text-${type}`).text(msg).show().animate({ opacity: "1" }, 300);
+    $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
 }
 
 function sortByProp(arr, prop) {
@@ -333,7 +339,8 @@ function RecurFlatControls(src_obj, dest_coll) {
 
 function getValsFromForm(formObj) {
     let fltr_collection = [];
-    $.each(getFlatControls(formObj), function (i, obj) {
+
+    $.each(getFlatCtrlObjs(formObj), function (i, obj) {
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
     });
     return fltr_collection;

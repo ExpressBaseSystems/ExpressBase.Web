@@ -23,6 +23,7 @@ using System.Text.RegularExpressions;
 using ExpressBase.Web.Filters;
 using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.Extensions;
+using ExpressBase.Objects.ApiBuilderRelated;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -183,6 +184,17 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+            else if (type.Equals(EbObjectTypes.Api))
+            {
+                Type[] typeArray = typeof(EbApiWrapper).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.ApiBuilder, typeof(EbApiWrapper));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
+
             if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
             {
                 EbUsrCtrlObjLisAllVerResponse result = this.ServiceClient.Get<EbUsrCtrlObjLisAllVerResponse>(new EbUsrCtrlObjLisAllVerRequest { EbObjectRefId = ViewBag.Refid });

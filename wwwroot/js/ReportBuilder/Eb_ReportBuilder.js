@@ -462,6 +462,7 @@
         this.EbObject.Margin.Left = this.repExtern.convertTopoints(this.margin.Left);
         this.EbObject.Margin.Right = this.repExtern.convertTopoints(parseFloat(this.width) - this.margin.Right);
         commonO.Current_obj = this.EbObject;
+        return true;
     };//save
 
     this.findReportLayObjects = function (k, object) {

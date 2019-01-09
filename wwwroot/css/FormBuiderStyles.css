@@ -238,16 +238,25 @@
     max-width: inherit !important;*/
 }
 
-    .dgtbl td {
+    .dgtbl > tbody > tr > td {
         position: relative;
-        border: 1px dotted #cccccc9c !important;
+        border: none !important;
+        border-right: dotted 1px rgb(241, 241, 241) !important;
     }
 
-    .dgtbl tr th:last-child {
+    .dgtbl > tbody > tr:nth-child(odd) {
+        background-color: rgb(249, 249, 249) !important;
+    }
+
+    .dgtbl > tbody > tr:nth-child(even) {
+        background-color: white;
+    }
+
+    .dgtbl > tbody > tr th:last-child {
         text-align: center;
     }
 
-    .dgtbl tr td:last-child {
+    .dgtbl > tbody > tr td:last-child {
         width: 50px;
     }
 
@@ -269,9 +278,9 @@
     overflow: auto;
 }
 
-.grid-cont input[type=checkbox] {
-    min-height: inherit !important;
-}
+    .grid-cont input[type=checkbox] {
+        min-height: inherit !important;
+    }
 
 .Eb-ctrlContainer .tab-content {
     border: 1px solid #ddd;
@@ -673,7 +682,7 @@
     padding-top: 4px;
 }
 
-.userloc-checkbox{
+.userloc-checkbox {
     vertical-align: middle;
     margin-right: 5px !important;
 }

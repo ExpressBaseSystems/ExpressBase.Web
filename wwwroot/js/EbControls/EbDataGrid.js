@@ -96,9 +96,11 @@
     };
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
-        let tr = `<tr is-added='${isAdded}' rowid='${rowid}'>`;
+        let tr = `<tr class='dgtr' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
         $.each(this.ctrl.Controls.$values, function (i, col) {
+            if (col.Hidden)
+                return true;
             let inpCtrlType = col.InputControlType;
             editBtn = "";
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
@@ -116,7 +118,7 @@
         }.bind(this));
         tr += `<td>
                     <span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>
-                    <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
+                    <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
                     <span class='del-row rowc' tabindex='1'><span class='fa fa-minus'></span></span>
                 </td></tr>`;
         return tr;
@@ -231,6 +233,13 @@
         $td.find(".ctrl-cover").show();
     }.bind(this);
 
+    this.dg_rowKeydown = function (e) {
+        if (e.which === 40)//down arrow
+            $(e.target).next().focus();
+        if (e.which === 38)//up arrow
+            $(e.target).prev().focus();
+    }.bind(this);
+
     this.init = function () {
         if (this.ctrl.IsAddable) {
             if (!this.isEditMode)
@@ -239,6 +248,7 @@
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".check-row", this.checkRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".del-row", this.delRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".edit-row", this.editRow_click);
+        $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("keydown", ".dgtr", this.dg_rowKeydown);
     };
 
     this.init();

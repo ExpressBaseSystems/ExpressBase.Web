@@ -241,6 +241,7 @@
     .dgtbl > tbody > tr > td {
         position: relative;
         border: none !important;
+        padding: 0 !important;
         border-right: dotted 1px rgb(241, 241, 241) !important;
     }
 
@@ -461,6 +462,28 @@
     /*padding: .25rem .25rem !important;
     border: 1px solid #e3e3e3;*/
 }
+
+.ctrl-cover .dropdown-toggle {
+    padding: 0px 12px;
+    border-radius: 1px;
+    font-size: 13px;
+    height: 28px;
+    box-shadow: none !important;
+}
+
+.ctrl-cover > div > div > div.bs-searchbox > input {
+    height: 21px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    border-radius: 2px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+    .ctrl-cover .dropdown-toggle .filter-option-inner-inner {
+        margin-top: 3px;
+    }
 
 .req-cont {
     float: right;

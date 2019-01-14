@@ -96,6 +96,7 @@
     };
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
+        let anyColEditable = false;
         let tr = `<tr class='dgtr' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
         $.each(this.ctrl.Controls.$values, function (i, col) {
@@ -114,13 +115,17 @@
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                         <div class='tdtxt'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+            if (col.IsEditable)
+                anyColEditable = true;
 
         }.bind(this));
         tr += `<td>
-                    <span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>
+                    @editBtn@
                     <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
-                    <span class='del-row rowc' tabindex='1'><span class='fa fa-minus'></span></span>
-                </td></tr>`;
+                    <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
+                </td></tr>`
+            .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>": "")
+            .replace("@del-c@", !anyColEditable ? "del-c": "");
         return tr;
     };
 

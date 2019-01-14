@@ -5,17 +5,21 @@
 
     this.insertButton = function ($html) {
         _btnContainer.prepend(`${$html}`);
-    }
+    };
 
     this.setName = function (name) {
         _objName.text(`${name}`);
+    };
+
+    this.setMode = function (html) {
+        _objName.append(`${html}`);
     };
 
     this.hideElement = function (collectionofIds) {
         collectionofIds.forEach(function (item, i) {
             _btnContainer.children("#" + item).hide();
         }.bind(this));
-    }
+    };
 
     this.showElement = function (collectionofIds) {
         collectionofIds.forEach(function (item, i) {

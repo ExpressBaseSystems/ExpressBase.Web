@@ -12,14 +12,15 @@
 
     this.Date = function (ctrl, ctrlOpts) {
         let formObject = ctrlOpts.formObject;
+        let userObject = ctrlOpts.userObject;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-                let fun = new Function("form", atob(ctrl.OnChange));
+                let fun = new Function("form","User", atob(ctrl.OnChange));
             $input.MonthPicker({
-                OnAfterChooseMonth: fun.bind(this, formObject )
+                OnAfterChooseMonth: fun.bind(this, formObject, userObject )
                 });
         }
         else {

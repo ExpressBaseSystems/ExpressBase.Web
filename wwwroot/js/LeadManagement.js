@@ -487,7 +487,7 @@
             this.setFollowupStatus(tempObj.Status);
 
             this.$FlUpDate.val(tempObj.Date);
-            this.$FlUpStatus.val(tempObj.Status);
+            //this.$FlUpStatus.val(tempObj.Status);
             this.$FlUpFolDate.val(tempObj.Fup_Date);
             this.$FlUpComnt.val(tempObj.Comments);
             this.$FlUpNotPicked.prop("checked", tempObj.Is_Picked_Up === "Yes" ? false: true);
@@ -546,7 +546,7 @@
                 }
             }.bind(this));
         }
-        
+        this.$FlUpStatus.val(_oldStatus);
     };
 
     this.initBillingModal = function () {

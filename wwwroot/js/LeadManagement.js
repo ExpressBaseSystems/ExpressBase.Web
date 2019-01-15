@@ -59,6 +59,7 @@
     this.$FlUpStatus = $("#selFlUpStatus");
     this.$FlUpFolDate = $("#txtFlUpFolDate");
     this.$FlUpComnt = $("#txaFlUpComnt");
+    this.$FlUpNotPicked = $("#chkFlUpNotPicked");
     this.$FlUpSave = $("#btnFlUpSave");
     //BILLING
     this.divBilling = "divBilling";
@@ -446,7 +447,15 @@
             this.$FlUpSave.prop("disabled", true);
             if (this.$MdlFeedBack.attr("data-id") !== '')
                 id = parseInt(this.$MdlFeedBack.attr("data-id"));
-            var fdbkObj = { Id: id, Date: this.$FlUpDate.val(), Status: this.$FlUpStatus.val(), Fup_Date: this.$FlUpFolDate.val(), Comments: this.$FlUpComnt.val(), Account_Code: this.AccId };
+            var fdbkObj = {
+                Id: id,
+                Date: this.$FlUpDate.val(),
+                Status: this.$FlUpStatus.val(),
+                Fup_Date: this.$FlUpFolDate.val(),
+                Comments: this.$FlUpComnt.val(),
+                Account_Code: this.AccId,
+                Is_Picked_Up: this.$FlUpNotPicked.prop("checked")? "No": "Yes"
+            };
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveFollowup",
@@ -478,9 +487,10 @@
             this.setFollowupStatus(tempObj.Status);
 
             this.$FlUpDate.val(tempObj.Date);
-            this.$FlUpStatus.val(tempObj.Status);
+            //this.$FlUpStatus.val(tempObj.Status);
             this.$FlUpFolDate.val(tempObj.Fup_Date);
             this.$FlUpComnt.val(tempObj.Comments);
+            this.$FlUpNotPicked.prop("checked", tempObj.Is_Picked_Up === "Yes" ? false: true);
             //this.$FlUpDate.prop("disabled", true);
 
             this.$MdlFeedBack.modal('show');
@@ -491,6 +501,7 @@
                 this.$FlUpDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$FlUpFolDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$FlUpComnt.val("");
+                this.$FlUpNotPicked.prop("checked", false);
                 this.$FlUpSave.children().hide();
                 this.$FlUpSave.prop("disabled", false);
                 //this.$FlUpDate.prop("disabled", false);
@@ -535,7 +546,7 @@
                 }
             }.bind(this));
         }
-        
+        this.$FlUpStatus.val(_oldStatus);
     };
 
     this.initBillingModal = function () {
@@ -924,7 +935,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
     this.init = function () {
         if (this.ParentDivId === "divFdbk") {
-            this.metadata = ["7", "Id", "Created_Date", "Date", "Status", "Fup_Date", "Comments", "Created_By", "_feedback"];
+            this.metadata = ["8", "Id", "Created_Date", "Date", "Status", "Fup_Date", "Is_Picked_Up", "Comments", "Created_By", "_feedback"];
         }
         else if (this.ParentDivId === "divBilling") {
             this.metadata = ["9", "Id", "Date", "Total_Amount", "Amount_Received", "Balance_Amount", "Cash_Paid", "Payment_Mode", "Narration", "Created_By", "_billing"];
@@ -951,7 +962,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]] });
         }
         else if (this.metadata.indexOf("_billing") !== -1) {
             for (i = 0; i < this.itemList.length; i++)

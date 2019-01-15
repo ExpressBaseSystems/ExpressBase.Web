@@ -28,6 +28,7 @@
     }
 
     this.initFilterDialogCtrls = function () {
+        $('.selectpicker').selectpicker();
         JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
             let opt = {};

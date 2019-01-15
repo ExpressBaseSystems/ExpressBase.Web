@@ -43,6 +43,22 @@
                 settings.format = "Y/m/d H:i";
             }
 
+
+
+            //if (ctrl.DateFormat === 0) {
+            //    settings.formatDate = "d/m/Y";
+            //}
+            //else if (ctrl.DateFormat === 1) {
+            //    settings.formatDate = "m/d/Y";
+            //}
+            //else if (ctrl.DateFormat === 2) {
+            //    settings.formatDate = "Y/m/d";
+            //}
+            //else {
+            //    settings.formatDate = "Y/d/m";
+            //}
+
+
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
 
@@ -180,7 +196,7 @@
 
     this.Survey = function (ctrl) {
         new EbSurveyRender($('#' + ctrl.Name), this.Bot);
-    }
+    };
 
     this.StaticCardSet = function (ctrl) {
         this.initCards($('#' + ctrl.Name));

@@ -21,6 +21,8 @@
 <link href="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version=@bApnd />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/css/bootstrap-select.css">
+
 
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
@@ -36,6 +38,7 @@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/js/bootstrap-select.js"></script>
 @{
 
     EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.WebForm);
@@ -84,7 +87,7 @@
         border-radius: 2px;*/
     }
 
-    .form-render-table td {
+    .form-render-table > tbody > tr > td {
         border: none !important;
     }
 
@@ -128,21 +131,26 @@
 <script>
     @Html.Raw(ViewBag.ControlOperations);
 
-    new EbHeader().insertButton(' <button class="btn" id="webformsave"><i class="fa fa-save" aria-hidden="true"></i></button>');
+    let header = new EbHeader();
+    header.insertButton(' <button class="btn" id="webformsave"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
 
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _editModeObj =  '@Html.Raw(ViewBag.editModeObj)';
     let _formRefId=  "@Html.Raw(ViewBag.formRefId)";
     let _$saveBtn = $("#webformsave");
-    var d = new EbHeader();
+    let FormMode = "";
     if (_editModeObj === "false") {
         _editModeObj = false;
+        FormMode = "New Mode";
     }
     else {
-        d.insertButton('<button class="btn" id="webformaudittrail"><i class="fa fa-history" aria-hidden="true"></i></button>');
+        FormMode = "Edit Mode";
+        header.insertButton('<button class="btn" id="webformaudittrail"><i class="fa fa-history" aria-hidden="true"></i></button>');
+        header.insertButton(' <button class="btn" id="webformnew" onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-file-o" aria-hidden="true"></i></button>');
         _editModeObj = JSON.parse(atob(_editModeObj));
     }
-    d.setName(_formObj.DisplayName);
+    header.setName(_formObj.DisplayName);
+    header.setMode(`<span class="fmode"style="color: #444;font-weight: normal;">(${FormMode})</span>`);
     $('title').text(_formObj.DisplayName);
 
     const renderer = new WebFormRender({

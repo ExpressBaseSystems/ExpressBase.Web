@@ -1,0 +1,203 @@
+﻿.eb_apiWrper {
+    width: 100%;
+    height: calc(100% - 73px);
+}
+    .eb_apiWrper .eb_apiSideBar {
+        width: 20%;
+        background: white;
+        height: 100%;
+        padding: 0 !important;
+        border: 1px solid #ccc;
+        overflow-y: auto;
+        border-top-right-radius: 4px;
+        height: calc(100% - 73px);
+        position: fixed;
+    }
+    .eb_apiWrper .eb_apiPane {
+        width: 60%;
+        min-height: 300px;
+        margin-left: 20%;
+        padding:0 5px;
+    }
+    .eb_apiWrper .eb_apiSideBar .resource_link_Bdy .head {
+        padding: 2px 5px;
+        border-bottom: 1px solid #ddd;
+        background: #eee;
+        font-size: 13px;
+        cursor: pointer;
+    }
+    .eb_apiWrper .eb_apiPane .resource_Body {
+        background: white;
+        min-height: 80vh;
+        width: 100%;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+    .eb_apiWrper .eb_apiSideBar .resource_link_Bdy .bdy .resource_items {
+        width: 50%;
+        display: inline-block;
+        font-size: 0.98em;
+        padding: 3px;
+        float: left;
+        cursor: pointer;
+    }
+        .eb_apiWrper .eb_apiSideBar .resource_link_Bdy .bdy .resource_items .resource_items-inner {
+            width: 100%;
+            padding: 10px 10px;
+            border-radius: 2px;
+            box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
+            background-color: white;
+            border: solid 1px rgba(0, 0, 255, 0);
+            transition-duration: 0.05s;
+        }
+.eb_apiWrper .eb_apiSideBar .resource_link_Bdy .bdy .resource_items i {
+    padding-right: 10px;
+}
+    .eb_apiWrper .pgContainer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 4;
+        padding-top: 37px;
+        border: 1px solid #ccc;
+        box-shadow: var(--eb-shadow);
+        height: 100%;
+        background-color: white;
+        width: 25%;
+    }
+.drop-hover {
+    border: 2px solid #316396 !important;
+}
+.strt_circ {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background-color: #78ca77;
+}
+.stop_circ {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background-color: #e87575;
+}
+.resource_append_wraper .apiPrcItem {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+}
+.drpbox {
+    height: 60px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 15px;
+    border-radius: 4px;
+    box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
+    cursor:pointer;
+}
+.resource_append_wraper .apiPrcItem .drpbox:focus {
+    border-color: blue !important;
+}
+.refIdMsetNotfy{
+    background:red;
+    color:white;
+}
+.resource_Body_head{
+
+}
+.Json_reqOrRespWrpr {
+    position: fixed;
+    width: 100%;
+    background: white;
+    height: 300px;
+    bottom: 0;
+    z-index: 1000;
+    border-top: 1px solid #ccc;
+    left: 0;
+    display: none;
+}
+    .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-flow: row nowrap;
+    }
+        .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner .JsonReq {
+            width: 50%;
+            padding: 10px;
+        }
+        .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner .JsonResp {
+            width: 50%;
+            padding:10px;
+        }
+            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner .JsonResp .JsonResp_inner {
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                height:100%;
+                width:100%;
+            }
+        .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner .JsonReq .JsonReq_inner {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            height: 100%;
+            width: 100%;
+        }
+        .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h {
+            padding: 2px 5px;
+            border-bottom: 1px solid #ddd;
+            background: #eee;
+            font-size: 13px;
+        }
+            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .runReq_btn {
+                background: transparent;
+                background-color: transparent;
+                border: none;
+                float: right;
+            }
+            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .runReq_btn .fa {
+                color: green;
+                margin-top:3px;
+            }
+            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._b {
+                padding: 5px 10px;
+                overflow: auto;
+                height: calc(100% - 23px);
+            }
+        .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._b ul{
+           list-style:none;
+           padding-left:15px;
+        }
+        .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ol {
+            padding-left: 15px;
+            list-style: none;
+        }
+        /*json window*/
+        .objkey {
+            color: #204a87;
+        }
+.objval {
+    color: #4e9a06;
+}
+.a_ob_o, .a_ob_c{
+    color: #729fcf;
+}
+.Json_reqOrRespWrpr .regRespWHead {
+    position: absolute;
+    background: #316396;
+    color: white;
+    padding: 2px 30px 2px 15px;
+    top: -25px;
+    font-size: 14px;
+    text-align: center;
+}
+.regRespWHead::after{
+    content: "";
+    width: 0;
+    height: 0;
+    border-top: 27px solid white;
+    border-left: 19px solid transparent;
+    position: absolute;
+    top: 0;
+    right: 0px;
+}

@@ -1,0 +1,61 @@
+﻿@using ExpressBase.Scheduler.Jobs;
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    int counter = 0;
+}
+@{ List<EbSchedule> Schedules = ViewBag.schedules;
+    <div class="container-fluid">
+        <div class="schedules_list table-responsive table-light ">
+            <table class="table table-hover table-bordered">
+                <caption><h3>Schedules</h3></caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">JobKey</th>
+                        <th scope="col">TriggerKey</th>
+                        <th scope="col">JobType</th>
+                        <th scope="col">Expression</th>
+                        <th scope="col">CreatedAt</th>
+                        <th scope="col">CreatedBy</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (EbSchedule sch in Schedules)
+                    {
+                        <tr id="tr_@counter" class="sch_r">
+                            <td dcope="row" class="id">@sch.Id</td>
+                            <td class="jobkey">@sch.JobKey</td>
+                            <td class="triggerkey">@sch.TriggerKey</td>
+                            <td class="jobtype">@sch.Task.JobType</td>
+                            <td class="expression">@sch.Task.Expression</td>
+                            <td class="createdat">@sch.CreatedAt</td>
+                            <td class="createdby">@sch.CreatedBy</td>
+                            <td class="status">@sch.Status</td>
+                        </tr>
+                        counter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="Scheduler_main" id="Scheduler_main">
+        @await Component.InvokeAsync("SchedulerWindow")
+    </div>
+}
+<script>
+    $('.sch_r').on('click', function (e) {
+      //  alert(e.target.parentElement.children);
+        $('#SchedulerModal').modal('show');
+    });
+</script>
+<style>
+    .schedules_list {
+        padding-top: 50px;
+        background-color: white;
+    }
+
+    table {
+        background-color: white;
+    }
+</style>

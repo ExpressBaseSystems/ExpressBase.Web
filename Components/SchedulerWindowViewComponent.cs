@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Components
 {
-    public class SchedulerViewComponent : ViewComponent
+    public class SchedulerWindowViewComponent : ViewComponent
     {
         protected JsonServiceClient ServiceClient { get; set; }
 
         protected RedisClient Redis { get; set; }
 
-        public SchedulerViewComponent(IServiceClient _client, IRedisClient _redis)
+        public SchedulerWindowViewComponent(IServiceClient _client, IRedisClient _redis)
         {
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;

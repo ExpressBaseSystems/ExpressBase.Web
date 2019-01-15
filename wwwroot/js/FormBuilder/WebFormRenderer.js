@@ -37,6 +37,7 @@
     };
 
     this.init = function () {
+        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.initWebFormCtrls();
         if (this.isEditMode)

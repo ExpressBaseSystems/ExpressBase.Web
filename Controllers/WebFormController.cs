@@ -85,7 +85,7 @@ namespace ExpressBase.Web.Controllers
 				PropertyInfo[] props = control.GetType().GetProperties();
 				foreach (PropertyInfo prop in props)
 				{
-					if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == PropertyEditorType.MultiLanguageKeySelector)
+					if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == (int)PropertyEditorType.MultiLanguageKeySelector)
 					{
 						if(prop.Name == "Label")
 							MLPair.Add(control.Name, control.GetType().GetProperty(prop.Name).GetValue(control, null) as String);

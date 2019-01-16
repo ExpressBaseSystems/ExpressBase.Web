@@ -144,8 +144,13 @@
             this.initCSE();
         else if (this.editor === 21)
             this.initMLE(e);
+        else if (this.editor > 63) {
+            this.initScrE(e);
+        }
 
-        $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
+        if (this.editor < 64)
+            $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
+
         if (this.editor !== 8)
             $("#" + this.CEctrlsContId).off("focus", ".colTile").on("focus", ".colTile", this.colTileFocusFn.bind(this));
         $("#" + this.PGobj.wraperId + ' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
@@ -257,7 +262,7 @@
         }
         let _CElistFromSrc = CurlevelObj.PropsObj[sourceProp.replace(/Parent./g, "")].$values;
         return _CElistFromSrc;
-    }
+    };
 
     this.CEHelper = function (sourceProp) {
         this.Dprop = this.CurMeta.Dprop;
@@ -400,13 +405,13 @@
         $(el).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
     };
 
-    this.initCSE = function () {
-        this.curEditorLabel = "C# Script Editor";
-        let JEbody = '<textarea id="CSE_txtEdtr' + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
+    this.ScrEHelper = function (label, idPrefix, mode, hint) {
+        this.curEditorLabel = label;
+        let JEbody = '<textarea id="' + idPrefix + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
-        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.anyword); };
-        window.editor = CodeMirror.fromTextArea(document.getElementById('CSE_txtEdtr' + this.PGobj.wraperId), {
-            mode: "text/x-csharp",
+        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint[hint]); };
+        window.editor = CodeMirror.fromTextArea(document.getElementById(idPrefix + this.PGobj.wraperId), {
+            mode: mode,
             lineNumbers: true,
             lineWrapping: true,
             matchBrackets: true,
@@ -416,19 +421,62 @@
         });
     };
 
+    this.initScrE = function (e) {
+        let options = "";
+        if (this.editor & 64)
+            options += "<option>Javascript Editor</option>";
+        if (this.editor & 128)
+            options += "<option>C# Script Editor</option>";
+        if (this.editor & 256)
+            options += "<option>SQL Editor</option>";
+        this.ScrEHelper("Javascript Editor", 'JE_txtEdtr', "javascript", "javascript");
+        $("#editorsel").empty();
+        $(this.pgCXE_Cont_Slctr + " .modal-title").html(this.CurProplabel + ": " + "<select id='editorsel' class='selectpicker'>" + options + "</select>");
+        $("#editorsel").selectpicker('refresh');
+        $("#editorsel").selectpicker().on('changed.bs.select', this.editorSelChange.bind(this));
+    };
+
+    this.editorSelChange = function (e, clickedIndex, isSelected, previousValue) {
+        let val = $("#editorsel").selectpicker('val');
+        alert(val);
+    };
+
     this.initJE = function () {
-        this.curEditorLabel = "Javascript Editor";
-        let JEbody = '<textarea id="JE_txtEdtr' + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
-        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
-        window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.PGobj.wraperId), {
-            mode: "javascript",
-            lineNumbers: true,
-            lineWrapping: true,
-            extraKeys: { "Ctrl-Space": "autocomplete" },
-            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-        });
+
+
+        this.ScrEHelper("Javascript Editor", 'JE_txtEdtr', "javascript", "javascript");
+
+        //this.curEditorLabel = "Javascript Editor";
+        //let JEbody = '<textarea id="JE_txtEdtr' + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
+        //$(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
+        //CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.javascript); };
+        //window.editor = CodeMirror.fromTextArea(document.getElementById('JE_txtEdtr' + this.PGobj.wraperId), {
+        //    mode: "javascript",
+        //    lineNumbers: true,
+        //    lineWrapping: true,
+        //    extraKeys: { "Ctrl-Space": "autocomplete" },
+        //    foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+        //    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        //});
+    };
+
+    this.initCSE = function () {
+
+        this.ScrEHelper("C# Script Editor", 'CSE_txtEdtr', "text/x-csharp", "anyword");
+
+        //this.curEditorLabel = "C# Script Editor";
+        //let JEbody = '<textarea id="CSE_txtEdtr' + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
+        //$(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
+        //CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint.anyword); };
+        //window.editor = CodeMirror.fromTextArea(document.getElementById('CSE_txtEdtr' + this.PGobj.wraperId), {
+        //    mode: "text/x-csharp",
+        //    lineNumbers: true,
+        //    lineWrapping: true,
+        //    matchBrackets: true,
+        //    extraKeys: { "Ctrl-Space": "autocomplete" },
+        //    foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+        //    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        //});
     };
 
     this.initOSE = function () {
@@ -498,7 +546,7 @@
         $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
         $.each(data, function (name, val) {
             if (name)
-				$(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" is-selected="false" tabindex="1" name ="' + name + '">' + val[0].displayName
+                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append('<div class="colTile" is-selected="false" tabindex="1" name ="' + name + '">' + val[0].displayName
                     + '<i class="fa fa-chevron-circle-right pull-right ColT-right-arrow" aria-hidden="true"></i></div>');
             ObjType = val[0].refId.split("-")[2];
         }.bind(this));
@@ -732,7 +780,7 @@
         if (SubTypes) {
             for (let i = 0; i < SubTypes.length; i++) {
                 let ObjName = SubTypes[i].split("-/-")[0]; let DispName = SubTypes[i].split("-/-")[1];
-                options += '<option value=' + ObjName + '>' + DispName + '</option>'
+                options += '<option value=' + ObjName + '>' + DispName + '</option>';
             }
             $(this.pgCXE_Cont_Slctr + " .modal-footer .selectpicker").empty().append(options).selectpicker('refresh');
         }

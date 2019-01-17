@@ -64,9 +64,12 @@
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
             this.addInvalidStyle(ctrl);
+            return false;
         }
-        else
+        else {
             this.removeInvalidStyle(ctrl);
+            return true;
+        }
     };
 
     this.addInvalidStyle = function (ctrl, msg, type) {

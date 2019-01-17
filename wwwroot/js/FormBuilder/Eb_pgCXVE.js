@@ -407,7 +407,7 @@
 
     this.ScrEHelper = function (label, idPrefix, mode, hint) {
         this.curEditorLabel = label;
-        let JEbody = '<textarea id="' + idPrefix + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>'
+        let JEbody = '<textarea id="' + idPrefix + this.PGobj.wraperId + '" rows="12" cols="40" ></textarea>';
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(JEbody);
         CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint[hint]); };
         window.editor = CodeMirror.fromTextArea(document.getElementById(idPrefix + this.PGobj.wraperId), {
@@ -424,11 +424,11 @@
     this.initScrE = function (e) {
         let options = "";
         if (this.editor & 64)
-            options += "<option>Javascript Editor</option>";
+            options += "<option mode='javascript'    hint='javascript' >Javascript Editor</option>";
         if (this.editor & 128)
-            options += "<option>C# Script Editor</option>";
+            options += "<option mode='text/x-csharp' hint='anyword'>C# Script Editor</option>";
         if (this.editor & 256)
-            options += "<option>SQL Editor</option>";
+            options += "<option mode='text/x-plsql'  hint='sql'>SQL Editor</option>";
         this.ScrEHelper("Javascript Editor", 'JE_txtEdtr', "javascript", "javascript");
         $("#editorsel").empty();
         $(this.pgCXE_Cont_Slctr + " .modal-title").html(this.CurProplabel + ": " + "<select id='editorsel' class='selectpicker'>" + options + "</select>");
@@ -437,8 +437,11 @@
     };
 
     this.editorSelChange = function (e, clickedIndex, isSelected, previousValue) {
-        let val = $("#editorsel").selectpicker('val');
-        alert(val);
+        let hint = $(e.target).find("option:selected").attr('hint');
+        let mode = $(e.target).find("option:selected").attr('mode');
+
+        CodeMirror.commands.autocomplete = function (cm) { CodeMirror.showHint(cm, CodeMirror.hint[hint]); };
+        window.editor.setOption("mode", mode);
     };
 
     this.initJE = function () {

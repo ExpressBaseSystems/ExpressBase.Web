@@ -146,6 +146,13 @@
         return NCCSingleColumns_flat;
     };
 
+    this.ClearControls = function (isForceClear = false) {
+        $.each(this.allFlatControls, function (control) {
+            if (!control.IsMaintainValue && !isForceClear)
+                control.clear();
+        });
+    };
+
     this.setEditModeCtrls = function () {
         let FormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames(FormData);

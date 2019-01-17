@@ -288,7 +288,7 @@
 }
 
 .grid-cont {
-    overflow: auto;
+    /*overflow: auto;*/
 }
 
     .grid-cont input[type=checkbox] {

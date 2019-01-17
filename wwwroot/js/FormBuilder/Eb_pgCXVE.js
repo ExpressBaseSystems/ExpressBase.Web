@@ -424,11 +424,11 @@
     this.initScrE = function (e) {
         let options = "";
         if (this.editor & 64)
-            options += "<option mode='javascript'    hint='javascript' >Javascript Editor</option>";
+            options += "<option mode='javascript'    hint='javascript' >Javascript</option>";
         if (this.editor & 128)
-            options += "<option mode='text/x-csharp' hint='anyword'>C# Script Editor</option>";
+            options += "<option mode='text/x-csharp' hint='anyword'>C# Script</option>";
         if (this.editor & 256)
-            options += "<option mode='text/x-plsql'  hint='sql'>SQL Editor</option>";
+            options += "<option mode='text/x-plsql'  hint='sql'>SQL</option>";
         this.ScrEHelper("Javascript Editor", 'JE_txtEdtr', "javascript", "javascript");
         $("#editorsel").empty();
         $(this.pgCXE_Cont_Slctr + " .modal-title").html(this.CurProplabel + ": " + "<select id='editorsel' class='selectpicker'>" + options + "</select>");
@@ -897,7 +897,7 @@
             objectToBeUpdated = getObjByval(this.CElistFromSrc, "data", (i + 1));
             objectToBeUpdated.data = i;
         }
-    }
+    };
 
     this.CE_AddFn = function (e) {
         let $DD = $(e.target).closest(".sub-controls-DD-cont").find("option:selected");

@@ -146,7 +146,7 @@
                 }.bind(this);
             this.initControls.init(inpCtrl, opt);
         }.bind(this));
-    }
+    };
 
     this.getValues = function () {
         this.FVWTObjColl = [];

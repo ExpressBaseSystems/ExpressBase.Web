@@ -273,6 +273,10 @@
         width: 50px;
     }
 
+[eb-form='true'] .bootstrap-select{
+    width:100% !important;
+}
+
 .Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
     height: auto;
@@ -288,7 +292,7 @@
 }
 
 .grid-cont {
-    overflow: auto;
+    /*overflow: auto;*/
 }
 
     .grid-cont input[type=checkbox] {
@@ -306,6 +310,16 @@
 
 .ctrl-cover {
     border: 1px solid rgba(34,36,38,.15);
+}
+.dgtbl .ctrl-cover {
+    border: none;
+    border-top: 1px solid rgba(34,36,38,.15);
+    border-right: 1px solid rgba(34,36,38,.15);
+}
+
+.check-wraper {
+    background-color: white;
+    height: 28px;
 }
 
 .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
@@ -480,6 +494,7 @@
     border-radius: 1px;
     font-size: 13px;
     height: 28px;
+    background-color: white;
     box-shadow: none !important;
 }
 

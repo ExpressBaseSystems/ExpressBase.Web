@@ -72,7 +72,7 @@
 
     this.SimpleSelect = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
-        //$input.selectpicker();
+        $input.selectpicker();
     };
 
     this.UserLocation = function (ctrl) {

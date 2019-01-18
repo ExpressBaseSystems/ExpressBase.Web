@@ -15,6 +15,7 @@ using ExpressBase.Common.Objects;
 using ExpressBase.Common.Extensions;
 using System.Reflection;
 using ExpressBase.Common.Objects.Attributes;
+using ExpressBase.Common.Data;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -24,7 +25,20 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Index(string refId, string _params)
         {
-            ViewBag.editModeObj = _params ?? "false";
+            //ViewBag.editModeObj = _params ?? "false";
+            ViewBag.rowId = 0;
+            ViewBag.formData = "null";
+            if (_params != null)
+            {
+                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(_params)));
+                Param _temp = ob.FirstOrDefault(e => e.Name.Equals("id"));
+                if (_temp != null)
+                {
+                    ViewBag.rowId = _temp.ValueTo;
+                    //ViewBag.formData = EbSerializers.Json_Serialize(getRowdata(refId, _temp.ValueTo));
+                    ViewBag.formData = JsonConvert.SerializeObject(getRowdata(refId, _temp.ValueTo));
+                }
+            }
             ViewBag.formRefId = refId;
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale} );
         }
@@ -85,7 +99,7 @@ namespace ExpressBase.Web.Controllers
 				PropertyInfo[] props = control.GetType().GetProperties();
 				foreach (PropertyInfo prop in props)
 				{
-					if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == PropertyEditorType.MultiLanguageKeySelector)
+					if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == (int)PropertyEditorType.MultiLanguageKeySelector)
 					{
 						if(prop.Name == "Label")
 							MLPair.Add(control.Name, control.GetType().GetProperty(prop.Name).GetValue(control, null) as String);
@@ -109,11 +123,11 @@ namespace ExpressBase.Web.Controllers
 			}
 		}
 
-		public int InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
+		public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
         {
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
             InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, FormData = Values, RowId = RowId });
-            return Resp.RowAffected;
+            return JsonConvert.SerializeObject(Resp);
             //return 0;
         }
 

@@ -104,8 +104,8 @@
                 if (!isUnique)
                     this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
                 else
-                    this.FRC.removeInvalidStyle()
-            }.bind(this),
+                    this.FRC.removeInvalidStyle();
+            }.bind(this)
         });
     };
 

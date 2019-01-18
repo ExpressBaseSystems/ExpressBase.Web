@@ -62,12 +62,14 @@
     // checks a control value is emptyString
     this.isRequiredOK = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if ($ctrl.length !== 0 && ctrl.Required && isNaNOrEmpty(ctrl.getValue())) {
+        if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
             this.addInvalidStyle(ctrl);
             return false;
         }
-        else
+        else {
+            this.removeInvalidStyle(ctrl);
             return true;
+        }
     };
 
     this.addInvalidStyle = function (ctrl, msg, type) {

@@ -101,6 +101,10 @@
                     + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
             }
         }
+        else if (type > 63) {    // If JS editor
+            valueHTML = '<span class="cxv-inp">(Script)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
         else if (type === 11) {    // If JS editor
             valueHTML = '<span class="cxv-inp">(JavaScript)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';

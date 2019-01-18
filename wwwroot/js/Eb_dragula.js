@@ -398,7 +398,7 @@
                             var reference = getReference(target, immediate, clientX, clientY);
                             var initial = isInitialPlacement(target, reference);
                             if (initial) {
-                                return true; // should always be able to drop it right back where it was
+                                return false; //return true; // modified for toolbox// should always be able to drop it right back where it was
                             }
                             return o.accepts(_item, target, _source, reference);
                         }

@@ -259,6 +259,7 @@ function EbApiBuild(config) {
 
     this.editApi = function () {
         this.EbObject = new EbObjects["EbApi"](this.EditObj.Name);
+        this.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
         this.EbObject.Resources.$values.length = 0;
         this.drawProcsEmode();

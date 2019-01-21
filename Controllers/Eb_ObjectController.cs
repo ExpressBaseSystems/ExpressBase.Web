@@ -23,7 +23,6 @@ using System.Text.RegularExpressions;
 using ExpressBase.Web.Filters;
 using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.Extensions;
-using ExpressBase.Objects.ApiBuilderRelated;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -264,7 +263,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = obj.Name,
                         Description = obj.Description,
-                        Json = _json,
+                        Json = EbSerializers.Json_Serialize(obj),
                         Status = ObjectLifeCycleStatus.Dev,
                         Relations = _rel_obj_tmp,
                         IsSave = false,
@@ -290,7 +289,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Name = obj.Name,
                     Description = obj.Description,
-                    Json = _json,
+                    Json = EbSerializers.Json_Serialize(obj),
                     Relations = _rel_obj_tmp,
                     RefId = _refid,
                     ChangeLog = _changeLog,
@@ -334,7 +333,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = obj.Name,
                         Description = obj.Description,
-                        Json = _json,
+                        Json = EbSerializers.Json_Serialize(obj),
                         Status = ObjectLifeCycleStatus.Dev,
                         Relations = _rel_obj_tmp,
                         IsSave = true,
@@ -358,7 +357,7 @@ namespace ExpressBase.Web.Controllers
                     RefId = _refid,
                     Name = obj.Name,
                     Description = obj.Description,
-                    Json = _json,
+                    Json = EbSerializers.Json_Serialize(obj),
                     Relations = _rel_obj_tmp,
                     Tags = _tags,
                     Apps = _apps,

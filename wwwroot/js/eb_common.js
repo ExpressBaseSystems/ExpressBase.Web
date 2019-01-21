@@ -411,3 +411,14 @@ function getSingleColumn(obj) {
 //        _z = val;
 //    }
 //});
+function Test() {
+    $.ajax({
+        url: "../api/api_getparties/1.0.0",
+        type: "POST",
+        cache: false,
+        data: { "routem_xid": 'DB034' },
+        success: function (result) {
+          
+        }.bind(this)
+    });
+}

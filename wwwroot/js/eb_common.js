@@ -285,7 +285,7 @@ function getFlatContControls(formObj) {
 
     RecurFlatContControls(formObj, coll);
     return coll;
-};
+}
 
 
 function getInnerFlatContControls(formObj) {
@@ -293,7 +293,7 @@ function getInnerFlatContControls(formObj) {
 
     RecurFlatContControls(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatContControls(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -302,13 +302,13 @@ function RecurFlatContControls(src_obj, dest_coll) {
             RecurFlatContControls(obj, dest_coll);
         }
     });
-};
+}
 
 function getFlatCtrlObjs(formObj) {
     let coll = [];
     RecurFlatCtrlObjs(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatCtrlObjs(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -319,14 +319,14 @@ function RecurFlatCtrlObjs(src_obj, dest_coll) {
         else
             dest_coll.push(obj);
     });
-};
+}
 
 
 function getFlatControls(formObj) {
     let coll = [];
     RecurFlatControls(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatControls(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -335,7 +335,7 @@ function RecurFlatControls(src_obj, dest_coll) {
             getFlatControls(obj, dest_coll);
         }
     });
-};
+}
 
 function getValsFromForm(formObj) {
     let fltr_collection = [];
@@ -356,9 +356,9 @@ function getFlatObjOfType(ContObj, type) {
     $.each(flat, function (i, ctrl) {
         if (ctrl.ObjType === type)
             ctrls.push(ctrl);
-    })
+    });
     return ctrls;
-};
+}
 
 function getValsForViz(formObj) {
     let fltr_collection = [];

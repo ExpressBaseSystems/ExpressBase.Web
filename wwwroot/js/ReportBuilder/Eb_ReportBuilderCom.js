@@ -426,7 +426,7 @@
         //$("#content_dv").removeClass("col-md-9").addClass("col-md-12");
         //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
-		var ParamsArray = FilterDialog.getFilterVals();
+		var ParamsArray = FilterDialog.getFormVals();
         
 
         //if (!validateFD()) {

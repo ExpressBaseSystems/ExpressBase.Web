@@ -164,16 +164,12 @@
                 overflow: auto;
                 height: calc(100% - 23px);
             }
-        .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._b ul{
-           list-style:none;
-           padding-left:15px;
-        }
         .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ol {
             padding-left: 15px;
             list-style: none;
         }
         /*json window*/
-        .objkey {
+        /*.objkey {
             color: #204a87;
         }
 .objval {
@@ -181,7 +177,7 @@
 }
 .a_ob_o, .a_ob_c{
     color: #729fcf;
-}
+}*/
 .Json_reqOrRespWrpr .regRespWHead {
     position: absolute;
     background: #316396;

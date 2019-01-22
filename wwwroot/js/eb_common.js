@@ -413,10 +413,14 @@ function getSingleColumn(obj) {
 //});
 function Test() {
     $.ajax({
-        url: "../api/api_getparties/1.0.0",
+        url: "../api/api_salesmanwsalereport/1.0.0",
         type: "POST",
         cache: false,
-        data: { "routem_xid": 'DB034' },
+        data: {
+            "trndate_from": '2015-04-07',
+            "trndate_to":'2015-10-07',
+            "salesman_id":89
+        },
         success: function (result) {
           
         }.bind(this)

@@ -18,12 +18,12 @@
         let value = "";
         let PropsObj = this.getPropsObj();
         let $curRowInp = $("#" + this.PGobj.wraperId + " [name=" + _CurProp + "Tr] input");
-        if (this.editor === 11 || this.editor === 16 || this.editor === 18) {// script editors
+        if (this.editor === 11 || this.editor === 16 || this.editor === 18 || this.editor > 63) {// script editors
             if (this.editor === 16) {
                 value = $(`#StrE_txtEdtr${this.PGobj.wraperId}`).val();
                 PropsObj[_CurProp] = value;
             }
-            else if (this.editor === 11 || this.editor === 18) {
+            else if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
                 value = window.editor.getValue();
                 PropsObj[_CurProp] = btoa(value);
             }
@@ -95,7 +95,7 @@
     this.pgCXEshowCallback = function () {
         let PropsObj = this.getPropsObj();
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
-        if (this.editor === 11 || this.editor === 18) {
+        if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
             window.editor.setValue(atob(PropsObj[this.PGobj.CurProp]));
             window.editor.focus();
         }
@@ -148,7 +148,7 @@
             this.initScrE(e);
         }
 
-        if (this.editor < 64)
+        if (this.editor < 64 || this.editor === 64 || this.editor === 128 || this.editor === 156)
             $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
 
         if (this.editor !== 8)
@@ -422,6 +422,18 @@
     };
 
     this.initScrE = function (e) {
+        if (this.editor === 64) {
+            this.initJE();
+            return;
+        }
+        else if (this.editor === 128) {
+            this.initCSE();
+            return;
+        }
+        else if (this.editor === 256) {
+            ;
+            return;
+        }
         let options = "";
         if (this.editor & 64)
             options += "<option mode='javascript'    hint='javascript' >Javascript</option>";

@@ -1,9 +1,15 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
     this.initControls = new InitControls(this);
-    this.rowCtrls = {};
     this.isEditMode = options.isEditMode;
-    this.newRowCounter = 0;
+    this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
+    this.$table = $(`#${this.TableId}`);
+    this.resetBuffers = function () {
+        this.rowCtrls = {};
+        this.newRowCounter = 0;
+    }.bind(this);
+    this.resetBuffers();
+
 
     ctrl.setEditModeRows = function (SingleTable) {
         return this.setEditModeRows(SingleTable);
@@ -20,7 +26,7 @@
     this.isFinished = function () {
         let isEditing = false;
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            if ($(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowId}]`).attr("is-editing") === "true") {
+            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-editing") === "true") {
                 isEditing = true;
                 EbMessage("show", { Message: "Finish DataGrid editing before Saving", Background: "#ee7700" });
             }
@@ -39,9 +45,11 @@
     };
 
     this.addEditModeRows = function (SingleTable) {
+            $(`#${this.TableId} tbody`).empty();
+            this.resetBuffers();
         $.each(SingleTable, function (i, SingleRow) {
             let rowid = SingleRow.RowId;
- //           this.addRow(rowid, false);
+            this.addRow(rowid, false);
             $.each(SingleRow.Columns, function (j, SingleColumn) {
                 if (j === 0)// to skip id column
                     return true;
@@ -52,7 +60,7 @@
                 ctrl.Name = SingleColumn.Name;
             }.bind(this));
             {// call checkRow_click() pass event.target directly
-                let td = $(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowid}] td:last`)[0];
+                let td = $(`#${this.TableId} tbody tr[rowid=${rowid}] td:last`)[0];
                 this.checkRow_click({ target: td });
             }
         }.bind(this));
@@ -88,7 +96,7 @@
         //              },
         //            ]
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            if ($(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true")
+            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true")
                 SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
         console.log(SingleTable);
@@ -133,7 +141,7 @@
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
-        $(`#tbl_${this.ctrl.EbSid_CtxId} tbody`).append($tr);
+        $(`#${this.TableId} tbody`).append($tr);
         this.initRowCtrls(rowid);
     }.bind(this);
 
@@ -169,7 +177,7 @@
     t = this.getValues;
 
     this.ctrlToSpan_row = function (rowid) {
-        let $tr = $(`#tbl_${this.ctrl.EbSid_CtxId}`).find(`[rowid=${rowid}]`);
+        let $tr = $(`#${this.TableId}`).find(`[rowid=${rowid}]`);
         $.each($tr.find("td[ctrltdidx]"), function (i, td) {
             this.ctrlToSpan_td($(td));
         }.bind(this));
@@ -250,10 +258,10 @@
             if (!this.isEditMode)
                 this.addRow();
         }
-        $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".check-row", this.checkRow_click);
-        $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".del-row", this.delRow_click);
-        $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".edit-row", this.editRow_click);
-        $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("keydown", ".dgtr", this.dg_rowKeydown);
+        this.$table.on("click", ".check-row", this.checkRow_click);
+        this.$table.on("click", ".del-row", this.delRow_click);
+        this.$table.on("click", ".edit-row", this.editRow_click);
+        this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
     };
 
     this.init();

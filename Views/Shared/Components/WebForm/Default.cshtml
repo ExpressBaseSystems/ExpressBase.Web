@@ -104,6 +104,29 @@
         /*background: #fff;*/
         padding: 0px 2px;
     }
+
+    .fmode {
+        color: #fff;
+        font-weight: normal;
+        border-radius: 10px;
+        font-weight: normal;
+        margin-left: 3px;
+        padding: 1px 6px;
+        background-color: #9bf052;
+    }
+
+        .fmode[mode="New Mode"] {
+            background-color: #00d036;
+        }
+
+        .fmode[mode="Edit Mode"] {
+            background-color: #f09b52;
+        }
+
+        .fmode[mode="View Mode"] {
+            background-color: #222222;
+        }
+
 </style>
 
 <div id='WebForm-cont' class="webform-cont">
@@ -160,7 +183,7 @@
             header.hideElement(["webformsave"]);
         }
         header.setName(_formObj.DisplayName);
-        header.setMode(`<span class="fmode"style="color: #444;font-weight: normal;">(${reqstMode})</span>`);
+        header.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
         $('title').text(_formObj.DisplayName);
     }
 

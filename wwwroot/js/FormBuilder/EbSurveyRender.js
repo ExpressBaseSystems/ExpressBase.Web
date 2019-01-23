@@ -15,7 +15,7 @@
         $("body").off("click", ".survey-btn-cont .btn").on("click", ".survey-btn-cont .btn", this.onClickContinue.bind(this));
 
         this.renderQuery();
-    }
+    };
 
     this.renderQuery = function () {
         if (this.Bot.curCtrl.queryList.length > this.curQryIndx) {
@@ -33,13 +33,13 @@
             optHtml += `<label><input type="radio" name="${curQry.queryId}" value="${curQry.optionsList[i].option}"> ${curQry.optionsList[i].option}</label></br>`;
         }
         this.$curCtrl.append(this.$optCont.clone().append(optHtml));
-    }
+    };
 
     this.renderButton = function () {
         this.$curCtrl.append(this.$btnCont.clone().append(`<button class='btn'>Continue</button>`));
-    }
+    };
 
-    this.onClickContinue = function (event) {        
+    this.onClickContinue = function (event) {
         if ((this.Bot.curCtrl.queryList.length - 1) !== this.curQryIndx) {
             $(event.target).parent('.survey-btn-cont').hide();
             this.curQryIndx++;
@@ -49,7 +49,7 @@
             this.setFinalObject();
             $(".survey-final-btn .btn").click();
         }
-    }
+    };
 
     this.setFinalObject = function () {
         var curCtrl = this.Bot.curCtrl;

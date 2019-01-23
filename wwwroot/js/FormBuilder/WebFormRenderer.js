@@ -248,9 +248,11 @@
         //let msg = "";
         let respObj = JSON.parse(_respObj);
         if (this.rowId > 0) {// if edit mode 
-            if (respObj.RowAffected > 0) {
+            if (respObj.RowAffected > 0) {// edit success from editmode
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
+                this.EditModeFormData = respObj.FormData.MultipleTables;
+                this.setEditModeCtrls();
             }
             else {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
@@ -258,7 +260,7 @@
             }
         }
         else {
-            if (respObj.RowId > 0) {// if insertion success
+            if (respObj.RowId > 0) {// if insertion success -NewToedit
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;

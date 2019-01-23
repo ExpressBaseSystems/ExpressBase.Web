@@ -276,7 +276,7 @@
         $td.find(".dropped").each(function (k, ebctrl) {
             if ($(ebctrl).length >= 1) {
                 var eb_type = this.RbObj.objCollection[$(ebctrl).attr("id")].$type.split(",")[0].split(".").pop().substring(2);
-                if (eb_type === "TableLayout")
+                if (eb_type === "Table_Layout")
                     this.innerTableOnEdit(this.RbObj.objCollection[$(ebctrl).attr("id")]);
                 else {
                     this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);

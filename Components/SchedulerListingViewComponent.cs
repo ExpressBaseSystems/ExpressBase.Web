@@ -9,23 +9,22 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Components
 {
-    public class SchedulerWindowViewComponent : ViewComponent
+    public class SchedulerListingViewComponent : ViewComponent
     {
         protected JsonServiceClient ServiceClient { get; set; }
-        
+
         protected RedisClient Redis { get; set; }
 
-        public SchedulerWindowViewComponent(IServiceClient _client, IRedisClient _redis)
+        public SchedulerListingViewComponent(IServiceClient _client, IRedisClient _redis)
         {
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
         public async Task<IViewComponentResult> InvokeAsync(int objid)
         {
-            GetAllUsersResponse  Res= ServiceClient.Get<GetAllUsersResponse>( new GetAllUsersRequest());
-            ViewBag.users = Res.Users;
-            ViewBag.usergroups = Res.UserGroups;
-            return View("schWindow");
+            GetSchedulesOfSolutionResponse ds = this.ServiceClient.Get(new GetSchedulesOfSolutionRequest { ObjectId = objid });
+            ViewBag.schedules = ds.Schedules;
+            return View("schList");
         }
     }
 }

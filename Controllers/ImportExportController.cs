@@ -12,7 +12,6 @@ using ExpressBase.Common.Objects.Attributes;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects;
 using ExpressBase.Objects.Objects.DVRelated;
-using ExpressBase.Objects.ReportRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Filters;

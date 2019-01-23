@@ -23,13 +23,14 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void Schedule(string expression, int objId, JobTypes type, string users, string groups)
-        {           
-            List<Param> _param = new List<Param> { new Param { Name = "FromDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() },
+        public void Schedule(string name, string expression, int objId, JobTypes type, string users, string groups)
+        {
+            List<Param> _param = new List<Param> { new Param { Name = "FromDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString("yyyy-MM-dd") },
             new Param{ Name = "ToDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() } };
 
             EbTask task = new EbTask
             {
+                Name = name,
                 Expression = expression,
                 JobType = type,
                 JobArgs = new EbJobArguments
@@ -46,19 +47,32 @@ namespace ExpressBase.Web.Controllers
 
             var ds = this.ServiceClient.Post(new SchedulerMQRequest { Task = task });
         }
+
         [HttpGet]
         public IActionResult SchedulesList()
         {
-            GetSchedulesOfSolutionResponse ds = this.ServiceClient.Get(new GetSchedulesOfSolutionRequest { });
-            ViewBag.schedules = ds.Schedules;
+
             return View();
         }
-       // [HttpPost]
-        public void Unschedule(/*string triggerkey*/)
+
+        [HttpPost]
+        public void UpdateSchedule(EbTask task, string triggerkey, string jobkey)
+        {
+            var ds = this.ServiceClient.Post(new RescheduleRequest { Task = task, TriggerKey = triggerkey, JobKey = jobkey });
+
+        }
+      
+         [HttpPost]
+        public void Unschedule(string triggerkey)
         {
             var ds = this.ServiceClient.Post(new UnschedulerMQRequest { TriggerKey = /*triggerkey*/"JobTrigger11/30/2018 12:04:14 PM" });
         }
 
+        [HttpPost]
+        public void DeleteJob(string jobkey,int id)
+        {
+            var ds = this.ServiceClient.Post(new DeleteJobMQRequest{ JobKey = jobkey ,Id = id});
 
+        }
     }
 }

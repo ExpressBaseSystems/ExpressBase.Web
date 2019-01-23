@@ -20,46 +20,36 @@ using System.Collections.Specialized;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using ExpressBase.Web.Models;
+using System.Runtime.Serialization;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ApiController : EbBaseIntCommonController
+    public class ApiController : EbBaseIntApiController
     {
         public ApiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         [HttpGet]
-        public string GetReq_respJson(string refid)
-        {
-            var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
-            EbDataSourceMain ds = EbSerializers.Json_Deserialize(obj.Data[0].Json);
-            if (ds.InputParams == null || ds.InputParams.Count <= 0)
-            {
-                CEController cedit = new CEController(this.ServiceClient, this.Redis);
-                return cedit.GetSqlParams(ds.Sql, obj.Data[0].EbObjectType);
-            }
-            else
-            {
-                return JsonConvert.SerializeObject(ds.InputParams);
-            }
-        }
-
-        [HttpGet]
         [HttpPost]
         [Microsoft.AspNetCore.Mvc.Route("/api/{_name}/{_version}")]
-        public object Api(string _name,string _version)
+        public ApiResponse Api(string _name, string _version)
         {
+            ApiResponse resp = null;
             Dictionary<string, object> d = null;
             if (this.HttpContext.Request.Method == "POST")
                 d = this.F2D(this.HttpContext.Request.Form as FormCollection);
-
-            ApiResponse resp = this.ServiceClient.Get(new ApiRequest
+            if (ViewBag.IsValid)
             {
-                Name = _name,
-                Version = _version,
-                Data = d
-            });
+                resp = this.ServiceClient.Get(new ApiRequest
+                {
+                    Name = _name,
+                    Version = _version,
+                    Data = d
+                });
+            }
+            else
+                resp = new ApiResponse { Message = ViewBag.Message };
 
-            return JsonConvert.DeserializeObject(resp.Result);
+            return resp;
         }
 
         private Dictionary<string, object> F2D(FormCollection collection)

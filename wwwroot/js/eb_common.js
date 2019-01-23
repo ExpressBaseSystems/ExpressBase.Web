@@ -412,10 +412,16 @@ function getSingleColumn(obj) {
 //    }
 //});
 function Test() {
+    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU0ODE1NDk1MSwiZXhwIjoxNTQ4MTU1MDQxLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.KMqwYHOdQnFZYTYzqJUq1-5Ltzz9Z8Xct-idOcPmiuJSNKI6lRz910FnLyn5DsW5HQ7JnbES6Cuc2oZ4soy-21Vmk7sdssFEkae2A0__duw4HDiw4n4JoILdmBvevzMSP4u4NDMvULr8y0ogsRa8F6NDjj2En1_hI02ueSxIs-I`
+    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NDgxNTQ5NTEsImV4cCI6MTU0ODI0MTM1MX0.BT3LUSneyLlLy994KxnLBmj2lQ--46yxxY2qqErZinIjGhkn7UcfHuo3l3K9es5gzsND1ppSqcqCyNrswHyhpTylnCcXikMxgtLLz019PppieZL3x-ZvhMpA4Qllc8_UPBTHdPB6pyLkUJJ-v1Ey9OAOOQ85GI07xgTpW7uzHEM`
     $.ajax({
         url: "../api/api_salesmanwsalereport/1.0.0",
         type: "POST",
         cache: false,
+        beforeSend: function(xhr){
+            xhr.setRequestHeader("bToken", b);
+            xhr.setRequestHeader("rToken", r);
+        },
         data: {
             "trndate_from": '2015-04-07',
             "trndate_to":'2015-10-07',

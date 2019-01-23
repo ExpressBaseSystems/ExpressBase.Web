@@ -131,6 +131,12 @@ namespace ExpressBase.Web.Controllers
             //return 0;
         }
 
+        public bool DeleteWebformData(string RefId, int RowId)
+        {
+            DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = RowId });
+            return Resp.RowAffected > 0;
+        }
+
         public bool DoUniqueCheck(string TableName, string Field, string Value, string type)
         {
             DoUniqueCheckResponse Resp = ServiceClient.Post<DoUniqueCheckResponse>(new DoUniqueCheckRequest { TableName = TableName, Field = Field, Value = Value,TypeS = type });

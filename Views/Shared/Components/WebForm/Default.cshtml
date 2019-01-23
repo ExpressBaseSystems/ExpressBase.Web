@@ -192,12 +192,12 @@
     else
         setHeader("New Mode");
     
-    let _$saveBtn = $("#webformsave");
+    //let _$saveBtn = $("#webformsave");
     //let FormMode = "New Mode";    
 
     const renderer = new WebFormRender({
         formObj: _formObj,
-        $saveBtn: _$saveBtn,
+        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete"},
         formRefId: _formRefId,
         //editModeObj: _editModeObj
         rowId: _rowId,

@@ -12,7 +12,7 @@
 
     this.createTable = function () {
         let id = this.Report.Objtype + (this.Report.idCounter[this.Report.Objtype + "Counter"])++;
-        this.EbCtrl = new EbObjects["EbTableLayout"](id);
+        this.EbCtrl = new EbObjects["EbTable_Layout"](id);
         this.ColCount = this.EbCtrl.ColoumCount;
         this.RowCount = this.EbCtrl.RowCount;
         this.Report.dropLoc.append(this.getHtml(id));
@@ -27,8 +27,8 @@
     };
 
     this.createTableOnEdit = function () {
-        let id = "TableLayout" + (this.Report.idCounter["TableLayoutCounter"])++;
-        this.EbCtrl = new EbObjects["EbTableLayout"](id);
+        let id = "Table_Layout" + (this.Report.idCounter["Table_LayoutCounter"])++;
+        this.EbCtrl = new EbObjects["EbTable_Layout"](id);
         this.Report.containerId.append(this.getHtml(id));
         this.Report.repExtern.replaceProp(this.EbCtrl, this.EditCtrl);
         this.EbCtrl.EbSid = id; this.EbCtrl.Name = id;
@@ -85,7 +85,7 @@
 
     this.drawControls = function ($td, ebCtrl) {
         var eb_type = ebCtrl.$type.split(",")[0].split(".").pop().substring(2);
-        if (eb_type === "TableLayout")
+        if (eb_type === "Table_Layout")
             this.Report.RbCommon.drawTableOnEdit(ebCtrl);
         else {
             var Objid = eb_type + this.Report.idCounter[eb_type + "Counter"]++;
@@ -130,7 +130,7 @@
     };
 
     this.getHtml = function (id) {
-        let html = `<div class="eb_TableLayout dropped" id=${id} eb-type="TableLayout" tabindex="1">
+        let html = `<div class="eb_TableLayout dropped" id=${id} eb-type="Table_Layout" tabindex="1">
                          <table class="table table-bordered">
                             <tbody>
                               <tr class="T_layout_tr">
@@ -146,7 +146,7 @@
     this.getTdHtml = function () {
         let ar = [];
         for (i = 0; i < this.ColCount; i++) {
-            ar.push("<td class='T_layout_td' eb-type='TableLayout'></td>");
+            ar.push("<td class='T_layout_td' eb-type='Table_Layout'></td>");
         }
         return ar.join("");
     };
@@ -217,7 +217,7 @@
 
     this.appendTd = function ($ctrl, count) {
         for (let t = 0; t < count; t++) {
-            $ctrl.append("<td class='T_layout_td' eb-type='TableLayout'></td>");
+            $ctrl.append("<td class='T_layout_td' eb-type='Table_Layout'></td>");
         }
     };
 

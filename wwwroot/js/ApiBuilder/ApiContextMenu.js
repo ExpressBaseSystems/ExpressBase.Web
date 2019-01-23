@@ -13,7 +13,7 @@
 
         if (o.Refid !== "" && o.Refid !== null) {
             $.ajax({
-                url: "../Api/GetReq_respJson",
+                url: "../Dev/GetReq_respJson",
                 type: "GET",
                 cache: false,
                 data: { "refid": o.Refid },

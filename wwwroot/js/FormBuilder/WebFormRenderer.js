@@ -1,6 +1,7 @@
 ﻿const WebFormRender = function (option) {
     this.FormObj = option.formObj;
-    this.$saveBtn = option.$saveBtn;
+    this.$saveBtn = $('#' + option.headerBtns['Save']);
+    this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.initControls = new InitControls(this);
     //this.editModeObj = option.editModeObj;
     this.formRefId = option.formRefId || "";
@@ -40,6 +41,7 @@
     this.init = function () {
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.$saveBtn.on("click", this.saveForm.bind(this));
+        this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.initWebFormCtrls();
         if (this.isEditMode)
             this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
@@ -293,6 +295,49 @@
             success: this.ajaxsuccess.bind(this)
         });
 
+    };
+
+    this.deleteForm = function () {
+        EbDialog("show",
+                {
+                    Message: "Are you sure?",
+                    Buttons: {
+                        "Yes": {
+                            Background: "green",
+                            Align: "left",
+                            FontColor: "white;"
+                        },
+                        "No": {
+                            Background: "violet",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: function (name) {
+                        if (name === "Yes"){
+                            this.showLoader();
+                            $.ajax({
+                                type: "POST",
+                                url: "../WebForm/DeleteWebformData",
+                                data: { RefId: this.formRefId, RowId: this.rowId },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                                    this.hideLoader();
+                                },
+                                success: function (result) {
+                                    this.hideLoader();
+                                    if (result) {
+                                        EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
+                                        setTimeout(function () { window.close(); }, 3000);
+                                    }
+                                    else {
+                                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
     };
 
     this.showLoader = function () {

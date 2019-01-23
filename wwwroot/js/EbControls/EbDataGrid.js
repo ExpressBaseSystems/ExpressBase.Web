@@ -22,7 +22,7 @@
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
             if ($(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowId}]`).attr("is-editing") === "true") {
                 isEditing = true;
-                EbMessage("show", { Message: "Finish DataGrid editing before Saving", Background: "#ee7700" })
+                EbMessage("show", { Message: "Finish DataGrid editing before Saving", Background: "#ee7700" });
             }
         }.bind(this));
         return !isEditing;
@@ -40,18 +40,18 @@
 
     this.addEditModeRows = function (SingleTable) {
         $.each(SingleTable, function (i, SingleRow) {
-            let rowid = SingleRow.rowId;
-            this.addRow(rowid, false);
-            $.each(SingleRow.columns, function (j, SingleColumn) {
-                if (j === 0)
+            let rowid = SingleRow.RowId;
+ //           this.addRow(rowid, false);
+            $.each(SingleRow.Columns, function (j, SingleColumn) {
+                if (j === 0)// to skip id column
                     return true;
                 let ctrl = this.rowCtrls[rowid][(j - 1)];
-                let val = SingleColumn.value;
+                let val = SingleColumn.Value;
                 console.log(val);
                 ctrl.setValue(val);
-                ctrl.Name = SingleColumn.name;
+                ctrl.Name = SingleColumn.Name;
             }.bind(this));
-            {// call checkRow_click() pass event.target indirectly
+            {// call checkRow_click() pass event.target directly
                 let td = $(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowid}] td:last`)[0];
                 this.checkRow_click({ target: td });
             }
@@ -96,9 +96,12 @@
     };
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
-        let tr = `<tr is-added='${isAdded}' rowid='${rowid}'>`;
+        let anyColEditable = false;
+        let tr = `<tr class='dgtr' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
         $.each(this.ctrl.Controls.$values, function (i, col) {
+            if (col.Hidden)
+                return true;
             let inpCtrlType = col.InputControlType;
             editBtn = "";
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
@@ -112,13 +115,17 @@
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                         <div class='tdtxt'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+            if (col.IsEditable)
+                anyColEditable = true;
 
         }.bind(this));
         tr += `<td>
-                    <span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>
-                    <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
-                    <span class='del-row rowc' tabindex='1'><span class='fa fa-minus'></span></span>
-                </td></tr>`;
+                    @editBtn@
+                    <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
+                    <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
+                </td></tr>`
+            .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>": "")
+            .replace("@del-c@", !anyColEditable ? "del-c": "");
         return tr;
     };
 
@@ -139,7 +146,7 @@
                 }.bind(this);
             this.initControls.init(inpCtrl, opt);
         }.bind(this));
-    }
+    };
 
     this.getValues = function () {
         this.FVWTObjColl = [];
@@ -231,6 +238,13 @@
         $td.find(".ctrl-cover").show();
     }.bind(this);
 
+    this.dg_rowKeydown = function (e) {
+        if (e.which === 40)//down arrow
+            $(e.target).next().focus();
+        if (e.which === 38)//up arrow
+            $(e.target).prev().focus();
+    }.bind(this);
+
     this.init = function () {
         if (this.ctrl.IsAddable) {
             if (!this.isEditMode)
@@ -239,6 +253,7 @@
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".check-row", this.checkRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".del-row", this.delRow_click);
         $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("click", ".edit-row", this.editRow_click);
+        $(`#tbl_${this.ctrl.EbSid_CtxId}`).on("keydown", ".dgtr", this.dg_rowKeydown);
     };
 
     this.init();

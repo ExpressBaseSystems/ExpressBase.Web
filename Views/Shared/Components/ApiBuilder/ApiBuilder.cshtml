@@ -1,0 +1,92 @@
+﻿<link rel="stylesheet" href="~/css/ApiRelated/leader-line.css" />
+<link rel="stylesheet" href="~/css/ApiRelated/EbPrettyJson.css" />
+<link rel="stylesheet" href="~/css/ApiRelated/Eb_ApiAssets.css" />
+<script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript"></script>
+<script src="~/js/ApiBuilder/EbPrettyJson.js" type="text/javascript"></script>
+<script src="~/js/ApiBuilder/ApiBuilder.js" type="text/javascript"></script>
+<script src="~/js/ApiBuilder/ApiContextMenu.js" type="text/javascript"></script>
+<script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.ReportSections);
+    @Html.Raw(ViewBag.EbObjectTypes);
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="eb_apiWrper">
+            <div class="eb_apiSideBar resource_wraper" id="resource_wraper">
+                <div class="resource_link_Bdy">
+                    <div class="head">
+                        Resources
+                    </div>
+                    <div class="bdy" id="draggable">
+                        <div eb-type="SqlReader" ctrname="DataReader" class="resource_items draggable">
+                            <div class="resource_items-inner">
+                                <i class="fa fa-database"></i>DataReader
+                            </div>
+                        </div>
+                        <div eb-type="SqlFunc" ctrname="SqlFunction" class="resource_items draggable">
+                            <div class="resource_items-inner"><i class="fa fa-database"></i>SqlFunction</div>
+                        </div>
+                        <div eb-type="SqlWriter" ctrname="DataWriter" class="resource_items draggable">
+                            <div class="resource_items-inner"><i class="fa fa-code"></i>DataWriter</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="eb_apiPane resource_append_wraper" id="resource_append_wraper">
+                <div class="resource_Body" id="resource_Body_drparea">
+                    <div class="apiPrcItem" id="start_item">
+                        <div class="strt_circ" id="start">
+
+                        </div>
+                    </div>
+                    <div class="apiPrcItem" id="end_item">
+                        <div class="stop_circ" id="stop">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pgContainer" id="pgContainer">
+                <div class="pgContainer_wrpr" id="pgContainer_wrpr">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="Json_reqOrRespWrpr" id="Json_reqOrRespWrp">
+        <div class="regRespWHead">JSON</div>
+        <div class="Json_reqOrRespWrpr_inner">
+            <div class="JsonReq">
+                <div class="JsonReq_inner">
+                    <div class="_h">Request <button class="runReq_btn">Run <i class="fa fa-play pull-right"></i></button></div>
+                    <div class="_b" id="JsonReq_CMW"></div>
+                </div>
+            </div>
+            <div class="JsonResp">
+                <div class="JsonResp_inner">
+                    <div class="_h">Response</div>
+                    <div class="_b" id="JsonResp_CMW"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+     if (@ViewBag.tabnum === 0) {
+        var commonO = $("#layout_div").data("commonObj");
+    }
+    var api = EB_Api_entry({
+        Wc: '@ViewBag.wc',
+        TenantId: '@ViewBag.cid',
+        RefId: '@ViewBag.Refid',
+        Version: '@ViewBag.VersionNumber',
+        ObjType: @ViewBag.ObjType,
+        DsObj: @Html.Raw(ViewBag.dsObj),
+        Status: '@ViewBag.Status',
+        TabNum: @ViewBag.tabnum,
+        ServiceUrl: '@ViewBag.ServiceUrl'
+    });
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = api;
+</script>

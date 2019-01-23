@@ -26,8 +26,7 @@ using ExpressBase.Common.Constants;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using ExpressBase.Objects.Objects.DVRelated;
-
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+using ExpressBase.Common.Extensions;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -198,7 +197,7 @@ namespace ExpressBase.Web.Controllers
             EbDataTable _data = this.ServiceClient.Post<SqlFuncTestResponse>(new SqlFuncTestRequest
             {
                 FunctionName = fname,
-                Parameters = JsonConvert.DeserializeObject<List<InputParam>>(_params)
+                Parameters = JsonConvert.DeserializeObject<List<Param>>(_params)
             }).Data;
 
             DVColumnCollection _columns = new DVColumnCollection();
@@ -211,51 +210,10 @@ namespace ExpressBase.Web.Controllers
             return _table;
         }
 
-        public string DataWriterSqlEval(string sql, int obj_type)
+        [HttpGet]
+        public string GetSqlParams(string sql, int obj_type)
         {
-            sql = Base64Decode(sql);
-            List<InputParam> param = new List<InputParam>();
-            if (!string.IsNullOrEmpty(sql) && obj_type == EbObjectTypes.DataWriter)
-            {
-                List<string> _temp = new List<string>();
-                Regex r = new Regex(@"\:\w+|\@\w+g");
-
-                foreach (Match match in r.Matches(sql))
-                {
-                    if (!_temp.Contains(match.Value))
-                    {
-                        param.Add(new InputParam
-                        {
-                            Column = match.Value,
-                        });
-
-                        _temp.Add(match.Value);
-                    }
-                }
-                return JsonConvert.SerializeObject(param);
-            }
-            else if (!string.IsNullOrEmpty(sql) && obj_type == EbObjectTypes.SqlFunction)
-            {
-                Regex r = new Regex(@"(\w+)(\s+|)\(.*?\)");
-                Regex r1 = new Regex(@"\(.*?\)");
-                string _func = r.Match(sql.Replace("\n", "").Replace("\r", "").Replace("\t", "")).Groups[1].Value;
-                string _params = r.Match(sql.Replace("\n", "").Replace("\r","").Replace("\t","")).Groups[0].Value;
-                string[] _arguments = r1.Match(_params).Groups[0].Value.Replace("(", "").Replace(")", "").Split(",");
-
-                foreach (string _arg in _arguments)
-                {
-                    if (!string.IsNullOrEmpty(_arg))
-                    {
-                        param.Add(new InputParam
-                        {
-                            Column = _arg.Split(" ")[0],
-                        });
-                    }
-                }
-                return JsonConvert.SerializeObject(new SqlFunParamWrapper { FunctionName = _func, Arguments = param });
-            }
-            else
-                return null;
+            return JsonConvert.SerializeObject(SqlHelper.GetSqlParams(sql, obj_type));
         }
 
         private string Base64Decode(string base64EncodedData)

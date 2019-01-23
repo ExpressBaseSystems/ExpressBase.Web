@@ -28,26 +28,33 @@ namespace ExpressBase.Web.Components
         }
         public async Task<IViewComponentResult> InvokeAsync(string[] arr)
         {
-			string refid = arr[0];
-			string Locale = arr[1];
+            string refid = arr[0];
+            string Locale = arr[1];
 
-			EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+            EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
 
             EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);// form object without localization
             WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             if (WebForm != null)
             {
 
-				string[] Keys = EbControlContainer.GetKeys(WebForm);
-				Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest {Keys = Keys, Locale =Locale }).Dict;				
+                string[] Keys = EbControlContainer.GetKeys(WebForm);
+                Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = Locale }).Dict;
 
-				EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
+                EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
 
                 foreach (EbControl control in WebForm_L.Controls.FlattenEbControls())
                 {
                     if (control is EbSimpleSelect)
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+                    }
+                    else if (control is EbDGSimpleSelectColumn)
+                    {
+                        EbDGSimpleSelectColumn SimpleSelectColumn = (control as EbDGSimpleSelectColumn);
+                        SimpleSelectColumn.EbSimpleSelect.InitFromDataBase(this.ServiceClient);
+
+                        SimpleSelectColumn.DBareHtml = SimpleSelectColumn.EbSimpleSelect.GetBareHtml();
                     }
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();

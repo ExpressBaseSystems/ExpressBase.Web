@@ -276,7 +276,7 @@
         $td.find(".dropped").each(function (k, ebctrl) {
             if ($(ebctrl).length >= 1) {
                 var eb_type = this.RbObj.objCollection[$(ebctrl).attr("id")].$type.split(",")[0].split(".").pop().substring(2);
-                if (eb_type === "TableLayout")
+                if (eb_type === "Table_Layout")
                     this.innerTableOnEdit(this.RbObj.objCollection[$(ebctrl).attr("id")]);
                 else {
                     this.RbObj.objCollection[$(ebctrl).attr("id")].Left = $(ebctrl).position().left + $td.position().left + parseFloat(this._table.Left);
@@ -426,7 +426,7 @@
         //$("#content_dv").removeClass("col-md-9").addClass("col-md-12");
         //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
-		var ParamsArray = FilterDialog.getFilterVals();
+		var ParamsArray = FilterDialog.getFormVals();
         
 
         //if (!validateFD()) {

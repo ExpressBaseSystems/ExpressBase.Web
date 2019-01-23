@@ -2,12 +2,13 @@
     this.FormObj = option.formObj;
     this.$saveBtn = option.$saveBtn;
     this.initControls = new InitControls(this);
-    this.editModeObj = option.editModeObj;
+    //this.editModeObj = option.editModeObj;
     this.formRefId = option.formRefId || "";
-    this.isEditMode = !!this.editModeObj;
+    this.rowId = option.rowId;
+    this.EditModeFormData = option.formData === null ? null : option.formData.FormData.MultipleTables;
+    this.isEditMode = this.rowId > 0;
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
-    this.rowId = 0;
     this.formValidationflag = true;
     this.FRC = new FormRenderCommon({
         FO: this
@@ -37,6 +38,7 @@
     };
 
     this.init = function () {
+        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.initWebFormCtrls();
         if (this.isEditMode)
@@ -70,7 +72,8 @@
         }.bind(this));
 
         if (this.isEditMode)
-            this.populateControls();
+            this.setEditModeCtrls();
+            //this.populateControls();
     };
 
     this.bindValidators = function (control) {
@@ -101,8 +104,8 @@
                 if (!isUnique)
                     this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
                 else
-                    this.FRC.removeInvalidStyle()
-            }.bind(this),
+                    this.FRC.removeInvalidStyle();
+            }.bind(this)
         });
     };
 
@@ -111,17 +114,17 @@
     }.bind(this);
 
 
-    this.populateControls = function () {
-        this.rowId = getObjByval(this.editModeObj, "Name", "id").Value;
-        this.getEditModeFormData(this.rowId);
-    };
+    //this.populateControls = function () {
+        //this.rowId = getObjByval(this.editModeObj, "Name", "id").Value;
+        //this.getEditModeFormData(this.rowId);
+    //};
 
     this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
         $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
-            if (SingleColumn.name === "id")
+            if (SingleColumn.Name === "id")
                 return true;
-            let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.name);
-            ctrl.setValue(SingleColumn.value);
+            let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
+            ctrl.setValue(SingleColumn.Value);
         }.bind(this));
     };
 
@@ -139,10 +142,17 @@
     this.getNCCSingleColumns_flat = function (FormData, NCCTblNames) {
         let NCCSingleColumns_flat = [];
         $.each(NCCTblNames, function (i, TblName) {
-            let SingleRowColums = FormData[TblName][0].columns;
+            let SingleRowColums = FormData[TblName][0].Columns;
             NCCSingleColumns_flat = NCCSingleColumns_flat.concat(SingleRowColums);
         });
         return NCCSingleColumns_flat;
+    };
+
+    this.ClearControls = function (isForceClear = false) {
+        $.each(this.allFlatControls, function (control) {
+            if (!control.IsMaintainValue && !isForceClear)
+                control.clear();
+        });
     };
 
     this.setEditModeCtrls = function () {
@@ -158,21 +168,25 @@
         this.setNCCSingleColumns(NCCSingleColumns_flat);
     };
 
-    this.getEditModeFormData = function (rowId) {
-        this.showLoader();
-        $.ajax({
-            type: "POST",
-            url: "../WebForm/getRowdata",
-            data: {
-                refid: this.formRefId, rowid: parseInt(rowId)
-            },
-            success: function (data) {
-                this.EditModeFormData = data.formData.multipleTables;
-                this.setEditModeCtrls();
-                this.hideLoader();
-            }.bind(this),
-        });
-    };
+    //this.getEditModeFormData = function (rowId) {
+    //    this.showLoader();
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "../WebForm/getRowdata",
+    //        data: {
+    //            refid: this.formRefId, rowid: parseInt(rowId)
+    //        },
+    //        error: function (xhr, ajaxOptions, thrownError) {
+    //            this.hideLoader();
+    //            EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+    //        }.bind(this),
+    //        success: function (data) {
+    //            this.EditModeFormData = data.formData.multipleTables;
+    //            this.setEditModeCtrls();
+    //            this.hideLoader();
+    //        }.bind(this),
+    //    });
+    //};
 
     this.getDG_FVWTObjColl = function () {
         let FVWTObjColl = {};
@@ -212,7 +226,7 @@
         FormTables[this.FormObj.TableName] = [{
             RowId: this.rowId,
             IsUpdate: false,
-            Columns: [],
+            Columns: []
         }];
         this.ProcRecurForVal(this.FormObj, FormTables);
         return FormTables;
@@ -229,17 +243,33 @@
         return JSON.stringify(WebformData);
     };
 
-    this.ajaxsuccess = function (rowAffected) {
+    this.ajaxsuccess = function (_respObj) {
         this.hideLoader();
-        let msg = "";
-        if (rowAffected > 0) {
-            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
-            msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
+        //let msg = "";
+        let respObj = JSON.parse(_respObj);
+        if (this.rowId > 0) {// if edit mode 
+            if (respObj.RowAffected > 0) {
+                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
+                //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
+            }
+            else {
+                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+                //msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
+            }
         }
         else {
-            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
-            msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
-        }
+            if (respObj.RowId > 0) {// if insertion success
+                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
+                this.rowId = respObj.RowId;
+                this.EditModeFormData = respObj.FormData.MultipleTables;
+                this.setEditModeCtrls();
+
+                setHeader("Edit Mode");
+            }
+            else {
+                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+            }
+        }        
     };
 
     this.saveForm = function () {
@@ -253,10 +283,14 @@
             data: {
                 TableName: this.FormObj.TableName, ValObj: this.getFormValuesObjWithTypeColl(), RefId: this.formRefId, RowId: this.rowId
             },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
             //}.bind(this),
-            success: this.ajaxsuccess.bind(this),
+            success: this.ajaxsuccess.bind(this)
         });
 
     };

@@ -12,14 +12,15 @@
 
     this.Date = function (ctrl, ctrlOpts) {
         let formObject = ctrlOpts.formObject;
+        let userObject = ctrlOpts.userObject;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-                let fun = new Function("form", atob(ctrl.OnChange));
+                let fun = new Function("form","User", atob(ctrl.OnChange));
             $input.MonthPicker({
-                OnAfterChooseMonth: fun.bind(this, formObject )
+                OnAfterChooseMonth: fun.bind(this, formObject, userObject )
                 });
         }
         else {
@@ -42,6 +43,22 @@
                 settings.format = "Y/m/d H:i";
             }
 
+
+
+            //if (ctrl.DateFormat === 0) {
+            //    settings.formatDate = "d/m/Y";
+            //}
+            //else if (ctrl.DateFormat === 1) {
+            //    settings.formatDate = "m/d/Y";
+            //}
+            //else if (ctrl.DateFormat === 2) {
+            //    settings.formatDate = "Y/m/d";
+            //}
+            //else {
+            //    settings.formatDate = "Y/d/m";
+            //}
+
+
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
 
@@ -55,7 +72,7 @@
 
     this.SimpleSelect = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
-        //$input.selectpicker();
+        $input.selectpicker();
     };
 
     this.UserLocation = function (ctrl) {
@@ -179,7 +196,7 @@
 
     this.Survey = function (ctrl) {
         new EbSurveyRender($('#' + ctrl.Name), this.Bot);
-    }
+    };
 
     this.StaticCardSet = function (ctrl) {
         this.initCards($('#' + ctrl.Name));

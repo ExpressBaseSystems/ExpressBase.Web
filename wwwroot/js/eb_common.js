@@ -144,7 +144,7 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
     var $ctrlCont = $(`${contSel}  ${_ctrlCont}`);
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
     $(`${contSel}  ${_ctrlCont}`).css("box-shadow", `0 0 3px 1px ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
-    $(`${contSel}  .text-${type}`).text(msg).show().animate({ opacity: "1" }, 300);
+    $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
 }
 
 function sortByProp(arr, prop) {
@@ -285,7 +285,7 @@ function getFlatContControls(formObj) {
 
     RecurFlatContControls(formObj, coll);
     return coll;
-};
+}
 
 
 function getInnerFlatContControls(formObj) {
@@ -293,7 +293,7 @@ function getInnerFlatContControls(formObj) {
 
     RecurFlatContControls(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatContControls(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -302,13 +302,13 @@ function RecurFlatContControls(src_obj, dest_coll) {
             RecurFlatContControls(obj, dest_coll);
         }
     });
-};
+}
 
 function getFlatCtrlObjs(formObj) {
     let coll = [];
     RecurFlatCtrlObjs(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatCtrlObjs(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -319,14 +319,14 @@ function RecurFlatCtrlObjs(src_obj, dest_coll) {
         else
             dest_coll.push(obj);
     });
-};
+}
 
 
 function getFlatControls(formObj) {
     let coll = [];
     RecurFlatControls(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatControls(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -335,7 +335,7 @@ function RecurFlatControls(src_obj, dest_coll) {
             getFlatControls(obj, dest_coll);
         }
     });
-};
+}
 
 function getValsFromForm(formObj) {
     let fltr_collection = [];
@@ -356,9 +356,9 @@ function getFlatObjOfType(ContObj, type) {
     $.each(flat, function (i, ctrl) {
         if (ctrl.ObjType === type)
             ctrls.push(ctrl);
-    })
+    });
     return ctrls;
-};
+}
 
 function getValsForViz(formObj) {
     let fltr_collection = [];
@@ -411,3 +411,24 @@ function getSingleColumn(obj) {
 //        _z = val;
 //    }
 //});
+function Test() {
+    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU0ODE1NDk1MSwiZXhwIjoxNTQ4MTU1MDQxLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.KMqwYHOdQnFZYTYzqJUq1-5Ltzz9Z8Xct-idOcPmiuJSNKI6lRz910FnLyn5DsW5HQ7JnbES6Cuc2oZ4soy-21Vmk7sdssFEkae2A0__duw4HDiw4n4JoILdmBvevzMSP4u4NDMvULr8y0ogsRa8F6NDjj2En1_hI02ueSxIs-I`
+    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NDgxNTQ5NTEsImV4cCI6MTU0ODI0MTM1MX0.BT3LUSneyLlLy994KxnLBmj2lQ--46yxxY2qqErZinIjGhkn7UcfHuo3l3K9es5gzsND1ppSqcqCyNrswHyhpTylnCcXikMxgtLLz019PppieZL3x-ZvhMpA4Qllc8_UPBTHdPB6pyLkUJJ-v1Ey9OAOOQ85GI07xgTpW7uzHEM`
+    $.ajax({
+        url: "../api/api_salesmanwsalereport/1.0.0",
+        type: "POST",
+        cache: false,
+        beforeSend: function(xhr){
+            xhr.setRequestHeader("bToken", b);
+            xhr.setRequestHeader("rToken", r);
+        },
+        data: {
+            "trndate_from": '2015-04-07',
+            "trndate_to":'2015-10-07',
+            "salesman_id":89
+        },
+        success: function (result) {
+          
+        }.bind(this)
+    });
+}

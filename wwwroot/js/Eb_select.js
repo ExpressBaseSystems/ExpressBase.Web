@@ -78,6 +78,7 @@ var EbSelect = function (ctrl, options) {
 
     this.$curEventTarget = null;
     this.IsDatatableInit = false;
+    this.IsSearchBoxFocused = false;
 
     $.each(this.dmNames, function (i, name) { this.localDMS[name] = [] }.bind(this));
 
@@ -100,6 +101,7 @@ var EbSelect = function (ctrl, options) {
         this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
         this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
         this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
+        this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
 
         //set id for searchBox
         $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
@@ -109,6 +111,10 @@ var EbSelect = function (ctrl, options) {
         $('#' + this.name + 0).children().css("border-top-left-radius", "5px");
         $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
     };
+
+    this.searchBoxFocus = function () {
+        this.IsSearchBoxFocused = true;
+    }.bind(this);
 
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
@@ -678,11 +684,13 @@ var EbSelect = function (ctrl, options) {
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
+                if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
+                    EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
                 if (this.required && this.Vobj.valueMembers.length === 0) {
-                    EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`);
+                    if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
+                        EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`);
                 }
                 else {
                     EbMakeValid(`#${_name}Container`, `#${_name}Wraper`);

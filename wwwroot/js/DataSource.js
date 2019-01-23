@@ -13,6 +13,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //this.FD = false;
     this.Ssurl = ssurl;
     this.delay = 300;
+    this.isPw = false;
 
     const _DataReader = "DataReader";
     const _DataWriter = "DataWriter";
@@ -46,7 +47,6 @@ END;`;
             $e.attr("state", "advanced")
             $simpleSec.hide(this.delay);
             $advSec.show(this.delay);
-
             $simpleSec.animate({});
         }
         else {
@@ -60,9 +60,6 @@ END;`;
 
     this.Init = function () {
         let dsType = "";
-        //$('#execute' + tabNum).off("click").on("click", this.Execute.bind(this));
-        //$('#runSqlFn0').off("click").on("click", this.RunSqlFn.bind(this));
-        //$('#testSqlFn0').off("click").on("click", this.TestSqlFn.bind(this));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').bind('paste', (this.SetCode.bind(this)));
         $('#codewindow' + tabNum + ' .CodeMirror textarea').keyup(this.SetCode.bind(this));
         $(".selectpicker").selectpicker();
@@ -79,47 +76,36 @@ END;`;
             commonO.Current_obj = this.EbObject;
             if (this.ObjectType === 5)
                 this.EbObject.Sql = btoa(_SqlFuncSyntax);
-            // this.FD = false;
         }
         else {
             if (this.EbObject.FilterDialogRefId !== "") {
-                //this.FD = true;
                 var callback = true;
                 this.GetFD(callback);
             }
         }
-
         this.propGrid.setObject(this.EbObject, AllMetas["Eb" + dsType]);
         this.GenerateButtons();
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
-        //$(".toolbar .toolicons").prepend(`<button class='btn ds-builder-toggle' is-edited='false' state='simple' id= 'ds-builder-toggle' data-toggle='tooltip' data-placement='bottom' title= 'Switch to advanced editor'> <i class='fa fa-share' aria-hidden='true'></i></button >`);
-        //$('.ds-builder-toggle').on("click", this.toggleBuilder.bind(this));
-        if (this.ObjectType === 4 || this.ObjectType === 5) {
-            $("#paramsModal-toggle").on("show.bs.modal", this.getInputParams.bind(this));
-            $("#parmSetupSave").off("click").on("click", this.SaveParamsetup.bind(this));
-        }
+        $("#parmSetupSave").off("click").on("click", this.SaveParamsetup.bind(this));
     }
 
     this.SaveParamsetup = function (ev) {
-        if (commonO.ver_Refid !== "" && commonO.ver_Refid !== null) {
-            if (this.ObjectType === 4) {
-                this.EbObject.InputParams.$values = this.getParamVal(this.InputParams);
-            }
-            else if (this.ObjectType === 5) {
-                $.ajax({
-                    type: 'POST',
-                    url: "../CE/ExecSqlFunction",
-                    data: { "fname": this.InputParams.FunctionName, "_params": JSON.stringify(this.getParamVal(this.InputParams.Arguments)) },
-                    beforeSend: function () {
-                    }
-                }).done(function (data) {
-                    this.DrawDataTable(data);
-                }.bind(this));
-            }
+        if (this.ObjectType === 5) {
+            $.ajax({
+                type: 'POST',
+                url: "../CE/ExecSqlFunction",
+                data: { "fname": this.EbObject.Name, "_params": JSON.stringify(this.getParamVal(this.InputParams)) },
+                beforeSend: function () {
+                }
+            }).done(function (data) {
+                this.DrawDataTable(data);
+            }.bind(this));
         }
         else {
-            EbMessage("show", { Background: "red", Message: "!Save before run." });
+            this.EbObject.InputParams.$values = this.getParamVal(this.InputParams);
+            commonO.Save();
+            this.DrawTable();
         }
     };
 
@@ -145,67 +131,78 @@ END;`;
 
     this.getParamVal = function (_params) {
         for (let i = 0; i < _params.length; i++) {
-            _params[i].Type = eval($(`select[name="${_params[i].Column}-DBTYPE"]`).val());
-            _params[i].Value = $(`input[name="${_params[i].Column}-VLU"]`).val();
+            _params[i].Type = eval($(`select[name="${_params[i].Name}-DBTYPE"]`).val());
+            _params[i].Value = $(`input[name="${_params[i].Name}-VLU"]`).val();
         }
         return _params;
-    } 
-
-    this.getInputParams = function () {
-        if (this.Sql !== window["editor" + tabNum].getValue().trim()) {
-            this.Sql = window["editor" + tabNum].getValue().trim();
-            $.ajax({
-                type: 'GET',
-                url: "../CE/DataWriterSqlEval",
-                data: { "sql": btoa(this.Sql), "obj_type": this.ObjectType },
-                beforeSend: function () {
-                }
-            }).done(function (data) {
-                this.InputParams = JSON.parse(data);
-                if (this.ObjectType === 4) {
-                    this.AppendInpuParams();
-                    this.setValues();
-                }
-                else if (this.ObjectType === 5) {
-                    this.AppendInpuParams();
-                    this.configParamWindo();
-                }
-            }.bind(this));
-        }
-    };
+    }
 
     this.configParamWindo = function () {
         $("#parmSetupSave").html(`Run <i class="fa fa-play" aria-hidden="true"></i>`);
     }
 
-	this.setValues = function () {
-		for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
-			$(`select[name="${this.EbObject.InputParams.$values[i].Column}-DBTYPE"]`).val(this.EbObject.InputParams.$values[i].Type);
-			$(`input[name="${this.EbObject.InputParams.$values[i].Column}-VLU"]`).val(this.EbObject.InputParams.$values[i].Value);
-		}
-	};
+    this.GenerateButtons = function () {
+        $("#obj_icons").empty().append(`<button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
+                                            <i class='fa fa-play' aria-hidden='true'></i>
+                                        </button>`);
+
+        $("#run").off("click").on("click", this.RunClick.bind(this));
+        $(".simple-dsb-cont").hide(this.delay);
+    };
+
+    this.RunClick = function () {
+        if (this.EbObject.FilterDialogRefId) {
+            this.isPw = false;
+            this.RunDs();
+        }
+        else {
+            this.isPw = true;
+            this.getInputParams();
+            commonO.Save();
+            $(`#paramsModal-toggle`).modal("show");
+        }
+    };
+
+    this.getInputParams = function () {
+        this.Sql = window["editor" + tabNum].getValue().trim();
+        $.ajax({
+            type: 'GET',
+            url: "../CE/GetSqlParams",
+            data: { "sql": this.Sql, "obj_type": this.ObjectType },
+            beforeSend: function () { }
+        }).done(function (data) {
+            this.InputParams = JSON.parse(data);
+            this.configParamWindo();
+
+            if (this.ObjectType === 5) {
+                this.AppendInpuParams();
+            }
+            else {
+                this.AppendInpuParams();
+                this.setValues();
+            }
+        }.bind(this));
+    };
 
     this.AppendInpuParams = function () {
         let param_list = [];
-        if (this.ObjectType === 4)
-            param_list = this.InputParams;
-        else if (this.ObjectType === 5) 
-            param_list = this.InputParams.Arguments;
+        param_list = this.InputParams;
+        this.EbObject.InputParams.$values = this.InputParams;
 
         $("#paraWinTab_" + tabNum + " tbody").empty();
         if (param_list.length <= 0) {
-
+            $(".emptyPMsg").show();
         }
         else {
             for (let i = 0; i < param_list.length; i++) {
                 $("#paraWinTab_" + tabNum + " tbody").append(`<tr>
-                            <td>${param_list[i].Column}</td>
+                            <td>${param_list[i].Name}</td>
                             <td>
-                                <select name="${param_list[i].Column}-DBTYPE" class="form-control">
+                                <select name="${param_list[i].Name}-DBTYPE" class="form-control">
                                     ${this.setDbType()}
                                 </select>
                             </td>
-                            <td><input type="text" name="${param_list[i].Column}-VLU" class="form-control"/></td>
+                            <td><input type="text" name="${param_list[i].Name}-VLU" class="form-control"/></td>
                         </tr>`);
             }
         }
@@ -219,21 +216,12 @@ END;`;
         return d.join(",");
     };
 
-    this.GenerateButtons = function () {
-        $("#obj_icons").empty();
-        if (this.ObjectType !== 5 && this.ObjectType !== 4) {
-            $("#obj_icons").append(`
-            <button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'><i class='fa fa-play' aria-hidden='true'></i></button >
-            `);
-            $("#run").off("click").on("click", this.RunDs.bind(this));
+    this.setValues = function () {
+        for (let i = 0; i < this.EbObject.InputParams.$values.length; i++) {
+            $(`select[name="${this.EbObject.InputParams.$values[i].Name}-DBTYPE"]`).val(this.EbObject.InputParams.$values[i].Type);
+            $(`input[name="${this.EbObject.InputParams.$values[i].Name}-VLU"]`).val(this.EbObject.InputParams.$values[i].Value);
         }
-        if (this.ObjectType === 4 || this.ObjectType === 5)
-            $("#obj_icons").append(`<button class="btn" data-toggle="modal" data-target="#paramsModal-toggle"><i class='fa fa-play' aria-hidden='true'></i></button>`);
-
-		//$(".adv-dsb-cont").hide(this.delay);
-		$(".simple-dsb-cont").hide(this.delay);
-		//$("#btnToggleFD").off("click").on("click", this.ToggleFD.bind(this));
-	};
+    };
 
     this.SetCode = function (e) {
         try {
@@ -260,7 +248,7 @@ END;`;
             }
         }
         if (pname === "Name") {
-			$("#objname").text(this.EbObject.DisplayName);
+            $("#objname").text(this.EbObject.DisplayName);
         }
     }.bind(this);
 
@@ -308,23 +296,13 @@ END;`;
         this.stickBtn.minimise();
     };
 
-    //this.ToggleFD = function () {
-    //    if ($('#paramdiv' + tabNum).css("display") === "none") {
-    //        $('#paramdiv' + tabNum).show();
-    //        $('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
-    //    }
-    //    else {
-    //        this.CloseParamDiv();
-    //    }
-    //};
-
-	this.AddVerNavTab = function (navitem, tabitem) {
-		$("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-		$('#versionNav').append(navitem);
-		$('#versionTab').append(tabitem);
-		$("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-		$('.closeTab').off("click").on("click", this.deleteTab.bind(this));
-	};
+    this.AddVerNavTab = function (navitem, tabitem) {
+        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        $('#versionNav').append(navitem);
+        $('#versionTab').append(tabitem);
+        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
+        $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+    };
 
     this.deleteTab = function (e) {
         var tabContentId = $(e.target).parent().attr("href");
@@ -333,59 +311,6 @@ END;`;
         $('#versionNav a:last').tab('show'); // Select first tab        
     };
 
-    //this.Execute = function () {
-    //    if (!$('#execute' + tabNum).hasClass('collapsed')) {
-    //        //dasdsd
-    //    }
-    //    else {
-    //        this.Find_parameters(false, false, false);
-    //        $.LoadingOverlay("show");
-    //        if (this.Parameter_Count !== 0 && $('#fd' + tabNum + ' option:selected').text() === "Select Filter Dialog") {
-    //            alert("Please select a filter dialog");
-    //            $.LoadingOverlay("hide");
-    //        }
-    //        else if (this.Parameter_Count === 0) {
-    //            $.LoadingOverlay("hide");
-    //            var getNav = $("#versionNav li.active a").attr("href");
-    //        }
-    //        else {
-    //            this.Find_parameters(false, false, false);
-    //            // this.Save(false);
-    //            this.SelectedFdId = $('#fd' + tabNum + ' option:selected').val();
-    //        }
-    //    }
-    //}
-
-    //this.RunSqlFn = function () {
-    //    $.LoadingOverlay("show");
-    //    if ($('.fd option:selected').text() === "Select Filter Dialog") {
-    //        alert("Please select a filter dialog");
-    //        $.LoadingOverlay("hide");
-    //    }
-    //    this.Save(true);
-    //}
-
-    //this.TestSqlFn = function () {
-    //    $.LoadingOverlay("show");
-    //    alert("Test");
-    //}
-
-
-    //this.Save = function (needRun) {
-    //    $.LoadingOverlay("show");
-    //    if (this.ObjectType === 5) {
-    //        this.SetSqlFnName();
-    //    }
-    //    this.Find_parameters(true, true, needRun);
-    //};
-
-    //this.Commit = function (needRun) {
-    //    $.LoadingOverlay("show");
-    //    if (this.ObjectType === 5) {
-    //        this.SetSqlFnName();
-    //    }
-    //    this.Find_parameters(true, false, needRun);
-    //}
     this.RunDs = function () {
         commonO.flagRun = true;
         //$.LoadingOverlay("show");
@@ -440,6 +365,12 @@ END;`;
     };
 
     this.DrawTable = function () {
+        var paramsArray = null;
+        if (this.isPw)
+            paramsArray = this.EbObject.InputParams.$values;
+        else
+            paramsArray = this.CreateObjString();
+
         commonO.tabNum++;
         var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
@@ -449,7 +380,7 @@ END;`;
             "</div>");
         $.post('../../CE/GetColumns4Trial', {
             ds_refid: this.Refid,
-            parameter: this.CreateObjString()
+            parameter: paramsArray
         }, this.Load_Table_Columns.bind(this));
         $("#obj_icons").empty();
         $('#save').hide();
@@ -488,11 +419,8 @@ END;`;
                     dataSrc: function (dd) { return dd.data; },
                 }
             });
-
             $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
         }
-
-        //$.LoadingOverlay("hide");
         $("#eb_common_loader").EbLoader("hide");
     };
 
@@ -500,13 +428,17 @@ END;`;
         delete dq.columns; delete dq.order; delete dq.search;
         dq.RefId = this.Refid;
         dq.TFilters = [];
-        dq.Params = this.CreateObjString();
+        if (this.isPw)
+            dq.Params = this.EbObject.InputParams.$values;
+        else
+            dq.Params = this.CreateObjString();
         return dq;
     };
 
-	this.AfterCommit = function () {
-		window["editor" + tabNum].options.readOnly = true;
-	};
+    this.AfterCommit = function () {
+        window["editor" + tabNum].options.readOnly = true;
+    };
+
     this.SetSqlFnName = function () {
         var result = this.EbObject.Sql.match(/create\s*FUNCTION\s*|create\s*or\s*replace\s*function\s*(.[\s\S]*?\))/i);
         if (result.length > 0) {
@@ -520,7 +452,6 @@ END;`;
     };
 
     this.GetUsedSqlFns = function (needRun, issave) {
-
         this.rel_arr = [];
         this.relatedObjects = null;
         $.post("../CE/GetObjects_refid_dict", { obj_type: 5 }, this.FetchUsedSqlFns.bind(this, issave, needRun));
@@ -558,7 +489,6 @@ END;`;
         //        "tags": tagvalues
         //    }, this.CallDrawTable.bind(this, needRun));
         //}
-
     };
 
     this.CallDrawTable = function (needRun, result) {
@@ -587,11 +517,6 @@ END;`;
             this.rel_arr.push(i);
         }
     };
-
-    //commonO.PreviewObject = function () {
-    //	$("#preview_wrapper").empty();
-    //	this.RunDs();
-    //}.bind(this);
 
     this.Init();
 }

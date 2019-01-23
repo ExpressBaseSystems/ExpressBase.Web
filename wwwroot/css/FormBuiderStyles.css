@@ -199,13 +199,21 @@
     padding-top: 5px;
 }
 
-    .rowc:focus {
-        outline: none;
-        box-shadow: 0px 0px 6px 0 !important;
-    }
+.del-c {
+    left: 7.5px !important;
+    top: 0.5px !important;
+    height: 28px !important;
+    width: 29px !important;
+    border-radius: 100% !important;
+}
 
-.check-row:hover {
-    box-shadow: 0 0 2.5px 0 !important;
+.rowc:focus {
+    outline: none;
+    box-shadow: 0px 0px 6px 0 !important;
+}
+
+.edit-row:hover {
+    box-shadow: -1.5px 0 1px 0 !important;
 }
 
 .edit-row:hover {
@@ -214,6 +222,10 @@
 
 .del-row:hover {
     box-shadow: 1.5px 0 1px 0 !important;
+}
+
+.check-row:hover, .del-c:hover {
+    box-shadow: 0 0 2.5px 0 !important;
 }
 
 .ctrl-edit {
@@ -238,18 +250,32 @@
     max-width: inherit !important;*/
 }
 
-    .dgtbl td {
+    .dgtbl > tbody > tr > td {
         position: relative;
-        border: 1px dotted #cccccc9c !important;
+        border: none !important;
+        padding: 0 !important;
+        border-right: dotted 1px rgb(241, 241, 241) !important;
     }
 
-    .dgtbl tr th:last-child {
+    .dgtbl > tbody > tr:nth-child(odd) {
+        background-color: rgb(249, 249, 249) !important;
+    }
+
+    .dgtbl > tbody > tr:nth-child(even) {
+        background-color: white;
+    }
+
+    .dgtbl > tbody > tr th:last-child {
         text-align: center;
     }
 
-    .dgtbl tr td:last-child {
+    .dgtbl > tbody > tr td:last-child {
         width: 50px;
     }
+
+[eb-form='true'] .bootstrap-select{
+    width:100% !important;
+}
 
 .Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
@@ -266,12 +292,12 @@
 }
 
 .grid-cont {
-    overflow: auto;
+    /*overflow: auto;*/
 }
 
-.grid-cont input[type=checkbox] {
-    min-height: inherit !important;
-}
+    .grid-cont input[type=checkbox] {
+        min-height: inherit !important;
+    }
 
 .Eb-ctrlContainer .tab-content {
     border: 1px solid #ddd;
@@ -284,6 +310,16 @@
 
 .ctrl-cover {
     border: 1px solid rgba(34,36,38,.15);
+}
+.dgtbl .ctrl-cover {
+    border: none;
+    border-top: 1px solid rgba(34,36,38,.15);
+    border-right: 1px solid rgba(34,36,38,.15);
+}
+
+.check-wraper{
+    background-color: white;
+    height: 28px;
 }
 
 .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
@@ -453,10 +489,35 @@
     border: 1px solid #e3e3e3;*/
 }
 
+.ctrl-cover .dropdown-toggle {
+    padding: 0px 12px;
+    border-radius: 1px;
+    font-size: 13px;
+    height: 28px;
+    background-color: white;
+    box-shadow: none !important;
+}
+
+.ctrl-cover > div > div > div.bs-searchbox > input {
+    height: 21px;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    border-radius: 2px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    -webkit-transition: box-shadow .1s ease,border-color .1s ease;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}
+
+.ctrl-cover .dropdown-toggle .filter-option-inner-inner {
+    margin-top: 3px;
+}
+
 .req-cont {
     float: right;
     font-size: 12px;
     margin-top: 3px;
+    animation-duration: 0.3s;
 }
 
 .form-buider-form .Eb-ctrlContainer {
@@ -672,7 +733,7 @@
     padding-top: 4px;
 }
 
-.userloc-checkbox{
+.userloc-checkbox {
     vertical-align: middle;
     margin-right: 5px !important;
 }

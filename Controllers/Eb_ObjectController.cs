@@ -14,7 +14,6 @@ using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
 using Newtonsoft.Json;
 using System.Text;
-using ExpressBase.Objects.ReportRelated;
 using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
 using ExpressBase.Common.JsonConverters;
@@ -183,6 +182,17 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+            else if (type.Equals(EbObjectTypes.Api))
+            {
+                Type[] typeArray = typeof(EbApiWrapper).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.ApiBuilder, typeof(EbApiWrapper));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
+
             if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
             {
                 EbObjAllVerWithoutCircularRefResp result = this.ServiceClient.Get<EbObjAllVerWithoutCircularRefResp>(new EbObjAllVerWithoutCircularRefRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode});
@@ -252,7 +262,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = obj.Name,
                         Description = obj.Description,
-                        Json = _json,
+                        Json = EbSerializers.Json_Serialize(obj),
                         Status = ObjectLifeCycleStatus.Dev,
                         Relations = _rel_obj_tmp,
                         IsSave = false,
@@ -278,7 +288,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Name = obj.Name,
                     Description = obj.Description,
-                    Json = _json,
+                    Json = EbSerializers.Json_Serialize(obj),
                     Relations = _rel_obj_tmp,
                     RefId = _refid,
                     ChangeLog = _changeLog,
@@ -322,7 +332,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         Name = obj.Name,
                         Description = obj.Description,
-                        Json = _json,
+                        Json = EbSerializers.Json_Serialize(obj),
                         Status = ObjectLifeCycleStatus.Dev,
                         Relations = _rel_obj_tmp,
                         IsSave = true,
@@ -346,7 +356,7 @@ namespace ExpressBase.Web.Controllers
                     RefId = _refid,
                     Name = obj.Name,
                     Description = obj.Description,
-                    Json = _json,
+                    Json = EbSerializers.Json_Serialize(obj),
                     Relations = _rel_obj_tmp,
                     Tags = _tags,
                     Apps = _apps,

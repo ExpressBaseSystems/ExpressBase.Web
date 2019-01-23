@@ -372,6 +372,11 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-8">
+                        <div class="lm-form-group" style="text-align: right; padding-top: 15px;">
+                            <label class="tag-title" style="user-select: none; cursor: pointer; color: red;"><input id="chkFlUpNotPicked" type="checkbox" /> Not Picking Up</label>
+                        </div>
+                    </div>
                 </div>
                 <div class="lm-form-inline">
                     <div class="col-md-8">
@@ -379,9 +384,9 @@
                             <label class="tag-title">Lead Status</label>
                             <select id="selFlUpStatus" class="form-control">
                                 @{ 
-                                    foreach(string str in ViewBag.StatusList)
+                                    foreach(KeyValuePair<string, string> item in ViewBag.StatusDict)
                                     {
-                                        <option value="@str">@str</option>
+                                        <option value="@item.Key" data-ns="@item.Value">@item.Key</option>
                                     }
                                 } 
                             </select>
@@ -529,7 +534,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Surgery Details</h4>
             </div>
-            <div class="modal-body" style="height: 240px;">
+            <div class="modal-body" style="height: 265px;">
                 <div class="lm-form-inline">
                     <div class="col-md-4">
                         <div class="lm-form-group">
@@ -591,6 +596,26 @@
                         </div>
                     </div>
                 </div>
+                <div class="lm-form-inline">
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label class="tag-title">Complimentary</label>
+                            <select id="selSrgyCmpltry" class="form-control">
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="lm-form-group">
+                            <label class="tag-title">Method</label>
+                            <select id="selSrgyMethod" class="form-control">
+                                <option value="Pen">Pen</option>
+                                <option value="Needle">Needle</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button id="btnSrgySave" class="ebbtn eb_btn-sm eb_btnblue" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style="display:none;"></i> Save</button>
@@ -634,6 +659,10 @@
         white-space: normal !important;
         max-width: 350px;
         height: 30px !important;
+    }
+    select option:disabled {
+        color: #888;
+        background-color: #eee
     }
 </style>
 

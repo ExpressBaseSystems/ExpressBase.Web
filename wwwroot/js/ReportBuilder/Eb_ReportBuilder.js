@@ -201,6 +201,7 @@
         for (let k = 0; k < subSecArray.length; k++) {
             let id = sections + this.idCounter[sections + "Counter"]++;
             let o = new EbObjects["Eb" + sections](id);
+            o.DisplayName = id;
             $(".page ." + sections).append(o.$Control.outerHTML());
             if (!_new)
                 this.isNew ? o.SectionHeight = parseFloat(this.designHeight) / 5 + "px" : o.SectionHeight = this.repExtern.convertPointToPixel(subSecArray[k].HeightPt) + "px";
@@ -208,6 +209,7 @@
                 o.SectionHeight = "60px";
             this.objCollection[id] = o;
             this.RefreshControl(o);
+            this.pg.setObject(o, AllMetas["Eb" + sections]);
             this.pg.addToDD(o);
             this.makeSecResizable(`#${id}`);
             this.appendMSplitSec(sections, o);
@@ -285,7 +287,7 @@
     };//on drop func of dropable
 
     this.DropFirst = function (Title) {
-        if (this.Objtype === "TableLayout") {
+        if (this.Objtype === "Table_Layout") {
             let o = new EbTableLayout(this);
             this.TableCollection[o.EbCtrl.EbSid] = o;
         }
@@ -294,6 +296,7 @@
             var obj = new EbObjects["Eb" + this.Objtype](Objid);
             this.dropLoc.append(obj.$Control.outerHTML());
             this.objCollection[Objid] = obj;
+            obj.DisplayName = Objid;
             obj.Top = this.getPositionTop();
             obj.Left = this.leftwithMargin();
             if (this.col.hasClass('coloums')) {
@@ -351,7 +354,7 @@
     this.onReSizeFn = function (event, ui) {
         var resizeId = $(event.target).attr("id");
         var type = $(event.target).attr('eb-type');
-        if (type === "TableLayout") {
+        if (type === "Table_Layout") {
             this.RbCommon.resizeTdOnLayoutResize($(event.target).attr("id"));
         }
         else {
@@ -462,6 +465,7 @@
         this.EbObject.Margin.Left = this.repExtern.convertTopoints(this.margin.Left);
         this.EbObject.Margin.Right = this.repExtern.convertTopoints(parseFloat(this.width) - this.margin.Right);
         commonO.Current_obj = this.EbObject;
+        return true;
     };//save
 
     this.findReportLayObjects = function (k, object) {
@@ -492,7 +496,7 @@
     this.findPageElements = function (k, elements) {
         var elemId = $(elements).attr('id');
         var eb_typeCntl = $("#" + this.subsec).attr("eb-type");
-        if ($(elements).attr("eb-type") === "TableLayout") {
+        if ($(elements).attr("eb-type") === "Table_Layout") {
             this.RbCommon.buildTableHierarcy($(elements), this.j, eb_typeCntl);
             this.pushToSections($(elements), this.j, eb_typeCntl);
         }
@@ -601,9 +605,9 @@
     this.appendHTMLonEdit = function ($controlColl, container) {
         for (var i = 0; i < $controlColl.length; i++) {
             var editControl = $controlColl[i];
-            if (editControl.$type.split(",")[0].split(".").pop() === "EbTableLayout")
+            if (editControl.$type.split(",")[0].split(".").pop() === "EbTable_Layout")
                 this.RbCommon.drawTableOnEdit(editControl);
-            else if (editControl.ParentName !== "TableLayout")
+            else if (editControl.ParentName !== "Table_Layout")
                 this.drawEbControls(editControl, container);
         }
     };

@@ -105,8 +105,9 @@
         if (!$.isEmptyObject(this.resultObj.Data[appid])) {
             $(".Eb_quick_menu .menu_notifiction").hide();
             for (var otype in this.resultObj.Data[appid].Types) {
-                var _obj = this.resultObj.Data[appid].Types[otype].Objects;
-                $(".Eb_quick_menu .modal-body #objList").append(`<div class="objContainer_f_app">
+                if (eval(otype) !== -1) {
+                    var _obj = this.resultObj.Data[appid].Types[otype].Objects;
+                    $(".Eb_quick_menu .modal-body #objList").append(`<div class="objContainer_f_app">
                                                 <div class="objContainer2">
                                                     <div class="form-inline obType_wrapper_head" obj_container="obtype_container${otype}" id="obType_wrapper_head${otype}"
                                                         len="${_obj.length}" data-toggle="collapse" data-target="#obtype_container${otype}" style="cursor:pointer;">
@@ -121,10 +122,11 @@
                                                     </div>
                                                 </div>
                                             </div>`);
-                this.apndOTypeContainer($(".Eb_quick_menu #obtype_container" + otype), _obj);
-                if (this.login === "dc") {
-                    $(`.Eb_quick_menu #obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
+                    this.apndOTypeContainer($(".Eb_quick_menu #obtype_container" + otype), _obj);
+                    if (this.login === "dc") {
+                        $(`.Eb_quick_menu #obType_wrapper_head${otype} .btn_container`).append(`<a class="btn new_btn pull-right" href="../Eb_Object/Index?objid=null&objtype=${otype}">
                                                             <i class="material-icons" style="pointer-events:none;">add</i></a>`);
+                    }
                 }
             }
         }
@@ -203,15 +205,15 @@
         $(".Eb_quick_menu .modal-body #objList").empty();
         var srch = $(e.target).val().toLowerCase();
         if (srch !== "") {
-                $.each(this.resultObj.Data, function (i, Types) {
-                    $.each(Types.Types, function (i, _obj) {
-						_obj.Objects.forEach(function (obItem) {
-							if (obItem.DisplayName.toLowerCase().indexOf(srch) !== -1) {
-                                this.code4AppendList(obItem, $(".Eb_quick_menu .modal-body #objList"));
-                            }
-                        }.bind(this));
+            $.each(this.resultObj.Data, function (i, Types) {
+                $.each(Types.Types, function (i, _obj) {
+                    _obj.Objects.forEach(function (obItem) {
+                        if (obItem.DisplayName.toLowerCase().indexOf(srch) !== -1) {
+                            this.code4AppendList(obItem, $(".Eb_quick_menu .modal-body #objList"));
+                        }
                     }.bind(this));
-                }.bind(this));           
+                }.bind(this));
+            }.bind(this));
         }
     };
 
@@ -240,7 +242,7 @@
                 <div class='col-md-6 objitems' name='objBox'>
                     <a class="object_container" href='${this.decideUrl(_obj)}'>
                     <div class='col-md-12 col-lg-12 col-sm-12 pd-0'>
-                        <h4 class='head4'>${_obj.DisplayName}</h4>
+                        <h4 class='head4'>${_obj.DisplayName || 'Untitled'}</h4>
                         <p class='text-justify'>${_obj.Description || 'no description'}</p>
                         <div class="label_container">
                                 <span name="Version" class="label">V.${_obj.VersionNumber}</span>

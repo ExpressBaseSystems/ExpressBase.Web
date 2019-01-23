@@ -59,6 +59,7 @@
     this.$FlUpStatus = $("#selFlUpStatus");
     this.$FlUpFolDate = $("#txtFlUpFolDate");
     this.$FlUpComnt = $("#txaFlUpComnt");
+    this.$FlUpNotPicked = $("#chkFlUpNotPicked");
     this.$FlUpSave = $("#btnFlUpSave");
     //BILLING
     this.divBilling = "divBilling";
@@ -86,7 +87,9 @@
     this.$SrgyConsentBy = $("#selSrgyConsentBy");
     this.$SrgyAnasthBy = $("#selSrgyAnasthBy");
     this.$SrgyPostBrfBy = $("#selSrgyPostBrfBy");
-    this.$SrgyNurse = $("#selSrgyNurse");
+    this.$SrgyNurse = $("#selSrgyNurse");   
+    this.$SrgyCmpltry = $("#selSrgyCmpltry");
+    this.$SrgyMethod = $("#selSrgyMethod");
     this.$SrgySave = $("#btnSrgySave");
     //ATTACH
     //this.$FirstImgPage = $("#btnFirstImgPage");
@@ -415,6 +418,8 @@
     //};
 
     this.initFeedBackModal = function () {
+        this.tempStatusObject = null;
+
         this.$btnNewFeedBack.on("click", function () {
             if (this.AccId === 0) {
                 EbMessage("show", { Message: 'Save Customer Information then try to add Followup', AutoHide: true, Background: '#aa0000' });
@@ -442,7 +447,15 @@
             this.$FlUpSave.prop("disabled", true);
             if (this.$MdlFeedBack.attr("data-id") !== '')
                 id = parseInt(this.$MdlFeedBack.attr("data-id"));
-            var fdbkObj = { Id: id, Date: this.$FlUpDate.val(), Status: this.$FlUpStatus.val(), Fup_Date: this.$FlUpFolDate.val(), Comments: this.$FlUpComnt.val(), Account_Code: this.AccId };
+            var fdbkObj = {
+                Id: id,
+                Date: this.$FlUpDate.val(),
+                Status: this.$FlUpStatus.val(),
+                Fup_Date: this.$FlUpFolDate.val(),
+                Comments: this.$FlUpComnt.val(),
+                Account_Code: this.AccId,
+                Is_Picked_Up: this.$FlUpNotPicked.prop("checked")? "No": "Yes"
+            };
             $.ajax({
                 type: "POST",
                 url: "../CustomPage/SaveFollowup",
@@ -470,11 +483,16 @@
         new ListViewCustom(this.divFeedback, this.FeedbackList, function (id, data) {
             this.$MdlFeedBack.attr("data-id", id);
             var tempObj = JSON.parse(window.atob(data));
+
+            this.setFollowupStatus(tempObj.Status);
+
             this.$FlUpDate.val(tempObj.Date);
-            this.$FlUpStatus.val(tempObj.Status);
+            //this.$FlUpStatus.val(tempObj.Status);
             this.$FlUpFolDate.val(tempObj.Fup_Date);
             this.$FlUpComnt.val(tempObj.Comments);
+            this.$FlUpNotPicked.prop("checked", tempObj.Is_Picked_Up === "Yes" ? false: true);
             //this.$FlUpDate.prop("disabled", true);
+
             this.$MdlFeedBack.modal('show');
         }.bind(this));
 
@@ -483,15 +501,52 @@
                 this.$FlUpDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$FlUpFolDate.val(moment(new Date()).format("DD-MM-YYYY"));
                 this.$FlUpComnt.val("");
+                this.$FlUpNotPicked.prop("checked", false);
                 this.$FlUpSave.children().hide();
                 this.$FlUpSave.prop("disabled", false);
                 //this.$FlUpDate.prop("disabled", false);
-            }
+
+                if (this.FeedbackList.length === 0)
+                    this.setFollowupStatus("To Consult");
+                else
+                    this.setFollowupStatus(this.FeedbackList[0]["Status"]);
+            }            
+
         }.bind(this));
 
         this.$MdlFeedBack.on('hidden.bs.modal', function (e) {
             this.$MdlFeedBack.attr("data-id", "");
         }.bind(this));
+    };
+
+    this.setFollowupStatus = function (_oldStatus) {
+        if (this.tempStatusObject === null) {
+            this.tempStatusObject = {};
+            $.each(this.$FlUpStatus.children(), function (i, ob) {
+                let nextStatus = $(ob).attr("data-ns");
+                let _next = [];
+                if (nextStatus !== "") {
+                    _next = nextStatus.split(",");
+                }
+                this.tempStatusObject[$(ob).attr("value")] = _next;
+            }.bind(this));
+        }
+        if (this.tempStatusObject[_oldStatus].length === 0) {
+            $.each(this.$FlUpStatus.children(), function (i, ob) {
+                $(ob).prop("disabled", false);
+            });
+        }
+        else {
+            $.each(this.$FlUpStatus.children(), function (i, ob) {
+                if (this.tempStatusObject[_oldStatus].indexOf($(ob).attr("value")) === -1)
+                    $(ob).prop("disabled", true);
+                else {
+                    $(ob).prop("disabled", false);
+                    this.$FlUpStatus.val($(ob).attr("value"));
+                }
+            }.bind(this));
+        }
+        this.$FlUpStatus.val(_oldStatus);
     };
 
     this.initBillingModal = function () {
@@ -666,6 +721,8 @@
                 Anaesthesia_By: this.$SrgyAnasthBy.val(),
                 Post_Brief_By: this.$SrgyPostBrfBy.val(),
                 Nurse: this.$SrgyNurse.val(),
+                Complimentary: this.$SrgyCmpltry.val(),
+                Method: this.$SrgyMethod.val(),
                 Account_Code: this.AccId
             };
             $.ajax({
@@ -878,13 +935,13 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
     this.init = function () {
         if (this.ParentDivId === "divFdbk") {
-            this.metadata = ["7", "Id", "Created_Date", "Date", "Status", "Fup_Date", "Comments", "Created_By", "_feedback"];
+            this.metadata = ["8", "Id", "Created_Date", "Date", "Status", "Fup_Date", "Is_Picked_Up", "Comments", "Created_By", "_feedback"];
         }
         else if (this.ParentDivId === "divBilling") {
             this.metadata = ["9", "Id", "Date", "Total_Amount", "Amount_Received", "Balance_Amount", "Cash_Paid", "Payment_Mode", "Narration", "Created_By", "_billing"];
         }
         else if (this.ParentDivId === "divSrgy") {
-            this.metadata = ["11", "Id", "Created_Date", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Created_By", "_surgery"];
+            this.metadata = ["13", "Id", "Created_Date", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Complimentary", "Method", "Created_By", "_surgery"];
         }
         this.setTable();
 
@@ -905,7 +962,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]] });
         }
         else if (this.metadata.indexOf("_billing") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
@@ -913,7 +970,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         }
         else if (this.metadata.indexOf("_surgery") !== -1) {
             for (i = 0; i < this.itemList.length; i++)
-                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]], 10: this.itemList[i][this.metadata[10]], 11: this.itemList[i][this.metadata[11]] });
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]], 10: this.itemList[i][this.metadata[10]], 11: this.itemList[i][this.metadata[11]], 12: this.itemList[i][this.metadata[12]], 13: this.itemList[i][this.metadata[13]] });
         }
 
         this.table = $("#" + this.TableId).DataTable({

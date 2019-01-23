@@ -22,7 +22,7 @@
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
             if ($(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowId}]`).attr("is-editing") === "true") {
                 isEditing = true;
-                EbMessage("show", { Message: "Finish DataGrid editing before Saving", Background: "#ee7700" })
+                EbMessage("show", { Message: "Finish DataGrid editing before Saving", Background: "#ee7700" });
             }
         }.bind(this));
         return !isEditing;
@@ -40,18 +40,18 @@
 
     this.addEditModeRows = function (SingleTable) {
         $.each(SingleTable, function (i, SingleRow) {
-            let rowid = SingleRow.rowId;
-            this.addRow(rowid, false);
-            $.each(SingleRow.columns, function (j, SingleColumn) {
-                if (j === 0)
+            let rowid = SingleRow.RowId;
+ //           this.addRow(rowid, false);
+            $.each(SingleRow.Columns, function (j, SingleColumn) {
+                if (j === 0)// to skip id column
                     return true;
                 let ctrl = this.rowCtrls[rowid][(j - 1)];
-                let val = SingleColumn.value;
+                let val = SingleColumn.Value;
                 console.log(val);
                 ctrl.setValue(val);
-                ctrl.Name = SingleColumn.name;
+                ctrl.Name = SingleColumn.Name;
             }.bind(this));
-            {// call checkRow_click() pass event.target indirectly
+            {// call checkRow_click() pass event.target directly
                 let td = $(`#tbl_${this.ctrl.EbSid_CtxId} tbody tr[rowid=${rowid}] td:last`)[0];
                 this.checkRow_click({ target: td });
             }

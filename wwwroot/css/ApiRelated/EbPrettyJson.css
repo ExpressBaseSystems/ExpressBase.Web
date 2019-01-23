@@ -1,0 +1,19 @@
+﻿.prety_jsonWrpr{
+    width:100%;
+    height:100%;
+}
+    .prety_jsonWrpr .objkey {
+        color: #204a87;
+    }
+
+    .prety_jsonWrpr .objval {
+        color: #4e9a06;
+    }
+
+    .prety_jsonWrpr .a_ob_o, .a_ob_c {
+        color: #729fcf;
+    }
+.prety_jsonWrpr ul {
+    list-style: none;
+    padding-left: 15px;
+}

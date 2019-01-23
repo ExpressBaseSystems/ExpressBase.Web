@@ -247,7 +247,7 @@
         this.hideLoader();
         //let msg = "";
         let respObj = JSON.parse(_respObj);
-        if (this.rowId > 0) {
+        if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
@@ -258,7 +258,7 @@
             }
         }
         else {
-            if (respObj.RowId > 0) {
+            if (respObj.RowId > 0) {// if insertion success
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;

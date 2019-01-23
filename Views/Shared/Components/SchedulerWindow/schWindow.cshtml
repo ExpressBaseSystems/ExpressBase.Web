@@ -32,17 +32,38 @@
         });
 
         $('#schedule').on('click', function () {
-
-
             $.post("../Scheduler/Schedule", {
+                "name": $('#sch-name').val(),
                 "expression": $('#result').text(),
                 "objId": window.location.search.split("&")[0].split("=")[1],
                 "type": '@taskType',
                 "users": geUsers(),
-                "groups": geUserGroups(),
+                "groups": geUserGroups()
             }, function () {
             }
             );
+        });
+        $('#edit_sch').on('click', function () {
+            window.Schedule[0].Task.Name = $('#sch-name').val();
+            window.Schedule[0].Task.Expression = $('#result').text();
+            window.Schedule[0].Task.JobArgs.ToUserIds = geUsers();
+            window.Schedule[0].Task.JobArgs.ToUserGroupIds = geUserGroups();
+            $.post("../Scheduler/UpdateSchedule", {
+                "triggerkey": window.Schedule[0].TriggerKey,
+                "jobkey": window.Schedule[0].JobKey,
+                "task": window.Schedule[0].Task
+            }, function () {
+            }
+            );
+
+        });
+        $('#del_sch').on('click', function () {
+            $.post("../Scheduler/DeleteJob", {
+                "jobkey": window.Schedule[0].JobKey,
+                "id": window.Schedule[0].Id
+            },
+            function () {
+            });
         });
 
         function geUsers() {
@@ -78,33 +99,42 @@
         });
     });
 </script>
-
-<div class="modal fade" id="SchedulerModal" role="dialog">
+<div>
+    @await Component.InvokeAsync("SchedulerListing", new { objid = Convert.ToInt32(ViewBag.Obj_id) })
+</div>
+<div class="modal SchedulerModal fade" id="SchedulerModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Schedule</h4>
+                <h4 class="modal-title">Configure Schedule</h4>
             </div>
             <div class="modal-body">
                 <div class="scheduler">
-                    <div class="form-check form-check-inline top_pad">
+                    <div class=" row col-md-12 form-group">
+                        <label class="form-check-label col-md-1">Name</label>
+                        <input type="text" class="sch-name form-control float-right col-md-4" id="sch-name">
+                    </div>
+                    <div class="form-check form-check-inline top_pad col-md-6">
                         <input class="form-check-input" type="radio" name="sch-type" id="sch-type1" value="reccur" checked>
                         <label class="form-check-label" for="sch-type1">
                             Recurring
                         </label>
                     </div>
-                    <div class="recur">
-                        <div id="cron" class="cron-builder"></div>
-                        <span id="result" hidden></span>
-                    </div>
-                    <div class="form-check form-check-inline top_pad">
+                    <div class="form-check form-check-inline top_pad col-md-4">
                         <input class="form-check-input" type="radio" name="sch-type" id="sch-type2" value="nonreccur">
                         <label class="form-check-label" for="sch-type2">
                             Non Recurring
                         </label>
                     </div>
-                    <div class="non-rec">
+
+                    <label class="form-check-label">Expression</label>
+                    <div id="result" contenteditable="true"></div>
+                    <div class="recur fxdht">
+                        <div id="cron" class="cron-builder"></div>
+                    </div>
+
+                    <div class="non-rec fxdht">
                         <div class="input-group col-md-3">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                             <input id="datetimepicker" type="text" class="form-control" placeholder="Date Time">
@@ -139,6 +169,7 @@
                             Deliver To
                         </label>
 
+
                         <div class="col-md-3">
                             <label class="form-check-label usr">
                                 Users
@@ -162,7 +193,8 @@
                                 UserGroups
                             </label>
                             <div class="user-common">
-                                @{ Dictionary<int, string> UserGroups = ViewBag.usergroups; foreach (KeyValuePair<int, string> userg in UserGroups)
+                                @{ Dictionary<int, string> UserGroups = ViewBag.usergroups;
+                                    foreach (KeyValuePair<int, string> userg in UserGroups)
                                     { <div class="form-check form-check-inline user-line">
                                             <input class="form-check-input usergrp" type="checkbox" id="usergrp+@userg.Key" value="@userg.Key">
                                             <label class="form-check-label" for="inlineCheckbox1">@userg.Value</label>
@@ -176,10 +208,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button" id="schedule" class="btn btn-success" data-dismiss="modal">Schedule</button>
+                <button type="button" id="edit_sch" class="btn btn-success" data-dismiss="modal">Apply Changes</button>
+                <button type="button" id="del_sch" class="btn btn-danger" data-dismiss="modal">Delete</button>
             </div>
         </div>
     </div>
 </div>
+
 
 <style>
     .scheduler {
@@ -217,12 +252,13 @@
         transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     }
 
-    .modal-dialog {
-        width: 1200px;
+    .SchedulerModal .modal-dialog {
+        width: 1100px;
+        margin-top: 75px;
     }
 
-    .modal-body {
-        height: calc(100vh - 200px);
+    .SchedulerModal .modal-body {
+        height: calc(100vh - 300px);
         overflow-y: auto;
     }
 
@@ -232,7 +268,7 @@
     }
 
     .del-to {
-        /*margin-top: 15px;*/
+        margin-top: 15px;
     }
 
     .recur {
@@ -258,7 +294,11 @@
         padding: 5px;
     }
 
-    .user-line:hover {
-       background-color: #e6e6e6;
+        .user-line:hover {
+            background-color: #e6e6e6;
+        }
+
+    .fxdht {
+        height: 170px;
     }
 </style>

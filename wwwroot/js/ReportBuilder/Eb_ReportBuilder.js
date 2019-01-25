@@ -49,7 +49,7 @@
 	};
 
 	this.DrawScheduler = function(){
-		$('#SchedulerModal').modal('show');
+        $('#schedulerlistmodal').modal('show');
 	};
 
     this.TableCollection = {};

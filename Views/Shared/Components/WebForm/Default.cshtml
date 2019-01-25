@@ -104,6 +104,29 @@
         /*background: #fff;*/
         padding: 0px 2px;
     }
+
+    .fmode {
+        color: #fff;
+        font-weight: normal;
+        border-radius: 10px;
+        font-weight: normal;
+        margin-left: 3px;
+        padding: 1px 6px;
+        background-color: #9bf052;
+    }
+
+        .fmode[mode="New Mode"] {
+            background-color: #00d036;
+        }
+
+        .fmode[mode="Edit Mode"] {
+            background-color: #f09b52;
+        }
+
+        .fmode[mode="View Mode"] {
+            background-color: #222222;
+        }
+
 </style>
 
 <div id='WebForm-cont' class="webform-cont">
@@ -133,7 +156,7 @@
 
     let header = new EbHeader();
     header.insertButton('<button id="webformsave"  class="btn"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
-    header.insertButton('<button id="webformnew" class="btn"  onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-file-o" aria-hidden="true"></i></button>');
+    header.insertButton('<button id="webformnew" class="btn"  onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-plus" aria-hidden="true"></i></button>');
     header.insertButton(`<button id="webformdelete" class='btn' title='Delete'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformedit" class='btn' title='Edit'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
 
@@ -144,8 +167,9 @@
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _rowId = @Html.Raw(ViewBag.rowId);
     let _formData =  @Html.Raw(ViewBag.formData);
-    
+    let _mode =  "@Html.Raw(ViewBag.Mode)";
     function setHeader(reqstMode) {
+        _mode = reqstMode;// 
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
             header.showElement(["webformnew", "webformsave"]);
@@ -160,23 +184,19 @@
             header.hideElement(["webformsave"]);
         }
         header.setName(_formObj.DisplayName);
-        header.setMode(`<span class="fmode"style="color: #444;font-weight: normal;">(${reqstMode})</span>`);
-        $('title').text(_formObj.DisplayName);
+        header.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
+        $('title').text(_formObj.DisplayName + `(${reqstMode})`);
     }
-
-    if (_rowId > 0)
-        setHeader("Edit Mode");
-    else
-        setHeader("New Mode");
+    setHeader(_mode);
     
-    let _$saveBtn = $("#webformsave");
+    //let _$saveBtn = $("#webformsave");
     //let FormMode = "New Mode";    
 
     const renderer = new WebFormRender({
         formObj: _formObj,
-        $saveBtn: _$saveBtn,
+        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete"},
         formRefId: _formRefId,
-        //editModeObj: _editModeObj
+        mode: _mode,
         rowId: _rowId,
         formData: _formData
     });

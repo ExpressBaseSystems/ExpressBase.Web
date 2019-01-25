@@ -159,7 +159,7 @@ var EbSelect = function (ctrl, options) {
             //$.each(this.setvaluesColl, function (i, val) {
             this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
-            this.datatable.Api.ajax.reload();
+            this.datatable.Api.ajax.reload(this.initComplete4SetVal.bind(this));
         }
         else {
             this.filterArray = [];
@@ -280,10 +280,9 @@ var EbSelect = function (ctrl, options) {
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
-        o.fninitComplete4SetVal = this.initComplete4SetVal.bind(this);
         o.columnSearch = this.filterArray;
         o.headerDisplay = (this.Vobj.displayMembers.length > 1) ? true : false;
-        //o.filterValues = this.getParams();
+
         o.keys = true;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);

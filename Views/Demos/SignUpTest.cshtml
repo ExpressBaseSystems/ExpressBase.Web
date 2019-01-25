@@ -2,30 +2,63 @@
 <html>
 <head>
     <title>EXPRESSbase: Rapid Application Development & Delivery Platform for SMBs</title>
-    
+
     <link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
     <link rel="icon" href="~/images/favicon.ico">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
     <link rel="stylesheet" type="text/css" href="~/css/style.css" />
     <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
+
+    <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbFileUploader.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbFileUpload.css" />
 
     <script type="text/javascript" src="~/js/jquery.min.js"></script>
     <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="~/js/eb_extutils.js"></script>
     <script type="text/javascript" src="~/js/EbMsgBox.js"></script>
     <script type="text/javascript" src="~/js/EbLoader.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
+
+    <script type="text/javascript" src="~/js/eb_common.js"></script>
+    <script type="text/javascript" src="~/js/EbServerEvents/eventsource.min.js"></script>
+    <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js"></script>
+    <script type="text/javascript" src="~/js/EbControls/EbFileUploader.js"></script>
+    <script type="text/javascript" src="~/js/EbControls/EbFileUpload.js"></script>
 </head>
 <body>
-    <div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
-        <form action="../Ext/TenantExtSignup" method="post">
-            <div class="input-group">
-                <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
-                <span class="input-group-btn">
-                    <button type="submit" id="getstart" class="btn getstarted">Get Started </button>
-                </span>
-            </div>
-        </form>
+    @*<div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
+            <form action="../Ext/TenantExtSignup" method="post">
+                <div class="input-group">
+                    <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
+                    <span class="input-group-btn">
+                        <button type="submit" id="getstart" class="btn getstarted">Get Started </button>
+                    </span>
+                </div>
+            </form>
+        </div>*@
+    <div id="div">
+
     </div>
 </body>
+
+<script>
+    var imgup = new EbFileUploader({
+        Type: "image",
+        ShowGallery: true,
+        Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],
+        Files: [],
+        TenantId:"@ViewBag.cid",
+        SolutionId: "@ViewBag.SolnId",
+        Container: "div",
+        Multiple: false,
+        ServerEventUrl: '',
+        EnableTag: false,
+        EnableCrop: true,
+        MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),
+        CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }]
+    });
+</script>
 </html>

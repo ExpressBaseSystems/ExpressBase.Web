@@ -40,6 +40,14 @@
                     icon = "fa-lock";
                 }
             }
+            @if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
+            {
+                <li class="">
+                    <a data-toggle="tab" class="cetab" id="" href="#builderDashB">
+                        <i class="fa fa-home" aria-hidden="true"></i> Home
+                    </a>
+                </li>
+            }
             <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber"><i class='fa @(icon)' aria-hidden='true'></i> v @ViewBag.VersionNumber</a></li>
             @if (ViewBag.ObjType == (int)EbObjectTypes.Report)
             {
@@ -53,6 +61,13 @@
         </ul>
     </div>
     <div class="tab-content tab-cont-common" id="versionTab">
+        @if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
+        {
+            <div class="tab-pane" id="builderDashB">
+                <div class="container-fluid" id="builderDashB_bdy">
+                </div>
+            </div>
+        }
         <div id="vernav0" class="tab-pane fade in active code_edit" data-id="new">
             @{
                 if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter || ViewBag.ObjType == (int)EbObjectTypes.SqlFunction)
@@ -60,11 +75,11 @@
                     @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
                 }
                 @*else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization || ViewBag.ObjType == (int)EbObjectTypes.ChartVisualization)
-            {
-                object o = null;
-                @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
+                {
+                    object o = null;
+                    @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
 
-            }*@
+                }*@
                 else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization)
                 {
                     object o = null;

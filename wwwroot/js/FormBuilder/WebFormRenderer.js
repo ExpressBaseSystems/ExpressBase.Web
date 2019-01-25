@@ -2,11 +2,13 @@
     this.FormObj = option.formObj;
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
+    this.$editBtn = $('#' + option.headerBtns['Edit']);
     this.initControls = new InitControls(this);
     //this.editModeObj = option.editModeObj;
     this.formRefId = option.formRefId || "";
     this.rowId = option.rowId;
-    this.EditModeFormData = option.formData === null ? null : option.formData.FormData.MultipleTables;
+    this.mode = option.mode;
+    this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
     this.isEditMode = this.rowId > 0;
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
@@ -42,9 +44,13 @@
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
+        this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.initWebFormCtrls();
-        if (this.isEditMode)
-            this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
+        if (this.mode === "View Mode") {
+            this.setEditModeCtrls();
+            this.SwitchToViewMode();
+        }
+
         let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
         $.each(allFlatControls, function (k, Obj) {
             this.updateCtrlUI(Obj);
@@ -72,10 +78,6 @@
         $.each(this.DGs, function (k, DG) {
             this.initControls.init(DG, { isEditMode: this.isEditMode });
         }.bind(this));
-
-        if (this.isEditMode)
-            this.setEditModeCtrls();
-            //this.populateControls();
     };
 
     this.bindValidators = function (control) {
@@ -114,12 +116,6 @@
     this.getWebFormVals = function () {
         return getValsFromForm(this.FormObj);
     }.bind(this);
-
-
-    //this.populateControls = function () {
-        //this.rowId = getObjByval(this.editModeObj, "Name", "id").Value;
-        //this.getEditModeFormData(this.rowId);
-    //};
 
     this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
         $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
@@ -254,7 +250,7 @@
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
-                this.setEditModeCtrls();
+                this.SwitchToViewMode();
             }
             else {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
@@ -266,14 +262,12 @@
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
-                this.setEditModeCtrls();
-
-                setHeader("Edit Mode");
+                this.SwitchToViewMode();
             }
             else {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
             }
-        }        
+        }
     };
 
     this.saveForm = function () {
@@ -299,47 +293,65 @@
 
     };
 
+    this.SwitchToViewMode = function () {
+        setHeader("View Mode");
+        this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
+        this.setEditModeCtrls();
+        $.each(this.flatControls, function (k, ctrl) {
+            ctrl.disable();
+        }.bind(this));
+    };
+
+    this.SwitchToEditMode = function () {
+        this.setEditModeCtrls();
+        setHeader("Edit Mode");
+        this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
+        $.each(this.flatControls, function (k, ctrl) {
+            ctrl.enable();
+        }.bind(this));
+    };
+
     this.deleteForm = function () {
         EbDialog("show",
-                {
-                    Message: "Are you sure?",
-                    Buttons: {
-                        "Yes": {
-                            Background: "green",
-                            Align: "left",
-                            FontColor: "white;"
-                        },
-                        "No": {
-                            Background: "violet",
-                            Align: "right",
-                            FontColor: "white;"
-                        }
+            {
+                Message: "Are you sure?",
+                Buttons: {
+                    "Yes": {
+                        Background: "green",
+                        Align: "left",
+                        FontColor: "white;"
                     },
-                    CallBack: function (name) {
-                        if (name === "Yes"){
-                            this.showLoader();
-                            $.ajax({
-                                type: "POST",
-                                url: "../WebForm/DeleteWebformData",
-                                data: { RefId: this.formRefId, RowId: this.rowId },
-                                error: function (xhr, ajaxOptions, thrownError) {
-                                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
-                                    this.hideLoader();
-                                },
-                                success: function (result) {
-                                    this.hideLoader();
-                                    if (result) {
-                                        EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
-                                        setTimeout(function () { window.close(); }, 3000);
-                                    }
-                                    else {
-                                        EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
-                                    }
-                                }
-                            });
-                        }
+                    "No": {
+                        Background: "violet",
+                        Align: "right",
+                        FontColor: "white;"
                     }
-                });
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        this.showLoader();
+                        $.ajax({
+                            type: "POST",
+                            url: "../WebForm/DeleteWebformData",
+                            data: { RefId: this.formRefId, RowId: this.rowId },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                                this.hideLoader();
+                            }.bind(this),
+                            success: function (result) {
+                                this.hideLoader();
+                                if (result) {
+                                    EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
+                                    setTimeout(function () { window.close(); }, 3000);
+                                }
+                                else {
+                                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                                }
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this)
+            });
     };
 
     this.showLoader = function () {

@@ -28,15 +28,28 @@ namespace ExpressBase.Web.Controllers
             //ViewBag.editModeObj = _params ?? "false";
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
+            ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_"," ");
             if (_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(_params)));
                 Param _temp = ob.FirstOrDefault(e => e.Name.Equals("id"));
                 if (_temp != null)
-                {
-                    ViewBag.rowId = _temp.ValueTo;
+                {                    
                     //ViewBag.formData = EbSerializers.Json_Serialize(getRowdata(refId, _temp.ValueTo));
-                    ViewBag.formData = JsonConvert.SerializeObject(getRowdata(refId, _temp.ValueTo));
+                    WebformData wfd = getRowdata(refId, _temp.ValueTo);
+                    
+                    if (wfd.MultipleTables.Count == 0)
+                    {
+                        ViewBag.rowId = -1;
+                        ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_"," ");
+                    }                       
+                    else if (_temp.ValueTo > 0)
+                    {
+                        ViewBag.rowId = _temp.ValueTo;
+                        ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
+                        ViewBag.formData = JsonConvert.SerializeObject(wfd);
+                    }
+                        
                 }
             }
             ViewBag.formRefId = refId;
@@ -109,17 +122,17 @@ namespace ExpressBase.Web.Controllers
 			return MLPair;
 		}
 
-		public object getRowdata(string refid, int rowid)
+		public WebformData getRowdata(string refid, int rowid)
 		{
 			try
 			{
 				GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid });
-				return DataSet;
+				return DataSet.FormData;
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
-				return 0;
+				return new WebformData();
 			}
 		}
 

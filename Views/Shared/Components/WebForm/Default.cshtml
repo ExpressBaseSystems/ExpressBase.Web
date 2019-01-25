@@ -156,7 +156,7 @@
 
     let header = new EbHeader();
     header.insertButton('<button id="webformsave"  class="btn"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
-    header.insertButton('<button id="webformnew" class="btn"  onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-file-o" aria-hidden="true"></i></button>');
+    header.insertButton('<button id="webformnew" class="btn"  onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-plus" aria-hidden="true"></i></button>');
     header.insertButton(`<button id="webformdelete" class='btn' title='Delete'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformedit" class='btn' title='Edit'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
 
@@ -167,8 +167,9 @@
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _rowId = @Html.Raw(ViewBag.rowId);
     let _formData =  @Html.Raw(ViewBag.formData);
-    
+    let _mode =  "@Html.Raw(ViewBag.Mode)";
     function setHeader(reqstMode) {
+        _mode = reqstMode;// 
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
             header.showElement(["webformnew", "webformsave"]);
@@ -184,13 +185,9 @@
         }
         header.setName(_formObj.DisplayName);
         header.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-        $('title').text(_formObj.DisplayName);
+        $('title').text(_formObj.DisplayName + `(${reqstMode})`);
     }
-
-    if (_rowId > 0)
-        setHeader("Edit Mode");
-    else
-        setHeader("New Mode");
+    setHeader(_mode);
     
     //let _$saveBtn = $("#webformsave");
     //let FormMode = "New Mode";    
@@ -199,7 +196,7 @@
         formObj: _formObj,
         headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete"},
         formRefId: _formRefId,
-        //editModeObj: _editModeObj
+        mode: _mode,
         rowId: _rowId,
         formData: _formData
     });

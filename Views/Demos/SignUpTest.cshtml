@@ -12,12 +12,11 @@
     <link rel="stylesheet" type="text/css" href="~/css/style.css" />
     <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
 
-    <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbFileUploader.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbFupFormControl.css" />
     <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbFileUpload.css" />
 
     <script type="text/javascript" src="~/js/jquery.min.js"></script>
     <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="~/js/eb_extutils.js"></script>
     <script type="text/javascript" src="~/js/EbMsgBox.js"></script>
     <script type="text/javascript" src="~/js/EbLoader.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
@@ -25,27 +24,26 @@
     <script type="text/javascript" src="~/js/eb_common.js"></script>
     <script type="text/javascript" src="~/js/EbServerEvents/eventsource.min.js"></script>
     <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js"></script>
-    <script type="text/javascript" src="~/js/EbControls/EbFileUploader.js"></script>
+    <script type="text/javascript" src="~/js/EbControls/EbFupFormControl.js"></script>
     <script type="text/javascript" src="~/js/EbControls/EbFileUpload.js"></script>
+    <script type="text/javascript" src="~/js/EbControls/EbCropper.js"></script>
 </head>
 <body>
     @*<div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
-            <form action="../Ext/TenantExtSignup" method="post">
-                <div class="input-group">
-                    <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
-                    <span class="input-group-btn">
-                        <button type="submit" id="getstart" class="btn getstarted">Get Started </button>
-                    </span>
-                </div>
-            </form>
-        </div>*@
+         <form action="../Ext/TenantExtSignup" method="post">
+            <div class="input-group">
+                <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
+                <span class="input-group-btn">
+                    <button type="submit" id="getstart" class="btn getstarted">Get Started </button>
+                </span>
+            </div>
+         </form>
+      </div>*@
     <div id="div">
-
     </div>
 </body>
-
 <script>
-    var imgup = new EbFileUploader({
+    var imgup = new FUPFormControl({
         Type: "image",
         ShowGallery: true,
         Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],

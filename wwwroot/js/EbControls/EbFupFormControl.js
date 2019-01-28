@@ -1,4 +1,4 @@
-﻿class EbFileUploader {
+﻿class FUPFormControl {
     constructor(options) {
         //super();
         this.Options = $.extend({}, options);

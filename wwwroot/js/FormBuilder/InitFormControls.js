@@ -2,12 +2,32 @@
     if (option) {
         this.Bot = option.botBuilder;
         this.Wc = option.wc;
+        this.Cid = option.Cid;
+        this.Env = option.Env;
     }
 
     this.init = function (control, ctrlOpts) {
         if (this[control.ObjType] !== undefined) {
             this[control.ObjType](control, ctrlOpts);
         }
+    };
+
+    this.FileUploader = function (ctrl, ctrlOpts) {
+        var imgup = new FUPFormControl({
+            Type: this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString()),
+            ShowGallery: true,
+            Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],//ctrl.Categories.$values
+            Files: [],
+            TenantId: this.Cid,
+            SolutionId: this.Cid,
+            Container: ctrl.EbSid,
+            Multiple: ctrl.IsMultipleUpload,
+            ServerEventUrl: '',
+            EnableTag: ctrl.EnableTag,
+            EnableCrop: ctrl.EnableCrop,
+            MaxSize: ctrl.MaxFileSize,
+            CustomMenu: [{ name: "Delete", icon: "fa-trash" }]
+        });
     };
 
     this.Date = function (ctrl, ctrlOpts) {
@@ -18,10 +38,10 @@
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-                let fun = new Function("form","User", atob(ctrl.OnChange));
+            let fun = new Function("form", "User", atob(ctrl.OnChange));
             $input.MonthPicker({
-                OnAfterChooseMonth: fun.bind(this, formObject, userObject )
-                });
+                OnAfterChooseMonth: fun.bind(this, formObject, userObject)
+            });
         }
         else {
 
@@ -212,7 +232,7 @@
             Bot: this.Bot
         });
         //this.initCards($('#' + ctrl.Name));
-    };    
+    };
 
     this.ImageUploader = function (ctrl) {
         $('#' + ctrl.Name).off("change").on("change", function (input) {
@@ -335,4 +355,13 @@
         });
     };
 
-}
+    this.getKeyByValue = function (Obj, value) {
+        for (var prop in Obj) {
+            if (Obj.hasOwnProperty(prop)) {
+                if (Obj[prop] === value)
+                    return prop;
+            }
+        }
+    };
+
+};

@@ -1,84 +1,156 @@
-﻿var JsonWindow = function (option) {
-    this.JsonHtml = [];
-
+﻿var EbPrettyJson = function (option) {
     this.Option = $.extend({
         ContetEditable: [],
-        HideFields:[]
+        HideFields: []
     }, option);
 
-    this.getJsonWindow = function (_json_string) {
-        this.JsonHtml = [`<div class="prety_jsonWrpr">`];
-        let json = JSON.parse(_json_string);
-        if (Array.isArray(json)) {
-            this.drawArray(json)
+    this.build = function (_jsobj) {
+        this.JsonHtml = [];
+
+        this.JsonHtml.push(`<div class="prety_jsonWrpr">`);
+        if (Array.isArray(_jsobj)) {
+            this.Arrayflow(_jsobj);
         }
-        else if (typeof json === "object")
-            this.JsonHtml.push(`<div class="a_ob_o">{</div>`);
-        this.JsonHtml.push(`</div>`)
+        else if (_jsobj === null) {
+
+        }
+        else if (typeof _jsobj === 'object') {
+            this.objectFlow(_jsobj);
+        }
+        else {
+            this.PropFlow(_jsobj);
+        }
+
+        this.JsonHtml.push(`</div>`);
         return this.JsonHtml.join("");
     }
 
-    this.drawArray = function (json) {
-        this.JsonHtml.push(`<div class="a_o">[</div>`);
-        this.JsonHtml.push(`<ol class="a_o">`);
-        for (let i = 0; i < json.length; i++) {
-            if (Array.isArray(json[i])) {
-                this.drawArray(json[i]);
+    this.objectFlow = function (o) {
+        let last = Object.keys(o)[Object.keys(o).length - 1];
+        this.JsonHtml.push(`<div class="a_ob_o">{</div><ol class="a_o">`);
+        for (let key in o) {
+            if (Array.isArray(o[key])) {
+                this.JsonHtml.push(`<li><a lass="propkey"><span class="property">"${key}"</span> : <span class="array">[</span> </a><ul>`);
+                this.dArray(o[key]);
+                this.JsonHtml.push(`</ul> <span class="array">]</span></li>`);
             }
-            else if (typeof json[i] === "object") {
-                this.drawObj(json[i], (i === json.length - 1));
+            else if (o[key] === null) {
+
+            }
+            else if (typeof o[key] === "object") {
+                this.JsonHtml.push(`<li><a class="propkey"><span class="property">"${key}"</span> : <span class="object">{</span> </a><ul>`);
+                this.dObject(o[key]);;
+                this.JsonHtml.push(`</ul><span class="object">}</span></li>`);
+            }
+            else {
+                this.JsonHtml.push(this.dProp(key, o[key], (key === last)));
             }
         }
-        this.JsonHtml.push(`</ol>`);
-        this.JsonHtml.push(`<div class="a_c">]</div>`);
+        this.JsonHtml.push(`</ol><div class="a_ob_o">}</div>`);
+    };
+
+    this.Arrayflow = function (a) {
+        this.JsonHtml.push(`<div class="a_ob_o">[</div><ol class="a_o">`);
+        let cm = "";
+        for (let i = 0; i < a.length; i++) {
+            cm = (i === a.length - 1) ? "" : ",";
+            if (Array.isArray(a[i])) {
+                this.JsonHtml.push(`<li>
+                                    <a lass="propkey"><span class="array">[</span> </a>
+                                        <ul>`);
+                this.dArray(a[i]);
+                this.JsonHtml.push(`</ul><span class="array">]${cm}</span></li>`);
+            }
+            else if (a[i] === null) {
+
+            }
+            else if (typeof a[i] === "object") {
+                this.JsonHtml.push(`<li><a class="propkey"><span class="object">{</span></a><ul>`);
+                this.dObject(a[i]);
+                this.JsonHtml.push(`</ul><span class="object">}${cm}</span></li>`);
+            }
+            else {
+                this.JsonHtml.push(this.Propitem(a[i], (i === a.length - 1)));
+            }
+        }
+        this.JsonHtml.push(`</ol><div class="a_ob_o">]</div>`);
     }
 
-    this.drawObj = function (json, isLast) {
-        this.JsonHtml.push(`<li class="a_ob_o">{`);
-        this.loopObj(json);
-        this.JsonHtml.push(`}`);
-        if (!isLast)
-            this.JsonHtml.push(`<span class="comma">,</span>`);
-        this.JsonHtml.push(`</li>`);
-    };
+    this.dArray = function (ai) {
+        let cm = "";
+        for (let i = 0; i < ai.length; i++) {
+            cm = (i === ai.length - 1) ? "" : ",";
 
-    this.loopObj = function (json) {
-        this.JsonHtml.push(`<ul class="item">`);
-        let last = Object.keys(json)[Object.keys(json).length - 1];
-        for (let kvp in json) {
-            if (typeof json[kvp] === "string" || typeof json[kvp] === "number" || typeof json[kvp] === "boolean" || json[kvp] === null) {
-                this.JsonHtml.push(this.genJsonFjsObj(kvp, json[kvp], (kvp === last)));
+            if (Array.isArray(ai[i])) {
+                this.JsonHtml.push(`<li><a><span class="array">[</span></a><ul>`);
+                this.dArray(ai[i]);
+                this.JsonHtml.push(`</ul><span class="array">]${cm}</span></li>`);
             }
-            else if (typeof json[kvp] === "object") {
-                this.loopObj(json[kvp]);
+            else if (ai[i] === null) {
+
+            }
+            else if (typeof ai[i] === "object") {
+                this.JsonHtml.push(`<li><a><span class="object">{</span></a><ul>`);
+                this.dObject(ai[i]);
+                this.JsonHtml.push(`</ul><span class="object">}${cm}</span></li>`);
+            }
+            else {
+                this.JsonHtml.push(this.Propitem(ai[i], (i === ai.length - 1)));
             }
         }
-        this.JsonHtml.push(`</ul>`);
     };
 
-    this.genJsonFjsObj = function (k, v, isComa) {
+    this.dObject = function (o) {
+        let last = Object.keys(o)[Object.keys(o).length - 1];
+        let cm = "";
+        for (let key in o) {
+            cm = (key === last) ? "" : ",";
+            if (Array.isArray(o[key])) {
+                this.JsonHtml.push(`<li><a class="propkey"><span class="property">"${key}"</span> : <span class="array">[</span> </a><ul>`);
+                this.dArray(o[key]);
+                this.JsonHtml.push(`</ul><span class="array">]${cm}</span></li>`);
+            }
+            else if (o[key] === null) {
+                this.JsonHtml.push(this.dProp(key, o[key], (key === last)));
+            }
+            else if (typeof o[key] === "object") {
+                this.JsonHtml.push(`<li><a class="propkey"><span class="property">"${key}"</span> : <span class="object">{</span></a><ul>`);
+                this.dObject(o[key]);
+                this.JsonHtml.push(`</ul><span class="object">}${cm}</span></li>`);
+            }
+            else {
+                this.JsonHtml.push(this.dProp(key, o[key], (key === last)));
+            }
+        }
+    };
+
+    this.Propitem = function (p, isLast) {
+        let cm = isLast ? "" : ",";
+        if (p === null)
+            p = null;
+        else if (typeof p === "string")
+            p = `"${p}"`;
+        else if (typeof p === "number")
+            p = p;
+        return `<li class="ar_item">${p} ${cm}</li>`;
+    }
+
+    this.dProp = function (k, val, isLast) {
         let ce = (this.Option.ContetEditable.indexOf(k) >= 0) ? true : false;
-        let cma = (isComa) ? "" : '<span class="comma">,</span>';
-        let val = null;
-        if (v === null)
+        let hf = (this.Option.HideFields.indexOf(k) >= 0) ? "hide" : "show";
+        let cm = isLast ? "" : ",";
+        if (val === null)
             val = null;
-        else if (typeof v === "string")
-            val = `"${v}"`;
-        else if (typeof v === "number")
-            val = v;
-        if (this.Option.HideFields.indexOf(k) <= -1) {
-            return `<li class="wraper_line">
+        else if (typeof val === "string")
+            val = `"${val}"`;
+        else if (typeof val === "number")
+            val = val;
+
+        return `<li class="wraper_line ${hf}">
                     <span class="objkey">"${k}"</span>
                     <span class="colon">:</span>
                     <span class="objval" contenteditable="${ce}">${val}</span>
-                    ${cma}
+                    ${cm}
                 </li>`;
-        }
-        else
-            return null;
     }
-
-    this.getJson = function (id) {
-        return $(`#${id}`).text();
-    };
 };

@@ -48,7 +48,6 @@ namespace ExpressBase.Web.Controllers
             }
             else
                 resp = new ApiResponse { Message = ViewBag.Message };
-
             return resp;
         }
 

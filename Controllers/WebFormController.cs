@@ -40,7 +40,7 @@ namespace ExpressBase.Web.Controllers
                     
                     if (wfd.MultipleTables.Count == 0)
                     {
-                        ViewBag.rowId = -1;
+                        //ViewBag.rowId = -1;
                         ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_"," ");
                     }                       
                     else if (_temp.ValueTo > 0)

@@ -167,7 +167,10 @@
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _rowId = @Html.Raw(ViewBag.rowId);
     let _formData =  @Html.Raw(ViewBag.formData);
-    let _mode =  "@Html.Raw(ViewBag.Mode)";
+    let _mode = "@Html.Raw(ViewBag.Mode)";
+    let _cid = "@ViewBag.Cid";
+    let _env = "@ViewBag.Env";
+
     function setHeader(reqstMode) {
         _mode = reqstMode;// 
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
@@ -179,9 +182,13 @@
             header.showElement(["webformsave"]);
             header.hideElement(["webformnew", "webformedit", "webformdelete"]);
         }
-        else {
+        else if (reqstMode === "View Mode"){
             header.showElement(["webformnew", "webformedit", "webformdelete"]);
-            header.hideElement(["webformsave"]);
+            header.hideElement(["webformsave"]);            
+        }
+        else if (reqstMode === "Fail Mode") {
+            header.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete"]);
+            EbMessage("show", { Message: 'Data Not Found!', AutoHide: false, Background: '#aa0000' });
         }
         header.setName(_formObj.DisplayName);
         header.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
@@ -198,7 +205,9 @@
         formRefId: _formRefId,
         mode: _mode,
         rowId: _rowId,
-        formData: _formData
+        formData: _formData,
+        cid: _cid,
+        env: _env
     });
 
     //if (_editModeObj === "false") {

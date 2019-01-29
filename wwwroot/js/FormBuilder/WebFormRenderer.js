@@ -3,6 +3,8 @@
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
+    this.Env = option.env;
+    this.Cid = option.cid;
     this.initControls = new InitControls(this);
     //this.editModeObj = option.editModeObj;
     this.formRefId = option.formRefId || "";

@@ -298,6 +298,15 @@
     vertical-align: bottom;
 }
 
+.pow-center {
+    position: relative;
+    z-index: 1 !important;
+}
+
+[isrendermode="False"] .DDdiv {
+    display: none;
+}
+
 .DDdiv table.dataTable {
     font-size: 12px !important;
     margin-bottom: 0;
@@ -328,8 +337,8 @@
 }
 
 .searchable [type="search"] {
-	width: 90px !important;
-	min-width: 100%;
+    width: 90px !important;
+    min-width: 100%;
 }
 
 .DDdiv {

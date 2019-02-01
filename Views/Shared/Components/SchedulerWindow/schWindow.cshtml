@@ -1,5 +1,8 @@
 ﻿@{
     @using  ExpressBase.Common
+}
+@{
+
     var taskType = JobTypes.ReportTask;
 }
 <script type="text/javascript" src="~/src/jquery-cron-quartz.js"></script>
@@ -7,16 +10,16 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script type="text/javascript" src="~/js/scheduling.js"></script>
 <script>
     $(document).ready(function () {
         $('.non-rec').hide();
         $('#cron').cronBuilder({
             onChange: function (expression) {
                 $('#result').text(expression);
-                console.log(expression);
             }
         });
-
+     
         $('#datetimepicker').datetimepicker({
             onChangeDateTime: function (dp, $input) {
                 var expression = "0 "; //Seconds
@@ -27,65 +30,8 @@
                 expression = expression + " ? "; //Day - of - Week
                 expression = expression + dp.getFullYear(); //Year(optional field)
                 $('#result').text(expression);
-                console.log(expression);
             }
         });
-
-        $('#schedule').on('click', function () {
-            $.post("../Scheduler/Schedule", {
-                "name": $('#sch-name').val(),
-                "expression": $('#result').text(),
-                "objId": window.location.search.split("&")[0].split("=")[1],
-                "type": '@taskType',
-                "users": geUsers(),
-                "groups": geUserGroups()
-            }, function () {
-            }
-            );
-        });
-        $('#edit_sch').on('click', function () {
-            window.Schedule[0].Task.Name = $('#sch-name').val();
-            window.Schedule[0].Task.Expression = $('#result').text();
-            window.Schedule[0].Task.JobArgs.ToUserIds = geUsers();
-            window.Schedule[0].Task.JobArgs.ToUserGroupIds = geUserGroups();
-            $.post("../Scheduler/UpdateSchedule", {
-                "triggerkey": window.Schedule[0].TriggerKey,
-                "jobkey": window.Schedule[0].JobKey,
-                "task": window.Schedule[0].Task
-            }, function () {
-            }
-            );
-
-        });
-        $('#del_sch').on('click', function () {
-            $.post("../Scheduler/DeleteJob", {
-                "jobkey": window.Schedule[0].JobKey,
-                "id": window.Schedule[0].Id
-            },
-            function () {
-            });
-        });
-
-        function geUsers() {
-            var checkedValue = "";
-            var inputElements = $('.user:checked');
-            for (var i = 0; inputElements[i]; ++i) {
-                if (inputElements[i].checked) {
-                    checkedValue = checkedValue + "," + inputElements[i].value;
-                }
-            }
-            return checkedValue.substring(1, checkedValue.length);
-        }
-        function geUserGroups() {
-            var checkedValue =  "";
-            var inputElements = $('.usergrp:checked');
-            for (var i = 0; inputElements[i]; ++i) {
-                if (inputElements[i].checked) {
-                    checkedValue = checkedValue + "," + inputElements[i].value;
-                }
-            }
-            return checkedValue.substring(1, checkedValue.length);
-        }
 
         $('input[type=radio][name=sch-type]').change(function () {
             if (this.value === 'reccur') {
@@ -215,7 +161,9 @@
     </div>
 </div>
 
-
+<script>
+    var schedule = new scheduleO('@taskType');
+</script>
 <style>
     .scheduler {
         padding-bottom: 10px;

@@ -333,7 +333,7 @@
         $(el).find('.close').css("opacity", "0");
         if (source.id !== this.CE_all_ctrlsContId) {// target 2nd source
             if (this.editor === 7)
-                this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.id)), 1)[0];
+                this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.getAttribute("ebsid"))), 1)[0];
             else if (this.editor === 9 || this.editor === 8)
                 this.movingObj = this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1)[0];
             else if (this.editor === 24 || this.editor === 26)
@@ -870,7 +870,7 @@
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
         $e.css("background-color", "#b1bfc1").css("color", "#222");
         if (this.editor === 7) {
-            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", id);
+            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", $e.attr("ebsid"));
             if (!obj)
                 obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
         }
@@ -878,7 +878,7 @@
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
         }
         else if (this.editor === 22) {
-            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", id);
+            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", $e.attr("ebsid"));
         }
         if (!obj)
             console.error("Object " + obj);
@@ -895,7 +895,7 @@
         if ($items.length === 0)
             tempArr.push(0);
         $.each($items, function (i, el) {
-            let numStr = el.id.replace(/[^0-9]/g, '');
+            let numStr = el.getAttribute("ebsid").replace(/[^0-9]/g, '');
             numStr = numStr.substr(numStr.length - 3);
             let lastNum = parseInt(numStr) || 0;
             tempArr.push(lastNum);

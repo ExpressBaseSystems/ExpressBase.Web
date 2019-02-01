@@ -18,7 +18,7 @@
                 cache: false,
                 data: { "refid": o.Refid },
                 success: function (result) {
-                    this.Api.toggleReqWindow(result);
+                    this.Api.toggleReqWindow(JSON.parse(result), o.Refid);
                 }.bind(this)
             });
         }

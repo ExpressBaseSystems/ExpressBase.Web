@@ -1,76 +1,4 @@
-﻿//var JsonWindow = function () {
-//    this.JsonHtml = [];
-//    this.getJsonWindow = function (_json_string) {
-//        this.JsonHtml = [];
-//        let json = JSON.parse(_json_string);
-//        if (Array.isArray(json)) {
-//            this.drawArray(json)
-//        }
-//        else if (typeof json === "object")
-//            this.JsonHtml.push(`<div class="a_ob_o">{</div>`);
-//        return this.JsonHtml.join("");
-//    }
-
-//    this.drawArray = function (json) {
-//        this.JsonHtml.push(`<div class="a_o">[</div>`);
-//        this.JsonHtml.push(`<ol class="a_o">`);
-//        for (let i = 0; i < json.length; i++) {
-//            if (Array.isArray(json[i])) {
-
-//            }
-//            else if (typeof json[i] === "object") {
-//                this.drawObj(json[i], (i === json.length - 1));
-
-//            }
-//        }
-//        this.JsonHtml.push(`</ol>`);
-//        this.JsonHtml.push(`<div class="a_c">]</div>`);
-//    }
-
-//    this.drawObj = function (json, isLast) {
-//        this.JsonHtml.push(`<li class="a_ob_o">{`);
-//        this.loopObj(json);
-//        this.JsonHtml.push(`}`);
-//        if (!isLast)
-//            this.JsonHtml.push(`<span class="comma">,</span>`);
-//        this.JsonHtml.push(`</li>`);
-//    };
-
-//    this.loopObj = function (json) {
-//        this.JsonHtml.push(`<ul class="item">`);
-//        let last = Object.keys(json)[Object.keys(json).length - 1];
-//        for (let kvp in json) {
-//            if (typeof json[kvp] === "string" || typeof json[kvp] === "number" || typeof json[kvp] === "boolean" || json[kvp] === null) {
-//                this.JsonHtml.push(this.genJsonFjsObj(kvp, json[kvp], (kvp === last)));
-//            }
-//            else if (typeof json[kvp] === "object") {
-//                this.loopObj(json[kvp]);
-//            }
-//        }
-//        this.JsonHtml.push(`</ul>`);
-//    };
-
-//    this.genJsonFjsObj = function (k, v, isComa) {
-//        let ce = (k === "Value") ? true : false;
-//        let cma = (isComa) ? "" : '<span class="comma">,</span>';
-//        let val = null;
-//        if (v === null)
-//            val = null;
-//        else if (typeof v === "string")
-//            val = `"${v}"`;
-//        else if (typeof v === "number")
-//            val = v;
-
-//        return `<li class="wraper_line">
-//                    <span class="objkey">"${k}"</span>
-//                    <span class="colon">:</span>
-//                    <span class="objval" contenteditable="${ce}">${val}</span>
-//                    ${cma}
-//                </li>`;
-//    }
-//};
-
-function EB_Api_entry(option) {
+﻿function EB_Api_entry(option) {
     this.Config = $.extend({}, option);
     this.validate = function () {
         return true;
@@ -80,7 +8,7 @@ function EB_Api_entry(option) {
         window.Api = {};
         window.Api.Constants = {};
         window.Api.Creator = new EbApiBuild(this.Config);
-        window.Api.JsonWindow = new JsonWindow({ ContetEditable: ["Value"], HideFields: []});
+        window.Api.JsonWindow = new EbPrettyJson({ ContetEditable: ["Value"], HideFields: ["ValueTo"] });
         return window.Api.Creator;
     }
     else {
@@ -96,6 +24,7 @@ function EbApiBuild(config) {
     this.Lines = {};
     this.Procs = {};
     this.dropArea = "resource_Body_drparea";
+    this.FlagRun = false;
 
     this.pg = new Eb_PropertyGrid({
         id: "pgContainer_wrpr",
@@ -246,9 +175,10 @@ function EbApiBuild(config) {
         }
     }
 
-    this.toggleReqWindow = function (resp) {
+    this.toggleReqWindow = function (resp,ref) {
         $(`#Json_reqOrRespWrp`).show();
-        $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.getJsonWindow(resp));
+        $(`#Json_reqOrRespWrp`).attr("ref_id", ref);
+        $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.build(resp));
     };
 
     this.newApi = function () {
@@ -266,7 +196,71 @@ function EbApiBuild(config) {
         this.resetLinks();
     };
 
+    this.setBtns = function () {
+        $("#obj_icons").empty().append(`<button class='btn run' id='api_run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
+                                            <i class='fa fa-play' aria-hidden='true'></i>
+                                        </button>`);
+        $("#api_run").off("click").on("click", this.apiRun.bind(this));
+    };
+
+    this.apiRun = function (ev) {
+        this.FlagRun = true;
+        commonO.Save();
+    }
+
+    commonO.saveOrCommitSuccess = function (refid) {
+        var ref = null;
+        if (this.FlagRun) {
+            for (let i = 0; i < this.EbObject.Resources.$values.length; i++) {
+                let eb_type = this.EbObject.Resources.$values[i].$type.split(",")[0].split(".")[2];
+                if (eb_type === "EbSqlReader" || eb_type === "EbSqlFunc" || eb_type === "EbSqlWriter ") {
+                    ref = this.EbObject.Resources.$values[i].Refid;
+                    break;
+                }
+            }
+            if (ref) {
+                $.ajax({
+                    url: "../Dev/GetReq_respJson",
+                    type: "GET",
+                    cache: false,
+                    data: { "refid": ref },
+                    success: function (result) {
+                        this.toggleReqWindow(JSON.parse(result), ref);
+                        this.FlagRun = false;
+                    }.bind(this)
+                });
+            }
+        }
+    }.bind(this)
+
+    this.getApiResponse = function (ev) {
+        var ref = $(ev.target).closest('.Json_reqOrRespWrpr').attr("ref_id");
+        var name = this.EbObject.Name;
+        var ver = commonO.Current_obj.VersionNumber;
+        $.ajax({
+            url: "../Dev/GetApiResponse",
+            type: "GET",
+            cache: false,
+            data: {
+                "name": name,
+                "vers": ver,
+                "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text()
+            },
+            success: function (result) {
+                this.toggleRespWindow(JSON.parse(result), ref);
+                this.FlagRun = false;
+            }.bind(this)
+        });
+    };
+
+    this.toggleRespWindow = function (result) {
+        $(`#Json_reqOrRespWrp`).show();
+        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(window.Api.JsonWindow.build(result));
+    };
+
     this.start = function () {
+        this.setBtns();
+
         if (this.EditObj === null || this.EditObj === "undefined")
             this.newApi();
         else
@@ -277,6 +271,7 @@ function EbApiBuild(config) {
             handles: "n",
             minHeight: 50
         });
+        $(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
     };
 
     this.start();

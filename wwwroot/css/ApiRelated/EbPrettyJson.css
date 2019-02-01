@@ -17,3 +17,17 @@
     list-style: none;
     padding-left: 15px;
 }
+
+.array {
+    color: #bf2d2d;
+}
+
+.property {
+    color: #204a87 !important;
+}
+.show{
+    display:block;
+}
+.hide{
+    display:none;
+}

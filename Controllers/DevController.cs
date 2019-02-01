@@ -30,6 +30,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Web.BaseControllers;
 using System.Text.RegularExpressions;
 using ExpressBase.Common.Extensions;
+using ExpressBase.Common.Data;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -572,8 +573,26 @@ namespace ExpressBase.Web.Controllers
                 return JsonConvert.SerializeObject(ds.InputParams);
         }
 
-        public IActionResult ApiConsole()
+        [HttpGet]
+        public string GetApiResponse(string name,string vers,string param)
         {
+            ApiResponse resp = null;
+            List<Param> pr = JsonConvert.DeserializeObject<List<Param>>(param);
+            Dictionary<string, object> d = pr.Select(p => new { prop = p.Name,val = p.Value})
+                .ToDictionary(x=>x.prop,x=> x.val as object);
+
+                resp = this.ServiceClient.Get(new ApiRequest
+                {
+                    Name = name,
+                    Version = vers,
+                    Data = d
+                });
+
+            return JsonConvert.SerializeObject(resp);
+        }
+
+        public IActionResult ApiConsole()
+        { 
             //string _json = @"{'Name':'Form1','MasterTable':'dg3f','MultipleTables':{'dg3f':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'textbox0','Value':'abhilasha','Type':16,'AutoIncrement':false}]}],'dg3c':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'date0','Value':'2018-11-17','Type':5,'AutoIncrement':false},{'Name':'textbox1','Value':'pushpam','Type':16,'AutoIncrement':false}]}]}}";
             string _json = @"{
 'FormName':'Form1',

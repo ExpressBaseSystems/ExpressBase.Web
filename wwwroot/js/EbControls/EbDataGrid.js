@@ -34,10 +34,6 @@
         return !isEditing;
     };
 
-    this.isValid = function () {
-        return true;
-    };
-
     this.setEditModeRows = function (SingleTable) {
         this.addEditModeRows(SingleTable);
         if (this.ctrl.IsAddable)
@@ -45,8 +41,8 @@
     };
 
     this.addEditModeRows = function (SingleTable) {
-            $(`#${this.TableId} tbody`).empty();
-            this.resetBuffers();
+        $(`#${this.TableId} tbody`).empty();
+        this.resetBuffers();
         $.each(SingleTable, function (i, SingleRow) {
             let rowid = SingleRow.RowId;
             this.addRow(rowid, false);
@@ -119,7 +115,7 @@
             inpCtrl.ObjType = inpCtrlType.substr(2);
             inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
-            tr += `<td ctrltdidx='${i}'>
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                         <div class='tdtxt'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -132,8 +128,8 @@
                     <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
                 </td></tr>`
-            .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>": "")
-            .replace("@del-c@", !anyColEditable ? "del-c": "");
+            .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>" : "")
+            .replace("@del-c@", !anyColEditable ? "del-c" : "");
         return tr;
     };
 
@@ -142,8 +138,51 @@
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
         $(`#${this.TableId} tbody`).append($tr);
+        this.bindReq_Vali_UniqRow($tr);
         this.initRowCtrls(rowid);
     }.bind(this);
+
+    this.bindReq_Vali_UniqRow = function ($tr) {
+        let rowid = $tr.attr("rowid");
+        $.each(this.rowCtrls[rowid], function (i, Col) {
+            this.bindReq_Vali_UniqCtrl(Col);
+        }.bind(this));
+    };
+
+    this.bindReq_Vali_UniqCtrl = function (Col) {
+        let $ctrl = $(`#${Col.EbSid_CtxId}`);
+        if (Col.Required)
+            this.bindRequired($ctrl, Col);
+        if (Col.Unique)
+            this.bindUniqueCheck($ctrl, Col);
+        if (Col.Validators.$values.length > 0)
+            this.bindValidators($ctrl, Col);
+    };
+
+    this.bindRequired = function ($ctrl, control) {
+        $ctrl.on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
+    };
+
+    // checks a control value is emptyString
+    this.isRequiredOK = function (ctrl) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
+            this.addInvalidStyle(ctrl);
+            return false;
+        }
+        else {
+            this.removeInvalidStyle(ctrl);
+            return true;
+        }
+    };
+
+    this.addInvalidStyle = function (ctrl, msg, type) {
+        EbMakeInvalid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+    };
+
+    this.removeInvalidStyle = function (ctrl) {
+        EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
+    };
 
     this.initRowCtrls = function (rowid) {
         $.each(this.rowCtrls[rowid], function (i, inpCtrl) {
@@ -208,14 +247,33 @@
         this.spanToCtrl_row($tr);
     }.bind(this);
 
+    this.AllRequired_valid_Check = function (rowid) {//////
+        let required_valid_flag = true;
+        let $notOk1stCtrl = null;
+        $.each(this.rowCtrls[rowid], function (i, Col) {
+            let $ctrl = $("#" + Col.EbSid_CtxId);
+            if (!this.isRequiredOK(Col)) {
+                required_valid_flag = false;
+                if (!$notOk1stCtrl)
+                    $notOk1stCtrl = $ctrl;
+            }
+        }.bind(this));
+
+        if ($notOk1stCtrl)
+            $notOk1stCtrl.select();
+        return required_valid_flag;
+    };
+
     this.checkRow_click = function (e) {
         $td = $(e.target).closest("td");
-        $td.find(".check-row").hide();
-        $td.find(".del-row").show();
-        $td.find(".edit-row").show();
         let $tr = $td.closest("tr");
         $tr.attr("is-editing", "false");
         let rowid = $tr.attr("rowid");
+        if (!this.AllRequired_valid_Check(rowid))
+            return;
+        $td.find(".check-row").hide();
+        $td.find(".del-row").show();
+        $td.find(".edit-row").show();
         this.ctrlToSpan_row(rowid);
         if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
             this.addRow();

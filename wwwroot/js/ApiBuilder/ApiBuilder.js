@@ -175,9 +175,8 @@ function EbApiBuild(config) {
         }
     }
 
-    this.toggleReqWindow = function (resp,ref) {
+    this.toggleReqWindow = function (resp) {
         $(`#Json_reqOrRespWrp`).show();
-        $(`#Json_reqOrRespWrp`).attr("ref_id", ref);
         $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.build(resp));
     };
 
@@ -204,51 +203,51 @@ function EbApiBuild(config) {
     };
 
     this.apiRun = function (ev) {
-        this.FlagRun = true;
-        commonO.Save();
-    }
-
-    commonO.saveOrCommitSuccess = function (refid) {
-        var ref = null;
-        if (this.FlagRun) {
-            for (let i = 0; i < this.EbObject.Resources.$values.length; i++) {
-                let eb_type = this.EbObject.Resources.$values[i].$type.split(",")[0].split(".")[2];
-                if (eb_type === "EbSqlReader" || eb_type === "EbSqlFunc" || eb_type === "EbSqlWriter ") {
-                    ref = this.EbObject.Resources.$values[i].Refid;
-                    break;
+        let ref = null;
+        $(`#${this.dropArea}`).find(".apiPrcItem").each(function (i,o) {
+            if (["start_item", "end_item"].indexOf(o.id) < 0) {
+                let eb_type = $(o).attr("eb-type");
+                if (eb_type === "SqlReader" || eb_type === "SqlFunc" || eb_type === "SqlWriter ") {
+                    ref = this.Procs[o.id].Refid;
+                    return false;
                 }
             }
-            if (ref) {
-                $.ajax({
-                    url: "../Dev/GetReq_respJson",
-                    type: "GET",
-                    cache: false,
-                    data: { "refid": ref },
-                    success: function (result) {
-                        this.toggleReqWindow(JSON.parse(result), ref);
-                        this.FlagRun = false;
-                    }.bind(this)
-                });
-            }
+        }.bind(this));
+        if (ref) {
+            $.ajax({
+                url: "../Dev/GetReq_respJson",
+                type: "GET",
+                cache: false,
+                beforeSend: function () {
+                    $("#eb_common_loader").EbLoader("show");
+                },
+                data: { "refid": ref },
+                success: function (result) {
+                    this.toggleReqWindow(JSON.parse(result));
+                    $("#eb_common_loader").EbLoader("hide");
+                }.bind(this)
+            });
         }
-    }.bind(this)
+        else
+            EbMessage("show", { Message: "refid must be set", Background: "red" });
+    }
 
     this.getApiResponse = function (ev) {
-        var ref = $(ev.target).closest('.Json_reqOrRespWrpr').attr("ref_id");
-        var name = this.EbObject.Name;
-        var ver = commonO.Current_obj.VersionNumber;
         $.ajax({
             url: "../Dev/GetApiResponse",
             type: "GET",
             cache: false,
+            beforeSend: function () {
+                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#JsonResp_CMW', Style: {"top":"0","left":"0"} } });
+            },
             data: {
-                "name": name,
-                "vers": ver,
+                "name": this.EbObject.Name,
+                "vers": commonO.getVersion(),
                 "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text()
             },
             success: function (result) {
-                this.toggleRespWindow(JSON.parse(result), ref);
-                this.FlagRun = false;
+                this.toggleRespWindow(JSON.parse(result));
+                $("#eb_common_loader").EbLoader("hide");
             }.bind(this)
         });
     };
@@ -260,7 +259,6 @@ function EbApiBuild(config) {
 
     this.start = function () {
         this.setBtns();
-
         if (this.EditObj === null || this.EditObj === "undefined")
             this.newApi();
         else

@@ -159,7 +159,6 @@ END;`;
             this.isPw = true;
             this.getInputParams();
             commonO.Save();
-            $(`#paramsModal-toggle`).modal("show");
         }
     };
 
@@ -172,14 +171,19 @@ END;`;
             beforeSend: function () { }
         }).done(function (data) {
             this.InputParams = JSON.parse(data);
-            this.configParamWindo();
-
-            if (this.ObjectType === 5) {
-                this.AppendInpuParams();
+            if (this.InputParams.length > 0) {
+                $(`#paramsModal-toggle`).modal("show");
+                this.configParamWindo();
+                if (this.ObjectType === 5)
+                    this.AppendInpuParams();
+                else {
+                    this.AppendInpuParams();
+                    this.setValues();
+                }
             }
             else {
-                this.AppendInpuParams();
-                this.setValues();
+                this.isPw = false;
+                this.RunDs();
             }
         }.bind(this));
     };

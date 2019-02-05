@@ -492,5 +492,10 @@
         this.alertMsg = "Success";
         this.ShowMessage();
     };
+
+    this.getVersion = function () {
+        return $("#versionNav li.active a").attr("data-vernum");
+    };
+
     this.init();
 };

@@ -56,10 +56,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void UpdateSchedule(EbTask task, string triggerkey, string jobkey)
+        public void UpdateSchedule(EbTask task, string triggerkey, string jobkey, int id)
         {
-            var ds = this.ServiceClient.Post(new RescheduleRequest { Task = task, TriggerKey = triggerkey, JobKey = jobkey });
-
+            var ds = this.ServiceClient.Post(new RescheduleMQRequest { Task = task, TriggerKey = triggerkey, JobKey = jobkey, Id = id });
         }
       
          [HttpPost]

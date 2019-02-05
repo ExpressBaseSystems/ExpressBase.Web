@@ -1,75 +1,74 @@
 ﻿@using ExpressBase.Scheduler.Jobs;
+@using  ExpressBase.Common;
 @using Newtonsoft.Json;
 @{
-
     int counter = 0;
 }
-<script type="text/javascript" src="~/js/scheduling.js"></script>
 
-    <script>
-        window.Schedule = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(ViewBag.schedules))');        
-    </script>
+<script>
+        window.Schedule = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(ViewBag.schedules))');
+</script>
 
-    <div id="schedulerlistmodal" class="schedulerlistmodal modal fade" role="dialog">
-        <div class="modal-dialog">
+<div id="schedulerlistmodal" class="schedulerlistmodal modal fade" role="dialog">
+    <div class="modal-dialog">
 
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Schedules</h4>
-                </div>
-                <div class="modal-body">
-                    <button type="button" class="btn btn-success pull-right" id="new_sch">+</button>
-                    @{ List<EbSchedule> Schedules = ViewBag.schedules;
-                        <div class="container-fluid">
-                            <div class="schedules_list table-responsive table-light ">
-                                <table class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            @*<th scope="col">Id</th>*@
-@*<th scope="col">JobKey</th>*@
-@*<th scope="col">TriggerKey</th>*@
-@*<th scope="col">JobType</th>*@
-<th scope="col">Name</th>
-<th scope="col">Expression</th>
-<th scope="col">CreatedAt</th>
-<th scope="col">CreatedBy</th>
-<th scope="col">Status</th>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Schedules</h4>
+            </div>
+            <div class="modal-body">
+                <button type="button" class="btn btn-success pull-right" id="new_sch">+</button>
+                @{ List<EbSchedule> Schedules = ViewBag.schedules;
+                    <div class="container-fluid">
+                        <div class="schedules_list table-responsive table-light ">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        @*<th scope="col">Id</th>*@
+                                        @*<th scope="col">JobKey</th>*@
+                                        @*<th scope="col">TriggerKey</th>*@
+                                        @*<th scope="col">JobType</th>*@
+                                        <th scope="col">No.</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Expression</th>
+                                        <th scope="col">CreatedAt</th>
+                                        <th scope="col">CreatedBy</th>
+                                        <th scope="col">Status</th>
                                     </tr>
                                 </thead>
-<tbody>
-    @foreach (EbSchedule sch in Schedules)
-    {
-        <tr id="tr_@counter" class="sch_r" slno="@counter">
-            @*<td dcope="row" class="id">@sch.Id</td>
-                <td class="jobkey">@sch.JobKey</td>
-                <td class="triggerkey">@sch.TriggerKey</td>
-                <td class="jobtype">@sch.Task.JobType</td>*@
-            <td class="Name">@sch.Name</td>
-            <td class="expression">@sch.Task.Expression</td>
-            <td class="createdat">@sch.CreatedAt</td>
-            <td class="createdby">@sch.CreatedBy</td>
-            <td class="status">@sch.Status</td>
-        </tr>
-        counter++;
-    }
-</tbody>
+                                <tbody>
+                                    @foreach (EbSchedule sch in Schedules)
+                                    {
+                                        <tr id="tr_@counter" class="sch_r" slno="@counter">
+                                            @*<td dcope="row" class="id">@sch.Id</td>
+                                                <td class="jobkey">@sch.JobKey</td>
+                                                <td class="triggerkey">@sch.TriggerKey</td>
+                                                <td class="jobtype">@sch.Task.JobType</td>*@
+                                            <td class="">@(counter + 1)</td>
+                                            <td class="Name">@sch.Name</td>
+                                            <td class="expression">@sch.Task.Expression</td>
+                                            <td class="createdat">@sch.CreatedAt</td>
+                                            <td class="createdby">@sch.CreatedBy</td>
+                                            <td class="status">@sch.Status</td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                </tbody>
                             </table>
                         </div>
                     </div>
                 }
             </div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
 
     </div>
 </div>
 
-<script>
-    var schedule = new scheduleO();
-</script>
+
 <style>
     .schedules_list {
         padding-top: 50px;

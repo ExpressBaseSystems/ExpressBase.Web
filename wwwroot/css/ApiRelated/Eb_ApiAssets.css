@@ -163,6 +163,7 @@
                 padding: 5px 10px;
                 overflow: auto;
                 height: calc(100% - 23px);
+                position:relative;
             }
         .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ol {
             padding-left: 15px;
@@ -178,22 +179,14 @@
 .a_ob_o, .a_ob_c{
     color: #729fcf;
 }*/
-.Json_reqOrRespWrpr .regRespWHead {
-    position: absolute;
-    background: #316396;
-    color: white;
-    padding: 2px 30px 2px 15px;
-    top: -25px;
-    font-size: 14px;
-    text-align: center;
-}
-.regRespWHead::after{
-    content: "";
-    width: 0;
-    height: 0;
-    border-top: 27px solid white;
-    border-left: 19px solid transparent;
-    position: absolute;
-    top: 0;
-    right: 0px;
-}
+    .Json_reqOrRespWrpr .regRespWHead {
+        position: absolute;
+        background: #316396;
+        color: white;
+        padding: 2px 30px 2px 15px;
+        top: -25px;
+        font-size: 14px;
+        text-align: center;
+        -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+        clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    }

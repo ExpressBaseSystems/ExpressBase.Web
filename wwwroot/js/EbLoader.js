@@ -23,6 +23,12 @@
 
         if (!el.hasClass('eb-loader-prcbar')) {
             el.addClass('eb-loader-prcbar');
+        }
+        else {
+            showPrc();
+        }
+
+        if (action === "show") {
             if (!$.isEmptyObject(settings.maskItem)) {
                 maskItem.append(`<div class="loader_mask_EB" id="${el.attr("id")}loader_mask_item"></div>`);
                 appendMaskStyle();
@@ -32,9 +38,6 @@
                                     <div></div><div></div><div></div><div></div><div>
                                     </div><div></div><div></div></div>`);
             }
-        }
-        else {
-            showPrc();
         }
 
         function appendMaskStyle() {
@@ -53,7 +56,7 @@
         //hide function for processbar
         function hidePrc() {
             el.hide();
-            $(`#${el.attr("id")}loader_mask_item`).hide();
+            $(`#${el.attr("id")}loader_mask_item`).remove();
         };
 
         if (operation === "show")

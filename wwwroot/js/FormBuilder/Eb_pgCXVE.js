@@ -938,7 +938,7 @@
         else
             this.setColTiles();
         this.onAddToCE(this.PGobj.CurProp, this.PGobj.PropsObj[this.PGobj.CurProp].$values, obj);
-        $("#" + obj.name).focus();
+        $("#" + obj.Name).focus();
     };
 
     this.changeCopyToRef = function () {

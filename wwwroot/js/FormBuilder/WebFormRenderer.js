@@ -11,6 +11,7 @@
     this.rowId = option.rowId;
     this.mode = option.mode;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
+    this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
     this.isEditMode = this.rowId > 0;
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
@@ -66,6 +67,8 @@
             let opt = {};
             if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
+            else if (Obj.ObjType === "FileUploader")
+                opt.FormDataExtended = this.FormDataExtended;
             this.initControls.init(Obj, opt);
             if (Obj.Required)
                 this.bindRequired(Obj);
@@ -214,7 +217,7 @@
                 }
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }
-            else {
+            else if(obj.ObjType !== "FileUploader") {
                 FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
             }
         }.bind(this));
@@ -232,6 +235,29 @@
         return FormTables;
     };
 
+    this.getExtendedTables = function () {
+        let ExtendedTables = {};
+        $.each(uploadedFileRefList, function (key, values) {
+            ExtendedTables[key] = [];
+            //ExtendedTables[key] = [{
+            //    IsUpdate: false,
+            //    Columns: []
+            //}];
+            for (let i = 0; i < values.length; i++) {
+                let SingleColumn = {};
+                SingleColumn.Name = key;
+                SingleColumn.Value = values[i];
+                SingleColumn.Type = EbEnums.EbDbTypes.Decimal;
+                ExtendedTables[key].push({
+                    IsUpdate: false,
+                    Columns: [SingleColumn]
+                });
+                //ExtendedTables[key][0].Columns.push(SingleColumn);
+            }
+        });
+        return ExtendedTables;
+    };
+
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
         WebformData.MasterTable = this.FormObj.TableName;
@@ -240,6 +266,7 @@
         let gridTables = this.getDG_FVWTObjColl();
 
         WebformData.MultipleTables = $.extend(formTables, gridTables);
+        WebformData.ExtendedTables = this.getExtendedTables();
         return JSON.stringify(WebformData);
     };
 

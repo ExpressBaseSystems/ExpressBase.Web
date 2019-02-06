@@ -13,11 +13,15 @@
     };
 
     this.FileUploader = function (ctrl, ctrlOpts) {
-        var imgup = new FUPFormControl({
+        let files = [];
+        if (ctrlOpts.FormDataExtended !== null) {
+            files = JSON.parse(ctrlOpts.FormDataExtended[ctrl.EbSid][0].Columns[0].Value);
+        }
+        let imgup = new FUPFormControl({
             Type: this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString()),
             ShowGallery: true,
             Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],//ctrl.Categories.$values
-            Files: [],
+            Files: files,
             TenantId: this.Cid,
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
@@ -28,6 +32,68 @@
             MaxSize: ctrl.MaxFileSize,
             CustomMenu: [{ name: "Delete", icon: "fa-trash" }]
         });
+
+        uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
+        
+        imgup.uploadSuccess = function (fileid) {
+            if (uploadedFileRefList[ctrl.Name].indexOf(fileid) === -1)
+                uploadedFileRefList[ctrl.Name].push(fileid);
+        };
+
+        imgup.windowClose = function () {
+            if (uploadedFileRefList[ctrl.Name].length > 0)
+                EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+        };
+
+        imgup.customTrigger = function (name, refids) {
+            if (name === "Set as DP") {
+                EbMessage("show", { Message: 'Not Implemented', AutoHide: true, Background: '#0000aa' });
+            }
+            else if (name === "Delete") {
+                if (name === "Delete") {
+                    EbDialog("show",
+                        {
+                            Message: "Are you sure? Changes Affect only if Form is Saved.",
+                            Buttons: {
+                                "Yes": {
+                                    Background: "green",
+                                    Align: "left",
+                                    FontColor: "white;"
+                                },
+                                "No": {
+                                    Background: "violet",
+                                    Align: "right",
+                                    FontColor: "white;"
+                                }
+                            },
+                            CallBack: function (name) {
+                                if (name === "Yes") {
+                                    let initLen = uploadedFileRefList[ctrl.Name].length;
+                                    for (let i = 0; i < refids.length; i++) {
+                                        let index = uploadedFileRefList[ctrl.Name].indexOf(refids[i]);
+                                        if (index !== -1) {
+                                            uploadedFileRefList[ctrl.Name].splice(index, 1);                                            
+                                        }
+                                    }
+                                    if (initLen > uploadedFileRefList[ctrl.Name].length) {
+                                        imgup.deleteFromGallery(refids);
+                                        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
+                                    }
+                                }
+                            }
+                        });
+                }
+
+            }
+        };
+
+    };
+
+    this.getInitFileIds = function (files) {
+        let ids = [];
+        for (let i = 0; i < files.length; i++)
+            ids.push(files[i].FileRefId);
+        return ids;
     };
 
     this.Date = function (ctrl, ctrlOpts) {

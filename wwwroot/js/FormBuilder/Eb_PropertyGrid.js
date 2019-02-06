@@ -150,7 +150,7 @@
                 //PreviewWraper: "#divAllImg1",
                 //Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],
                 //FilesUrl: "/FilesOf/@ViewBag.AccId",
-                Console:this.wc,
+                Console: this.wc,
                 Toggle: "#pgCXbtn_" + elemId,
                 TenantId: this.cid,
                 SolutionId: "@ViewBag.SolnId",
@@ -159,7 +159,7 @@
                 ServerEventUrl: 'https://se.eb-test.xyz',
                 EnableTag: false,
                 EnableCrop: false,
-                MaxSize:  2,//in MegaBytes
+                MaxSize: 2,//in MegaBytes
                 //Context: "dp",//if single and crop
                 //ResizeViewPort: true //if single and crop
             });
@@ -436,12 +436,19 @@
     //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) { ////////// need optimization
         this.getvaluesFromPG();
+        let subTypeOf = null;
         if (e) {
-            this.CurProp = $(e.target).closest("tr").attr("name").slice(0, -2);
+            let $e = $(e.target);
+            this.CurProp = $e.closest("tr").attr("name").slice(0, -2);
+            subTypeOf = $e.closest("tr").attr("subtype-of");
         }
         //let res = this.getvaluesFromPG();
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
+
         this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
+        if (subTypeOf) {
+            this.CurMeta = getObjByval(this.Metas, "name", subTypeOf);
+        }
         if (this.CurProp === "Name" || this.CurProp === "name") {
             this.updateDD(this.PropsObj);
             let $colTile = "";
@@ -450,7 +457,7 @@
             if ($colTile.length)
                 $colTile.attr("id", this.PropsObj[this.CurProp]).text(this.PropsObj[this.CurProp]);
         }
-        if (typeof EbOnChangeUIfns != "undefined" && this.CurMeta.UIChangefn) {
+        if (typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
             let NS1 = this.CurMeta.UIChangefn.split(".")[0];
             let NS2 = this.CurMeta.UIChangefn.split(".")[1];
             EbOnChangeUIfns[NS1][NS2](this.PropsObj.EbSid, this.PropsObj);

@@ -30,10 +30,7 @@
                     let NS1 = NSS.split(".")[0];
                     let NS2 = NSS.split(".")[1];
                     try {
-                        if (cObj.ObjType === "TableLayout" || cObj.ObjType === "GroupBox")
-                            EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
-                        else
-                            EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.EbSid_CtxId, cObj);
+                        EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
                     }
                     catch (e) {
                         alert(e.message);
@@ -45,6 +42,7 @@
 
     this.init = function () {
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
+        $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));

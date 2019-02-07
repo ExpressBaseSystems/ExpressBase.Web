@@ -171,6 +171,9 @@
     let _cid = "@ViewBag.Cid";
     let _env = "@ViewBag.Env";
 
+    //to store refids of uploaded files via all fileuploader ctrls
+    let uploadedFileRefList = {};
+
     function setHeader(reqstMode) {
         _mode = reqstMode;// 
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"

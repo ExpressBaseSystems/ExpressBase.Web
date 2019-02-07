@@ -14,13 +14,18 @@
 
     this.FileUploader = function (ctrl, ctrlOpts) {
         let files = [];
+        let catTitle = [];
+        $.each(ctrl.Categories.$values, function (i, obj) {
+            catTitle.push(obj.CategoryTitle);
+        }.bind(catTitle));
+
         if (ctrlOpts.FormDataExtended !== null) {
             files = JSON.parse(ctrlOpts.FormDataExtended[ctrl.EbSid][0].Columns[0].Value);
         }
         let imgup = new FUPFormControl({
             Type: this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString()),
             ShowGallery: true,
-            Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],//ctrl.Categories.$values
+            Categories: catTitle,
             Files: files,
             TenantId: this.Cid,
             SolutionId: this.Cid,
@@ -112,7 +117,7 @@
         else {
 
             if (typeof ctrl === typeof "")
-                ctrl = { name: ctrl, ebDateType: 5 }
+                ctrl = { name: ctrl, ebDateType: 5 };
             var settings = { timepicker: false };
 
             if (ctrl.EbDateType === 5) {

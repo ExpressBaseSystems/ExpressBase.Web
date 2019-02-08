@@ -412,23 +412,22 @@ function getSingleColumn(obj) {
 //    }
 //});
 function Test() {
-    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU0ODY1OTA1MywiZXhwIjoxNTQ4NjU5MTQzLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.ByFBmvHXyvBZzGzaEJ1R3_YF-jvBkFIpRvfTX4o4bKQU61_Ax_CpygNAQx1YRRCRCAo94vhA9qHbchgNjFF2MyE5m2-8PvWLH66jhl6fycvl_fA7x5NWSJmFas5OPW_b5_QYRDNaFZja1_K_jKmnsSyZyq79GF7gfD9bruCLcB8`
-    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NDg2NTM1NzYsImV4cCI6MTU0ODczOTk3Nn0.NUYT91MJ-fTZsAUXswbDAz14zv9fmBLPI68uuSbEW-r-eOkVG_txCgU-9aRPuUybKpB1A-5sUntybhnRd2aFKOhAtBbcVhiW_YSQe8r5yZusA4MMpCZ3WzQ7KasPevI84whZ6IYtMm2GUGYvEgZK9mg3kgqWMhhdYsW3s3NRoEc`
+    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU0OTQzMjM4NywiZXhwIjoxNTQ5NDMyNDc3LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.U6Oq_5l9jIs2VBaOYAF3R242fsjFTbIhcYoDdkQ-gP9LMDKJ8mr579fRs0lfEULtUSxICJRGxoLRLjDAD7RHdId34yW4qpOCGMttKypk_gxgpxCl85g3M9xIYdu6atRrYmig2iKY-mZm-kse7VFEYQIz94A9yOsdKoi6bVmyRjY`;
+    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NDk0MzIzODcsImV4cCI6MTU0OTUxODc4N30.OSOgnAjau3THUZ8UXSSDHE0DYAuHT0sNP3r3Yyy2xQ8KwRvqgVg_gSagbWS4qLMdTV2ij75QwmytwlNO3l5eoUbzNWtS4G8OVXnAFyV6zOyEuvlDRCNF8nEr6bEcJz6INK-vYLiPSSVFvdLWGRK6uCxnXtLclCeW8isANfme2oI`;
     $.ajax({
-        url: "../api/api_salesmanwsalereport/1.0.0",
+        url: "../api/api_getparties/1.0.0",
         type: "POST",
         cache: false,
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             xhr.setRequestHeader("bToken", b);
             xhr.setRequestHeader("rToken", r);
         },
         data: {
-            "trndate_from": '2015-04-07',
-            "trndate_to":'2015-10-07',
-            "salesman_id":89
+            "routem_xid": '16',
+            "ids": '12345'
         },
         success: function (result) {
-          
+
         }.bind(this)
     });
 }

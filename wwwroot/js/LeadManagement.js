@@ -90,6 +90,7 @@
     this.$SrgyNurse = $("#selSrgyNurse");   
     this.$SrgyCmpltry = $("#selSrgyCmpltry");
     this.$SrgyMethod = $("#selSrgyMethod");
+    this.$SrgyComnt = $("#txaSrgyComnt");
     this.$SrgySave = $("#btnSrgySave");
     //ATTACH
     //this.$FirstImgPage = $("#btnFirstImgPage");
@@ -723,6 +724,7 @@
                 Nurse: this.$SrgyNurse.val(),
                 Complimentary: this.$SrgyCmpltry.val(),
                 Method: this.$SrgyMethod.val(),
+                Comment: this.$SrgyComnt.val(),
                 Account_Code: this.AccId
             };
             $.ajax({
@@ -941,7 +943,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
             this.metadata = ["9", "Id", "Date", "Total_Amount", "Amount_Received", "Balance_Amount", "Cash_Paid", "Payment_Mode", "Narration", "Created_By", "_billing"];
         }
         else if (this.ParentDivId === "divSrgy") {
-            this.metadata = ["13", "Id", "Created_Date", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Complimentary", "Method", "Created_By", "_surgery"];
+            this.metadata = ["13", "Id", "Date", "Branch", "Extract_By", "Implant_By", "Consent_By", "Anaesthesia_By", "Post_Brief_By", "Nurse", "Complimentary", "Method", "Comment", "Created_By", "_surgery"];
         }
         this.setTable();
 

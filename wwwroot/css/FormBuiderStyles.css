@@ -514,8 +514,9 @@
 }
 
 .req-cont {
-    float: right;
     font-size: 12px;
+    position: absolute;
+    right: 1px;
     margin-top: 3px;
     animation-duration: 0.3s;
 }

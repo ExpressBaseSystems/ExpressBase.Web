@@ -28,22 +28,52 @@ namespace ExpressBase.Web.Controllers
     {
         public ApiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-        [HttpGet]
-        [HttpPost]
-        [Microsoft.AspNetCore.Mvc.Route("/api/{_name}/{_version}")]
-        public ApiResponse Api(string _name, string _version)
+        [HttpGet("/api/{_name}/{_version}")]
+        public ApiResponse Api(string _name,string _version)
         {
             ApiResponse resp = null;
-            Dictionary<string, object> d = null;
-            if (this.HttpContext.Request.Method == "POST")
-                d = this.F2D(this.HttpContext.Request.Form as FormCollection);
+
+            Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
+                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+
             if (ViewBag.IsValid)
             {
                 resp = this.ServiceClient.Get(new ApiRequest
                 {
                     Name = _name,
                     Version = _version,
-                    Data = d
+                    Data = parameters
+                });
+            }
+            else
+                resp = new ApiResponse { Message = ViewBag.Message };
+            return resp;
+        }
+
+
+        [HttpPost("/api/{_name}/{_version}")]
+        public ApiResponse Api(string _name,string _version, [FromForm]Dictionary<string, string> form)
+        {
+            ApiResponse resp = null;
+            Dictionary<string, object> parameters = null;
+            if (form.Count<=0)
+            {
+                parameters = HttpContext.Request.Query.Keys.Cast<string>()
+                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+            }
+            else
+            {
+                parameters = form.Keys.Cast<string>()
+                .ToDictionary(k => k, v => form[v] as object);
+            }
+
+            if (ViewBag.IsValid)
+            {
+                resp = this.ServiceClient.Get(new ApiRequest
+                {
+                    Name = _name,
+                    Version = _version,
+                    Data = parameters
                 });
             }
             else

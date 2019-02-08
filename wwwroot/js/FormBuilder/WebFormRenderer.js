@@ -1,4 +1,5 @@
 ﻿const WebFormRender = function (option) {
+    jilla = 0;//==========================================================
     this.FormObj = option.formObj;
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
@@ -11,6 +12,7 @@
     this.rowId = option.rowId;
     this.mode = option.mode;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
+    this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
     this.isEditMode = this.rowId > 0;
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
@@ -29,10 +31,7 @@
                     let NS1 = NSS.split(".")[0];
                     let NS2 = NSS.split(".")[1];
                     try {
-                        if (cObj.ObjType === "TableLayout" || cObj.ObjType === "GroupBox")
-                            EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
-                        else
-                            EbOnChangeUIfns[NS1][NS2]("cont_" + cObj.EbSid_CtxId, cObj);
+                        EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
                     }
                     catch (e) {
                         alert(e.message);
@@ -44,6 +43,7 @@
 
     this.init = function () {
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
+        $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
@@ -66,6 +66,8 @@
             let opt = {};
             if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
+            else if (Obj.ObjType === "FileUploader")
+                opt.FormDataExtended = this.FormDataExtended;
             this.initControls.init(Obj, opt);
             if (Obj.Required)
                 this.bindRequired(Obj);
@@ -119,12 +121,29 @@
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
+    this.l = function (p1) {//==========================================================
+        $.each(p1, function (i, row) {
+            $.each(row.Columns, function (j, dm) {
+                if (j === 0) {
+                    //this.initializer.Vobj.valueMembers.push(dm.Value);
+                    return true;
+                }
+                this.initializer.Vobj.displayMembers[dm.Name].push(dm.Value);
+            }.bind(this));
+        }.bind(this));
+    };
+
     this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
         $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
             if (SingleColumn.Name === "id")
                 return true;
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
-            ctrl.setValue(SingleColumn.Value);
+            if (ctrl.ObjType === "PowerSelect") {
+                ctrl.setDisplayMember = this.l;
+                ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
+            }
+            else
+                ctrl.setValue(SingleColumn.Value);
         }.bind(this));
     };
 
@@ -156,6 +175,9 @@
     };
 
     this.setEditModeCtrls = function () {
+        jilla++;
+        if (jilla == 2)
+            return;
         let FormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames(FormData);
         //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
@@ -214,7 +236,7 @@
                 }
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }
-            else {
+            else if (obj.ObjType !== "FileUploader") {
                 FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
             }
         }.bind(this));
@@ -232,6 +254,29 @@
         return FormTables;
     };
 
+    this.getExtendedTables = function () {
+        let ExtendedTables = {};
+        $.each(uploadedFileRefList, function (key, values) {
+            ExtendedTables[key] = [];
+            //ExtendedTables[key] = [{
+            //    IsUpdate: false,
+            //    Columns: []
+            //}];
+            for (let i = 0; i < values.length; i++) {
+                let SingleColumn = {};
+                SingleColumn.Name = key;
+                SingleColumn.Value = values[i];
+                SingleColumn.Type = EbEnums.EbDbTypes.Decimal;
+                ExtendedTables[key].push({
+                    IsUpdate: false,
+                    Columns: [SingleColumn]
+                });
+                //ExtendedTables[key][0].Columns.push(SingleColumn);
+            }
+        });
+        return ExtendedTables;
+    };
+
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
         WebformData.MasterTable = this.FormObj.TableName;
@@ -240,6 +285,7 @@
         let gridTables = this.getDG_FVWTObjColl();
 
         WebformData.MultipleTables = $.extend(formTables, gridTables);
+        WebformData.ExtendedTables = this.getExtendedTables();
         return JSON.stringify(WebformData);
     };
 

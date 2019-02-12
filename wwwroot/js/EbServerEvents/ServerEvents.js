@@ -32,6 +32,10 @@
         //console.log("stopped listening");
     };
 
+    this.onExportToExcel = function (m, e) {
+        alert("cfhlgahg;kjd;ljgljgh';kG");
+    };
+
     this.ES = new EventSourcePolyfill(this.Url, {
         headers: {
             'Authorization': 'Bearer ' + this.rTok,
@@ -71,7 +75,8 @@
             onLeave: this.onLeave.bind(this),
             onHeartbeat: this.onHeartbeat.bind(this),
             onUploadSuccess: this.onUploaded.bind(this),
-            stopListening: this.stopListening.bind(this)
+            stopListening: this.stopListening.bind(this),
+            onExportToExcel: this.onExportToExcel.bind(this)
         }
     });
 };

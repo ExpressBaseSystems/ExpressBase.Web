@@ -68,6 +68,7 @@ namespace ExpressBase.Web.Controllers
                             dsobj = EbSerializers.Json_Deserialize(element.Json_lc);
                             ViewBag.dsObj = dsobj;
                             dsobj.Status = element.Status;
+                            dsobj.RefId = element.RefId;
                             dsobj.VersionNumber = element.VersionNumber;
                             dsobj.DisplayName = element.DisplayName;
                             ViewBag.Workingcopy = element.Wc_All;
@@ -78,6 +79,7 @@ namespace ExpressBase.Web.Controllers
                             dsobj = EbSerializers.Json_Deserialize(element.Json_wc);
                             ViewBag.dsObj = dsobj;
                             dsobj.Status = element.Status;
+                            dsobj.RefId = element.RefId;
                             dsobj.VersionNumber = element.VersionNumber;
                             dsobj.DisplayName = element.DisplayName;
                             ViewBag.Workingcopy = element.Wc_All;

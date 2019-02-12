@@ -48,7 +48,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(rowData)) : null;
+    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob()) : null;
     this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(atob(filterValues)) : [];
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
@@ -2930,8 +2930,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $('#' + this.tableId + '_wrapper').find('.buttons-print')[0].click();
     };
 
+
     this.ExportToExcel = function (e) {
-        $('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
+        //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
+        var ob = new Object();
+        ob.DataVizObjString = JSON.stringify(this.EbObject);
+        ob.Params = this.filterValues;
+        ob.TFilters = this.columnSearch;
+        this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.xyz', Channels: ["ExportToExcel"] });
+        this.ss.onExportToExcel = function () {
+            alert("success");
+        };
+        $.ajax({
+            type: "POST",
+            url: "../DV/exportToexcel",
+            data: { req: ob },
+            success: function (result) {
+                alert(result);
+            }
+        });
+
     };
 
     this.ExportToCsv = function (e) {

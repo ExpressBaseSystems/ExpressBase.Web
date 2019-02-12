@@ -98,26 +98,26 @@
         this.initTiles();
         if (this.whichMode === 2)
             this.setReadOnly();
-        this.DpImageUpload();
+        //this.DpImageUpload();
     };
 
 
-    this.DpImageUpload = function () {
-        var logoCrp = new cropfy({
-            Container: 'Add_User_Dp',
-            Toggle: '#profimage',
-            isUpload: true,  //upload to cloud
-            enableSE: true, //enable server event
-            Browse: true,  //browse image
-            Result: 'base64',
-            Type: 'dp',
-            //Tid: _tid, //if type is logo
-            Preview: "#imgprofimage"
-        });
-        logoCrp.getFile = function (file) {
+    //this.DpImageUpload = function () {
+    //    var logoCrp = new cropfy({
+    //        Container: 'Add_User_Dp',
+    //        Toggle: '#profimage',
+    //        isUpload: true,  //upload to cloud
+    //        enableSE: true, //enable server event
+    //        Browse: true,  //browse image
+    //        Result: 'base64',
+    //        Type: 'dp',
+    //        //Tid: _tid, //if type is logo
+    //        Preview: "#imgprofimage"
+    //    });
+    //    logoCrp.getFile = function (file) {
 
-        }.bind(this);
-    };
+    //    }.bind(this);
+    //};
 
 
     this.onKeyUpPwdInModal = function (pwdThis) {

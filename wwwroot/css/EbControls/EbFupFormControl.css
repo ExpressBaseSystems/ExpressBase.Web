@@ -1,0 +1,13 @@
+﻿.FileUploadGallery {
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    padding: 10px;
+}
+    .FileUploadGallery .FUP_Head_W {
+        width: 100%;
+        padding: 5px 0;
+    }
+.FUP_Bdy_WZ {
+    width: 100%;
+}

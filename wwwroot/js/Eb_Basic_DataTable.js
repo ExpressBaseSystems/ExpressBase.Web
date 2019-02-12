@@ -44,6 +44,7 @@ var EbBasicDataTable = function (Option) {
 
     this.orderColl = [];
     this.eb_agginfo = [];
+    this.Aggregateflag = false;
 
     this.init = function () {
         if(this.EbObject === null)
@@ -116,7 +117,7 @@ var EbBasicDataTable = function (Option) {
 
         this.table_jQO.append($(this.getFooterFromSettingsTbl()));
 
-        this.table_jQO.children("tfoot").hide();
+        //this.table_jQO.children("tfoot").hide();
 
         this.table_jQO.on('processing.dt', function (e, settings, processing) {
             if (processing == true) {
@@ -279,37 +280,6 @@ var EbBasicDataTable = function (Option) {
         return dq;
     };
 
-    //this.getFilterValues = function () {
-    //    this.filterChanged = false;
-    //    var fltr_collection = [];
-    //    var FdCont = ".fd";
-    //    var paramstxt = $(FdCont + " #all_control_names").val();//$('#hiddenparams').val().trim();datefrom,dateto
-    //    if (paramstxt != undefined) {
-    //        var params = paramstxt.split(',');
-    //        if (params.length > 0) {
-    //            $.each(params, function (i, id) {
-    //                var v = null;
-    //                var dtype = $(FdCont + ' #' + id).attr('data-ebtype');
-    //                if (dtype === '6')
-    //                    v = $(FdCont + ' #' + id).val().substring(0, 10);
-    //                else if (dtype === '3')
-    //                    v = $(FdCont).children().find("[name=" + id + "]:checked").val();
-    //                else {
-    //                    v = $(FdCont + ' #' + id).val();
-    //                    if (dtype === '16' && !(isNaN(v))) {
-    //                        v = parseInt(v);
-    //                        dtype = 8;
-    //                    }
-    //                }
-
-    //                if (v !== "" || v !== null)
-    //                    fltr_collection.push(new fltr_obj(dtype, id, v));
-    //            });
-    //        }
-    //    }
-    //    return fltr_collection;
-    //};
-
     this.filterDisplay = function () {
         if ($("#sub_window_" + this.tableId).find(".dataTables_scroll").children().hasClass("filter_Display")) {
             $(".filter_Display").empty();
@@ -359,7 +329,8 @@ var EbBasicDataTable = function (Option) {
         if (this.login == "uc") {
             dvcontainerObj.currentObj.data = dd;
             this.MainData = dd;
-        }        
+        }
+        this.data = dd.data;
         return dd.data;
     };
 
@@ -411,7 +382,7 @@ var EbBasicDataTable = function (Option) {
 
     this.getAgginfo_inner = function (_ls, i, col) {
         if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double"))) && col.name !== "serial")
-            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces));
+            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces,col.data));
     };
 
     this.getFooterFromSettingsTbl = function () {
@@ -520,6 +491,10 @@ var EbBasicDataTable = function (Option) {
         //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
         if (!this.headerDisplay)
             $(".Eb-ctrlContainer .dataTables_scrollHead").hide();
+        if (this.data.length > 7 && this.Aggregateflag) {
+            $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
+            $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "140px", "important");
+        }
     }
 
     this.contextMenu = function () {
@@ -725,12 +700,10 @@ var EbBasicDataTable = function (Option) {
                     }
                 });
             }
-
-            if (!aggFlag)
-                $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
+            if (!aggFlag ||  this.data.length === 0) {
+                $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
+            }
         }
-        if (pos === 1)
-            $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ')').hide();
         var j = 0;
         $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(' + pos + ') th').each(function (idx) {
             if (lfoot !== null) {
@@ -760,18 +733,19 @@ var EbBasicDataTable = function (Option) {
             j++;
         });
 
-        //this.summarize2();
+        this.summarize2();
     };
 
     this.GetAggregateControls = function (footer_id, zidx) {
         var ScrollY = this.ebSettings.scrollY;
         var ResArray = [];
         var tableId = this.tableId;
+        var api = $("#" + this.tableId).DataTable();
         //$.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
         if (this.Api !== null)
             $.each(this.Api.settings().init().aoColumns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
         else
-            $.each(this.ebSettings.Columns.$values, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
+            $.each(api.settings().init().aoColumns, this.GetAggregateControls_inner.bind(this, ResArray, footer_id, zidx));
         return ResArray;
     };
 
@@ -780,12 +754,13 @@ var EbBasicDataTable = function (Option) {
         if (col.bVisible) {
             //(col.Type ==parseInt( gettypefromString("Int32")) || col.Type ==parseInt( gettypefromString("Decimal")) || col.type ==parseInt( gettypefromString("Int64")) || col.Type ==parseInt( gettypefromString("Double"))) && col.name !== "serial"
             if (col.Aggregate) {
+                this.Aggregateflag = true;
                 var footer_select_id = this.tableId + "_" + col.name + "_ftr_sel" + footer_id;
                 var fselect_class = this.tableId + "_fselect";
                 var data_colum = "data-column=" + col.name;
                 var data_table = "data-table=" + this.tableId;
                 var footer_txt = this.tableId + "_" + col.name + "_ftr_txt" + footer_id;
-                var data_decip = "data-decip=" + this.Api.settings().init().aoColumns[i].DecimalPlaces;
+                var data_decip = "data-decip=" + col.DecimalPlaces;
 
                 _ls = "<div class='input-group input-group-sm'>" +
                     "<div class='input-group-btn dropup'>" +
@@ -806,16 +781,20 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.summarize2 = function () {
-        var api = this.Api;
+        var api = null;
+        if (this.Api === null)
+            api = $("#" + this.tableId).DataTable();
+        else
+            api = this.Api;
         var tableId = this.tableId;
         var scrollY = this.ebSettings.scrollY;
         var p;
         var ftrtxt;
         $.each(this.eb_agginfo, function (index, agginfo) {
             if (agginfo.colname) {
-                p = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.name + '_ftr_sel0').text().trim();
-                ftrtxt = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.name + '_ftr_txt0';
-                var col = api.column(agginfo.name + ':name');
+                p = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                ftrtxt = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                var col = api.column(agginfo.colname + ':name');
 
                 var summary_val = 0;
                 if (p === '∑')
@@ -823,7 +802,7 @@ var EbBasicDataTable = function (Option) {
                 if (p === 'x̄') {
                     summary_val = col.data().average();
                 }
-                $(ftrtxt).val(summary_val.toFixed(agginfo.DecimalPlaces));
+                $(ftrtxt).val(summary_val.toFixed(agginfo.deci_val));
             }
         });
     };
@@ -898,7 +877,7 @@ var EbBasicDataTable = function (Option) {
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $("#clearfilterbtn_" + this.tableId).off("click").on("click", this.clearFilter.bind(this));
-        $("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
+        //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
         $(".columnMarker_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $('[data-toggle="tooltip"]').tooltip({
             placement: 'bottom'
@@ -1283,6 +1262,29 @@ var EbBasicDataTable = function (Option) {
         e.stopPropagation();
     };
 
+    this.arrangeFooterWidth = function () {
+        var lfoot = $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper table');
+        var rfoot = $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper table');
+        var scrollfoot = $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner table');
+
+        if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0) {
+            if (this.ebSettings.LeftFixedColumn > 0) {
+                for (var j = 0; j < this.ebSettings.LeftFixedColumn; j++) {
+                    $(lfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j).css("width"));
+                }
+            }
+
+            if (this.ebSettings.RightFixedColumn > 0) {
+                var start = scrollfoot.find("tr").eq(0).children().length - this.ebSettings.RightFixedColumn;
+                for (var j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
+                    $(rfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j + start).css("width"));
+                }
+            }
+        }
+
+        $("#" + this.tableId + " thead tr:eq(1) .eb_finput").parent().remove();
+    };
+
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         if (this.FlagPresentId) {
             this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
@@ -1315,14 +1317,7 @@ var EbBasicDataTable = function (Option) {
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
         }
     };
-
-    this.showOrHideAggrControl = function (e) {
-        //if (this.ebSettings.scrollY !== 0)
-        $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(0)').toggle();
-        //else
-        //    $('#' + this.tableId + '_wrapper .dataTables_scrollFootInner tfoot tr:eq(1)').toggle();
-        this.Api.columns.adjust();
-    };
+    
 
     this.link2NewTable = function (e) {
         var cData;

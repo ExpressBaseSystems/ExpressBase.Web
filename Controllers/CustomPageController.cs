@@ -48,7 +48,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.DistrictList = fr.DistrictList;
 			ViewBag.SourceCategoryList = fr.SourceCategoryList;
 			ViewBag.SubCategoryList = fr.SubCategoryList;
-			ViewBag.StatusList = fr.StatusList;
+			ViewBag.StatusDict = fr.StatusDict;
 			ViewBag.ServiceList = fr.ServiceList;
 
             //ViewBag.ImageIdList = fr.ImageIdList;

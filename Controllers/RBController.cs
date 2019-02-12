@@ -9,15 +9,12 @@ using ServiceStack.Redis;
 using ExpressBase.Common;
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
-using ExpressBase.Objects.ReportRelated;
 using System.Reflection;
 using System.Data;
 using ExpressBase.Web.BaseControllers;
 using Newtonsoft.Json;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
-
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
 {

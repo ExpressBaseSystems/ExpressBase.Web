@@ -459,6 +459,16 @@
     height: 100%;
 }
 
+#pgWraper > div.pgCXEditor-bg > div > div.modal-header > h4 > div {
+    width: 200px !important;
+}
+
+    #pgWraper > div.pgCXEditor-bg > div > div.modal-header > h4 > div > button {
+        padding: 3px 4px;
+        border: none;
+        border-radius: 1px;
+    }
+
 
 .sub-controls-DD-cont .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
     width: 205px;
@@ -521,7 +531,7 @@
     float: right;
 }
 
-[pg-editor-type='8']  .colTile .coltile-delete {
+[pg-editor-type='8'] .colTile .coltile-delete {
     display: none !important;
 }
 

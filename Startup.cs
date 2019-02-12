@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http.Features;
 using ServiceStack;
 using ServiceStack.Redis;
 using Stripe;
@@ -74,7 +75,13 @@ namespace ExpressBase.Web2
 				options.ForwardedForHeaderName = "Eb-X-Forwarded-For";
 			});
 
-			services.AddSingleton<AreaRouter>();
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueCountLimit = 200; // 200 items max
+                options.ValueLengthLimit = 1024 * 1024 * 100; // 100MB max len form data
+            });
+
+            services.AddSingleton<AreaRouter>();
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			// Added - uses IOptions<T> for your settings.
 			services.AddOptions();

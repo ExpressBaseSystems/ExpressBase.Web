@@ -2747,16 +2747,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.rowgroupFilter = [];
         var rows = this.Api.rows(idx).nodes();
         var cData;
+        var colindex = -1;
         this.isContextual = true;
         if ($(e.target).closest("a").attr("data-latlong") !== undefined)
             cData = $(e.target).closest("a").attr("data-latlong");
         else if ($(e.target).closest("a").attr("data-inline") !== undefined) {
             cData = $(e.target).closest("a").attr("data-data");
             this.inline = true;
-            var colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+            colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
-        else
+        else {
             cData = $(e.target).text();
+            colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        }
         this.linkDV = $(e.target).closest("a").attr("data-link");
         var idx = this.Api.row($(e.target).parent().parent()).index();
         if (typeof (idx) !== "undefined")
@@ -2765,8 +2768,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else {//incomplete...
             this.rowData = [];
         }
-
-        this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata());
+        var x = this.getStaticParameter(colindex);
+        this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
 
         if ($(e.target).parent("b").attr("data-rowgroup") !== undefined) {
 
@@ -2876,6 +2879,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.scrollHeight = "200px";
             o.dvObject = Dvobj;
             o.data = result.formattedData;
+            o.keys = false;
             this.datatable = new EbBasicDataTable(o);
             if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
                 $(".inlinetable").css("width", $(window).width() - 115);
@@ -2913,6 +2917,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         dq.Length = 500;
         dq.DataVizObjString = JSON.stringify(Dvobj);
         return dq;
+    };
+
+    this.getStaticParameter = function (index) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.data == index });
+        var array = [];
+        if (temp[0].StaticParameters.$values.length > 0) {
+            $.each(temp[0].StaticParameters.$values, function (i, obj) {
+                array.push(new fltr_obj(obj.Type, obj.Name, obj.Value));
+            });
+        }
+        return array;
     };
 
     this.deleteTab = function (e) {

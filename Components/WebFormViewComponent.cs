@@ -31,17 +31,22 @@ namespace ExpressBase.Web.Components
             string refid = arr[0];
             string Locale = arr[1];
 
-            EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-
-            EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);// form object without localization
+            EbWebForm WebForm = this.Redis.Get<EbWebForm>(refid);
+            if(WebForm == null)
+            {
+                EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+                WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);// form object without localization
+                this.Redis.Set<EbWebForm>(refid, WebForm);
+            }            
             WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             if (WebForm != null)
             {
-
-                string[] Keys = EbControlContainer.GetKeys(WebForm);
-                Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = Locale }).Dict;
-
-                EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
+                //************Localization - Feature Disabled Temporarily************
+                //string[] Keys = EbControlContainer.GetKeys(WebForm);
+                //Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = Locale }).Dict;
+                //EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
+                EbWebForm WebForm_L = WebForm;
+                //*******************************************************************
 
                 foreach (EbControl control in WebForm_L.Controls.FlattenEbControls())
                 {

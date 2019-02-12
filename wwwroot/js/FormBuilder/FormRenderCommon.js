@@ -1,6 +1,6 @@
 ﻿const FormRenderCommon = function (options) {
     this.FO = options.FO;
-    this.$submitButton = options.submitButtonHtml
+    this.$submitButton = options.submitButtonHtml;
     this.AllRequired_valid_Check = function () {
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
@@ -15,16 +15,7 @@
 
         if ($notOk1stCtrl)
             $notOk1stCtrl.select();
-
-        // isDGsValid
-        let isDGsValid = true;
-        if (this.FO.DGs) {
-            $.each(this.FO.DGs, function (i, DG) {
-                if (DG.isValid() === false)
-                    isDGsValid = false;
-            });
-        }
-        return required_valid_flag && isDGsValid;
+        return required_valid_flag;
     };
 
     // check all validations in a control
@@ -62,12 +53,14 @@
     // checks a control value is emptyString
     this.isRequiredOK = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if ($ctrl.length !== 0 && ctrl.Required && isNaNOrEmpty(ctrl.getValue())) {
+        if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
             this.addInvalidStyle(ctrl);
             return false;
         }
-        else
+        else {
+            this.removeInvalidStyle(ctrl);
             return true;
+        }
     };
 
     this.addInvalidStyle = function (ctrl, msg, type) {

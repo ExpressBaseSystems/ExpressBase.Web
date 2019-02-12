@@ -285,7 +285,7 @@ function getFlatContControls(formObj) {
 
     RecurFlatContControls(formObj, coll);
     return coll;
-};
+}
 
 
 function getInnerFlatContControls(formObj) {
@@ -293,7 +293,7 @@ function getInnerFlatContControls(formObj) {
 
     RecurFlatContControls(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatContControls(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -302,13 +302,13 @@ function RecurFlatContControls(src_obj, dest_coll) {
             RecurFlatContControls(obj, dest_coll);
         }
     });
-};
+}
 
 function getFlatCtrlObjs(formObj) {
     let coll = [];
     RecurFlatCtrlObjs(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatCtrlObjs(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -319,14 +319,14 @@ function RecurFlatCtrlObjs(src_obj, dest_coll) {
         else
             dest_coll.push(obj);
     });
-};
+}
 
 
 function getFlatControls(formObj) {
     let coll = [];
     RecurFlatControls(formObj, coll);
     return coll;
-};
+}
 
 function RecurFlatControls(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
@@ -335,7 +335,7 @@ function RecurFlatControls(src_obj, dest_coll) {
             getFlatControls(obj, dest_coll);
         }
     });
-};
+}
 
 function getValsFromForm(formObj) {
     let fltr_collection = [];
@@ -356,9 +356,9 @@ function getFlatObjOfType(ContObj, type) {
     $.each(flat, function (i, ctrl) {
         if (ctrl.ObjType === type)
             ctrls.push(ctrl);
-    })
+    });
     return ctrls;
-};
+}
 
 function getValsForViz(formObj) {
     let fltr_collection = [];
@@ -411,3 +411,23 @@ function getSingleColumn(obj) {
 //        _z = val;
 //    }
 //});
+function Test() {
+    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU0OTQzMjM4NywiZXhwIjoxNTQ5NDMyNDc3LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.U6Oq_5l9jIs2VBaOYAF3R242fsjFTbIhcYoDdkQ-gP9LMDKJ8mr579fRs0lfEULtUSxICJRGxoLRLjDAD7RHdId34yW4qpOCGMttKypk_gxgpxCl85g3M9xIYdu6atRrYmig2iKY-mZm-kse7VFEYQIz94A9yOsdKoi6bVmyRjY`;
+    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NDk0MzIzODcsImV4cCI6MTU0OTUxODc4N30.OSOgnAjau3THUZ8UXSSDHE0DYAuHT0sNP3r3Yyy2xQ8KwRvqgVg_gSagbWS4qLMdTV2ij75QwmytwlNO3l5eoUbzNWtS4G8OVXnAFyV6zOyEuvlDRCNF8nEr6bEcJz6INK-vYLiPSSVFvdLWGRK6uCxnXtLclCeW8isANfme2oI`;
+    $.ajax({
+        url: "../api/api_getparties/1.0.0",
+        type: "POST",
+        cache: false,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("bToken", b);
+            xhr.setRequestHeader("rToken", r);
+        },
+        data: {
+            "routem_xid": '16',
+            "ids": '12345'
+        },
+        success: function (result) {
+
+        }.bind(this)
+    });
+}

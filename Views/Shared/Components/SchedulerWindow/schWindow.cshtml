@@ -1,0 +1,265 @@
+﻿@{
+    @using  ExpressBase.Common
+}
+@{
+
+    var taskType = JobTypes.ReportTask;
+}
+<script type="text/javascript" src="~/src/jquery-cron-quartz.js"></script>
+<link rel="stylesheet" type="text/css" href="~/src/jquery-cron-quartz.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script type="text/javascript" src="~/js/scheduling.js"></script>
+<script>
+    $(document).ready(function () {
+        window.EbCron = {};
+        $('.non-rec').hide();
+        $('#cron').cronBuilder({
+            onChange: function (expression) {
+                $('#result').text(expression);
+            }
+        });
+
+        $('#datetimepicker').datetimepicker({
+            format: 'm/d/Y H:i ',
+            onChangeDateTime: function (dp, $input) {
+                var expression = "0 "; //Seconds
+                expression = expression + dp.getMinutes() + " "; //Minutes
+                expression = expression + dp.getHours() + " "; //Hours
+                expression = expression + dp.getDate() + " "; //Day - of - Month
+                expression = expression + parseInt(dp.getMonth() + 1) + " "; //Month
+                expression = expression + " ? "; //Day - of - Week
+                expression = expression + dp.getFullYear(); //Year(optional field)
+                $('#result').text(expression);
+                EbCron = {
+                    Type: 'nonreccur',
+                    DatTimeestring: dp
+                };
+
+            }
+        });
+
+        $('input[type=radio][name=sch-type]').change(function () {
+            if (this.value === 'reccur') {
+                $('.recur').show();
+                $('.non-rec').hide();
+            }
+            else if (this.value === 'nonreccur') {
+                $('.recur').hide();
+                $('.non-rec').show();
+            }
+        });
+    });
+</script>
+<div>
+    @await Component.InvokeAsync("SchedulerListing", new { objid = Convert.ToInt32(ViewBag.Obj_id) })
+</div>
+<div class="modal SchedulerModal fade" id="SchedulerModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Configure Schedule</h4>
+            </div>
+            <div class="modal-body">
+                <div class="scheduler col-md-6">
+                    <div>
+                        <label class="form-check-label">Name</label>
+                        <input type="text" class="sch-name form-control" id="sch-name">
+                    </div>
+
+                    <div id="result" style="display: none;"></div>@*expression*@
+
+                    <div class="row">
+                        <label class="form-check-label col-md-12 top-pad">
+                            Schedule Type
+                        </label>
+                        <div class="form-check form-check-inline col-md-4">
+                            <input class="form-check-input" type="radio" name="sch-type" id="sch-type1" value="reccur" checked>
+                            <label class="" for="sch-type1">
+                                Recurring
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline col-md-4">
+                            <input class="form-check-input" type="radio" name="sch-type" id="sch-type2" value="nonreccur">
+                            <label class="form-check-label" for="sch-type2">
+                                Non Recurring
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="recur col-md-12">
+                            <div id="cron" class="cron-builder"></div>
+                        </div>
+
+                        <div class="non-rec col-md-5">
+                            <label class="form-check-label" for="">
+                                Select Time
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                <input id="datetimepicker" type="text" class="form-control" placeholder="Date Time">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 top-pad">
+                        <label class="form-check-label row">
+                            Delivery Mechanism
+                        </label>
+                        <div class="row">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="delivery" id="delivery1" value="email" checked>
+                                Email
+                            </div>
+                            <div class="form-check disabled">
+                                <input class="form-check-input" type="radio" name="delivery" id="delivery2" value="sms" disabled>
+                                Sms
+                            </div>
+                            <div class="form-check disabled">
+                                <input class="form-check-input" type="radio" name="delivery" id="delivery3" value="slack" disabled>
+                                Slack
+                            </div>
+                            <div class="form-check disabled">
+                                <input class="form-check-input" type="radio" name="delivery" id="delivery4" value="noti" disabled>
+                                Notifications
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-check-label col-md-12">
+                        Deliver To
+                    </label>
+
+
+                    <div class="col-md-6">
+                        <label class="form-check-label usr">
+                            Users
+                        </label>
+                        <div class="user-common">
+                            @{
+                                Dictionary<int, string> Users = ViewBag.users;
+                                foreach (KeyValuePair<int, string> user in Users)
+                                {
+                                    <div class="form-check form-check-inline user-line">
+                                        <input class="form-check-input user" type="checkbox" id="user+@user.Key" value="@user.Key">
+                                        <label class="form-check-label" for="inlineCheckbox1">@user.Value</label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-check-label usr">
+                            UserGroups
+                        </label>
+                        <div class="user-common">
+                            @{ Dictionary<int, string> UserGroups = ViewBag.usergroups;
+                                foreach (KeyValuePair<int, string> userg in UserGroups)
+                                { <div class="form-check form-check-inline user-line">
+                                        <input class="form-check-input usergrp" type="checkbox" id="usergrp+@userg.Key" value="@userg.Key">
+                                        <label class="form-check-label" for="inlineCheckbox1">@userg.Value</label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="schedule" class="btn btn-success" data-dismiss="modal">Schedule</button>
+                <button type="button" id="edit_sch" class="btn btn-success" data-dismiss="modal">Apply Changes</button>
+                <button type="button" id="del_sch" class="btn btn-danger" data-dismiss="modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var schedule = new scheduleO('@taskType');
+</script>
+<style>
+    .scheduler {
+        padding-bottom: 10px;
+    }
+
+
+    .cron-period-select {
+        background-color: white;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    #cron select {
+        width: 25%;
+    }
+    .top-pad {
+        padding-top: 4%;
+    }
+    select {
+        width: 11%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    .SchedulerModal .modal-dialog {
+        width: 1100px;
+        margin-top: 75px;
+    }
+
+    .SchedulerModal .modal-body {
+        height: calc(100vh - 300px);
+        overflow-y: auto;
+    }
+
+    .non-rec {
+        padding-bottom: 15px;
+        padding-left: 2%;
+        /*height: 190px;*/
+    }
+
+    .del-to {
+        margin-top: 15px;
+    }
+
+    .recur {
+        /*height: 190px;*/
+    }
+
+    .user-common {
+        height: calc(100vh - 400px);
+        overflow: auto;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .usr {
+        background-color: #e6e6e6;
+        box-shadow: 0 2px 3px 0 #0000003b;
+        padding: 6px;
+        width: 256px;
+        text-align: center;
+    }
+
+    .user-line {
+        padding: 5px;
+    }
+
+        .user-line:hover {
+            background-color: #e6e6e6;
+        }
+</style>

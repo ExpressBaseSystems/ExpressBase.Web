@@ -28,13 +28,16 @@
     }
 
     this.initFilterDialogCtrls = function () {
+        $('.selectpicker').selectpicker();
         JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
             let opt = {};
             if (cObj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getFormVals;
-            else if (cObj.ObjType === "Date")
+            else if (cObj.ObjType === "Date") {
                 opt.formObject = this.formObject;
+                opt.userObject = userObj;
+            }
 
             this.initControls.init(cObj, opt);
         }.bind(this));
@@ -85,7 +88,7 @@
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
             //creating onChangeExeFuncs and binding to dom elements
             if (cObj.OnChange && cObj.OnChange !== '') {
-                this.onChangeExeFuncs[cObj.Name] = new Function("form", atob(cObj.OnChange));
+                this.onChangeExeFuncs[cObj.Name] = new Function("form","User", atob(cObj.OnChange));
                 if (cObj.ObjType === 'TextBox' || cObj.ObjType === 'Date') {
                     this.onChangeExeFlag = true;
                     $("body #" + cObj.EbSid_CtxId).on("change", this.ctrlValueChanged.bind(this, cObj.Name));
@@ -113,7 +116,7 @@
     }
 
     this.ctrlValueChanged = function (name) {
-        this.onChangeExeFuncs[name](this.formObject);
+        this.onChangeExeFuncs[name](this.formObject, userObj);
     }
 
     this.initialLoad = function () {

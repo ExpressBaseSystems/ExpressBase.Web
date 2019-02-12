@@ -1,76 +1,4 @@
-﻿var JsonWindow = function () {
-    this.JsonHtml = [];
-    this.getJsonWindow = function (_json_string) {
-        this.JsonHtml = [];
-        let json = JSON.parse(_json_string);
-        if (Array.isArray(json)) {
-            this.drawArray(json)
-        }
-        else if (typeof json === "object")
-            this.JsonHtml.push(`<div class="a_ob_o">{</div>`);
-        return this.JsonHtml.join("");
-    }
-
-    this.drawArray = function (json) {
-        this.JsonHtml.push(`<div class="a_o">[</div>`);
-        this.JsonHtml.push(`<ol class="a_o">`);
-        for (let i = 0; i < json.length; i++) {
-            if (Array.isArray(json[i])) {
-
-            }
-            else if (typeof json[i] === "object") {
-                this.drawObj(json[i], (i === json.length - 1));
-
-            }
-        }
-        this.JsonHtml.push(`</ol>`);
-        this.JsonHtml.push(`<div class="a_c">]</div>`);
-    }
-
-    this.drawObj = function (json, isLast) {
-        this.JsonHtml.push(`<li class="a_ob_o">{`);
-        this.loopObj(json);
-        this.JsonHtml.push(`}`);
-        if (!isLast)
-            this.JsonHtml.push(`<span class="comma">,</span>`);
-        this.JsonHtml.push(`</li>`);
-    };
-
-    this.loopObj = function (json) {
-        this.JsonHtml.push(`<ul class="item">`);
-        let last = Object.keys(json)[Object.keys(json).length - 1];
-        for (let kvp in json) {
-            if (typeof json[kvp] === "string" || typeof json[kvp] === "number" || typeof json[kvp] === "boolean" || json[kvp] === null) {
-                this.JsonHtml.push(this.genJsonFjsObj(kvp, json[kvp], (kvp === last)));
-            }
-            else if (typeof json[kvp] === "object") {
-                this.loopObj(json[kvp]);
-            }
-        }
-        this.JsonHtml.push(`</ul>`);
-    };
-
-    this.genJsonFjsObj = function (k, v, isComa) {
-        let ce = (k === "Value") ? true : false;
-        let cma = (isComa) ? "" : '<span class="comma">,</span>';
-        let val = null;
-        if (v === null)
-            val = null;
-        else if (typeof v === "string")
-            val = `"${v}"`;
-        else if (typeof v === "number")
-            val = v;
-
-        return `<li class="wraper_line">
-                    <span class="objkey">"${k}"</span>
-                    <span class="colon">:</span>
-                    <span class="objval" contenteditable="${ce}">${val}</span>
-                    ${cma}
-                </li>`;
-    }
-};
-
-function EB_Api_entry(option) {
+﻿function EB_Api_entry(option) {
     this.Config = $.extend({}, option);
     this.validate = function () {
         return true;
@@ -80,7 +8,7 @@ function EB_Api_entry(option) {
         window.Api = {};
         window.Api.Constants = {};
         window.Api.Creator = new EbApiBuild(this.Config);
-        window.Api.JsonWindow = new JsonWindow();
+        window.Api.JsonWindow = new EbPrettyJson({ ContetEditable: ["Value"], HideFields: ["ValueTo"] });
         return window.Api.Creator;
     }
     else {
@@ -96,6 +24,7 @@ function EbApiBuild(config) {
     this.Lines = {};
     this.Procs = {};
     this.dropArea = "resource_Body_drparea";
+    this.FlagRun = false;
 
     this.pg = new Eb_PropertyGrid({
         id: "pgContainer_wrpr",
@@ -248,7 +177,7 @@ function EbApiBuild(config) {
 
     this.toggleReqWindow = function (resp) {
         $(`#Json_reqOrRespWrp`).show();
-        $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.getJsonWindow(resp));
+        $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.build(resp));
     };
 
     this.newApi = function () {
@@ -259,13 +188,77 @@ function EbApiBuild(config) {
 
     this.editApi = function () {
         this.EbObject = new EbObjects["EbApi"](this.EditObj.Name);
+        this.replaceProp(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
         this.EbObject.Resources.$values.length = 0;
         this.drawProcsEmode();
         this.resetLinks();
     };
 
+    this.setBtns = function () {
+        $("#obj_icons").empty().append(`<button class='btn run' id='api_run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
+                                            <i class='fa fa-play' aria-hidden='true'></i>
+                                        </button>`);
+        $("#api_run").off("click").on("click", this.apiRun.bind(this));
+    };
+
+    this.apiRun = function (ev) {
+        let ref = null;
+        $(`#${this.dropArea}`).find(".apiPrcItem").each(function (i,o) {
+            if (["start_item", "end_item"].indexOf(o.id) < 0) {
+                let eb_type = $(o).attr("eb-type");
+                if (eb_type === "SqlReader" || eb_type === "SqlFunc" || eb_type === "SqlWriter ") {
+                    ref = this.Procs[o.id].Refid;
+                    return false;
+                }
+            }
+        }.bind(this));
+        if (ref) {
+            $.ajax({
+                url: "../Dev/GetReq_respJson",
+                type: "GET",
+                cache: false,
+                beforeSend: function () {
+                    $("#eb_common_loader").EbLoader("show");
+                },
+                data: { "refid": ref },
+                success: function (result) {
+                    this.toggleReqWindow(JSON.parse(result));
+                    $("#eb_common_loader").EbLoader("hide");
+                }.bind(this)
+            });
+        }
+        else
+            EbMessage("show", { Message: "refid must be set", Background: "red" });
+    }
+
+    this.getApiResponse = function (ev) {
+        $.ajax({
+            url: "../Dev/GetApiResponse",
+            type: "GET",
+            cache: false,
+            beforeSend: function () {
+                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#JsonResp_CMW', Style: {"top":"0","left":"0"} } });
+            },
+            data: {
+                "name": this.EbObject.Name,
+                "vers": commonO.getVersion(),
+                "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text()
+            },
+            success: function (result) {
+                this.toggleRespWindow(JSON.parse(result));
+                $("#eb_common_loader").EbLoader("hide");
+            }.bind(this)
+        });
+    };
+
+    this.toggleRespWindow = function (result) {
+        $(`#Json_reqOrRespWrp`).show();
+        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(window.Api.JsonWindow.build(result));
+    };
+
     this.start = function () {
+        this.setBtns();
         if (this.EditObj === null || this.EditObj === "undefined")
             this.newApi();
         else
@@ -276,6 +269,7 @@ function EbApiBuild(config) {
             handles: "n",
             minHeight: 50
         });
+        $(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
     };
 
     this.start();

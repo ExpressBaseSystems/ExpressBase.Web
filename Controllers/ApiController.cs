@@ -16,19 +16,79 @@ using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using ExpressBase.Objects;
+using System.Collections.Specialized;
+using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http;
+using ExpressBase.Web.Models;
+using System.Runtime.Serialization;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ApiController : EbBaseIntCommonController
+    public class ApiController : EbBaseIntApiController
     {
         public ApiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-        [HttpGet]
-        public string GetReq_respJson(string refid)
+        [HttpGet("/api/{_name}/{_version}")]
+        public ApiResponse Api(string _name,string _version)
         {
-            var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
-            EbDataSourceMain ds = EbSerializers.Json_Deserialize(obj.Data[0].Json);
-            return ds.GetInputParams();
+            ApiResponse resp = null;
+
+            Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
+                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+
+            if (ViewBag.IsValid)
+            {
+                resp = this.ServiceClient.Get(new ApiRequest
+                {
+                    Name = _name,
+                    Version = _version,
+                    Data = parameters
+                });
+            }
+            else
+                resp = new ApiResponse { Message = ViewBag.Message };
+            return resp;
+        }
+
+
+        [HttpPost("/api/{_name}/{_version}")]
+        public ApiResponse Api(string _name,string _version, [FromForm]Dictionary<string, string> form)
+        {
+            ApiResponse resp = null;
+            Dictionary<string, object> parameters = null;
+            if (form.Count<=0)
+            {
+                parameters = HttpContext.Request.Query.Keys.Cast<string>()
+                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+            }
+            else
+            {
+                parameters = form.Keys.Cast<string>()
+                .ToDictionary(k => k, v => form[v] as object);
+            }
+
+            if (ViewBag.IsValid)
+            {
+                resp = this.ServiceClient.Get(new ApiRequest
+                {
+                    Name = _name,
+                    Version = _version,
+                    Data = parameters
+                });
+            }
+            else
+                resp = new ApiResponse { Message = ViewBag.Message };
+            return resp;
+        }
+
+        private Dictionary<string, object> F2D(FormCollection collection)
+        {
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+            foreach (var pair in collection)
+            {
+                dict.Add(pair.Key, pair.Value);
+            }
+            return dict;
         }
     }
 }

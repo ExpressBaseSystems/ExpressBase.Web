@@ -1,8 +1,8 @@
-﻿table {
+﻿.logtable table {
     border-spacing: 5px;
 }
 
-table, th, td {
+.logtable table, th, td {
     border: 1px solid black;
     padding: 5px;
     font-size: larger;

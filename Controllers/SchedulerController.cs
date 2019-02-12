@@ -45,7 +45,6 @@ namespace ExpressBase.Web.Controllers
                     ToUserGroupIds = groups
                 }
             };
-
             var ds = this.ServiceClient.Post(new ScheduleMQRequest { Task = task });
         }
 

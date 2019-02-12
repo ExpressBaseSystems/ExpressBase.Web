@@ -1,0 +1,102 @@
+﻿@using ExpressBase.Common;
+@using ExpressBase.Common.SqlProfiler;
+<link rel="stylesheet" type="text/css" href="~/css/ApiRelated/EbPrettyJson.css" />
+<link rel="stylesheet" type="text/css" href="~/css/SQLProfiler/SqlProfiler.css" />
+<script type="text/javascript" src="~/js/ApiBuilder/EbPrettyJson.js"></script>
+<script type="text/javascript" src="~/js/SQLProfiler/SQLProfiler.js"></script>
+
+@*<div class="row LogView">
+        <div id="paramsalert">
+            @*style="visibility:hidden">
+    </div>*@
+
+<div class="row ">
+    <div class="wrpr_drhome LogView">
+        <div class="col-md-12 wraper1_drhome" style="margin-right:10px;">
+            @{
+                List<EbExecutionLogs> logs = ViewBag.Log;
+                string logsObj = EbSerializers.Json_Serialize(logs);
+            <div class="pull-right maximize" style="padding: 10px;">
+                <i class="fa fa-window-maximize"></i>
+            </div>
+            <div class="pull-right restore" style="padding: 10px;display:none">
+                <i class="fa fa-window-restore"></i>
+            </div>
+                <div class="logtable" style="overflow-y:auto">
+                    <table id="table" style="width:100%;padding: 10px;">
+                        <tr>
+                            <th>Execution Time</th>
+                            <th>No.of Rows</th>
+                            <th>Executed by</th>
+                            <th>Executed at</th>
+                            <th><span class="glyphicon glyphicon-asterisk" aria-hidden="false"></span></th>
+
+                        </tr>
+                        <tbody>
+                            @foreach (EbExecutionLogs eb in logs)
+                            {
+                                <tr class="rows" idx="@eb.Id">
+                                    <td>@eb.Exec_time</td>
+                                    <td>@eb.Rows</td>
+                                    <td>@eb.Created_by</td>
+                                    <td>@eb.Created_at</td>
+                                    <td><span class="glyphicon glyphicon-asterisk" aria-hidden="false"></span></td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                Profiler profiler = ViewBag.Profiler;
+                <div class="tile_wrapere">
+                    <div class="tiles_outer">
+                        <div class="tiles" id="label1" idx="@profiler.Min_id">
+                            Minimum Execution Time:<div style="color:indigo;"><b>@profiler.Min_exectime ms</b></div>
+                        </div>
+                    </div>
+                    <div class="tiles_outer">
+                        <div class="tiles" id="label2" idx="@profiler.Max_id">
+                            Maximum Execution Time:<div style="color:indigo;"><b>@profiler.Max_exectime ms</b></div>
+                        </div>
+                    </div>
+                    <div class="tiles_outer">
+                        <div class="tiles" id="label3" idx="@profiler.Cur_Min_id">
+                            Current Months Minimum Execution Time:<div style="color:indigo;"><b>@profiler.Cur_Min_exectime ms</b></div>
+                        </div>
+                    </div>
+                    <div class="tiles_outer">
+                        <div class="tiles" id="label4" idx="@profiler.Cur_Max_id">
+                            Current Months Maximum Execution Time:<div style="color:indigo;"><b>@profiler.Cur_Max_exectime ms</b></div>
+                        </div>
+                    </div>
+                    <div class="tiles_outer">
+                        <div class="tiles">
+                            Total count of execution<br />
+                            <div style="color:indigo;"><b>@profiler.Total_count</b></div>
+                        </div>
+                    </div>
+                    <div class="tiles_outer">
+                        <div class="tiles">
+                            Current months execution<br />
+                            <div style="color:indigo;"><b>@profiler.Month_count</b></div>
+                        </div>
+                    </div>
+                    <div class="tiles_outer">
+                        <div class="tiles">
+                            Todays no. of execution<br />
+                            <div style="color:indigo;"><b>@profiler.Current_count</b></div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-8 wraper2_drhome" id="paramsalert" style="overflow-y:auto">
+
+        </div>
+    </div>
+</div>
+<script>
+    //let profiler = @Html.Raw(@ViewBag.Profiler);
+    let logsObj=@Html.Raw(logsObj);
+    let SQLProfilerObj = new SQLProfiler(logsObj);
+</script>

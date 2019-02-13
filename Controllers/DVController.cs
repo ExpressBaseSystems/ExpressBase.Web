@@ -29,6 +29,7 @@ using System.Net;
 using System.Net.Mime;
 using ExpressBase.Objects.Objects.DVRelated;
 using OfficeOpenXml;
+using System.IO.Compression;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -236,8 +237,22 @@ namespace ExpressBase.Web.Controllers
        
         public IActionResult GetExcel(string refid, string filename)
         {
+
             var res = Redis.Get<byte[]>("excel" + refid);
-            return File(res, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",filename+".xlsx");
+            byte[] decompressedData = Decompress(res);
+            Redis.Delete("excel" + refid);
+            return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",filename);
+        }
+
+        public static byte[] Decompress(byte[] data)
+        {
+            using (var compressedStream = new MemoryStream(data))
+            using (var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
+            using (var resultStream = new MemoryStream())
+            {
+                zipStream.CopyTo(resultStream);
+                return resultStream.ToArray();
+            }
         }
     }
 }

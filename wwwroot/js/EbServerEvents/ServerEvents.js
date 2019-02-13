@@ -34,7 +34,7 @@
     };
 
     this.onExportToExcel = function (m, e) {
-        this.onExcelExportSuccess(m, e);
+        this.onExcelExportSuccess(m);
     };
 
     this.ES = new EventSourcePolyfill(this.Url, {

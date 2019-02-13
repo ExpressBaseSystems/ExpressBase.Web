@@ -234,10 +234,10 @@ namespace ExpressBase.Web.Controllers
         }
         
        
-        public IActionResult GetExcel(string refid)
+        public IActionResult GetExcel(string refid, string filename)
         {
             var res = Redis.Get<byte[]>("excel" + refid);
-            return File(res, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            return File(res, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",filename+".xlsx");
         }
     }
 }

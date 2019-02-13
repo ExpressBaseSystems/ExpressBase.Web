@@ -5,6 +5,7 @@
     this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
     this.sEvent = $.ss;
     this.onUploadSuccess = function (m, e) { };
+    this.onExcelExportSuccess = function (m, e) { };
 
     this.onConnect = function (sub) {
         //console.log("You've connected! welcome " + sub.displayName);
@@ -33,7 +34,7 @@
     };
 
     this.onExportToExcel = function (m, e) {
-        alert("cfhlgahg;kjd;ljgljgh';kG");
+        this.onExcelExportSuccess(m, e);
     };
 
     this.ES = new EventSourcePolyfill(this.Url, {

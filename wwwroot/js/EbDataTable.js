@@ -2953,16 +2953,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
         this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.xyz', Channels: ["ExportToExcel"] });
-        this.ss.onExportToExcel = function () {
-            alert("success");
+        this.ss.onExcelExportSuccess = function (url) {
+            window.location.href = url;
         };
         $.ajax({
             type: "POST",
             url: "../DV/exportToexcel",
-            data: { req: ob },
-            success: function (result) {
-                alert(result);
-            }
+            data: { req: ob }
         });
 
     };

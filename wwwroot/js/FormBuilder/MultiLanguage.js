@@ -204,7 +204,7 @@
         if (e.keyCode === 13)
             this.getKeySuggestion(true);
         else
-            $(this).data('timer', setTimeout(this.getKeySuggestion.bind(this, false), 500));
+            $(this).data('timer', setTimeout(this.getKeySuggestion.bind(this, false), 1000));
     };
 
     this.getKeySuggestion = function (force) {

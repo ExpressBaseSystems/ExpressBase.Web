@@ -6,7 +6,9 @@
 }
 
 <script>
-        window.Schedule = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(ViewBag.schedules))');
+  
+    window.Schedule= @Html.Raw(JsonConvert.SerializeObject(@ViewBag.schedules));
+   // window.Schedule = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(ViewBag.schedules))');
 </script>
 
 <div id="schedulerlistmodal" class="schedulerlistmodal modal fade" role="dialog">
@@ -18,7 +20,10 @@
                 <h4 class="modal-title">Schedules</h4>
             </div>
             <div class="modal-body">
-                <button type="button" class="btn btn-success pull-right" id="new_sch">+</button>
+                <button class="ebbtn eb_btn_md eb_btngreen btn-default dropdown-toggle pull-right" type="button" id="new_sch" style="border-radius: 20px;">
+                    <span class="fa fa-plus"></span>
+                    New Schedule
+                </button>               
                 @{ List<EbSchedule> Schedules = ViewBag.schedules;
                     <div class="container-fluid">
                         <div class="schedules_list table-responsive table-light ">
@@ -42,9 +47,9 @@
                                     {
                                         <tr id="tr_@counter" class="sch_r" slno="@counter">
                                             @*<td dcope="row" class="id">@sch.Id</td>
-                                                <td class="jobkey">@sch.JobKey</td>
-                                                <td class="triggerkey">@sch.TriggerKey</td>
-                                                <td class="jobtype">@sch.Task.JobType</td>*@
+                                    <td class="jobkey">@sch.JobKey</td>
+                                    <td class="triggerkey">@sch.TriggerKey</td>
+                                    <td class="jobtype">@sch.Task.JobType</td>*@
                                             <td class="">@(counter + 1)</td>
                                             <td class="Name">@sch.Name</td>
                                             <td class="expression">@sch.Task.Expression</td>
@@ -71,7 +76,7 @@
 
 <style>
     .schedules_list {
-        padding-top: 50px;
+        /*padding-top: 50px;*/
         background-color: white;
     }
 

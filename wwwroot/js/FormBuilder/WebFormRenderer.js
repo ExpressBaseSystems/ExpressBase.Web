@@ -1,4 +1,5 @@
 ﻿const WebFormRender = function (option) {
+    jilla = 0;//==========================================================
     this.FormObj = option.formObj;
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
@@ -120,12 +121,29 @@
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
+    this.l = function (p1) {//==========================================================
+        $.each(p1, function (i, row) {
+            $.each(row.Columns, function (j, dm) {
+                if (j === 0) {
+                    //this.initializer.Vobj.valueMembers.push(dm.Value);
+                    return true;
+                }
+                this.initializer.Vobj.displayMembers[dm.Name].push(dm.Value);
+            }.bind(this));
+        }.bind(this));
+    };
+
     this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
         $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
             if (SingleColumn.Name === "id")
                 return true;
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
-            ctrl.setValue(SingleColumn.Value);
+            if (ctrl.ObjType === "PowerSelect") {
+                ctrl.setDisplayMember = this.l;
+                ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
+            }
+            else
+                ctrl.setValue(SingleColumn.Value);
         }.bind(this));
     };
 
@@ -157,6 +175,9 @@
     };
 
     this.setEditModeCtrls = function () {
+        jilla++;
+        if (jilla == 2)
+            return;
         let FormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames(FormData);
         //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
@@ -215,7 +236,7 @@
                 }
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }
-            else if(obj.ObjType !== "FileUploader") {
+            else if (obj.ObjType !== "FileUploader") {
                 FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
             }
         }.bind(this));

@@ -5,6 +5,7 @@
     this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
     this.sEvent = $.ss;
     this.onUploadSuccess = function (m, e) { };
+    this.onExcelExportSuccess = function (m, e) { };
 
     this.onConnect = function (sub) {
         //console.log("You've connected! welcome " + sub.displayName);
@@ -30,6 +31,10 @@
         this.ES.close();
         this.sEvent.eventSourceStop = true;
         //console.log("stopped listening");
+    };
+
+    this.onExportToExcel = function (m, e) {
+        this.onExcelExportSuccess(m);
     };
 
     this.ES = new EventSourcePolyfill(this.Url, {
@@ -71,7 +76,8 @@
             onLeave: this.onLeave.bind(this),
             onHeartbeat: this.onHeartbeat.bind(this),
             onUploadSuccess: this.onUploaded.bind(this),
-            stopListening: this.stopListening.bind(this)
+            stopListening: this.stopListening.bind(this),
+            onExportToExcel: this.onExportToExcel.bind(this)
         }
     });
 };

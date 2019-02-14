@@ -65,6 +65,7 @@
         {
             <div class="tab-pane" id="builderDashB">
                 <div class="container-fluid" id="builderDashB_bdy">
+                    @await Component.InvokeAsync("SqlProfiler", new { refid = ViewBag.Refid })
                 </div>
             </div>
         }
@@ -75,11 +76,12 @@
                     @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
                 }
                 @*else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization || ViewBag.ObjType == (int)EbObjectTypes.ChartVisualization)
-                {
-                    object o = null;
-                    @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
+                    {
+                        object o = null;
+                        @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
 
-                }*@
+                    }*@
+                /**/
                 else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization)
                 {
                     object o = null;

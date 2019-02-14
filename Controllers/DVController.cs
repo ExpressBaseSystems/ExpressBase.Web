@@ -9,14 +9,28 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web2;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using Microsoft.AspNetCore.Http;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Net;
+using System.Net.Mime;
+using ExpressBase.Objects.Objects.DVRelated;
+using OfficeOpenXml;
+using System.IO.Compression;
+
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -24,6 +38,8 @@ namespace ExpressBase.Web.Controllers
     public class DVController : EbBaseIntCommonController
     {
         public DVController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
+
+        private ActionResult ExcelFileResult { get; set; }
 
         [HttpGet]
         [HttpPost]
@@ -194,6 +210,50 @@ namespace ExpressBase.Web.Controllers
             public List<EbObjectWrapper> DvTaggedList { get; set; }
         }
 
+             
+        [HttpPost]
+        public void exportToexcel(TableDataRequest req)
+        {
+            try
+            {
+                ExportToExcelMqRequest request = new ExportToExcelMqRequest();
+                EbDataVisualization ebobject = EbSerializers.Json_Deserialize<EbDataVisualization>(req.DataVizObjString);
+                request.EbDataVisualization = ebobject;
+                request.Ispaging = false;
+                request.UserInfo = this.LoggedInUser;
+                request.RefId = ebobject.DataSourceRefId;
+                request.IsExcel = true;
+                request.Params = req.Params;
+                this.ServiceClient.Post(request);
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.ToString());
+            }
+           
+        }
+        
+       
+        public IActionResult GetExcel(string refid, string filename)
+        {
+
+            var res = Redis.Get<byte[]>("excel" + refid);
+            byte[] decompressedData = Decompress(res);
+            Redis.Delete("excel" + refid);
+            return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",filename);
+        }
+
+        public static byte[] Decompress(byte[] data)
+        {
+            using (var compressedStream = new MemoryStream(data))
+            using (var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
+            using (var resultStream = new MemoryStream())
+            {
+                zipStream.CopyTo(resultStream);
+                return resultStream.ToArray();
+            }
+        }
     }
 }
 

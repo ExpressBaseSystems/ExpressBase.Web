@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Controllers
         public ApiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         [HttpGet("/api/{_name}/{_version}")]
-        public ApiResponse Api(string _name,string _version)
+        public ApiResponse Api(string _name, string _version)
         {
             ApiResponse resp = null;
 
@@ -52,11 +52,11 @@ namespace ExpressBase.Web.Controllers
 
 
         [HttpPost("/api/{_name}/{_version}")]
-        public ApiResponse Api(string _name,string _version, [FromForm]Dictionary<string, string> form)
+        public ApiResponse Api(string _name, string _version, [FromForm]Dictionary<string, string> form)
         {
             ApiResponse resp = null;
             Dictionary<string, object> parameters = null;
-            if (form.Count<=0)
+            if (form.Count <= 0)
             {
                 parameters = HttpContext.Request.Query.Keys.Cast<string>()
                 .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
@@ -77,7 +77,7 @@ namespace ExpressBase.Web.Controllers
                 });
             }
             else
-                resp = new ApiResponse { Message = ViewBag.Message };
+                resp = new ApiResponse { Message = new ApiMessage { Status = "Error", Description = ViewBag.Message } };
             return resp;
         }
 

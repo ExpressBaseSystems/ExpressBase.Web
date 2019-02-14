@@ -8,7 +8,10 @@
         window.Api = {};
         window.Api.Constants = {};
         window.Api.Creator = new EbApiBuild(this.Config);
-        window.Api.JsonWindow = new EbPrettyJson({ ContetEditable: ["Value"], HideFields: ["ValueTo"] });
+        window.Api.JsonWindow = new EbPrettyJson({
+            ContetEditable: ["Value"],
+            HideFields: ["ValueTo"]
+        });
         return window.Api.Creator;
     }
     else {
@@ -121,13 +124,17 @@ function EbApiBuild(config) {
     this.BeforeSave = function () {
         this.reidStat = true;
         this.EbObject.Resources.$values.length = 0;
-        $(`#${this.dropArea}`).find(".apiPrcItem").each(this.loopProcess.bind(this));
+        this.prepareApiobject();
         if (this.reidStat)
             commonO.Current_obj = this.EbObject;
         else
             EbMessage("show", { Message: "RefId must be set!", Background: "red" });
         return this.reidStat;
     };//save
+
+    this.prepareApiobject = function () {
+        $(`#${this.dropArea}`).find(".apiPrcItem").each(this.loopProcess.bind(this));
+    }
 
     this.loopProcess = function (i, o) {
         if (["start_item", "end_item"].indexOf(o.id) < 0) {
@@ -143,16 +150,41 @@ function EbApiBuild(config) {
     };
 
     this.validateRefid = function (id) {
-        if (this.Procs[id].Refid === "" || this.Procs[id].Refid === null)
-            return false;
-        else
+        if ('Refid' in this.Procs[id]) {
+            if (this.Procs[id].Refid === "" || this.Procs[id].Refid === null)
+                return false;
+            else
+                return true;
+        }
+        else {
             return true;
+        }
     };
 
     this.pg.PropertyChanged = function (obj, pname) {
-        if (pname === "Refid" && obj.Refid !== "" && obj.Refid !== null)
+        if (pname === "Refid" && obj.Refid !== "" && obj.Refid !== null) {
             $("#" + obj.EbSid).children(".drpbox").removeClass("refIdMsetNotfy");
+            this.getComponent(obj);
+        }
     }.bind(this);
+
+    this.getComponent = function (obj) {
+        if (obj.Refid) {
+            $.ajax({
+                url: "../Dev/GetComponent",
+                type: "GET",
+                cache: false,
+                beforeSend: function () {
+                },
+                data: { "refid": obj.Refid },
+                success: function (component) {
+                    obj.RefName = component.name;
+                    obj.Version = component.version;
+                    this.RefreshControl(obj);
+                }.bind(this)
+            });
+        }
+    };
 
     this.drawProcsEmode = function () {
         var o = this.EditObj.Resources.$values;
@@ -164,6 +196,7 @@ function EbApiBuild(config) {
             $(`#${this.dropArea} #end_item`).before(obj.$Control.outerHTML());
             this.Procs[id] = obj;
             this.RefreshControl(this.Procs[id]);
+            //this.getComponent(obj.Refid, obj.EbSid);
         }
     };
 
@@ -203,17 +236,9 @@ function EbApiBuild(config) {
     };
 
     this.apiRun = function (ev) {
-        let ref = null;
-        $(`#${this.dropArea}`).find(".apiPrcItem").each(function (i,o) {
-            if (["start_item", "end_item"].indexOf(o.id) < 0) {
-                let eb_type = $(o).attr("eb-type");
-                if (eb_type === "SqlReader" || eb_type === "SqlFunc" || eb_type === "SqlWriter ") {
-                    ref = this.Procs[o.id].Refid;
-                    return false;
-                }
-            }
-        }.bind(this));
-        if (ref) {
+        this.reidStat = true;
+        this.prepareApiobject();
+        if (this.reidStat) {
             $.ajax({
                 url: "../Dev/GetReq_respJson",
                 type: "GET",
@@ -221,15 +246,13 @@ function EbApiBuild(config) {
                 beforeSend: function () {
                     $("#eb_common_loader").EbLoader("show");
                 },
-                data: { "refid": ref },
+                data: { "components": JSON.stringify(this.EbObject.Resources) },
                 success: function (result) {
                     this.toggleReqWindow(JSON.parse(result));
                     $("#eb_common_loader").EbLoader("hide");
                 }.bind(this)
             });
         }
-        else
-            EbMessage("show", { Message: "refid must be set", Background: "red" });
     }
 
     this.getApiResponse = function (ev) {
@@ -238,7 +261,7 @@ function EbApiBuild(config) {
             type: "GET",
             cache: false,
             beforeSend: function () {
-                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#JsonResp_CMW', Style: {"top":"0","left":"0"} } });
+                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#JsonResp_CMW', Style: { "top": "0", "left": "0" } } });
             },
             data: {
                 "name": this.EbObject.Name,

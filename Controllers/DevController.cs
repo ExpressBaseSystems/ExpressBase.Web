@@ -35,13 +35,13 @@ using ExpressBase.Common.Data;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
-{   
+{
     public class DevController : EbBaseIntCommonController
     {
         public const string Msg = "Msg";
 
         public DevController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
-        
+
         [HttpGet("MyApplications")]
         public IActionResult DevDashboard()
         {
@@ -236,7 +236,7 @@ namespace ExpressBase.Web.Controllers
         private string GetHtml2Render(BuilderType type, string objid)
         {
             IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectLatestCommitedResponse>(new EbObjectLatestCommitedRequest { RefId = objid});
+            var resultlist = client.Get<EbObjectLatestCommitedResponse>(new EbObjectLatestCommitedRequest { RefId = objid });
             var rlist = resultlist.Data[0];
             string _html = string.Empty;
 
@@ -256,19 +256,19 @@ namespace ExpressBase.Web.Controllers
         public EbObjectWrapper GetFormObj(string objId, int objType)
         {
             IServiceClient client = this.ServiceClient;
-            var resultlist = client.Get<EbObjectLatestCommitedResponse>(new EbObjectLatestCommitedRequest { RefId = objId});
+            var resultlist = client.Get<EbObjectLatestCommitedResponse>(new EbObjectLatestCommitedRequest { RefId = objId });
             var rlist = resultlist.Data[0];
             return rlist;
         }
 
-        
+
         public IActionResult EbObjectList(EbObjectType type)
         {
             ViewBag.EbObjectType = (int)type;
 
             IServiceClient client = this.ServiceClient;
 
-            var resultlist = client.Get<EbObjectListResponse>(new EbObjectListRequest { EbObjectType = (int)type});
+            var resultlist = client.Get<EbObjectListResponse>(new EbObjectListRequest { EbObjectType = (int)type });
             var rlist = resultlist.Data;
 
             Dictionary<int, EbObjectWrapper> ObjList = new Dictionary<int, EbObjectWrapper>();
@@ -298,7 +298,7 @@ namespace ExpressBase.Web.Controllers
             var html = string.Empty;
             foreach (var element in rlist)
             {
-                html += @"<a href='../Eb_Object/Index?objid="+ element.Id+ @"&objtype=" + (int)type + @"'>
+                html += @"<a href='../Eb_Object/Index?objid=" + element.Id + @"&objtype=" + (int)type + @"'>
                 <div class='col-md-6 objitems' name='objBox'>
                     <div class='col-md-1 obj-icon'>
                         <div class='obj-ic-cir'>
@@ -306,11 +306,11 @@ namespace ExpressBase.Web.Controllers
                         </div>
                     </div>
                     <div class='col-md-10'>
-                        <h4 name='head4' style='color:black;'>"+ element .Name+ @"</h4>
-                        <p class='text-justify'>"+element.Description+@"</p>
+                        <h4 name='head4' style='color:black;'>" + element.Name + @"</h4>
+                        <p class='text-justify'>" + element.Description + @"</p>
                         <a id='labels'>
-                            <span name='Version' class='label label-default'>v "+element.VersionNumber+@"</span>
-                            <span name='Application' class='label objbox-label'>"+ type + @"</span>
+                            <span name='Version' class='label label-default'>v " + element.VersionNumber + @"</span>
+                            <span name='Application' class='label objbox-label'>" + type + @"</span>
                         </a>
                     </div>
                     <div class='col-md-1 objbox-footer'>
@@ -319,7 +319,7 @@ namespace ExpressBase.Web.Controllers
                 </div></a>";
             }
             return html;
-            
+
         }
 
         [EbBreadCrumbFilter("NewApplication")]
@@ -346,13 +346,13 @@ namespace ExpressBase.Web.Controllers
             if (resultlist.id > 0)
             {
                 TempData[Msg] = "Application Created succesfully.";
-                return RedirectToAction("AppDashBoard", new RouteValueDictionary(new { Id = resultlist.id,Type = Convert.ToInt32(req["AppType"]) })); 
+                return RedirectToAction("AppDashBoard", new RouteValueDictionary(new { Id = resultlist.id, Type = Convert.ToInt32(req["AppType"]) }));
             }
             else
                 TempData[Msg] = "Application Creation failed.";
             return View();
-        } 
-        
+        }
+
         [HttpGet]
         public IActionResult Eb_EmailBuilder()
         {
@@ -372,11 +372,11 @@ namespace ExpressBase.Web.Controllers
             var typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
 
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
-           
+
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-        
+
             return View();
         }
 
@@ -389,7 +389,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Obj_id = Convert.ToInt32(req["objid"]);
             var resultlist = this.ServiceClient.Get<EbObjectExploreObjectResponse>(new EbObjectExploreObjectRequest { Id = obj_id });
             var rlist = resultlist.Data;
-            
+
             foreach (var element in rlist)
             {
                 ObjectLifeCycleStatus[] array = (ObjectLifeCycleStatus[])Enum.GetValues(typeof(ObjectLifeCycleStatus));
@@ -410,7 +410,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     ViewBag.ReadOnly = true;
                     var dsobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(element.Json_lc);
-                    ViewBag.dsobj = dsobj;            
+                    ViewBag.dsobj = dsobj;
                     ViewBag.html = dsobj.Body;
                 }
                 else
@@ -429,14 +429,14 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
             }
             return View();
-        }      
+        }
 
 
         public string EmailTemplateCommit(string _Refid, string Htmlcode, string PropObj, string ChangeLog)
         {
             IServiceClient client = this.ServiceClient;
             var emailobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(PropObj);
-            string refid="";
+            string refid = "";
             if (string.IsNullOrEmpty(_Refid))
             {
                 var ds = new EbObject_Create_New_ObjectRequest();
@@ -480,14 +480,14 @@ namespace ExpressBase.Web.Controllers
                 var res = ServiceClient.Post<EbObject_CommitResponse>(ds);
                 refid = res.RefId;
             }
-            return refid ;
+            return refid;
         }
 
         public string EmailTemplateSave(string _Refid, string PropObj)
         {
             var req = this.HttpContext.Request.Form;
 
-            var emailobj =  EbSerializers.Json_Deserialize<EbEmailTemplate>(PropObj);
+            var emailobj = EbSerializers.Json_Deserialize<EbEmailTemplate>(PropObj);
             string refid;
             if (string.IsNullOrEmpty(_Refid))
             {
@@ -504,7 +504,7 @@ namespace ExpressBase.Web.Controllers
                     DataSourceRefId = emailobj.DataSourceRefId
 
                 });
-                ds.Relations ="";
+                ds.Relations = "";
                 ds.IsSave = true;
 
                 var res = ServiceClient.Post<EbObject_Create_New_ObjectResponse>(ds);
@@ -535,11 +535,11 @@ namespace ExpressBase.Web.Controllers
             return refid;
         }
 
-		public int UpdateAppSettings(int id, int type, string settings)
-		{
-			SaveAppSettingsResponse response = this.ServiceClient.Get(new SaveAppSettingsRequest{AppId = id, AppType = type, Settings = settings });
-			return response.ResStatus;
-		}
+        public int UpdateAppSettings(int id, int type, string settings)
+        {
+            SaveAppSettingsResponse response = this.ServiceClient.Get(new SaveAppSettingsRequest { AppId = id, AppType = type, Settings = settings });
+            return response.ResStatus;
+        }
 
         public IActionResult RedisExplorer()
         {
@@ -548,12 +548,12 @@ namespace ExpressBase.Web.Controllers
             var keys = this.Redis.GetAllKeys();
             string _json = string.Empty;
 
-            foreach(string k in keys)
+            foreach (string k in keys)
             {
                 string[] splistr = k.Split("-");
                 if (splistr.Length >= 3)
                 {
-                    if(splistr[2] == "2" && !k.EndsWith("columns"))
+                    if (splistr[2] == "2" && !k.EndsWith("columns"))
                     {
                         _json = this.Redis.Get<string>(k);
                     }
@@ -563,36 +563,107 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet]
-        public string GetReq_respJson(string refid)
+        public string GetReq_respJson(string components)
         {
-            var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
-            EbDataSourceMain ds = EbSerializers.Json_Deserialize(obj.Data[0].Json);
-            if (ds.InputParams == null || ds.InputParams.Count <= 0)
-                return JsonConvert.SerializeObject(SqlHelper.GetSqlParams(ds.Sql, obj.Data[0].EbObjectType));
+            List<Param> p = new List<Param>();
+            ListOrdered resources = EbSerializers.Json_Deserialize<ListOrdered>(components);
+
+            foreach (EbApiWrapper r in resources)
+            {
+                if (r is EbSqlReader || r is EbSqlWriter || r is EbSqlFunc)
+                {
+                    var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = r.Refid });
+                    EbDataSourceMain ds = EbSerializers.Json_Deserialize(obj.Data[0].Json);
+                    if (ds.InputParams == null || ds.InputParams.Count <= 0)
+                       p.Merge(this.GetSqlParams(ds, obj.Data[0].EbObjectType));
+                    else
+                       p.Merge(ds.InputParams);
+                }
+                else if(r is EbEmailNode)
+                {
+                    var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = r.Refid });
+                    EbEmailTemplate enode = EbSerializers.Json_Deserialize(obj.Data[0].Json);
+
+                    if (!string.IsNullOrEmpty(enode.AttachmentReportRefID))
+                    {
+                        var rep = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = enode.AttachmentReportRefID });
+                        EbReport o = EbSerializers.Json_Deserialize<EbReport>(rep.Data[0].Json);
+                        if (!string.IsNullOrEmpty(o.DataSourceRefId))
+                        {
+                            var ds= this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = o.DataSourceRefId });
+                            p = p.Merge(this.GetSqlParams(EbSerializers.Json_Deserialize<EbDataSourceMain>(ds.Data[0].Json), ds.Data[0].EbObjectType));
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(enode.DataSourceRefId))
+                    {
+                        var ob = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = enode.DataSourceRefId });
+                        p = p.Merge(this.GetSqlParams(EbSerializers.Json_Deserialize<EbDataSourceMain>(ob.Data[0].Json), ob.Data[0].EbObjectType));
+                    }
+                }
+            }
+            return JsonConvert.SerializeObject(p);
+        }
+
+        private List<Param> GetSqlParams(EbDataSourceMain o, int obj_type)
+        {
+            bool isFilter = false;
+            if (o is EbDataReader)
+            {
+                if (!string.IsNullOrEmpty((o as EbDataReader).FilterDialogRefId))
+                    isFilter = true;
+            }
+
+            if (!isFilter)
+            {
+                if ((o.InputParams != null) && (o.InputParams.Any()))
+                    return o.InputParams;
+                else
+                    return SqlHelper.GetSqlParams(o.Sql, obj_type);
+            }
             else
-                return JsonConvert.SerializeObject(ds.InputParams);
+            {
+                (o as EbDataReader).AfterRedisGet(Redis as RedisClient);
+                List<Param> p = new List<Param>();
+                foreach (EbControl ctrl in (o as EbDataReader).FilterDialog.Controls)
+                {
+                    p.Add(new Param
+                    {
+                        Name = ctrl.Name,
+                        Type = ((int)ctrl.EbDbType).ToString(),
+                    });
+                }
+                return p;
+            }
         }
 
         [HttpGet]
-        public string GetApiResponse(string name,string vers,string param)
+        public ApiComponent GetComponent(string refid)
+        {
+            var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
+            var o = EbSerializers.Json_Deserialize(obj.Data[0].Json);
+            return new ApiComponent {Name=o.Name,Version=o.VersionNumber };
+        }
+
+        [HttpGet]
+        public string GetApiResponse(string name, string vers, string param)
         {
             ApiResponse resp = null;
             List<Param> pr = JsonConvert.DeserializeObject<List<Param>>(param);
-            Dictionary<string, object> d = pr.Select(p => new { prop = p.Name,val = p.Value})
-                .ToDictionary(x=>x.prop,x=> x.val as object);
+            Dictionary<string, object> d = pr.Select(p => new { prop = p.Name, val = p.Value })
+                .ToDictionary(x => x.prop, x => x.val as object);
 
-                resp = this.ServiceClient.Get(new ApiRequest
-                {
-                    Name = name,
-                    Version = vers,
-                    Data = d
-                });
+            resp = this.ServiceClient.Get(new ApiRequest
+            {
+                Name = name,
+                Version = vers,
+                Data = d
+            });
 
             return JsonConvert.SerializeObject(resp);
         }
 
         public IActionResult ApiConsole()
-        { 
+        {
             //string _json = @"{'Name':'Form1','MasterTable':'dg3f','MultipleTables':{'dg3f':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'textbox0','Value':'abhilasha','Type':16,'AutoIncrement':false}]}],'dg3c':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'date0','Value':'2018-11-17','Type':5,'AutoIncrement':false},{'Name':'textbox1','Value':'pushpam','Type':16,'AutoIncrement':false}]}]}}";
             string _json = @"{
 'FormName':'Form1',

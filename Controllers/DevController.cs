@@ -575,11 +575,11 @@ namespace ExpressBase.Web.Controllers
                     var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = r.Refid });
                     EbDataSourceMain ds = EbSerializers.Json_Deserialize(obj.Data[0].Json);
                     if (ds.InputParams == null || ds.InputParams.Count <= 0)
-                       p.Merge(this.GetSqlParams(ds, obj.Data[0].EbObjectType));
+                        p.Merge(this.GetSqlParams(ds, obj.Data[0].EbObjectType));
                     else
-                       p.Merge(ds.InputParams);
+                        p.Merge(ds.InputParams);
                 }
-                else if(r is EbEmailNode)
+                else if (r is EbEmailNode)
                 {
                     var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = r.Refid });
                     EbEmailTemplate enode = EbSerializers.Json_Deserialize(obj.Data[0].Json);
@@ -590,7 +590,7 @@ namespace ExpressBase.Web.Controllers
                         EbReport o = EbSerializers.Json_Deserialize<EbReport>(rep.Data[0].Json);
                         if (!string.IsNullOrEmpty(o.DataSourceRefId))
                         {
-                            var ds= this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = o.DataSourceRefId });
+                            var ds = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = o.DataSourceRefId });
                             p = p.Merge(this.GetSqlParams(EbSerializers.Json_Deserialize<EbDataSourceMain>(ds.Data[0].Json), ds.Data[0].EbObjectType));
                         }
                     }
@@ -600,6 +600,22 @@ namespace ExpressBase.Web.Controllers
                         p = p.Merge(this.GetSqlParams(EbSerializers.Json_Deserialize<EbDataSourceMain>(ob.Data[0].Json), ob.Data[0].EbObjectType));
                     }
                 }
+            }
+            return JsonConvert.SerializeObject(p);
+        }
+
+        public string GetCompReqJson(string refid)
+        {
+            List<Param> p = null;
+            var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
+            var o = EbSerializers.Json_Deserialize(obj.Data[0].Json);
+
+            if (o is EbDataReader || o is EbDataWriter || o is EbSqlFunction)
+            {
+                if (o.InputParams == null || o.InputParams.Count <= 0)
+                    p = this.GetSqlParams(o, obj.Data[0].EbObjectType);
+                else
+                    p = o.InputParams;
             }
             return JsonConvert.SerializeObject(p);
         }
@@ -641,24 +657,34 @@ namespace ExpressBase.Web.Controllers
         {
             var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
             var o = EbSerializers.Json_Deserialize(obj.Data[0].Json);
-            return new ApiComponent {Name=o.Name,Version=o.VersionNumber };
+            return new ApiComponent { Name = o.Name, Version = o.VersionNumber };
         }
 
         [HttpGet]
-        public string GetApiResponse(string name, string vers, string param)
+        public string GetApiResponse(string name, string vers, string param, string component = null)
         {
             ApiResponse resp = null;
-            List<Param> pr = JsonConvert.DeserializeObject<List<Param>>(param);
-            Dictionary<string, object> d = pr.Select(p => new { prop = p.Name, val = p.Value })
-                .ToDictionary(x => x.prop, x => x.val as object);
-
-            resp = this.ServiceClient.Get(new ApiRequest
+            if (component == null)
             {
-                Name = name,
-                Version = vers,
-                Data = d
-            });
+                List<Param> pr = JsonConvert.DeserializeObject<List<Param>>(param);
+                Dictionary<string, object> d = pr.Select(p => new { prop = p.Name, val = p.Value })
+                    .ToDictionary(x => x.prop, x => x.val as object);
 
+                resp = this.ServiceClient.Get(new ApiRequest
+                {
+                    Name = name,
+                    Version = vers,
+                    Data = d
+                });
+            }
+            else
+            {
+                resp = this.ServiceClient.Post(new ApiComponetRequest
+                {
+                    Component = EbSerializers.Json_Deserialize(component),
+                    Params = JsonConvert.DeserializeObject<List<Param>>(param)
+                });
+            }
             return JsonConvert.SerializeObject(resp);
         }
 

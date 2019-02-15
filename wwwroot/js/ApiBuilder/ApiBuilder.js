@@ -28,6 +28,8 @@ function EbApiBuild(config) {
     this.Procs = {};
     this.dropArea = "resource_Body_drparea";
     this.FlagRun = false;
+    this.ComponentRun = false;
+    this.Component = null;
 
     this.pg = new Eb_PropertyGrid({
         id: "pgContainer_wrpr",
@@ -249,6 +251,7 @@ function EbApiBuild(config) {
                 data: { "components": JSON.stringify(this.EbObject.Resources) },
                 success: function (result) {
                     this.toggleReqWindow(JSON.parse(result));
+                    this.ComponentRun = false;
                     $("#eb_common_loader").EbLoader("hide");
                 }.bind(this)
             });
@@ -256,6 +259,13 @@ function EbApiBuild(config) {
     }
 
     this.getApiResponse = function (ev) {
+        let _data = null;
+        if (!this.ComponentRun) {
+            _data = { "name": this.EbObject.Name, "vers": commonO.getVersion(), "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text() };
+        }
+        else {
+            _data = {"param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text(),"component": JSON.stringify(this.Component)}
+        }
         $.ajax({
             url: "../Dev/GetApiResponse",
             type: "GET",
@@ -263,13 +273,9 @@ function EbApiBuild(config) {
             beforeSend: function () {
                 $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#JsonResp_CMW', Style: { "top": "0", "left": "0" } } });
             },
-            data: {
-                "name": this.EbObject.Name,
-                "vers": commonO.getVersion(),
-                "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text()
-            },
+            data: _data ,
             success: function (result) {
-                this.toggleRespWindow(JSON.parse(result));
+                (this.ComponentRun) ? this.toggleRespWindow(JSON.parse(result).Result) : this.toggleRespWindow(JSON.parse(result));
                 $("#eb_common_loader").EbLoader("hide");
             }.bind(this)
         });

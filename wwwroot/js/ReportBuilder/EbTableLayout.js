@@ -13,6 +13,7 @@
     this.createTable = function () {
         let id = this.Report.Objtype + (this.Report.idCounter[this.Report.Objtype + "Counter"])++;
         this.EbCtrl = new EbObjects["EbTable_Layout"](id);
+        this.EbCtrl.Name = this.Report.RbCommon.GenUniqName(this.EbCtrl.Name);
         this.ColCount = this.EbCtrl.ColoumCount;
         this.RowCount = this.EbCtrl.RowCount;
         this.Report.dropLoc.append(this.getHtml(id));
@@ -31,7 +32,7 @@
         this.EbCtrl = new EbObjects["EbTable_Layout"](id);
         this.Report.containerId.append(this.getHtml(id));
         this.Report.repExtern.replaceProp(this.EbCtrl, this.EditCtrl);
-        this.EbCtrl.EbSid = id; this.EbCtrl.Name = id;
+        this.EbCtrl.EbSid = id; this.EbCtrl.Name = this.EditCtrl.Name;
         this.Report.objCollection[id] = this.EbCtrl;
         this.Report.pg.addToDD(this.Report.objCollection[id]);
         this.Table = $(`#${id}`);
@@ -92,7 +93,7 @@
             var $control = new EbObjects["Eb" + eb_type](Objid);
             $td.append($control.$Control.outerHTML());
             this.Report.repExtern.replaceProp($control, ebCtrl);
-            $control.EbSid = Objid; $control.Name = Objid;
+            $control.EbSid = Objid; $control.Name = ebCtrl.Name;
             this.Report.objCollection[Objid] = $control;
             this.Report.pg.addToDD(this.Report.objCollection[Objid]);
             this.Report.RefreshControl(this.Report.objCollection[Objid]);

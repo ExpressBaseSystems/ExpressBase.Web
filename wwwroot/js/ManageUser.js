@@ -24,6 +24,7 @@
     this.txtEmail = $("#txtEmail");
     this.spanEmail = $("#spanEmail");
     this.pwdPassword = $("#pwdPassword");
+    this.pwdPasswordCon = $("#pwdPasswordCon");
     this.lblMessage = $("#lblMessage");
     this.txtDateOfBirth = $("#txtDateOfBirth");
     this.txtAlternateEmail = $("#txtAlternateEmail");
@@ -74,6 +75,8 @@
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
         this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/); }.bind(this));
+        this.pwdPasswordCon.on('keyup', function (e) { this.validateInfo(this.pwdPasswordCon, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/); }.bind(this));
+        this.makeAsShowPwdField(this.pwdPasswordCon);
         this.txtAlternateEmail.on('change', function (e) { this.isInfoValidEmail2 = this.validateInfo(this.txtAlternateEmail, /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/); }.bind(this));
         this.btnCreateUser.on('click', this.clickbtnCreateUser.bind(this));
         this.selectLocale.on("change", this.selectLocaleChangeAction.bind(this));
@@ -87,6 +90,7 @@
         this.pwdOld.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdOld));
         this.pwdNew.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNew));
         this.pwdNewConfirm.on('keyup', this.onKeyUpPwdInModal.bind(this, this.pwdNewConfirm));
+        this.makeAsShowPwdField(this.pwdNewConfirm);
 
         for (var i = 0; i < this.statusList.length; i++) {
             $("#divStatus input:radio[value='" + i + "']").parent().contents().last().replaceWith(this.statusList[i]);
@@ -136,8 +140,10 @@
         this.chkboxHide.parent().prev().hide();
         this.txtEmail.val("");
         this.pwdPassword.val("");
+        this.pwdPasswordCon.val("");
         if (this.itemId > 1) {
             this.menuBarObj.setName("Edit User");
+            document.title = "Manage User - " + this.userinfo["fullname"];
             //$(this.divFormHeading).text("Edit User");
             //this.btnCreateUser.text("Update");
             this.txtEmail.attr("disabled", "true");
@@ -145,6 +151,7 @@
             $("#imgprofimage").attr("src", "/images/dp/" + this.itemId + ".png");
             if (this.whichMode === 3) {
                 this.menuBarObj.setName("My Profile");
+                document.title = "My Profile - " + this.userinfo["fullname"];
                 this.divChangePassword.css("display", "block");
             }
             if (this.whichMode === 1) {
@@ -160,6 +167,7 @@
         }
         else if (this.itemId === 1) {
             this.menuBarObj.setName("New User");
+            document.title = "New User";
             //$(this.divFormHeading).text("Create User");
             //this.btnCreateUser.text("Create");
             this.btnFbConnect.css("display", "none");
@@ -178,6 +186,7 @@
         }
         else {
             this.menuBarObj.setName("New User");
+            document.title = "New User";
             //$(this.divFormHeading).text("Create User");
             //this.btnCreateUser.text("Create");
             this.btnFbConnect.css("display", "none");
@@ -215,6 +224,7 @@
         this.txtNickName.attr("disabled", "true");
         this.txtEmail.attr("disabled", "true");
         this.pwdPassword.attr("disabled", "true");
+        this.pwdPasswordCon.attr("disabled", "true");
         this.txtDateOfBirth.attr("disabled", "true");
         this.txtAlternateEmail.attr("disabled", "true");
         this.txtPhPrimary.attr("disabled", "true");
@@ -527,6 +537,7 @@
     this.initResetPwdModal = function () {
         this.pwdResetNew.val('');
         this.pwdResetNewConfirm.val('');
+        this.makeAsShowPwdField(this.pwdResetNewConfirm);
         this.ResetPwdModal.modal('show');
     };
 
@@ -590,6 +601,10 @@
             this.isInfoValidEmail = false;
         if (!this.isInfoValidEmail || !this.isInfoValidEmail2) {
             EbMessage("show", { Message: 'Validation Failed. Check all Fields', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
+        if (this.pwdPassword.val() !== this.pwdPasswordCon.val() && this.whichMode === 1 && this.itemId < 2) {
+            EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
         if (this.pwdPassword.val().length < 8 && this.whichMode === 1 && this.itemId < 2) {
@@ -664,6 +679,24 @@
         });
     };
 
+    this.makeAsShowPwdField = function ($pwdField) {
+        let id = $pwdField.attr("id");
+        $pwdField.after(`<span id="${id}_eop" class="glyphicon glyphicon-eye-open form-control-feedback" style="top: 0px; cursor: pointer; color: #555;" title="Click to show password"></span>`);
+        $pwdField.after(`<span id="${id}_ecl" class="glyphicon glyphicon-eye-close form-control-feedback" style="top: 0px; cursor: pointer; color: #555; display: none;"  title="Click to hide password"></span>`);
+        let $eop = $("#" + id + "_eop");
+        let $ecl = $("#" + id + "_ecl");
+        $eop.on("click", function (e) {
+            $pwdField[0].type = "text";
+            $(e.target).hide();
+            $(e.target).prev().show();
+        });
+        $ecl.on("click", function (e) {
+            $pwdField[0].type = "password";
+            $(e.target).hide();
+            $(e.target).next().show();
+        });
+    };
+    
     this.init();
 };
 

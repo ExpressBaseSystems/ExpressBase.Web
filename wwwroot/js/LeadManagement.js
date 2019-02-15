@@ -438,7 +438,7 @@
                 EbMessage("show", { Message: 'Save Customer Information then try to add Followup', AutoHide: true, Background: '#aa0000' });
                 return;
             }
-            if (this.$FlUpDate.val() === "" || this.$FlUpStatus.val() === "" || this.$FlUpFolDate.val() === "" || this.$FlUpComnt.val() === "") {
+            if (this.$FlUpDate.val().trim() === "" || this.$FlUpStatus.val().trim() === "" || this.$FlUpFolDate.val().trim() === "" || this.$FlUpComnt.val().trim() === "") {
                 EbMessage("show", { Message: 'Validation Faild. Fill all Fields.', AutoHide: true, Background: '#aa0000' });
                 return;
             }
@@ -521,33 +521,47 @@
     };
 
     this.setFollowupStatus = function (_oldStatus) {
-        if (this.tempStatusObject === null) {
-            this.tempStatusObject = {};
-            $.each(this.$FlUpStatus.children(), function (i, ob) {
-                let nextStatus = $(ob).attr("data-ns");
-                let _next = [];
-                if (nextStatus !== "") {
-                    _next = nextStatus.split(",");
-                }
-                this.tempStatusObject[$(ob).attr("value")] = _next;
-            }.bind(this));
-        }
-        if (this.tempStatusObject[_oldStatus].length === 0) {
-            $.each(this.$FlUpStatus.children(), function (i, ob) {
+        let isClosed = false;
+        $.each(this.FeedbackList, function (i, obj) {
+            if (obj["Status"] === "Closed")
+                isClosed = true;
+        });
+        $.each(this.$FlUpStatus.children(), function (i, ob) {
+            let tt = $(ob).attr("value");
+            if (!isClosed && (tt === "HT Done" || tt === "PRP Done"))
+                $(ob).prop("disabled", true);
+            else
                 $(ob).prop("disabled", false);
-            });
-        }
-        else {
-            $.each(this.$FlUpStatus.children(), function (i, ob) {
-                if (this.tempStatusObject[_oldStatus].indexOf($(ob).attr("value")) === -1)
-                    $(ob).prop("disabled", true);
-                else {
-                    $(ob).prop("disabled", false);
-                    this.$FlUpStatus.val($(ob).attr("value"));
-                }
-            }.bind(this));
-        }
+        }.bind(this));
         this.$FlUpStatus.val(_oldStatus);
+
+        //if (this.tempStatusObject === null) {
+        //    this.tempStatusObject = {};
+        //    $.each(this.$FlUpStatus.children(), function (i, ob) {
+        //        let nextStatus = $(ob).attr("data-ns");
+        //        let _next = [];
+        //        if (nextStatus !== "") {
+        //            _next = nextStatus.split(",");
+        //        }
+        //        this.tempStatusObject[$(ob).attr("value")] = _next;
+        //    }.bind(this));
+        //}
+        //if (this.tempStatusObject[_oldStatus].length === 0) {
+        //    $.each(this.$FlUpStatus.children(), function (i, ob) {
+        //        $(ob).prop("disabled", false);
+        //    });
+        //}
+        //else {
+        //    $.each(this.$FlUpStatus.children(), function (i, ob) {
+        //        if (this.tempStatusObject[_oldStatus].indexOf($(ob).attr("value")) === -1)
+        //            $(ob).prop("disabled", true);
+        //        else {
+        //            $(ob).prop("disabled", false);
+        //            this.$FlUpStatus.val($(ob).attr("value"));
+        //        }
+        //    }.bind(this));
+        //}
+        //this.$FlUpStatus.val(_oldStatus);
     };
 
     this.initBillingModal = function () {

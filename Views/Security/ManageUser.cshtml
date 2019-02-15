@@ -90,10 +90,20 @@
             </div>
             <div class="form-group">
                 <div id="divPassword" style="width: 100%;">
-                    <label style="font-family: open sans; font-weight: 300;">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
-                        <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password" autocomplete="off">
+                    <div>
+                        <label style="font-family: open sans; font-weight: 300;">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
+                            <input id="pwdPassword" style="display:inline-block; width:100%;" type="password" class="form-control" title="Password" autocomplete="off">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-family: open sans; font-weight: 300;">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-addon" id=""><i class="fa fa-key" aria-hidden="true"></i></span>
+                            <input id="pwdPasswordCon" style="display:inline-block; width:100%;" type="password" class="form-control" title="Confirm Password" autocomplete="off">
+                            
+                        </div>
                     </div>
                 </div>
                 <div id="divChangePassword" style="padding-top: 28px; display:none;">
@@ -268,7 +278,9 @@
                     </div>
                     <div class="form-group">
                         <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
-                        <input id="pwdNewConfirm" class="form-control" type="password" title="ReEnter New Password" style="width:60%; display: inline-block;">
+                        <div style="position: relative; width:60%; display: inline-block;">
+                            <input id="pwdNewConfirm" class="form-control" type="password" title="ReEnter New Password">
+                        </div>
                     </div>
                     <label id="lblPwdChngMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);"></label>
                 </div>
@@ -299,7 +311,9 @@
                     </div>
                     <div class="form-group">
                         <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
-                        <input id="pwdResetNewConfirm" class="form-control" type="password" title="ReEnter New Password" style="width:60%; display: inline-block;">
+                        <div style="position: relative; width:60%; display: inline-block;">
+                            <input id="pwdResetNewConfirm" class="form-control" type="password" title="ReEnter New Password">
+                        </div>
                     </div>
                     <label id="lblPwdResetMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);">Minimum Pasword length should be 8</label>
                 </div>

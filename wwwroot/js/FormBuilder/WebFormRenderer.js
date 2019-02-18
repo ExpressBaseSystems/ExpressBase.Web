@@ -125,7 +125,7 @@
         $.each(p1, function (i, row) {
             $.each(row.Columns, function (j, dm) {
                 if (j === 0) {
-                    //this.initializer.Vobj.valueMembers.push(dm.Value);
+                    //this.initializer.Vobj.valueMembers.push(parseInt(dm.Value));
                     return true;
                 }
                 this.initializer.Vobj.displayMembers[dm.Name].push(dm.Value);

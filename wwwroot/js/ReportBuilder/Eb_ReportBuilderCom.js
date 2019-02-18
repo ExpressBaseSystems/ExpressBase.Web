@@ -89,6 +89,10 @@
         3: "justify"
     }
 
+    this.GenUniqName = function (ctrl_name) {
+        return ctrl_name+ "_" + Math.floor(Date.now() / 1000);
+    };
+
     this.setMarginOnedit = function (margin) {
         $(".track_line_vert1").css("left", this.RbObj.repExtern.convertPointToPixel(margin.Left));
         this.RbObj.margin.Left = $(".track_line_vert1").position().left;
@@ -340,7 +344,7 @@
                     type = "DataFieldNumeric"; icon = EbParams.Icons["Numeric"];
                 }
                 else if (obj.type === 3) {
-                    type = "DataFieldBoolean"; icon = _EbParams.Icons["Bool"];
+                    type = "DataFieldBoolean"; icon = EbParams.Icons["Bool"];
                 }
                 else if (obj.type === 5 || obj.type === 6 || obj.type === 17 || obj.type === 26) {
                     type = "DataFieldDateTime"; icon = EbParams.Icons["DateTime"];

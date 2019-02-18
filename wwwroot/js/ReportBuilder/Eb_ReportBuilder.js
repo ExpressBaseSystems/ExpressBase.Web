@@ -40,6 +40,8 @@
     this.pages = this.RbCommon.pages;
     this.TextAlign = EbEnums["EbTextAlign"];
     this.rulerTypesObj = this.RbCommon.EbRuler;
+    this.TableCollection = {};
+
     this.GenerateButtons = function () { 
 		$("#obj_icons").empty();
 		$("#obj_icons").append(`
@@ -51,8 +53,6 @@
 	this.DrawScheduler = function(){
         $('#schedulerlistmodal').modal('show');
 	};
-
-    this.TableCollection = {};
 
     this.RefreshControl = function (obj) {
         var NewHtml = obj.$Control.outerHTML();
@@ -297,6 +297,7 @@
             this.dropLoc.append(obj.$Control.outerHTML());
             this.objCollection[Objid] = obj;
             obj.DisplayName = Objid;
+            obj.Name = this.RbCommon.GenUniqName(obj.Name);
             obj.Top = this.getPositionTop();
             obj.Left = this.leftwithMargin();
             if (this.col.hasClass('coloums')) {
@@ -620,7 +621,7 @@
             this.containerId = $("#page-reportLayer");
         this.containerId.append($control.$Control.outerHTML());
 		this.repExtern.replaceProp($control, editControl);
-		$control.EbSid = Objid; $control.Name = editControl.Name;
+        $control.EbSid = Objid; $control.Name = editControl.Name;
         this.objCollection[Objid] = $control;
         this.RefreshControl($control);
         this.pg.addToDD(this.objCollection[Objid]);

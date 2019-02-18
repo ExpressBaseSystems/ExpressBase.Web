@@ -412,8 +412,8 @@ function getSingleColumn(obj) {
 //    }
 //});
 function Test() {
-    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU0OTQzMjM4NywiZXhwIjoxNTQ5NDMyNDc3LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.U6Oq_5l9jIs2VBaOYAF3R242fsjFTbIhcYoDdkQ-gP9LMDKJ8mr579fRs0lfEULtUSxICJRGxoLRLjDAD7RHdId34yW4qpOCGMttKypk_gxgpxCl85g3M9xIYdu6atRrYmig2iKY-mZm-kse7VFEYQIz94A9yOsdKoi6bVmyRjY`;
-    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NDk0MzIzODcsImV4cCI6MTU0OTUxODc4N30.OSOgnAjau3THUZ8UXSSDHE0DYAuHT0sNP3r3Yyy2xQ8KwRvqgVg_gSagbWS4qLMdTV2ij75QwmytwlNO3l5eoUbzNWtS4G8OVXnAFyV6zOyEuvlDRCNF8nEr6bEcJz6INK-vYLiPSSVFvdLWGRK6uCxnXtLclCeW8isANfme2oI`;
+    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1MDAzNjMzMiwiZXhwIjoxNTUwMDM2NDIyLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.R_iKggAI7oRBlekGn1Pzw3-HzDOINvXNETsc-Vs1WiIFROjgeRU1NwMr17Mhmn9S7a-t6EoIeUVAu8wpLShy7igFRBUaGl_8jsGCMMzgIqvO4jokCLo_XWtdMQ8l4G0JVJ40lssWEOAOLMr2GinMeqbCf2gBjTSgsmd87VUE6G4`;
+    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTAwMzU3NDksImV4cCI6MTU1MDEyMjE0OX0.T2UnH-qrGMTaJGBnPIhJdRkQY_Rz_wqPvazvOnrd2hcmjY05FQ9lXS7-dK9MkxREEeUyGX4huBdiCeQp7Nd6AxkKHcCHB8VdZmdj7-7Vo5KSbbn2U60KBfWsEoMI6cP82UZuJO2HjbAvOQlHXv5uSxdjg0pRH003vUsXNYlDk14`;
     $.ajax({
         url: "../api/api_getparties/1.0.0",
         type: "POST",
@@ -423,8 +423,7 @@ function Test() {
             xhr.setRequestHeader("rToken", r);
         },
         data: {
-            "routem_xid": '16',
-            "ids": '12345'
+            "routem_xid": 'DB033'
         },
         success: function (result) {
 

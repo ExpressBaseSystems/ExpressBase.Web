@@ -31,3 +31,6 @@
 .hide{
     display:none;
 }
+.prety_jsonWrpr ol{
+    margin-bottom: 0;
+}

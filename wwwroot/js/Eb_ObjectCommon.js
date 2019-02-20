@@ -26,9 +26,9 @@
         $('#commit').off("click").on("click", this.Commit.bind(this, false));
         $('a[data-toggle="tab"].cetab').off("click").on('click', this.TabChangeSuccess.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
-        //$(window).bind('keydown', this.checkKeyDown.bind(this));
         $(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
         $('#ProfilerHome').off('click').on('click', this.SqlProfilerHome.bind(this));
+        $('#del_obj').off('click').on('click', this.DeleteObject.bind(this));
         this.target = $("#versionNav li.active a").attr("href");//edits by amal
     };
 
@@ -376,7 +376,7 @@
         var changeLog = $('#obj_changelog').val();
         var getNav = this.target; /*$("#versionNav li.active a").attr("href");*/
         if (this.isBeforSaveImplemets(getNav)) {
-            if (this.ObjCollection[getNav].BeforeSave()) 
+            if (this.ObjCollection[getNav].BeforeSave())
                 this.ajaxCommit(tagvalues, apps, getNav, changeLog);
             else
                 $("#eb_common_loader").EbLoader("hide");
@@ -495,6 +495,15 @@
 
     this.getVersion = function () {
         return $("#versionNav li.active a").attr("data-vernum");
+    };
+
+    this.DeleteObject = function () {
+        $.post("../Eb_Object/DeleteObject",
+            { objid: this.ver_Refid.split("-")[3] },
+            function (result) {
+                if (result) alert("Deleted");
+                else alert("failed. Please retry");
+            });
     };
 
     this.SqlProfilerHome = function () {

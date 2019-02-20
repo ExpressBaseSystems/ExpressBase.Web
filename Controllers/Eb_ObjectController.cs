@@ -605,5 +605,13 @@ namespace ExpressBase.Web.Controllers
         {
             return ViewComponent("SqlProfiler",new { refid = refid});
         }
+
+        public bool DeleteObject(int objid)
+        {
+            DeleteObjectResponse res = ServiceClient.Post(new DeleteEbObjectRequest { ObjId = objid});
+            if (res.RowsDeleted > 0)
+                return true;
+            return false;
+        }
     }
 }

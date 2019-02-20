@@ -45,6 +45,17 @@
     display: none;
 }
 
+.wrappernew {
+    width: 50%;
+    height: 100%;
+}
+
+/*.wraper3_drhome {
+    width: 100%;
+    border: 2px solid #ccc;
+    height: 40%;
+}*/
+
 .maximize {
     right: 10px;
 }
@@ -53,35 +64,55 @@
     width: 100%;
     display: flex;
     flex-flow: row wrap;
-    background-color: #fafafa;
-    margin-top: 20px;
+    background-color: white;
+    margin-top: 10px;
 }
 
-    .tile_wrapere .tiles_outer {
-        width: 33.3%;
-        padding: 5px;
+    .tile_wrapere .tile_middle {
+        width: 100%;
+        margin-top: 10px;
     }
 
-        .tile_wrapere .tiles_outer .tiles {
-            width: 100%;
-            height: 100%;
-            -webkit-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-            -moz-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-            box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-            border: 1px solid #ccc;
-            background: white;
-            min-height: 50px;
-            border-radius: 4px;
-            padding: 15px;
-            text-align: center;
+    .tile_wrapere .tiles_outer .tilecount {
+        width: 30%;
+        height: 100%;
+        -webkit-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+        -moz-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+        box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+        border: 1px solid #ccc;
+        background: white;
+        min-height: 50px;
+        border-radius: 4px;
+        padding: 15px;
+        text-align: center;
+        margin-left: 15px;
+    }
+
+    .tile_wrapere .tiles_outer .tiles {
+        width: 30%;
+        height: 100%;
+        -webkit-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+        -moz-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+        box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+        border: 1px solid #ccc;
+        background: white;
+        min-height: 50px;
+        border-radius: 4px;
+        padding: 15px;
+        text-align: center;
+        margin-left: 15px;
+    }
+
+        .tile_wrapere .tiles_outer .tiles:hover {
+            background-color: lightgray;
+            transform: translateY(4px);
         }
 
-            .tile_wrapere .tiles_outer .tiles:hover {
-                background-color: lightgray;
-                transform: translateY(4px);
-            }
+        .tile_wrapere .tiles_outer .tiles:active {
+            background-color: lightgray;
+            transform: translateY(8px);
+        }
 
-            .tile_wrapere .tiles_outer .tiles:active {
-                background-color: lightgray;
-                transform: translateY(8px);
-            }
+.selected {
+    background: lightblue !important;
+}

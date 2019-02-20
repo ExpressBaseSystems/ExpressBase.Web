@@ -388,7 +388,7 @@ namespace ExpressBase.Web.Controllers
             EbObject dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
             dsobj.Status = resultlist.Data[0].Status;
             dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-
+            dsobj.RefId = objid;
             return EbSerializers.Json_Serialize(dsobj);
         }
 
@@ -600,6 +600,10 @@ namespace ExpressBase.Web.Controllers
         public bool CheckSqlFuncRestricted(string sql)
         {
             return Regex.IsMatch(sql.ToLower(), @"\b(delete\s|alter\s|truncate\s|drop\s)");
+        }
+        public IActionResult GetProfilerView(string refid)
+        {
+            return ViewComponent("SqlProfiler",new { refid = refid});
         }
     }
 }

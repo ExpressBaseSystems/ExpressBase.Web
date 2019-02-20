@@ -6,6 +6,7 @@
     @using Newtonsoft.Json;
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
 }
+<script type="text/javascript" src="~/js/SQLProfiler/SQLProfiler.js"></script>
 <script>
 @Html.Raw(ViewBag.Meta);
 @Html.Raw(ViewBag.JsObjects);
@@ -42,11 +43,11 @@
             }
             @if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
             {
-                <li class="">
-                    <a data-toggle="tab" class="cetab" id="" href="#builderDashB">
-                        <i class="fa fa-home" aria-hidden="true"></i> Home
-                    </a>
-                </li>
+            <li class="">
+                <a data-toggle="tab" class="cetab" id="ProfilerHome" href="#builderDashB">
+                    <i class="fa fa-home" aria-hidden="true"></i> Home
+                </a>
+            </li>
             }
             <li class="active"><a data-toggle="tab" class="cetab" href="#vernav0" data-verNum="@ViewBag.VersionNumber"><i class='fa @(icon)' aria-hidden='true'></i> v @ViewBag.VersionNumber</a></li>
             @if (ViewBag.ObjType == (int)EbObjectTypes.Report)
@@ -65,7 +66,7 @@
         {
             <div class="tab-pane" id="builderDashB">
                 <div class="container-fluid" id="builderDashB_bdy">
-                    @await Component.InvokeAsync("SqlProfiler", new { refid = ViewBag.Refid })
+                    @*@await Component.InvokeAsync("SqlProfiler", new { refid = ViewBag.Refid })*@
                 </div>
             </div>
         }

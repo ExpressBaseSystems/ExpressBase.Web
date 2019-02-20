@@ -28,7 +28,7 @@
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         //$(window).bind('keydown', this.checkKeyDown.bind(this));
         $(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
-
+        $('#ProfilerHome').off('click').on('click', this.SqlProfilerHome.bind(this));
         this.target = $("#versionNav li.active a").attr("href");//edits by amal
     };
 
@@ -497,5 +497,17 @@
         return $("#versionNav li.active a").attr("data-vernum");
     };
 
+    this.SqlProfilerHome = function () {
+        $.ajax({
+            url: "../Eb_Object/GetProfilerView",
+            type: "get",
+            data: {
+                "refid": this.Current_obj.RefId
+            },
+            success: function (response) {
+                $('#builderDashB_bdy').html(response);
+            }
+        });
+    };
     this.init();
 };

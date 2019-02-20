@@ -43,6 +43,7 @@
         if (this.roleId > 0) {
             $(this.txtRoleName).val(roleInfo["RoleName"]);
             this.menuBarObj.setName(roleInfo["RoleName"]);
+            document.title = "Edit Role - " + roleInfo["RoleName"];
             //this.btnSaveAll.text("Update");
             $(this.txtRoleName).attr("disabled", "true");
 
@@ -79,6 +80,7 @@
         }
         else {
             this.menuBarObj.setName("New Role");
+            document.title = "New Role";
             //this.btnSaveAll.text("Create");
             this.selectApp.on("change", this.selectAppChangeAction.bind(this));
             this.loadAppToSelect.bind(this)();

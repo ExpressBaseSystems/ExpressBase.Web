@@ -729,6 +729,7 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
         if (parseInt(this.infoDict['id']) > 0) {
             //this.btnSaveAll.text("Update");
             this.menuBarObj.setName(this.infoDict['name']);
+            document.title = "Edit User Group - " + this.infoDict['name'];
             initUserList = [];
             for (i = 0; i < this.usersList.length; i++) {
                 initUserList.push({ id: this.usersList[i].Id, name: this.usersList[i].Name, email: this.usersList[i].Email });
@@ -737,6 +738,7 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
         else {
             //this.btnSaveAll.text("Create");
             this.menuBarObj.setName("New User Group");
+            document.title = "New User Group";
         }
         if (this.usersTile === null) {
             this.usersTile = new TileSetupJs($("#divusers"), "Add Users", initUserList, null, metadata2, "../Security/GetUserDetails", null, this);

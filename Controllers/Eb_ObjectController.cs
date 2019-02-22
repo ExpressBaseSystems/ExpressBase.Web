@@ -276,9 +276,9 @@ namespace ExpressBase.Web.Controllers
                         DisplayName = obj.DisplayName
                     };
                     EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
-                    if (res.ExceptionMessage != string.Empty && res.RefId == null)
+                    if (res.Message != string.Empty && res.RefId == null)
                     {
-                        return res.ExceptionMessage;
+                        return res.Message;
                     }
                     refid = res.RefId;
                 }

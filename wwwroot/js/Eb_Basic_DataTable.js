@@ -1018,6 +1018,9 @@ var EbBasicDataTable = function (Option) {
             this.eb_filter_controls_4sb = [];
 
         //$.each(this.ebSettings.Columns.$values, this.GetFiltersFromSettingsTbl_inner.bind(this));
+        if (this.Api === null)
+            this.Api = $("#" + this.tableId).DataTable();
+        
         $.each(this.Api.settings().init().aoColumns, this.GetFiltersFromSettingsTbl_inner.bind(this));
     };
 

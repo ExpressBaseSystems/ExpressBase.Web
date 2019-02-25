@@ -158,7 +158,6 @@ END;`;
         else {
             this.isPw = true;
             this.getInputParams();
-            commonO.Save();
         }
     };
 
@@ -319,7 +318,9 @@ END;`;
         commonO.flagRun = true;
         //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
-        if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
+        if (this.EbObject.VersionNumber == "")
+            commonO.Save();
+        else if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
             if (this.EbObject.VersionNumber.slice(-1) === "w") {
                 commonO.Save();
             }

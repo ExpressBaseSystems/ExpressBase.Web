@@ -197,15 +197,15 @@ namespace ExpressBase.Web.Controllers
 
             if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
             {
-                EbObjAllVerWithoutCircularRefResp result = this.ServiceClient.Get<EbObjAllVerWithoutCircularRefResp>(new EbObjAllVerWithoutCircularRefRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode});
+                EbObjAllVerWithoutCircularRefResp result = this.ServiceClient.Get<EbObjAllVerWithoutCircularRefResp>(new EbObjAllVerWithoutCircularRefRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode });
                 string UserControlsHtml = string.Empty;
-                foreach(KeyValuePair<string, List<EbObjectWrapper>> _object in result.Data)
+                foreach (KeyValuePair<string, List<EbObjectWrapper>> _object in result.Data)
                 {
                     EbObjectWrapper _objverL = null;
                     string versionHtml = "<select style = 'float: right; border: none;'>";
-                    foreach(EbObjectWrapper _objver in _object.Value)
+                    foreach (EbObjectWrapper _objver in _object.Value)
                     {
-                        versionHtml += "<option refid='" + _objver.RefId + "'>"+ _objver.VersionNumber + "</option>";
+                        versionHtml += "<option refid='" + _objver.RefId + "'>" + _objver.VersionNumber + "</option>";
                         _objverL = _objver;
                     }
                     versionHtml += "</select>";
@@ -219,7 +219,7 @@ namespace ExpressBase.Web.Controllers
                     _dsobj.AfterRedisGet(Redis, this.ServiceClient);
                     ViewBag.dsObj = _dsobj;
                 }
-                else if(dsobj is EbUserControl)
+                else if (dsobj is EbUserControl)
                 {
                     EbUserControl _dsobj = dsobj as EbUserControl;
                     _dsobj.AfterRedisGet(Redis, this.ServiceClient);
@@ -233,9 +233,9 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public string CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, string _apps)
+        public EbRootObjectResponse CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, string _apps)
         {
-            string refid;
+            EbRootObjectResponse _response = new EbRootObjectResponse();
             EbObject obj = EbSerializers.Json_Deserialize(_json);
             string _rel_obj_tmp = obj.DiscoverRelatedRefids();
             if (_rel_obj_tmp.Length > 0)
@@ -243,17 +243,20 @@ namespace ExpressBase.Web.Controllers
             if (obj is EbDataReader)
             {
                 bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
-                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+                if (ContainsRestricted)
+                    _response.Message = "RestrictedStatementinQuerry";
             }
-            else if(obj is EbDataWriter)
+            else if (obj is EbDataWriter)
             {
                 bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
-                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+                if (ContainsRestricted)
+                    _response.Message = "RestrictedStatementinQuerry";
             }
-            else if(obj is EbSqlFunction)
+            else if (obj is EbSqlFunction)
             {
                 bool ContainsRestricted = CheckSqlFuncRestricted((obj as EbSqlFunction).Sql);
-                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+                if (ContainsRestricted)
+                    _response.Message = "RestrictedStatementinQuerry";
             }
             if (string.IsNullOrEmpty(_refid))
             {
@@ -278,11 +281,12 @@ namespace ExpressBase.Web.Controllers
                     EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
                     if (res.Message != string.Empty && res.RefId == null)
                     {
-                        return res.Message;
+                        _response.Message = res.Message;
                     }
-                    refid = res.RefId;
+                    _response.Refid = res.RefId;
                 }
-                else return "nameisnotunique";
+                else
+                    _response.Message = "nameisnotunique";
             }
             else
             {
@@ -299,31 +303,34 @@ namespace ExpressBase.Web.Controllers
                     DisplayName = obj.DisplayName
                 };
                 EbObject_CommitResponse res = ServiceClient.Post(ds);
-                refid = res.RefId;
+                _response.Refid = res.RefId;
             }
 
-            return refid;
+            return _response;
         }
 
-        public string SaveEbObject(string _refid, string _json, string _rel_obj, string _tags, string _apps)
+        public EbRootObjectResponse SaveEbObject(string _refid, string _json, string _rel_obj, string _tags, string _apps)
         {
-            string refid;
+            EbRootObjectResponse _response = new EbRootObjectResponse();
             EbObject obj = EbSerializers.Json_Deserialize(_json);
             string _rel_obj_tmp = obj.DiscoverRelatedRefids();
             if (obj is EbDataReader)
             {
                 bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
-                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+                if (ContainsRestricted)
+                    _response.Message="RestrictedStatementinQuerry";
             }
             else if (obj is EbDataWriter)
             {
                 bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
-                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+                if (ContainsRestricted)
+                    _response.Message = "RestrictedStatementinQuerry";
             }
             else if (obj is EbSqlFunction)
             {
                 bool ContainsRestricted = CheckSqlFuncRestricted((obj as EbSqlFunction).Sql);
-                if (ContainsRestricted) return "RestrictedStatementinQuerry";
+                if (ContainsRestricted)
+                    _response.Message = "RestrictedStatementinQuerry";
             }
             if (string.IsNullOrEmpty(_refid))
             {
@@ -347,9 +354,9 @@ namespace ExpressBase.Web.Controllers
                     };
 
                     EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
-                    refid = res.RefId;
+                    _response.Refid =  res.RefId;
                 }
-                else return "nameIsNotUnique";
+                else _response.Message = "nameIsNotUnique";
             }
             else
             {
@@ -366,9 +373,9 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 EbObject_SaveResponse res = ServiceClient.Post(ds);
-                refid = res.RefId;
+                _response.Refid = res.RefId;
             }
-            return refid;
+            return _response;
         }
 
         public IActionResult GetLifeCycle(int _tabNum, string cur_status, string refid)
@@ -391,7 +398,6 @@ namespace ExpressBase.Web.Controllers
             dsobj.RefId = objid;
             return EbSerializers.Json_Serialize(dsobj);
         }
-
 
         [HttpPost]
         public Object GetVersionObj(string refid)
@@ -601,17 +607,24 @@ namespace ExpressBase.Web.Controllers
         {
             return Regex.IsMatch(sql.ToLower(), @"\b(delete\s|alter\s|truncate\s|drop\s)");
         }
+
         public IActionResult GetProfilerView(string refid)
         {
-            return ViewComponent("SqlProfiler",new { refid = refid});
+            return ViewComponent("SqlProfiler", new { refid = refid });
         }
 
         public bool DeleteObject(int objid)
         {
-            DeleteObjectResponse res = ServiceClient.Post(new DeleteEbObjectRequest { ObjId = objid});
+            DeleteObjectResponse res = ServiceClient.Post(new DeleteEbObjectRequest { ObjId = objid });
             if (res.RowsDeleted > 0)
                 return true;
             return false;
         }
+    }
+    public class EbRootObjectResponse
+    {
+        public string Refid { get; set; }
+
+        public string Message { get; set; }
     }
 }

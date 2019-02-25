@@ -54,25 +54,29 @@
     };
 
     this.UpdateTab = function (data) {
-        if (data.indexOf("Specify a diffrent name.") > 0) {
-            this.alertBgColor = "#e83c46";
-            this.alertMsg = data;
-            EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
-        }
-        //var target = $("#versionNav li.active a").attr("href");
-        else if (data === "RestrictedStatementinQuerry") {
-            this.alertBgColor = "#e83c46";
-            this.alertMsg = "Querry Contains Restricted Keywords !!";
-            EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
-        }
-        else if (data === "nameIsNotUnique") {
-            this.alertBgColor = "#e83c46";
-            this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
-            EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+
+        if (data.message !== null && data.message !== "")
+        {
+            if (data.message.indexOf("Specify a diffrent name.") > 0) {
+                this.alertBgColor = "#e83c46";
+                this.alertMsg = data.message;
+                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+            }
+            //var target = $("#versionNav li.active a").attr("href");
+            else if (data.message === "RestrictedStatementinQuerry") {
+                this.alertBgColor = "#e83c46";
+                this.alertMsg = "Querry Contains Restricted Keywords !!";
+                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+            }
+            else if (data.message === "nameIsNotUnique") {
+                this.alertBgColor = "#e83c46";
+                this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
+                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+            }
         }
         else {
             var target = this.target;//edits by amal
-            this.ver_Refid = data;
+            this.ver_Refid = data.refid;
             var getNav = $("#versionNav li.active a").attr("href");
             $(getNav).attr("data-id", this.ver_Refid);
             if (this.Current_obj.Status === null || this.Current_obj.Status === undefined) {

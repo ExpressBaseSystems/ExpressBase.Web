@@ -439,6 +439,8 @@ var EbSelect = function (ctrl, options) {
     };
 
     this.getSelectedRow = function () {
+        if (!this.IsDatatableInit)
+            return;
         console.log(100);
         var res = [];
         $.each(this.ComboObj.TempValue, function (idx, item) {

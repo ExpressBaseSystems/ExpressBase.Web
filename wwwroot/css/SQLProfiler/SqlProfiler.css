@@ -1,7 +1,32 @@
 ﻿.logtable {
     margin-top: 10px;
-    height: 30%;
+    height: 35%;
 }
+
+.fixed_table {
+    width: 100%;
+    padding: 10px;
+    height: 90%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+    .fixed_table tbody {
+        display: block;
+        width: 100%;
+        height: 193px;
+        overflow-y: auto !important;
+    }
+
+    .fixed_table thead tr {
+        display: block;
+    }
+
+    .fixed_table th, .fixed_table td {
+        padding: 5px;
+        text-align: left;
+        width: 200px;
+    }
 
 .LogView {
     height: 100%;
@@ -37,27 +62,21 @@
     height: 100%;
 }
 
-.wraper2_drhome {
+.logchart {
     width: 50%;
     border: 2px solid #ccc;
     height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+.wraper2_drhome {
+    margin-top: 10px;
+    width: 100%;
+    /*border: 2px solid #ccc;*/
+    height: 80vh;
     overflow-y: auto;
     display: none;
-}
-
-.wrappernew {
-    width: 50%;
-    height: 100%;
-}
-
-/*.wraper3_drhome {
-    width: 100%;
-    border: 2px solid #ccc;
-    height: 40%;
-}*/
-
-.maximize {
-    right: 10px;
 }
 
 .tile_wrapere {
@@ -65,54 +84,59 @@
     display: flex;
     flex-flow: row wrap;
     background-color: white;
+}
+
+.tile_middle {
+    width: 100%;
     margin-top: 10px;
 }
 
-    .tile_wrapere .tile_middle {
-        width: 100%;
-        margin-top: 10px;
+.tiles_outer .tilecount {
+    width: 30%;
+    height: 100%;
+    -webkit-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+    -moz-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+    box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+    border: 1px solid #ccc;
+    background: white;
+    min-height: 50px;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    margin-left: 15px;
+}
+
+.tiles_outer .tiles {
+    width: 30%;
+    height: 100%;
+    -webkit-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+    -moz-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+    box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
+    border: 1px solid #ccc;
+    background: white;
+    min-height: 50px;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    margin-left: 15px;
+}
+
+    .tiles_outer .tiles:hover {
+        background-color: lightgray;
+        transform: translateY(4px);
     }
 
-    .tile_wrapere .tiles_outer .tilecount {
-        width: 30%;
-        height: 100%;
-        -webkit-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-        -moz-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-        box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-        border: 1px solid #ccc;
-        background: white;
-        min-height: 50px;
-        border-radius: 4px;
-        padding: 15px;
-        text-align: center;
-        margin-left: 15px;
+    .tiles_outer .tiles:active {
+        background-color: lightgray;
+        transform: translateY(8px);
     }
-
-    .tile_wrapere .tiles_outer .tiles {
-        width: 30%;
-        height: 100%;
-        -webkit-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-        -moz-box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-        box-shadow: -1px 0px 14px 0px rgba(199,189,199,1);
-        border: 1px solid #ccc;
-        background: white;
-        min-height: 50px;
-        border-radius: 4px;
-        padding: 15px;
-        text-align: center;
-        margin-left: 15px;
-    }
-
-        .tile_wrapere .tiles_outer .tiles:hover {
-            background-color: lightgray;
-            transform: translateY(4px);
-        }
-
-        .tile_wrapere .tiles_outer .tiles:active {
-            background-color: lightgray;
-            transform: translateY(8px);
-        }
 
 .selected {
     background: lightblue !important;
+}
+
+.logchart .logpara {
+    text-decoration: underline;
+    text-decoration-color: indigo;
+    color: indigo;
 }

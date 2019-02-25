@@ -28,6 +28,7 @@
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         $(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
         $('#ProfilerHome').off('click').on('click', this.SqlProfilerHome.bind(this));
+        $('#profiler').off('click').on('click', this.onProfilerClick.bind(this));
         $('#del_obj').off('click').on('click', this.DeleteObject.bind(this));
         this.target = $("#versionNav li.active a").attr("href");//edits by amal
     };
@@ -54,25 +55,29 @@
     };
 
     this.UpdateTab = function (data) {
-        if (data.indexOf("Specify a diffrent name.") > 0) {
-            this.alertBgColor = "#e83c46";
-            this.alertMsg = data;
-            EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
-        }
-        //var target = $("#versionNav li.active a").attr("href");
-        else if (data === "RestrictedStatementinQuerry") {
-            this.alertBgColor = "#e83c46";
-            this.alertMsg = "Querry Contains Restricted Keywords !!";
-            EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
-        }
-        else if (data === "nameIsNotUnique") {
-            this.alertBgColor = "#e83c46";
-            this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
-            EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+
+        if (data.message !== null && data.message !== "")
+        {
+            if (data.message.indexOf("Specify a diffrent name.") > 0) {
+                this.alertBgColor = "#e83c46";
+                this.alertMsg = data.message;
+                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+            }
+            //var target = $("#versionNav li.active a").attr("href");
+            else if (data.message === "RestrictedStatementinQuerry") {
+                this.alertBgColor = "#e83c46";
+                this.alertMsg = "Querry Contains Restricted Keywords !!";
+                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+            }
+            else if (data.message === "nameIsNotUnique") {
+                this.alertBgColor = "#e83c46";
+                this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
+                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+            }
         }
         else {
             var target = this.target;//edits by amal
-            this.ver_Refid = data;
+            this.ver_Refid = data.refid;
             var getNav = $("#versionNav li.active a").attr("href");
             $(getNav).attr("data-id", this.ver_Refid);
             if (this.Current_obj.Status === null || this.Current_obj.Status === undefined) {
@@ -507,6 +512,7 @@
     };
 
     this.SqlProfilerHome = function () {
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             url: "../Eb_Object/GetProfilerView",
             type: "get",
@@ -515,8 +521,21 @@
             },
             success: function (response) {
                 $('#builderDashB_bdy').html(response);
+                $("#eb_common_loader").EbLoader("hide");
             }
         });
     };
+
+    this.onProfilerClick = function () {
+        $.ajax({
+            url: "../Eb_Object/EnableLogging",
+            type: "post",
+            data: {
+                "ProfilerValue": document.getElementById("profiler").checked,
+                "objid": this.ver_Refid.split("-")[3]
+            },
+            success: alert("ProfilerOnOff updated")
+        })
+    }
     this.init();
 };

@@ -17,21 +17,22 @@
             @{
                 List<EbExecutionLogs> logs = ViewBag.Log;
                 string logsObj = EbSerializers.Json_Serialize(logs);
-                <div class="pull-right maximize" style="padding: 10px;">
+                @*<div class="pull-right maximize" style="padding: 10px;">
                     <i class="fa fa-window-maximize"></i>
                 </div>
                 <div class="pull-right restore" style="padding: 10px;display:none">
                     <i class="fa fa-window-restore"></i>
-                </div>
-                <div class="logtable" style="overflow-y:auto">
-                    <table class="table table-bordered  table-condensed" id="tablelog" style="width:100%;padding: 10px;">
-                        <tr>
-                            <th><div style="color:indigo;">Execution Time</div></th>
-                            <th><div style="color:indigo;">No.of Rows</div></th>
-                            <th><div style="color:indigo;">Executed by</div></th>
-                            <th><div style="color:indigo;">Executed at</div></th>
-                            <th><div style="color:indigo;"><span class="glyphicon glyphicon-asterisk" aria-hidden="false"></span></div></th>
-                        </tr>
+                </div>*@
+                <div class="logtable">
+                    <table class="table table-bordered table-condensed fixed_table" id="tablelog">
+                        <thead>
+                            <tr>
+                                <th><div style="color:indigo;">Exec Time</div></th>
+                                <th><div style="color:indigo;">Row Count</div></th>
+                                <th><div style="color:indigo;">Exec by</div></th>
+                                <th><div style="color:indigo;">Exec at</div></th>
+                            </tr>
+                        </thead>
                         <tbody>
                             @foreach (EbExecutionLogs eb in logs)
                             {
@@ -40,7 +41,6 @@
                                     <td>@eb.Rows</td>
                                     <td>@eb.Created_by</td>
                                     <td>@eb.Created_at</td>
-                                    <td><div style="color:indigo;"><span class="glyphicon glyphicon-asterisk" aria-hidden="false"></span></div></td>
                                 </tr>
 
                             }
@@ -94,21 +94,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tile_middle">
-                        <div class="tiles_outer">
-                            <div class="col-md-4 tiles " id="chart-tile1">
-                                Row Number Vs Execution Time
-                            </div>
-                            <div class="col-md-4 tiles " id="chart-tile2">
-                                Hourly Execution
-                            </div>
-                        </div>
-                    </div>
                 </div>
             }
         </div>
-        <div class=" col-md-8 wraper2_drhome" id="paramsalert" style="overflow-y:auto">
-
+        <div class=" col-md-8 logchart">
+            <div class="tile_middle">
+                <div class="tiles_outer">
+                    <div class="col-md-4 tiles " id="chart-tile1">
+                        Row Num Vs Execution Time
+                    </div>
+                    <div class="col-md-4 tiles " id="chart-tile2">
+                        Hourly Execution
+                    </div>
+                </div>
+            </div>
+            <div class="logpara">
+                <p ><b>Log Details</b></="logpara">
+            </div>
+            <div class="wraper2_drhome" id="paramsalert" style="overflow-y:auto; font-size:smaller">
+            </div>
         </div>
     </div>
 </div>

@@ -28,6 +28,7 @@
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         $(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
         $('#ProfilerHome').off('click').on('click', this.SqlProfilerHome.bind(this));
+        $('#profiler').off('click').on('click', this.onProfilerClick.bind(this));
         $('#del_obj').off('click').on('click', this.DeleteObject.bind(this));
         this.target = $("#versionNav li.active a").attr("href");//edits by amal
     };
@@ -511,6 +512,7 @@
     };
 
     this.SqlProfilerHome = function () {
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             url: "../Eb_Object/GetProfilerView",
             type: "get",
@@ -519,8 +521,21 @@
             },
             success: function (response) {
                 $('#builderDashB_bdy').html(response);
+                $("#eb_common_loader").EbLoader("hide");
             }
         });
     };
+
+    this.onProfilerClick = function () {
+        $.ajax({
+            url: "../Eb_Object/EnableLogging",
+            type: "post",
+            data: {
+                "ProfilerValue": document.getElementById("profiler").checked,
+                "objid": this.ver_Refid.split("-")[3]
+            },
+            success: alert("ProfilerOnOff updated")
+        })
+    }
     this.init();
 };

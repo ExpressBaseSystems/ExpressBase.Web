@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using ExpressBase.Web.Filters;
 using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.Extensions;
+using ExpressBase.Common.SqlProfiler;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -619,6 +620,18 @@ namespace ExpressBase.Web.Controllers
             if (res.RowsDeleted > 0)
                 return true;
             return false;
+        }
+
+        [HttpPost]
+        public void EnableLogging(bool ProfilerValue, int objid)
+        {
+            var response = ServiceClient.Post(new EnableLogRequest { Islog = ProfilerValue, ObjId = objid });
+        }
+
+        public EbExecutionLogs GetLogdetails(int idx)
+        {
+            GetLogdetailsResponse logdt = ServiceClient.Get(new GetLogdetailsRequest { Index = idx });
+            return logdt.logdetails;
         }
     }
     public class EbRootObjectResponse

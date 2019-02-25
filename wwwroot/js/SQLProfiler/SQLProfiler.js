@@ -6,129 +6,64 @@
         let $e = $(event.target).closest(".tiles");
         let idx = $e.attr("idx");
         this.removeSelected($e, idx);
-        let params;
-        for (let i = 0; i < this.logsObj.$values.length; i++) {
-            if (this.logsObj.$values[i].Id == idx) {
-                params = this.logsObj.$values[i].Params;
-            }
-        }
-        if (params === "" || params === "null") {
-            params = "No Parameters";
-        }
         $(".rows").css({ background: "white" });
         $("#paramsalert").show();
         document.getElementById("paramsalert").innerHTML = "";
-        document.getElementById("paramsalert").innerHTML = new EbPrettyJson().build(JSON.parse(params));
         $(".wraper1_drhome").css({ width: "50%", });
-        //var $table = document.getElementById("tablelog");
-        //var rowno = $table.rows.length;
-        //$("table tbody tr").each(function () {
-        //    var id = $tr.attr("idx");
-        //    if (idx == id) {
-        //        $tr.css({ background: "lightblue" });
-        //    }
-        //})
+        this.getParams(idx);
     }
-
-
 
     this.onLabel2_click = function () {
         let $e = $(event.target).closest(".tiles");
         let idx = $e.attr("idx");
         this.removeSelected($e, idx);
-        let params;
-        for (let i = 0; i < this.logsObj.$values.length; i++) {
-            if (this.logsObj.$values[i].Id == idx) {
-                params = this.logsObj.$values[i].Params;
-            }
-        }
-        if (params === "" || params === "null") {
-            params = "No Parameters";
-        }
         $(".rows").css({ background: "white" });
         $("#paramsalert").show();
         document.getElementById("paramsalert").innerHTML = "";
-        document.getElementById("paramsalert").innerHTML = new EbPrettyJson().build(JSON.parse(params));
         $(".wraper1_drhome").css({ width: "50%", });
+        this.getParams(idx);
     }.bind(this);
 
     this.onLabel3_click = function () {
         let $e = $(event.target).closest(".tiles");
         let idx = $e.attr("idx");
         this.removeSelected($e, idx);
-        let params;
-        for (let i = 0; i < this.logsObj.$values.length; i++) {
-            if (this.logsObj.$values[i].Id == idx) {
-                params = this.logsObj.$values[i].Params;
-            }
-        }
-        if (params === "" || params === "null") {
-            params = "No Parameters";
-        }
         $(".rows").css({ background: "white" });
         $("#paramsalert").show();
         document.getElementById("paramsalert").innerHTML = "";
-        document.getElementById("paramsalert").innerHTML = new EbPrettyJson().build(JSON.parse(params));
         $(".wraper1_drhome").css({ width: "50%", });
+        this.getParams(idx);
     }.bind(this);
 
     this.onLabel4_click = function () {
         let $e = $(event.target).closest(".tiles");
         let idx = $e.attr("idx");
         this.removeSelected($e, idx);
-        let params;
-        for (let i = 0; i < this.logsObj.$values.length; i++) {
-            if (this.logsObj.$values[i].Id == idx) {
-                params = this.logsObj.$values[i].Params;
-            }
-        }
-        if (params === "" || params === "null") {
-            params = "No Parameters";
-        }
         $(".rows").css({ background: "white" });
         $("#paramsalert").show();
         document.getElementById("paramsalert").innerHTML = "";
-        document.getElementById("paramsalert").innerHTML = new EbPrettyJson().build(JSON.parse(params));
         $(".wraper1_drhome").css({ width: "50%", });
+        this.getParams(idx);
     }.bind(this);
 
     this.onLabel5_click = function () {
         let $e = $(event.target).closest(".tiles");
         let idx = $e.attr("idx");
         this.removeSelected($e, idx);
-        let params;
-        for (let i = 0; i < this.logsObj.$values.length; i++) {
-            if (this.logsObj.$values[i].Id == idx) {
-                params = this.logsObj.$values[i].Params;
-            }
-        }
-        if (params === "" || params === "null") {
-            params = "No Parameters";
-        }
         $(".rows").css({ background: "white" });
         $("#paramsalert").show();
         document.getElementById("paramsalert").innerHTML = "";
-        document.getElementById("paramsalert").innerHTML = new EbPrettyJson().build(JSON.parse(params));
         $(".wraper1_drhome").css({ width: "50%", });
+        this.getParams(idx);
     }.bind(this);
 
     this.onLabel6_click = function () {
         let $e = $(event.target).closest(".tiles");
         let idx = $e.attr("idx");
         this.removeSelected($e, idx);
-        let params;
-        for (let i = 0; i < this.logsObj.$values.length; i++) {
-            if (this.logsObj.$values[i].Id == idx) {
-                params = this.logsObj.$values[i].Params;
-            }
-        }
-        if (params === "" || params === "null") {
-            params = "No Parameters";
-        }
         $(".rows").css({ background: "white" });
         $("#paramsalert").show();
         document.getElementById("paramsalert").innerHTML = "";
-        document.getElementById("paramsalert").innerHTML = new EbPrettyJson().build(JSON.parse(params));
         $(".wraper1_drhome").css({ width: "50%", });
     }.bind(this);
 
@@ -136,38 +71,12 @@
         let $e = $(event.target);
         let $tr = $e.closest("tr");
         let idx = $tr.attr("idx");
-        let params;
-        //let params = getObjByval(this.logsObj.$values, "ID", idx);
-        for (let i = 0; i < this.logsObj.$values.length; i++) {
-            if (this.logsObj.$values[i].Id == idx) {
-                params = this.logsObj.$values[i].Params;
-            }
-        }
-        if (params === "" || params === "null") {
-            params = "No Parameters";
-        }
-        $(".rows").css({ background: "white" });
-        $tr.css({ background: "lightblue" });
-        //$("#paramsalert").css({ position: "absolute", top: event.pageY, left: 430 });
+        this.removeSelected($tr, idx);
         $("#paramsalert").show();
         document.getElementById("paramsalert").innerHTML = "";
-        document.getElementById("paramsalert").innerHTML = new EbPrettyJson().build(JSON.parse(params));
         $(".wraper1_drhome").css({ width: "50%", });
+        this.getParams(idx);
         this.logsObj;
-    }.bind(this);
-
-    this.onMaxClick = function () {
-        $(".maximize").hide();
-        $(".restore").show();
-        $("#paramsalert").hide();
-        $(".wraper1_drhome").css({ width: "100%" });
-    }.bind(this);
-
-    this.onResClick = function () {
-        $(".restore").hide();
-        $(".maximize").show();
-        $("#paramsalert").show();
-        $(".wraper1_drhome").css({ width: "50%" });
     }.bind(this);
 
     this.onShowChart1 = function () {
@@ -184,29 +93,21 @@
             numrow.push(this.logsObj.$values[i]["Rows"]);
         }
         var myChart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: lables,
                 datasets: [{
+                    label: 'Row number',
                     data: numrow,
-                    lineTension: 0,
                     fill: true,
-                    borderColor: 'orange',
-                    backgroundColor: 'transparent',
-                    borderDash: [5, 5],
-                    pointBorderColor: 'orange',
-                    pointBackgroundColor: 'rgba(255,150,0,0.5)',
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    pointHitRadius: 30,
-                    pointBorderWidth: 2,
-                    pointStyle: 'rectRounded'
+                    borderColor: '#EE13B3',
+                    backgroundColor: '#EE13B3',
                 }]
             },
             options: {
                 title: {
                     display: true,
-                    title: 'Rows Vs Time'
+                    text: 'Rows Vs Time'
                 },
                 scales: {
                     yAxes: [{
@@ -263,6 +164,7 @@
             data: {
                 labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
                 datasets: [{
+                    label: 'Execution count',
                     data: freq,
                     lineTension: 0,
                     fill: true,
@@ -275,7 +177,7 @@
                     pointHoverRadius: 10,
                     pointHitRadius: 30,
                     pointBorderWidth: 2,
-                    pointStyle: 'rectRounded'
+                    //pointStyle: 'rectRounded'
                 }]
             },
             options: {
@@ -317,6 +219,7 @@
         $("#chart-tile1").on("click", this.onShowChart1);
 
         $("#chart-tile2").on("click", this.onShowChart2);
+
     }
 
     this.removeSelected = function ($e, idx) {
@@ -339,5 +242,29 @@
         });
     }
 
+    this.getParams = function (idx) {
+        $("#eb_common_loader").EbLoader("show");
+        $.ajax({
+            url: "../Eb_Object/GetLogdetails",
+            type: "get",
+            data: {
+                "idx": idx
+            },
+            success: function (response) {
+                logdetails = "Execution time: " + response.exec_time;
+                logdetails = logdetails + " Rows: " + response.rows;
+                logdetails = logdetails + " Executed by: " + response.created_by;
+                logdetails = logdetails + " Executed at: " + response.created_at;
+                logdetails = logdetails + new EbPrettyJson().build(JSON.parse(response.params));
+                //document.getElementById("paramsalert").innerHTML = logdetails;
+                $("#paramsalert").append(logdetails);
+                $("#eb_common_loader").EbLoader("hide");
+            }
+        })
+    }
+
+    //this.showRow = functions(idx){
+
+    //}
     this.init();
 }

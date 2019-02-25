@@ -2,6 +2,7 @@
     border-bottom: 2px solid #316396;
     padding-bottom: 1px;
 }
+
 .tab-section-common {
     background: white;
     position: fixed;
@@ -13,8 +14,9 @@
 .tab-cont-common {
     margin-top: 34px;
 }
+
 .dashbord {
-    display:none;
+    display: none;
     height: 100%;
     color: #ffffff;
     padding: 15px;
@@ -23,8 +25,8 @@
     z-index: 9;
     right: 0;
     top: 0;
-    opacity:0.5;
-    right:-380px;
+    opacity: 0.5;
+    right: -380px;
     width: 380px;
     background-color: #f8f8f8;
     -webkit-box-shadow: -2px 0 6px 0 rgba(0,0,0,.15);
@@ -41,10 +43,11 @@
 .prof_dp {
     width: 40px;
 }
+
 .dashbord .box2, .box4 {
     height: auto;
     padding: 0;
-    width:100%;
+    width: 100%;
 }
 
 .dashbord .box3 {
@@ -85,6 +88,7 @@
     color: #5f5f5f;
     font-weight: 600;
 }
+
 .card_body {
     width: 100%;
     background: white;
@@ -94,13 +98,15 @@
     box-shadow: 0 1px 2px rgba(0,0,0,.1);
     padding: 12px 10px;
     margin-top: 10px;
-    position:relative;
+    position: relative;
 }
+
     .card_body .bootstrap-tagsinput {
         background-color: none;
         border: none;
-        box-shadow: none;   
+        box-shadow: none;
     }
+
     .card_body .card1-mid {
         position: absolute;
         right: 10px;
@@ -128,31 +134,37 @@
     padding-right: 0px;
     padding-left: 0px;
 }
-.app_div .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-    width: 219px;
-}
+
+    .app_div .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+        width: 219px;
+    }
 
 .mr-0 {
     margin: 0 !important;
 }
+
 .brd_cr_t {
     float: left;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
+
     .brd_cr_t .brd_row {
         font-size: 11px;
         color: #3b89ce;
     }
-        .brd_cr_t .brd_row a{
-            color:inherit !important;
-            cursor:pointer;
+
+        .brd_cr_t .brd_row a {
+            color: inherit !important;
+            cursor: pointer;
         }
-        .Obj_title {
-            font-size: 13px;
-            font-weight: bold;
-        }
+
+.Obj_title {
+    font-size: 13px;
+    font-weight: bold;
+}
+
 .pd-0 {
     padding: 0;
 }
@@ -176,6 +188,7 @@
     font-size: 18px;
     margin-right: 5px;
 }
+
     .toolicons .btn:hover {
         background-color: #e4e4e4;
         border-radius: 0;
@@ -189,16 +202,18 @@
         outline: none;
         border-radius: 4px;
     }
-    /*profile image and dropdown style*/
+/*profile image and dropdown style*/
 .obj_dash_proimage_drp {
     float: right;
 }
+
     .obj_dash_proimage_drp .dropdown-menu {
         right: 4px;
         left: unset;
         padding: 0;
         top: -5px;
     }
+
 .drp_ul {
     list-style: none;
     padding: 5px;
@@ -206,8 +221,9 @@
     min-width: 270px;
     width: 270px;
     margin: 0;
-    z-index:100;
+    z-index: 100;
 }
+
 .drp_item a {
     cursor: pointer;
     height: 50px;
@@ -221,53 +237,61 @@
     font-family: open sans;
     align-items: center;
 }
-.border_b{
-  border-bottom:1px solid #ccc;
+
+.border_b {
+    border-bottom: 1px solid #ccc;
 }
-.drp_item a i{
-    margin-right:3rem;
+
+.drp_item a i {
+    margin-right: 3rem;
 }
+
 .drp_item .user_info {
     min-width: 80%;
     height: 100%;
     float: left;
     padding: 5px 5px 5px 12px;
 }
+
     .drp_item .user_info h4 {
         font-family: open sans;
         margin: 0;
-        font-size:16px;
+        font-size: 16px;
     }
+
     .drp_item .user_info p {
         margin: 3px 0;
     }
+
 .proimage_inner {
     float: left;
     height: 83%;
     margin-right: 1rem;
 }
+
 .obj_dash_proimage {
     height: 28px;
     margin-right: 5px;
-    cursor:pointer;
+    cursor: pointer;
 }
 /*profile image and dropdown style end.....................*/
 .notification_menu {
-    position:relative;
+    position: relative;
 }
-.notification_menu:after {
-    content: "10";
-    position: absolute;
-    font-size: 9px;
-    width: 15px;
-    border-radius: 50%;
-    background-color: #f90a0a;
-    height: 15px;
-    color: white;
-    border: 2px solid #f90a0a;
-    right: 5px;
-    top: -1px;
-}
+
+    .notification_menu:after {
+        content: "10";
+        position: absolute;
+        font-size: 9px;
+        width: 15px;
+        border-radius: 50%;
+        background-color: #f90a0a;
+        height: 15px;
+        color: white;
+        border: 2px solid #f90a0a;
+        right: 5px;
+        top: -1px;
+    }
 
 .dashbord .userimg {
     float: left;
@@ -320,14 +344,14 @@ li:hover {
     padding: 0;
 }
 
-.toolicons .bootstrap-select .btn {
-    height: 25px;
-    border: none;
-    border-radius: 0;
-    background: white;
-    color: black;
-    padding: 0px 0px 0px 7px;
-}
+    .toolicons .bootstrap-select .btn {
+        height: 25px;
+        border: none;
+        border-radius: 0;
+        background: white;
+        color: black;
+        padding: 0px 0px 0px 7px;
+    }
 
 /*.bootstrap-select .btn {
     font-size: 12px;
@@ -344,6 +368,7 @@ li:hover {
 .box5 {
     margin-left: 17px !important;
 }
+
 .wrkcpylink {
     text-decoration: none;
     font-family: sans-serif;
@@ -360,6 +385,7 @@ li:hover {
     background-color: #eee;
     border-top-left-radius: 2px;
 }
+
     .codedit .tab-section-common .nav > li > a::after {
         content: "";
         width: 0;
@@ -370,6 +396,7 @@ li:hover {
         top: 0;
         right: 0px;
     }
+
 .codedit .tab-section-common .nav > .active a {
     background: #316396;
     color: white;
@@ -456,27 +483,32 @@ li:hover {
         font-size: 25px;
     }
 
-    .img-thumbnail{
-        padding: 2px;
-    }
+.img-thumbnail {
+    padding: 2px;
+}
+
 .sid_sec_Common {
     color: #528ff0;
     font-weight: 700;
 }
+
 .eb_slash {
     margin: 0 3px;
 }
+
 .eb_context {
     color: #494e52;
 }
+
 .objectDashB-toolbar .solution_logo_cont {
     height: 33px;
     padding: 2px;
     margin-right: 10px;
 }
+
 .objectDashB-toolbar .solution_logo {
-    height:100%;
-    width:auto;
+    height: 100%;
+    width: auto;
 }
 /*from cshtml of object dash*/
 .tt-query {
@@ -548,3 +580,63 @@ li:hover {
 .tag-container .tt-hint {
     opacity: 0;
 }
+
+.profilerswitch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+    .profilerswitch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .profilerswitch .proslider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .profilerswitch .proslider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+input:checked + .proslider {
+    background-color: #2196F3;
+}
+
+input:focus + .proslider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .proslider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.proslider.round {
+    border-radius: 34px;
+}
+
+    .proslider.round:before {
+        border-radius: 50%;
+    }

@@ -50,10 +50,10 @@
     };
 
     this.Arrayflow = function (a) {
-        this.JsonHtml.push(`<div class="a_ob_o">[</div><ol class="a_o">`);
+        this.JsonHtml.push(`<div class="array">[</div><ol class="a_o">`);
         let cm = "";
         for (let i = 0; i < a.length; i++) {
-            cm = (i === a.length - 1) ? "" : ",";
+            cm = (i === a.length - 1) ? "" : "<span class='comma'>,</span>";
             if (Array.isArray(a[i])) {
                 this.JsonHtml.push(`<li>
                                     <a lass="propkey"><span class="array">[</span> </a>
@@ -73,13 +73,13 @@
                 this.JsonHtml.push(this.Propitem(a[i], (i === a.length - 1)));
             }
         }
-        this.JsonHtml.push(`</ol><div class="a_ob_o">]</div>`);
+        this.JsonHtml.push(`</ol><div class="array">]</div>`);
     }
 
     this.dArray = function (ai) {
         let cm = "";
         for (let i = 0; i < ai.length; i++) {
-            cm = (i === ai.length - 1) ? "" : ",";
+            cm = (i === ai.length - 1) ? "" : "<span class='comma'>,</span>";
 
             if (Array.isArray(ai[i])) {
                 this.JsonHtml.push(`<li><a><span class="array">[</span></a><ul>`);
@@ -104,7 +104,7 @@
         let last = Object.keys(o)[Object.keys(o).length - 1];
         let cm = "";
         for (let key in o) {
-            cm = (key === last) ? "" : ",";
+            cm = (key === last) ? "" : "<span class='comma'>,</span>";
             if (Array.isArray(o[key])) {
                 this.JsonHtml.push(`<li><a class="propkey"><span class="property">"${key}"</span> : <span class="array">[</span> </a><ul>`);
                 this.dArray(o[key]);
@@ -125,7 +125,7 @@
     };
 
     this.Propitem = function (p, isLast) {
-        let cm = isLast ? "" : ",";
+        let cm = isLast ? "" : "<span class='comma'>,</span>";
         if (p === null)
             p = null;
         else if (typeof p === "string")
@@ -138,7 +138,7 @@
     this.dProp = function (k, val, isLast) {
         let ce = (this.Option.ContetEditable.indexOf(k) >= 0) ? true : false;
         let hf = (this.Option.HideFields.indexOf(k) >= 0) ? "hide" : "show";
-        let cm = isLast ? "" : ",";
+        let cm = isLast ? "" : "<span class='comma'>,</span>";
         if (val === null)
             val = null;
         else if (typeof val === "string")

@@ -178,7 +178,7 @@
                 margin-top:3px;
             }
             .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._b {
-                padding: 5px 10px;
+                background:black;
                 overflow: auto;
                 height: calc(100% - 23px);
                 position:relative;
@@ -208,3 +208,10 @@
         -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
         clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
     }
+        .Json_reqOrRespWrpr .regRespWHead i {
+            font-size: 13px;
+            margin-top: 3px;
+            margin-right: 0;
+            margin-left: 10px;
+            cursor:pointer;
+        }

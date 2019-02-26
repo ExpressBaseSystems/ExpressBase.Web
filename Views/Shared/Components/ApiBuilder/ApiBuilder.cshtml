@@ -69,7 +69,9 @@
         </div>
     </div>
     <div class="Json_reqOrRespWrpr" id="Json_reqOrRespWrp">
-        <div class="regRespWHead">JSON</div>
+        <div class="regRespWHead">JSON <i class="fa fa-thumb-tack pull-right" style="transform: rotate(90deg);" id="pin_jswindow"></i>
+                                       <i class="fa fa-thumb-tack pull-right" id="unpin_jswindow" style="display:none;"></i>
+        </div>
         <div class="Json_reqOrRespWrpr_inner">
             <div class="JsonReq">
                 <div class="JsonReq_inner">
@@ -102,4 +104,15 @@
         ServiceUrl: '@ViewBag.ServiceUrl'
     });
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = api;
+
+    $("#pin_jswindow").click(function (ev) {
+        $("#Json_reqOrRespWrp").animate({ height: 10 }, 300).css("top","unset");
+        $(`#unpin_jswindow`).show();
+        $("#pin_jswindow").hide();
+    });
+    $(`#unpin_jswindow`).click(function (ev) {
+        $("#Json_reqOrRespWrp").animate({ height: 300 }, 300).css("top", "unset");
+        $(`#unpin_jswindow`).hide();
+        $("#pin_jswindow").show();
+    });
 </script>

@@ -62,6 +62,7 @@ var EbBasicDataTable = function (Option) {
     }
 
     this.showLoader = function () {
+        this.$dtLoaderCont.EbLoader("hide");
         this.$dtLoaderCont.EbLoader("show", { maskItem: { Id: `#${this.contId}` }, maskLoader: false });
     };
 

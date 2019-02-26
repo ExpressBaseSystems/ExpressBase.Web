@@ -1,6 +1,7 @@
 ﻿@{
     @using System.Web;
     @using ExpressBase.Objects.ServiceStack_Artifacts;
+    @using ExpressBase.Common.Structures;
     var appdata = Html.Raw(ViewBag.Apps);
 
     string Logourl = "/images/logo/" + ViewBag.cid + ".png";
@@ -251,20 +252,21 @@
                 <input type="text" class="typeahead form-control" id="tags" data-role="tagsinput" />
             </div>
         </div>
-
-        <div class="card1">
-            <div class="head">
-                <div class="profilerOnOff">
-                    <i class="ProfilerToggle" aria-hidden="true"></i> Profiler
+        @if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
+        {
+            <div class="card1">
+                <div class="head">
+                    <div class="profilerOnOff">
+                        <i class="ProfilerToggle" aria-hidden="true"></i> Profiler
+                    </div>
                 </div>
+                <label class="profilerswitch">
+                    <input type="checkbox" id="profiler">
+                    <span class="proslider round"></span>
+                </label>
             </div>
-            <label class="profilerswitch">
-                <input type="checkbox" id="profiler">
-                <span class="proslider round"></span>
-            </label>
+        }
         </div>
-
-    </div>
 </div>
 
 <div class="changLog-container" id="changelogPopup">

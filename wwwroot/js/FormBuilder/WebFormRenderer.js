@@ -17,6 +17,7 @@
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
     this.formValidationflag = true;
+    this.isEditModeCtrlsSet = false;
     this.FRC = new FormRenderCommon({
         FO: this
     });
@@ -125,7 +126,7 @@
         $.each(p1, function (i, row) {
             $.each(row.Columns, function (j, dm) {
                 if (j === 0) {
-                    //this.initializer.Vobj.valueMembers.push(parseInt(dm.Value));
+                    this.initializer.Vobj.valueMembers.push(parseInt(dm.Value));
                     return true;
                 }
                 this.initializer.Vobj.displayMembers[dm.Name].push(dm.Value);
@@ -175,8 +176,7 @@
     };
 
     this.setEditModeCtrls = function () {
-        jilla++;
-        if (jilla == 2)
+        if (this.isEditModeCtrlsSet)
             return;
         let FormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames(FormData);
@@ -188,6 +188,7 @@
 
         let NCCSingleColumns_flat = this.getNCCSingleColumns_flat(FormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat);
+        this.isEditModeCtrlsSet = true;
     };
 
     //this.getEditModeFormData = function (rowId) {

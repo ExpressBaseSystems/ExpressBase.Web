@@ -48,7 +48,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob()) : null;
+    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(rowData)) : null;
     this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(atob(filterValues)) : [];
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
@@ -181,7 +181,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         //this.InitializeColumns();
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-        if (this.PcFlag === "True")
+        if (this.PcFlag === true)
             this.compareAndModifyRowGroup();
 
         if ($("#" + this.ContextId).children("#filterBox").length === 0) {
@@ -236,9 +236,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.isContextual = false;
                 this.isPipped = false;
                 this.rowData = null;
-                this.CurrentRowGroup = null;
-                this.rowgroupCols = [];
-                this.EbObject.RowGroupCollection.$values = [];
+                
                 this.orderColl = [];
                 this.check4Customcolumn();
                 this.EbObject.OrderBy.$values = [];
@@ -286,14 +284,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.compareAndModifyRowGroup = function () {
+        var temparr = [];
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             $.each(obj.RowGrouping.$values, function (j, col) {
                 var tempcol = $.grep(this.EbObject.Columns.$values, function (column) { return column.name === col.name && column.Type === col.Type });
-                if (tempcol.length === 1)
-                    obj.RowGrouping.$values[j] = tempcol[0];
+                if (tempcol.length !== 1) {
+                    temparr.push(i);
+                    return false;
+                }
             }.bind(this));
         }.bind(this));
-    }
+        $.each(temparr, function (i, index) {
+            this.EbObject.RowGroupCollection.$values.splice(index, 1);
+        }.bind(this));
+        this.CurrentRowGroup = null;
+    };
 
     //Initialisation
     this.start = function () {
@@ -358,7 +363,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         this.isSecondTime = false;
         $(".dv-body1").show();
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#dv-body", Style: { "top": "39px", "margin-left": "-15px" } } });
+        $("#eb_common_loader").EbLoader("show");
         this.extraCol = [];
         this.ebSettings = this.EbObject;
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
@@ -482,7 +487,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.table_jQO.on('processing.dt', function (e, settings, processing) {
             if (processing == true) {
                 $("#obj_icons .btn").prop("disabled", true);
-                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+                $("#eb_common_loader").EbLoader("show");
             }
             else {
                 $("#obj_icons .btn").prop("disabled", false);

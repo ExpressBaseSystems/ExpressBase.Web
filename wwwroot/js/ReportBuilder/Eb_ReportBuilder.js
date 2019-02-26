@@ -624,7 +624,7 @@
         $control.EbSid = Objid; $control.Name = editControl.Name;
         this.objCollection[Objid] = $control;
         this.RefreshControl($control);
-        this.pg.addToDD(this.objCollection[Objid]);
+        this.pg.setObject(this.objCollection[Objid], AllMetas["Eb" + eb_type]);
         return $control;
     }
 

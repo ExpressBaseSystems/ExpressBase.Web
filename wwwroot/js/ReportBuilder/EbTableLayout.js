@@ -18,6 +18,7 @@
         this.RowCount = this.EbCtrl.RowCount;
         this.Report.dropLoc.append(this.getHtml(id));
         this.Report.objCollection[id] = this.EbCtrl;
+        this.Report.pg.setObject(this.Report.objCollection[id], AllMetas["EbTable_Layout"]);
         this.Table = $(`#${id}`);
         this.setPosition(id);
         this.draggableT(id);
@@ -34,7 +35,7 @@
         this.Report.repExtern.replaceProp(this.EbCtrl, this.EditCtrl);
         this.EbCtrl.EbSid = id; this.EbCtrl.Name = this.EditCtrl.Name;
         this.Report.objCollection[id] = this.EbCtrl;
-        this.Report.pg.addToDD(this.Report.objCollection[id]);
+        this.Report.pg.setObject(this.Report.objCollection[id], AllMetas["EbTable_Layout"]);
         this.Table = $(`#${id}`);
         this.Table.css({
             left: this.EbCtrl.Left,
@@ -96,6 +97,7 @@
             $control.EbSid = Objid; $control.Name = ebCtrl.Name;
             this.Report.objCollection[Objid] = $control;
             this.Report.pg.addToDD(this.Report.objCollection[Objid]);
+            this.Report.pg.setObject(this.Report.objCollection[Objid], AllMetas["Eb" + eb_type]);
             this.Report.RefreshControl(this.Report.objCollection[Objid]);
         }
     };

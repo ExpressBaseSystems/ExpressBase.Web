@@ -9,7 +9,7 @@
 
     if (!this.Rpt.isNew) {
         ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'].forEach(function (item) {
-            $("head").append($("<link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family='" + item +"'/>"));
+            $("head").append($("<link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family='" + item + "'/>"));
         });
     }
 
@@ -35,18 +35,18 @@
 
     this.moveCtrl = function (js_cntrol, eb_cntrol) {
         var jq_cntrol = $(js_cntrol.target);
-        if (jq_cntrol.css("left") !== 0 || jq_cntrol.css("top") !== 0 ){
+        if (jq_cntrol.css("left") !== 0 || jq_cntrol.css("top") !== 0) {
             if (js_cntrol.which === 37) {
-                jq_cntrol.finish().animate({left: "-=1"});
+                jq_cntrol.finish().animate({ left: "-=1" });
             }
             else if (js_cntrol.which === 38) {
-                jq_cntrol.finish().animate({top: "-=1"});
+                jq_cntrol.finish().animate({ top: "-=1" });
             }
             else if (js_cntrol.which === 39) {
-                jq_cntrol.finish().animate({left: "+=1"});
+                jq_cntrol.finish().animate({ left: "+=1" });
             }
             else if (js_cntrol.which === 40) {
-                jq_cntrol.finish().animate({top: "+=1"});
+                jq_cntrol.finish().animate({ top: "+=1" });
             }
             eb_cntrol.Left = jq_cntrol.position().left;
             eb_cntrol.Top = jq_cntrol.position().top;
@@ -54,30 +54,30 @@
     };
 
     this.markEbCntrol = function (js_cntrol, eb_cntrol) {
-        $(js_cntrol.target).toggleClass("marked"); 
+        $(js_cntrol.target).toggleClass("marked");
     };
 
     this.alignGroup = function (eType, selector, action, originalEvent) {
         var top = $(selector.selector).css("top");
-        var left = $(selector.selector).css("left");  
+        var left = $(selector.selector).css("left");
         var parent = $(selector.selector).parent();
         switch (eType) {
             case "Top":
-                this.applyToGroupSelect(parent,"top",top);
+                this.applyToGroupSelect(parent, "top", top);
                 break;
-            case "Left":   
-                this.applyToGroupSelect(parent,"left", left);
+            case "Left":
+                this.applyToGroupSelect(parent, "left", left);
                 break;
             case "Bottom":
-                
+
                 break;
             case "Right":
-                this.applyToGroupSelect(parent,"left", left);
+                this.applyToGroupSelect(parent, "left", left);
                 break;
         }
     }.bind(this);
 
-    this.applyToGroupSelect = function (parent,item,val) {
+    this.applyToGroupSelect = function (parent, item, val) {
         $.each(parent.children(".marked"), function (i, obj) {
             $(obj).css(item, val);
             $(obj).removeClass("marked");
@@ -106,7 +106,7 @@
     this.replaceProp = function (source, destination) {
         for (var objPropIndex in source) {
             if (typeof source[objPropIndex] !== "object" || objPropIndex === "Font") {
-                if (['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1) 
+                if (['Width', 'Height', 'Left', 'Top'].indexOf(objPropIndex) > -1)
                     source[objPropIndex] = this.convertPointToPixel(destination[objPropIndex + "Pt"]);
                 else
                     source[objPropIndex] = destination[objPropIndex];
@@ -135,7 +135,7 @@
 
     this.convertPixelToPercent = function (SubsecHArr) {
         var tot = SubsecHArr.reduce((x, y) => x + y);
-        for (var i = 0 ; i < SubsecHArr.length; i++) {
+        for (var i = 0; i < SubsecHArr.length; i++) {
             SubsecHArr[i] = (SubsecHArr[i] / tot) * 100;
         }
         return SubsecHArr;
@@ -143,7 +143,7 @@
 
     this.emptyControlCollection = function (rptObj) {
         for (var objPropIndex in rptObj) {
-            if (typeof rptObj[objPropIndex] === "object" && objPropIndex !== "ReportObjects" && objPropIndex !== "$Control" && objPropIndex !== "Margin" && objPropIndex !== "DataSourceRefId") 
+            if (typeof rptObj[objPropIndex] === "object" && objPropIndex !== "ReportObjects" && objPropIndex !== "$Control" && objPropIndex !== "Margin" && objPropIndex !== "DataSourceRefId")
                 this.emptyCConESec(rptObj[objPropIndex]);
             else if (objPropIndex === "ReportObjects")
                 rptObj[objPropIndex].$values.length = 0
@@ -156,9 +156,9 @@
     }
 
     this.setFontProp = function (fobj) {
-        var _font = fobj.Font;
+        var _font = ("Font" in fobj) ? fobj.Font : null;
 
-        if (_font !== null) {
+        if (_font !== null && _font !== undefined) {
             var caps = (_font.Caps) ? "uppercase" : "lowercase";
             var decor = "";
             var style = "";
@@ -197,9 +197,9 @@
                 "font-weight": weight,
                 "text-transform": caps,
                 "color": _font.color
-            });            
+            });
         }
     };
-   
+
     $('body').off("keydown").on("keydown", ".dropped", this.keyInteractions.bind(this));
 }

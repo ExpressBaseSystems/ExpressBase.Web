@@ -181,7 +181,7 @@ var DvContainerObj = function (settings) {
                 }
             }.bind(this));
             this.previousObj = this.currentObj;
-            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } }, maskLoader: false });
             $.ajax({
                 type: "POST",
                 url: "../DV/getdv",
@@ -228,7 +228,7 @@ var DvContainerObj = function (settings) {
             return;
         }
 
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } } });
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#parent", Style: { "top": "39px", "margin-left": "-15px" } }, maskLoader: false });
         $("#obj_icons .btn").prop("disabled", true);
         if (this.dvRefid !== null) {
             if (this.dvRefid.split("-")[2] === "3") { 

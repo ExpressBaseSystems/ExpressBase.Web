@@ -568,7 +568,7 @@ namespace ExpressBase.Web.Controllers
             List<Param> p = new List<Param>();
             ListOrdered resources = EbSerializers.Json_Deserialize<ListOrdered>(components);
 
-            foreach (EbApiWrapper r in resources)
+            foreach (ApiResources r in resources)
             {
                 if (r is EbSqlReader || r is EbSqlWriter || r is EbSqlFunc)
                 {

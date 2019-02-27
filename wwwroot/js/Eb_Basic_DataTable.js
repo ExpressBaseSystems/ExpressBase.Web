@@ -1,7 +1,6 @@
 ﻿
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbBasicDataTable = function (Option) {
-    console.log(1);
     this.contId = Option.containerId;
     this.dsid = Option.dsid;
     this.tableId = Option.tableId;
@@ -9,7 +8,6 @@ var EbBasicDataTable = function (Option) {
     this.showCheckboxColumn = (typeof Option.showCheckboxColumn !== "undefined" && Option.showCheckboxColumn !== "" && Option.showCheckboxColumn !== null) ? Option.showCheckboxColumn : true;
     this.showFilterRow = (typeof Option.showFilterRow !== "undefined" && Option.showFilterRow !== "" && Option.showFilterRow !== null) ? Option.showFilterRow : true;
     this.scrollHeight = Option.scrollHeight || "inherit";
-    console.log(this.scrollHeight);
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.columns = Option.columns || null;
     this.hiddenIndex = null;

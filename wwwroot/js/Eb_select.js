@@ -1,4 +1,4 @@
-﻿var EbTableVisualization = function EbTableVisualization(id, jsonObj) {
+﻿const EbTableVisualization = function EbTableVisualization(id, jsonObj) {
     this.$type = 'ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects';
     this.EbSid = id;
     this.ObjType = 'TableVisualization';
@@ -8,11 +8,11 @@
     this.$Control = $("            <div id='cont_@name@' Ctype='TableVisualization' class='Eb-ctrlContainer'>                <table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>            </div>".replace(/@id/g, this.EbSid));
     this.BareControlHtml = `<table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>`.replace(/@id/g, this.EbSid);
     this.DesignHtml = "            <div id='cont_@name@' Ctype='TableVisualization' class='Eb-ctrlContainer'>                <table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>            </div>";
-    var MyName = this.constructor.name;
+    let MyName = this.constructor.name;
     this.RenderMe = function () {
-        var NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
+        let NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
         $.each(metas, function (i, meta) {
-            var name = meta.name;
+            let name = meta.name;
             if (meta.IsUIproperty) {
                 NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
             }
@@ -36,10 +36,8 @@
     }
 };
 
-var z = 100;
-
-//var EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
-var EbSelect = function (ctrl, options) {
+//let EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
+const EbSelect = function (ctrl, options) {
     //parameters   
     this.getFilterValuesFn = options.getFilterValuesFn;
     this.ComboObj = ctrl;
@@ -121,19 +119,19 @@ var EbSelect = function (ctrl, options) {
         if (!isPrintable(e) && e.which !== 8)
             return;
 
-        var $e = $(e.target);
-        var searchVal = $e.val();
+        let $e = $(e.target);
+        let searchVal = $e.val();
 
-        var mapedField = $e.closest(".searchable").attr("maped-column");
-        var mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
-        var $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
-        var searchBy = " = ";
+        let mapedField = $e.closest(".searchable").attr("maped-column");
+        let mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
+        let $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
+        let searchBy = " = ";
         if (mapedFieldType === "string")
             searchBy = "x*";
         if (!this.IsDatatableInit) {
             if (this.ComboObj.MinSeachLength > searchVal.length)
                 return;
-            var filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
+            let filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
             this.InitDT();
             this.V_showDD();
@@ -208,7 +206,7 @@ var EbSelect = function (ctrl, options) {
 
     this.getTypeForDT = function (type) {
         type = parseInt(type);
-        var res = "";
+        let res = "";
         if (type === 16)
             res = "string";
         else if ([7, 8, 9, 10, 11, 12, 21].contains(type))
@@ -227,8 +225,8 @@ var EbSelect = function (ctrl, options) {
 
     //enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
     this.SearchBoxEveHandler = function (e) {
-        var $e = $(e.target);
-        var search = $e.val().toString();
+        let $e = $(e.target);
+        let search = $e.val().toString();
         if (e.which === 13)
             this.Vobj.showDD();
         if ((e.which === 8 || e.which === 46) && search === '' && this.Vobj.valueMembers.length > 0) {
@@ -252,22 +250,18 @@ var EbSelect = function (ctrl, options) {
 
     // init datatable
     this.InitDT = function () {
-
-        var searchVal = this.getMaxLenVal();
+        let searchVal = this.getMaxLenVal();
         let _name = this.ComboObj.EbSid_CtxId;
         if (this.ComboObj.MinSeachLength > searchVal.length) {
             //alert(`enter minimum ${this.ComboObj.MinSeachLength} charecter in searchBox`);
             EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
-            setTimeout(function () {
-                EbMakeValid(`#${_name}Container`, `#${_name}Wraper`);
-            }.bind(this), 2000000);
             return;
         }
 
         this.IsDatatableInit = true;
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
-        var o = new Object();
+        let o = new Object();
         o.containerId = this.name + "DDdiv";
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
@@ -276,7 +270,7 @@ var EbSelect = function (ctrl, options) {
         o.showFilterRow = true;
         o.scrollHeight = this.ComboObj.DropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
-        o.fnKeyUpCallback = this.xxx.bind(this);
+        //o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
@@ -339,12 +333,11 @@ var EbSelect = function (ctrl, options) {
     };
 
 
-    this.xxx = function (e, dt, type, indexes) {
-        console.log("keysssss");
-    };
+    //this.xxx = function (e, dt, type, indexes) {
+    //    console.log("keysssss");
+    //};
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
-        console.log(5);
         if (key === 13)
             this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
         else if (key === 32) {
@@ -355,16 +348,16 @@ var EbSelect = function (ctrl, options) {
     };
 
     this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
-        var row = datatable.row(cell.index().row);
-        var $tr = $(row.nodes());
+        let row = datatable.row(cell.index().row);
+        let $tr = $(row.nodes());
         $tr.dblclick();
     };
 
     this.DDEnterKeyPress = function (e, datatable, key, cell, originalEvent) {
-        var row = datatable.row(cell.index().row);
-        var $tr = $(row.nodes());
-        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
-        var vmValue = this.datatable.Api.row($(this.DTSelector + " tr.selected")).data()[idx];
+        let row = datatable.row(cell.index().row);
+        let $tr = $(row.nodes());
+        let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
+        let vmValue = this.datatable.Api.row($(this.DTSelector + " tr.selected")).data()[idx];
         this.$curEventTarget = $(this.DTSelector + " tr.selected");
         this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
@@ -373,9 +366,6 @@ var EbSelect = function (ctrl, options) {
     this.initDTpost = function (data) {
         $.each(this.datatable.Api.settings().init().columns, this.dataColumIterFn.bind(this));
         $(this.DTSelector + ' tbody').on('click', "input[type='checkbox']", this.checkBxClickEventHand.bind(this));//checkbox click event 
-        $(this.DTSelector + ' tbody').on('focus', "td", function () {
-            console.log("td focus")
-        });
         this.datatable.Api.cell($(this.DTSelector + ' tbody tr:eq(0) td:eq(0)')).focus();
     };
 
@@ -401,18 +391,17 @@ var EbSelect = function (ctrl, options) {
     };
 
     this.setDmValues = function (i, name) {
-        var cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
+        let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
         if (this.maxLimit === 1)
             this.localDMS[name].shift();
         this.localDMS[name].push(cellData);
-        console.log("DISPLAY MEMBER 0 a=" + this.Vobj.displayMembers[0]);
     };
 
     //double click on option in DD
     this.dblClickOnOptDDEventHand = function (e) {
         this.$curEventTarget = $(e.target);
-        var idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
-        var vmValue = this.datatable.Api.row($(e.target).closest("tr")).data()[idx];
+        let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
+        let vmValue = this.datatable.Api.row($(e.target).closest("tr")).data()[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             this.SelectRow(idx, vmValue);
         }
@@ -441,13 +430,12 @@ var EbSelect = function (ctrl, options) {
     this.getSelectedRow = function () {
         if (!this.IsDatatableInit)
             return;
-        console.log(100);
-        var res = [];
+        let res = [];
         $.each(this.ComboObj.TempValue, function (idx, item) {
-            var obj = {};
-            var rowData = this.datatable.getRowDataByUid(item);
-            var temp = this.datatable.sortedColumns;
-            var colNames = temp.map((obj, i) => { return obj.name; });
+            let obj = {};
+            let rowData = this.datatable.getRowDataByUid(item);
+            let temp = this.datatable.sortedColumns;
+            let colNames = temp.map((obj, i) => { return obj.name; });
             $.grep(temp, function (obj, i) {
                 return obj.name;
             });
@@ -456,7 +444,6 @@ var EbSelect = function (ctrl, options) {
             });
             res.push(obj);
         }.bind(this));
-        console.log(res);
         this.ComboObj.SelectedRow = res;
         return res;
     }.bind(this);
@@ -518,20 +505,17 @@ var EbSelect = function (ctrl, options) {
             this.$searchBoxes.hide();
         else
             this.$searchBoxes.show();
-        setTimeout(function () {
-            var maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () {
-                console.log($(this).height());
-                return $(this).height();
-            }).get());
+        setTimeout(function () {// to adjust search-block
+            let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
             $(".search-block .input-group").css("height", maxHeight + "px");
             $('#' + this.name + 'Wraper [type=search]').val("");
         }.bind(this), 10);
 
 
-        console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
-        console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
-        console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[this.dmNames[1]]);
-        console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
+        //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
+        //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
+        //console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[this.dmNames[1]]);
+        //console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
     };
 
     this.trimDmValues = function (i) {
@@ -564,7 +548,7 @@ var EbSelect = function (ctrl, options) {
         this.RemoveRowFocusStyle();
     };
     this.getMaxLenVal = function () {
-        var val = "";
+        let val = "";
         $.each(this.$searchBoxes, function (i, el) {
             if ($(el).val().trim().length > val.length)
                 val = $(el).val().trim();
@@ -581,7 +565,7 @@ var EbSelect = function (ctrl, options) {
             EbMakeValid(`#${this.ComboObj.Name}Container`, `#${this.ComboObj.Name}Wraper`);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
-                var $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
+                let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
                 this.datatable.Api.cell($cell).focus();
                 this.ApplyRowFocusStyle($cell.closest("tr"));
             }.bind(this), 10);
@@ -593,10 +577,9 @@ var EbSelect = function (ctrl, options) {
     //this.colAdjust = function () { $('#' + this.name + 'tbl').DataTable().columns.adjust().draw(); }
 
     this.V_updateCk = function () {// API..............
-        console.log("colAdjust---------- ");
         $("#" + this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
-            var $row = $(chkbx).closest('tr');
-            var datas = $(this.DTSelector).DataTable().row($row).data();
+            let $row = $(chkbx).closest('tr');
+            let datas = $(this.DTSelector).DataTable().row($row).data();
             if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
                 $(chkbx).prop('checked', true);
             else
@@ -609,7 +592,7 @@ var EbSelect = function (ctrl, options) {
     this.RaiseErrIf = function () {
         if (this.Vobj.valueMembers.length !== this.Vobj.displayMembers[this.dmNames[0]].length) {
             alert('valueMember and displayMembers length miss match found !!!!');
-            console.error('valueMember and displayMembers length miss match found !!!!');
+            console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
             console.log('valueMembers=' + this.Vobj.valueMember);
             console.log('displayMember[0] = ' + this.Vobj.displayMember[this.dmNames[0]]);
         }
@@ -618,14 +601,14 @@ var EbSelect = function (ctrl, options) {
     this.arrowSelectionStylingFcs = function (e, datatable, cell, originalEvent) {
         $(this.DTSelector + " ." + this.name + "tbl_select").blur();
         $(":focus").blur();
-        var row = datatable.row(cell.index().row);
-        var $tr = $(row.nodes());
+        let row = datatable.row(cell.index().row);
+        let $tr = $(row.nodes());
         this.ApplyRowFocusStyle($tr);
     }.bind(this);
 
     this.arrowSelectionStylingBlr = function (e, datatable, cell) {
-        var row = datatable.row(cell.index().row);
-        var $tr = $(row.nodes());
+        let row = datatable.row(cell.index().row);
+        let $tr = $(row.nodes());
         this.RemoveRowFocusStyle($tr);
     }.bind(this);
 
@@ -653,8 +636,8 @@ var EbSelect = function (ctrl, options) {
 
     this.checkBxClickEventHand = function (e) {
         this.$curEventTarget = $(e.target);
-        var $row = $(e.target).closest('tr');
-        var datas = $(this.DTSelector).DataTable().row($row).data();
+        let $row = $(e.target).closest('tr');
+        let datas = $(this.DTSelector).DataTable().row($row).data();
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
             if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);
@@ -671,16 +654,16 @@ var EbSelect = function (ctrl, options) {
     };
 
     this.delDMs = function ($e) {
-        var $row = $e.closest('tr');
-        var datas = $(this.DTSelector).DataTable().row($row).data();
-        var vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
+        let $row = $e.closest('tr');
+        let datas = $(this.DTSelector).DataTable().row($row).data();
+        let vmIdx2del = this.Vobj.valueMembers.indexOf(datas[this.VMindex]);
         this.Vobj.valueMembers.splice(vmIdx2del, 1);
         $.each(this.dmNames, function (i) { this.Vobj.displayMembers[this.dmNames[i]].splice(vmIdx2del, 1); }.bind(this));
     };
 
     this.hideDDclickOutside = function (e) {
-        var container = $('#' + this.name + 'DDdiv');
-        var container1 = $('#' + this.name + 'Container');
+        let container = $('#' + this.name + 'DDdiv');
+        let container1 = $('#' + this.name + 'Container');
         let _name = this.ComboObj.EbSid_CtxId;
         if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////

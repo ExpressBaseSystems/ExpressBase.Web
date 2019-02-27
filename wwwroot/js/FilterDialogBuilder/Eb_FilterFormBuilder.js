@@ -253,13 +253,13 @@
     };// start
 
     this.onDragendFn = function (el) {
-        var $sibling = $(el).next();
-        var $target = $(el).parent();
+        let $sibling = $(el).next();
+        let $target = $(el).parent();
         if (this.movingObj) {
             //Drag end with in the form
             if ($target.attr("id") !== "form-buider-toolBox") {
                 if ($sibling.attr("id")) {
-                    var idx = $sibling.index() - 1;
+                    let idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
                 }
                 else {
@@ -286,7 +286,7 @@
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
                     $ctrl.insertBefore($sibling);
-                    var idx = $sibling.index() - 1;
+                    let idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, ctrlObj);
                 }
                 else {
@@ -309,7 +309,7 @@
 
     this.adjustPanesHeight = function ($target) {
         let parent = $target.attr("eb-form") ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($target.attr("ebsid"));
-        let = tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
+        let tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
         EbOnChangeUIfns.EbTabControl.adjustPanesHeightToHighest(tabControl.EbSid, tabControl);
     };
 
@@ -322,10 +322,10 @@
     };
 
     //this.initCtrl = function (el) {
-    //    var $EbCtrl = $(el);
-    //    var $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
-    //    var type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
-    //    var id = type + (this.controlCounters[type + "Counter"])++;
+    //    let $EbCtrl = $(el);
+    //    let $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
+    //    let type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
+    //    let id = type + (this.controlCounters[type + "Counter"])++;
     //    $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
     //    $ControlTile.attr("eb-type", type).attr("id", id);
     //    $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test///////////////

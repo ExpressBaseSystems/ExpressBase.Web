@@ -1,5 +1,9 @@
-﻿const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
-    console.log("kitty--------------------------------------------");
+﻿/*!
+* Eb_FilterDialogRender.js
+* to Render FilterDialogForm
+* EXPRESSbase Systems Pvt. Ltd, author: Jith Job
+*/
+const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
     this.FormObj = fObj;
     this.submitId = submitId;
     this.formObject = {};
@@ -14,7 +18,6 @@
     });
 
     this.submit = function () {
-        console.log("111111111111111111111111111111");
         if (!this.FRC.AllRequired_valid_Check())
             return;
         if (this.onSubmitFn)

@@ -1,9 +1,9 @@
 ﻿/*!
 * WebFormRender.js
+* to Render WebForm
 * EXPRESSbase Systems Pvt. Ltd , Jith Job
 */
 const WebFormRender = function (option) {
-    jilla = 0;//==========================================================
     this.FormObj = option.formObj;
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);

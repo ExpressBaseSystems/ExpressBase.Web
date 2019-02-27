@@ -47,7 +47,7 @@
         //  this.PGobj.ReadOnly();
     }.bind(this);
 
-    this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
+    this.InitContCtrl = function (ctrlObj, $ctrl) {
         if (ctrlObj.ObjType === "TableLayout") {
             this.makeTdsDropable_Resizable();
             let tds = $ctrl.find("td");
@@ -68,7 +68,7 @@
             let el = $("#" + this.formId + " .group-box")[0];
             this.makeGBDropable(el);
         }
-    }
+    };
 
     this.makeGBDropable = function (el) {
         if (this.drake) {
@@ -210,7 +210,7 @@
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");
         this.SelectedCtrl = control;
-        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);////
+        this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);
     };
 
     this.saveObj = function () {
@@ -320,19 +320,6 @@
         $ctrl.attr("id", "cont_" + id).attr("ebsid", id);
         $ctrl.attr("eb-type", type);
     };
-
-    //this.initCtrl = function (el) {
-    //    let $EbCtrl = $(el);
-    //    let $ControlTile = $("<div class='controlTile' tabindex='1' onclick='event.stopPropagation();$(this).focus()'></div>");
-    //    let type = $EbCtrl.attr("Ctype").trim();// get type from Eb-ctrlContainer html
-    //    let id = type + (this.controlCounters[type + "Counter"])++;
-    //    $ControlTile.attr("onfocusout", "$(this).children('.ctrlHead').hide()").on("focus", this.controlOnFocus.bind(this));
-    //    $ControlTile.attr("eb-type", type).attr("id", id);
-    //    $(".controls-dd-cont select").append("<option id='SelOpt" + id + "'>" + id + "</option>");//need to test///////////////
-    //    $ControlTile.find(".close").on("click", this.controlCloseOnClick.bind(this));
-    //    $EbCtrl.wrap($ControlTile);
-    //    $("<div class='ctrlHead' style='display:none;'><i class='fa fa-arrows moveBtn' aria-hidden='true'></i><a href='#' class='close' style='cursor:default' data-dismiss='alert' aria-label='close' title='close'>×</a></div>").insertBefore($EbCtrl);
-    //};
 
     this.CreateRelationString = function () { };
 

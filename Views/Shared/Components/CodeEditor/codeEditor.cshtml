@@ -5,7 +5,8 @@
 }
 <link href="~/css/Eb_datatable.css" rel="stylesheet" />
 <link href="~/css/splitWindow.css" rel="stylesheet" />
-<script type="text/javascript" src="~/js/DataSource.js"></script>@*Dona
+<script type="text/javascript" src="~/js/DataSource.js"></script>
+<script src="~/js/QueryExplain/QueryExplain.js" type="text/javascript"></script>
 
 @*<link href="~/css/SqlBuilder/Home.css" rel="stylesheet" />
     <link href="~/css/SqlBuilder/QBuilder.css" rel="stylesheet" />
@@ -20,14 +21,30 @@
     <script src="~/js/SqlBuilder/whereClause.js" type="text/javascript"></script>*@
 
 <style>
-    .CodeMirror {z-index: 0;}
-    .ds-cont {position: relative;margin: 0 auto;height: calc( 100vh - 76.5px);margin-top: 37px;box-shadow: var(--eb-shadow);border: solid rgba(54, 57, 88, 0.1);
-        border-width: 1px 1px 1px 0px;border-radius: 2px 3px 3px 2px;overflow: hidden;}
-        .ds-cont .CodeMirror-gutters {background-color: rgb(54, 57, 88);
+    .CodeMirror {
+        z-index: 0;
+    }
+
+    .ds-cont {
+        position: relative;
+        margin: 0 auto;
+        height: calc( 100vh - 76.5px);
+        margin-top: 37px;
+        box-shadow: var(--eb-shadow);
+        border: solid rgba(54, 57, 88, 0.1);
+        border-width: 1px 1px 1px 0px;
+        border-radius: 2px 3px 3px 2px;
+        overflow: hidden;
+    }
+
+        .ds-cont .CodeMirror-gutters {
+            background-color: rgb(54, 57, 88);
         }
+
         .ds-cont .CodeMirror-gutter-elt {
             color: white;
         }
+
         .ds-cont .ds-prop {
             position: fixed;
             right: 0px;
@@ -39,25 +56,31 @@
             border: 1px solid #ccc;
             z-index: 9;
         }
+
         .ds-cont .CodeMirror pre {
             z-index: 0 !important;
         }
+
         .ds-cont .code-window {
             height: 100%;
         }
+
         .ds-cont .CodeMirror {
             font-family: monospace;
             height: 100%;
             color: black;
         }
+
         .ds-cont .CodeMirror-selected {
             background-color: #0083ff3b;
         }
+
         .ds-cont .param-div-cont {
             position: absolute;
             background-color: white;
             height: calc( 100vh - 77px);
         }
+
         .ds-cont .param-div {
             position: absolute;
             left: 0px;
@@ -88,9 +111,11 @@
     .CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
         z-index: 2;
     }
+
     #paramsModal-toggle .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
         vertical-align: middle;
     }
+
     .emptyPMsg {
         display: none;
         text-align: center;
@@ -203,9 +228,7 @@
                             <th>Value</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <div class="emptyPMsg">No parameters</div>
             </div>
@@ -275,4 +298,13 @@
     var EbDbType = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.EbDbType));
 
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataSourceWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ssurl');
+
+    let is_datasource = true;
+    var eval = new SqlEval(is_datasource);
+
+    $("#explaine_btn").on("click", function () {
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"].Explain();
+        eval.refresh(@(ViewBag.tabnum));
+    });
+
 </script>

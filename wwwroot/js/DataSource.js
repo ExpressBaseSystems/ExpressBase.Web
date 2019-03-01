@@ -88,7 +88,7 @@ END;`;
         this.Name = this.EbObject.Name;
         window["editor" + tabNum].setValue(atob(this.EbObject.Sql));
         $("#parmSetupSave").off("click").on("click", this.SaveParamsetup.bind(this));
-    }
+    };
 
     this.SaveParamsetup = function (ev) {
         if (this.ObjectType === 5) {
@@ -144,9 +144,13 @@ END;`;
     this.GenerateButtons = function () {
         $("#obj_icons").empty().append(`<button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
                                             <i class='fa fa-play' aria-hidden='true'></i>
+                                        </button>
+                                    <button class='btn' id='explaine_btn' data-toggle='tooltip' data-placement='bottom' title= 'Explain'>
+                                            <i class='fa fa-bolt' aria-hidden='true'></i>
                                         </button>`);
 
         $("#run").off("click").on("click", this.RunClick.bind(this));
+        //$("#explaine_btn").off("click").on("click", this.Explain.bind(this));
         $(".simple-dsb-cont").hide(this.delay);
     };
 
@@ -275,6 +279,7 @@ END;`;
                     </div>
                 `);
         //$('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
+
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.RunDs.bind(this));
@@ -318,7 +323,7 @@ END;`;
         commonO.flagRun = true;
         //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
-        if (this.EbObject.VersionNumber == "")
+        if (this.EbObject.VersionNumber === "")
             commonO.Save();
         else if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
             if (this.EbObject.VersionNumber.slice(-1) === "w") {
@@ -522,6 +527,17 @@ END;`;
             this.rel_arr.push(i);
         }
     };
-
+    this.Explain = function () {
+        commonO.tabNum++;
+        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Explain-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
+        this.AddVerNavTab(navitem, tabitem);
+        $('#vernav' + commonO.tabNum).append(`<section class="container-fluid">
+        <div id="JsonD" style=" display:flex; overflow:auto; flex-flow:wrap; width:100%; overflow-x: scroll;"></div>
+        </section>
+        <div id="item">
+        </div>`);
+        $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
+    };
     this.Init();
-}
+};

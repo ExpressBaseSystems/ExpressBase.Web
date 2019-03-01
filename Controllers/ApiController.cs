@@ -47,6 +47,11 @@ namespace ExpressBase.Web.Controllers
             }
             else
                 resp = new ApiResponse { Message = ViewBag.Message };
+
+            if (resp.Result.GetType() == typeof(ApiScript))
+            {
+                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+            }
             return resp;
         }
 
@@ -78,6 +83,12 @@ namespace ExpressBase.Web.Controllers
             }
             else
                 resp = new ApiResponse { Message = new ApiMessage { Status = "Error", Description = ViewBag.Message } };
+
+            if (resp.Result.GetType() == typeof(ApiScript))
+            {
+                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+            }
+
             return resp;
         }
 

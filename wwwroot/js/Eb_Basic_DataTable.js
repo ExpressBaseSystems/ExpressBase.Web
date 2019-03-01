@@ -1,6 +1,6 @@
 ﻿
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbBasicDataTable = function (Option) {
+const EbBasicDataTable = function (Option) {
     this.contId = Option.containerId;
     this.dsid = Option.dsid;
     this.tableId = Option.tableId;
@@ -45,7 +45,7 @@ var EbBasicDataTable = function (Option) {
     this.Aggregateflag = false;
 
     this.init = function () {
-        if(this.EbObject === null)
+        if (this.EbObject === null)
             this.EbObject = new EbTableVisualization(this.tableId);
         this.EbObject.IsPaging = Option.IsPaging || false;
         this.$dtLoaderCont = $(`<div id='${this.tableId}dtloadercont' class='dt-loader-cont'></div>`);
@@ -109,7 +109,7 @@ var EbBasicDataTable = function (Option) {
 
     this.Init = function () {
         $.event.props.push('dataTransfer');
-       // this.updateRenderFunc();
+        // this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
 
         this.eb_agginfo = this.getAgginfo();
@@ -263,7 +263,7 @@ var EbBasicDataTable = function (Option) {
         //this.columnSearch = this.repopulate_filter_arr();
         dq.TFilters = this.columnSearch;
         //if (this.filterValues.length === 0)
-            this.filterValues = this.getFilterValues();
+        this.filterValues = this.getFilterValues();
         dq.Params = this.filterValues;
         dq.rowData = this.rowData;
         if (this.orderColl.length > 0)
@@ -275,7 +275,7 @@ var EbBasicDataTable = function (Option) {
         if (Option.wc === 'bc') {
             dq.start = 0;
             dq.length = 25;/////////hard coding
-        }       
+        }
         return dq;
     };
 
@@ -381,7 +381,7 @@ var EbBasicDataTable = function (Option) {
 
     this.getAgginfo_inner = function (_ls, i, col) {
         if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double"))) && col.name !== "serial")
-            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces,col.data));
+            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces, col.data));
     };
 
     this.getFooterFromSettingsTbl = function () {
@@ -475,7 +475,7 @@ var EbBasicDataTable = function (Option) {
             if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-        if(this.Api !== null)
+        if (this.Api !== null)
             this.Api.columns.adjust();
 
         this.$dtLoaderCont.EbLoader("hide");
@@ -699,7 +699,7 @@ var EbBasicDataTable = function (Option) {
                     }
                 });
             }
-            if (!aggFlag ||  this.data.length === 0) {
+            if (!aggFlag || this.data.length === 0) {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
             }
         }
@@ -1019,7 +1019,7 @@ var EbBasicDataTable = function (Option) {
         //$.each(this.ebSettings.Columns.$values, this.GetFiltersFromSettingsTbl_inner.bind(this));
         if (this.Api === null)
             this.Api = $("#" + this.tableId).DataTable();
-        
+
         $.each(this.Api.settings().init().aoColumns, this.GetFiltersFromSettingsTbl_inner.bind(this));
     };
 
@@ -1319,7 +1319,7 @@ var EbBasicDataTable = function (Option) {
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
         }
     };
-    
+
 
     this.link2NewTable = function (e) {
         var cData;

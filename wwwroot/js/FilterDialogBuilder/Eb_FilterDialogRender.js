@@ -3,7 +3,7 @@
 * to Render FilterDialogForm
 * EXPRESSbase Systems Pvt. Ltd, author: Jith Job
 */
-const Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
+var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
     this.FormObj = fObj;
     this.submitId = submitId;
     this.formObject = {};

@@ -455,7 +455,7 @@
             if (this.ParentPG && this.ParentPG.isModalOpen)
                 $colTile = $(`#${e.target.defaultValue}.colTile`);
             if ($colTile.length)
-                $colTile.attr("id", this.PropsObj[this.CurProp]).text(this.PropsObj[this.CurProp]);
+                $colTile.attr("id", this.PropsObj[this.CurProp]).find("span").text(this.PropsObj[this.CurProp]);
         }
         if (typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
             let NS1 = this.CurMeta.UIChangefn.split(".")[0];

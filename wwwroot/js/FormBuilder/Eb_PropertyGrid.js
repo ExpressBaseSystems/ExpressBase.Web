@@ -1,4 +1,5 @@
 ﻿const Eb_PropertyGrid = function (options, parentPG) {
+    this.ParentPG = parentPG;
     this.wc = options.wc;
     this.cid = options.cid;
     this.IsInnerCall = options.IsInnerCall || false;
@@ -473,17 +474,18 @@
         //  this.AllObjects[obj.EbSid] = obj;
         let $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
         let ebsid = obj.EbSid;
-        let _name = (obj.Name || obj.name);
-        if (this.isModalOpen) {
+        let _name = obj.Name || obj.name;
+        if (this.ParentPG && this.ParentPG.isModalOpen) {
             if ($(".pgCXEditor-Cont #SelOpt_" + obj.EbSid + "_" + this.wraperId).length === 0) { // need rework
                 $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
                 $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
             }
         }
-        if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
-            $MainCtrlsDDCont.find("select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
-            $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
-        }
+        else
+            if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
+                $MainCtrlsDDCont.find("select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
+                $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
+            }
         $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
     };
 
@@ -805,7 +807,6 @@
         this.Metas = metas;
         this.PropsObj = props;
         this.CurObj = this.PropsObj;
-        this.ParentPG = parentPG;
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         this.ImgSlctrs = {};
         this.FontSlctrs = {};

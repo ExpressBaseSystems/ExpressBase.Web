@@ -508,7 +508,7 @@
     this.updateDD = function (obj) {
         this.removeFromDD(obj.EbSid);
         this.addToDD(obj);
-    }
+    };
 
     //removes a control name to Control DD
     this.removeFromDD = function (EbSid) {

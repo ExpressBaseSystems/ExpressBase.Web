@@ -685,6 +685,11 @@ namespace ExpressBase.Web.Controllers
                     Params = JsonConvert.DeserializeObject<List<Param>>(param)
                 });
             }
+            if(resp.Result != null && resp.Result.GetType()== typeof(ApiScript))
+            {
+                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+            }
+
             return JsonConvert.SerializeObject(resp);
         }
 

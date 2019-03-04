@@ -237,6 +237,14 @@ function EbApiBuild(config) {
         $("#api_run").off("click").on("click", this.apiRun.bind(this));
     };
 
+    commonO.saveOrCommitSuccess = function (ref) {
+        this.setBtns();
+    }.bind(this)
+
+    this.GenerateButtons = function () {
+
+    };
+
     this.apiRun = function (ev) {
         this.reidStat = true;
         this.prepareApiobject();

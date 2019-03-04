@@ -116,7 +116,7 @@
         let curTdWidthPerc = (curTdWidth / tblWidth) * 100;
         let cuTdobj = this.rootContainerObj.Controls.GetByName($curTd.attr("ebsid"));
         cuTdobj.WidthPercentage = curTdWidthPerc;
-    }
+    };
 
     this.pushToDragables = function ($e) {
         let el = $e[0];
@@ -125,13 +125,12 @@
                 this.drake.containers.push(el);
             }
         }
-    }
+    };
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
-        //setTimeout(function () {
+        // convert json to ebobjects
         Proc(editModeObj, this.rootContainerObj);
-        //}.bind(this), 1000);
         $(".Eb-ctrlContainer").each(function (i, el) {
             if (el.getAttribute("childOf") === 'EbUserControl')
                 return true;
@@ -158,6 +157,7 @@
         $el.attr("ebsid", ebsid);
         if(type !== "UserControl")
             this.updateControlUI(ebsid);
+        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -169,7 +169,7 @@
             });
         else
             $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
-    }
+    };
 
     this.updateControlUI = function (ebsid, type) {
         let obj = this.rootContainerObj.Controls.GetByName(ebsid);
@@ -179,7 +179,7 @@
             if (meta && meta.IsUIproperty)
                 this.updateUIProp(propName, ebsid, _type);
         }.bind(this));
-    }
+    };
 
     this.updateUIProp = function (propName, id, type) {
         let obj = this.rootContainerObj.Controls.GetByName(id);
@@ -189,7 +189,14 @@
             let NS2 = NSS.split(".")[1];
             EbOnChangeUIfns[NS1][NS2](id, obj);
         }
-    }
+    };
+
+    this.PGobj = new Eb_PropertyGrid({
+        id: "pgWraper",
+        wc: this.wc,
+        cid: this.cid,
+        $extCont: $(".property-grid-cont")
+    });
 
     //Edit mode
     if (this.EbObject) {
@@ -200,14 +207,7 @@
         this.rootContainerObj = new EbObjects["Eb" + this.builderType](this.formId);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
-    };
-
-    this.PGobj = new Eb_PropertyGrid({
-        id: "pgWraper",
-        wc: this.wc,
-        cid: this.cid,
-        $extCont: $(".property-grid-cont")
-    });
+    }
 
     this.curControl = null;
     this.drake = null;

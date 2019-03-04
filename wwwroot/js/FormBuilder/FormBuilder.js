@@ -144,18 +144,16 @@
         let attr_ebsid = $el.attr("ebsid");
         let attrEbsid_Dgt = parseInt(attr_ebsid.match(/\d+$/)[0]);
         let attrEbsid_Except_Dgt = attr_ebsid.substring(0, attr_ebsid.length - attrEbsid_Dgt.toString().length);
-
-        if (attrEbsid_Dgt || attrEbsid_Dgt === 0)
-            this.controlCounters[type + "Counter"] = attrEbsid_Dgt;
-
-        //this.controlCounters[type + "Counter"] = parseInt($el.attr("ebsid").match(/\d+$/)[0]) || (this.controlCounters[type + "Counter"]);
-        let ebsid = attrEbsid_Except_Dgt + this.controlCounters[type + "Counter"]++;// inc counter
+        
+        let ctrlCount = this.controlCounters[type + "Counter"];
+        this.controlCounters[type + "Counter"] = (attrEbsid_Dgt > ctrlCount) ? attrEbsid_Dgt : ctrlCount;
+        let ebsid = attrEbsid_Except_Dgt + attrEbsid_Dgt;// inc counter
         $el.attr("tabindex", "1");
         this.ctrlOnClickBinder($el, type);
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
         $el.attr("ebsid", ebsid);
-        if(type !== "UserControl")
+        if (type !== "UserControl")
             this.updateControlUI(ebsid);
         this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
@@ -270,7 +268,7 @@
 
                 if (type === "UserControl") {///user control refid set on ctrlobj
                     ctrlObj["RefId"] = $(el).find("option:selected").attr('refid');
-                    this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]); 
+                    this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]);
                 }
 
                 this.dropedCtrlInit($ctrl, type, ebsid);
@@ -364,7 +362,7 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        
+
         let _id = $(target).attr("id");
         if (_id !== this.primitiveToolsId && _id !== this.customToolsId)
             return true;
@@ -429,7 +427,7 @@
     }.bind(this);
 
     this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-        
+
     }.bind(this);
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {

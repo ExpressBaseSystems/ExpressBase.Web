@@ -262,7 +262,7 @@
             if ($(source).attr("id") === this.primitiveToolsId || $(source).attr("id") === this.customToolsId) {
                 let $el = $(el);
                 let type = $el.attr("eb-type").trim();
-                let ebsid = type + (this.controlCounters[type + "Counter"])++;
+                let ebsid = type + ++(this.controlCounters[type + "Counter"]);
                 let $ctrl = new EbObjects["Eb" + type](ebsid).$Control;
                 let $sibling = $(sibling);
                 $el.remove();

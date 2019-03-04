@@ -182,14 +182,14 @@ namespace EbControllers
             // object changed_at;
 
         }
-        public List<EbRedisLogs> SetActivityLog()
-        {
-            int soln_id = 5;
-            var x = ServiceClient.Get<LogRedisGetResponse>(new LogRedisGetRequest
-            { SolutionId = soln_id }
-                );
-            return x.Logs;
-        }
+        //public List<EbRedisLogs> SetActivityLog()
+        //{
+        //    int soln_id = 5;
+        //    var x = ServiceClient.Get<LogRedisGetResponse>(new LogRedisGetRequest
+        //    { SolutionId = soln_id }
+        //        );
+        //    return x.Logs;
+        //}
         public object ViewLogChanges(int logid)
         {
             var x = ServiceClient.Get<LogRedisViewChangesResponse>(new LogRedisViewChangesRequest

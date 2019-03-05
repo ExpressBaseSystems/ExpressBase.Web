@@ -1,0 +1,43 @@
+﻿body {
+    font-size: 14px !important;
+}
+
+.sqltbl {
+    width: 100%;
+}
+
+._row {
+    height: 100px;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row-reverse;
+}
+
+._column {
+    min-width: 30px;
+    padding-right: 50px;
+}
+
+._column_ {
+    min-width: 140px;
+    padding-right: 50px;
+}
+
+.explain-tooltip {
+    display: table-cell;
+    text-align: left;
+    white-space: nowrap;
+    padding: 2px !important;
+    font-size: small;
+}
+
+.jsonD {
+    display: flex;
+    overflow: auto;
+    flex-flow: wrap;
+    width: 100%;
+    overflow-x: scroll;
+    background-color: white;
+    height: 100vh - 20px;
+}

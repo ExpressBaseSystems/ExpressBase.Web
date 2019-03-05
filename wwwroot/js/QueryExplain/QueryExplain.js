@@ -9,31 +9,31 @@
     var count = 0;
     //var draw = [];
     var draw = new Object();
-    html.push(` <div class = "_row">`);
+    html.push(`<div class ="_row">`);
 
     
-    this.refresh = function (tabNum) {
+    this.refresh = function (tabNum, code, code_tnum) {
         //var value1 = $('textarea[name="querytext"]').val();
-        //var value2 = $('textarea[name="queryparam"]').val();
-        this.Code = window["editor" + tabNum].getValue();
+        //var value2 = $('textarea[name="queryparam"]').val();        
         let params = null;
         if(is_ds)
-        params = commonO.ObjCollection["#vernav" + tabNum].CreateObjString();
+            params = commonO.ObjCollection["#vernav" + code_tnum].CreateObjString();
         $.ajax({
             url: "../QueryExplain/GetExplain",
             type: 'POST',
             data: {
-                "query": this.Code,
-                "params": params
+                "query": code,
+                "_params": params
             },
                 //"queryparam": value2},
             success: function (response) {
                 //this.CreateHtml(response);
                 //this.CreateResult(response);
                 this.CreateExplain(response);
-                this.JsonTraverse(JSON.parse(response.explain)[0]);  
-                $('#JsonD').append(html.join());
-                this.draw();
+                this.JsonTraverse(JSON.parse(response.explain)[0]);
+                $('#JsonD' + tabNum).append(html.join());
+                if (Object.keys(draw).length > 1)
+                    this.draw();
             }.bind(this)
         });
     };
@@ -109,12 +109,21 @@
                     if (object[keys]["Node Type"] === "Aggregate") {
                         //index -= 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/ex_aggregate.svg" id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Strategy : ' + object[keys]["Strategy"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' Parent Relationship : ' + object[keys]["Parent Relationship"] + ' Partial Mode : ' + object[keys]["Partial Mode"] + ' Group Key : ' + object[keys]["Group Key"] + '"/><br/>' + object[keys]["Node Type"] + '</div>');
-                        let pre = idi - 2;
-                        pre = 'a' + pre;
-                        let send = idi - 1;
-                        sent = 'a' + send;
-                        //this.draw(sent, pre);
-                        draw[connect++] = { "From": sent, "To": pre };
+                        if (idi !== 1) {
+                            let pre = idi - 2;
+                            pre = 'a' + pre;
+                            let send = idi - 1;
+                            sent = 'a' + send;
+                            //this.draw(sent, pre);
+                            draw[connect++] = { "From": sent, "To": pre };
+                        }
+                        if (idi === 1) {
+
+                            let send = idi - 1;
+                            sent = 'a' + send;
+                            //this.draw(sent, pre);
+                            HJ[count++] = { sent };
+                        }
                     }
                     if (object[keys]["Node Type"] === "Subquery Scan") {
                         //index += 1;
@@ -210,7 +219,7 @@
     this.draw = function () {
         for (var key in draw) {
             new LeaderLine(document.getElementById(draw[key].From),
-                document.getElementById(draw[key].To), { size: 3, dash: { animation: true } })
+                document.getElementById(draw[key].To), { size: 3, dash: { animation: true } });
             this.activemouse();
         }
     };
@@ -257,7 +266,7 @@
     this.getThead = function (typeArray) {
         let arry = [];
         for (var i = 0; i < typeArray.length; i++) {
-            arry.push(` <th>${typeArray[i]}</th>`)
+            arry.push(` <th>${typeArray[i]}</th>`);
         }
         return arry.join('');
     };
@@ -267,7 +276,7 @@
         for (var i = 0; i < typeList.length; i++) {
             array.push(`<tr>`);
             for (var j = 0; j < typeList[i].length; j++) {
-                array.push(`<td>${typeList[i][j]}</td>`)
+                array.push(`<td>${typeList[i][j]}</td>`);
             }
             array.push(`<tr>`);
         }

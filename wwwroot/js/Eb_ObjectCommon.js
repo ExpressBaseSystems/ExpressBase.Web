@@ -80,11 +80,12 @@
             this.ver_Refid = data.refid;
             var getNav = $("#versionNav li.active a").attr("href");
             $(getNav).attr("data-id", this.ver_Refid);
+
             if (this.Current_obj.Status === null || this.Current_obj.Status === undefined) {
                 this.Current_obj.Status = "Dev";
             }
             this.alertBgColor = "#00AD6E";
-            if (this.Current_obj.VersionNumber !== null && this.Current_obj.VersionNumber !== undefined) {
+            if (this.Current_obj.VersionNumber !== null && this.Current_obj.VersionNumber !== undefined && this.Current_obj.VersionNumber !== "") {
                 if (!this.FlagSave) {
                     this.Current_obj.VersionNumber = this.Current_obj.VersionNumber.replace(/.w/g, '');
                     this.alertMsg = "Commit Success";
@@ -344,7 +345,7 @@
             $('#ver_his').show();
         }
         else {
-            $("#obj_icons").empty();
+            //$("#obj_icons").empty();
             $('#save').hide();
             $('#commit_outer').hide();
             $('#create_button').hide();

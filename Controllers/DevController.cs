@@ -565,43 +565,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public string GetReq_respJson(string components)
         {
-            List<Param> p = new List<Param>();
-            ListOrdered resources = EbSerializers.Json_Deserialize<ListOrdered>(components);
-
-            foreach (ApiResources r in resources)
-            {
-                if (r is EbSqlReader || r is EbSqlWriter || r is EbSqlFunc)
-                {
-                    var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = r.Refid });
-                    EbDataSourceMain ds = EbSerializers.Json_Deserialize(obj.Data[0].Json);
-                    if (ds.InputParams == null || ds.InputParams.Count <= 0)
-                        p.Merge(this.GetSqlParams(ds, obj.Data[0].EbObjectType));
-                    else
-                        p.Merge(ds.InputParams);
-                }
-                else if (r is EbEmailNode)
-                {
-                    var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = r.Refid });
-                    EbEmailTemplate enode = EbSerializers.Json_Deserialize(obj.Data[0].Json);
-
-                    if (!string.IsNullOrEmpty(enode.AttachmentReportRefID))
-                    {
-                        var rep = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = enode.AttachmentReportRefID });
-                        EbReport o = EbSerializers.Json_Deserialize<EbReport>(rep.Data[0].Json);
-                        if (!string.IsNullOrEmpty(o.DataSourceRefId))
-                        {
-                            var ds = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = o.DataSourceRefId });
-                            p = p.Merge(this.GetSqlParams(EbSerializers.Json_Deserialize<EbDataSourceMain>(ds.Data[0].Json), ds.Data[0].EbObjectType));
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(enode.DataSourceRefId))
-                    {
-                        var ob = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = enode.DataSourceRefId });
-                        p = p.Merge(this.GetSqlParams(EbSerializers.Json_Deserialize<EbDataSourceMain>(ob.Data[0].Json), ob.Data[0].EbObjectType));
-                    }
-                }
-            }
-            return JsonConvert.SerializeObject(p);
+            ApiReqJsonResponse resp = this.ServiceClient.Get(new ApiReqJsonRequest { Components = EbSerializers.Json_Deserialize<ListOrdered>(components) });
+            return JsonConvert.SerializeObject(resp.Params);
         }
 
         public string GetCompReqJson(string refid)
@@ -616,6 +581,10 @@ namespace ExpressBase.Web.Controllers
                     p = this.GetSqlParams(o, obj.Data[0].EbObjectType);
                 else
                     p = o.InputParams;
+            }
+            else if(o is EbApi)
+            {
+                return this.GetReq_respJson(EbSerializers.Json_Serialize((o as EbApi).Resources));
             }
             return JsonConvert.SerializeObject(p);
         }

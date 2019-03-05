@@ -17,7 +17,6 @@
     this.saveOrCommitSuccess = function (refif) { };//edit by amal
     this.PreviewObject = function () { };//edits by amal
 
-
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('#ver_his').off("click").on("click", this.Version_List.bind(this));
@@ -38,7 +37,6 @@
             if (event.which === 83) {
                 event.preventDefault();
                 this.Save();
-                //alert(111);
             }
         }
     };
@@ -46,16 +44,12 @@
     this.ShowMessage = function () {
         this.tags = $('#tags').val();
         this.UpdateDashboard();
-
         EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor });
-
-        //$.LoadingOverlay("hide");
         $("#eb_common_loader").EbLoader("hide");
         $('#close_popup').trigger('click');
     };
 
     this.UpdateTab = function (data) {
-
         if (data.message !== null && data.message !== "")
         {
             if (data.message.indexOf("Specify a diffrent name.") > 0) {
@@ -111,12 +105,10 @@
             }
             this.ObjCollection[target].EbObject = this.Current_obj;
             this.ObjCollection[target].Refid = this.ver_Refid;
-
             $(`#versionNav [href='${target}']`).attr("data-verNum", this.Current_obj.VersionNumber);//edits by amal
             $(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
-
             if (this.flagRun) {
                 this.ObjCollection[target].SaveSuccess();
             }
@@ -344,7 +336,7 @@
             $('#ver_his').show();
         }
         else {
-            $("#obj_icons").empty();
+            //$("#obj_icons").empty();
             $('#save').hide();
             $('#commit_outer').hide();
             $('#create_button').hide();
@@ -458,7 +450,6 @@
 
         if (selected_opt === "_major") {
             if (confirm('Are you sure you want to create Major version?')) {
-                //$.LoadingOverlay("show");
                 $("#eb_common_loader").EbLoader("show");
                 $.post("../Eb_Object/Create_Major_Version", {
                     _refId: this.ver_Refid, _type: type
@@ -467,7 +458,6 @@
         }
         if (selected_opt === "_minor") {
             if (confirm('Are you sure you want to create Minor version?')) {
-                //$.LoadingOverlay("show");
                 $("#eb_common_loader").EbLoader("show");
                 $.post("../Eb_Object/Create_Minor_Version", {
                     _refId: this.ver_Refid,
@@ -477,7 +467,6 @@
         }
         if (selected_opt === "_patch") {
             if (confirm('Are you sure you want to create Patch version?')) {
-                //$.LoadingOverlay("show");
                 $("#eb_common_loader").EbLoader("show");
                 $.post("../Eb_Object/Create_Patch_Version", {
                     _refId: this.ver_Refid,
@@ -488,7 +477,6 @@
     };
 
     this.OpenVersionAfterCreate = function (_refid) {
-        //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
         this.ver_Refid = _refid;
         $.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })

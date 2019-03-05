@@ -44,6 +44,9 @@
                         <div eb-type="Processor" ctrname="Processor" class="resource_items draggable">
                             <div class="resource_items-inner"><i class="fa fa-code"></i>Processor</div>
                         </div>
+                        <div eb-type="ConnectApi" ctrname="Api" class="resource_items draggable">
+                            <div class="resource_items-inner"><i class="fa fa-code"></i>Api</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -81,10 +84,20 @@
             </div>
             <div class="JsonResp">
                 <div class="JsonResp_inner">
-                    <div class="_h">Response</div>
+                    <div class="_h">Response 
+                    <span class="fa fa-arrows-alt pull-right" onclick="$('#api_RqFullSwrapr').show();" data-toggle="tooltip" title="Full Screen"></span>
+                    </div>
                     <div class="_b" id="JsonResp_CMW"></div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="api_RqFullSwrapr" id="api_RqFullSwrapr">
+        <div class="FS_head">
+           <span class="Comp_Name">Untitled</span> <i class="fa fa-close pull-right" onclick="$('#api_RqFullSwrapr').hide();"></i>
+        </div>
+        <div class="FS_bdy">
+
         </div>
     </div>
 </div>

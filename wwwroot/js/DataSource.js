@@ -19,11 +19,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     const _DataWriter = "DataWriter";
     const _SqlFunction = "SqlFunction";
     const _SqlFuncSyntax = `CREATE OR REPLACE FUNCTION function_name(parameter_name...)
-RETURN return_datatype
-{ IS | AS }
-BEGIN
-    <function_body>
-END;`;
+            RETURN return_datatype
+            { IS | AS }
+            BEGIN
+                <function_body>
+            END;`;
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
@@ -44,7 +44,7 @@ END;`;
         var $simpleSec = $(".simple-dsb-cont");
         var $advSec = $(".adv-dsb-cont");
         if (stat === "simple") {
-            $e.attr("state", "advanced")
+            $e.attr("state", "advanced");
             $simpleSec.hide(this.delay);
             $advSec.show(this.delay);
             $simpleSec.animate({});
@@ -112,7 +112,7 @@ END;`;
     //duplicated for sql function need to change.
     this.DrawDataTable = function (_table) {
         commonO.tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
@@ -382,7 +382,7 @@ END;`;
             paramsArray = this.CreateObjString();
 
         commonO.tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
@@ -529,11 +529,11 @@ END;`;
     };
     this.Explain = function () {
         commonO.tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Explain-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Explain-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         $('#vernav' + commonO.tabNum).append(`<section class="container-fluid">
-        <div id="JsonD" style=" display:flex; overflow:auto; flex-flow:wrap; width:100%; overflow-x: scroll;"></div>
+        <div id="JsonD${commonO.tabNum}" class = "jsonD"></div>
         </section>
         <div id="item">
         </div>`);

@@ -116,7 +116,7 @@
         let curTdWidthPerc = (curTdWidth / tblWidth) * 100;
         let cuTdobj = this.rootContainerObj.Controls.GetByName($curTd.attr("ebsid"));
         cuTdobj.WidthPercentage = curTdWidthPerc;
-    }
+    };
 
     this.pushToDragables = function ($e) {
         let el = $e[0];
@@ -125,13 +125,12 @@
                 this.drake.containers.push(el);
             }
         }
-    }
+    };
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
-        //setTimeout(function () {
+        // convert json to ebobjects
         Proc(editModeObj, this.rootContainerObj);
-        //}.bind(this), 1000);
         $(".Eb-ctrlContainer").each(function (i, el) {
             if (el.getAttribute("childOf") === 'EbUserControl')
                 return true;
@@ -145,19 +144,18 @@
         let attr_ebsid = $el.attr("ebsid");
         let attrEbsid_Dgt = parseInt(attr_ebsid.match(/\d+$/)[0]);
         let attrEbsid_Except_Dgt = attr_ebsid.substring(0, attr_ebsid.length - attrEbsid_Dgt.toString().length);
-
-        if (attrEbsid_Dgt || attrEbsid_Dgt === 0)
-            this.controlCounters[type + "Counter"] = attrEbsid_Dgt;
-
-        //this.controlCounters[type + "Counter"] = parseInt($el.attr("ebsid").match(/\d+$/)[0]) || (this.controlCounters[type + "Counter"]);
-        let ebsid = attrEbsid_Except_Dgt + this.controlCounters[type + "Counter"]++;// inc counter
+        
+        let ctrlCount = this.controlCounters[type + "Counter"];
+        this.controlCounters[type + "Counter"] = (attrEbsid_Dgt > ctrlCount) ? attrEbsid_Dgt : ctrlCount;
+        let ebsid = attrEbsid_Except_Dgt + attrEbsid_Dgt;// inc counter
         $el.attr("tabindex", "1");
         this.ctrlOnClickBinder($el, type);
         $el.on("focus", this.controlOnFocus.bind(this));
         $el.attr("eb-type", type);
         $el.attr("ebsid", ebsid);
-        if(type !== "UserControl")
+        if (type !== "UserControl")
             this.updateControlUI(ebsid);
+        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -169,7 +167,7 @@
             });
         else
             $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
-    }
+    };
 
     this.updateControlUI = function (ebsid, type) {
         let obj = this.rootContainerObj.Controls.GetByName(ebsid);
@@ -179,7 +177,7 @@
             if (meta && meta.IsUIproperty)
                 this.updateUIProp(propName, ebsid, _type);
         }.bind(this));
-    }
+    };
 
     this.updateUIProp = function (propName, id, type) {
         let obj = this.rootContainerObj.Controls.GetByName(id);
@@ -189,7 +187,14 @@
             let NS2 = NSS.split(".")[1];
             EbOnChangeUIfns[NS1][NS2](id, obj);
         }
-    }
+    };
+
+    this.PGobj = new Eb_PropertyGrid({
+        id: "pgWraper",
+        wc: this.wc,
+        cid: this.cid,
+        $extCont: $(".property-grid-cont")
+    });
 
     //Edit mode
     if (this.EbObject) {
@@ -200,14 +205,7 @@
         this.rootContainerObj = new EbObjects["Eb" + this.builderType](this.formId);
         commonO.Current_obj = this.rootContainerObj;
         this.EbObject = this.rootContainerObj;
-    };
-
-    this.PGobj = new Eb_PropertyGrid({
-        id: "pgWraper",
-        wc: this.wc,
-        cid: this.cid,
-        $extCont: $(".property-grid-cont")
-    });
+    }
 
     this.curControl = null;
     this.drake = null;
@@ -262,7 +260,7 @@
             if ($(source).attr("id") === this.primitiveToolsId || $(source).attr("id") === this.customToolsId) {
                 let $el = $(el);
                 let type = $el.attr("eb-type").trim();
-                let ebsid = type + (this.controlCounters[type + "Counter"])++;
+                let ebsid = type + ++(this.controlCounters[type + "Counter"]);
                 let $ctrl = new EbObjects["Eb" + type](ebsid).$Control;
                 let $sibling = $(sibling);
                 $el.remove();
@@ -270,7 +268,7 @@
 
                 if (type === "UserControl") {///user control refid set on ctrlobj
                     ctrlObj["RefId"] = $(el).find("option:selected").attr('refid');
-                    this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]); 
+                    this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]);
                 }
 
                 this.dropedCtrlInit($ctrl, type, ebsid);
@@ -364,7 +362,7 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        
+
         let _id = $(target).attr("id");
         if (_id !== this.primitiveToolsId && _id !== this.customToolsId)
             return true;
@@ -429,7 +427,7 @@
     }.bind(this);
 
     this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-        
+
     }.bind(this);
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {

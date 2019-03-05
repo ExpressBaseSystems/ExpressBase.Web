@@ -109,10 +109,12 @@
 }
 
 .form-buider-form {
+    position:relative;
     width: 100%;
     height: calc( 100vh - 98px );
     overflow-y: auto;
     border: solid 1px #ccc;
+    z-index:0;
 }
 
     .form-buider-form:focus {

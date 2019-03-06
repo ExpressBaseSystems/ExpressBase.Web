@@ -2,7 +2,7 @@
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 const EbBasicDataTable = function (Option) {
     this.contId = Option.containerId;
-    this.dsid = Option.dsid;
+    this.dsid = Option.dsid || null;
     this.tableId = Option.tableId;
     this.showSerialColumn = (typeof Option.showSerialColumn !== "undefined" && Option.showSerialColumn !== "" && Option.showSerialColumn !== null) ? Option.showSerialColumn : true;
     this.showCheckboxColumn = (typeof Option.showCheckboxColumn !== "undefined" && Option.showCheckboxColumn !== "" && Option.showCheckboxColumn !== null) ? Option.showCheckboxColumn : true;
@@ -31,8 +31,9 @@ const EbBasicDataTable = function (Option) {
     this.columnSearch = Option.columnSearch || [];
     this.data = Option.data || null;
     this.headerDisplay = Option.headerDisplay;
-    this.getFilterValues = Option.getFilterValuesFn;
+    this.getFilterValues = Option.getFilterValuesFn || function () { };
     this.source = Option.source || "";
+    this.IsQuery = Option.IsQuery || false;
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -108,6 +109,7 @@ const EbBasicDataTable = function (Option) {
     };
 
     this.Init = function () {
+        this.EbObject.IsPaging = Option.IsPaging || false;
         $.event.props.push('dataTransfer');
         // this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
@@ -179,7 +181,7 @@ const EbBasicDataTable = function (Option) {
         };
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
-        //$('#' + this.tableId + ' tbody').off('keyup').on('keyup', 'tr', this.DTKeyPressCallback.bind(this));
+        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
         this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
     };
@@ -238,12 +240,14 @@ const EbBasicDataTable = function (Option) {
         o.order = [];
         o.dom = (this.EbObject.IsPaging ? "p" : "") + "<'col-md-12 noPadding display_none'>rt";
         o.paging = this.EbObject.IsPaging;
+        o.lengthChange = this.EbObject.IsPaging;
+        o.lengthMenu = [[20, 40, 60], [20, 40, 60]];
         //o.lengthChange = false;
         o.select = true;
         o.keys = true;
         if (this.data === null) {
             o.ajax = {
-                url: (Option.wc === 'bc' ? "../boti/getData" : "../dv/getData"),
+                url: (Option.wc === 'bc' ? "../boti/getData" : ((this.IsQuery) ? "../Eb_Object/getData" : "../dv/getData")),
                 type: 'POST',
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),
@@ -643,6 +647,11 @@ const EbBasicDataTable = function (Option) {
         Option.keyPressCallbackFn(e, datatable, key, cell, originalEvent);
     };
 
+    this.rowclick = function (e, dt, type, indexes) {
+        if (Option.rowclick)
+            Option.rowclick(e, dt, type, indexes);
+    };
+    
     this.doRowgrouping = function () {
         var rows = this.Api.rows({ page: 'current' }).nodes();
         var last = null;

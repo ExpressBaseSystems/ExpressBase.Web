@@ -60,6 +60,7 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.Tags = element.Tags;
                         ViewBag.AppId = element.Apps;
                         ViewBag.DashboardTiles = element.Dashboard_Tiles;
+                        ViewBag.IsLogEnabled = element.IsLogEnabled;
 
                         if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                         {
@@ -632,6 +633,32 @@ namespace ExpressBase.Web.Controllers
         {
             GetLogdetailsResponse logdt = ServiceClient.Get(new GetLogdetailsRequest { Index = idx });
             return logdt.logdetails;
+        }
+
+        public RowColletion GetChartDetails(string refid)
+        {
+            GetChartDetailsResponse chartdt = ServiceClient.Get(new GetChartDetailsRequest { Refid = refid });
+            return chartdt.data;
+        }
+
+        public RowColletion GetChart2Details(string refid)
+        {
+            GetChart2DetailsResponse chartdt = ServiceClient.Get(new GetChart2DetailsRequest { Refid = refid });
+            return chartdt.data;
+        }
+
+        public ProfilerQueryResponse getdata(ProfilerQueryDataRequest request)
+        {
+            ProfilerQueryResponse resultlist1 = new ProfilerQueryResponse();
+            try
+            {
+                resultlist1 = this.ServiceClient.Get(request);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.ToString());
+            }
+            return resultlist1;
         }
     }
     public class EbRootObjectResponse

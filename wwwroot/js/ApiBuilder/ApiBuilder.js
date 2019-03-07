@@ -130,7 +130,7 @@ function EbApiBuild(config) {
         if (this.reidStat)
             commonO.Current_obj = this.EbObject;
         else
-            EbMessage("show", { Message: "RefId must be set!", Background: "red" });
+            EbMessage("show", { Message: "Reference must be set!", Background: "red" });
         return this.reidStat;
     };//save
 
@@ -152,8 +152,8 @@ function EbApiBuild(config) {
     };
 
     this.validateRefid = function (id) {
-        if ('Refid' in this.Procs[id]) {
-            if (this.Procs[id].Refid === "" || this.Procs[id].Refid === null)
+        if ('Reference' in this.Procs[id]) {
+            if (this.Procs[id].Reference === "" || this.Procs[id].Reference === null)
                 return false;
             else
                 return true;
@@ -164,14 +164,14 @@ function EbApiBuild(config) {
     };
 
     this.pg.PropertyChanged = function (obj, pname) {
-        if (pname === "Refid" && obj.Refid !== "" && obj.Refid !== null) {
+        if (pname === "Reference" && obj.Reference !== "" && obj.Reference !== null) {
             $("#" + obj.EbSid).children(".drpbox").removeClass("refIdMsetNotfy");
             this.getComponent(obj);
         }
     }.bind(this);
 
     this.getComponent = function (obj) {
-        if (obj.Refid) {
+        if (obj.Reference) {
             $.ajax({
                 url: "../Dev/GetComponent",
                 type: "GET",
@@ -213,6 +213,7 @@ function EbApiBuild(config) {
     this.toggleReqWindow = function (resp) {
         $(`#Json_reqOrRespWrp`).show();
         $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.build(resp));
+        $(`#Json_reqOrRespWrp #JsonResp_CMW`).empty();
     };
 
     this.newApi = function () {
@@ -235,6 +236,14 @@ function EbApiBuild(config) {
                                             <i class='fa fa-play' aria-hidden='true'></i>
                                         </button>`);
         $("#api_run").off("click").on("click", this.apiRun.bind(this));
+    };
+
+    commonO.saveOrCommitSuccess = function (ref) {
+        this.setBtns(); 
+    }.bind(this)
+
+    this.GenerateButtons = function () {
+        this.setBtns();
     };
 
     this.apiRun = function (ev) {
@@ -275,15 +284,18 @@ function EbApiBuild(config) {
             },
             data: _data ,
             success: function (result) {
-                (this.ComponentRun) ? this.toggleRespWindow(JSON.parse(result).Result) : this.toggleRespWindow(JSON.parse(result));
+                (this.ComponentRun) ? this.toggleRespWindow(JSON.parse(result).Result, this.Component) : this.toggleRespWindow(JSON.parse(result), this.EbObject);
                 $("#eb_common_loader").EbLoader("hide");
             }.bind(this)
         });
     };
 
-    this.toggleRespWindow = function (result) {
+    this.toggleRespWindow = function (result,o) {
+        let _html = window.Api.JsonWindow.build(result);
         $(`#Json_reqOrRespWrp`).show();
-        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(window.Api.JsonWindow.build(result));
+        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(_html);
+        $(`#api_RqFullSwrapr .FS_bdy`).html(_html);
+        $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
     };
 
     this.start = function () {

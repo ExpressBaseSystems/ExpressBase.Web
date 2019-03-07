@@ -70,7 +70,7 @@
                 this.JsonHtml.push(`</ul><span class="object">}${cm}</span></li>`);
             }
             else {
-                this.JsonHtml.push(this.Propitem(a[i], (i === a.length - 1)));
+                this.JsonHtml.push(this.Propitem(a[i], (i === a.length - 1),i));
             }
         }
         this.JsonHtml.push(`</ol><div class="array">]</div>`);
@@ -82,7 +82,7 @@
             cm = (i === ai.length - 1) ? "" : "<span class='comma'>,</span>";
 
             if (Array.isArray(ai[i])) {
-                this.JsonHtml.push(`<li><a><span class="array">[</span></a><ul>`);
+                this.JsonHtml.push(`<li data-toggle="tooltip" data-placement="bottom" title='Index:${i}'><a><span class="array">[</span></a><ul>`);
                 this.dArray(ai[i]);
                 this.JsonHtml.push(`</ul><span class="array">]${cm}</span></li>`);
             }
@@ -95,7 +95,7 @@
                 this.JsonHtml.push(`</ul><span class="object">}${cm}</span></li>`);
             }
             else {
-                this.JsonHtml.push(this.Propitem(ai[i], (i === ai.length - 1)));
+                this.JsonHtml.push(this.Propitem(ai[i], (i === ai.length - 1),i));
             }
         }
     };
@@ -124,7 +124,7 @@
         }
     };
 
-    this.Propitem = function (p, isLast) {
+    this.Propitem = function (p, isLast,i) {
         let cm = isLast ? "" : "<span class='comma'>,</span>";
         if (p === null)
             p = null;
@@ -132,9 +132,9 @@
             p = `"${p}"`;
         else if (typeof p === "number")
             p = p;
-        return `<li class="ar_item">${p} ${cm}</li>`;
+        return `<li class="ar_item" data-toggle="tooltip" data-placement="bottom" title='Index:${i} &#013;Value:${p}'>${p} ${cm}</li>`;
     }
-
+    
     this.dProp = function (k, val, isLast) {
         let ce = (this.Option.ContetEditable.indexOf(k) >= 0) ? true : false;
         let hf = (this.Option.HideFields.indexOf(k) >= 0) ? "hide" : "show";

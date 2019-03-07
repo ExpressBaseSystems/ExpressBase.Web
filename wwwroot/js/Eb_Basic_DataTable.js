@@ -1,15 +1,13 @@
 ﻿
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbBasicDataTable = function (Option) {
-    console.log(1);
+const EbBasicDataTable = function (Option) {
     this.contId = Option.containerId;
-    this.dsid = Option.dsid;
+    this.dsid = Option.dsid || null;
     this.tableId = Option.tableId;
     this.showSerialColumn = (typeof Option.showSerialColumn !== "undefined" && Option.showSerialColumn !== "" && Option.showSerialColumn !== null) ? Option.showSerialColumn : true;
     this.showCheckboxColumn = (typeof Option.showCheckboxColumn !== "undefined" && Option.showCheckboxColumn !== "" && Option.showCheckboxColumn !== null) ? Option.showCheckboxColumn : true;
     this.showFilterRow = (typeof Option.showFilterRow !== "undefined" && Option.showFilterRow !== "" && Option.showFilterRow !== null) ? Option.showFilterRow : true;
     this.scrollHeight = Option.scrollHeight || "inherit";
-    console.log(this.scrollHeight);
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.columns = Option.columns || null;
     this.hiddenIndex = null;
@@ -33,8 +31,9 @@ var EbBasicDataTable = function (Option) {
     this.columnSearch = Option.columnSearch || [];
     this.data = Option.data || null;
     this.headerDisplay = Option.headerDisplay;
-    this.getFilterValues = Option.getFilterValuesFn;
+    this.getFilterValues = Option.getFilterValuesFn || function () { };
     this.source = Option.source || "";
+    this.IsQuery = Option.IsQuery || false;
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -184,7 +183,7 @@ var EbBasicDataTable = function (Option) {
         };
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
-        //$('#' + this.tableId + ' tbody').off('keyup').on('keyup', 'tr', this.DTKeyPressCallback.bind(this));
+        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
         this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
     };
@@ -248,6 +247,7 @@ var EbBasicDataTable = function (Option) {
         o.keys = true;
         if (this.data === null) {
             o.ajax = {
+                url: (Option.wc === 'bc' ? "../boti/getData" : ((this.IsQuery) ? "../Eb_Object/getData" : "../dv/getData")),
                 url: (Option.wc === 'bc' ? "../boti/getData" : ((this.source === "datareader") ? "../CE/getDataCollcetion" : "../dv/getData")),
                 type: 'POST',
                 data: this.ajaxData.bind(this),
@@ -269,7 +269,7 @@ var EbBasicDataTable = function (Option) {
             this.columnSearch = this.repopulate_filter_arr();
         dq.TFilters = this.columnSearch;
         //if (this.filterValues.length === 0)
-            this.filterValues = this.getFilterValues();
+        this.filterValues = this.getFilterValues();
         dq.Params = this.filterValues;
         dq.rowData = this.rowData;
         //if (this.orderColl.length > 0)
@@ -487,7 +487,7 @@ var EbBasicDataTable = function (Option) {
             //if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-        if(this.Api !== null)
+        if (this.Api !== null)
             this.Api.columns.adjust();
 
         this.$dtLoaderCont.EbLoader("hide");
@@ -655,6 +655,11 @@ var EbBasicDataTable = function (Option) {
         Option.keyPressCallbackFn(e, datatable, key, cell, originalEvent);
     };
 
+    this.rowclick = function (e, dt, type, indexes) {
+        if (Option.rowclick)
+            Option.rowclick(e, dt, type, indexes);
+    };
+    
     this.doRowgrouping = function () {
         var rows = this.Api.rows({ page: 'current' }).nodes();
         var last = null;
@@ -711,7 +716,7 @@ var EbBasicDataTable = function (Option) {
                     }
                 });
             }
-            if (!aggFlag ||  this.data.length === 0) {
+            if (!aggFlag || this.data.length === 0) {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
             }
         }
@@ -1031,7 +1036,7 @@ var EbBasicDataTable = function (Option) {
         //$.each(this.ebSettings.Columns.$values, this.GetFiltersFromSettingsTbl_inner.bind(this));
         if (this.Api === null)
             this.Api = $("#" + this.tableId).DataTable();
-        
+
         $.each(this.Api.settings().init().aoColumns, this.GetFiltersFromSettingsTbl_inner.bind(this));
     };
 
@@ -1329,7 +1334,7 @@ var EbBasicDataTable = function (Option) {
             $('#' + this.tableId + '_wrapper table:eq(0) thead tr:eq(0) [type=checkbox]').prop('checked', false);
         }
     };
-    
+
 
     this.link2NewTable = function (e) {
         var cData;

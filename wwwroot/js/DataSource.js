@@ -19,11 +19,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     const _DataWriter = "DataWriter";
     const _SqlFunction = "SqlFunction";
     const _SqlFuncSyntax = `CREATE OR REPLACE FUNCTION function_name(parameter_name...)
-RETURN return_datatype
-{ IS | AS }
-BEGIN
-    <function_body>
-END;`;
+            RETURN return_datatype
+            { IS | AS }
+            BEGIN
+                <function_body>
+            END;`;
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
@@ -112,7 +112,7 @@ END;`;
     //duplicated for sql function need to change.
     this.DrawDataTable = function (_table) {
         commonO.tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
@@ -144,9 +144,13 @@ END;`;
     this.GenerateButtons = function () {
         $("#obj_icons").empty().append(`<button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
                                             <i class='fa fa-play' aria-hidden='true'></i>
+                                        </button>
+                                    <button class='btn' id='explaine_btn' data-toggle='tooltip' data-placement='bottom' title= 'Explain'>
+                                            <i class='fa fa-bolt' aria-hidden='true'></i>
                                         </button>`);
 
         $("#run").off("click").on("click", this.RunClick.bind(this));
+        //$("#explaine_btn").off("click").on("click", this.Explain.bind(this));
         $(".simple-dsb-cont").hide(this.delay);
     };
 
@@ -275,6 +279,7 @@ END;`;
                     </div>
                 `);
         //$('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
+
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.RunDs.bind(this));
@@ -377,7 +382,7 @@ END;`;
             paramsArray = this.CreateObjString();
 
         commonO.tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
         $('#vernav' + commonO.tabNum).append(`<div class='filter_modal_body'><div class="accordion" id="accordion${commonO.tabNum}"></div></div>`);
@@ -553,6 +558,17 @@ END;`;
             this.rel_arr.push(i);
         }
     };
-
+    this.Explain = function () {
+        commonO.tabNum++;
+        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Explain-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
+        this.AddVerNavTab(navitem, tabitem);
+        $('#vernav' + commonO.tabNum).append(`<section class="container-fluid">
+        <div id="JsonD${commonO.tabNum}" class = "jsonD"></div>
+        </section>
+        <div id="item">
+        </div>`);
+        $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
+    };
     this.Init();
 };

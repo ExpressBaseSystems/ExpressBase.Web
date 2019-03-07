@@ -29,7 +29,7 @@
     <script type="text/javascript" src="~/js/EbControls/EbCropper.js"></script>
 </head>
 <body>
-    @*<div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
+    <div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
          <form action="../Ext/TenantExtSignup" method="post">
             <div class="input-group">
                 <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
@@ -38,11 +38,11 @@
                 </span>
             </div>
          </form>
-      </div>*@
+      </div>
     <div id="div">
     </div>
 </body>
-<script>
+@*<script>
     var imgup = new FUPFormControl({
         Type: "image",
         ShowGallery: true,
@@ -58,5 +58,5 @@
         MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),
         CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }]
     });
-</script>
+</script>*@
 </html>

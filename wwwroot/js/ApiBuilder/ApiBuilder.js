@@ -239,11 +239,11 @@ function EbApiBuild(config) {
     };
 
     commonO.saveOrCommitSuccess = function (ref) {
-        this.setBtns();
+        this.setBtns(); 
     }.bind(this)
 
     this.GenerateButtons = function () {
-
+        this.setBtns();
     };
 
     this.apiRun = function (ev) {

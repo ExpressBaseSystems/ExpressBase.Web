@@ -1,8 +1,10 @@
 ﻿@using ExpressBase.Common;
 @using ExpressBase.Common.SqlProfiler;
+@using Newtonsoft.Json;
+
 <link rel="stylesheet" type="text/css" href="~/css/ApiRelated/EbPrettyJson.css" />
 <link rel="stylesheet" type="text/css" href="~/css/SQLProfiler/SqlProfiler.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+
 <script type="text/javascript" src="~/js/ApiBuilder/EbPrettyJson.js"></script>
 <script type="text/javascript" src="~/js/SQLProfiler/SQLProfiler.js"></script>
 
@@ -10,47 +12,28 @@
         <div id="paramsalert">
             @*style="visibility:hidden">
     </div>*@
+@{
+    string Columns = EbSerializers.Json_Serialize(ViewBag.Columns);
+    string Rows = JsonConvert.SerializeObject(ViewBag.Rows);
+}
+<div class="row" style="padding:1px">
+    <div class="wrpr_drhome LogView" style="border:1px solid indigo">
+        <div class="wraper1_drhome" style="margin-right:10px;">
 
-<div class="row ">
-    <div class="wrpr_drhome LogView">
-        <div class="col-md-12 wraper1_drhome" style="margin-right:10px;">
+            @*//List<EbExecutionLogs>
+                    logs = ViewBag.
+                //string logsObj = EbSerializers.Json_Serialize(logs);
+                <div class="pull-right maximize" style="padding: 10px;">
+                        <i class="fa fa-window-maximize"></i>
+                    </div>
+                    <div class="pull-right restore" style="padding: 10px;display:none">
+                        <i class="fa fa-window-restore"></i>
+                    </div>*@
             @{
-                List<EbExecutionLogs> logs = ViewBag.Log;
-                string logsObj = EbSerializers.Json_Serialize(logs);
-                @*<div class="pull-right maximize" style="padding: 10px;">
-                    <i class="fa fa-window-maximize"></i>
-                </div>
-                <div class="pull-right restore" style="padding: 10px;display:none">
-                    <i class="fa fa-window-restore"></i>
-                </div>*@
-                <div class="logtable">
-                    <table class="table table-bordered table-condensed fixed_table" id="tablelog">
-                        <thead>
-                            <tr>
-                                <th><div style="color:indigo;">Exec Time</div></th>
-                                <th><div style="color:indigo;">Row Count</div></th>
-                                <th><div style="color:indigo;">Exec by</div></th>
-                                <th><div style="color:indigo;">Exec at</div></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (EbExecutionLogs eb in logs)
-                            {
-                                <tr class="rows" idx="@eb.Id">
-                                    <td>@eb.Exec_time</td>
-                                    <td>@eb.Rows</td>
-                                    <td>@eb.Created_by</td>
-                                    <td>@eb.Created_at</td>
-                                </tr>
-
-                            }
-                        </tbody>
-                    </table>
-                </div>
                 Profiler profiler = ViewBag.Profiler;
                 <div class="tile_wrapere">
                     <div class="tile_middle">
-                        <div style="color:indigo"><b>Total</b></div>
+                        <div class="tile_tag" style="color:indigo"><b>Total</b></div>
                         <div class="tiles_outer">
                             <div class="col-md-3 tiles " id="label1" idx="@profiler.Min_id">
                                 Min Execution Time:<div style="color:indigo;"><b>@profiler.Min_exectime ms</b></div>
@@ -65,53 +48,83 @@
                         </div>
                     </div>
                     <div class="tile_middle">
-                        <div style="color:indigo"><b>Current Month</b></div>
+                        <div class="tile_tag" style="color:indigo"><b>Current Month</b></div>
                         <div class="tiles_outer">
-                            <div class="col-md-4 tiles " id="label3" idx="@profiler.Cur_Mon_Min_id">
+                            <div class="col-md-3 tiles " id="label3" idx="@profiler.Cur_Mon_Min_id">
                                 Min Execution Time:<div style="color:indigo;"><b>@profiler.Cur_Mon_Min_exectime ms</b></div>
                             </div>
-                            <div class="col-md-4 tiles " id="label4" idx="@profiler.Cur_Mon_Max_id">
+                            <div class="col-md-3 tiles " id="label4" idx="@profiler.Cur_Mon_Max_id">
                                 Max Execution Time:<div style="color:indigo;"><b>@profiler.Cur_Mon_Max_exectime ms</b></div>
                             </div>
-                            <div class="col-md-4  tilecount">
+                            <div class="col-md-3  tilecount">
                                 Execution Count<br />
                                 <div style="color:indigo;"><b>@profiler.Month_count</b></div>
                             </div>
                         </div>
                     </div>
                     <div class="tile_middle">
-                        <div style="color:indigo"><b>Today</b></div>
+                        <div class="tile_tag" style="color:indigo"><b>Today</b></div>
                         <div class="tiles_outer">
-                            <div class="col-md-4 tiles " id="label5" idx="@profiler.Cur_Min_id">
+                            <div class="col-md-3 tiles" id="label5" idx="@profiler.Cur_Min_id">
                                 Min Execution Time:<div style="color:indigo;"><b>@profiler.Cur_Min_exectime ms</b></div>
                             </div>
-                            <div class="col-md-4 tiles " id="label6" idx="@profiler.Cur_Max_id">
+                            <div class="col-md-3 tiles" id="label6" idx="@profiler.Cur_Max_id">
                                 Max Execution Time:<div style="color:indigo;"><b>@profiler.Cur_Max_exectime ms</b></div>
                             </div>
-                            <div class="col-md-4  tilecount">
+                            <div class="col-md-3 tilecount">
                                 Execution Count<br />
                                 <div style="color:indigo;"><b>@profiler.Current_count</b></div>
                             </div>
                         </div>
                     </div>
+                    <div class="tile_wrapper2">
+                        <div class="tile_tag" style="color:indigo"><b>Chart</b></div>
+                        <div class="tiles_outer">
+                            <div class="col-md-4 tiles " id="chart-tile1">
+                                Row Num Vs Execution Time
+                            </div>
+                            <div class="col-md-4 tiles " id="chart-tile2">
+                                Hourly Execution
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+
+
             }
         </div>
-        <div class=" col-md-8 logchart">
-            <div class="tile_middle">
-                <div class="tiles_outer">
-                    <div class="col-md-4 tiles " id="chart-tile1">
-                        Row Num Vs Execution Time
-                    </div>
-                    <div class="col-md-4 tiles " id="chart-tile2">
-                        Hourly Execution
-                    </div>
-                </div>
+        <div class="logchart">
+            <div class="logtable">
+                <div class="table_tag" style="color:indigo; margin-left: 20px; font-size:medium"><b><u>Log Details Table</u></b></div>
+                <table id="tablelog" role="grid" class="table display table-bordered compact">
+                    @*<thead>
+                            <tr>
+                                <th><div style="color:indigo;">Exec Time</div></th>
+                                <th><div style="color:indigo;">Row Count</div></th>
+                                <th><div style="color:indigo;">Exec by</div></th>
+                                <th><div style="color:indigo;">Exec at</div></th>
+                            </tr>
+                        </thead>*@
+                    @*<tbody>
+                            @foreach (EbExecutionLogs eb in logs)
+                            {
+                                <tr class="rows" idx="@eb.Id">
+                                    <td>@eb.Exec_time</td>
+                                    <td>@eb.Rows</td>
+                                    <td>@eb.Created_by</td>
+                                    <td>@eb.Created_at</td>
+                                </tr>
+
+                            }
+                        </tbody>*@
+                </table>
             </div>
-            <div class="logpara">
-                <p ><b>Log Details</b></="logpara">
-            </div>
+            @*<div class="logpara">
+                    <p><b>Log Details</b></="logpara">
+                </div>*@
             <div class="wraper2_drhome" id="paramsalert" style="overflow-y:auto; font-size:smaller">
+                <p><b>Log Details</b></="logpara">
             </div>
         </div>
     </div>
@@ -119,6 +132,7 @@
 <script>
 
     @*//let profiler = @Html.Raw(@ViewBag.Profiler);*@
-    let logsObj=@Html.Raw(logsObj);
-    let SQLProfilerObj = new SQLProfiler(logsObj);
+    $(document).ready(function () {
+        let SQLProfilerObj = new SQLProfiler(@Html.Raw(Columns), @Html.Raw(Rows), '@ViewBag.refid',@profiler.Month_count,@profiler.Current_count);
+    });
 </script>

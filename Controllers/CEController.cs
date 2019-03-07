@@ -166,6 +166,24 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public string GetColumnsCollection(string ds_refid, List<Param> parameter)
+        {
+            RedisClient redis = Redis;
+            JsonServiceClient sscli = ServiceClient;
+            var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
+            DataSourceDataSetColumnsResponse columnresp = sscli.Get<DataSourceDataSetColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
+            if (columnresp.ColumnsCollection == null || columnresp.ColumnsCollection.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                DSController dSController = new DSController(sscli, redis);
+                return EbSerializers.Json_Serialize(dSController.GetDVColumnCollection(columnresp.ColumnsCollection));
+            }
+        }
+
         public DataSourceDataResponse getData(DataSourceDataRequest request)
         {
             DataSourceDataResponse resultlist1 = null;
@@ -179,6 +197,21 @@ namespace ExpressBase.Web.Controllers
             }
             return resultlist1;
         }
+
+        public DataSourceDataSetDataResponse getDataCollcetion(DataSourceDataSetDataRequest request)
+        {
+            DataSourceDataSetDataResponse resultlist1 = null;
+            try
+            {
+                resultlist1 = this.ServiceClient.Get(request);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.ToString());
+            }
+            return resultlist1;
+        }
+
         public int Email(int val)
         {
             List<Param> _param = new List<Param> { new Param { Name = "ids", Type = ((int)EbDbTypes.Int32).ToString(), Value = val.ToString() } };

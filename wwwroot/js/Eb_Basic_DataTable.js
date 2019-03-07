@@ -228,6 +228,15 @@ const EbBasicDataTable = function (Option) {
     }
 
     this.createTblObject = function () {
+        var url = string.empty;
+        if (Option.wc === 'bc')
+            url = "../boti/getData";
+        else if (this.IsQuery)
+            url = "../Eb_Object/getData";
+        else if (this.source === "datareader")
+            url = "../CE/getDataCollcetion";
+        else
+            url = "../dv/getData";
         var o = new Object();
         o.scrollY = this.scrollHeight;
         o.scrollX = "100%";
@@ -247,8 +256,7 @@ const EbBasicDataTable = function (Option) {
         o.keys = true;
         if (this.data === null) {
             o.ajax = {
-                url: (Option.wc === 'bc' ? "../boti/getData" : ((this.IsQuery) ? "../Eb_Object/getData" : "../dv/getData")),
-                url: (Option.wc === 'bc' ? "../boti/getData" : ((this.source === "datareader") ? "../CE/getDataCollcetion" : "../dv/getData")),
+                url: url,
                 type: 'POST',
                 data: this.ajaxData.bind(this),
                 dataSrc: this.receiveAjaxData.bind(this),

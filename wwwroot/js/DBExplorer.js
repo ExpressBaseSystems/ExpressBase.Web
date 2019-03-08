@@ -6,8 +6,10 @@
     var drag = 0;
     var quer = 0;
     var t_ounter = 0;
-    var draw_count = 0;
-    var draw = new Object();
+    var drawP_count = 0;
+    var drawF_count = 0;
+    var drawP = new Object();
+    var drawF = new Object();
     //$("#TabAdderMain li.active a").attr("href")
 
     this.create_tree = function (e) {
@@ -23,32 +25,45 @@
         var exe_window = $("#TabAdderMain li.active a").attr("href");
         exe_window = exe_window[exe_window.length - 1];
         var data = this.editor[exe_window].getValue();
-
+        $(".show_loader").EbLoader("show");
         $.ajax({
             type: "POST",
-            url: "../DbClient/SqlQuery",
+            url: "../DbClient/ExecuteQuery",
             content: "application/json; charset=utf-8",
             dataType: "json",
             data: { Query: data },
             traditional: true,
             success: function (result) {
-                this.query_result(result);
+                console.log(result);
+
+                if (result.columnCollection !== null) {
+                    this.query_result(result);
+                    $('#t' + (res - 1) + ' a').trigger('click');
+                } else if (result.Message !== "") {
+                    alert(result.message);
+                } else if (result.Result === 0) {
+                    alert('Oh Yes success :(  : ' + result);
+                }
+
+                $(".show_loader").EbLoader("hide");
             }.bind(this),
             error: function (result) {
-                alert('Oh no :(  : ' + result);
+                alert('Oh no :(  : ' + "result");
+                $(".show_loader").EbLoader("hide");
             }
         });
+
     }.bind(this);
 
     this.query_result = function (result) {
 
         var exe_window = $("#TabAdderMain li.active a").attr("href");
         exe_window = exe_window[exe_window.length - 1];
-
-        $.each(result.columnCollection, function (i, columns) {
-            $(`#Result_Tab${exe_window}`).append(' <li id="t' + res + '"><a data-toggle="tab" href="#tab' + tab + 'R' + res + '" style="margin: 25px 5px 0px 5px;">Result ' + res + ' <button class="btn" id="Result_' + res + '" data-toggle="modal" data-target="#myModal' + res + '"><i class="fa fa-expand"></i></button><i class="fa fa-window-close fa-1x Result_close" style="padding: 4px; " id="Resultclose"></i></a></li>')
-            $("#resulttab" + exe_window).append("<div id='tab" + tab + "R" + res + "' class='Result_Cont tab-pane fade'><table id='tableid" + res + "'></table></div>")
-            $("#resulttab" + exe_window).append(`<!-- Modal -->
+        for (var Result_ in result) {
+            $.each(result[Result_].columnCollection, function (i, columns) {
+                $(`#Result_Tab${exe_window}`).append(' <li id="t' + res + '"><a data-toggle="tab" href="#tab' + tab + 'R' + res + '" style="margin: 25px 5px 0px 5px;">Result ' + res + ' <button class="btn" id="Result_' + res + '" data-toggle="modal" data-target="#myModal' + res + '"><i class="fa fa-expand"></i></button><i class="fa fa-window-close fa-1x Result_close" style="padding: 4px; " id="Resultclose"></i></a></li>')
+                $("#resulttab" + exe_window).append("<div id='tab" + tab + "R" + res + "' class='Result_Cont tab-pane fade'><table id='tableid" + res + "'></table></div>")
+                $("#resulttab" + exe_window).append(`<!-- Modal -->
                                                     <div class="modal fade" id="myModal${res}" role="dialog">
                                                         <div class="modal-dialog-lg">
     
@@ -66,18 +81,21 @@
                                                                 </div>
                                                             </div>
                                                       </div>`)
-            this.drawdatatable("tableid" + res, columns, result.rowCollection[i]);
-            this.drawdatatable("tableidM" + res, columns, result.rowCollection[i]);
-            res++;
-        }.bind(this));
-        $('#t' + res - 1 + ' a').trigger('click');
-        $(`body`).off("click").on("click", ".Result_close", this.Result_Closer.bind(this));
-        //$('#Result_1').click(this.Modal_append.bind(this));
+                this.drawdatatable("tableid" + res, columns, result[Result_].rowCollection[i]);
+                this.drawdatatable("tableidM" + res, columns, result[Result_].rowCollection[i]);
+                res++;
+            }.bind(this));
+            $(`body`).off("click").on("click", ".Result_close", this.Result_Closer.bind(this));
+            //$('#Result_1').click(this.Modal_append.bind(this));
+        }
+
     }.bind(this);
+
 
     this.drawdatatable = function (tableid, columns, result) {
         var o = new Object();
         o.tableId = tableid;
+        o.datetimeformat = true;
         //o.showFilterRow = false;
         o.showSerialColumn = false
         o.showCheckboxColumn = false;
@@ -166,9 +184,9 @@
             let posTop = event.pageY;// - $("#pannel").position().top;
             //let tid = `${tableName}_table${t_ounter++}`;
             let tid = `drop_table${t_ounter++}`;
-            let $tableBoxHtml = $(`<div is-draggable="false" class="table-box" id="${tid}">
+            let $tableBoxHtml = $(`<div is-draggable="false" class="table-box" id="${tid}" ">
                                         <div class="t_drophead"><div class="tname">${tableName}</div> <i class="fa fa-window-close-o draggeer pull-right" onClick="$(${tid}).remove();"></i></div>
-                                        <div class="t_dropbdy">${this.getCols(this.TCobj.TableCollection[tableName].Columns)}</div>
+                                        <div class="t_dropbdy">${this.getCols(this.TCobj.TableCollection[tableName].Columns, tid, tableName)}</div>
                                 </div>`);
             $('#droppable' + exe_window).append($tableBoxHtml);
             $(`#${tid}`).css("left", posLeft + "px");
@@ -176,43 +194,44 @@
             if ($(`#${tid}`).attr("is-draggable") == "false") {// if called first time
                 $(`#${tid}`).draggable(options);
                 $(`#${tid}`).attr("is-draggable", "true");
+
+            }
+            //this.draw();
+            tid++;
+        }
+        $(".table-box").on("click", this.draw());
+    }.bind(this);
+
+    this.draw = function () {
+        $(".leader-line").remove();
+        for (var key in drawF) {
+            for (var PKey in drawP) {
+                if (drawF[key].From === drawP[PKey].tableName) {
+                    new LeaderLine(document.getElementById(drawP[PKey].From), document.getElementById(drawF[key].To), { size: 3, dash: { animation: true } }).setOptions({ startSocket: 'auto', endSocket: 'auto' });
+                    //this.activemouse.bind(this);
+                }
+
             }
         }
     }.bind(this);
 
-    this.draw = function () {
-        for (var key in draw) {
-            new LeaderLine(document.getElementById(draw[key].From),
-                document.getElementById(draw[key].To), { size: 3, dash: { animation: true } })
-            this.activemouse();
-        }
-    }.bind(this);
-
-    this.getCols = function (cols) {
+    this.getCols = function (cols, tid, tableName) {
         let html = [];
         $.each(cols, function (key, column) {
             if (column['ColumnKey'] === "Primary key") {
                 html.push(`<div class="t_colsitem">${column['ColumnName']}:${column['ColumnType']} <i class="fa fa-key gold" aria-hidden="true"></i></div>`);
+                drawP[drawP_count++] = { "tableName": tableName, "key": "Primary key", "From": tid };
             }
             else if (column['ColumnKey'] === "Foreign key") {
                 html.push(`<div class="t_colsitem">${column['ColumnName']}:${column['ColumnType']} <i class="fa fa-key fkey" aria-hidden="true"></i></div>`);
-                var from = idi - 2;
-                from = 'a' + from;
-                var to = idi - 1;
-                to = 'a' + to;
-                draw[draw_count++] = { "From": to, "To": from };
+                var from = column['ColumnTable'].substring(0, column['ColumnTable'].lastIndexOf("("));
+                drawF[drawF_count++] = { "tableName": tableName, "key": "Foreign key", "To": tid, "From": from };
             }
             else {
                 html.push(`<div class="t_colsitem">${column['ColumnName']}:${column['ColumnType']} </div>`);
             }
         }.bind(this))
         return html.join("");
-    };
-
-    this.KeyChecker = function (key) {
-        if (key === "Primary key") {
-
-        }
     };
 
     window.onload = function () {
@@ -240,7 +259,7 @@
         let $TabHtml = $(`<li id="query_li${++tab}"><a data-toggle="tab" href="#result_set${tab}">QUERY ${++quer}<i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; "  onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
         $('#pannel #TabAdderMain').append($TabHtml);
         $(`body`).off("click").on("click", ".Tabclose", this.Tab_Closer.bind(this));
-        let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div id="code' + quer + '" ><textarea id="coder' + quer + '" name="coder" style="visibility:hidden"></textarea></div ><ul class="nav nav-tabs" id="Result_Tab' + tab + '"></ul><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
+        let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div class="show_loader"></div><div id="code' + quer + '" ><textarea id="coder' + quer + '" name="coder" style="visibility:hidden"></textarea></div ><ul class="nav nav-tabs" id="Result_Tab' + tab + '"></ul><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
         $('#maintab').append($TabHtml_cont);
         //let $ResultHtml = $(' <li class="active"><a data-toggle="tab" href="#queryresult' + res + '" style="margin: 25px 5px 0px 5px;">Result ' + res + '</a></li>');
         //$('#Result_Tab').append($ResultHtml);

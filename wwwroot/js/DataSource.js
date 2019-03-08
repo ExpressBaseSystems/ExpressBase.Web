@@ -52,7 +52,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         else {
             if ($e.attr("is-edited") === "true")
                 return;
-            $e.attr("state", "simple")
+            $e.attr("state", "simple");
             $simpleSec.show(this.delay);
             $advSec.hide(this.delay);
         }
@@ -135,11 +135,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             _params[i].Value = $(`input[name="${_params[i].Name}-VLU"]`).val();
         }
         return _params;
-    }
+    };
 
     this.configParamWindo = function () {
         $("#parmSetupSave").html(`Run <i class="fa fa-play" aria-hidden="true"></i>`);
-    }
+    };
 
     this.GenerateButtons = function () {
         $("#obj_icons").empty().append(`<button class='btn run' id= 'run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
@@ -289,7 +289,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $extCont: $(".param-div"),
             icon: "fa-filter",
             dir: "left",
-            label: "Parameters",
+            label: "Parameters"
         });
 
         if (callback)
@@ -372,7 +372,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (this.FilterDialogRefId !== undefined)
             ParamsArray = getValsForViz(this.filterDialog.FormObj);
         return ParamsArray;
-    };
+    }.bind(this);
 
     this.DrawTable = function () {
         var paramsArray = null;
@@ -385,10 +385,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddVerNavTab(navitem, tabitem);
-        $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
-            "<table class='table table-striped table-bordered' id='sample" + commonO.tabNum + "'></table>" +
-            "</div>");
-        $.post('../../CE/GetColumns4Trial', {
+        $('#vernav' + commonO.tabNum).append(`<div class='filter_modal_body'><div class="accordion" id="accordion${commonO.tabNum}"></div></div>`);
+
+        $.post('../../CE/GetColumnsCollection', {
             ds_refid: this.Refid,
             parameter: paramsArray
         }, this.Load_Table_Columns.bind(this));
@@ -406,29 +405,61 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             alert('Error in Query');
         }
         else {
-            var cols = JSON.parse(result);
-            $("#sample" + commonO.tabNum).dataTable({
-                aoColumns: cols,
-                serverSide: true,
-                lengthMenu: [[20, 50, 100], [20, 50, 100]],
-                scrollX: "100%",
-                scrollY: "300px",
-                processing: true,
-                dom: "<lip>rt",
-                paging: true,
-                lengthChange: true,
-                ajax: {
-                    //url: this.Ssurl + "/ds/data/" + this.Refid,
-                    url: "../CE/getData",
-                    type: "POST",
-                    data: this.Load_tble_Data.bind(this),
-                    crossDomain: true,
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                    },
-                    dataSrc: function (dd) { return dd.data; },
-                }
-            });
+            var colscollection = JSON.parse(result);
+            $.each(colscollection.$values, function (i, columns) {
+                //var ariastring = (i === 0) ? "aria-expanded='true'" : "";
+                //var showstring = (i === 0) ? "in" : "";
+                var ariastring = "aria-expanded='true'";
+                var showstring = "in";
+                $('#vernav' + commonO.tabNum + ' .accordion').append(`<div class="card">
+                        <div class="card-header" id="card-header${commonO.tabNum}_${i}">
+                          <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#TableParent${commonO.tabNum}_${i}" ${ariastring} aria-controls="TableParent${commonO.tabNum}_${i}">
+                              Table${i}
+                            </button>
+                          </h5>
+                        </div>`);
+                $('#vernav' + commonO.tabNum + ' .accordion').append(`<div id='TableParent${commonO.tabNum}_${i}' class="collapse ${showstring}" aria-labelledby="card-header${commonO.tabNum}_${i}" data-parent="#accordion${commonO.tabNum}"> 
+                    <div class="card-body"><table class='table table-striped table-bordered' id='Table${commonO.tabNum}_${i}'></table></div></div>`);
+                var o = {};
+                o.tableId = "Table" + commonO.tabNum + "_" + i;
+                o.dsid = this.Refid;
+                o.columns = columns;
+                o.showFilterRow = (i === 0) ? true : false;
+                o.showSerialColumn = true;
+                o.showCheckboxColumn = false;
+                o.getFilterValuesFn = this.CreateObjString;
+                o.source = "datareader";
+                o.IsPaging = (i === 0) ? true : false;
+                o.scrollHeight = "250";
+                o.QueryIndex = i;
+                o.datetimeformat = true;
+                let res = new EbBasicDataTable(o);
+                res.Api.columns.adjust();
+            }.bind(this));
+            //$("#sample" + commonO.tabNum).dataTable({
+            //    aoColumns: cols,
+            //    serverSide: true,
+            //    lengthMenu: [[20, 50, 100], [20, 50, 100]],
+            //    scrollX: "100%",
+            //    scrollY: "300px",
+            //    processing: true,
+            //    dom: "<lip>rt",
+            //    paging: true,
+            //    lengthChange: true,
+            //    ajax: {
+            //        //url: this.Ssurl + "/ds/data/" + this.Refid,
+            //        url: "../CE/getData",
+            //        type: "POST",
+            //        data: this.Load_tble_Data.bind(this),
+            //        crossDomain: true,
+            //        beforeSend: function (xhr) {
+            //            xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+            //        },
+            //        dataSrc: function (dd) { return dd.data; },
+            //    }
+            //});
+
             $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
         }
         $("#eb_common_loader").EbLoader("hide");

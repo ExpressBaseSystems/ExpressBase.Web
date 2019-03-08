@@ -1,4 +1,7 @@
-﻿.eb_apiWrper {
+﻿.api_body{
+    font-family:open sans;
+}
+.eb_apiWrper {
     width: 100%;
     height: calc(100% - 73px);
 }
@@ -169,16 +172,24 @@
             background: #eee;
             font-size: 13px;
         }
-            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .runReq_btn {
+            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn {
                 background: transparent;
                 background-color: transparent;
                 border: none;
                 float: right;
+                margin: 0 2px;
+                padding: 0 5px;
+                cursor: pointer;
             }
-            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .runReq_btn .fa {
-                color: green;
-                margin-top:3px;
-            }
+                .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn:hover {
+                    background: #cecece;
+                    border-radius: 4px;
+                }
+                .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn .fa {
+                    color: green;
+                    margin-top: 3px;
+                    font-weight: 600;
+                }
             .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._b {
                 background:black;
                 overflow: auto;
@@ -260,3 +271,37 @@
         height: 100%;
         padding: 40px 10px 10px 20px;
     }
+
+    /*code sample*/
+.api_scodeMd .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border: none;
+    border-bottom: 3px solid #1580ef;
+}
+.api_scodeMd .nav > li > a {
+    padding: 5px 15px;
+}
+.api_scodeMd .modal-body {
+    padding-top: 5px;
+}
+.code_wrpr {
+    padding-top: 10px;
+}
+.cod_line {
+    margin: 5px 0;
+}
+.code_comment {
+    color: #116711;
+    padding-left: 15px;
+}
+.reserved {
+    color: #0f0fc3;
+}
+.higlite {
+    color: #ce3838;
+}
+.tab{
+    margin-left:20px;
+}

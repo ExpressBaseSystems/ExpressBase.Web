@@ -175,7 +175,7 @@
             },
             success: function (response) {
                 for (let i = 0; i < response.length; i++) {
-                    var date = new Date(parseInt(response[0][0].substr(6)));
+                    var date = new Date(parseInt(response[i][0].substr(6)));
                     var hr = date.getHours()
                     freq[hr - 1] += 1;
                 }

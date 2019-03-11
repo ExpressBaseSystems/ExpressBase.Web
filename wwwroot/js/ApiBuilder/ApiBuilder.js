@@ -30,6 +30,7 @@ function EbApiBuild(config) {
     this.FlagRun = false;
     this.ComponentRun = false;
     this.Component = null;
+    this.ResultData = {};
 
     this.pg = new Eb_PropertyGrid({
         id: "pgContainer_wrpr",
@@ -305,6 +306,7 @@ function EbApiBuild(config) {
     };
 
     this.toggleRespWindow = function (result, o) {
+        this.ResultData = result;
         let _html = window.Api.JsonWindow.build(result);
         $(`#Json_reqOrRespWrp`).show();
         $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(_html);
@@ -314,6 +316,27 @@ function EbApiBuild(config) {
 
     this.showSampleCode = function (ev) {
         $("#api_scodeMd").modal("toggle");
+    };
+
+    this.foramatChange = function (ev) {
+        let o = null;
+        let html = "";
+        if (this.ComponentRun) 
+            o = this.Component;
+        else 
+            o = this.EbObject;
+
+        if ($(ev.target).val() === 'xml') {
+            html = window.Api.JsonWindow.json2xml(this.ResultData);
+        }
+        else if ($(ev.target).val() === 'json')
+            html = window.Api.JsonWindow.build(this.ResultData);
+        else if ($(ev.target).val() === 'raw')
+            html = window.Api.JsonWindow.rawData(this.ResultData);
+
+        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(html);
+        $(`#api_RqFullSwrapr .FS_bdy`).html(html);
+        $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
     };
 
     this.start = function () {
@@ -329,7 +352,8 @@ function EbApiBuild(config) {
             minHeight: 50
         });
         $(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
-        $("#sample_codes").off("click").on("click", this.showSampleCode.bind(this));
+        //$("#sample_codes").off("click").on("click", this.showSampleCode.bind(this));
+        $('.format_type').off("change").on("change", this.foramatChange.bind(this));
     };
 
     this.start();

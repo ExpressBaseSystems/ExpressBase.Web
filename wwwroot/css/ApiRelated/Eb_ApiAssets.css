@@ -1,4 +1,7 @@
-﻿.eb_apiWrper {
+﻿.api_body{
+    font-family:open sans;
+}
+.eb_apiWrper {
     width: 100%;
     height: calc(100% - 73px);
 }
@@ -70,15 +73,17 @@
 }
 .strt_circ {
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     background-color: #78ca77;
+    position: relative;
 }
 .stop_circ {
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     background-color: #e87575;
+    position: relative;
 }
 .resource_append_wraper .apiPrcItem {
     display: flex;
@@ -167,16 +172,24 @@
             background: #eee;
             font-size: 13px;
         }
-            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .runReq_btn {
+            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn {
                 background: transparent;
                 background-color: transparent;
                 border: none;
                 float: right;
+                margin: 0 2px;
+                padding: 0 5px;
+                cursor: pointer;
             }
-            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .runReq_btn .fa {
-                color: green;
-                margin-top:3px;
-            }
+                .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn:hover {
+                    background: #cecece;
+                    border-radius: 4px;
+                }
+                .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn .fa {
+                    color: green;
+                    margin-top: 3px;
+                    font-weight: 600;
+                }
             .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._b {
                 background:black;
                 overflow: auto;
@@ -215,3 +228,80 @@
             margin-left: 10px;
             cursor:pointer;
         }
+
+.strt_circ:after, .stop_circ:after {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    top: 5px;
+    left: 5px;
+}
+
+/*full screen window*/
+.api_RqFullSwrapr {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    top: 0;
+    z-index: 1000;
+    display: none;
+    overflow: auto;
+}
+    .api_RqFullSwrapr .FS_head {
+        padding: 5px 30px;
+        font-size: 15px;
+        color: #1a2973;
+        font-family: open sans;
+        font-weight: 600;
+        color: white;
+        position: fixed;
+        width: 100%;
+        background: black;
+    }
+        .api_RqFullSwrapr .FS_head i{
+            cursor:pointer;
+        }
+    .api_RqFullSwrapr .FS_bdy {
+        width: 100%;
+        height: 100%;
+        padding: 40px 10px 10px 20px;
+    }
+
+    /*code sample*/
+.api_scodeMd .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border: none;
+    border-bottom: 3px solid #1580ef;
+}
+.api_scodeMd .nav > li > a {
+    padding: 5px 15px;
+}
+.api_scodeMd .modal-body {
+    padding-top: 5px;
+}
+.code_wrpr {
+    padding-top: 10px;
+}
+.cod_line {
+    margin: 5px 0;
+}
+.code_comment {
+    color: #116711;
+    padding-left: 15px;
+}
+.reserved {
+    color: #0f0fc3;
+}
+.higlite {
+    color: #ce3838;
+}
+.tab{
+    margin-left:20px;
+}

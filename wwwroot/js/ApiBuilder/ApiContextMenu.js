@@ -12,13 +12,13 @@
         let o = this.Api.Procs[selector.$trigger.attr("id")];
         let eb_type = o.$type.split(',')[0].split('.')[2];
         this.Api.Component = o;
-        if (eb_type === "EbSqlReader" || eb_type === "EbSqlFunc" || eb_type === "EbSqlWriter") {
-            if (o.Refid !== "" && o.Refid !== null) {
+        if (eb_type !== "EbProcessor") {
+            if (o.Reference !== "" && o.Reference !== null) {
                 $.ajax({
                     url: "../Dev/GetCompReqJson",
                     type: "GET",
                     cache: false,
-                    data: { "refid": o.Refid },
+                    data: { "refid": o.Reference },
                     success: function (result) {
                         this.Api.toggleReqWindow(JSON.parse(result));
                         this.Api.ComponentRun = true;
@@ -27,14 +27,14 @@
             }
             else {
                 $(`#${o.EbSid}`).children(".drpbox").toggleClass("refIdMsetNotfy");
-                EbMessage("show", { Message: "RefId must be set!", Background: "red" });
+                EbMessage("show", { Message: "Reference must be set!", Background: "red" });
             }
         }
     };
 
     this.options = {
         "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) },
-        "req&resp": {name:"Request JSON & Response JSON",icon:"",callback:this.getReq_RespJSON.bind(this)}
+        "req&resp": { name: "Request JSON & Response JSON", icon:"fa-exchange",callback:this.getReq_RespJSON.bind(this)}
     };
 
     this.initContextMenu = function () {
@@ -50,6 +50,8 @@
     this.getMenu = function ($trigger, e) {
         let m = $.extend({}, this.options);
         let eb_type = $trigger.attr("eb-type");
+        if (eb_type === "Processor")
+            delete m["req&resp"];
         return m;
     };
     this.initContextMenu();

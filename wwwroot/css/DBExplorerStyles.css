@@ -1,36 +1,10 @@
-﻿
-body {
-    padding-top: 50px;
-    padding-bottom: 20px
+﻿.cont {
+    display: flex;
+    flex-flow: row;
+    margin-top: 25px;
 }
-
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px
-}
-
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4
-}
-
-.carousel-inner .item img[src$=".svg"] {
-    width: 100%
-}
-
-#qrCode {
-    margin: 15px
-}
-
-@media screen and (max-width:767px) {
-    .carousel-caption {
-        display: none
-    }
-}
-
 
 div.mytree div {
-    
     padding-left: 20px;
     background: transparent url(http://www3.telus.net/jianlu58/bullet.gif) no-repeat top left;
 }
@@ -48,23 +22,66 @@ div.mytree div {
     div.mytree div.expanded {
         background: transparent url(http://www3.telus.net/jianlu58/minus.gif) no-repeat top left;
     }
+
+.db_client_toolbox {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    font-size: 15px;
+    padding-left: 12px;
+}
+
+.db_client_toolbox_bdy {
+    padding: 12px;
+    background-color: white;
+    position: relative;
+    height: 600px;
+    overflow: auto;
+    border: 1px solid #ccc;
+    border-top: 0;
+}
+
 .table-box {
     width: 200px;
     height: 200px;
     display: inline-block;
-    background: white;
-    border: solid;
-    padding: 3px;
     border-width: 1px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    position:absolute;
-    z-index: 100;
-
+    position: absolute;
+    z-index: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
 }
+
+    .table-box .t_drophead {
+        background: #eee;
+        padding: 5px;
+        font-size: 15px;
+        color: #1d1da9;
+    }
+
+        .table-box .t_drophead .tname {
+            max-width: 80%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+    .table-box .t_dropbdy {
+        padding: 5px;
+        line-height: 2.2rem;
+        overflow: auto;
+        height: calc(100% - 25px);
+    }
+
 .fa {
     float: right;
 }
+
 .drag-box {
     width: 150px;
     height: 150px;
@@ -76,22 +93,32 @@ div.mytree div {
     overflow-x: hidden;
     z-index: 10;
 }
+
 .drop-box {
-    position: absolute;
-    top: 52px;
     width: 100%;
     height: 609px;
-    background: #999;
+    background: white;
     color: #fff;
     padding: 10px;
 }
 
+.gold {
+    color: goldenrod;
+}
+
+.fkey {
+    color: #97948d;
+}
+
 #pannel {
-    position: absolute;
-    top: 40px;
-    left: 410px;
-    padding: 10px;
-    width: 72%;
+    padding: 0px 10px 10px 10px;
+    width: 75%;
+}
+
+.draggeer {
+    background: white;
+    border: 1px solid #ccc;
+    border-top: 0;
 }
 
 .Result_Cont {
@@ -103,11 +130,21 @@ div.mytree div {
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
-div.CodeMirror.cm-s-default {
-    top: 12px;
-    height: 390px;
+.Result_Cont_modal {
+    /*margin-right: 50px;*/
+    /*margin-top: 20px;*/
+    padding: 16px;
+    max-height: 520px;
+    overflow-y: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
+.modal fade in {
+    margin: 29px;
+}
 
-
-
+div.CodeMirror.cm-s-default {
+    top: 12px;
+    height: 361px;
+    z-index: 100;
+}

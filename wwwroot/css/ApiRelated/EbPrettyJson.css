@@ -6,6 +6,10 @@
     background: black;
     padding: 5px 10px;
 }
+    .prety_jsonWrpr ol {
+        padding-left: 15px;
+        list-style: none;
+    }
     .prety_jsonWrpr .objkey {
         color: #7f2f76;
     }

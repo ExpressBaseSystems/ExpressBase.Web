@@ -9,31 +9,31 @@
     var count = 0;
     //var draw = [];
     var draw = new Object();
-    html.push(` <div class = "_row">`);
+    html.push(`<div class ="_row">`);
 
     
-    this.refresh = function (tabNum) {
+    this.refresh = function (tabNum, code, code_tnum) {
         //var value1 = $('textarea[name="querytext"]').val();
-        //var value2 = $('textarea[name="queryparam"]').val();
-        this.Code = window["editor" + tabNum].getValue();
+        //var value2 = $('textarea[name="queryparam"]').val();        
         let params = null;
         if(is_ds)
-        params = commonO.ObjCollection["#vernav" + tabNum].CreateObjString();
+            params = commonO.ObjCollection["#vernav" + code_tnum].CreateObjString();
         $.ajax({
             url: "../QueryExplain/GetExplain",
             type: 'POST',
             data: {
-                "query": this.Code,
-                "params": params
+                "query": code,
+                "_params": params
             },
                 //"queryparam": value2},
             success: function (response) {
                 //this.CreateHtml(response);
                 //this.CreateResult(response);
                 this.CreateExplain(response);
-                this.JsonTraverse(JSON.parse(response.explain)[0]);  
-                $('#JsonD').append(html.join());
-                this.draw();
+                this.JsonTraverse(JSON.parse(response.explain)[0]);
+                $('#JsonD' + tabNum).append(html.join());
+                if (Object.keys(draw).length > 1)
+                    this.draw();
             }.bind(this)
         });
     };
@@ -63,7 +63,7 @@
                         //this.draw(sent, pre);
                         draw[connect++] = { "From": sent, "To": pre };
                     }
-                    if (object[keys]["Node Type"] === "Hash") {
+                    else if (object[keys]["Node Type"] === "Hash") {
                         html.push('<div class = "_row">');
                         for (i = 0; i <= index; i++) {
                             html.push('<div class =  "_column_"></div>');
@@ -77,7 +77,7 @@
                         //this.draw(sent, pre);
                         draw[connect++] = { "From": sent, "To": HJ[--count].sent };
                     }
-                    if (object[keys]["Node Type"] === "Index Scan") {
+                    else if (object[keys]["Node Type"] === "Index Scan") {
                         index -= 1;
                         html.push('<div class = "_row">');
                         for (i = 0; i <= index; i++) {
@@ -92,7 +92,7 @@
                         //this.draw(sent, pre);
                         draw[connect++] = { "From": sent, "To": HJ[--count].sent };
                     }
-                    if (object[keys]["Node Type"] === "Materialize") {
+                    else if (object[keys]["Node Type"] === "Materialize") {
                         html.push('<div class = "_row">');
                         for (i = 0; i <= index; i++) {
                             html.push('<div class =  "_column_"></div>');
@@ -106,17 +106,26 @@
                         //this.draw(sent, pre);
                         draw[connect++] = { "From": sent, "To": HJ[--count].sent };
                     }
-                    if (object[keys]["Node Type"] === "Aggregate") {
+                    else if (object[keys]["Node Type"] === "Aggregate") {
                         //index -= 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/ex_aggregate.svg" id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Strategy : ' + object[keys]["Strategy"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' Parent Relationship : ' + object[keys]["Parent Relationship"] + ' Partial Mode : ' + object[keys]["Partial Mode"] + ' Group Key : ' + object[keys]["Group Key"] + '"/><br/>' + object[keys]["Node Type"] + '</div>');
-                        let pre = idi - 2;
-                        pre = 'a' + pre;
-                        let send = idi - 1;
-                        sent = 'a' + send;
-                        //this.draw(sent, pre);
-                        draw[connect++] = { "From": sent, "To": pre };
+                        if (idi !== 1) {
+                            let pre = idi - 2;
+                            pre = 'a' + pre;
+                            let send = idi - 1;
+                            sent = 'a' + send;
+                            //this.draw(sent, pre);
+                            draw[connect++] = { "From": sent, "To": pre };
+                        }
+                        if (idi === 1) {
+
+                            let send = idi - 1;
+                            sent = 'a' + send;
+                            //this.draw(sent, pre);
+                            HJ[count++] = { sent };
+                        }
                     }
-                    if (object[keys]["Node Type"] === "Subquery Scan") {
+                    else if (object[keys]["Node Type"] === "Subquery Scan") {
                         //index += 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/ex_subplan.svg" id="a' + idi++ + '" style="width:30px;height:40x; "/><br/>' + object[keys]["Node Type"] + '</div>');
                         let pre = idi - 2;
@@ -126,7 +135,7 @@
                         //this.draw(sent, pre);
                         draw[connect++] = { "From": sent, "To": pre };
                     }
-                    if (object[keys]["Node Type"] === "Hash Join") {
+                    else if (object[keys]["Node Type"] === "Hash Join") {
                         index += 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/hash.svg"  id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Hash Cond : ' + object[keys]["Hash Cond"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' Parent Relationship : ' + object[keys]["Parent Relationship"] + ' "/><br/>' + object[keys]["Node Type"] + " " + object[keys]["Join Type"] + '</div>');
                         if (idi !== 1) {
@@ -139,7 +148,7 @@
                             HJ[count++] = { sent };
                         }
                     }
-                    if (object[keys]["Node Type"] === "Nested Loop") {
+                    else if (object[keys]["Node Type"] === "Nested Loop") {
                         index += 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/ex_nested.svg"  id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Join Filter : ' + object[keys]["Join Filter"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' Parent Relationship : ' + object[keys]["Parent Relationship"] + '"/><br/>' + object[keys]["Node Type"] + " " + object[keys]["Join Type"] + '</div>');
                         if (idi !== 1) {
@@ -152,7 +161,7 @@
                             HJ[count++] = { sent };
                         }
                     }
-                    if (object[keys]["Node Type"] === "Merge Join") {
+                    else if (object[keys]["Node Type"] === "Merge Join") {
                         index += 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/ex_merge.svg"  id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Merge Cond : ' + object[keys]["Merge Cond"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' Parent Relationship : ' + object[keys]["Parent Relationship"] + '"/><br/>' + object[keys]["Node Type"] + " " + object[keys]["Join Type"] + '</div>');
                         if (idi !== 1) {
@@ -173,7 +182,7 @@
                         }
 
                     }
-                    if (object[keys]["Node Type"] === "Sort") {
+                    else if (object[keys]["Node Type"] === "Sort") {
                         index += 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/sort.svg"  id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Sort Key : ' + object[keys]["Sort Key"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' "/><br/>' + object[keys]["Node Type"] + '</div>');
                         if (idi !== 1) {
@@ -185,7 +194,7 @@
                             draw[connect++] = { "From": sent, "To": pre };
                         }
                     }
-                    if (object[keys]["Node Type"] === "Unique") {
+                    else if (object[keys]["Node Type"] === "Unique") {
                         index += 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/ex_unique.svg"  id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="bottom" title=" Parallel Aware : ' + object[keys]["Parallel Aware"] + '">"/><br/>' + object[keys]["Node Type"] + '</div>');
                         if (idi !== 1) {
@@ -196,6 +205,9 @@
                             //this.draw(sent, pre);
                             draw[connect++] = { "From": sent, "To": pre };
                         }
+                    }
+                    else {
+                        html.push("<div> **unknown** </div>");
                     }
                 }
                 if (key === "Plans") {
@@ -210,7 +222,7 @@
     this.draw = function () {
         for (var key in draw) {
             new LeaderLine(document.getElementById(draw[key].From),
-                document.getElementById(draw[key].To), { size: 3, dash: { animation: true } })
+                document.getElementById(draw[key].To), { size: 3, dash: { animation: true } }).setOptions({ startSocket: 'auto', endSocket: 'auto' });
             this.activemouse();
         }
     };
@@ -257,7 +269,7 @@
     this.getThead = function (typeArray) {
         let arry = [];
         for (var i = 0; i < typeArray.length; i++) {
-            arry.push(` <th>${typeArray[i]}</th>`)
+            arry.push(` <th>${typeArray[i]}</th>`);
         }
         return arry.join('');
     };
@@ -267,7 +279,7 @@
         for (var i = 0; i < typeList.length; i++) {
             array.push(`<tr>`);
             for (var j = 0; j < typeList[i].length; j++) {
-                array.push(`<td>${typeList[i][j]}</td>`)
+                array.push(`<td>${typeList[i][j]}</td>`);
             }
             array.push(`<tr>`);
         }

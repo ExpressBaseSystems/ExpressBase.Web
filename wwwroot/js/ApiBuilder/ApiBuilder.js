@@ -130,7 +130,7 @@ function EbApiBuild(config) {
         if (this.reidStat)
             commonO.Current_obj = this.EbObject;
         else
-            EbMessage("show", { Message: "RefId must be set!", Background: "red" });
+            EbMessage("show", { Message: "Reference must be set!", Background: "red" });
         return this.reidStat;
     };//save
 
@@ -152,8 +152,8 @@ function EbApiBuild(config) {
     };
 
     this.validateRefid = function (id) {
-        if ('Refid' in this.Procs[id]) {
-            if (this.Procs[id].Refid === "" || this.Procs[id].Refid === null)
+        if ('Reference' in this.Procs[id]) {
+            if (this.Procs[id].Reference === "" || this.Procs[id].Reference === null)
                 return false;
             else
                 return true;
@@ -164,14 +164,14 @@ function EbApiBuild(config) {
     };
 
     this.pg.PropertyChanged = function (obj, pname) {
-        if (pname === "Refid" && obj.Refid !== "" && obj.Refid !== null) {
+        if (pname === "Reference" && obj.Reference !== "" && obj.Reference !== null) {
             $("#" + obj.EbSid).children(".drpbox").removeClass("refIdMsetNotfy");
             this.getComponent(obj);
         }
     }.bind(this);
 
     this.getComponent = function (obj) {
-        if (obj.Refid) {
+        if (obj.Reference) {
             $.ajax({
                 url: "../Dev/GetComponent",
                 type: "GET",
@@ -213,6 +213,21 @@ function EbApiBuild(config) {
     this.toggleReqWindow = function (resp) {
         $(`#Json_reqOrRespWrp`).show();
         $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.build(resp));
+        $(`#Json_reqOrRespWrp #JsonResp_CMW`).empty();
+        this.setSampleCode(resp);
+    };
+
+    this.setSampleCode = function (req) {
+        $('#api_scodeMd .url').text(`'${location.origin}/api/${this.EbObject.Name}/${commonO.getVersion()}'`);
+        $('#api_scodeMd .method').text(`'${this.EbObject.Method || "POST/GET"}'`);
+        var s = "";
+        var o = {};
+        for (let i = 0; i < req.length; i++) {
+            s = s + req[i].Name + "=" + req[i].ValueTo + ((i == req.length - 1) ? "" : "&");
+            o[req[i].Name] = req[i].ValueTo;
+        }
+        $(`#api_scodeMd #js .data`).text(`'${s}'`);
+        $(`#api_scodeMd #ajax .data`).text(JSON.stringify(o));
     };
 
     this.newApi = function () {
@@ -242,7 +257,7 @@ function EbApiBuild(config) {
     }.bind(this)
 
     this.GenerateButtons = function () {
-
+        this.setBtns();
     };
 
     this.apiRun = function (ev) {
@@ -272,7 +287,7 @@ function EbApiBuild(config) {
             _data = { "name": this.EbObject.Name, "vers": commonO.getVersion(), "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text() };
         }
         else {
-            _data = {"param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text(),"component": JSON.stringify(this.Component)}
+            _data = { "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text(), "component": JSON.stringify(this.Component) }
         }
         $.ajax({
             url: "../Dev/GetApiResponse",
@@ -281,17 +296,24 @@ function EbApiBuild(config) {
             beforeSend: function () {
                 $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#JsonResp_CMW', Style: { "top": "0", "left": "0" } } });
             },
-            data: _data ,
+            data: _data,
             success: function (result) {
-                (this.ComponentRun) ? this.toggleRespWindow(JSON.parse(result).Result) : this.toggleRespWindow(JSON.parse(result));
+                (this.ComponentRun) ? this.toggleRespWindow(JSON.parse(result).Result, this.Component) : this.toggleRespWindow(JSON.parse(result), this.EbObject);
                 $("#eb_common_loader").EbLoader("hide");
             }.bind(this)
         });
     };
 
-    this.toggleRespWindow = function (result) {
+    this.toggleRespWindow = function (result, o) {
+        let _html = window.Api.JsonWindow.build(result);
         $(`#Json_reqOrRespWrp`).show();
-        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(window.Api.JsonWindow.build(result));
+        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(_html);
+        $(`#api_RqFullSwrapr .FS_bdy`).html(_html);
+        $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
+    };
+
+    this.showSampleCode = function (ev) {
+        $("#api_scodeMd").modal("toggle");
     };
 
     this.start = function () {
@@ -307,6 +329,7 @@ function EbApiBuild(config) {
             minHeight: 50
         });
         $(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
+        $("#sample_codes").off("click").on("click", this.showSampleCode.bind(this));
     };
 
     this.start();

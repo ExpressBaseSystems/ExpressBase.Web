@@ -20,13 +20,13 @@ namespace ExpressBase.Web.Controllers
     {
         public DSController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public string GetColumns(string DataSourceRefId)
+        public DVColumnCollection GetColumns(ColumnColletion __columns)
         {
-            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", DataSourceRefId));
-            if (columnresp == null || columnresp.Columns.Count == 0)
-                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = DataSourceRefId, SolnId = ViewBag.cid });
+            //DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", DataSourceRefId));
+            //if (columnresp == null || columnresp.Columns.Count == 0)
+            //    columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = DataSourceRefId, SolnId = ViewBag.cid });
             
-            var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+            //var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 
             var Columns = new DVColumnCollection();
             foreach (EbDataColumn column in __columns)
@@ -47,7 +47,15 @@ namespace ExpressBase.Web.Controllers
 
                 Columns.Add(_col);
             }
-            return EbSerializers.Json_Serialize(Columns);
+            return Columns;
+        }
+
+        public List<DVColumnCollection> GetDVColumnCollection(List<ColumnColletion> _ColumnColl)
+        {
+            List<DVColumnCollection> dvColumnCollection = new List<DVColumnCollection>();
+            foreach (ColumnColletion _columns in _ColumnColl)
+                dvColumnCollection.Add(GetColumns(_columns));
+            return dvColumnCollection;
         }
     }
 }

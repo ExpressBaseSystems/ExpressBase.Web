@@ -5,8 +5,11 @@
 }
 <link href="~/css/Eb_datatable.css" rel="stylesheet" />
 <link href="~/css/splitWindow.css" rel="stylesheet" />
+<script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="~/js/DataSource.js"></script>
 <script src="~/js/QueryExplain/QueryExplain.js" type="text/javascript"></script>
+<link href="~/css/QueryExplain/query_explain.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
 @*<link href="~/css/SqlBuilder/Home.css" rel="stylesheet" />
     <link href="~/css/SqlBuilder/QBuilder.css" rel="stylesheet" />
@@ -300,11 +303,14 @@
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataSourceWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ssurl');
 
     let is_datasource = true;
-    var eval = new SqlEval(is_datasource);
+    var evaluator = new SqlEval(is_datasource);
 
-    $("#explaine_btn").on("click", function () {
-        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"].Explain();
-        eval.refresh(@(ViewBag.tabnum));
+    $("#explaine_btn").off("click").on("click", function (e) {
+        let code_tnum = $("#versionNav li.active a").attr("tnum");
+        let code = window["editor" + code_tnum].getValue();
+
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"].Explain(); //to add explain tab
+        evaluator.refresh(commonO.tabNum, code, code_tnum );
     });
 
 </script>

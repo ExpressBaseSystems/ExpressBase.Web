@@ -18,7 +18,7 @@
     @Html.Raw(ViewBag.ReportSections);
     @Html.Raw(ViewBag.EbObjectTypes);
 </script>
-<div class="container-fluid">
+<div class="container-fluid api_body">
     <div class="row">
         <div class="eb_apiWrper">
             <div class="eb_apiSideBar resource_wraper" id="resource_wraper">
@@ -43,6 +43,9 @@
                         </div>
                         <div eb-type="Processor" ctrname="Processor" class="resource_items draggable">
                             <div class="resource_items-inner"><i class="fa fa-code"></i>Processor</div>
+                        </div>
+                        <div eb-type="ConnectApi" ctrname="Api" class="resource_items draggable">
+                            <div class="resource_items-inner"><i class="fa fa-code"></i>Api</div>
                         </div>
                     </div>
                 </div>
@@ -69,20 +72,75 @@
         </div>
     </div>
     <div class="Json_reqOrRespWrpr" id="Json_reqOrRespWrp">
-        <div class="regRespWHead">JSON <i class="fa fa-thumb-tack pull-right" style="transform: rotate(90deg);" id="pin_jswindow"></i>
-                                       <i class="fa fa-thumb-tack pull-right" id="unpin_jswindow" style="display:none;"></i>
+        <div class="regRespWHead">
+            JSON <i class="fa fa-thumb-tack pull-right" style="transform: rotate(90deg);" id="pin_jswindow"></i>
+            <i class="fa fa-thumb-tack pull-right" id="unpin_jswindow" style="display:none;"></i>
         </div>
         <div class="Json_reqOrRespWrpr_inner">
             <div class="JsonReq">
                 <div class="JsonReq_inner">
-                    <div class="_h">Request <button class="runReq_btn">Run <i class="fa fa-play pull-right"></i></button></div>
+                    <div class="_h">
+                        Request
+                        <button class="jsw_btn runReq_btn">Run <i class="fa fa-play pull-right"></i></button>
+                        <buton class="jsw_btn" id="sample_codes"><i class="fa fa-code" aria-hidden="true"></i></buton>
+                    </div>
                     <div class="_b" id="JsonReq_CMW"></div>
                 </div>
             </div>
             <div class="JsonResp">
                 <div class="JsonResp_inner">
-                    <div class="_h">Response</div>
+                    <div class="_h">
+                        Response
+                        <span class="fa fa-arrows-alt pull-right" onclick="$('#api_RqFullSwrapr').show();" data-toggle="tooltip" title="Full Screen"></span>
+                    </div>
                     <div class="_b" id="JsonResp_CMW"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="api_RqFullSwrapr" id="api_RqFullSwrapr">
+        <div class="FS_head">
+            <span class="Comp_Name">Untitled</span> <i class="fa fa-close pull-right" onclick="$('#api_RqFullSwrapr').hide();"></i>
+        </div>
+        <div class="FS_bdy">
+
+        </div>
+    </div>
+
+    <!--sample code mdl-->
+    <div class="modal fade api_scodeMd" id="api_scodeMd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="overflow: hidden;">
+                <div class="modal-body" style="max-height: 409px; overflow-y: auto;">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#js">Js</a></li>
+                        <li><a data-toggle="tab" href="#ajax">Jquery</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="js" class="tab-pane fade in active">
+                            <div class="code_wrpr">
+                                <div class="cod_line"><span class="reserved">var</span> xhr = <span class="reserved">new</span> XMLHttpRequest();</div>
+                                <div class="cod_line"><span class="reserved">var</span> url =<span class="higlite url">'https://'</span>;</div>
+                                <div class="cod_line">xhr.open(<span class="higlite method">'POST'</span>,url, <span class="reserved">true</span>);</div>
+                                <div class="code_comment">// your api key in header</div>
+                                <div class="cod_line">xhr.setRequestHeader(<span class="higlite">'key'</span>,<span class="higlite">'your api key'</span>);</div>
+                                <div class="cod_line">xhr.onload = <span class="reserved">function ()</span> {</div>
+                                <div class="code_comment">// do something to response</div>
+                                <div class="cod_line">};</div>
+                                <div class="cod_line">xhr.send(<span class="higlite data">'user=person&pwd=password&organization=place&requiredkey=key'</span>);</div>
+                            </div>
+                        </div>
+                        <div id="ajax" class="tab-pane fade">
+                            <div class="cod_line"> $.ajax({</div>
+                            <div class="cod_line tab">url: <span class="higlite url">'https://'</span>,</div>
+                            <div class="cod_line tab">type: <span class="higlite method">'POST'</span>,</div>
+                            <div class="cod_line tab">data: <span class="higlite data"></span>,</div>
+                            <div class="cod_line tab">success: <span class="reserved">function </span>(result){</div>
+                            <div class="code_comment tab">// do something to response</div>
+                            <div class="cod_line tab">}</div>
+                            <div class="cod_line">});,</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

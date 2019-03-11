@@ -742,6 +742,13 @@
         }
         @*$('select[name=Apps]').val(@ViewBag.AppId);
         $('.selectpicker').selectpicker('refresh');*@
+
+         if ('@ViewBag.IsLogEnabled' === 'True') {
+            $('#profiler').prop("checked",true);
+        }
+        else {
+            $('#profiler').prop("checked", false)  ;
+        }
     });
 
         $('#minmize').click(function () {

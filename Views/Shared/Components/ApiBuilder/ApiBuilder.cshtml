@@ -5,9 +5,9 @@
         bApnd = false;
     }
 }
-<link rel="stylesheet" href="~/css/ApiRelated/leader-line.css" asp-append-version=@bApnd/>
-<link rel="stylesheet" href="~/css/ApiRelated/EbPrettyJson.css" asp-append-version=@bApnd/>
-<link rel="stylesheet" href="~/css/ApiRelated/Eb_ApiAssets.css" asp-append-version=@bApnd/>
+<link rel="stylesheet" href="~/css/ApiRelated/leader-line.css" asp-append-version=@bApnd />
+<link rel="stylesheet" href="~/css/ApiRelated/EbPrettyJson.css" asp-append-version=@bApnd />
+<link rel="stylesheet" href="~/css/ApiRelated/Eb_ApiAssets.css" asp-append-version=@bApnd />
 <script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript" asp-append-version=@bApnd></script>
 <script src="~/js/ApiBuilder/EbPrettyJson.js" type="text/javascript" asp-append-version=@bApnd></script>
 <script src="~/js/ApiBuilder/ApiBuilder.js" type="text/javascript" asp-append-version=@bApnd></script>
@@ -82,7 +82,7 @@
                     <div class="_h">
                         Request
                         <button class="jsw_btn runReq_btn">Run <i class="fa fa-play pull-right"></i></button>
-                        <buton class="jsw_btn" id="sample_codes"><i class="fa fa-code" aria-hidden="true"></i></buton>
+                        @*<buton class="jsw_btn" id="sample_codes"><i class="fa fa-code" aria-hidden="true"></i></buton>*@
                     </div>
                     <div class="_b" id="JsonReq_CMW"></div>
                 </div>
@@ -92,6 +92,13 @@
                     <div class="_h">
                         Response
                         <span class="fa fa-arrows-alt pull-right" onclick="$('#api_RqFullSwrapr').show();" data-toggle="tooltip" title="Full Screen"></span>
+                        <span class="formatType">
+                            <select class="format_type">
+                                <option value="json">json</option>
+                                <option value="xml">xml</option>
+                                <option value="raw">raw</option>
+                            </select>
+                        </span>
                     </div>
                     <div class="_b" id="JsonResp_CMW"></div>
                 </div>
@@ -100,7 +107,15 @@
     </div>
     <div class="api_RqFullSwrapr" id="api_RqFullSwrapr">
         <div class="FS_head">
-            <span class="Comp_Name">Untitled</span> <i class="fa fa-close pull-right" onclick="$('#api_RqFullSwrapr').hide();"></i>
+            <span class="Comp_Name">Untitled</span> 
+            <span class="formatType_fullscreen">
+                <select class="format_type">
+                    <option value="json">json</option>
+                    <option value="xml">xml</option>
+                    <option value="raw">raw</option>
+                </select>
+            </span>
+            <i class="fa fa-close pull-right" onclick="$('#api_RqFullSwrapr').hide();"></i>
         </div>
         <div class="FS_bdy">
 

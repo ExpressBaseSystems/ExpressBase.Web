@@ -50,8 +50,7 @@
     };
 
     this.UpdateTab = function (data) {
-        if (data.message !== null && data.message !== "")
-        {
+        if (data.message !== null && data.message !== "") {
             if (data.message.indexOf("Specify a diffrent name.") > 0) {
                 this.alertBgColor = "#e83c46";
                 this.alertMsg = data.message;
@@ -523,8 +522,18 @@
                 "ProfilerValue": document.getElementById("profiler").checked,
                 "objid": this.ver_Refid.split("-")[3]
             },
-            success: alert("ProfilerOnOff updated")
-        })
-    }
+            success: function (response) {
+                var Background;
+                if (response.indexOf("Sorry") === -1)
+                    Background = "#00AD6E";
+                else
+                    Background = "red";
+
+                EbMessage("show", { Message: response, Background: Background });
+            }
+
+
+        });
+    };
     this.init();
 };

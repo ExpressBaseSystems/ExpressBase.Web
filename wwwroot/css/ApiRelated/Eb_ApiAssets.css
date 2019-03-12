@@ -239,7 +239,10 @@
     top: 5px;
     left: 5px;
 }
-
+.formatType select{
+    margin-left: 15px;
+    height: 20px;
+}
 /*full screen window*/
 .api_RqFullSwrapr {
     position: fixed;
@@ -305,3 +308,13 @@
 .tab{
     margin-left:20px;
 }
+
+.formatType_fullscreen select{
+    margin-left:15px;
+    background: transparent;
+    color: white !important;
+    border-radius: 4px;
+}
+    .formatType_fullscreen select option {
+        color: #333 !important;
+    }

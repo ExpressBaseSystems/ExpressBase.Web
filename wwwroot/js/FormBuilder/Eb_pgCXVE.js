@@ -943,13 +943,13 @@
 
     this.changeCopyToRef = function () {
         $.each(this.CElistFromSrc, function (i, colObj) {
-            let RObj;
-            if (RObj = getObjByval(this.selectedCols, "name", colObj.name)) {
+            let RObj = getObjByval(this.selectedCols, "name", colObj.name);
+            if (RObj) {
                 if (RObj === colObj)/// if already reference exit
                     return false;
                 let idx = this.selectedCols.indexOf(RObj);
                 this.selectedCols[idx] = colObj;
-            };
+            }
         }.bind(this));
     };
 

@@ -21,6 +21,10 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using ExpressBase.Web.Models;
 using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
+using System.Text;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -28,11 +32,11 @@ namespace ExpressBase.Web.Controllers
     {
         public ApiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-        [HttpGet("/api/{_name}/{_version}")]
-        public ApiResponse Api(string _name, string _version)
+        [HttpGet("/api/{_name}/{_version}/{format}")]
+        public object Api(string _name, string _version, string format)
         {
             ApiResponse resp = null;
-
+            format = format.ToLower();
             Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
                 .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
 
@@ -52,14 +56,19 @@ namespace ExpressBase.Web.Controllers
             {
                 resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
             }
-            return resp;
+
+            if (format.Equals("xml"))
+                return this.ToXML(resp);
+            else
+                return resp;
         }
 
 
-        [HttpPost("/api/{_name}/{_version}")]
-        public ApiResponse Api(string _name, string _version, [FromForm]Dictionary<string, string> form)
+        [HttpPost("/api/{_name}/{_version}/{format}")]
+        public object Api(string _name, string _version, string format, [FromForm]Dictionary<string, string> form)
         {
             ApiResponse resp = null;
+            format = format.ToLower();
             Dictionary<string, object> parameters = null;
             if (form.Count <= 0)
             {
@@ -89,7 +98,18 @@ namespace ExpressBase.Web.Controllers
                 resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
             }
 
-            return resp;
+            if (format.Equals("xml"))
+                return this.ToXML(resp);
+            else
+                return resp;
+        }
+
+        [HttpGet("/api/{api_name}/{ver}/metadata")]
+        public IActionResult ApiMetaData(string api_name, string ver)
+        {
+            ApiMetaResponse resp = this.ServiceClient.Get(new ApiMetaRequest {Name=api_name,Version=ver,SolutionId=this.SultionId });
+            ViewBag.Meta = resp;
+            return View();
         }
 
         private Dictionary<string, object> F2D(FormCollection collection)
@@ -100,6 +120,15 @@ namespace ExpressBase.Web.Controllers
                 dict.Add(pair.Key, pair.Value);
             }
             return dict;
+        }
+
+        public string ToXML(ApiResponse _apiresp)
+        {
+            string json = JsonConvert.SerializeObject(_apiresp);
+            XmlDocument doc = JsonConvert.DeserializeXmlNode(json,"Root");
+            XmlNode docNode = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            doc.PrependChild(docNode);
+            return doc.InnerXml;
         }
     }
 }

@@ -25,7 +25,7 @@
             }
             else if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
                 value = window.editor.getValue();
-                PropsObj[_CurProp] = btoa(value);
+                PropsObj[_CurProp].Code = btoa(value);
             }
             $("#" + this.PGobj.wraperId + " [name=" + _CurProp + "Tr] .pgTdval").attr("title", value);
         }
@@ -96,7 +96,7 @@
         let PropsObj = this.getPropsObj();
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
         if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
-            window.editor.setValue(atob(PropsObj[this.PGobj.CurProp]));
+            window.editor.setValue(atob(PropsObj[this.PGobj.CurProp].Code));
             window.editor.focus();
         }
         else if (this.editor === 7 || this.editor === 22 || this.editor === 26)

@@ -68,7 +68,7 @@ div.mytree div {
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
-            display:inline-block;
+            display: inline-block;
         }
 
     .table-box .t_dropbdy {
@@ -101,9 +101,11 @@ div.mytree div {
     color: #fff;
     padding: 10px;
 }
-.gold{
+
+.gold {
     color: goldenrod;
 }
+
 .fkey {
     color: #97948d;
 }
@@ -136,11 +138,13 @@ div.mytree div {
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }
+
 .modal fade in {
     margin: 29px;
 }
 
 div.CodeMirror.cm-s-default {
     top: 12px;
-    height: 390px;
+    height: 361px;
+    z-index: 100;
 }

@@ -94,7 +94,7 @@
     this.makeTdsDropable_Resizable = function () {
         $.each($(".tdDropable"), function (i, el) {
             let $e = $(el);
-            this.pushToDragables($e);
+            this.pushToDragables($($e.children()[0]));
             if (($(".tdDropable").length - 1) !== i)
                 this.makeTdResizable($e);
         }.bind(this));
@@ -248,7 +248,7 @@
                     this.rootContainerObj.Controls.Append(this.movingObj);
                 }
                 this.saveObj();
-                $(el).on("focus", this.controlOnFocus.bind(this));
+                $(el).off("focus").on("focus", this.controlOnFocus.bind(this));
             }
         }
     };
@@ -358,6 +358,8 @@
     this.CreateRelationString = function () { };
 
     this.movesfn = function (el, source, handle, sibling) {
+        if ($(handle).hasClass("ui-resizable-handle"))//if handle is resizable's handle of table layout
+            return false;
         return true;
     };
 
@@ -415,9 +417,9 @@
     this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
         if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls") {
             let $tblTr = $(`#cont_${this.PGobj.CurObj.EbSid}>table>tbody>tr`);
-            let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='width:auto'; class='form-render-table-Td tdDropable ebcont-ctrl'></td>`);
+            let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='width:auto'; class='form-render-table-Td tdDropable ebcont-ctrl'> <div style='height: 100%; width: 100%;'></div> </td>`);
             $tblTr.append($td);
-            this.pushToDragables($td);
+            this.pushToDragables($($td.children()[0]));
             this.makeTdResizable($td.prev("td"));
         }
         else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls") {

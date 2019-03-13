@@ -320,7 +320,7 @@ namespace ExpressBase.Web.Controllers
             {
                 bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
                 if (ContainsRestricted)
-                    _response.Message="RestrictedStatementinQuerry";
+                    _response.Message = "RestrictedStatementinQuerry";
             }
             else if (obj is EbDataWriter)
             {
@@ -356,7 +356,7 @@ namespace ExpressBase.Web.Controllers
                     };
 
                     EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
-                    _response.Refid =  res.RefId;
+                    _response.Refid = res.RefId;
                 }
                 else _response.Message = "nameIsNotUnique";
             }
@@ -624,9 +624,22 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void EnableLogging(bool ProfilerValue, int objid)
+        public string EnableLogging(bool ProfilerValue, int objid)
         {
             var response = ServiceClient.Post(new EnableLogRequest { Islog = ProfilerValue, ObjId = objid });
+            string msg = "";
+            if (response.RowsDeleted > 0)
+            {
+                if (ProfilerValue)
+                    msg = "Profiling Enabled";
+                else
+                    msg = "Profiling Disabled";
+            }
+            else
+            {
+                msg = "Sorry, Please Try Again";
+            }
+            return msg;
         }
 
         public EbExecutionLogs GetLogdetails(int idx)

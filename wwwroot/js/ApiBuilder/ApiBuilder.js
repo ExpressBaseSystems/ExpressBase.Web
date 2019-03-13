@@ -30,6 +30,7 @@ function EbApiBuild(config) {
     this.FlagRun = false;
     this.ComponentRun = false;
     this.Component = null;
+    this.ResultData = {};
 
     this.pg = new Eb_PropertyGrid({
         id: "pgContainer_wrpr",
@@ -214,6 +215,20 @@ function EbApiBuild(config) {
         $(`#Json_reqOrRespWrp`).show();
         $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.build(resp));
         $(`#Json_reqOrRespWrp #JsonResp_CMW`).empty();
+        this.setSampleCode(resp);
+    };
+
+    this.setSampleCode = function (req) {
+        $('#api_scodeMd .url').text(`'${location.origin}/api/${this.EbObject.Name}/${commonO.getVersion()}'`);
+        $('#api_scodeMd .method').text(`'${this.EbObject.Method || "POST/GET"}'`);
+        var s = "";
+        var o = {};
+        for (let i = 0; i < req.length; i++) {
+            s = s + req[i].Name + "=" + req[i].ValueTo + ((i == req.length - 1) ? "" : "&");
+            o[req[i].Name] = req[i].ValueTo;
+        }
+        $(`#api_scodeMd #js .data`).text(`'${s}'`);
+        $(`#api_scodeMd #ajax .data`).text(JSON.stringify(o));
     };
 
     this.newApi = function () {
@@ -239,7 +254,7 @@ function EbApiBuild(config) {
     };
 
     commonO.saveOrCommitSuccess = function (ref) {
-        this.setBtns(); 
+        this.setBtns();
     }.bind(this)
 
     this.GenerateButtons = function () {
@@ -273,7 +288,7 @@ function EbApiBuild(config) {
             _data = { "name": this.EbObject.Name, "vers": commonO.getVersion(), "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text() };
         }
         else {
-            _data = {"param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text(),"component": JSON.stringify(this.Component)}
+            _data = { "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text(), "component": JSON.stringify(this.Component) }
         }
         $.ajax({
             url: "../Dev/GetApiResponse",
@@ -282,7 +297,7 @@ function EbApiBuild(config) {
             beforeSend: function () {
                 $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#JsonResp_CMW', Style: { "top": "0", "left": "0" } } });
             },
-            data: _data ,
+            data: _data,
             success: function (result) {
                 (this.ComponentRun) ? this.toggleRespWindow(JSON.parse(result).Result, this.Component) : this.toggleRespWindow(JSON.parse(result), this.EbObject);
                 $("#eb_common_loader").EbLoader("hide");
@@ -290,11 +305,37 @@ function EbApiBuild(config) {
         });
     };
 
-    this.toggleRespWindow = function (result,o) {
+    this.toggleRespWindow = function (result, o) {
+        this.ResultData = result;
         let _html = window.Api.JsonWindow.build(result);
         $(`#Json_reqOrRespWrp`).show();
         $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(_html);
         $(`#api_RqFullSwrapr .FS_bdy`).html(_html);
+        $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
+    };
+
+    this.showSampleCode = function (ev) {
+        $("#api_scodeMd").modal("toggle");
+    };
+
+    this.foramatChange = function (ev) {
+        let o = null;
+        let html = "";
+        if (this.ComponentRun) 
+            o = this.Component;
+        else 
+            o = this.EbObject;
+
+        if ($(ev.target).val() === 'xml') {
+            html = window.Api.JsonWindow.json2xml(this.ResultData);
+        }
+        else if ($(ev.target).val() === 'json')
+            html = window.Api.JsonWindow.build(this.ResultData);
+        else if ($(ev.target).val() === 'raw')
+            html = window.Api.JsonWindow.rawData(this.ResultData);
+
+        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(html);
+        $(`#api_RqFullSwrapr .FS_bdy`).html(html);
         $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
     };
 
@@ -311,6 +352,8 @@ function EbApiBuild(config) {
             minHeight: 50
         });
         $(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
+        //$("#sample_codes").off("click").on("click", this.showSampleCode.bind(this));
+        $('.format_type').off("change").on("change", this.foramatChange.bind(this));
     };
 
     this.start();

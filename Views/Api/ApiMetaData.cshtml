@@ -1,0 +1,125 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common.Data;
+@using ExpressBase.Common.Structures;
+@using System.Reflection;
+@using Newtonsoft.Json;
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+ ApiMetaResponse Meta = ViewBag.Meta;
+ //ApiResponse resp = new ApiResponse();
+}
+@await Component.InvokeAsync("PageHeaderCommon");
+
+<style>
+    .ApiMeta_wrpr {
+        min-height: 100vh;
+        padding-top: 50px;
+        font-family: open sans;
+    }
+</style>
+<div class="ApiMeta_wrpr">
+    <h3>@Meta.Name</h3>
+    <h5>@Meta.Version</h5>
+    <div class="metaRequest">
+        <div class="MetaReqHead">
+            <h4>Request Parameter</h4>
+        </div>
+        <div class="MetaReqBdy">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>NAME</th>
+                        <th>DATA TYPE</th>
+                        <th>REQUIRED</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (Param p in Meta.Params)
+                        {
+                            <tr>
+                                <td>@p.Name</td>
+                                <td>@Enum.GetName(typeof(EbDbTypes), Convert.ToInt32(p.Type))</td>
+                                <td>true</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="metaResponse">
+        <div class="MetaRespHead">
+            <h4>Response Parameter</h4>
+        </div>
+        <div class="MetaRespBdy">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>NAME</th>
+                        <th>DATA TYPE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (PropertyInfo propertyInfo in typeof(ApiResponse).GetProperties())
+                        {
+                            if (propertyInfo.PropertyType == typeof(ApiMessage))
+                            {
+                                <tr>
+                                    <td>@propertyInfo.Name</td>
+                                    <td style="padding:0;">
+                                        <table class="table table-bordered" style="margin-bottom:0;">
+                                            <thead>
+                                                <tr>
+                                                    <th>NAME</th>
+                                                    <th>DATA TYPE</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (PropertyInfo pinfo in typeof(ApiMessage).GetProperties())
+                                                {
+                                                    <tr>
+                                                        <td>@pinfo.Name</td>
+                                                        <td>@pinfo.PropertyType.ToString()</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@propertyInfo.Name</td>
+                                    <td>@propertyInfo.PropertyType.ToString()</td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="apiMetaSamples">
+        <div class="ApiMetaRequest_sample">
+            <div class="apiMeta_req_head">
+                <h4> HTTP Request sample json</h4>
+            </div>
+            <div class="apiMeta_req_body">
+                @JsonConvert.SerializeObject(Meta.Params);
+            </div>
+        </div>
+    </div>
+    <div class="apiMetaSamples">
+        <div class="ApiMetaResp_sample">
+            <div class="apiMeta_resp_head">
+                <h4>HTTP Response sample json</h4>
+            </div>
+            <div class="apiMeta_resp_body">
+                @JsonConvert.SerializeObject(new ApiResponse());
+            </div>
+        </div>
+    </div>
+</div>

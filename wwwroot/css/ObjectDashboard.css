@@ -597,10 +597,10 @@ li:hover {
     .profilerswitch .proslider {
         position: absolute;
         cursor: pointer;
-        top: 0;
+        top: 5px;
         left: 0;
-        right: 0;
-        bottom: 0;
+        right: 12px;
+        bottom: 5px;
         background-color: #ccc;
         -webkit-transition: .4s;
         transition: .4s;
@@ -609,8 +609,8 @@ li:hover {
         .profilerswitch .proslider:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
+            height: 17px;
+            width: 17px;
             left: 4px;
             bottom: 4px;
             background-color: white;
@@ -627,9 +627,9 @@ input:focus + .proslider {
 }
 
 input:checked + .proslider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(23px);
+    -ms-transform: translateX(23px);
+    transform: translateX(23px);
 }
 
 /* Rounded sliders */

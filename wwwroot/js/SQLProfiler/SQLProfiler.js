@@ -91,7 +91,10 @@
         $("#paramsalert").show().empty().append(`<canvas id="myChart1"></canvas>`);
         var ctx = $("#myChart1");
         var lables = [];
-        var numrow = [];
+        var chartrows = [];
+        var _chartrows = [];
+        var chartdataset = [];
+        var count = 0;
         $.ajax({
             url: "../Eb_Object/GetChartDetails",
             type: "get",
@@ -100,20 +103,23 @@
             },
             success: function (response) {
                 for (let i = 0; i < response.length; i++) {
+                    if (response[i][0].split(',').length > count)
+                        count = response[i][0].split(',').length;
+                }
+                for (let i = 0; i < response.length; i++) {
                     lables.push(response[i][1]);
-                    numrow.push(response[i][0]);
+                    var rows = response[i][0].split(',', count);
+                    for (let j = 0; j < count; j++) {
+                        chartrows.push([]);
+                    }
+                    for (let j = 0; j < count; j++) {
+                        chartrows[j].push(rows[j] > 0 ? rows[j] : 0);
+                    }
                 }
                 var myChart = new Chart(ctx, {
-                    type: 'bar',
+                    type: 'line',
                     data: {
-                        labels: lables,
-                        datasets: [{
-                            label: 'Row number',
-                            data: numrow,
-                            fill: true,
-                            borderColor: '#316396',
-                            backgroundColor: '#316396',
-                        }]
+                        labels: lables
                     },
                     options: {
                         title: {
@@ -139,7 +145,58 @@
                             }]
                         }
                     }
-                });
+                })
+
+                for (let i = 0; i < count - 1; i++) {
+                    var r = Math.floor(Math.random() * 255);
+                    var g = Math.floor(Math.random() * 255);
+                    var b = Math.floor(Math.random() * 255);
+                    var clr = "rgb(" + r + "," + g + "," + b + ")";
+                    myChart.data.datasets.push({
+                        label: 'DataTable ' + i,
+                        data: chartrows[i],
+                        fill: false,
+                        backgroundColor: clr
+                    })
+                    myChart.update();
+                }
+                //var myChart = new Chart(ctx, {
+                //    type: 'bar',
+                //    data: {
+                //        labels: lables,
+                //        datasets: [{
+                //            label: 'Row number',
+                //            data: numrow,
+                //            fill: false,
+                //            borderColor: '#316396',
+                //            backgroundColor: '#316396',
+                //        }]
+                //    },
+                //    options: {
+                //        title: {
+                //            display: true,
+                //            text: 'Rows Vs Time'
+                //        },
+                //        scales: {
+                //            yAxes: [{
+                //                ticks: {
+                //                    beginAtZero: true
+                //                },
+                //                scaleLabel: {
+                //                    display: true,
+                //                    labelString: 'Row num'
+                //                }
+                //            }],
+
+                //            xAxes: [{
+                //                scaleLabel: {
+                //                    display: true,
+                //                    labelString: 'Exec time'
+                //                }
+                //            }]
+                //        }
+                //    }
+                //});
             }
         })
 
@@ -175,7 +232,7 @@
             },
             success: function (response) {
                 for (let i = 0; i < response.length; i++) {
-                    var date = new Date(parseInt(response[0][0].substr(6)));
+                    var date = new Date(parseInt(response[i][0].substr(6)));
                     var hr = date.getHours()
                     freq[hr - 1] += 1;
                 }
@@ -249,7 +306,8 @@
         this.call2DataTable();
 
         $("#chart-tile1").click();
-    }
+    };
+
 
     this.call2DataTable = function () {
         var o = new Object();
@@ -263,8 +321,9 @@
         o.dsid = refid;
         o.scrollHeight = "350";
         o.rowclick = this.onRowClick;
+        o.datetimeformat = true;
         this.datatable = new EbBasicDataTable(o);
-    }
+    };
 
     this.removeSelected = function ($e, idx) {
         $('.tile_wrapere .selected').each(function (i, o) {

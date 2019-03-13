@@ -1,7 +1,7 @@
 ﻿class DvBuilder {
     constructor(option) {
         this.type = option.ObjType || null;
-        this.dsobj = option.DsObj || null;
+        this.EbObject = option.dvObj || null;
         this.tabNum = option.TabNum || null;
         this.ssurl = option.ServiceUrl || null;
         this.wc = option.Wc;

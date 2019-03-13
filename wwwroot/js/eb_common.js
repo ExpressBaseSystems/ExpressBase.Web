@@ -412,10 +412,10 @@ function getSingleColumn(obj) {
 //    }
 //});
 function Test() {
-    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1MTQzNTU4OCwiZXhwIjoxNTUxNDM1Njc4LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.GCOkEJ3d3HlCfHlvJgoGCvooo-xEQGB3NWdGwlxnPwVfDKV4tfJ2n7R9qHIuxyuGNzO1hpYhqTbdenhB_u6AKa3TO2C6NBYmTahycamUJkHei3te9TmWEms8HOGl0hHs-0T10Vlg1X_4Sa84H5WnT20VzTue2uJ70NuPOScZMuw`;
-    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTE0MTcyODEsImV4cCI6MTU1MTUwMzY4MX0.dtVgejcjuzbs1Y_rC1oWTUM5I1EkA5jElrZ1Lv89IsUnLtE0HjeR101v5x-AHNDZzSvxkc10EeiEtswyq0iObxJeH-gs_2smkrQC95_hjzkLojRqKDxHTwFdrrW590LOC4CIr8eIx48-2Q3YZ8-Kd8aW_mRroNfZ5wt4rI3N3zo`;
+    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1MjM2NzkxNSwiZXhwIjoxNTUyMzY4MDA1LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.UYPQmoHqL0TAHpgw9cIRCHlHu_1YMScVWH2b9b1Zt0Lsfqw7Wl5IrytAxl3NmqOSgTmKQ2ESGyoMwIjJB5BoAFMKKGce_iMzNB6dq1mKKt9-PBWV7cVPeUakoHnMAyD9NBZWCkqfMu8t7e8vIoaIPW3nK8zRkMdpyR1y7-S6eKs`;
+    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTIzNjc4MTYsImV4cCI6MTU1MjQ1NDIxNn0.a6CwoatvjEESYI_T0DfnjVLg6vhbiw2TQrz6FkZUxlpaIDoegqLrW06bFCg2OVUIl313lWBS0A8RDhN1j9C9bHJzqtXy2k3VVe2e4owJqYKqBQUykHXWeaCZeqAACJsVhrxubRl45-BfBwFIhlXNIWzqylPio7S15ZdTVI6wGDs`;
     $.ajax({
-        url: "../api/api_getparties/1.0.0",
+        url: "../api/api_salesmanwsalereport/1.0.0/xml",
         type: "POST",
         cache: false,
         beforeSend: function (xhr) {
@@ -423,7 +423,9 @@ function Test() {
             xhr.setRequestHeader("rToken", r);
         },
         data: {
-            "routem_xid": 'DB033'
+            "trndate_from": '2015-04-07',
+            "trndate_to": '2015-10-07',
+            "salesman_id":'89'
         },
         success: function (result) {
 

@@ -72,7 +72,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             dsType = _SqlFunction;
 
         if (this.EbObject === null) {
-            this.EbObject = new EbObjects["Eb" + dsType](dsType + "1");
+            this.EbObject = new EbObjects["Eb" + dsType](dsType + "_" + Date.now().toString(36));
+            this.EbObject.DisplayName = this.EbObject.Name;
             commonO.Current_obj = this.EbObject;
             if (this.ObjectType === 5)
                 this.EbObject.Sql = btoa(_SqlFuncSyntax);

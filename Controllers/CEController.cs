@@ -173,15 +173,15 @@ namespace ExpressBase.Web.Controllers
             RedisClient redis = Redis;
             JsonServiceClient sscli = ServiceClient;
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
-            DataSourceDataSetColumnsResponse columnresp = sscli.Get<DataSourceDataSetColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
-            if (columnresp.ColumnsCollection == null || columnresp.ColumnsCollection.Count == 0)
+            DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
+            if (columnresp.Columns == null || columnresp.Columns.Count == 0)
             {
                 return null;
             }
             else
             {
                 DSController dSController = new DSController(sscli, redis);
-                return EbSerializers.Json_Serialize(dSController.GetDVColumnCollection(columnresp.ColumnsCollection));
+                return EbSerializers.Json_Serialize(dSController.GetDVColumnCollection(columnresp.Columns));
             }
         }
 

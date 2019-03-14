@@ -1,6 +1,6 @@
 ﻿
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-const EbBasicDataTable = function (Option) {
+var EbBasicDataTable = function (Option) {
     this.contId = Option.containerId;
     this.dsid = Option.dsid || null;
     this.tableId = Option.tableId;

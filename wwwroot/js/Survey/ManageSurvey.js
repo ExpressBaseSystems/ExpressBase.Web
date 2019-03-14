@@ -1,7 +1,7 @@
 ﻿var ManageSurveyObj = function (SurveyData, QuesList) {
     this.SurveyData = JSON.parse(SurveyData);
     this.QuestionList = JSON.parse(QuesList);
-    this.menuBarObj = $("#layout_div").data("EbHeader");
+    this.menuBarObj = new EbHeader();
     this.drake;
     this.Marked = [];
 

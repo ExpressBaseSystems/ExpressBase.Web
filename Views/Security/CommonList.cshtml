@@ -107,7 +107,7 @@
 
 <script>
         $(document).ready(function () {
-            var mnuBarObj = $("#layout_div").data("EbHeader");
+            var mnuBarObj = new EbHeader();
             if ("@ViewBag.ListType" === "users") {
                 mnuBarObj.setName("Users");
                 document.title = "Users";

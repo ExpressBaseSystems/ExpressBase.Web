@@ -2,7 +2,7 @@
     this.whichMode = mode;
     //CreateEdit = 1, View = 2, MyProfileView = 3
     this.Environment = env;
-    this.menuBarObj = $("#layout_div").data("EbHeader");
+    this.menuBarObj = new EbHeader();
     this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.userinfo = userinfo;
     this.customRoles = cusroles;
@@ -702,7 +702,7 @@
 
 //---------------------------------------------------------------USERGROUP-----------------------------------------------------------------------------
 var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
-    this.menuBarObj = $("#layout_div").data("EbHeader");
+    this.menuBarObj = new EbHeader();
     this.menuBarObj.insertButton(`<button id="btnSaveAll" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.infoDict = infoDict;
     this.usersList = usersList;

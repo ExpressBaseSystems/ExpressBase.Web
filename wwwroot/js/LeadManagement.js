@@ -129,7 +129,8 @@
     };
 
     this.initMenuBarObj = function () {
-        var menuBarObj = $("#layout_div").data("EbHeader");
+        //$("#layout_div").data("EbHeader")
+        var menuBarObj = new EbHeader();
         let nametxt = this.CustomerInfo["name"] || "New Customer";
         menuBarObj.setName("Lead Management - " + nametxt);
         document.title = "Lead Management - " + nametxt;

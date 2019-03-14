@@ -16,6 +16,8 @@
     this.FlagSave = false;
     this.saveOrCommitSuccess = function (refif) { };//edit by amal
     this.PreviewObject = function () { };//edits by amal
+    this.RedColor = "#e83c46";
+    this.GreenColor = "#00AD6E";
 
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
@@ -52,18 +54,18 @@
     this.UpdateTab = function (data) {
         if (data.message !== null && data.message !== "") {
             if (data.message.indexOf("Specify a diffrent name.") > 0) {
-                this.alertBgColor = "#e83c46";
+                this.alertBgColor = this.RedColor;
                 this.alertMsg = data.message;
                 EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
             }
             //var target = $("#versionNav li.active a").attr("href");
             else if (data.message === "RestrictedStatementinQuerry") {
-                this.alertBgColor = "#e83c46";
+                this.alertBgColor = this.RedColor;
                 this.alertMsg = "Querry Contains Restricted Keywords !!";
                 EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
             }
             else if (data.message === "nameIsNotUnique") {
-                this.alertBgColor = "#e83c46";
+                this.alertBgColor = this.RedColor;
                 this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
                 EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
             }
@@ -77,7 +79,7 @@
             if (this.Current_obj.Status === null || this.Current_obj.Status === undefined) {
                 this.Current_obj.Status = "Dev";
             }
-            this.alertBgColor = "#00AD6E";
+            this.alertBgColor = this.GreenColor;
             if (this.Current_obj.VersionNumber !== null && this.Current_obj.VersionNumber !== undefined && this.Current_obj.VersionNumber !== "") {
                 if (!this.FlagSave) {
                     this.Current_obj.VersionNumber = this.Current_obj.VersionNumber.replace(/.w/g, '');
@@ -393,7 +395,7 @@
             }, this.UpdateTab.bind(this));
         }
         else
-            EbMessage("show", { Message: "Validation faild! save uncompleted.", Background: "red" });
+            EbMessage("show", { Message: "Validation faild! save uncompleted.", Background: this.RedColor });
     };
 
     this.ajaxCommit = function (tagvalues, apps, getNav, changeLog) {
@@ -407,7 +409,7 @@
             }, this.UpdateTab.bind(this));
         }
         else
-            EbMessage("show", { Message: "Validation faild! commit uncompleted.", Background: "red" });
+            EbMessage("show", { Message: "Validation faild! commit uncompleted.", Background: this.RedColor });
     };
 
     this.isBeforSaveImplemets = function (getNav) {
@@ -481,7 +483,7 @@
         this.ver_Refid = _refid;
         $.post('../Eb_Object/VersionCodes', { objid: this.ver_Refid, objtype: this.ObjectType })
             .done(this.VersionCode_success.bind(this));
-        this.alertBgColor = "#00AD6E";
+        this.alertBgColor = this.GreenColor;
         this.alertMsg = "Success";
         this.ShowMessage();
     };
@@ -491,12 +493,34 @@
     };
 
     this.DeleteObject = function () {
-        $.post("../Eb_Object/DeleteObject",
-            { objid: this.ver_Refid.split("-")[3] },
-            function (result) {
-                if (result) alert("Deleted");
-                else alert("failed. Please retry");
-            });
+        $("#eb_common_loader").EbLoader("show");
+        EbDialog("show",
+            {
+                Message: 'Do you really want to delete ' + this.Current_obj.DisplayName + ' ?',
+                Buttons: {
+                    "Yes": {
+                        Background: this.GreenColor,
+                        Align: "left",
+                        FontColor: "white;"
+                    },
+                    "No": {
+                        Background: this.RedColor,
+                        Align: "right",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function () {
+                    $.post("../Eb_Object/DeleteObject",
+                        { objid: this.ver_Refid.split("-")[3] },
+                        function (result) {
+                            $("#eb_common_loader").EbLoader("hide");
+                            if (result)
+                                EbMessage("show", { Message: "Deleted", Background: this.GreenColor });
+                            else
+                                EbMessage("show", { Message: "failed. Please retry", Background: this.RedColor });
+                        }.bind(this));
+                }.bind(this)
+            });       
     };
 
     this.SqlProfilerHome = function () {
@@ -525,9 +549,9 @@
             success: function (response) {
                 var Background;
                 if (response.indexOf("Sorry") === -1)
-                    Background = "#00AD6E";
+                    Background = this.GreenColor;
                 else
-                    Background = "red";
+                    Background = this.RedColor;
 
                 EbMessage("show", { Message: response, Background: Background });
             }

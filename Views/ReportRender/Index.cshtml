@@ -14,7 +14,6 @@
     {
         Layout = "~/Views/Shared/LayoutBuilders.cshtml";
     }
-
 }
 
 @*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -53,11 +52,11 @@
         </div>
     </div>
 </div>
-
-@section EbHead {
-    <script>
-        $('title').text('@ViewBag.DispName');
-        new EbHeader().insertButton(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
+<script>
+    $('title').text('@ViewBag.DispName');
+    var head = new EbHeader();
+    head.setName('@ViewBag.DispName');
+    head.insertButton(`<button id='run' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>
     <button class="btn run" id="filter" data-toggle="tooltip" data-placement="bottom" title="Parameter Div"><i class="fa fa-filter" aria-hidden="true"></i></button>`);
       if ('@fd' === 'True') {
             $("#sub_windows_sidediv_dv").show();
@@ -128,8 +127,8 @@
        // $("#RptModal").modal('hide');
         //$.LoadingOverlay("hide");
         }
-    </script>
-}
+</script>
+
 @if (!ViewBag.RenderLimit)
 {
     <style>

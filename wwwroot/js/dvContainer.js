@@ -241,7 +241,7 @@ var DvContainerObj = function (settings) {
                     obj.EbSid = "container_Report" + ++counter;
                     obj.Pippedfrom = "";
                     obj.cellData = this.cellData;
-                    obj.Name = "Report";
+                    obj.DisplayName = "Report";
                     this.currentObj = obj;
                     var id = `${obj.EbSid}_0_${counter}`;
                     focusedId = "sub_window_dv" + obj.EbSid + "_0_" + counter;
@@ -258,7 +258,8 @@ var DvContainerObj = function (settings) {
                     this.dvcol[focusedId] = new ReportWrapper(obj = obj, refid = this.dvRefid, cellData = this.cellData);
 
                     $(`#reportIframe_${copycelldata}`).on('load', this.iframeLoad.bind(this));
-
+                    $("#eb_common_loader").EbLoader("hide");
+                    $("#obj_icons .btn").prop("disabled", false);
                 }
                 else {
                     $.each(this.dvcol, function (key, value) {
@@ -309,7 +310,7 @@ var DvContainerObj = function (settings) {
                         $("#eb_common_loader").EbLoader("hide");
                         $("#obj_icons .btn").prop("disabled", false);
                         this.btnGoClick();
-                    }.bind(this),
+                    }.bind(this)
                 });
             }
         }

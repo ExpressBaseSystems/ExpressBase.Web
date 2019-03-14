@@ -96,7 +96,8 @@
         let PropsObj = this.getPropsObj();
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
         if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
-            window.editor.setValue(atob(PropsObj[this.PGobj.CurProp].Code));
+            let value = PropsObj[this.PGobj.CurProp].Code === null ? "" : PropsObj[this.PGobj.CurProp].Code;
+            window.editor.setValue(atob(value));
             window.editor.focus();
         }
         else if (this.editor === 7 || this.editor === 22 || this.editor === 26)

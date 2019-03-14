@@ -3069,9 +3069,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (col.Font !== null) {
             var style = document.createElement('style');
             style.type = 'text/css';
-            var array = [this.tableId, col.name, col.Font.Font, col.Font.Size, col.Font.color.replace("#", "")];
+            var array = [this.tableId, col.name, col.Font.FontName, col.Font.Size, col.Font.color.replace("#", "")];
             if ($("." + array.join("_")).length === 0) {
-                style.innerHTML = "." + array.join("_") + "{font-family: " + col.Font.Font + "!important; font-size: " + col.Font.Size + "px!important; color: " + col.Font.color + "!important; }";
+                style.innerHTML = "." + array.join("_") + "{font-family: " + col.Font.FontName + "!important; font-size: " + col.Font.Size + "px!important; color: " + col.Font.color + "!important; }";
                 document.getElementsByTagName('body')[0].appendChild(style);
             }
             this.ebSettings.Columns.$values[i].className = array.join("_");

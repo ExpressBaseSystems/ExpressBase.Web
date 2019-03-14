@@ -6,7 +6,6 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     ApiMetaResponse Meta = ViewBag.Meta;
-    //ApiResponse resp = new ApiResponse();
 }
 @await Component.InvokeAsync("PageHeaderCommon")
 <style>
@@ -28,6 +27,22 @@
             vertical-align: top;
             border: none;
         }
+    .api_http_info {
+        float: left;
+        width: 50%;
+        padding-top: 15px;
+    }
+    .req_resp {
+        float: left;
+        width: 50%;
+    }
+    .apiMeta_req_body, .apiMeta_resp_body {
+        padding: 15px 10px;
+        background: #e8eeff;
+        border-radius: 4px;
+        word-wrap: break-word;
+        line-height: 1.7em;
+    }
 </style>
 <div class="row ApiMeta_wrpr">
     <div class="container">
@@ -116,7 +131,7 @@
                                     {
                                         <tr>
                                             <td>@propertyInfo.Name</td>
-                                            <td>@propertyInfo.PropertyType.ToString()</td>
+                                            <td>@propertyInfo.PropertyType.ToString().Replace("System.","")</td>
                                         </tr>
                                     }
                                 }
@@ -125,6 +140,8 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <div class="api_http_info">
             <div class="apiMetaSamples">
                 <div class="ApiMetaRequest_sample">
                     <div class="apiMeta_req_head">
@@ -150,19 +167,17 @@
                     </div>
                 </div>
             </div>
+            <br />
             <div class="apiMetaSamples">
                 <div class="ApiMetaResp_sample">
                     <div class="apiMeta_resp_head">
                         <h4>HTTP Response sample json</h4>
                     </div>
                     <div class="apiMeta_resp_body">
-                        @JsonConvert.SerializeObject(new ApiResponse());
+                        @Html.Raw(JsonConvert.SerializeObject(new ApiResponse()));
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="api_http_info">
-
         </div>
     </div>
 </div>

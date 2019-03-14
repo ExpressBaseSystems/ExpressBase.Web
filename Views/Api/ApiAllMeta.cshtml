@@ -1,0 +1,19 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    var AllMeta = ViewBag.Allmeta;
+}
+@await Component.InvokeAsync("PageHeaderCommon")
+
+<div class="row">
+    <div class="container">
+        <div class="allmeta-wrpr" style="min-height:100vh;padding-top:38px;">
+            @{
+                foreach (EbObjectWrapper wrpr in AllMeta)
+                {
+                    <a href="/api/@wrpr.Name/@wrpr.VersionNumber/metadata">@wrpr.Name : @wrpr.VersionNumber</a>
+                }
+            }
+        </div>
+    </div>
+</div>

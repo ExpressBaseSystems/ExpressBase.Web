@@ -112,6 +112,14 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet("/api/metadata")]
+        public IActionResult ApiAllMeta()
+        {
+            ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.SultionId });
+            ViewBag.Allmeta = resp.AllMetas;
+            return View();
+        }
+
         private Dictionary<string, object> F2D(FormCollection collection)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();

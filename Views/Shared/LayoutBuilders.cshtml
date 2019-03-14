@@ -111,6 +111,7 @@
     <script src="~/js/EbControls/EbParams.Mange.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/EbDialogBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script type="text/javascript" src="~/js/Eb_CommonHeader.js" asp-append-version=@bApnd></script>@*amal*@
 
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
@@ -132,15 +133,14 @@
     <script src="~/lib/codemirror/mode/clike/clike.js" asp-append-version=@bApnd></script>
     <script src="~/lib/codemirror/addon/edit/matchbrackets.js" asp-append-version=@bApnd></script>
     <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
-
     @if (ViewBag.wc == "uc")
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     }
+    <script>var Header = new EbHeader();</script>
 </head>
 <body>
     <div id="tenatDtls" class="container-fluid">
-
         @if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
         {
             Html.RenderPartial("EbQuickMenu");
@@ -168,7 +168,6 @@
     </div>
     <div id="layout_div" class="container-fluid main-cont">
         @RenderBody()
-        @RenderSection("EbHead", false)
     </div>
 </body>
 </html>

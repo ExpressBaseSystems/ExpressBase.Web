@@ -72,6 +72,7 @@
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     }
+    <script>var Header = new EbHeader();</script>
 </head>
 <body>
     <div id="Eb_com_menu">
@@ -107,9 +108,7 @@
         {
             @await Component.InvokeAsync("PageHeaderCommon")
         }
-
         @RenderBody()
-        @RenderSection("EbHead", false)
     </div>
 </body>
 </html>

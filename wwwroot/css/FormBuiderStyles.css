@@ -445,7 +445,7 @@
 }
 
 .tdDropable {
-    height: 30px;
+    min-height: 30px;
 }
 
 .radiog-cont {
@@ -554,7 +554,7 @@
 
 .form-render-table-Td {
     /*width: 100%;*/
-    vertical-align: top;
+    /*vertical-align: top;*/
     padding: 1px;
 }
 
@@ -586,7 +586,7 @@
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/
-    vertical-align: initial;
+    /*vertical-align: initial;*/
 }
 
 .moveBtn {

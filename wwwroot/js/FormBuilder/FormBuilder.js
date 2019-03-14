@@ -418,7 +418,7 @@
     this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
         if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls") {
             let $tblTr = $(`#cont_${this.PGobj.CurObj.EbSid}>table>tbody>tr`);
-            let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='width:auto'; class='form-render-table-Td tdDropable ebcont-ctrl'> <div style='height: 100%; width: 100%; min-height: 30px;'></div> </td>`);
+            let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='padding: 3px; width:auto;' class='form-render-table-Td tdDropable ebcont-ctrl'> <div style='height: 100%; width: 100%; min-height: 30px;'></div> </td>`);
             $tblTr.append($td);
             this.pushToDragables($($td.children()[0]));
             this.makeTdResizable($td.prev("td"));

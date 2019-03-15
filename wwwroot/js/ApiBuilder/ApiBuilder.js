@@ -179,7 +179,7 @@ function EbApiBuild(config) {
                 cache: false,
                 beforeSend: function () {
                 },
-                data: { "refid": obj.Refid },
+                data: { "refid": obj.Reference },
                 success: function (component) {
                     obj.RefName = component.name;
                     obj.Version = component.version;

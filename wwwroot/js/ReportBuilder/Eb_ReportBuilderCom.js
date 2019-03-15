@@ -400,8 +400,8 @@
         commonO.Save();
     };
 
-    commonO.saveOrCommitSuccess = function (refid) {
-        this.refid = refid || null;
+    commonO.saveOrCommitSuccess = function (res) {
+        this.refid = res.refid || null;
             $.ajax({
                 url: "../ReportRender/Index",
                 type: "POST",
@@ -415,7 +415,7 @@
                 },
                 success: function (result) {
                     $("#preview_wrapper").html(result);
-                    $("#btnGo").on("click", this.render.bind(this));
+                    $("#btnGo").off("click").on("click", this.render.bind(this));
                     if ($("#btnGo").length <= 0) {
                         $("#sub_windows_sidediv_dv").hide();
                         $("#content_dv").removeClass("col-md-9").addClass("col-md-12");

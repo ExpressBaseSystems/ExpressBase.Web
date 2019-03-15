@@ -14,7 +14,8 @@
     
     this.refresh = function (tabNum, code, code_tnum) {
         //var value1 = $('textarea[name="querytext"]').val();
-        //var value2 = $('textarea[name="queryparam"]').val();        
+        //var value2 = $('textarea[name="queryparam"]').val(); 
+        $("#eb_common_loader").EbLoader("show");
         let params = null;
         if(is_ds)
             params = commonO.ObjCollection["#vernav" + code_tnum].CreateObjString();
@@ -34,6 +35,7 @@
                 $('#JsonD' + tabNum).append(html.join());
                 if (Object.keys(draw).length > 1)
                     this.draw();
+                $("#eb_common_loader").EbLoader("hide");
             }.bind(this)
         });
     };

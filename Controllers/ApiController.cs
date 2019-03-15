@@ -107,16 +107,27 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("/api/{api_name}/{ver}/metadata")]
         public IActionResult ApiMetaData(string api_name, string ver)
         {
-            ApiMetaResponse resp = this.ServiceClient.Get(new ApiMetaRequest {Name=api_name,Version=ver,SolutionId=this.SultionId });
-            ViewBag.Meta = resp;
+            if (ViewBag.IsValidSol)
+            {
+                ApiMetaResponse resp = this.ServiceClient.Get(new ApiMetaRequest { Name = api_name, Version = ver, SolutionId = this.SultionId });
+                ViewBag.Meta = resp;
+            }
+            else
+                return Redirect("/StatusCode/700");
+
             return View();
         }
 
         [HttpGet("/api/metadata")]
         public IActionResult ApiAllMeta()
         {
-            ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.SultionId });
-            ViewBag.Allmeta = resp.AllMetas;
+            if (ViewBag.IsValidSol)
+            {
+                ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.SultionId });
+                ViewBag.Allmeta = resp.AllMetas;               
+            }
+            else
+                return Redirect("/StatusCode/700");
             return View();
         }
 

@@ -38,6 +38,15 @@ namespace ExpressBase.Web.BaseControllers
             this.SultionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty); ;
             var controller = context.Controller as Controller;
 
+            if (this.Redis.Exists(string.Format(CoreConstants.SOLUTION_CONNECTION_REDIS_KEY, this.SultionId)) == 0)
+            {
+                controller.ViewBag.IsValidSol = false;
+            }
+            else
+            {
+                controller.ViewBag.IsValidSol = true;
+            }
+
             if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
             {
                 controller.ViewBag.IsValid = false;

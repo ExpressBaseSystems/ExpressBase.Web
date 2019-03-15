@@ -5,15 +5,82 @@
 }
 @await Component.InvokeAsync("PageHeaderCommon")
 
+<style>
+    .allmeta-wrpr {
+        min-height: 100vh;
+        padding-top: 50px;
+        font-family: open sans;
+        background:white;
+    }
+    .allmeta-gen_h {
+        padding: 8px 5px 15px 8px;
+    }
+    .allmeta-gen_bdy {
+        display: flex;
+        flex-flow: column;
+    }
+
+    .apimeta_link {
+        padding: 3px 0;
+        /* font-weight: 600; */
+        color: #565555;
+    }
+    .api_allmeattable {
+        width: max-content;
+    }
+        .api_allmeattable th, .api_allmeattable td {
+            padding: 8px 100px 8px 8px !important;
+            border: none !important;
+        }
+
+</style>
+<script>$(".obj_dash_proimage_drp").remove();</script>
 <div class="row">
-    <div class="container">
-        <div class="allmeta-wrpr" style="min-height:100vh;padding-top:38px;">
-            @{
-                foreach (EbObjectWrapper wrpr in AllMeta)
-                {
-                    <a href="/api/@wrpr.Name/@wrpr.VersionNumber/metadata">@wrpr.Name : @wrpr.VersionNumber</a>
-                }
-            }
+    <div class="allmeta-wrpr">
+        <div class="container">
+            <div class="allmeta-gen_h">
+                <input type="text" placeholder="Search api" name="api_search"/>
+            </div>
+            <div class="allmeta-gen_bdy">
+                <table class="table api_allmeattable">
+                    <thead>
+                        <tr>
+                            <th>API</th>
+                            <th>VERSION</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (EbObjectWrapper wrpr in AllMeta)
+                            {
+                                <tr>
+                                    <td>@wrpr.Name</td>
+                                    <td>@wrpr.VersionNumber</td>
+                                    <td>
+                                        <a class="apimeta_link" target="_blank" href="/api/@wrpr.Name/@wrpr.VersionNumber/metadata">
+                                            <i class="fa fa-external-link" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $(`input[name="api_search"]`).off("keyup").on("keyup", function (ev) {
+            text = $(ev.target).closest("input").val().toLocaleLowerCase();
+            $(".api_allmeattable tbody tr").each(function (i, o) {
+                if ($(o).find("td").eq(0).text().toLocaleLowerCase().indexOf(text) !== -1)
+                    $(o).show();
+                else
+                    $(o).hide();
+            });
+        });
+    });
+</script>

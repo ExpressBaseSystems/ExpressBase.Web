@@ -390,7 +390,6 @@
     };
 
     this.drake = new dragula([document.getElementById(this.primitiveToolsId), document.getElementById(this.customToolsId), document.getElementById(this.formId)], {
-        removeOnSpill: true,
         revertOnSpill: true,
         copy: function (el, source) { return (source.className.includes('div-primitive-tools') || source.className.includes('div-custom-tools')); },
         copySortSource: true,

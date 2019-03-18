@@ -522,18 +522,19 @@
     };
 
     this.setFollowupStatus = function (_oldStatus) {
-        let isClosed = false;
-        $.each(this.FeedbackList, function (i, obj) {
-            if (obj["Status"] === "Closed")
-                isClosed = true;
-        });
-        $.each(this.$FlUpStatus.children(), function (i, ob) {
-            let tt = $(ob).attr("value");
-            if (!isClosed && (tt === "HT Done" || tt === "PRP Done"))
-                $(ob).prop("disabled", true);
-            else
-                $(ob).prop("disabled", false);
-        }.bind(this));
+        //let isClosed = false;
+        //$.each(this.FeedbackList, function (i, obj) {
+        //    if (obj["Status"] === "Closed")
+        //        isClosed = true;
+        //});
+        //$.each(this.$FlUpStatus.children(), function (i, ob) {
+        //    let tt = $(ob).attr("value");
+        //    if (!isClosed && (tt === "HT Done" || tt === "PRP Done"))
+        //        $(ob).prop("disabled", true);
+        //    else
+        //        $(ob).prop("disabled", false);
+        //}.bind(this));
+
         this.$FlUpStatus.val(_oldStatus);
 
         //if (this.tempStatusObject === null) {

@@ -394,11 +394,15 @@ namespace ExpressBase.Web.Controllers
         public string VersionCodes(string objid, int objtype)
         {
             EbObjectParticularVersionResponse resultlist = ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = objid });
-            EbObject dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
-            dsobj.Status = resultlist.Data[0].Status;
-            dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
-            dsobj.RefId = objid;
-            return EbSerializers.Json_Serialize(dsobj);
+            if (resultlist.Data.Count > 0)
+            {
+                EbObject dsobj = EbSerializers.Json_Deserialize(resultlist.Data[0].Json);
+                dsobj.Status = resultlist.Data[0].Status;
+                dsobj.VersionNumber = resultlist.Data[0].VersionNumber;
+                dsobj.RefId = objid;
+                return EbSerializers.Json_Serialize(dsobj);
+            }
+            else return string.Empty;
         }
 
         [HttpPost]

@@ -32,6 +32,14 @@
         $('#profiler').off('click').on('click', this.onProfilerClick.bind(this));
         $('#del_obj').off('click').on('click', this.DeleteObject.bind(this));
         this.target = $("#versionNav li.active a").attr("href");//edits by amal
+        if (this.Current_obj.VersionNumber.slice(-1) !== 'w') {
+            $('#save').hide();
+            $('#commit_outer').hide();
+        }
+        else {
+            $('#save').show();
+            $('#commit_outer').show();
+        }
     };
 
     this.checkKeyDown = function (event) {
@@ -128,24 +136,34 @@
 
     this.UpdateDashboard_Success = function (data) {
         $('#object_Dashboard_main').empty().append(data);
+
         var words = this.ver_Refid.split("-");
         window.history.pushState("data", "Title", 'Index?objid=' + words[3] + '&objtype=' + words[2]);
         menu.resultObj = null;//reload menu by amal on 27/04/2018
         menu.init();//reload menu by amal on 27/04/2018
 
         commonObj.init();
+        this.ObjCollection[this.target].GenerateButtons();
         $('#tags').tagsinput('add', this.tags);
+        if (this.Current_obj.VersionNumber.slice(-1) !== 'w') {
+            $('#save').hide();
+            $('#commit_outer').hide();
+        }
+        else {
+            $('#save').show();
+            $('#commit_outer').show();
+        }
     };
 
     this.LoadStatusPage = function () {
         //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
         this.tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> Status " + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade vernav'>";
-        this.AddVerNavTab(navitem, tabitem);
-        $('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
-        $("#obj_icons").empty();
+        var nav = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> Status " + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tab = "<div id='vernav" + this.tabNum + "' class='tab-pane fade vernav'>";
+        this.AddTab(nav, tab);
+        //$('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
+        //$("#obj_icons").empty();
         $.post("../Eb_Object/GetLifeCycle", { _tabNum: this.tabNum, cur_status: this.Current_obj.Status, refid: this.ver_Refid }, this.getLifecyleInner.bind(this));
     };
 
@@ -155,11 +173,24 @@
         $("#eb_common_loader").EbLoader("hide");
     };
 
-    this.AddVerNavTab = function (navitem, tabitem) {
-        $('#versionNav').append(navitem);
-        $('#versionTab').append(tabitem);
+    this.AddTab = function (nav, tab, iscodEditor) {
+        $('#versionNav').append(nav);
+        $('#versionTab').append(tab);
         $("#versionNav a[href='#vernav" + this.tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        $('a[data-toggle="tab"]').off('click').on('click', this.TabChangeSuccess.bind(this));
+
+        if (iscodEditor) {
+            if (this.Current_obj.VersionNumber.slice(-1) === 'w') {
+                $('#save').show();
+                $('#commit_outer').show();
+            }
+            $('#create_button').show();
+            $("#obj_icons").show();
+        }
+        //else
+        //    $('.toolicons').hide();
+
     };
 
     this.deleteTab = function (e) {
@@ -173,11 +204,11 @@
         //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
         this.tabNum++;
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'></div>";
-        this.AddVerNavTab(navitem, tabitem);
-        $('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
-        $("#obj_icons").empty();
+        var nav = "<li><a data-toggle ='tab' href='#vernav" + this.tabNum + "'>History<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tab = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'></div>";
+        this.AddTab(nav, tab);
+        //$('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
+        //$("#obj_icons").empty();
         $.post("../Eb_Object/VersionHistory", { objid: this.ver_Refid, tabnum: this.tabNum, Objtype: type }, this.versionHistoryInner.bind(this));
 
     };
@@ -214,10 +245,10 @@
             icon = "fa-lock";
         }
 
-        var navitem = "<li><a data-toggle='tab' class='cetab' href='#vernav" + this.tabNum + "' data-verNum='" + this.Current_obj.VersionNumber + "'><i class='fa " + icon + "' aria-hidden='true'></i>   v." + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
-        this.AddVerNavTab(navitem, tabitem);
-        $('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
+        var nav = "<li><a data-toggle='tab' class='cetab' href='#vernav" + this.tabNum + "' data-verNum='" + this.Current_obj.VersionNumber + "'><i class='fa " + icon + "' aria-hidden='true'></i>   v." + this.Current_obj.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tab = "<div id='vernav" + this.tabNum + "' class='tab-pane fade' data-id=" + this.ver_Refid + ">";
+        this.AddTab(nav, tab, true);
+        //$('a[data-toggle="tab"].cetab').on('click', this.TabChangeSuccess.bind(this));
         $('#vernav' + this.tabNum).append(data);
         if (this.Current_obj !== null)
             this.UpdateCreateVersionDD();
@@ -232,11 +263,11 @@
     };
 
     this.Load_differ = function (data) {
-        var navitem = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> Diff <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
-        this.AddVerNavTab(navitem, tabitem);
-        $('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
-        $("#obj_icons").empty();
+        var nav = "<li><a data-toggle='tab' href='#vernav" + this.tabNum + "'> Diff <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tab = "<div id='vernav" + this.tabNum + "' class='tab-pane fade'>";
+        this.AddTab(nav, tab);
+        //$('a[data-toggle="tab"]').on('click', this.TabChangeSuccess.bind(this));
+        // $("#obj_icons").empty();
         $('#vernav' + this.tabNum).append(data);
         this.Load_version_list();
         $('.selectpicker').selectpicker({
@@ -320,8 +351,8 @@
             this.PreviewObject();
         else
             this.target = jq.attr("href");
-
-        if ($(e.target).attr("data-vernum") !== undefined) {
+        let version = $(e.target).attr("data-vernum");
+        if (version !== undefined) {
             this.tabchangeFlag = true;
             var target = $(e.target).attr("href");
             this.ObjWrapper = this.ObjCollection[target];
@@ -330,21 +361,26 @@
             //this.ObjWrapper.propGrid.setObject(this.Current_obj, AllMetas["EbDataSource"]);
             this.UpdateCreateVersionDD();
             this.ObjWrapper.GenerateButtons();
-            $('#save').show();
-            $('#commit_outer').show();
+            if (version.slice(-1) === 'w') {
+                $('#save').show();
+                $('#commit_outer').show();
+            }
             $('#create_button').show();
             $('#compare').show();
             $('#status').show();
             $('#ver_his').show();
+            $("#obj_icons").show();
+            $('.toolicons').show();
         }
         else {
-            //$("#obj_icons").empty();
+            $("#obj_icons").hide();
             $('#save').hide();
             $('#commit_outer').hide();
             $('#create_button').hide();
             $('#compare').show();
             $('#status').show();
             $('#ver_his').show();
+            // $('.toolicons').hide();
         }
     };
 
@@ -430,7 +466,7 @@
     this.UpdateCreateVersionDD = function () {
         $("#objname").text(this.Current_obj.DisplayName);
         $('#create li').remove();
-        var arr = this.Current_obj.VersionNumber.split(".")
+        var arr = this.Current_obj.VersionNumber.split(".");
         var vNumMajor = ("v." + (parseInt(major) + 1) + ".0.0.w");
         var vNumMinor = ("v." + arr[0] + "." + (parseInt(arr[1]) + 1) + ".0.w");
         var vNumPatch = ("v." + arr[0] + "." + arr[1] + "." + (parseInt(arr[2]) + 1) + ".w");
@@ -509,18 +545,22 @@
                         FontColor: "white;"
                     }
                 },
-                CallBack: function () {
-                    $.post("../Eb_Object/DeleteObject",
-                        { objid: this.ver_Refid.split("-")[3] },
-                        function (result) {
-                            $("#eb_common_loader").EbLoader("hide");
-                            if (result)
-                                EbMessage("show", { Message: "Deleted", Background: this.GreenColor });
-                            else
-                                EbMessage("show", { Message: "failed. Please retry", Background: this.RedColor });
-                        }.bind(this));
+                CallBack: function (res) {
+                    if (res === "Yes") {
+                        $.post("../Eb_Object/DeleteObject",
+                            { objid: this.ver_Refid.split("-")[3] },
+                            function (result) {
+                                $("#eb_common_loader").EbLoader("hide");
+                                if (result) {
+                                    EbMessage("show", { Message: "Deleted", Background: this.GreenColor });
+                                    window.location.replace("../MyApplications");
+                                }
+                                else
+                                    EbMessage("show", { Message: "failed. Please retry", Background: this.RedColor });
+                            }.bind(this));
+                    }
                 }.bind(this)
-            });       
+            });
     };
 
     this.SqlProfilerHome = function () {
@@ -555,8 +595,6 @@
 
                 EbMessage("show", { Message: response, Background: Background });
             }
-
-
         });
     };
     this.init();

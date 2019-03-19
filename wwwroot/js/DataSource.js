@@ -113,9 +113,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //duplicated for sql function need to change.
     this.DrawDataTable = function (_table) {
         commonO.tabNum++;
-        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
-        this.AddVerNavTab(navitem, tabitem);
+        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tab = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
+        this.AddTab(nav, tab);
         $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
             "<table class='table table-striped table-bordered' id='sample" + commonO.tabNum + "'></table>" +
             "</div>");
@@ -151,7 +151,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                                         </button>`);
 
         $("#run").off("click").on("click", this.RunClick.bind(this));
-        //$("#explaine_btn").off("click").on("click", this.Explain.bind(this));
+        $("#explaine_btn").off("click").on("click", this.Explain.bind(this));
         $(".simple-dsb-cont").hide(this.delay);
     };
 
@@ -305,12 +305,12 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.stickBtn.minimise();
     };
 
-    this.AddVerNavTab = function (navitem, tabitem) {
-        $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
-        $('#versionNav').append(navitem);
-        $('#versionTab').append(tabitem);
+    this.AddTab = function (nav, tab) {
+        $('#versionNav').append(nav);
+        $('#versionTab').append(tab);
         $("#versionNav a[href='#vernav" + tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.deleteTab.bind(this));
+        $('a[data-toggle="tab"]').off('click').on('click', commonO.TabChangeSuccess.bind(commonO));
     };
 
     this.deleteTab = function (e) {
@@ -383,16 +383,16 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             paramsArray = this.CreateObjString();
 
         commonO.tabNum++;
-        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
-        this.AddVerNavTab(navitem, tabitem);
+        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tab = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
+        this.AddTab(nav, tab);
         $('#vernav' + commonO.tabNum).append(`<div class='filter_modal_body'><div class="accordion" id="accordion${commonO.tabNum}"></div></div>`);
 
         $.post('../../CE/GetColumnsCollection', {
             ds_refid: this.Refid,
             parameter: paramsArray
         }, this.Load_Table_Columns.bind(this));
-        $("#obj_icons").empty();
+        $("#obj_icons").hide();
         $('#save').hide();
         $('#commit_outer').hide();
         $('#create_button').hide();
@@ -561,9 +561,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
     this.Explain = function () {
         commonO.tabNum++;
-        var navitem = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Explain-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
-        var tabitem = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
-        this.AddVerNavTab(navitem, tabitem);
+        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Explain-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var tab = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
+        this.AddTab(nav, tab);
         $('#vernav' + commonO.tabNum).append(`<section class="container-fluid">
         <div id="JsonD${commonO.tabNum}" class = "jsonD"></div>
         </section>

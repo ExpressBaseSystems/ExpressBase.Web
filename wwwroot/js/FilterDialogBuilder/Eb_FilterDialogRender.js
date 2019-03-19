@@ -57,7 +57,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             Object.defineProperty(this.formObject, cObj.Name, {
                 get: function () {
                     return cObj;
-                }.bind(this),
+                }.bind(this)
             });
         }.bind(this));
     };
@@ -75,15 +75,15 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
                 }.bind(this)
             });
         }.bind(this));
-    }
+    };
 
     this.getValue = function (ctrlObj) {
         return ctrlObj.getValue();
-    }
+    };
 
     this.setValue = function (ctrlObj, val) {
         ctrlObj.setValue(val);
-    }
+    };
 
     this.bindFuncsToDom = function () {
         this.onChangeExeFlag = false;
@@ -91,7 +91,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
             //creating onChangeExeFuncs and binding to dom elements
             if (cObj.OnChange && cObj.OnChange !== '') {
-                this.onChangeExeFuncs[cObj.Name] = new Function("form","User", atob(cObj.OnChange));
+                this.onChangeExeFuncs[cObj.Name] = new Function("form", "User", atob(cObj.OnChange));
                 if (cObj.ObjType === 'TextBox' || cObj.ObjType === 'Date') {
                     this.onChangeExeFlag = true;
                     $("body #" + cObj.EbSid_CtxId).on("change", this.ctrlValueChanged.bind(this, cObj.Name));
@@ -116,11 +116,11 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         //if (this.onChangeExeFlag)
         this.initialLoad();
 
-    }
+    };
 
     this.ctrlValueChanged = function (name) {
         this.onChangeExeFuncs[name](this.formObject, userObj);
-    }
+    };
 
     this.initialLoad = function () {
         $.each(this.FormObj.Controls.$values, function (k, cObj) {

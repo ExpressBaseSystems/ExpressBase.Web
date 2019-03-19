@@ -23,6 +23,7 @@ using ExpressBase.Web.Filters;
 using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.SqlProfiler;
+using ExpressBase.Objects.Objects.DVRelated;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -142,6 +143,19 @@ namespace ExpressBase.Web.Controllers
                 _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
                 if (dsobj != null)
                 {
+                    //---------------------temp fix to copy old prop value (string) to new prop value (EbScript)-------------------------------
+                    foreach(DVBaseColumn c in (dsobj as EbDataVisualization).Columns)
+                    {
+                        if(c._Formula == null)
+                        {
+                            if (!string.IsNullOrEmpty(c.Formula))
+                                c._Formula = new EbScript { Code = c.Formula, Lang = ScriptingLanguage.CSharp };
+                            else
+                                c._Formula = new EbScript();
+                        }
+                    }
+                    //-----------------------------------------------------------------------------------------------------------------------
+
                     dsobj.AfterRedisGet(Redis, ServiceClient);
                     ViewBag.dsObj = dsobj;
                 }
@@ -152,6 +166,41 @@ namespace ExpressBase.Web.Controllers
                 _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
                 if (dsobj != null)
                 {
+                    //-------------------------temp fix to copy old prop value (string) to new prop value (EbScript)----------------------------
+                    foreach (EbReportDetail dt in (dsobj as EbReport).Detail)
+                    {
+                        foreach (EbReportField field in dt.Fields)
+                        {
+                            if (field is EbDataField)
+                            {
+                                var _new = (field as EbDataField).AppearExpression;
+                                var old = (field as EbDataField).AppearanceExpression;
+                                if (_new == null)
+                                {
+                                    if (!string.IsNullOrEmpty(old))
+                                        _new = new EbScript { Code = old, Lang = ScriptingLanguage.CSharp };
+                                    else
+                                        _new = new EbScript();
+                                    (field as EbDataField).AppearExpression = _new;
+                                }
+                                if (field is EbCalcField)
+                                {
+                                    var __new = (field as EbCalcField).ValExpression;
+                                    var _old = (field as EbCalcField).ValueExpression;
+                                    if (__new == null)
+                                    {
+                                        if (!string.IsNullOrEmpty(_old))
+                                            __new = new EbScript { Code = _old, Lang = ScriptingLanguage.CSharp };
+                                        else
+                                            __new = new EbScript();
+                                        (field as EbCalcField).ValExpression = __new;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //----------------------------------------------------------------------------------------------------------------------------
+
                     dsobj.AfterRedisGet(Redis, ServiceClient);
                     ViewBag.dsObj = dsobj;
                 }

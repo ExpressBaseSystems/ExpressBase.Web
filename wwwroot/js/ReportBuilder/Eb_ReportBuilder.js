@@ -620,7 +620,8 @@
         if (container)
             this.containerId = $("#page-reportLayer");
         this.containerId.append($control.$Control.outerHTML());
-		this.repExtern.replaceProp($control, editControl);
+		//this.repExtern.replaceProp($control, editControl);
+        $.extend($control, editControl);
         $control.EbSid = Objid; $control.Name = editControl.Name;
         this.objCollection[Objid] = $control;
         this.RefreshControl($control);

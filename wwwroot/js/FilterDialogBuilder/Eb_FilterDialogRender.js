@@ -90,8 +90,8 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         this.$submitBtn.on("click", this.submit);
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
             //creating onChangeExeFuncs and binding to dom elements
-            if (cObj.OnChange && cObj.OnChange !== '') {
-                this.onChangeExeFuncs[cObj.Name] = new Function("form","User", atob(cObj.OnChange));
+            if (cObj._OnChange && cObj._OnChange.Code && cObj._OnChange.Code !== '') {
+                this.onChangeExeFuncs[cObj.Name] = new Function("form","User", atob(cObj._OnChange.Code));
                 if (cObj.ObjType === 'TextBox' || cObj.ObjType === 'Date') {
                     this.onChangeExeFlag = true;
                     $("body #" + cObj.EbSid_CtxId).on("change", this.ctrlValueChanged.bind(this, cObj.Name));
@@ -124,7 +124,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
 
     this.initialLoad = function () {
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
-            if (cObj.ObjType === 'RadioGroup' && cObj.OnChange && cObj.OnChange !== '') {
+            if (cObj.ObjType === 'RadioGroup' && cObj._OnChange && cObj._OnChange.Code && cObj._OnChange.Code !== '') {
                 if (cObj.DefaultValue !== "")
                     $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
                 else

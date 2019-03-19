@@ -26,6 +26,9 @@
         case 500:
             statusmessage = "Internal Server Error - server was unable to finish processing the request";
             break;
+        case 700:
+            statusmessage = "Solution does not exist!";
+            break;
         default:
             statusmessage = "That’s odd... Something we didn't expect happened";
             break;
@@ -35,7 +38,7 @@
     <div class="error_wrapper">
         <div class="errorcode_img">
             @{
-                if(Model == 401)
+                if (Model == 401)
                 {
                     <img src="~/images/eb_401.svg" />
 
@@ -45,7 +48,10 @@
                     <img src="~/images/eb_404.jpg" />
 
                 }
-
+                else if (Model == 700)
+                {
+                    <img src="~/images/eb_404.jpg" />
+                }
             }
         </div>
         <h2 class="text-center">@statusmessage</h2>

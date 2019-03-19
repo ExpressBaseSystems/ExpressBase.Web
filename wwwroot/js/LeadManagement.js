@@ -529,11 +529,12 @@
         });
         $.each(this.$FlUpStatus.children(), function (i, ob) {
             let tt = $(ob).attr("value");
-            if (!isClosed && (tt === "HT Done" || tt === "PRP Done"))
+            if (!isClosed && (tt === "HT Done"))
                 $(ob).prop("disabled", true);
             else
                 $(ob).prop("disabled", false);
         }.bind(this));
+
         this.$FlUpStatus.val(_oldStatus);
 
         //if (this.tempStatusObject === null) {

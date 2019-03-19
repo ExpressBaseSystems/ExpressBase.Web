@@ -26,6 +26,10 @@
             else if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
                 value = window.editor.getValue();
                 PropsObj[_CurProp].Code = btoa(value);
+                if (!(this.editor === 64 || this.editor === 128 || this.editor === 256))
+                    PropsObj[_CurProp].Lang = parseInt($("#editorsel").find("option:selected").attr('type'));
+                else
+                    PropsObj[_CurProp].Lang = this.singleScrType;
             }
             $("#" + this.PGobj.wraperId + " [name=" + _CurProp + "Tr] .pgTdval").attr("title", value);
         }
@@ -96,6 +100,10 @@
         let PropsObj = this.getPropsObj();
         $(this.pgCXE_Cont_Slctr + " .CE-add").off("click").click(this.CE_AddFn.bind(this));
         if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
+            if (!(this.editor === 64 || this.editor === 128 || this.editor === 256)) {// if multi language
+                $("#editorsel").selectpicker('val', $("#editorsel").find("[type=" + PropsObj[this.PGobj.CurProp].Lang + "]").text());// set select
+                this.editorSelChange({ target: $("#editorsel")[0] });// force invoke select change event
+            }
             let value = PropsObj[this.PGobj.CurProp].Code === null ? "" : PropsObj[this.PGobj.CurProp].Code;
             window.editor.setValue(atob(value));
             window.editor.focus();
@@ -423,25 +431,29 @@
     };
 
     this.initScrE = function (e) {
+        this.singleScrType = 0;
         if (this.editor === 64) {
+            this.singleScrType = 0;
             this.initJE();
             return;
         }
         else if (this.editor === 128) {
+            this.singleScrType = 1;
             this.initCSE();
             return;
         }
         else if (this.editor === 256) {
+            this.singleScrType = 2;
             ;
             return;
         }
         let options = "";
         if (this.editor & 64)
-            options += "<option mode='javascript'    hint='javascript' >Javascript</option>";
+            options += "<option mode='javascript' type='0' hint='javascript' >Javascript</option>";
         if (this.editor & 128)
-            options += "<option mode='text/x-csharp' hint='anyword'>C# Script</option>";
+            options += "<option mode='text/x-csharp' type='1' hint='anyword'>C# Script</option>";
         if (this.editor & 256)
-            options += "<option mode='text/x-plsql'  hint='sql'>SQL</option>";
+            options += "<option mode='text/x-plsql'  type='2' hint='sql'>SQL</option>";
         this.ScrEHelper("Javascript Editor", 'JE_txtEdtr', "javascript", "javascript");
         $("#editorsel").empty();
         $(this.pgCXE_Cont_Slctr + " .modal-title").html(this.CurProplabel + ": " + "<select id='editorsel' class='selectpicker'>" + options + "</select>");

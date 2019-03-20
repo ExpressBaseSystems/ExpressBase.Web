@@ -29,6 +29,7 @@
         let last = Object.keys(o)[Object.keys(o).length - 1];
         this.JsonHtml.push(`<div class="a_ob_o">{</div><ol class="a_o">`);
         for (let key in o) {
+            o[key] = (this.isJson(o[key])) ? JSON.parse(o[key]) : o[key];
             if (Array.isArray(o[key])) {
                 this.JsonHtml.push(`<li><a lass="propkey"><span class="property">"${key}"</span> : <span class="array">[</span> </a><ul>`);
                 this.dArray(o[key]);
@@ -54,6 +55,7 @@
         let cm = "";
         for (let i = 0; i < a.length; i++) {
             cm = (i === a.length - 1) ? "" : "<span class='comma'>,</span>";
+            a[i] = (this.isJson(a[i])) ? JSON.parse(a[i]) : a[i];
             if (Array.isArray(a[i])) {
                 this.JsonHtml.push(`<li>
                                     <a lass="propkey"><span class="array">[</span> </a>
@@ -80,7 +82,7 @@
         let cm = "";
         for (let i = 0; i < ai.length; i++) {
             cm = (i === ai.length - 1) ? "" : "<span class='comma'>,</span>";
-
+            ai[i] = (this.isJson(ai[i])) ? JSON.parse(ai[i]) : ai[i];
             if (Array.isArray(ai[i])) {
                 this.JsonHtml.push(`<li data-toggle="tooltip" data-placement="bottom" title='Index:${i}'><a><span class="array">[</span></a><ul>`);
                 this.dArray(ai[i]);
@@ -105,6 +107,7 @@
         let cm = "";
         for (let key in o) {
             cm = (key === last) ? "" : "<span class='comma'>,</span>";
+            o[key] = (this.isJson(o[key])) ? JSON.parse(o[key]) : o[key];
             if (Array.isArray(o[key])) {
                 this.JsonHtml.push(`<li><a class="propkey"><span class="property">"${key}"</span> : <span class="array">[</span> </a><ul>`);
                 this.dArray(o[key]);
@@ -256,6 +259,15 @@
                         </li>`);
     };
     this.isNumber = function (n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); };
+
+    this.isJson = function (s) {
+        try {
+            JSON.parse(s);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
 
     this.rawData = function (o) {
         var raw = [`<div class="raw_data_wrapper">`];

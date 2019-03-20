@@ -137,6 +137,7 @@
                 return true;
             this.initCtrl(el);
         }.bind(this));
+        $("#" + this.rootContainerObj.EbSid).focus();
     };
 
     this.initCtrl = function (el) {

@@ -67,6 +67,12 @@ const WebFormRender = function (option) {
     this.initWebFormCtrls = function () {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
+        this.formObject = {};
+
+        $.each(this.flatControls, function(i, ctrl) {
+            this.formObject[ctrl.Name] = ctrl;
+        }.bind(this));
+
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
             if (Obj.ObjType === "PowerSelect")
@@ -78,6 +84,8 @@ const WebFormRender = function (option) {
                 this.bindRequired(Obj);
             if (Obj.Unique)
                 this.bindUniqueCheck(Obj);
+            if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
+                this.bindOnChange(Obj);
             if (Obj.Validators.$values.length > 0)
                 this.bindValidators(Obj);
 
@@ -87,6 +95,10 @@ const WebFormRender = function (option) {
         $.each(this.DGs, function (k, DG) {
             this.initControls.init(DG, { isEditMode: this.isEditMode });
         }.bind(this));
+    };
+
+    this.bindOnChange = function (control) {
+        control.bindOnChange(new Function("form", "user", `inpObj`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, "user"));
     };
 
     this.bindValidators = function (control) {

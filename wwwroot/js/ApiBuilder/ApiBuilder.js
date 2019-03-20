@@ -195,7 +195,8 @@ function EbApiBuild(config) {
             var ebtype = o[i].$type.split(",")[0].split(".").pop().substring(2);
             var id = ebtype + CtrlCounters[ebtype + "Counter"]++;
             var obj = new EbObjects["Eb" + ebtype](id);
-            this.replaceProp(obj, o[i]);
+            //this.replaceProp(obj, o[i]);
+            $.extend(obj, o[i]);
             $(`#${this.dropArea} #end_item`).before(obj.$Control.outerHTML());
             this.Procs[id] = obj;
             this.RefreshControl(this.Procs[id]);
@@ -240,6 +241,7 @@ function EbApiBuild(config) {
     this.editApi = function () {
         this.EbObject = new EbObjects["EbApi"](this.EditObj.Name);
         this.replaceProp(this.EbObject, this.EditObj);
+        //$.extend(this.EbObject, this.EditObj);
         this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
         this.EbObject.Resources.$values.length = 0;
         this.drawProcsEmode();

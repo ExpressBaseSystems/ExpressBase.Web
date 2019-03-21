@@ -111,6 +111,7 @@
             editBtn = "";
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+            inpCtrl.EbDbType = col.EbDbType;
             inpCtrl.EbSid_CtxId = ctrlEbSid;
             //inpCtrl.EbSid = ctrlEbSid;
             inpCtrl.ObjType = inpCtrlType.substr(2);

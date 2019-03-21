@@ -296,6 +296,22 @@
 .grid-cont {
     /*overflow: auto;*/
 }
+.grid-cont th{
+    position:relative;
+}
+.grid-cont sup {
+    position: absolute;
+    right: 5px;
+    top: 10px;
+}
+.grid-cont .grid-col-title {
+    width: inherit;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
     .grid-cont input[type=checkbox] {
         min-height: inherit !important;

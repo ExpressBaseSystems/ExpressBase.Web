@@ -146,7 +146,8 @@
         menu.init();//reload menu by amal on 27/04/2018
 
         commonObj.init();
-        this.ObjCollection[this.target].GenerateButtons();
+        if (this.target !== "#preview_tab")
+            this.ObjCollection[this.target].GenerateButtons();
         $('#tags').tagsinput('add', this.tags);
         if (this.Current_obj.VersionNumber.slice(-1) !== 'w') {
             $('#save').hide();

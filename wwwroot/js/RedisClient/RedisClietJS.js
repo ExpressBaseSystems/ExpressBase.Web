@@ -1,160 +1,4 @@
-﻿var EbPrettyJson = function (option) {
-    this.Option = $.extend({
-        ContetEditable: [],
-        HideFields: []
-    }, option);
-
-    this.build = function (_jsobj) {
-        this.JsonHtml = [];
-
-        this.JsonHtml.push(`<div class="prety_jsonWrpr">`);
-        if (Array.isArray(_jsobj)) {
-            this.Arrayflow(_jsobj);
-        }
-        else if (_jsobj === null) {
-
-        }
-        else if (typeof _jsobj === 'object') {
-            this.objectFlow(_jsobj);
-        }
-        else {
-            this.PropFlow(_jsobj);
-        }
-
-        this.JsonHtml.push(`</div>`);
-        return this.JsonHtml.join("");
-    }
-
-    this.objectFlow = function (o) {
-        let last = Object.keys(o)[Object.keys(o).length - 1];
-        this.JsonHtml.push(`<div class="a_ob_o">{</div><ol class="a_o">`);
-        for (let key in o) {
-            if (Array.isArray(o[key])) {
-                this.JsonHtml.push(`<li><a lass="propkey"><span class="property">"${key}"</span> : <span class="array">[</span> </a><ul>`);
-                this.dArray(o[key]);
-                this.JsonHtml.push(`</ul> <span class="array">]</span></li>`);
-            }
-            else if (o[key] === null) {
-
-            }
-            else if (typeof o[key] === "object") {
-                this.JsonHtml.push(`<li><a class="propkey"><span class="property">"${key}"</span> : <span class="object">{</span> </a><ul>`);
-                this.dObject(o[key]);;
-                this.JsonHtml.push(`</ul><span class="object">}</span></li>`);
-            }
-            else {
-                this.JsonHtml.push(this.dProp(key, o[key], (key === last)));
-            }
-        }
-        this.JsonHtml.push(`</ol><div class="a_ob_o">}</div>`);
-    };
-
-    this.Arrayflow = function (a) {
-        this.JsonHtml.push(`<div class="a_ob_o">[</div><ol class="a_o">`);
-        let cm = "";
-        for (let i = 0; i < a.length; i++) {
-            cm = (i === a.length - 1) ? "" : ",";
-            if (Array.isArray(a[i])) {
-                this.JsonHtml.push(`<li>
-                                        <a lass="propkey"><span class="array">[</span> </a>
-                                            <ul>`);
-                this.dArray(a[i]);
-                this.JsonHtml.push(`</ul><span class="array">]${cm}</span></li>`);
-            }
-            else if (a[i] === null) {
-
-            }
-            else if (typeof a[i] === "object") {
-                this.JsonHtml.push(`<li><a class="propkey"><span class="object">{</span></a><ul>`);
-                this.dObject(a[i]);
-                this.JsonHtml.push(`</ul><span class="object">}${cm}</span></li>`);
-            }
-            else {
-                this.JsonHtml.push(this.Propitem(a[i], (i === a.length - 1)));
-            }
-        }
-        this.JsonHtml.push(`</ol><div class="a_ob_o">]</div>`);
-    }
-
-    this.dArray = function (ai) {
-        let cm = "";
-        for (let i = 0; i < ai.length; i++) {
-            cm = (i === ai.length - 1) ? "" : ",";
-
-            if (Array.isArray(ai[i])) {
-                this.JsonHtml.push(`<li><a><span class="array">[</span></a><ul>`);
-                this.dArray(ai[i]);
-                this.JsonHtml.push(`</ul><span class="array">]${cm}</span></li>`);
-            }
-            else if (ai[i] === null) {
-
-            }
-            else if (typeof ai[i] === "object") {
-                this.JsonHtml.push(`<li><a><span class="object">{</span></a><ul>`);
-                this.dObject(ai[i]);
-                this.JsonHtml.push(`</ul><span class="object">}${cm}</span></li>`);
-            }
-            else {
-                this.JsonHtml.push(this.Propitem(ai[i], (i === ai.length - 1)));
-            }
-        }
-    };
-
-    this.dObject = function (o) {
-        let last = Object.keys(o)[Object.keys(o).length - 1];
-        let cm = "";
-        for (let key in o) {
-            cm = (key === last) ? "" : ",";
-            if (Array.isArray(o[key])) {
-                this.JsonHtml.push(`<li><a class="propkey"><span class="property">"${key}"</span> : <span class="array">[</span> </a><ul>`);
-                this.dArray(o[key]);
-                this.JsonHtml.push(`</ul><span class="array">]${cm}</span></li>`);
-            }
-            else if (o[key] === null) {
-                this.JsonHtml.push(this.dProp(key, o[key], (key === last)));
-            }
-            else if (typeof o[key] === "object") {
-                this.JsonHtml.push(`<li><a class="propkey"><span class="property">"${key}"</span> : <span class="object">{</span></a><ul>`);
-                this.dObject(o[key]);
-                this.JsonHtml.push(`</ul><span class="object">}${cm}</span></li>`);
-            }
-            else {
-                this.JsonHtml.push(this.dProp(key, o[key], (key === last)));
-            }
-        }
-    };
-
-    this.Propitem = function (p, isLast) {
-        let cm = isLast ? "" : ",";
-        if (p === null)
-            p = null;
-        else if (typeof p === "string")
-            p = `"${p}"`;
-        else if (typeof p === "number")
-            p = p;
-        return `<li class="ar_item">${p} ${cm}</li>`;
-    }
-
-    this.dProp = function (k, val, isLast) {
-        let ce = (this.Option.ContetEditable.indexOf(k) >= 0) ? true : false;
-        let hf = (this.Option.HideFields.indexOf(k) >= 0) ? "hide" : "show";
-        let cm = isLast ? "" : ",";
-        if (val === null)
-            val = null;
-        else if (typeof val === "string")
-            val = `"${val}"`;
-        else if (typeof val === "number")
-            val = val;
-
-        return `<li class="wraper_line ${hf}">
-                        <span class="objkey">"${k}"</span>
-                        <span class="colon">:</span>
-                        <span class="objval" contenteditable="${ce}">${val}</span>
-                        ${cm}
-                    </li>`;
-    }
-};
-
+﻿
 
 
 
@@ -164,17 +8,19 @@ var RedisClientJS = function () {
     this.currentGrpLink = null;
     this.subnm = null;
     this.temp = null;
+    this.ptnarray = [];
     this.indx = null;
     this.listeditval = null;
     this.incr = null;
     window.tp = null;
     this.keynm = null;
-    
+    this.objsn = null;
+    this.logjsn = null;
 
     this.init = function () {
 
         this.pjson = new EbPrettyJson();
-        $("#keyslist").off("click").on("click",".grp_link", this.groupClick.bind(this));
+        $("#keyslist").off("click").on("click", ".grp_link", this.groupClick.bind(this));
         $("#btninset").off("click").on("click", this.Keyinsertfn.bind(this));
         $("#btngrpinsert").off('click').on("click", this.GroupPatternfn.bind(this));
         $("#Btnsrch").off('click').on('click', this.Keysearchfn.bind(this));
@@ -189,15 +35,36 @@ var RedisClientJS = function () {
         $("#btnsetcancel").off('click').on('click', this.SetCancel.bind(this));
         $("#btnsortedsetinsert").off('click').on('click', this.SortedsetInsertfn.bind(this));
         $("#btnsortedsetcancel").off('click').on('click', this.SortedsetCancel.bind(this));
-        $(`#subkeydiv`).off("click").on("click",".sub_link", this.subClick.bind(this));
+        $(`#subkeydiv`).off("click").on("click", ".sub_link", this.subClick.bind(this));
         $("#btnkeydel").off('click').on('click', this.KeyPressDeletefn.bind(this));
         $("#btnrenamekey").off('click').on('click', this.KeyRenamefn.bind(this));
         $("#btnedit").off("click").on("click", this.Editfn.bind(this));
         $("#btnjsonview").off("click").on("click", this.Jsonviewfn.bind(this));
         $("#divterminal").on("keypress", ".terminalcls", this.Terminalfn.bind(this));
         $("#tablog").off("clicl").on("click", this.LogViewfn.bind(this));
-        $(".tablelog").off("click").on("click",".logrow", this.LogChangesfn.bind(this));
-        
+        $(".tablelog").off("click").on("click", ".logrow", this.LogChangesfn.bind(this));
+        $("#btnsave1").off("click").on("click", this.PatternSavefn.bind(this));
+        $("#grplists").off("click").on("click", ".cstmgrp_link", this.CustomGroupClick.bind(this));
+        $("#btninfo").off('click').on('click', this.Keydifferencefn.bind(this));
+        $("#txtgrp_name").on("keypress", this.EditGrpfn.bind(this));
+        $("#btnsave_newptn").off("click").on("click", this.AddPatternfn.bind(this));
+        $("#btngrp_save").off('click').on("click", this.EditGroupPatternfn.bind(this));
+        $("#btngrpcancel1").off('click').on("click", this.CancelGrpCreatefn.bind(this));
+        $("#btngrpcancel2").off('click').on("click", this.CancelGrpEditfn.bind(this));
+        $("#edit_grp_list").off('click').on("click", ".remove_item", this.RemoveItemfn.bind(this));
+
+        $("#dfltgrp").on("click", function (e) {
+            if ($("#cstmgrp").attr("aria-expanded") === 'true') {
+                $("#cstmgrp").click();
+            }
+        });
+        $("#cstmgrp").on("click", function () {
+            if ($('#dfltgrp').attr("aria-expanded") === 'true') {
+                $('#dfltgrp').click();
+            }
+        });
+
+
     };
 
     this.groupClick = function (ev) {
@@ -205,20 +72,29 @@ var RedisClientJS = function () {
         $('#smallbtn').hide();
         $(`#outerdisp`).hide();
         $('#btnkeys a[href="#dispvalue"]').tab('show');
-        this.GroupName = $(ev.target).closest(".grp_link").attr("data-ptn");
+        this.GroupName = $(ev.target).closest(".grp_link").attr("grp_name");
+
         let data = [];
+        let rfid = [];
         //  var p = "^" + this.GroupName;
         var p = this.GroupName;
-        for (let i = 0; i < _temp.length; i++) {
-            var k = _temp[i];
-            var match = (k.match(p));
+        $.each(dgrpnames, function (i, k) {
+            var match = (i.match(p));
             if (match != null) {
-                data.push(k);
+
+                $.each(k, function (j) {
+                    var va = k[j].disp_Name + "                  " + k[j].version;
+                    data.push(va);
+                    rfid.push(k[j].refid);
+                });
+
+
             }
-        }
+        });
+
         let h = [];
         for (let i = 0; i < data.length; i++) {
-            h.push(`<li class="sub_link list-group-item" ><a>${data[i]}</a></li>`);
+            h.push(`<li class="sub_link list-group-item"refid=${rfid[i]} ><a>${data[i]}</a></li>`);
         }
         $(`#subkeydiv`).empty().append(h.join(""));
 
@@ -227,13 +103,46 @@ var RedisClientJS = function () {
         $(`#dispval`).hide();
 
     };
+    this.CustomGroupClick = function (ev) {
+        this.currentGrpLink = ev.target;
+        $('#smallbtn').hide();
+        $(`#outerdisp`).hide();
+        $('#btnkeys a[href="#dispvalue"]').tab('show');
+        this.GroupName = $(ev.target).closest(".cstmgrp_link").attr("data-name");
+        this.ptnlst = JSON.parse($(ev.target).closest(".cstmgrp_link").attr("grp-ptns"));
+
+        let data = [];
+        let rfid = [];
+        for (let j = 0; j < this.ptnlst.length; j++) {
+
+            var p = new RegExp(this.ptnlst[j]);
+
+            $.each(dgrpnames, function (i, k) {
+                $.each(k, function (j) {
+                    if (p.test((k[j].refid))) {
+                        data.push(k[j].disp_Name + "                  " + k[j].version);
+                        rfid.push(k[j].refid);
+                    }
+
+                });
+            });
+
+        }
+        let h = [];
+        for (let i = 0; i < data.length; i++) {
+            h.push(`<li class="sub_link list-group-item" refid="${rfid[i]}" ><a>${data[i]}</a></li>`);
+        }
+        $(`#subkeydiv`).empty().append(h.join(""));
+        $(`#savediv`).hide();
+        $(`#dispval`).hide();
+    };
 
     this.subClick = function (ev) {
         $(`#outerdisp`).show();
         $(`#savediv`).show();
         $(`#dispval`).show();
         $("#dispval").attr('contenteditable', false);
-        this.SubName = $(ev.target).closest(".sub_link").text();
+        this.SubName = $(ev.target).closest(".sub_link").attr("refid");
         this.subnm = this.SubName;
         this.keynm = this.SubName;
         $('#smallbtn').show();
@@ -246,22 +155,23 @@ var RedisClientJS = function () {
                     type: "POST",
                     success: function (ob) {
                         window.tp = ob.type;
-                       
+                        this.objsn = ob;
                         if (ob.type === "string") {
                             var html = `<div> 
-                                            <div  height=10%> <strong>KEY :</strong>${ob.key}  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>TYPE :</strong>${ob.type} 
+                                            <div  height=10%> <strong>KEY :</strong>${ob.key}  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>TYPE :</strong>${ob.type}  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <strong>Last Modified :</strong>${ob.idltm} sec
                                               <input type="button" id="btnstringedit" class="btn btn-xs btn-info col-md-offset-7"  value="Save"/>
                                                  </div>
                                         </div>`;
                             $("#savediv").empty().append(html);
                             $(`#btnstringedit`).hide();
-                            $("#dispval").empty().append(ob.obj);
+                            $("#dispval").empty().append(JSON.stringify(ob.obj));
                         }
+
                         //<div style=" display: inline-block;  float: right; "  >  /div> 
                         else
                             if ((ob.type === "list") || (ob.type === "set")) {
                                 var html = `<div>
-                                                <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type}
+                                                <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type} &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <strong>Last Modified :</strong>${ob.idltm} sec
                                                 <input type="button" id="btnlistedit" rediskey="${ob.key}" class="btn btn-xs btn-info col-md-offset-7" value="Save" />
                                                   </div >
                                            </div >`
@@ -300,9 +210,9 @@ var RedisClientJS = function () {
                                 //$(".listsave").hide();
                             }
                             else
-                                if ((ob.type === "hash")|| (ob.type === "zset")) {
+                                if ((ob.type === "hash") || (ob.type === "zset")) {
                                     var html2 = `<div>
-                                                <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type}
+                                                <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type}  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <strong>Last Modified :</strong>${ob.idltm} sec
                                                 <input type="button" id="btnhashedit" rediskey="${ob.key}" class="btn btn-xs btn-info col-md-offset-7" value="Save" />
                                                   </div >
                                            </div >`
@@ -332,10 +242,10 @@ var RedisClientJS = function () {
                                     }.bind(this));
                                 }
 
-                    }
+                    }.bind(this)
                 });
         }
-    }
+    }.bind(this);
 
     this.Keyinsertfn = function () {
         if ((($("#txtkey").val() != "")) && ($("#txtval").val())) {
@@ -372,6 +282,7 @@ var RedisClientJS = function () {
     this.insertKeyToArr = function (newKey) {
         _temp.push(newKey);
     };
+
     this.deleteKeyFromArr = function (oldKey) {
         var index = _temp.indexOf(oldKey);
         if (index > -1) {
@@ -410,7 +321,7 @@ var RedisClientJS = function () {
                     }
                 }.bind(this)
             });
-           
+
         }
     };
 
@@ -441,21 +352,45 @@ var RedisClientJS = function () {
         }
     };
 
+    this.PatternSavefn = function () {
+        if (($(".txtadnlptn").val() != "") && ($("#txtnm").val() != "")) {
+
+
+            $("#ptnslist").append(`<li class=" list-group-item " ><a>${$(".txtadnlptn").val()}</a>
+            <span class="close closeitem">&times</span></li>`);
+            $(".txtadnlptn").val("");
+            $(".closeitem").click(function () {
+                this.parentElement.style.display = 'none';
+
+
+            });
+        }
+
+
+    }.bind(this);
+
+
     this.GroupPatternfn = function () {
-        if (($("#txtnm").val() != "") && ($("#txtptn").val() != "")) {
-            var regptn = btoa($("#txtptn").val());
+        if (($("#txtnm").val() != "")) {
+            var list = document.getElementById('ptnslist').childNodes;
+            if (list.length != 0) {
+                var theArray = [];
+                for (var i = 0; i < list.length; i++) {
+                    var arrValue = list[i].children[0].innerText;
+                    alert(arrValue);
+                    theArray.push(btoa(arrValue));
+                }
+            }
+
             $.ajax({
 
                 url: "../RedisManager/GroupPattern",
-                data: { textgroup: $("#txtnm").val(), textpattern: regptn },
+                data: { textgroup: $("#txtnm").val(), ptnlst: theArray },
                 cache: false,
                 type: "POST",
                 success: function () {
-                    var ad = `<li>    <a class="grp_link list-group-item" role="tab" href="#dispvalue" data-toggle="tab" data-ptn="${$("#txtptn").val()}" grp_name="${$("#txtnm").val()}">${$("#txtnm").val()}</a></li>`
                     alert("success");
                     $("#txtnm").val('');
-                    $("#txtptn").val('');
-                    $("#keyslist").append(ad);
                 }
             });
         }
@@ -464,14 +399,123 @@ var RedisClientJS = function () {
             $("#txtnm").val('');
             $("#txtptn").val('');
         }
+    }.bind(this);
+
+    this.EditGroupPatternfn = function () {
+        if (($("#txtgrp_name").val() != "")) {
+            var list = document.getElementById('edgrp_lst').children;
+            if (list.length != 0) {
+                var theArray = [];
+                for (var i = 0; i < list.length; i++) {
+                    var arrValue = list[i].children[0].innerText;
+
+                    theArray.push(btoa(arrValue));
+                }
+            }
+        }
+        if (($("#txtgrp_name").val() != "") && (theArray.length != 0)) {
+
+            $.ajax({
+
+                url: "../RedisManager/GroupPattern",
+                data: { textgroup: $("#txtgrp_name").val(), ptnlst: theArray },
+                cache: false,
+                type: "POST",
+                success: function () {
+                    alert("success");
+                    $("#txtgrp_name").val('');
+                }
+            });
+        }
+        else {
+            alert("Please Specify Group Name and pattern");
+            $("#txtgrp_name").val('');
+            $("#txtnewptn").val('');
+        }
+
+
     };
 
+    this.EditGrpfn = function (e) {
+
+        var cg_arr = [];
+        $.each(custom_grps, function (i) {
+            cg_arr.push(i);
+        });
+        var keycode = e.which;
+        $("#txtgrp_name").autocomplete({
+            source: cg_arr,
+
+            //autoFocus: true,
+            //minLength: 1,
+            class: 'ui-autocomplete2'
+        });
+        if (keycode == 13) {
+            $("#edit_grp_list").empty();
+            if (cg_arr.Contains($("#txtgrp_name").val())) {
+                var c = $("#txtgrp_name").val();
+                var cg_val = custom_grps[c];
+                //let htm = `<table class="table table-striped table table-bordered table-hover table-responsive" id="grp_lst" contenteditable="true">`;
+
+                let htm = `<ul id="edgrp_lst">`;
+                for (var i = 0; i < cg_val.length; i++) {
+                    // htm += `<tr id="${i}" ><td  class="ptn_row"><a>${cg_val[i]}</a><span class="close closeitem">&times</span></td></tr>`;
+                    this.row_id = i;
+                    htm += `<li class="editGrp list-group-item" contenteditable="true"><a>${cg_val[i]}</a>
+                        <span class="close btn remove_item">&times</span></li > `;
+                }
+                htm += `</table>`;
+
+
+                $("#edit_grp_list").append(htm);
+                $("#txtnewptn").removeAttr('disabled');
+                $("#btnsave_newptn").removeAttr('disabled');
+                $("#btngrp_save").removeAttr('disabled');
+
+
+            }
+            else {
+                alert("Group Not Found..");
+            }
+        }
+    };
+
+    this.CancelGrpEditfn = function () {
+        $("#txtgrp_name").val("");
+        $("#txtnewptn").val("");
+        $("#edgrp_lst").empty();
+    }.bind(this);
+
+    this.CancelGrpCreatefn = function () {
+        $("#txtnm").val("");
+        $(".txtadnlptn").val("");
+        $("#ptnsdiv").empty();
+    }.bind(this);
+
+    this.RemoveItemfn = function (ev) {
+        var li = ev.currentTarget.parentElement;
+        var ul = document.getElementById('edgrp_lst');
+        ul.removeChild(li);
+        ev.target.parentElement.style.display = 'none';
+    }.bind(this);
+
+    this.AddPatternfn = function () {
+
+        if (($("#txtnewptn").val() != "")) {
+            let html = `<li class="list-group-item" contenteditable="true"><a>${$("#txtnewptn").val()}</a>
+                        <span class="close closeitem">&times</span></li > `;
+
+            $("#edgrp_lst").append(html);
+            $("#txtnewptn").val("");
+        }
+    }.bind(this);
+
     this.Terminalfn = function (e) {
-        
+
         var tar = e.target;
         var keycode = e.which;
         auto_arr = auto_arr.sort();
-      
+
         $(tar).autocomplete({
             source: auto_arr,
             //classes: {
@@ -483,11 +527,10 @@ var RedisClientJS = function () {
             //},
             autoFocus: true,
             minLength: 2,
-           
+
         });
 
-        if (keycode === 13)
-        {
+        if (keycode === 13) {
             $.ajax({
                 url: "../RedisManager/Terminal",
                 data: { cmd: tar.value },
@@ -504,9 +547,9 @@ var RedisClientJS = function () {
                     }
                     else if (t === "object") {
                         var html2 = `< table >`;
-                       
+
                         $.each(val, function (i) {
-                           
+
                             html2 += `<tr id="${i}"  class="tblterinal"><td class="tdlistid"   style="width:5%" contenteditable="false"> &nbsp &nbsp &nbsp &nbsp &nbsp${val[i]}</td> 
                                    </tr>`;
                         });
@@ -517,11 +560,11 @@ var RedisClientJS = function () {
                     $("#divterminal").append(` >> <input type="text" class="active terminalcls txtboxwidth "  style=" background-color: #0f1315; color: #6ce890;" autofocus>
                     <div  class="tresponse"  style=" background-color: #0f1315; color: #2795ee;">
                    </div>`);
-                               
+                    $(".terminalcls").focus();
                 }.bind(this)
 
             });
-          
+
 
         }
     };
@@ -539,7 +582,7 @@ var RedisClientJS = function () {
             $(".btnl_add").show();
             $("#savediv").attr('contenteditable', false);
             $(".btnl_add").show();
-            
+
             $("#btnlistedit").off("click").on("click", this.savelistfn.bind(this));
         }
         if (window.tp === "set") {
@@ -581,7 +624,7 @@ var RedisClientJS = function () {
 
                 }
             });
-         
+
             $("#dispval").attr('contenteditable', false);
         }
         else {
@@ -592,7 +635,7 @@ var RedisClientJS = function () {
     this.savehashfn = function (ev) {
         var ob1 = {};
         $(`#table_${this.subnm}`).find(".hashlink").each(function (i, o) {
-           
+
             ob1[$(o).find(".tdhashfield").text().trim()] = $(o).find(".tdhashval").text().trim();
         });
 
@@ -610,7 +653,7 @@ var RedisClientJS = function () {
                 }
             });
 
-            $("#dispval").attr('contenteditable', false );
+            $("#dispval").attr('contenteditable', false);
         }
         else {
             alert("Value not Specified");
@@ -671,26 +714,42 @@ var RedisClientJS = function () {
 
     this.Regxfn = function () {
 
+        $('#dispvalue').split({
+            orientation: 'vertical',
+            position: '25%',
+            invisible: true
+        });
         if ($("#txtregex").val() != "") {
-            var ptn;
-            ptn = $("#txtregex").val();
-            var regptn = btoa(ptn);
-            $.ajax({
-                url: "../RedisManager/FindRegexMatch",
-                //data: { text :$("#t1").val() },
-                data: { textregex: regptn },
-                //$("#t1").val(),
-                cache: false,
-                type: "POST",
-                success: this.Showkeys.bind(this)
-            });
-            $('#smallbtn').hide();
-            $(`#outerdisp`).hide();
+            if ($("#txtregex").val() != "\\") {
+                var ptn;
+                ptn = $("#txtregex").val();
+                var regptn = btoa(ptn);
+                $.ajax({
+                    url: "../RedisManager/FindRegexMatch",
+                    //data: { text :$("#t1").val() },
+                    data: { textregex: regptn },
+                    //$("#t1").val(),
+                    cache: false,
+                    type: "POST",
+                    success: this.Showkeys.bind(this),
+                    Error: function (st) {
+                        alert(st);
+                    }
+                });
+                $('#smallbtn').hide();
+                $(`#outerdisp`).hide();
+            }
+
         }
         else { alert("Please Specify the regular expresion"); }
     };
 
     this.Keysearchfn = function () {
+        $('#dispvalue').split({
+            orientation: 'vertical',
+            position: '25%',
+            invisible: true
+        });
         var ptn;
         var objptn = $("#ptns").val();
         if (objptn == 1)
@@ -709,7 +768,7 @@ var RedisClientJS = function () {
         $('#smallbtn').hide();
         $(`#outerdisp`).hide();
     };
-    
+
     this.ListInsertLpushfn = function () {
         if (($("#txtlistkey").val() != "") && ($("#txtlistval").val() != "")) {
             $.ajax({
@@ -747,7 +806,7 @@ var RedisClientJS = function () {
         }
 
     };
-    
+
     this.listCancel = function () {
 
         $("#txtlistkey").val('');
@@ -782,9 +841,9 @@ var RedisClientJS = function () {
         $("#txthashfield").val('');
 
     };
-   
+
     this.SetInsertfn = function () {
-        if ($("#txtsetval").val() != "")  {
+        if ($("#txtsetval").val() != "") {
             $.ajax({
                 url: "../RedisManager/SetInsert",
                 data: { txtsetkey: $("#txtsetkey").val(), txtsetval: $("#txtsetval").val() },
@@ -798,7 +857,7 @@ var RedisClientJS = function () {
             });
         }
     };
-    
+
     this.SetCancel = function () {
         $("#txtsetkey").val('');
         $("#txtsetval").val('');
@@ -826,20 +885,23 @@ var RedisClientJS = function () {
         $("#txtsortedsetscr").val('');
         $("#txtsortedsetval").val('');
     };
-    
+
     this.Allkeysfn = function () {
-       
-        
-        //$('#dispvalue').split({
-        // orientation: 'vertical'
-        //});
+
+
+        $('#dispvalue').split({
+            orientation: 'vertical',
+            position: '25%',
+            invisible: true
+        });
+
 
 
         $("#dispval").hide();
         $("#savediv").hide();
         $("#smallbtn").hide();
         $(`#savediv`).hide();
-        var ptn ="*"+sln_name + "*";
+        var ptn = "*" + sln_name + "*";
         $.ajax({
             url: "../RedisManager/FindMatch",
             data: { text: ptn },
@@ -855,11 +917,40 @@ var RedisClientJS = function () {
         this.currentGrpLink = null;
         $('#subkeydiv').empty()
         let html = [];
-         list1 = list1.sort();
-        $.each(list1, function (i) {
-            html.push(`<li class="sub_link list-group-item  " ><a>${list1[i]}</a></li>`);
-          
+        list1 = list1.sort();
+        let arr2 = [];
+        for (let i = 0; i < list1.length; i++) {
+            let arr1 = [];
+            let refid = [];
+            let flg = 0;
+            $.each(dgrpnames, function (j, k) {
+
+                $.each(k, function (m) {
+                    if ((k[m].refid) === list1[i]) {
+                        flg = 1;
+                        var va = k[m].disp_Name + "                  " + k[m].version;
+                        arr1.push(va);
+                        refid.push(k[m].refid);
+                    }
+                });
+
+            });
+            if (flg === 1) {
+                html.push(`<li class="sub_link list-group-item  " refid="${refid[0]}" ><a>${arr1[0]}</a></li>`);
+
+            }
+            else {
+                arr2.push(list1[i]);
+            }
+
+
+        }
+
+        $.each(arr2, function (i) {
+
+            html.push(`<li class="sub_link list-group-item  " refid="${arr2[i]}" ><a>${arr2[i]} </a></li>`);
         });
+
         //html += `</table>`;
         //$("#subkeydiv").append(html);
         $(`#subkeydiv`).empty().append(html.join(""));
@@ -871,22 +962,27 @@ var RedisClientJS = function () {
         //$(`#dispval`).empty();
         $("#dispval").attr('contenteditable', false);
         if ((this.keynm != "")) {
-            $.ajax(
-                {
-                    url: "../RedisManager/FindVal",
-                    data: { "key_name": this.keynm },
-                    cache: false,
-                    type: "POST",
-                    success: function (ob) {
+            $("#dispval").empty().append(this.pjson.build(this.objsn.obj));
+            $(".prety_jsonWrpr").css("background-color", "#f2f2f2");
 
-                        $("#dispval").empty().append(this.pjson.build(ob));
-                    }.bind(this)
-                });
+            //$.ajax(
+            //    {
+            //        url: "../RedisManager/FindVal",
+            //        data: { "key_name": this.keynm },
+            //        cache: false,
+            //        type: "POST",
+            //        success: function (ob) {
+
+
+            //            $("#dispval").empty().append(this.pjson.build(ob));
+            //        }.bind(this)
+            //    });
         }
-    };
+    }.bind(this);
 
     this.LogViewfn = function () {
         $(".logrow").empty();
+        $("#logshowvalues").hide();
         $.ajax({
             url: "../RedisManager/SetActivityLog",
             data: {},
@@ -903,25 +999,57 @@ var RedisClientJS = function () {
         });
     };
 
-
-
     this.LogChangesfn = function (ev) {
+
+        $("#logshowvalues").show();
         var lgrow = ev.target.parentElement.getAttribute("logid");
         $.ajax({
             url: "../RedisManager/ViewLogChanges",
-            data: { logid: lgrow},
+            data: { logid: lgrow },
             cache: false,
             type: "POST",
             success: function (ob3) {
-                var html4 = ob3.new_val;
-                var html5 = ob3.prev_val;
-
-                $(".currentval").empty().append(html4);
-                $(".previousval").empty().append(html5);
+                this.logjsn = ob3;
+                $(".currentval").empty().append(ob3.redisLogValues.prev_val);
+                $(".previousval").empty().append(ob3.redisLogValues.new_val);
             }.bind(this)
         });
     };
 
+    this.Keydifferencefn = function () {
 
+        $('#dispvalue').split({
+            orientation: 'vertical',
+            position: '25%',
+            invisible: true
+        });
+        let diff = [];
+        let rfid = [];
+        //var p = new RegExp(this.ptnlst[j]);
+        for (let j = 0; j < _temp.length; j++) {
+            let flg = 0;
+            $.each(dgrpnames, function (i, k) {
+
+                $.each(k, function (m) {
+                    if ((k[m].refid) === _temp[j]) {
+                        flg = 1;
+                    }
+                });
+
+            });
+            if (flg === 0) {
+                diff.push(_temp[j]);
+
+            }
+        }
+
+
+        let h = [];
+        for (let i = 0; i < diff.length; i++) {
+            h.push(`<li class="sub_link list-group-item"refid=${diff[i]}><a>${diff[i]}</a></li>`);
+        }
+        $(`#subkeydiv`).empty().append(h.join(""));
+
+    };
     this.init();
 };

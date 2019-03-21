@@ -388,7 +388,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         this.AddTab(nav, tab);
         $('#vernav' + commonO.tabNum).append(`<div class='filter_modal_body'><div class="accordion" id="accordion${commonO.tabNum}"></div></div>`);
 
-        $.post('../../CE/GetColumnsCollection', {
+        $.post('../CE/GetColumnsCollection', {
             ds_refid: this.Refid,
             parameter: paramsArray
         }, this.Load_Table_Columns.bind(this));

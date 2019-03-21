@@ -32,14 +32,17 @@
         $('#profiler').off('click').on('click', this.onProfilerClick.bind(this));
         $('#del_obj').off('click').on('click', this.DeleteObject.bind(this));
         this.target = $("#versionNav li.active a").attr("href");//edits by amal
-        if (this.Current_obj.VersionNumber.slice(-1) !== 'w') {
-            $('#save').hide();
-            $('#commit_outer').hide();
-        }
-        else {
-            $('#save').show();
-            $('#commit_outer').show();
-        }
+
+        if (this.Current_obj !== null)
+            if (this.Current_obj.VersionNumber !== "")
+                if (this.Current_obj.VersionNumber.slice(-1) !== 'w') {
+                    $('#save').hide();
+                    $('#commit_outer').hide();
+                }
+                else {
+                    $('#save').show();
+                    $('#commit_outer').show();
+                }
     };
 
     this.checkKeyDown = function (event) {

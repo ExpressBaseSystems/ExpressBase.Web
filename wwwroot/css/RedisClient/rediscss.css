@@ -2,11 +2,13 @@
     font-family: Arial;
     font-size: 10pt;
 }
+
 .borderstyle {
     border: 2px solid #9092dc;
     border-radius: 5px;
-    border-width:1px;
+    border-width: 1px;
 }
+
 #hdbar a {
     color: black;
 }
@@ -14,88 +16,125 @@
 #subkeydiv a {
     color: black;
 }
+
 .pading0 {
     padding-left: 0;
     padding-right: 0;
 }
+
 .txtboxwidth {
-    width:98%;
+    width: 98%;
     display: inline;
     height: auto;
     margin: 0;
-    box-shadow: none;
+    /*box-shadow: none;*/
     border-radius: 0;
-    
     /*background-color: transparent;*/
     border: 0;
     cursor: auto;
     border-color: #080808;
 }
 
+    .txtboxwidth:focus {
+        outline: none !important;
+    }
+
 .margin0 {
     margin-top: 7px;
 }
+
 .marginleft {
     margin-left: 10px;
 }
+
 .column {
     float: left;
     width: 25%;
     padding: 10px;
 }
+
 .borders {
     /*display: inline-block;*/
-    border-style:solid;
-   border-width:1px;
-   border-color:black;
-
-   
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
 }
+
 .column2 {
     float: right;
     width: 75%;
     padding: 10px;
 }
+
 .noscrol {
     overflow-y: hidden;
     overflow-x: hidden;
 }
+
 .scrol {
     width: 25%;
     overflow: auto;
     outline: 0px;
     position: relative;
-    height: 555px;
+    height: 568px;
     /*overflow-y: scroll*/;
     overflow-x: hidden;
     word-wrap: break-word;
 }
+
 .scrol_2 {
     overflow: auto;
     outline: 0px;
     position: relative;
     height: 200px;
-
     overflow-x: hidden;
     word-wrap: break-word;
 }
+
+.scrol_3 {
+    overflow-y: auto;
+    outline: 0px;
+    position: relative;
+    height: 100px;
+    overflow-x: hidden;
+    word-wrap: break-word;
+}
+
 .resizes {
     resize: horizontal;
     min-width: 20%;
 }
+
 .scrol_1 {
     width: 100%;
-    overflow: auto;
+    overflow: scroll;
     outline: 0px;
     position: relative;
-    height: 490px;
- 
+    height: 470px;
     /*overflow-y: scroll;*/
     word-wrap: break-word
     /*overflow-x: hidden;*/
     /*width: 10%;*/
 }
 
+.scrol_0 {
+    width: 100%;
+    overflow: auto;
+    outline: 0px;
+    position: relative;
+    max-height: 480px;
+    word-wrap: break-word
+}
+
+.scrol_4 {
+    overflow: auto;
+    outline: 0px;
+    position: relative;
+    height: 300px;
+    /*overflow-y: scroll*/;
+    overflow-x: hidden;
+    word-wrap: break-word;
+}
 /* horizontal panel*/
 
 .panel-container {
@@ -132,22 +171,33 @@
 }
 
 
-.ui-autocomplete {
-    height: 25%;
+
+.ui-menu .ui-menu-item a {
+    background: red;
     width: 50%;
+    height: 10px;
+    font-size: 8px;
+}
+
+.ui-autocomplete {
+    height: 70%;
+    width: auto;
+    max-height: 200px;
     overflow-y: scroll;
     overflow-x: hidden;
-    background-color: #1f2b31;
-    color:aliceblue;
     position: absolute;
     top: 100%;
     left: 0;
-    z-index: 1000;
+    z-index: 2000;
     float: left;
     display: none;
+    min-width: 160px;
     padding: 4px 0;
     margin: 0 0 10px 25px;
     list-style: none;
+    background-color: #1f2b31;
+    background: #1f2b31;
+    color: aliceblue;
     border-color: #ccc;
     border-color: rgba(0, 0, 0, 0.2);
     border-style: solid;
@@ -218,6 +268,7 @@
         .Grid th a, .Grid th a:visited {
             color: #333;
         }
+
 .toolbox ul {
     margin: 0;
 }
@@ -229,117 +280,13 @@
 .toolbox i {
     margin-right: 5px;
 }
-/*treee*/
 
-.tree, .tree ul {
-    margin: 0;
-    padding: 0;
-    list-style: none
-}
-
-    .tree ul {
-        margin-left: 1em;
-        position: relative
-    }
-
-        .tree ul ul {
-            margin-left: .5em
-        }
-
-        .tree ul:before {
-            content: "";
-            display: block;
-            width: 0;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            border-left: 1px solid #353644;
-        }
-
-    .tree li {
-        margin: 0;
-        padding: 0 1em;
-        line-height: 2em;
-        color: #353638;
-        font-weight: 400;
-        position: relative;
-    }
-
-    .tree ul li:before {
-        content: "";
-        display: block;
-        width: 10px;
-        height: 0;
-        border-top: 1px solid;
-        margin-top: -1px;
-        position: absolute;
-        top: 1em;
-        left: 0
-    }
-
-    .tree ul li:last-child before {
-        background: #fff;
-        height: auto;
-        top: 1em;
-        bottom: 0
-    }
-
-.indicator {
-    margin-right: 5px;
-}
-
-.tree li a {
-    text-decoration: none;
-    color: #353644;
-    font-size: 13px;
-}
-
-.tree li button, .tree li button:active, .tree li button:focus {
-    text-decoration: none;
-    color: #369;
-    border: none;
-    background: transparent;
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 0px;
-    outline: 0;
-}
-/*tree end*/
-/*pretyjson*/
+/*prety_jsonWrpr overrider*/
 .prety_jsonWrpr {
     width: 100%;
     height: 100%;
-}
-
-    .prety_jsonWrpr .objkey {
-        color: #204a87;
-    }
-
-    .prety_jsonWrpr .objval {
-        color: #4e9a06;
-    }
-
-    .prety_jsonWrpr .a_ob_o, .a_ob_c {
-        color: #729fcf;
-    }
-
-    .prety_jsonWrpr ul, .prety_jsonWrpr ol {
-        list-style: none;
-        padding-left: 15px;
-    }
-
-.array {
-    color: #bf2d2d;
-}
-
-.property {
-    color: #204a87 !important;
-}
-
-.show {
-    display: block;
-}
-
-.hide {
-    display: none;
+    font-family: open sans;
+    font-weight: 600;
+    background: #f2f2f2;
+    padding: 5px 10px;
 }

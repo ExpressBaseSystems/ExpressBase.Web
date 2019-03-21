@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-(function($, undefined) {
+(function ($, undefined) {
     var count = 0;
     var splitter_id = null;
     var splitters = [];
     var current_splitter = null;
-    $.fn.split = function(options) {
+    $.fn.split = function (options) {
         var data = this.data('splitter');
         if (data) {
             return data;
@@ -56,9 +56,9 @@
         var height = this.height();
         var id = count++;
         this.addClass('splitter_panel');
-        var splitter = $('<div/>').addClass(cls).bind('mouseenter touchstart', function() {
+        var splitter = $('<div/>').addClass(cls).bind('mouseenter touchstart', function () {
             splitter_id = id;
-        }).bind('mouseleave touchend', function() {
+        }).bind('mouseleave touchend', function () {
             splitter_id = null;
         }).insertAfter(panel_1);
         var position;
@@ -87,7 +87,7 @@
         }
 
         function set_limit(limit) {
-            if(!isNaN(parseFloat(limit)) && isFinite(limit)){
+            if (!isNaN(parseFloat(limit)) && isFinite(limit)) {
                 return {
                     leftUpper: limit,
                     rightBottom: limit
@@ -97,7 +97,7 @@
         }
 
         var self = $.extend(this, {
-            refresh: function() {
+            refresh: function () {
                 var new_width = this.width();
                 var new_height = this.height();
                 if (width != new_width || height != new_height) {
@@ -106,7 +106,7 @@
                     self.position(position);
                 }
             },
-            option: function(name, value) {
+            option: function (name, value) {
                 if (name === 'position') {
                     return self.position(value);
                 } else if (typeof value === 'undefined') {
@@ -116,15 +116,15 @@
                 }
                 return self;
             },
-            position: (function() {
+            position: (function () {
                 if (settings.orientation == 'vertical') {
-                    return function(n, silent) {
+                    return function (n, silent) {
                         if (n === undefined) {
                             return position;
                         } else {
                             position = get_position(n);
                             var sw = splitter.width();
-                            var sw2 = sw/2, pw;
+                            var sw2 = sw / 2, pw;
                             var width = self.width();
                             if (settings.invisible) {
                                 pw = panel_1.width(position).outerWidth();
@@ -134,7 +134,7 @@
                                 if (settings.percent) {
                                     var w1 = (position - sw2) / width * 100;
                                     pw = panel_1.css('width', w1 + '%').outerWidth();
-                                    panel_2.css('width', (width-pw-sw) / width * 100 + '%');
+                                    panel_2.css('width', (width - pw - sw) / width * 100 + '%');
                                     splitter.css('left', (pw / width * 100) + '%');
                                 } else {
                                     pw = panel_1.css('width', position - sw2).outerWidth();
@@ -152,7 +152,7 @@
                         return self;
                     };
                 } else if (settings.orientation == 'horizontal') {
-                    return function(n, silent) {
+                    return function (n, silent) {
                         if (n === undefined) {
                             return position;
                         } else {
@@ -187,10 +187,10 @@
             })(),
             orientation: settings.orientation,
             limit: set_limit(settings.limit),
-            isActive: function() {
+            isActive: function () {
                 return splitter_id === id;
             },
-            destroy: function() {
+            destroy: function () {
                 self.removeClass('splitter_panel');
                 splitter.unbind('mouseenter');
                 splitter.unbind('mouseleave');
@@ -214,7 +214,7 @@
                 splitter.remove();
                 self.removeData('splitter');
                 var not_null = false;
-                for (var i=splitters.length; i--;) {
+                for (var i = splitters.length; i--;) {
                     if (splitters[i] !== null) {
                         not_null = true;
                         break;
@@ -229,14 +229,14 @@
                 }
             }
         });
-        self.bind('splitter.resize', function(e) {
+        self.bind('splitter.resize', function (e) {
             var pos = self.position();
             if (self.orientation == 'vertical' &&
                 pos > self.width()) {
-                pos = self.width() - self.limit.rightBottom-1;
+                pos = self.width() - self.limit.rightBottom - 1;
             } else if (self.orientation == 'horizontal' &&
-                       pos > self.height()) {
-                pos = self.height() - self.limit.rightBottom-1;
+                pos > self.height()) {
+                pos = self.height() - self.limit.rightBottom - 1;
             }
             if (pos < self.limit.leftUpper) {
                 pos = self.limit.leftUpper + 1;
@@ -247,15 +247,15 @@
         //inital position of splitter
         var pos;
         if (settings.orientation == 'vertical') {
-            if (pos > width-settings.limit.rightBottom) {
-                pos = width-settings.limit.rightBottom;
+            if (pos > width - settings.limit.rightBottom) {
+                pos = width - settings.limit.rightBottom;
             } else {
                 pos = get_position(settings.position);
             }
         } else if (settings.orientation == 'horizontal') {
             //position = height/2;
-            if (pos > height-settings.limit.rightBottom) {
-                pos = height-settings.limit.rightBottom;
+            if (pos > height - settings.limit.rightBottom) {
+                pos = height - settings.limit.rightBottom;
             } else {
                 pos = get_position(settings.position);
             }
@@ -270,41 +270,41 @@
         }
         // bind events to document if no splitters
         if (splitters.filter(Boolean).length === 0) {
-            $(window).bind('resize.splitter', function() {
-                $.each(splitters, function(i, splitter) {
+            $(window).bind('resize.splitter', function () {
+                $.each(splitters, function (i, splitter) {
                     if (splitter) {
                         splitter.refresh();
                     }
                 });
             });
-            $(document.documentElement).on('mousedown.splitter touchstart.splitter', function(e) {
+            $(document.documentElement).on('mousedown.splitter touchstart.splitter', function (e) {
                 if (splitter_id !== null) {
                     e.preventDefault();
                     current_splitter = splitters[splitter_id];
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $('<div class="splitterMask"></div>').
                             css('cursor', current_splitter.children().eq(1).css('cursor')).
                             insertAfter(current_splitter);
                     });
                     current_splitter.settings.onDragStart(e);
                 }
-            }).bind('mouseup.splitter touchend.splitter touchleave.splitter touchcancel.splitter', function(e) {
+            }).bind('mouseup.splitter touchend.splitter touchleave.splitter touchcancel.splitter', function (e) {
                 if (current_splitter) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $('.splitterMask').remove();
                     });
                     current_splitter.settings.onDragEnd(e);
                     current_splitter = null;
                 }
-            }).bind('mousemove.splitter touchmove.splitter', function(e) {
+            }).bind('mousemove.splitter touchmove.splitter', function (e) {
                 if (current_splitter !== null) {
                     var leftUpperLimit = current_splitter.limit.leftUpper;
                     var rightBottomLimit = current_splitter.limit.rightBottom;
                     var offset = current_splitter.offset();
                     if (current_splitter.orientation == 'vertical') {
                         var pageX = e.pageX;
-                        if(e.originalEvent && e.originalEvent.changedTouches){
-                          pageX = e.originalEvent.changedTouches[0].pageX;
+                        if (e.originalEvent && e.originalEvent.changedTouches) {
+                            pageX = e.originalEvent.changedTouches[0].pageX;
                         }
                         var x = pageX - offset.left;
                         if (x <= current_splitter.limit.leftUpper) {
@@ -313,7 +313,7 @@
                             x = current_splitter.width() - rightBottomLimit - 1;
                         }
                         if (x > current_splitter.limit.leftUpper &&
-                            x < current_splitter.width()-rightBottomLimit) {
+                            x < current_splitter.width() - rightBottomLimit) {
                             current_splitter.position(x, true);
                             current_splitter.trigger('splitter.resize');
                             current_splitter.find('.splitter_panel').
@@ -322,17 +322,17 @@
                         }
                     } else if (current_splitter.orientation == 'horizontal') {
                         var pageY = e.pageY;
-                        if(e.originalEvent && e.originalEvent.changedTouches){
-                          pageY = e.originalEvent.changedTouches[0].pageY;
+                        if (e.originalEvent && e.originalEvent.changedTouches) {
+                            pageY = e.originalEvent.changedTouches[0].pageY;
                         }
-                        var y = pageY-offset.top;
+                        var y = pageY - offset.top;
                         if (y <= current_splitter.limit.leftUpper) {
                             y = current_splitter.limit.leftUpper + 1;
                         } else if (y >= current_splitter.height() - rightBottomLimit) {
                             y = current_splitter.height() - rightBottomLimit - 1;
                         }
                         if (y > current_splitter.limit.leftUpper &&
-                            y < current_splitter.height()-rightBottomLimit) {
+                            y < current_splitter.height() - rightBottomLimit) {
                             current_splitter.position(y, true);
                             current_splitter.trigger('splitter.resize');
                             current_splitter.find('.splitter_panel').

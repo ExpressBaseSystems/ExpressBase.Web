@@ -15,6 +15,12 @@ using ExpressBase.Web.BaseControllers;
 using ServiceStack;
 using ExpressBase.Web.Filters;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Objects;
+using ExpressBase.Common.Data;
+using ExpressBase.Security;
+using ExpressBase.Objects.EmailRelated;
+using ExpressBase.Objects.Objects.SmsRelated;
+using ExpressBase.Common.LocationNSolution;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace EbControllers
@@ -37,7 +43,6 @@ namespace EbControllers
             }
             ViewBag.cmdbag = cmdlst;
             List<EbGroup> lst = new List<EbGroup>();
-            List<EbGroup> lst1 = new List<EbGroup>();
             List<String> lst2 = new List<String>();
             foreach (var m in Redis.GetKeysByPattern("Grp_ob_*"))
             {
@@ -45,15 +50,29 @@ namespace EbControllers
                 EbGroup obj = JsonConvert.DeserializeObject<EbGroup>(a);
                 lst.Add(obj);
             }
-            ViewBag.grpoblst = lst.OrderBy(x => x.Name).ToList();
-            //foreach (var m in Redis.GetKeysByPattern("Grp_*"))
-            //{
-            //    var a = Redis.Get<string>(m);
-            //    EbGroup obj = JsonConvert.DeserializeObject<EbGroup>(a);
-            //    lst1.Add(obj);
-            //}
-            //ViewBag.grplst = lst.OrderBy(x => x.Name).ToList();
-         
+            ViewBag.defltgrplst = lst.OrderBy(x => x.Name).ToList();
+
+            Dictionary<string, List<string>> ptndict = new Dictionary<string, List<string>>();
+            foreach (var m in Redis.GetKeysByPattern("Group_" + ViewBag.cid + "*"))
+            {
+                //    var a = Redis.Get<string>(m);
+                List<string> l = Redis.GetAllItemsFromList(m);
+                List<string> ptns = new List<string>();
+
+                var name = "";
+
+                for (int i = 0; i < l.Count; i++)
+                {
+                    EbGroup ob = JsonConvert.DeserializeObject<EbGroup>(l[i]);
+                    ptns.Add(ob.Pattern);
+                    name = ob.Name;
+                }
+
+                ptndict.Add(name, ptns);
+
+            }
+            ViewBag.csgrplst = ptndict;
+
             var text = "*" + ViewBag.cid + "*";
 
             foreach (var n in Redis.GetKeysByPattern(text))
@@ -62,9 +81,12 @@ namespace EbControllers
                 lst2.Add(n);
             }
 
-
             ViewBag.allkeylist = JsonConvert.SerializeObject(lst2);
+
+
+            ViewBag.grpdetails = ServiceClient.Get<RedisGroupDetailsResponse>(new RedisGetGroupDetails { }).GroupsDict;
             return View();
+
         }
         Dictionary<object, object> dict = new Dictionary<object, object>();
         List<string> list1 = new List<string>();
@@ -75,13 +97,13 @@ namespace EbControllers
         {
             EbGroup grp;
             string output;
-            grp = new EbGroup("Web Forms", @"(\w+\-\w+\-)(\-\w+\-\w+\-\w+\-\w)");
+            grp = new EbGroup("Web Forms", @"(\w+\-\w+\-)0(\-\w+\-\w+\-\w+\-\w)");
             output = JsonConvert.SerializeObject(grp);
             Redis.Set("Grp_ob_Webform", output);
 
-            grp = new EbGroup("Display Block", @"(\w+\-\w+\-)1(\-\w+\-\w+\-\w+\-\w)");
-            output = JsonConvert.SerializeObject(grp);
-            Redis.Set("Grp_ob_DisplayBlock", output);
+            //grp = new EbGroup("Display Block", @"(\w+\-\w+\-)1(\-\w+\-\w+\-\w+\-\w)");
+            //output = JsonConvert.SerializeObject(grp);
+            //Redis.Set("Grp_ob_DisplayBlock", output);
 
             grp = new EbGroup("Data Readers", @"(\w+\-\w+\-)2(\-\w+\-\w+\-\w+\-\w)");
             output = JsonConvert.SerializeObject(grp);
@@ -140,23 +162,41 @@ namespace EbControllers
 
         public List<string> FindMatch(string text)
         {
-            foreach (var m in Redis.GetKeysByPattern(text))
+            IEnumerable<string> ptn = Redis.GetKeysByPattern("*" + ViewBag.cid + "*");
+            foreach (var m in ptn)
 
             {
-                list1.Add(m);
+                if (m.Matches(text))
+                    list1.Add(m);
             }
             return list1;
         }
+        //public List<string> FindMatch(string text)
+        //{
+        //    foreach (var m in Redis.GetKeysByPattern(text))
 
-
+        //    {
+        //        list1.Add(m);
+        //    }
+        //    return list1;
+        //}
         public bool Keydeletes(string textdel)
         {
+            string prev_value;
             if (Redis.ContainsKey(textdel))
             {
-                string prev_value = Redis.GetValue(textdel);
-
+                if (Redis.Type(textdel) == "list")
+                    prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromList(textdel));
+                else if (Redis.Type(textdel) == "hash")
+                    prev_value = JsonConvert.SerializeObject(Redis.GetAllEntriesFromHash(textdel));
+                else if (Redis.Type(textdel) == "set")
+                    prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSet(textdel));
+                else if (Redis.Type(textdel) == "zset")
+                    prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSortedSet(textdel));
+                else
+                { prev_value = Redis.GetValue(textdel); }
                 Redis.Remove(textdel);
-                string new_value = null;
+                string new_value = "";
                 RedisOperations opn = RedisOperations.Delete;
                 ActivityLog(prev_value, new_value, opn, textdel);
                 return true;
@@ -166,9 +206,12 @@ namespace EbControllers
                 return false;
             }
         }
+
+
+
         public void ActivityLog(string prev, string newval, RedisOperations opn, string keyval)
         {
-            string changed_by = ViewBag.Uid;
+
             int sln_id = 5;
             var x = ServiceClient.Post<LogRedisInsertResponse>(new LogRedisInsertRequest
             {
@@ -177,26 +220,28 @@ namespace EbControllers
                 PreviousValue = prev,
                 Operation = opn,
                 SolutionId = sln_id
-                
+
             });
             // object changed_at;
 
         }
-        //public List<EbRedisLogs> SetActivityLog()
-        //{
-        //    int soln_id = 5;
-        //    var x = ServiceClient.Get<LogRedisGetResponse>(new LogRedisGetRequest
-        //    { SolutionId = soln_id }
-        //        );
-        //    return x.Logs;
-        //}
+        public List<EbRedisLogs> SetActivityLog()
+        {
+            int soln_id = 5;
+            var x = ServiceClient.Get<LogRedisGetResponse>(new LogRedisGetRequest
+            { SolutionId = soln_id }
+                );
+            return x.Logs;
+        }
         public object ViewLogChanges(int logid)
         {
             var x = ServiceClient.Get<LogRedisViewChangesResponse>(new LogRedisViewChangesRequest
             {
                 LogId = logid
+
             });
-            return x.RedisLogValues;
+            return x;
+
         }
 
         public bool Keyvalueinput(string textkey, string textvalue)
@@ -223,34 +268,50 @@ namespace EbControllers
 
         public List<string> FindRegexMatch(string textregex)
         {
-            var base64EncodedBytes = Convert.FromBase64String(textregex);
-            var regx = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-            Regex rgx = new Regex(regx);
-            foreach (var m in Redis.GetAllKeys())
+            try
             {
-                if (rgx.IsMatch(m))
-                    list1.Add(m);
+                var base64EncodedBytes = Convert.FromBase64String(textregex);
+                var regx = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                Regex rgx = new Regex(regx);
+                foreach (var m in Redis.GetKeysByPattern("*" + ViewBag.cid + "*"))
+                {
+                    if (rgx.IsMatch(m))
+                        list1.Add(m);
+                }
+                return list1;
             }
-            return list1;
+            catch (Exception e)
+            {
+                list1.Add(e.Message);
+                return list1;
+            }
+
+
+
         }
 
 
 
-
-        public void GroupPattern(string textgroup, string textpattern)
+        public void GroupPattern(string textgroup, List<string> ptnlst)
         {
-            var base64EncodedBytes = Convert.FromBase64String(textpattern);
-            var regx = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            var t1 = ViewBag.cid;
+            if (Redis.Exists("Group_" + t1 + "_" + textgroup) > 0)
+            {
+                Redis.Remove(Encoding.UTF8.GetBytes("Group_" + t1 + "_" + textgroup));
 
-            EbGroup grp = new EbGroup(textgroup, regx);
 
-            string output = JsonConvert.SerializeObject(grp);
-            Redis.Set("Grp_" + textgroup, output);
-
-            EbGroup dobj = JsonConvert.DeserializeObject<EbGroup>(output);
-            string s1 = dobj.Pattern;
-            string s2 = dobj.Name;
-
+                foreach (var i in ptnlst)
+                {
+                    var base64EncodedBytes = Convert.FromBase64String(i);
+                    var regx = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                    EbGroup grp = new EbGroup(textgroup, regx);
+                    string output = JsonConvert.SerializeObject(grp);
+                    Redis.RPush("Group_" + t1 + "_" + textgroup, Encoding.UTF8.GetBytes(output));
+                    EbGroup dobj = JsonConvert.DeserializeObject<EbGroup>(output);
+                    string s1 = dobj.Pattern;
+                    string s2 = dobj.Name;
+                }
+            }
         }
 
 
@@ -259,12 +320,108 @@ namespace EbControllers
         {
 
             object val = null;
-            var type = Redis.Type(key_name);
+            long idltm = Redis.ObjectIdleTime(key_name);
 
+            var type = Redis.Type(key_name);
+            var rx = new Regex("(?:(?:.*):(?:.*):)(uc+$|dc+$)");
+            string dgp = "Group_" + ViewBag.cid + "*";
             if (type == "string")
-                val = Redis.Get<string>(key_name);
+            {
+                try
+                {
+                    if (key_name.Matches("EbSolutionConnections*"))
+                    {
+                        val = Redis.Get<EbConnectionsConfig>(key_name);
+                    }
+                    else if (rx.IsMatch(key_name))
+                    {
+                        val = Redis.Get<User>(key_name);
+                    }
+                    else if (key_name.Matches(dgp))
+                    {
+                        val = Redis.Get<EbGroup>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)2(\-\d+\-\d+\-\d+\-\d+_columns$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<ColumnColletion>(key_name);
+                    }
+                    else if ((new Regex(@"(^solution_\w+)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<Eb_Solution>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)0(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbWebForm>(key_name);
+                    }
+                    //else if ((new Regex(@"(\w+\-\w+\-)1(\-\w+\-\w+\-\w+\-\w)")).IsMatch(key_name))
+                    //{
+                    //    val = Redis.Get<EbObject>(key_name);
+                    //}
+                    else if ((new Regex(@"(\w+\-\w+\-)2(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbDataReader>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)3(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbReport>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)4(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbDataWriter>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)5(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbSqlFunction>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)12(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbFilterDialog>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)14(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbUserControl>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)15(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbEmailTemplate>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)16(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbTableVisualization>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)17(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbChartVisualization>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)18(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbBotForm>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)19(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbSmsTemplate>(key_name);
+                    }
+                    else if ((new Regex(@"(\w+\-\w+\-)20(\-\d+\-\d+\-\d+\-\d+$)")).IsMatch(key_name))
+                    {
+                        val = Redis.Get<EbApi>(key_name);
+                    }
+                    //else
+                    //{
+                    //    val = Redis.Get<string>(key_name);
+                    //}
+
+                }
+                catch (Exception e)
+                {
+                    val = Redis.Get<string>(key_name);
+                }
+
+            }
+
             else if (type == "list")
+
                 val = Redis.GetAllItemsFromList(key_name);
+
             else if (type == "hash")
             {
                 val = Redis.GetAllEntriesFromHash(key_name);
@@ -278,10 +435,14 @@ namespace EbControllers
                 // val = Redis.GetAllItemsFromSortedSet(key_name);
                 val = Redis.GetAllWithScoresFromSortedSet(key_name);
             }
-            return new FindValClass { Key = key_name, Obj = val, Type = type };
+            return new FindValClass { Key = key_name, Obj = val, Type = type, Idltm = idltm };
 
         }
 
+        private object Regex(string v)
+        {
+            throw new NotImplementedException();
+        }
 
         public void ListInsert(string txtlistkey, string txtlistval, int flag)
         {
@@ -425,8 +586,9 @@ namespace EbControllers
                 else
                     return rd.Text;
             }
-
             catch (Exception e) { return e.Message; }
         }
+
+     
     }
 }

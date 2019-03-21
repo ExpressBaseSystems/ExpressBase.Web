@@ -1,5 +1,6 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
+    this.ctrl.formObject = options.formObject;
     this.initControls = new InitControls(this);
     this.isEditMode = options.isEditMode;
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
@@ -101,7 +102,7 @@
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let anyColEditable = false;
-        let tr = `<tr class='dgtr' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>`;
+        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
@@ -239,7 +240,8 @@
     this.editRow_click = function (e) {
         $td = $(e.target).closest("td");
         $td.find(".del-row").hide();
-        $td.find(".edit-row").hide();
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
+        $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`).hide().attr("is-editing", "false");
         $td.find(".check-row").show();
         let $tr = $td.closest("tr");
         $tr.attr("is-editing", "true");
@@ -274,6 +276,10 @@
         $td.find(".check-row").hide();
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
+
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
+        $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`).show().attr("is-editing", "true");
+
         this.ctrlToSpan_row(rowid);
         if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
             this.addRow();
@@ -316,6 +322,12 @@
             if (!this.isEditMode)
                 this.addRow();
         }
+        this.ctrl.currentRow = [];
+        $.each(this.ctrl.Controls.$values, function (i, col) {
+            col.__DG = this.ctrl;
+            this.ctrl.currentRow[col.Name] = col;
+        }.bind(this));
+
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);
         this.$table.on("click", ".edit-row", this.editRow_click);

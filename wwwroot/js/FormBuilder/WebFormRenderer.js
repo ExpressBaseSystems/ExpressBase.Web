@@ -69,16 +69,15 @@ const WebFormRender = function (option) {
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};
 
-        // temp
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
-        $.each(this.DGs, function (k, DG) {
-            this.initControls.init(DG, { isEditMode: this.isEditMode });
-        }.bind(this));
-
-
         let flatControlsWithDG = this.flatControls.concat(this.DGs);
         $.each(flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
+        }.bind(this));
+
+        // temp
+        $.each(this.DGs, function (k, DG) {
+            this.initControls.init(DG, { isEditMode: this.isEditMode, formObject: this.formObject });
         }.bind(this));
 
         $.each(this.flatControls, function (k, Obj) {
@@ -99,9 +98,11 @@ const WebFormRender = function (option) {
 
         }.bind(this));
 
-        $.each(this.DGs, function (k, Obj) {
-            if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
-                this.bindOnChange(Obj);
+      
+        $.each(this.DGs, function (k, DG) {
+            let _DG = new ControlOps[DG.ObjType](DG);
+            //  if (DG.OnChangeFn && DG.OnChangeFn.Code && DG.OnChangeFn.Code.trim() !== "")
+                this.bindOnChange(_DG);
         }.bind(this));
     };
 

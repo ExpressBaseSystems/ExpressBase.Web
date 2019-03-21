@@ -5,7 +5,7 @@
         $.LoadingOverlay('show');
         $.ajax({
             type: "POST",
-            url: "../DS/GetColumns",
+            url: "../DS/GetColumns4Control",
             data: { DataSourceRefId: this.PGobj.PropsObj.DataSourceId },
             success: function (Columns) {
                 this.clearDependantProps("Columns");

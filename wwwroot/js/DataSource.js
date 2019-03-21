@@ -147,7 +147,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                                             <i class='fa fa-play' aria-hidden='true'></i>
                                         </button>
                                     <button class='btn' id='explaine_btn' data-toggle='tooltip' data-placement='bottom' title= 'Explain'>
-                                            <i class='fa fa-bolt' aria-hidden='true'></i>
+                                            <i class='fa fa-sitemap ' aria-hidden='true'></i>
                                         </button>`);
 
         $("#run").off("click").on("click", this.RunClick.bind(this));

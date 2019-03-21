@@ -57,5 +57,18 @@ namespace ExpressBase.Web.Controllers
                 dvColumnCollection.Add(GetColumns(_columns));
             return dvColumnCollection;
         }
+
+        public string GetColumns4Control(string DataSourceRefId)
+        {
+            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", DataSourceRefId));
+            if (columnresp == null || columnresp.Columns.Count == 0)
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = DataSourceRefId, SolnId = ViewBag.cid });
+
+            var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+
+            var Columns = GetColumns(__columns);
+           
+            return EbSerializers.Json_Serialize( Columns);
+        }
     }
 }

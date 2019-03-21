@@ -122,10 +122,10 @@
             $(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
-            if (this.flagRun) {
+
+            if (this.flagRun) 
                 this.ObjCollection[target].SaveSuccess();
-            }
-            else
+
                 this.ShowMessage();
             this.saveOrCommitSuccess(data);//edit by amal
         }
@@ -146,7 +146,8 @@
         menu.init();//reload menu by amal on 27/04/2018
 
         commonObj.init();
-        this.ObjCollection[this.target].GenerateButtons();
+        if (this.target !== "#preview_tab")
+            this.ObjCollection[this.target].GenerateButtons();
         $('#tags').tagsinput('add', this.tags);
         if (this.Current_obj.VersionNumber.slice(-1) !== 'w') {
             $('#save').hide();

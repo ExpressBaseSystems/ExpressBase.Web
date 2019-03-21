@@ -69,7 +69,15 @@ const WebFormRender = function (option) {
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};
 
-        $.each(this.flatControls, function(i, ctrl) {
+        // temp
+        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
+        $.each(this.DGs, function (k, DG) {
+            this.initControls.init(DG, { isEditMode: this.isEditMode });
+        }.bind(this));
+
+
+        let flatControlsWithDG = this.flatControls.concat(this.DGs);
+        $.each(flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
 
@@ -90,15 +98,15 @@ const WebFormRender = function (option) {
                 this.bindValidators(Obj);
 
         }.bind(this));
-        // temp
-        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
-        $.each(this.DGs, function (k, DG) {
-            this.initControls.init(DG, { isEditMode: this.isEditMode });
+
+        $.each(this.DGs, function (k, Obj) {
+            if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
+                this.bindOnChange(Obj);
         }.bind(this));
     };
 
     this.bindOnChange = function (control) {
-        control.bindOnChange(new Function("form", "user", `inpObj`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, "user"));
+        control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, "user"));
     };
 
     this.bindValidators = function (control) {

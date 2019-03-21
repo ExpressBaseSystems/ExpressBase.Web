@@ -122,10 +122,10 @@
             $(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
-            if (this.flagRun) {
+
+            if (this.flagRun) 
                 this.ObjCollection[target].SaveSuccess();
-            }
-            else
+
                 this.ShowMessage();
             this.saveOrCommitSuccess(data);//edit by amal
         }

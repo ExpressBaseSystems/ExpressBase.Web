@@ -10,6 +10,8 @@
     this.builderType = options.builderType;
     this.$propGrid = $("#" + options.PGId);
 
+    this.GenerateButtons = function () { };
+
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
 
     this.$form = $("#" + this.formId);

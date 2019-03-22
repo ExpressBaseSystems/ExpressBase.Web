@@ -166,6 +166,7 @@
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _rowId = @Html.Raw(ViewBag.rowId);
     let _formData =  @Html.Raw(ViewBag.formData);
+    let _userObject =  @Html.Raw(ViewBag.userObject);
     let _mode = "@Html.Raw(ViewBag.Mode)";
     let _cid = "@ViewBag.Cid";
     let _env = "@ViewBag.Env";
@@ -208,6 +209,7 @@
         mode: _mode,
         rowId: _rowId,
         formData: _formData,
+        userObject: _userObject,
         cid: _cid,
         env: _env
     });

@@ -113,7 +113,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     //duplicated for sql function need to change.
     this.DrawDataTable = function (_table) {
         commonO.tabNum++;
-        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum + " href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tab = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddTab(nav, tab);
         $('#vernav' + commonO.tabNum).append(" <div class=' filter_modal_body'>" +
@@ -383,7 +383,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             paramsArray = this.CreateObjString();
 
         commonO.tabNum++;
-        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum + " href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tab = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddTab(nav, tab);
         $('#vernav' + commonO.tabNum).append(`<div class='filter_modal_body'><div class="accordion" id="accordion${commonO.tabNum}"></div></div>`);
@@ -429,7 +429,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 o.showFilterRow = (i === 0) ? true : false;
                 o.showSerialColumn = true;
                 o.showCheckboxColumn = false;
-                o.getFilterValuesFn = this.CreateObjString;
+                o.getFilterValuesFn = (this.isPw) ? this.getInputData.bind(this) : this.CreateObjString;
                 o.source = "datareader";
                 o.IsPaging = (i === 0) ? true : false;
                 o.scrollHeight = "250";
@@ -464,6 +464,10 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
         }
         $("#eb_common_loader").EbLoader("hide");
+    };
+
+    this.getInputData = function () {
+        return this.EbObject.InputParams.$values;
     };
 
     this.Load_tble_Data = function (dq) {
@@ -561,7 +565,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
     this.Explain = function () {
         commonO.tabNum++;
-        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum +" href='#vernav" + commonO.tabNum + "'>Explain-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum + " href='#vernav" + commonO.tabNum + "'>Explain-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tab = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddTab(nav, tab);
         $('#vernav' + commonO.tabNum).append(`<section class="container-fluid">

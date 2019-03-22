@@ -28,115 +28,116 @@ namespace ExpressBase.Web.Controllers
             //ViewBag.editModeObj = _params ?? "false";
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
-            ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_"," ");
+            ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             if (_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(_params)));
                 Param _temp = ob.FirstOrDefault(e => e.Name.Equals("id"));
                 if (_temp != null)
-                {                    
+                {
                     //ViewBag.formData = EbSerializers.Json_Serialize(getRowdata(refId, _temp.ValueTo));
                     WebformData wfd = getRowdata(refId, _temp.ValueTo);
-                    
+
                     if (wfd.MultipleTables.Count == 0)
                     {
                         //ViewBag.rowId = -1;
-                        ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_"," ");
-                    }                       
+                        ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
+                    }
                     else if (_temp.ValueTo > 0)
                     {
                         ViewBag.rowId = _temp.ValueTo;
                         ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
                         ViewBag.formData = JsonConvert.SerializeObject(wfd);
                     }
-                        
+
                 }
             }
             ViewBag.formRefId = refId;
-            return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale} );
+            ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
+            return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
 
-		public string AuditTrail(string refid, int rowid)
-		{
+        public string AuditTrail(string refid, int rowid)
+        {
             //sourc == dest == type == dst id == dst verid== src id == src verid
             //ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-0-2257-2976-2257-2976
             try
             {
-				string[] refidparts = refid.Split("-");
-				if (refidparts[1].Equals(ViewBag.cid))
-				{
-					if(this.LoggedInUser.EbObjectIds.Contains(refidparts[3].PadLeft(5, '0')) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
-					{
-						GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
-						//----------------------This code should be changed
+                string[] refidparts = refid.Split("-");
+                if (refidparts[1].Equals(ViewBag.cid))
+                {
+                    if (this.LoggedInUser.EbObjectIds.Contains(refidparts[3].PadLeft(5, '0')) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+                    {
+                        GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
+                        //----------------------This code should be changed
 
-						EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-						EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
-						if (WebForm != null)
-						{
-							string[] Keys = EbControlContainer.GetKeys(WebForm);
-							Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = this.LoggedInUser.Preference.Locale }).Dict;							
-							EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
+                        EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+                        EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
+                        if (WebForm != null)
+                        {
+                            string[] Keys = EbControlContainer.GetKeys(WebForm);
+                            Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = this.LoggedInUser.Preference.Locale }).Dict;
+                            EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
 
-							Dictionary<string, string> MLPair = GetMLPair(WebForm_L);
+                            Dictionary<string, string> MLPair = GetMLPair(WebForm_L);
 
-							foreach (KeyValuePair<int, FormTransaction> item in Resp.Logs)
-							{
-								foreach (FormTransactionLine initem in item.Value.Details)
-								{
-									if (MLPair.ContainsKey(initem.FieldName))
-										initem.FieldName = MLPair[initem.FieldName];
-								}
-							}
-						}
+                            foreach (KeyValuePair<int, FormTransaction> item in Resp.Logs)
+                            {
+                                foreach (FormTransactionLine initem in item.Value.Details)
+                                {
+                                    if (MLPair.ContainsKey(initem.FieldName))
+                                        initem.FieldName = MLPair[initem.FieldName];
+                                }
+                            }
+                        }
 
-						//--------------------------------
-						return JsonConvert.SerializeObject(Resp.Logs);
-					}
-				}
-				return string.Empty;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
-				return string.Empty;
-			}
-		}
+                        //--------------------------------
+                        return JsonConvert.SerializeObject(Resp.Logs);
+                    }
+                }
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
+                return string.Empty;
+            }
+        }
 
-		private Dictionary<string, string> GetMLPair(EbWebForm WebForm_L)
-		{
-			Dictionary<string, string> MLPair = new Dictionary<string, string>();
-			EbControl[] controls = (WebForm_L as EbControlContainer).Controls.FlattenAllEbControls();
-			foreach (EbControl control in controls)
-			{
-				PropertyInfo[] props = control.GetType().GetProperties();
-				foreach (PropertyInfo prop in props)
-				{
-					if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == (int)PropertyEditorType.MultiLanguageKeySelector)
-					{
-						if(prop.Name == "Label")
-							MLPair.Add(control.Name, control.GetType().GetProperty(prop.Name).GetValue(control, null) as String);
-					}
-				}
-			}
-			return MLPair;
-		}
+        private Dictionary<string, string> GetMLPair(EbWebForm WebForm_L)
+        {
+            Dictionary<string, string> MLPair = new Dictionary<string, string>();
+            EbControl[] controls = (WebForm_L as EbControlContainer).Controls.FlattenAllEbControls();
+            foreach (EbControl control in controls)
+            {
+                PropertyInfo[] props = control.GetType().GetProperties();
+                foreach (PropertyInfo prop in props)
+                {
+                    if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == (int)PropertyEditorType.MultiLanguageKeySelector)
+                    {
+                        if (prop.Name == "Label")
+                            MLPair.Add(control.Name, control.GetType().GetProperty(prop.Name).GetValue(control, null) as String);
+                    }
+                }
+            }
+            return MLPair;
+        }
 
-		public WebformData getRowdata(string refid, int rowid)
-		{
-			try
-			{
-				GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid });
-				return DataSet.FormData;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
-				return new WebformData();
-			}
-		}
+        public WebformData getRowdata(string refid, int rowid)
+        {
+            try
+            {
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid });
+                return DataSet.FormData;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
+                return new WebformData();
+            }
+        }
 
-		public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
+        public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
         {
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
             InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, FormData = Values, RowId = RowId });
@@ -152,7 +153,7 @@ namespace ExpressBase.Web.Controllers
 
         public bool DoUniqueCheck(string TableName, string Field, string Value, string type)
         {
-            DoUniqueCheckResponse Resp = ServiceClient.Post<DoUniqueCheckResponse>(new DoUniqueCheckRequest { TableName = TableName, Field = Field, Value = Value,TypeS = type });
+            DoUniqueCheckResponse Resp = ServiceClient.Post<DoUniqueCheckResponse>(new DoUniqueCheckRequest { TableName = TableName, Field = Field, Value = Value, TypeS = type });
             return (Resp.NoRowsWithSameValue == 0);
         }
 
@@ -175,5 +176,5 @@ namespace ExpressBase.Web.Controllers
             GetDesignHtmlResponse resp = ServiceClient.Post<GetDesignHtmlResponse>(new GetDesignHtmlRequest { RefId = refId });
             return resp.Html;
         }
-	}
+    }
 }

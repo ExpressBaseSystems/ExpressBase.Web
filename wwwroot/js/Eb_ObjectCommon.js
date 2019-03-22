@@ -145,9 +145,10 @@
         menu.resultObj = null;//reload menu by amal on 27/04/2018
         menu.init();//reload menu by amal on 27/04/2018
 
-        commonObj.init();
+
         if (this.target !== "#preview_tab")
             this.ObjCollection[this.target].GenerateButtons();
+        commonObj.init();
         $('#tags').tagsinput('add', this.tags);
         if (this.Current_obj.VersionNumber.slice(-1) !== 'w') {
             $('#save').hide();

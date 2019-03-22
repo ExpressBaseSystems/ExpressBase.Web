@@ -1,6 +1,7 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
     this.ctrl.formObject = options.formObject;
+    this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
     this.isEditMode = options.isEditMode;
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;

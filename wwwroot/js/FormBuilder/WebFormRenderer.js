@@ -15,6 +15,7 @@ const WebFormRender = function (option) {
     this.formRefId = option.formRefId || "";
     this.rowId = option.rowId;
     this.mode = option.mode;
+    this.userObject = option.userObject;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
     this.isEditMode = this.rowId > 0;
@@ -77,7 +78,7 @@ const WebFormRender = function (option) {
 
         // temp
         $.each(this.DGs, function (k, DG) {
-            this.initControls.init(DG, { isEditMode: this.isEditMode, formObject: this.formObject });
+            this.initControls.init(DG, { isEditMode: this.isEditMode, formObject: this.formObject, userObject: this.userObject });
         }.bind(this));
 
         $.each(this.flatControls, function (k, Obj) {
@@ -98,16 +99,17 @@ const WebFormRender = function (option) {
 
         }.bind(this));
 
-      
+
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
             //  if (DG.OnChangeFn && DG.OnChangeFn.Code && DG.OnChangeFn.Code.trim() !== "")
+            if (_DG.OnChangeFn !== null && _DG.OnChangeFn.Code !== null)
                 this.bindOnChange(_DG);
         }.bind(this));
     };
 
     this.bindOnChange = function (control) {
-        control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, "user"));
+        control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
     };
 
     this.bindValidators = function (control) {
@@ -147,25 +149,12 @@ const WebFormRender = function (option) {
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
-    this.l = function (p1) {//==========================================================
-        $.each(p1, function (i, row) {
-            $.each(row.Columns, function (j, dm) {
-                if (j === 0) {
-                    this.initializer.Vobj.valueMembers.push(parseInt(dm.Value));
-                    return true;
-                }
-                this.initializer.Vobj.displayMembers[dm.Name].push(dm.Value);
-            }.bind(this));
-        }.bind(this));
-    };
-
     this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
         $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
             if (SingleColumn.Name === "id")
                 return true;
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (ctrl.ObjType === "PowerSelect") {
-                ctrl.setDisplayMember = this.l;
                 ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
             }
             else

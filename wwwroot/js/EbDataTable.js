@@ -76,7 +76,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.RGIndex = [];
     this.NumericIndex = [];
     this.inline = false;
-    this.rowgroupCols = []
+    this.rowgroupCols = [];
+    this.treeCols = [];
     this.rowgroupFilter = [];
     this.CurrentRowGroup = null;
     this.permission = [];
@@ -277,6 +278,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.CurrentRowGroup = null;
             this.rowgroupCols = [];
         }
+        else if (Pname === "IsTree") {
+                this.EbObject.DisableRowGrouping = obj.IsTree;
+        }
     }.bind(this);
 
     this.dialogboxAction = function (value) {
@@ -422,7 +426,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.CurrentRowGroup = null;
             this.RGIndex = [];
             this.rowgroupCols = [];
+            
         }
+        if (this.EbObject.IsTree)
+            this.treeCols.push(JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "data":' + this.EbObject.Columns.$values.length + 1 + ', "defaultContent": ""}'));
+        else
+            this.treeCols = [];
 
         //----------
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
@@ -638,7 +647,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             },
             lengthMenu: "_MENU_ / Page",
         };
-        o.columns = this.rowgroupCols.concat(this.extraCol, this.ebSettings.Columns.$values);
+        o.columns = this.rowgroupCols.concat(this.extraCol, this.treeCols, this.ebSettings.Columns.$values);
         o.order = [];
         o.deferRender = true;
         //o.filter = true;

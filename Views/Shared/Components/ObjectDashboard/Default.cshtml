@@ -2,7 +2,9 @@
     @using System.Web;
     @using ExpressBase.Objects.ServiceStack_Artifacts;
     @using ExpressBase.Common.Structures;
+
     var appdata = Html.Raw(ViewBag.Apps);
+    var Appid = Html.Raw(ViewBag.AppId);
 
     string Logourl = "/images/logo/" + ViewBag.cid + ".png";
 
@@ -395,12 +397,10 @@
         {
             $('#tags').tagsinput('add', '@ViewBag.Tags');
         }
-        if ('@ViewBag.AppId'.length > 0)
+        if ('@Appid'.length > 0)
         {
-            $('#apps').tagsinput('add', '@ViewBag.AppId');
-        }
-        @*$('select[name=Apps]').val(@ViewBag.AppId);
-        $('.selectpicker').selectpicker('refresh');*@
+            $('#apps').tagsinput('add', '@Appid');
+        }      
 
          if ('@ViewBag.IsLogEnabled' === 'True') {
             $('#profiler').prop("checked",true);

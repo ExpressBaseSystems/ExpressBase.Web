@@ -3,7 +3,7 @@
     this.ctrl.formObject = options.formObject;
     this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
-    this.isEditMode = options.isEditMode;
+    this.isEditModeAsObj = options.isEditModeAsObj;
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.resetBuffers = function () {
@@ -38,7 +38,11 @@
 
     this.setEditModeRows = function (SingleTable) {
         this.addEditModeRows(SingleTable);
-        if (this.ctrl.IsAddable)
+        this.tryAddRow();
+    };
+
+    this.tryAddRow = function () {
+        if (this.isEditModeAsObj.val && this.ctrl.IsAddable)
             this.addRow();
     };
 
@@ -154,7 +158,7 @@
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
-        if ($(`#${this.TableId} tbody tr`).length === 0)
+        if ($(`#${this.TableId} tbody [agg='true']`).length === 0)
             $(`#${this.TableId} tbody`).append($tr);
         else
             $(`#${this.TableId} tbody tr:last`).prev().after($tr);
@@ -360,10 +364,7 @@
     }.bind(this);
 
     this.init = function () {
-        if (this.ctrl.IsAddable) {
-            if (!this.isEditMode)
-                this.addRow();
-        }
+        this.tryAddRow();
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {

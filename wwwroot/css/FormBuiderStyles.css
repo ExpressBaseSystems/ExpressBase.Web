@@ -109,12 +109,12 @@
 }
 
 .form-buider-form {
-    position:relative;
+    position: relative;
     width: 100%;
     height: calc( 100vh - 98px );
     overflow-y: auto;
     border: solid 1px #ccc;
-    z-index:0;
+    z-index: 0;
 }
 
     .form-buider-form:focus {
@@ -250,6 +250,7 @@
 .dgtbl {
     /*width: auto !important;
     max-width: inherit !important;*/
+    margin-bottom: 0;
 }
 
     .dgtbl > tbody > tr > td {
@@ -275,8 +276,25 @@
         width: 50px;
     }
 
-[eb-form='true'] .bootstrap-select{
-    width:100% !important;
+    .dgtbl > tbody > tr[agg='true'] {
+        border: solid 1px #dededf;
+        background-color: #ffffff !important;
+    }
+
+.tdtxt-agg {
+    font-weight: bold;
+}
+
+[coltype='DGNumericColumn'] {
+    direction: rtl;
+}
+
+tr[agg='true'] [coltype='DGNumericColumn'] span {
+    border-top: solid 1px #585858;
+}
+
+[eb-form='true'] .bootstrap-select {
+    width: 100% !important;
 }
 
 .Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
@@ -296,22 +314,25 @@
 .grid-cont {
     /*overflow: auto;*/
 }
-.grid-cont th{
-    position:relative;
-}
-.grid-cont sup {
-    position: absolute;
-    right: 5px;
-    top: 10px;
-}
-.grid-cont .grid-col-title {
-    width: inherit;
-    position: relative;
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
+
+    .grid-cont th {
+        position: relative;
+    }
+
+    .grid-cont sup {
+        position: absolute;
+        right: 5px;
+        top: 10px;
+    }
+
+    .grid-cont .grid-col-title {
+        width: inherit;
+        position: relative;
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 
     .grid-cont input[type=checkbox] {
         min-height: inherit !important;
@@ -329,13 +350,14 @@
 .ctrl-cover {
     border: 1px solid rgba(34,36,38,.15);
 }
+
 .dgtbl .ctrl-cover {
     border: none;
     border-top: 1px solid rgba(34,36,38,.15);
     border-right: 1px solid rgba(34,36,38,.15);
 }
 
-.check-wraper{
+.check-wraper {
     background-color: white;
     height: 28px;
 }

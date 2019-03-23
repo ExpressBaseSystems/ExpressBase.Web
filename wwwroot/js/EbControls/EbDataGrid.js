@@ -120,7 +120,7 @@
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
-                        <div class='tdtxt'><span></span></div>                        
+                        <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
             if (col.IsEditable)
                 anyColEditable = true;
@@ -136,14 +136,37 @@
         return tr;
     };
 
+    this.getAggTrHTML = function () {
+        let tr = `<tr class='dgtr' agg='true' tabindex='0'>`;
+        $.each(this.ctrl.Controls.$values, function (i, col) {
+            if (col.Hidden)
+                return true;
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${col.Name}'>
+                        <div class='tdtxt-agg' coltype='${col.ObjType}'><span></span></div>                        
+                   </td>`;
+
+        }.bind(this));
+        tr += `<td></td></tr>`;
+        return tr;
+    };
+
     this.addRow = function (rowid, isAdded) {
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
-        $(`#${this.TableId} tbody`).append($tr);
+        if ($(`#${this.TableId} tbody tr`).length === 0)
+            $(`#${this.TableId} tbody`).append($tr);
+        else
+            $(`#${this.TableId} tbody tr:last`).prev().after($tr);
         this.bindReq_Vali_UniqRow($tr);
         this.initRowCtrls(rowid);
     }.bind(this);
+
+    this.addAggragateRow = function () {
+        let tr = this.getAggTrHTML();
+        let $tr = $(tr);
+        $(`#${this.TableId} tbody`).append($tr);
+    };
 
     this.bindReq_Vali_UniqRow = function ($tr) {
         let rowid = $tr.attr("rowid");
@@ -280,13 +303,30 @@
         $td.find(".edit-row").show();
 
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
-        $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`).show().attr("is-editing", "true");
+        $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`).show().attr("is-editing", "true").focus();
 
         this.ctrlToSpan_row(rowid);
         if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
             this.addRow();
         $tr.attr("is-checked", "true");
+
+        if (this.isAggragateInDG) {
+            $.each(this.ctrl.Controls.$values, function (i, col) {
+                if (col.IsAggragate)
+                    $(`[agg='true'] [colname='${col.Name}'] .tdtxt-agg span`).text(this.getAggOfCol(col));
+            }.bind(this));
+        }
+
     }.bind(this);
+
+    this.getAggOfCol = function (col) {
+        let sum = 0;
+        $.each($(`[colname='${col.Name}'] .tdtxt span`), function (i, span) {
+            let val = parseInt($(span).text());
+            sum += val || 0;
+        }.bind(this));
+        return sum;
+    };
 
     this.delRow_click = function (e) {
         $td = $(e.target).closest("td");
@@ -325,10 +365,17 @@
                 this.addRow();
         }
         this.ctrl.currentRow = [];
+        this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             this.ctrl.currentRow[col.Name] = col;
+
+            if (col.IsAggragate)
+                this.isAggragateInDG = true;
         }.bind(this));
+
+
+        this.addAggragateRow();
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

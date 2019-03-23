@@ -18,7 +18,7 @@ const WebFormRender = function (option) {
     this.userObject = option.userObject;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
-    this.isEditModeAsObj = { val: this.mode === "Edit Mode" };// to pass by reference
+    this.Mode = { isEdit: this.mode === "Edit Mode" ,isView: this.mode === "View Mode" ,isNew: this.mode === "New Mode"};// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
     this.formValidationflag = true;
@@ -79,7 +79,7 @@ const WebFormRender = function (option) {
 
         // temp
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { isEditModeAsObj: this.isEditModeAsObj, formObject: this.formObject, userObject: this.userObject });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject });
         }.bind(this));
 
         $.each(this.flatControls, function (k, Obj) {
@@ -193,7 +193,7 @@ const WebFormRender = function (option) {
     this.setEditModeCtrls = function () {
         if (this.isEditModeCtrlsSet) {// if already set while mode switching
             $.each(this.DGs, function (k, DG) {
-                this.DGBuilderObjs[DG.Name].tryAddRow();
+                this.DGBuilderObjs[DG.Name].SwitchToEditMode();
             }.bind(this));
             return;
         }
@@ -247,7 +247,7 @@ const WebFormRender = function (option) {
                 if (obj.TableName === "" || obj.TableName === null)
                     obj.TableName = src_obj.TableName;
                 if (FVWTObjColl[obj.TableName] === undefined) {
-                    let rowId = this.isEditModeAsObj.val ? this.EditModeFormData[obj.TableName][0].rowId : 0;
+                    let rowId = this.Mode.isEdit ? this.EditModeFormData[obj.TableName][0].rowId : 0;
                     FVWTObjColl[obj.TableName] = [{
                         RowId: rowId,
                         IsUpdate: false,
@@ -362,7 +362,7 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToViewMode = function () {
-        this.isEditModeAsObj.val = false;
+        this.Mode.isEdit = false;
         setHeader("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
@@ -372,7 +372,7 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToEditMode = function () {
-        this.isEditModeAsObj.val = true;
+        this.Mode.isEdit = true;
         this.setEditModeCtrls();
         setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions

@@ -342,12 +342,17 @@ const WebFormRender = function (option) {
         if (!this.FRC.AllRequired_valid_Check())
             return;
         this.showLoader();
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation3;
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
             url: "../WebForm/InsertWebformData",
             data: {
-                TableName: this.FormObj.TableName, ValObj: this.getFormValuesObjWithTypeColl(), RefId: this.formRefId, RowId: this.rowId
+                TableName: this.FormObj.TableName,
+                ValObj: this.getFormValuesObjWithTypeColl(),
+                RefId: this.formRefId,
+                RowId: this.rowId,
+                CurrentLoc: currentLoc
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();

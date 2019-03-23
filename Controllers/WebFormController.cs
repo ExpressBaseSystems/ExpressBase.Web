@@ -137,10 +137,10 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId)
+        public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
-            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, FormData = Values, RowId = RowId });
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, FormData = Values, RowId = RowId, CurrentLoc = CurrentLoc });
             return JsonConvert.SerializeObject(Resp);
             //return 0;
         }

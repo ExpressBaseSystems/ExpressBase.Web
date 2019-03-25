@@ -16,6 +16,8 @@ using ExpressBase.Common.Extensions;
 using System.Reflection;
 using ExpressBase.Common.Objects.Attributes;
 using ExpressBase.Common.Data;
+using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Constants;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -51,6 +53,10 @@ namespace ExpressBase.Web.Controllers
                     }
 
                 }
+            }
+            if(ViewBag.wc == TokenConstants.DC)
+            {
+                ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
@@ -140,7 +146,20 @@ namespace ExpressBase.Web.Controllers
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
-            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, FormData = Values, RowId = RowId, CurrentLoc = CurrentLoc });
+            int _CurrentLoc = this.LoggedInUser.Preference.DefaultLocation;
+            if (!this.LoggedInUser.LocationIds.Contains(CurrentLoc))
+            {
+                if (this.LoggedInUser.LocationIds.Contains(-1))
+                {
+                    List<EbLocation> t = ViewBag.Locations;
+                    var temp = t.FirstOrDefault<EbLocation>(e => e.LocId == CurrentLoc);
+                    if (temp != null)
+                        _CurrentLoc = CurrentLoc;
+                }
+            }
+            else
+                _CurrentLoc = CurrentLoc;
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, FormData = Values, RowId = RowId, CurrentLoc = _CurrentLoc });
             return JsonConvert.SerializeObject(Resp);
             //return 0;
         }

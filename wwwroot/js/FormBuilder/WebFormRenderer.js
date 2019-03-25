@@ -342,7 +342,7 @@ const WebFormRender = function (option) {
         if (!this.FRC.AllRequired_valid_Check())
             return;
         this.showLoader();
-        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation3;
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",

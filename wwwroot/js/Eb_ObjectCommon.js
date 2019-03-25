@@ -534,7 +534,6 @@
     };
 
     this.DeleteObject = function () {
-        $("#eb_common_loader").EbLoader("show");
         EbDialog("show",
             {
                 Message: 'Do you really want to delete ' + this.Current_obj.DisplayName + ' ?',
@@ -552,6 +551,7 @@
                 },
                 CallBack: function (res) {
                     if (res === "Yes") {
+                        $("#eb_common_loader").EbLoader("show");
                         $.post("../Eb_Object/DeleteObject",
                             { objid: this.ver_Refid.split("-")[3] },
                             function (result) {

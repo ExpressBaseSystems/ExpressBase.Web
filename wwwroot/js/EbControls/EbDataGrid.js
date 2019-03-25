@@ -316,7 +316,7 @@
     this.checkRow_click = function (e) {
         $td = $(e.target).closest("td");
         let $tr = $td.closest("tr");
-        $tr.attr("is-editing", "false");
+        $tr.attr("mode", "false");
         let rowid = $tr.attr("rowid");
         if (!this.AllRequired_valid_Check(rowid))
             return;

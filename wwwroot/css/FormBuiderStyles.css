@@ -614,6 +614,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     margin: 3px 0;
 }
 
+[isrendermode="True"] [eb-hidden="True"] {
+    display: none;
+}
+
 .helpText {
     font-size: 11px;
     color: rgba(37, 37, 37, 0.8);

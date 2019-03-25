@@ -259,7 +259,7 @@ const WebFormRender = function (option) {
                 }
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }
-            else if (obj.ObjType !== "FileUploader") {
+            else if (obj.ObjType !== "FileUploader" && !obj.DoNotPersist) {
                 FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
             }
         }.bind(this));

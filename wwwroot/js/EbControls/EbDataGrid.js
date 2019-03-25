@@ -92,7 +92,8 @@
         SingleRow.IsUpdate = (rowId !== 0);
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
-            SingleRow.Columns.push(getSingleColumn(obj));
+            if (!obj.DoNotPersist)
+                SingleRow.Columns.push(getSingleColumn(obj));
         }.bind(this));
         return SingleRow;
     };

@@ -151,7 +151,7 @@ namespace ExpressBase.Web.Controllers
             {
                 if (this.LoggedInUser.LocationIds.Contains(-1))
                 {
-                    List<EbLocation> t = ViewBag.Locations;
+                    List<EbLocation> t = JsonConvert.DeserializeObject<List<EbLocation>>(ViewBag.Locations);
                     var temp = t.FirstOrDefault<EbLocation>(e => e.LocId == CurrentLoc);
                     if (temp != null)
                         _CurrentLoc = CurrentLoc;

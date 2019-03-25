@@ -103,9 +103,9 @@ const WebFormRender = function (option) {
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
-            //  if (DG.OnChangeFn && DG.OnChangeFn.Code && DG.OnChangeFn.Code.trim() !== "")
-            if (_DG.OnChangeFn !== null && _DG.OnChangeFn.Code !== null)
-                this.bindOnChange(_DG);
+            if (_DG.OnChangeFn.Code === null)
+                _DG.OnChangeFn.Code = "";
+            this.bindOnChange(_DG);
         }.bind(this));
     };
 

@@ -3,7 +3,7 @@
     this.ctrl.formObject = options.formObject;
     this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
-    this.isEditMode = options.isEditMode;
+    this.Mode = options.Mode;
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.resetBuffers = function () {
@@ -13,7 +13,7 @@
     this.resetBuffers();
 
 
-    ctrl.setEditModeRows = function (SingleTable) {
+    ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         return this.setEditModeRows(SingleTable);
     }.bind(this);
 
@@ -38,8 +38,19 @@
 
     this.setEditModeRows = function (SingleTable) {
         this.addEditModeRows(SingleTable);
-        if (this.ctrl.IsAddable)
+        this.tryAddRow();
+    };
+
+    this.tryAddRow = function () {
+        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable)
             this.addRow();
+        if (this.Mode.isEdit || this.Mode.isNew)
+            $(`.ctrlstd[is-editmode='false'] `).attr("is-editmode", "true");
+    };
+
+    this.SwitchToEditMode = function () {
+        this.tryAddRow();
+
     };
 
     this.addEditModeRows = function (SingleTable) {
@@ -126,7 +137,7 @@
                 anyColEditable = true;
 
         }.bind(this));
-        tr += `<td>
+        tr += `<td class='ctrlstd' is-editmode='${this.Mode.isEdit}'>
                     @editBtn@
                     <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
@@ -154,7 +165,7 @@
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
-        if ($(`#${this.TableId} tbody tr`).length === 0)
+        if ($(`#${this.TableId} tbody [agg='true']`).length === 0)
             $(`#${this.TableId} tbody`).append($tr);
         else
             $(`#${this.TableId} tbody tr:last`).prev().after($tr);
@@ -360,10 +371,7 @@
     }.bind(this);
 
     this.init = function () {
-        if (this.ctrl.IsAddable) {
-            if (!this.isEditMode)
-                this.addRow();
-        }
+        this.tryAddRow();
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {

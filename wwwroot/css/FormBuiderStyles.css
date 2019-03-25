@@ -247,6 +247,11 @@
         box-shadow: 0px 1px 2px 0 #0000082;
     }
 
+.ctrlstd[is-editmode='false'] .rowc {
+    color: gray;
+    pointer-events: none;
+}
+
 .dgtbl {
     /*width: auto !important;
     max-width: inherit !important;*/

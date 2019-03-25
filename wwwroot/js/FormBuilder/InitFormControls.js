@@ -8,7 +8,7 @@
 
     this.init = function (control, ctrlOpts) {
         if (this[control.ObjType] !== undefined) {
-            this[control.ObjType](control, ctrlOpts);
+            return this[control.ObjType](control, ctrlOpts);             
         }
     };
 
@@ -266,8 +266,8 @@
 
     this.DataGrid = function (ctrl, ctrlOpts) {
         let ebsid = ctrl.EbSid_CtxId;
-
         let DataGrid = new EbDataGrid(ctrl, ctrlOpts);
+        return DataGrid;
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {

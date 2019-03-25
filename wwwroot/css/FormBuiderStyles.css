@@ -247,7 +247,7 @@
         box-shadow: 0px 1px 2px 0 #0000082;
     }
 
-.ctrlstd[is-editmode='false'] .rowc {
+.ctrlstd[mode='view'] .rowc {
     color: gray;
     pointer-events: none;
 }

@@ -6,6 +6,15 @@
     this.Mode = options.Mode;
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
+
+    this.mode_s = "";
+    if (this.Mode.isEdit)
+        this.mode_s = "edit";
+    else if (this.Mode.isNew)
+        this.mode_s = "new";
+    else if (this.Mode.isView)
+        this.mode_s = "view";
+
     this.resetBuffers = function () {
         this.rowCtrls = {};
         this.newRowCounter = 0;
@@ -44,8 +53,10 @@
     this.tryAddRow = function () {
         if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable)
             this.addRow();
-        if (this.Mode.isEdit || this.Mode.isNew)
-            $(`.ctrlstd[is-editmode='false'] `).attr("is-editmode", "true");
+        if (this.Mode.isEdit)
+            $(`.ctrlstd[mode] `).attr("mode", "edit");
+        if (this.Mode.isNew)
+            $(`.ctrlstd[mode] `).attr("mode", "new");
     };
 
     this.SwitchToEditMode = function () {
@@ -137,7 +148,7 @@
                 anyColEditable = true;
 
         }.bind(this));
-        tr += `<td class='ctrlstd' is-editmode='${this.Mode.isEdit}'>
+        tr += `<td class='ctrlstd' mode='${this.mode_s}'>
                     @editBtn@
                     <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>

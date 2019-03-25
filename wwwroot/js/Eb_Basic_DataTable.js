@@ -10,6 +10,7 @@ var EbBasicDataTable = function (Option) {
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.columns = Option.columns || null;
+    this.dom = Option.dom;
     this.hiddenIndex = null;
     this.isSecondTime = false;
     this.Api = null;
@@ -249,7 +250,7 @@ var EbBasicDataTable = function (Option) {
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
-        o.dom = (this.EbObject.IsPaging ? "ip" : "i") + "<'col-md-12 noPadding display_none'>rt";
+        o.dom = this.dom ||((this.EbObject.IsPaging ? "ip" : "i") + "<'col-md-12 noPadding display_none'>rt");
         o.paging = this.EbObject.IsPaging;
         o.lengthChange = this.EbObject.IsPaging;
         o.select = true;
@@ -514,7 +515,7 @@ var EbBasicDataTable = function (Option) {
             $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
             $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "140px", "important");
         }
-    }
+    };
 
     this.contextMenu = function () {
         $.contextMenu({
@@ -523,7 +524,7 @@ var EbBasicDataTable = function (Option) {
                 "OpenNewTab": { name: "Open in New Tab", icon: "fa-external-link-square", callback: this.OpeninNewTab.bind(this) }
             }
         });
-    }
+    };
 
     this.contextMenu4Label = function () {
         $.contextMenu({

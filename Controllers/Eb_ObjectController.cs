@@ -144,9 +144,9 @@ namespace ExpressBase.Web.Controllers
                 if (dsobj != null)
                 {
                     //---------------------temp fix to copy old prop value (string) to new prop value (EbScript)-------------------------------
-                    foreach(DVBaseColumn c in (dsobj as EbDataVisualization).Columns)
+                    foreach (DVBaseColumn c in (dsobj as EbDataVisualization).Columns)
                     {
-                        if(c._Formula == null)
+                        if (c._Formula == null)
                         {
                             if (!string.IsNullOrEmpty(c.Formula))
                                 c._Formula = new EbScript { Code = c.Formula, Lang = ScriptingLanguage.CSharp };

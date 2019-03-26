@@ -23,7 +23,7 @@ namespace ExpressBase.Web.Controllers
     {
         public WebFormController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public IActionResult Index(string refId, string _params)
+        public IActionResult Index(string refId, string _params, int _mode)
         {
             //ViewBag.editModeObj = _params ?? "false";
             ViewBag.rowId = 0;

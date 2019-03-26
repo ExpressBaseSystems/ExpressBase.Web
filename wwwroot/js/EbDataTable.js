@@ -82,6 +82,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.CurrentRowGroup = null;
     this.permission = [];
     this.isCustomColumnExist = false;
+    this.dvformMode = -1;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -843,10 +844,27 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.getfilterFromRowdata = function () {
         var filters = [];
-        $.each(this.EbObject.Columns.$values, function (i, col) {
-            if (this.rowData[col.data] !== "")
+        if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm) {
+            $.each(this.EbObject.Columns.$values, function (i, col) {
+                if (this.rowData[col.data] !== "")
+                    filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
+            }.bind(this));
+        }
+        else {
+            var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.linkDV; }.bind(this));
+            this.dvformMode = temp[0].FormMode;
+            if (temp[0].FormMode === 0) {
+                var col = temp[0].FormId.$values[0];
                 filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
-        }.bind(this));
+            }
+            else {
+                var cols = temp[0].FormParameters.$values;
+                $.each(cols, function (i, col) {
+                    if (this.rowData[col.data] !== "")
+                        filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
+                }.bind(this));
+            }
+        }
         return filters;
     };
 
@@ -1253,6 +1271,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input.type = 'hidden';
             input.name = "_params";
             input.value = btoa(JSON.stringify(this.filterValues));
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = this.dvformMode;
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -2816,7 +2840,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             if (this.login === "uc")
-                dvcontainerObj.drawdvFromTable(btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), cData.toString());//, JSON.stringify(this.filterValues)
+                dvcontainerObj.drawdvFromTable(btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
             else
                 this.OpeninNewTab(idx, cData);
         }

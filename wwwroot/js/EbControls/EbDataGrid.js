@@ -6,6 +6,15 @@
     this.Mode = options.Mode;
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
+
+    this.mode_s = "";
+    if (this.Mode.isEdit)
+        this.mode_s = "edit";
+    else if (this.Mode.isNew)
+        this.mode_s = "new";
+    else if (this.Mode.isView)
+        this.mode_s = "view";
+
     this.resetBuffers = function () {
         this.rowCtrls = {};
         this.newRowCounter = 0;
@@ -44,8 +53,10 @@
     this.tryAddRow = function () {
         if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable)
             this.addRow();
-        if (this.Mode.isEdit || this.Mode.isNew)
-            $(`.ctrlstd[is-editmode='false'] `).attr("is-editmode", "true");
+        if (this.Mode.isEdit)
+            $(`.ctrlstd[mode] `).attr("mode", "edit");
+        if (this.Mode.isNew)
+            $(`.ctrlstd[mode] `).attr("mode", "new");
     };
 
     this.SwitchToEditMode = function () {
@@ -81,7 +92,8 @@
         SingleRow.IsUpdate = (rowId !== 0);
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
-            SingleRow.Columns.push(getSingleColumn(obj));
+            if (!obj.DoNotPersist)
+                SingleRow.Columns.push(getSingleColumn(obj));
         }.bind(this));
         return SingleRow;
     };
@@ -137,7 +149,7 @@
                 anyColEditable = true;
 
         }.bind(this));
-        tr += `<td class='ctrlstd' is-editmode='${this.Mode.isEdit}'>
+        tr += `<td class='ctrlstd' mode='${this.mode_s}'>
                     @editBtn@
                     <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
@@ -268,8 +280,22 @@
     this.ctrlToSpan_td = function ($td) {
         let ctrl = this.getCtrlByTd($td);
         $td.find(".ctrl-cover").hide();
-        let val = ctrl.getDisplayMember() || ctrl.getValue();
-        $td.find(".tdtxt span").text(val);
+        if (ctrl.ObjType === "PowerSelect") {
+            let html = "";
+            $("#" + ctrl.EbSid_CtxId + "Wraper .search-block").each(function (i, block) {
+                html += "<span iblock>";
+                $(block).find(".selected-tag").each(function (i, tag) {
+                    html += $(tag).outerHTML();
+                });
+                html += "</span>&nbsp;&nbsp;&nbsp;";
+            });
+            $td.find(".tdtxt span").html(html.substr(0, html.length - 18));
+        }
+        else {
+            let val = ctrl.getDisplayMember() || ctrl.getValue();
+            $td.find(".tdtxt span").text(val);
+        }
+
         $td.find(".tdtxt").show();
     }.bind(this);
 
@@ -305,11 +331,11 @@
     this.checkRow_click = function (e) {
         $td = $(e.target).closest("td");
         let $tr = $td.closest("tr");
-        $tr.attr("is-editing", "false");
+        $tr.attr("mode", "false");
         let rowid = $tr.attr("rowid");
         if (!this.AllRequired_valid_Check(rowid))
             return;
-        $td.find(".check-row").hide();
+        $td.find(".check-row").hide().find(".fa-plus").removeClass("fa-plus").addClass("fa-check");
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
 

@@ -79,6 +79,12 @@
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
                 EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+            } 
+            else
+            {
+                this.alertBgColor = this.RedColor;
+                this.alertMsg = data.message;
+                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
             }
         }
         else {
@@ -534,7 +540,6 @@
     };
 
     this.DeleteObject = function () {
-        $("#eb_common_loader").EbLoader("show");
         EbDialog("show",
             {
                 Message: 'Do you really want to delete ' + this.Current_obj.DisplayName + ' ?',
@@ -552,6 +557,7 @@
                 },
                 CallBack: function (res) {
                     if (res === "Yes") {
+                        $("#eb_common_loader").EbLoader("show");
                         $.post("../Eb_Object/DeleteObject",
                             { objid: this.ver_Refid.split("-")[3] },
                             function (result) {

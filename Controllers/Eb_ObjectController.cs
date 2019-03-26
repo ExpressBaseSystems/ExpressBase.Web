@@ -144,9 +144,9 @@ namespace ExpressBase.Web.Controllers
                 if (dsobj != null)
                 {
                     //---------------------temp fix to copy old prop value (string) to new prop value (EbScript)-------------------------------
-                    foreach(DVBaseColumn c in (dsobj as EbDataVisualization).Columns)
+                    foreach (DVBaseColumn c in (dsobj as EbDataVisualization).Columns)
                     {
-                        if(c._Formula == null)
+                        if (c._Formula == null)
                         {
                             if (!string.IsNullOrEmpty(c.Formula))
                                 c._Formula = new EbScript { Code = c.Formula, Lang = ScriptingLanguage.CSharp };
@@ -287,144 +287,162 @@ namespace ExpressBase.Web.Controllers
         public EbRootObjectResponse CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, string _apps)
         {
             EbRootObjectResponse _response = new EbRootObjectResponse();
-            EbObject obj = EbSerializers.Json_Deserialize(_json);
-            string _rel_obj_tmp = obj.DiscoverRelatedRefids();
-            if (_rel_obj_tmp.Length > 0)
-                _rel_obj_tmp = _rel_obj_tmp.Substring(0, _rel_obj_tmp.Length - 1);//removing excess comma
-            if (obj is EbDataReader)
+            try
             {
-                bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
-                if (ContainsRestricted)
-                    _response.Message = "RestrictedStatementinQuerry";
-            }
-            else if (obj is EbDataWriter)
-            {
-                bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
-                if (ContainsRestricted)
-                    _response.Message = "RestrictedStatementinQuerry";
-            }
-            else if (obj is EbSqlFunction)
-            {
-                bool ContainsRestricted = CheckSqlFuncRestricted((obj as EbSqlFunction).Sql);
-                if (ContainsRestricted)
-                    _response.Message = "RestrictedStatementinQuerry";
-            }
-            if (string.IsNullOrEmpty(_refid))
-            {
-                UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
-                if (uniqnameresp.IsUnique)
+                EbObject obj = EbSerializers.Json_Deserialize(_json);
+                obj.BeforeSave();
+                string _rel_obj_tmp = obj.DiscoverRelatedRefids();
+                if (_rel_obj_tmp.Length > 0)
+                    _rel_obj_tmp = _rel_obj_tmp.Substring(0, _rel_obj_tmp.Length - 1);//removing excess comma
+                if (obj is EbDataReader)
                 {
-                    EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
+                    bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
+                    if (ContainsRestricted)
+                        _response.Message = "RestrictedStatementinQuerry";
+                }
+                else if (obj is EbDataWriter)
+                {
+                    bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
+                    if (ContainsRestricted)
+                        _response.Message = "RestrictedStatementinQuerry";
+                }
+                else if (obj is EbSqlFunction)
+                {
+                    bool ContainsRestricted = CheckSqlFuncRestricted((obj as EbSqlFunction).Sql);
+                    if (ContainsRestricted)
+                        _response.Message = "RestrictedStatementinQuerry";
+                }
+                if (string.IsNullOrEmpty(_refid))
+                {
+                    UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
+                    if (uniqnameresp.IsUnique)
+                    {
+                        EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
+                        {
+                            Name = obj.Name,
+                            Description = obj.Description,
+                            Json = EbSerializers.Json_Serialize(obj),
+                            Status = ObjectLifeCycleStatus.Dev,
+                            Relations = _rel_obj_tmp,
+                            IsSave = false,
+                            Tags = _tags,
+                            Apps = _apps,
+                            SourceSolutionId = ViewBag.cid,
+                            SourceObjId = "0",
+                            SourceVerID = "0",
+                            DisplayName = obj.DisplayName
+                        };
+                        EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
+                        if (res.Message != string.Empty && res.RefId == null)
+                        {
+                            _response.Message = res.Message;
+                        }
+                        _response.Refid = res.RefId;
+                    }
+                    else
+                        _response.Message = "nameisnotunique";
+                }
+                else
+                {
+                    EbObject_CommitRequest ds = new EbObject_CommitRequest
                     {
                         Name = obj.Name,
                         Description = obj.Description,
                         Json = EbSerializers.Json_Serialize(obj),
-                        Status = ObjectLifeCycleStatus.Dev,
                         Relations = _rel_obj_tmp,
-                        IsSave = false,
+                        RefId = _refid,
+                        ChangeLog = _changeLog,
                         Tags = _tags,
                         Apps = _apps,
-                        SourceSolutionId = ViewBag.cid,
-                        SourceObjId = "0",
-                        SourceVerID = "0",
                         DisplayName = obj.DisplayName
                     };
-                    EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
-                    if (res.Message != string.Empty && res.RefId == null)
-                    {
-                        _response.Message = res.Message;
-                    }
+                    EbObject_CommitResponse res = ServiceClient.Post(ds);
                     _response.Refid = res.RefId;
+                    _response.Message = res.Message;
                 }
-                else
-                    _response.Message = "nameisnotunique";
             }
-            else
+            catch(Exception e)
             {
-                EbObject_CommitRequest ds = new EbObject_CommitRequest
-                {
-                    Name = obj.Name,
-                    Description = obj.Description,
-                    Json = EbSerializers.Json_Serialize(obj),
-                    Relations = _rel_obj_tmp,
-                    RefId = _refid,
-                    ChangeLog = _changeLog,
-                    Tags = _tags,
-                    Apps = _apps,
-                    DisplayName = obj.DisplayName
-                };
-                EbObject_CommitResponse res = ServiceClient.Post(ds);
-                _response.Refid = res.RefId;
+                _response.Message = e.Message;
             }
-
             return _response;
         }
 
         public EbRootObjectResponse SaveEbObject(string _refid, string _json, string _rel_obj, string _tags, string _apps)
         {
             EbRootObjectResponse _response = new EbRootObjectResponse();
-            EbObject obj = EbSerializers.Json_Deserialize(_json);
-            string _rel_obj_tmp = obj.DiscoverRelatedRefids();
-            if (obj is EbDataReader)
+            try
             {
-                bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
-                if (ContainsRestricted)
-                    _response.Message = "RestrictedStatementinQuerry";
-            }
-            else if (obj is EbDataWriter)
-            {
-                bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
-                if (ContainsRestricted)
-                    _response.Message = "RestrictedStatementinQuerry";
-            }
-            else if (obj is EbSqlFunction)
-            {
-                bool ContainsRestricted = CheckSqlFuncRestricted((obj as EbSqlFunction).Sql);
-                if (ContainsRestricted)
-                    _response.Message = "RestrictedStatementinQuerry";
-            }
-            if (string.IsNullOrEmpty(_refid))
-            {
-                UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
-                if (uniqnameresp.IsUnique)
+                EbObject obj = EbSerializers.Json_Deserialize(_json);
+                obj.BeforeSave();
+                string _rel_obj_tmp = obj.DiscoverRelatedRefids();
+                if (obj is EbDataReader)
                 {
-                    EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
+                    bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
+                    if (ContainsRestricted)
+                        _response.Message = "RestrictedStatementinQuerry";
+                }
+                else if (obj is EbDataWriter)
+                {
+                    bool ContainsRestricted = CheckDataWriterRestricted((obj as EbDataWriter).Sql);
+                    if (ContainsRestricted)
+                        _response.Message = "RestrictedStatementinQuerry";
+                }
+                else if (obj is EbSqlFunction)
+                {
+                    bool ContainsRestricted = CheckSqlFuncRestricted((obj as EbSqlFunction).Sql);
+                    if (ContainsRestricted)
+                        _response.Message = "RestrictedStatementinQuerry";
+                }
+                if (string.IsNullOrEmpty(_refid))
+                {
+                    UniqueObjectNameCheckResponse uniqnameresp = ServiceClient.Get(new UniqueObjectNameCheckRequest { ObjName = obj.Name });
+                    if (uniqnameresp.IsUnique)
                     {
+                        EbObject_Create_New_ObjectRequest ds = new EbObject_Create_New_ObjectRequest
+                        {
+                            Name = obj.Name,
+                            Description = obj.Description,
+                            Json = EbSerializers.Json_Serialize(obj),
+                            Status = ObjectLifeCycleStatus.Dev,
+                            Relations = _rel_obj_tmp,
+                            IsSave = true,
+                            Tags = _tags,
+                            Apps = _apps,
+                            SourceSolutionId = ViewBag.cid,
+                            SourceObjId = "0",
+                            SourceVerID = "0",
+                            DisplayName = obj.DisplayName
+                        };
+
+                        EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
+                        _response.Refid = res.RefId;
+                        _response.Message = res.Message;
+                    }
+                    else _response.Message = "nameIsNotUnique";
+                }
+                else
+                {
+                    EbObject_SaveRequest ds = new EbObject_SaveRequest
+                    {
+                        RefId = _refid,
                         Name = obj.Name,
                         Description = obj.Description,
                         Json = EbSerializers.Json_Serialize(obj),
-                        Status = ObjectLifeCycleStatus.Dev,
                         Relations = _rel_obj_tmp,
-                        IsSave = true,
                         Tags = _tags,
                         Apps = _apps,
-                        SourceSolutionId = ViewBag.cid,
-                        SourceObjId = "0",
-                        SourceVerID = "0",
                         DisplayName = obj.DisplayName
                     };
 
-                    EbObject_Create_New_ObjectResponse res = ServiceClient.Post(ds);
+                    EbObject_SaveResponse res = ServiceClient.Post(ds);
                     _response.Refid = res.RefId;
+                    _response.Message = res.Message;
                 }
-                else _response.Message = "nameIsNotUnique";
             }
-            else
+            catch (Exception e)
             {
-                EbObject_SaveRequest ds = new EbObject_SaveRequest
-                {
-                    RefId = _refid,
-                    Name = obj.Name,
-                    Description = obj.Description,
-                    Json = EbSerializers.Json_Serialize(obj),
-                    Relations = _rel_obj_tmp,
-                    Tags = _tags,
-                    Apps = _apps,
-                    DisplayName = obj.DisplayName
-                };
-
-                EbObject_SaveResponse res = ServiceClient.Post(ds);
-                _response.Refid = res.RefId;
+                _response.Message = e.Message;
             }
             return _response;
         }

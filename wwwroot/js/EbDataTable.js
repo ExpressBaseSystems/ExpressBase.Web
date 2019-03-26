@@ -393,7 +393,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
-
+        this.treeCols = [];
         //hard coding
         this.orderColl = [];
         let rowG_coll = this.EbObject.RowGroupCollection.$values;
@@ -763,6 +763,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 1));
                 }
             }
+        }
+        else if (this.EbObject.IsTree) {
+            if (this.EbObject.ParentColumn.$values.length > 0)
+                tempArray.push(new order_obj(this.EbObject.ParentColumn.$values[0].name, 1));
         }
 
         if (tempArray.length === 0) {

@@ -79,6 +79,12 @@
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
                 EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+            } 
+            else
+            {
+                this.alertBgColor = this.RedColor;
+                this.alertMsg = data.message;
+                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
             }
         }
         else {

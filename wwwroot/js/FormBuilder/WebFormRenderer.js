@@ -48,24 +48,6 @@ const WebFormRender = function (option) {
         });
     };
 
-    this.init = function () {
-        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
-        $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
-        this.$saveBtn.on("click", this.saveForm.bind(this));
-        this.$deleteBtn.on("click", this.deleteForm.bind(this));
-        this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
-        this.initWebFormCtrls();
-        if (this.mode === "View Mode") {
-            this.setEditModeCtrls();
-            this.SwitchToViewMode();
-        }
-
-        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
-        $.each(allFlatControls, function (k, Obj) {
-            this.updateCtrlUI(Obj);
-        }.bind(this));
-    };
-
     this.initWebFormCtrls = function () {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
@@ -440,5 +422,35 @@ const WebFormRender = function (option) {
         $("#eb_common_loader").EbLoader("hide");
     };
 
+    this.ctrl_s = function (event) {
+        if (event.ctrlKey || event.metaKey) {
+            if (event.which === 83) {
+                event.preventDefault();
+                if (this.Mode.isEdit || this.Mode.isNew)
+                    this.saveForm();
+            }
+        }
+    }.bind(this);
+
+    this.init = function () {
+        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
+        $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
+        this.$saveBtn.on("click", this.saveForm.bind(this));
+        this.$deleteBtn.on("click", this.deleteForm.bind(this));
+        this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
+        $(window).off("keydown").on("keydown", this.ctrl_s);
+
+        this.initWebFormCtrls();
+        if (this.mode === "View Mode") {
+            this.setEditModeCtrls();
+            this.SwitchToViewMode();
+        }
+
+        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
+        }.bind(this));
+    };
+
     this.init();
-}
+};

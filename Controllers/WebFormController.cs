@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             if (_params != null)
             {
-                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(_params)));
+                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
                 Param _temp = ob.FirstOrDefault(e => e.Name.Equals("id"));
                 if (_temp != null)
                 {

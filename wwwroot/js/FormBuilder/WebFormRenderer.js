@@ -18,7 +18,7 @@ const WebFormRender = function (option) {
     this.userObject = option.userObject;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
-    this.Mode = { isEdit: this.mode === "Edit Mode" ,isView: this.mode === "View Mode" ,isNew: this.mode === "New Mode"};// to pass by reference
+    this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
     this.formValidationflag = true;
@@ -46,24 +46,6 @@ const WebFormRender = function (option) {
                 }
             }
         });
-    };
-
-    this.init = function () {
-        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
-        $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
-        this.$saveBtn.on("click", this.saveForm.bind(this));
-        this.$deleteBtn.on("click", this.deleteForm.bind(this));
-        this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
-        this.initWebFormCtrls();
-        if (this.mode === "View Mode") {
-            this.setEditModeCtrls();
-            this.SwitchToViewMode();
-        }
-
-        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
-        $.each(allFlatControls, function (k, Obj) {
-            this.updateCtrlUI(Obj);
-        }.bind(this));
     };
 
     this.initWebFormCtrls = function () {
@@ -103,9 +85,9 @@ const WebFormRender = function (option) {
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
-            //  if (DG.OnChangeFn && DG.OnChangeFn.Code && DG.OnChangeFn.Code.trim() !== "")
-            if (_DG.OnChangeFn !== null && _DG.OnChangeFn.Code !== null)
-                this.bindOnChange(_DG);
+            if (_DG.OnChangeFn.Code === null)
+                _DG.OnChangeFn.Code = "";
+            this.bindOnChange(_DG);
         }.bind(this));
     };
 
@@ -118,7 +100,10 @@ const WebFormRender = function (option) {
     };
 
     this.bindRequired = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.FRC.isRequiredOK.bind(this.FRC, control)).on("focus", this.FRC.removeInvalidStyle.bind(this, control));
+        if (control.ObjType === "SimpleSelect")
+            $("#cont_" + control.EbSid_CtxId + " .dropdown-toggle").on("blur", this.FRC.isRequiredOK.bind(this.FRC, control)).on("focus", this.FRC.removeInvalidStyle.bind(this, control));
+        else
+            $("#" + control.EbSid_CtxId).on("blur", this.FRC.isRequiredOK.bind(this.FRC, control)).on("focus", this.FRC.removeInvalidStyle.bind(this, control));
     };
 
     this.bindUniqueCheck = function (control) {
@@ -256,7 +241,7 @@ const WebFormRender = function (option) {
                 }
                 this.ProcRecurForVal(obj, FVWTObjColl);
             }
-            else if (obj.ObjType !== "FileUploader") {
+            else if (obj.ObjType !== "FileUploader" && !obj.DoNotPersist) {
                 FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
             }
         }.bind(this));
@@ -342,7 +327,7 @@ const WebFormRender = function (option) {
         if (!this.FRC.AllRequired_valid_Check())
             return;
         this.showLoader();
-        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation3;
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
@@ -437,5 +422,35 @@ const WebFormRender = function (option) {
         $("#eb_common_loader").EbLoader("hide");
     };
 
+    this.ctrl_s = function (event) {
+        if (event.ctrlKey || event.metaKey) {
+            if (event.which === 83) {
+                event.preventDefault();
+                if (this.Mode.isEdit || this.Mode.isNew)
+                    this.saveForm();
+            }
+        }
+    }.bind(this);
+
+    this.init = function () {
+        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
+        $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
+        this.$saveBtn.on("click", this.saveForm.bind(this));
+        this.$deleteBtn.on("click", this.deleteForm.bind(this));
+        this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
+        $(window).off("keydown").on("keydown", this.ctrl_s);
+
+        this.initWebFormCtrls();
+        if (this.mode === "View Mode") {
+            this.setEditModeCtrls();
+            this.SwitchToViewMode();
+        }
+
+        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
+        }.bind(this));
+    };
+
     this.init();
-}
+};

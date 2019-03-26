@@ -268,7 +268,7 @@ const EbSelect = function (ctrl, options) {
         o.showSerialColumn = false;
         o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.ComboObj.DropdownHeight + "px";
+        o.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -276,6 +276,7 @@ const EbSelect = function (ctrl, options) {
         o.fninitComplete = this.initDTpost.bind(this);
         o.columnSearch = this.filterArray;
         o.headerDisplay = (this.Vobj.displayMembers.length > 1) ? true : false;
+        o.dom = "rt";
 
         o.keys = true;
         //o.hiddenFieldName = this.vmName;

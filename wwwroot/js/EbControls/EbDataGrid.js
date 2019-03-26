@@ -280,8 +280,22 @@
     this.ctrlToSpan_td = function ($td) {
         let ctrl = this.getCtrlByTd($td);
         $td.find(".ctrl-cover").hide();
-        let val = ctrl.getDisplayMember() || ctrl.getValue();
-        $td.find(".tdtxt span").text(val);
+        if (ctrl.ObjType === "PowerSelect") {
+            let html = "";
+            $("#" + ctrl.EbSid_CtxId + "Wraper .search-block").each(function (i, block) {
+                html += "<span iblock>";
+                $(block).find(".selected-tag").each(function (i, tag) {
+                    html += $(tag).outerHTML();
+                });
+                html += "</span>&nbsp;&nbsp;&nbsp;";
+            });
+            $td.find(".tdtxt span").html(html.substr(0, html.length - 18));
+        }
+        else {
+            let val = ctrl.getDisplayMember() || ctrl.getValue();
+            $td.find(".tdtxt span").text(val);
+        }
+
         $td.find(".tdtxt").show();
     }.bind(this);
 

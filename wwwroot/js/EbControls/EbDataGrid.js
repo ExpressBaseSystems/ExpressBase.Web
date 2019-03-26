@@ -335,7 +335,7 @@
         let rowid = $tr.attr("rowid");
         if (!this.AllRequired_valid_Check(rowid))
             return;
-        $td.find(".check-row").hide();
+        $td.find(".check-row").hide().find(".fa-plus").removeClass("fa-plus").addClass("fa-check");
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
 

@@ -397,7 +397,7 @@
     border: none;
 }
 
-.v-select .selected-tag {
+.v-select .selected-tag, .tdtxt .selected-tag {
     position: relative;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -427,22 +427,29 @@
             opacity: 1 !important;
         }
 
-    .v-select .selected-tag:nth-child(5n - 4) {
-        background-color: rgb(91, 142, 206) !important;
-    }
+[iblock] .close {
+    display: none;
+}
+[iblock] .selected-tag {
+    padding: 0.1em .45em 0.15em 0.45em !important;
+}
 
-    .v-select .selected-tag:nth-child(5n - 3) {
-        background-color: rgb(75, 193, 81) !important;
-    }
+.v-select .selected-tag:nth-child(5n - 4), [iblock] .selected-tag:nth-child(5n - 4) {
+    background-color: rgb(91, 142, 206) !important;
+}
 
-    .v-select .selected-tag:nth-child(5n - 2) {
-        background-color: rgba(154, 70, 181, 0.9803921568627451) !important;
-    }
+.v-select .selected-tag:nth-child(5n - 3), [iblock] .selected-tag:nth-child(5n - 3) {
+    background-color: rgb(75, 193, 81) !important;
+}
 
-    .v-select .selected-tag:nth-child(5n -1) {
-        background-color: rgb(224, 111, 116) !important;
-    }
+.v-select .selected-tag:nth-child(5n - 2), [iblock] .selected-tag:nth-child(5n - 2) {
+    background-color: rgba(154, 70, 181, 0.9803921568627451) !important;
+}
 
-    .v-select .selected-tag:nth-child(5n) {
-        background-color: #ecb144 !important;
-    }
+.v-select .selected-tag:nth-child(5n -1), [iblock] .selected-tag:nth-child(5n -1) {
+    background-color: rgb(224, 111, 116) !important;
+}
+
+.v-select .selected-tag:nth-child(5n), [iblock] .selected-tag:nth-child(5n) {
+    background-color: #ecb144 !important;
+}

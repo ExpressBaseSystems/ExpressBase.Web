@@ -9,9 +9,7 @@
     this.rootContainerObj = null;
     this.builderType = options.builderType;
     this.$propGrid = $("#" + options.PGId);
-
-    this.GenerateButtons = function () { };
-
+    
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
 
     this.$form = $("#" + this.formId);
@@ -24,6 +22,15 @@
     this.CurRowCount = 2;
     this.CurColCount = 2;
     this.movingObj = {};
+
+    this.GenerateButtons = function () {
+        $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
+                                            <i class='fa fa-eye' aria-hidden='true'></i>
+                                        </button>`);
+        $("#form_preview").off("click").on("click", function () {
+            window.open("../WebForm/Index?refid=" + this.EbObject.RefId, '_blank');
+        }.bind(this));
+    }.bind(this);
 
     this.del = function (eType, selector, action, originalEvent) {
         let $e = selector.$trigger;
@@ -468,6 +475,10 @@
         if (this.isEditMode) {
             this.makeTdsDropable_Resizable();
             this.makeTabsDropable();
+        }
+
+        if (options.builderType === 'WebForm' && options.objInEditMode !== null) {
+            this.GenerateButtons();
         }
     };
 

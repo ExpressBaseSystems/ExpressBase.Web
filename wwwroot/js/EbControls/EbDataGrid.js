@@ -241,6 +241,10 @@
                     return [];//getValsFromForm(this.FormObj);
                 }.bind(this);
             this.initControls.init(inpCtrl, opt);
+
+            if (inpCtrl.DefaultValue)
+                inpCtrl.setValue(inpCtrl.DefaultValue);
+
         }.bind(this));
     };
 

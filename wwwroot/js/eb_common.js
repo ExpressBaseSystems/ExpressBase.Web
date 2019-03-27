@@ -87,6 +87,12 @@ Array.prototype.contains = function (element) {
     return false;
 };
 
+Array.prototype.moveToFirst = function (index) {
+    var temp = this[index];
+    this.splice(index, 1);
+    this.unshift(temp);
+};
+
 //Array.prototype.splice = function (startIdx, noOfEleRet) {
 //    var arr = [];
 //    for (var i = startIdx; i < (startIdx+noOfEleRet); i++) {
@@ -425,7 +431,7 @@ function Test() {
         data: {
             "trndate_from": '2015-04-07',
             "trndate_to": '2015-10-07',
-            "salesman_id":'89'
+            "salesman_id": '89'
         },
         success: function (result) {
 

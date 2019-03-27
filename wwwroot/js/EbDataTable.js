@@ -429,10 +429,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.rowgroupCols = [];
             
         }
-        if (this.EbObject.IsTree)
-            this.treeCols.push(JSON.parse('{ "searchable": false, "orderable": false, "bVisible":true, "data":' + this.EbObject.Columns.$values.length + 1 + ', "defaultContent": ""}'));
-        else
-            this.treeCols = [];
+        if (this.EbObject.IsTree) {
+            if (this.EbObject.TreeNode.$values.length > 0) {
+                var index = this.EbObject.Columns.$values.findIndex(x => x.name === this.EbObject.TreeNode.$values[0].name);
+                this.EbObject.Columns.$values.moveToFirst(index);
+            }
+
+        }
 
         //----------
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
@@ -648,7 +651,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             },
             lengthMenu: "_MENU_ / Page",
         };
-        o.columns = this.rowgroupCols.concat(this.extraCol, this.treeCols, this.ebSettings.Columns.$values);
+        o.columns = this.rowgroupCols.concat(this.extraCol, this.ebSettings.Columns.$values);
         o.order = [];
         o.deferRender = true;
         //o.filter = true;

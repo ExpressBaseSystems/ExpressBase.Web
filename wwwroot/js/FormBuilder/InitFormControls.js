@@ -158,8 +158,22 @@
             //$input.datetimepicker(settings);
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
+            $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
         }
     };
+
+    //created by amal
+    this.toggleNullableCheck = function (ctrl) {
+        let $ctrl = $(event.target).closest("input[type='checkbox']");
+        if ($ctrl.is(":checked")) {
+            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false);
+            ctrl.DoNotPersist = false;
+        }
+        else {
+            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', true);
+            ctrl.DoNotPersist = true;
+        }
+    }
 
     this.SimpleSelect = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);

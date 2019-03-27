@@ -422,12 +422,20 @@ const WebFormRender = function (option) {
         $("#eb_common_loader").EbLoader("hide");
     };
 
-    this.ctrl_s = function (event) {
+    this.windowKeyDown = function (event) {
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {
                 event.preventDefault();
                 if (this.Mode.isEdit || this.Mode.isNew)
                     this.saveForm();
+            }
+        }
+
+        if (event.altKey || event.metaKey) {
+            if (event.which === 78) {
+                event.preventDefault();
+                if ($("#webformnew").css("display") !== "none")
+                    window.location.href = window.location.href;
             }
         }
     }.bind(this);
@@ -438,7 +446,7 @@ const WebFormRender = function (option) {
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
-        $(window).off("keydown").on("keydown", this.ctrl_s);
+        $(window).off("keydown").on("keydown", this.windowKeyDown);
 
         this.initWebFormCtrls();
         if (this.mode === "View Mode") {

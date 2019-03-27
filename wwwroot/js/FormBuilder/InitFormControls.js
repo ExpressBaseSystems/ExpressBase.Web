@@ -158,8 +158,10 @@
             //$input.datetimepicker(settings);
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
-            if (ctrl.IsNullable)
+            if (ctrl.IsNullable) {
                 $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
+                $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
+            }
         }
     };
 
@@ -167,11 +169,11 @@
     this.toggleNullableCheck = function (ctrl) {
         let $ctrl = $(event.target).closest("input[type='checkbox']");
         if ($ctrl.is(":checked")) {
-            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false);
+            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false).next(".input-group-addon").css('pointer-events', 'auto');
             ctrl.DoNotPersist = false;
         }
         else {
-            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', true);
+            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             ctrl.DoNotPersist = true;
         }
     }

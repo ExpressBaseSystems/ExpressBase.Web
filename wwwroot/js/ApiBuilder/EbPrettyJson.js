@@ -53,8 +53,8 @@
     this.Arrayflow = function (a) {
         this.JsonHtml.push(`<div class="array">[</div><ol class="a_o">`);
         let cm = "";
-        for (let i = 0; i < a.length; i++) {
-            cm = (i === a.length - 1) ? "" : "<span class='comma'>,</span>";
+        for (let i = 0, n = a.length; i < n; i++) {
+            cm = (i === n - 1) ? "" : "<span class='comma'>,</span>";
             a[i] = (this.isJson(a[i])) ? JSON.parse(a[i]) : a[i];
             if (Array.isArray(a[i])) {
                 this.JsonHtml.push(`<li>
@@ -80,8 +80,8 @@
 
     this.dArray = function (ai) {
         let cm = "";
-        for (let i = 0; i < ai.length; i++) {
-            cm = (i === ai.length - 1) ? "" : "<span class='comma'>,</span>";
+        for (let i = 0, n = ai.length; i < n; i++) {
+            cm = (i === n - 1) ? "" : "<span class='comma'>,</span>";
             ai[i] = (this.isJson(ai[i])) ? JSON.parse(ai[i]) : ai[i];
             if (Array.isArray(ai[i])) {
                 this.JsonHtml.push(`<li data-toggle="tooltip" data-placement="bottom" title='Index:${i}'><a><span class="array">[</span></a><ul>`);
@@ -163,7 +163,7 @@
                         <span>&#60;&#63;</span> xml version=<span class="val">"1.0"</span>
                         encoding=<span class="val">"UTF-8" </span></span><span>&#63;&#62;</span>
                     </div>`);
-        
+
         if (o instanceof Array) {
             this.xmla.push(`<ol>`);
             this.xml_arary(o);
@@ -187,10 +187,10 @@
             if (a[i] instanceof Array)
                 this.xml_array_inner(a[i]);
             else if (typeof a[i] === 'object') {
-                this.xml_object_inner(a[i]);             
+                this.xml_object_inner(a[i]);
             }
             else
-                this.xml_prop(p,a[i]);
+                this.xml_prop(p, a[i]);
         }
     };
 
@@ -201,11 +201,11 @@
             else if (typeof o[p] === 'object')
                 this.xml_object_inner(p, o[p]);
             else
-                this.xml_prop(p,o[p]);
+                this.xml_prop(p, o[p]);
         }
     };
 
-    this.xml_array_inner = function (p, a) {      
+    this.xml_array_inner = function (p, a) {
         for (let i = 0, n = a.length; i < n; i++) {
             if (a[i] instanceof Array) {
                 this.xmla.push(`<li class="xml_line"><span class="to"><</span>
@@ -223,21 +223,21 @@
         }
     };
 
-    this.xml_object_inner = function (pr,o) {
+    this.xml_object_inner = function (pr, o) {
         this.xmla.push(`<li class="xml_line"><span class="to"><</span>
                         <span class="to">${pr}</span><span class="to">></span>
                         <ul>`);
         for (let p in o) {
             if (o[p] instanceof Array) {
-                this.xml_array_inner(p,o[p]);
+                this.xml_array_inner(p, o[p]);
             }
             else if (typeof o[p] === 'object') {
                 this.xmla.push(`<ul>`);
-                this.xml_object_inner(p,o[p]);
+                this.xml_object_inner(p, o[p]);
                 this.xmla.push(`</ul>`);
             }
             else
-                this.xml_prop(p,o[p]);
+                this.xml_prop(p, o[p]);
         }
         this.xmla.push(`</ul><span class="to">&#60;&#47;</span>
                         <span class="to">${pr}</span><span class="to">></span>
@@ -247,7 +247,7 @@
     this.xml_prop = function (p, v) {
         if (this.isNumber(p))
             p = "element";
-        
+
         this.xmla.push(`<li class="xml_line val">
                             <span class="to"><</span>
                             <span class="to">${p}</span>

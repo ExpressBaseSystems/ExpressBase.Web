@@ -79,6 +79,8 @@ const WebFormRender = function (option) {
                 this.bindOnChange(Obj);
             if (Obj.Validators.$values.length > 0)
                 this.bindValidators(Obj);
+            if (Obj.DefaultValue)
+                Obj.setValue(Obj.DefaultValue);
 
         }.bind(this));
 

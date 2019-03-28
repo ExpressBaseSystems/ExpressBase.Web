@@ -61,7 +61,7 @@ const WebFormRender = function (option) {
 
         // temp
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtended: this.FormDataExtended });
         }.bind(this));
 
         $.each(this.flatControls, function (k, Obj) {
@@ -137,12 +137,34 @@ const WebFormRender = function (option) {
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
+    //this.j = function (p1) {
+    //    let VMs = this.initializer.Vobj.valueMembers;
+    //    let DMs = this.initializer.Vobj.displayMembers;
+
+    //    if (VMs.length > 0) {// clear if already values there
+    //        this.initializer.clearValues();
+    //        //VMs.splice(0, VMs.length);
+    //        //$.each(this.DisplayMembers.$values, function (j, dm) {
+    //        //    DMs[dm.name].splice(0, DMs[dm.name].length);
+    //        //}.bind(this));
+    //    }
+
+    //    $.each(p1, function (i, row) {
+    //        VMs.push(getObjByval(row.Columns, "Name", this.ValueMember.name).Value);
+
+    //        $.each(this.DisplayMembers.$values, function (j, dm) {
+    //            DMs[dm.name].push(getObjByval(row.Columns, "Name", dm.name).Value);
+    //        }.bind(this));
+    //    }.bind(this));
+    //};
+
     this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
         $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
             if (SingleColumn.Name === "id")
                 return true;
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (ctrl.ObjType === "PowerSelect") {
+                //ctrl.setDisplayMember = this.j;
                 ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
             }
             else
@@ -305,6 +327,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
+                this.FormDataExtended = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
             else {
@@ -317,6 +340,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
+                this.FormDataExtended = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
             else {

@@ -1,5 +1,6 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
+    this.FormDataExtended = options.FormDataExtended;
     this.ctrl.formObject = options.formObject;
     this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
@@ -78,10 +79,17 @@
                 console.log(val);
                 ctrl.setValue(val);
                 ctrl.Name = SingleColumn.Name;
+
+                if (ctrl.ObjType === "PowerSelect") {
+                    ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
+                }
             }.bind(this));
-            {// call checkRow_click() pass event.target directly
+            {
                 let td = $(`#${this.TableId} tbody tr[rowid=${rowid}] td:last`)[0];
-                this.checkRow_click({ target: td });
+                // call checkRow_click() pass event.target directly
+                setTimeout(function () {
+                    this.checkRow_click({ target: td });
+                }.bind(this), 1);
             }
         }.bind(this));
     };

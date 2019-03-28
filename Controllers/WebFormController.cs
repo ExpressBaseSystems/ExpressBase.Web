@@ -145,6 +145,8 @@ namespace ExpressBase.Web.Controllers
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
+            if (!TokenConstants.UC.Equals(ViewBag.wc))
+                throw new FormException("Access Denied");
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
             int _CurrentLoc = this.LoggedInUser.Preference.DefaultLocation;
             if (!this.LoggedInUser.LocationIds.Contains(CurrentLoc))

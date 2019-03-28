@@ -147,7 +147,7 @@
             inpCtrl.EbSid_CtxId = ctrlEbSid;
             //inpCtrl.EbSid = ctrlEbSid;
             inpCtrl.ObjType = inpCtrlType.substr(2);
-            inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
+            inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
@@ -252,6 +252,9 @@
 
             if (inpCtrl.DefaultValue)
                 inpCtrl.setValue(inpCtrl.DefaultValue);
+
+            if (inpCtrl.IsDisable)
+                inpCtrl.disable();
 
         }.bind(this));
     };

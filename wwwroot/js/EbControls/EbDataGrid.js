@@ -151,7 +151,7 @@
         }.bind(this));
         tr += `<td class='ctrlstd' mode='${this.mode_s}'>
                     @editBtn@
-                    <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
+                    <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
                 </td></tr>`
             .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>" : "")
@@ -241,6 +241,10 @@
                     return [];//getValsFromForm(this.FormObj);
                 }.bind(this);
             this.initControls.init(inpCtrl, opt);
+
+            if (inpCtrl.DefaultValue)
+                inpCtrl.setValue(inpCtrl.DefaultValue);
+
         }.bind(this));
     };
 
@@ -335,7 +339,7 @@
         let rowid = $tr.attr("rowid");
         if (!this.AllRequired_valid_Check(rowid))
             return;
-        $td.find(".check-row").hide().find(".fa-plus").removeClass("fa-plus").addClass("fa-check");
+        $td.find(".check-row").hide();
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
 

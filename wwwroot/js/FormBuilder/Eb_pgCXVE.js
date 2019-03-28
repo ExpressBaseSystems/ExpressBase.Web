@@ -935,6 +935,10 @@
         let EbSid = this.PGobj.PropsObj.EbSid + "_" + ShortName;
         obj = new EbObjects[SelType](EbSid);
         obj.Name = ShortName;
+        if (obj.hasOwnProperty('Title'))
+            obj.Title = ShortName;
+        if (obj.hasOwnProperty('DisplayName'))
+            obj.DisplayName = ShortName;
         this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
         if (this.editor === 26) {
             //if (!obj.name)

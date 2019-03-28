@@ -793,3 +793,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: solid 1px rgba(96, 98, 185, 0.2);
     border-radius: 6px;
 }
+
+
+[eb-form=true] .bootstrap-select > .dropdown-toggle {
+    z-index: 0 !important;
+}

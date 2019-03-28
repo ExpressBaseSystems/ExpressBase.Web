@@ -31,6 +31,7 @@ function EbApiBuild(config) {
     this.ComponentRun = false;
     this.Component = null;
     this.ResultData = {};
+    this.JsonEditMode = false;
 
     this.pg = new Eb_PropertyGrid({
         id: "pgContainer_wrpr",
@@ -213,9 +214,11 @@ function EbApiBuild(config) {
     }
 
     this.toggleReqWindow = function (resp) {
-        $(`#Json_reqOrRespWrp`).show();
+        $(`#Json_reqOrRespWrp`).show().find("#JsonReq_CMW").show();
         $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.build(resp));
         $(`#Json_reqOrRespWrp #JsonResp_CMW`).empty();
+        $("#JsonEditWindow").hide();
+        this.JsonEditMode = false;
         this.setSampleCode(resp);
     };
 
@@ -284,13 +287,20 @@ function EbApiBuild(config) {
         }
     }
 
+    this.getRequest = function () {
+        if (this.JsonEditMode)
+            return this.JsonEditW.getValue();
+        else
+            return $(`#Json_reqOrRespWrp #JsonReq_CMW`).text();
+    };
+
     this.getApiResponse = function (ev) {
         let _data = null;
         if (!this.ComponentRun) {
-            _data = { "name": this.EbObject.Name, "vers": commonO.getVersion(), "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text() };
+            _data = { "name": this.EbObject.Name, "vers": commonO.getVersion(), "param": this.getRequest() };
         }
         else {
-            _data = { "param": $(`#Json_reqOrRespWrp #JsonReq_CMW`).text(), "component": JSON.stringify(this.Component) }
+            _data = { "param": this.getRequest(), "component": JSON.stringify(this.Component) }
         }
         $.ajax({
             url: "../Dev/GetApiResponse",
@@ -341,6 +351,12 @@ function EbApiBuild(config) {
         $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
     };
 
+    this.toggleEditWindow = function (e) {
+        $("#JsonReq_CMW").hide();
+        this.JsonEditMode = true;
+        $("#JsonEditWindow").show();
+    };
+
     this.start = function () {
         this.setBtns();
         if (this.EditObj === null || this.EditObj === "undefined")
@@ -353,9 +369,13 @@ function EbApiBuild(config) {
             handles: "n",
             minHeight: 50
         });
+
+        this.JsonEditW = CodeMirror(document.getElementById("JsonEditWindow"), { mode: {name:"javascript",json:true}});
+
         $(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
         //$("#sample_codes").off("click").on("click", this.showSampleCode.bind(this));
         $('.format_type').off("change").on("change", this.foramatChange.bind(this));
+        $(".reqEditWbtn").off("click").on("click", this.toggleEditWindow.bind(this));
     };
 
     this.start();

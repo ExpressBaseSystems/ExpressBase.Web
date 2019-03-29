@@ -74,15 +74,23 @@
             $.each(SingleRow.Columns, function (j, SingleColumn) {
                 if (j === 0)// to skip id column
                     return true;
-                let ctrl = this.rowCtrls[rowid][(j - 1)];
+
+                let ctrl = getObjByval(this.rowCtrls[rowid], "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
+                if (!ctrl) {// to alert if no ctrl for such data
+                    alert("error");
+                    console.error();
+                }
+
+                //let ctrl = this.rowCtrls[rowid][(j - 1)];
                 let val = SingleColumn.Value;
                 console.log(val);
-                ctrl.setValue(val);
-                ctrl.Name = SingleColumn.Name;
+                //ctrl.Name = SingleColumn.Name;
 
-                if (ctrl.ObjType === "PowerSelect") {
+                if (ctrl.ObjType === "PowerSelect")
                     ctrl.setDisplayMember(this.FormDataExtdObj.val[ctrl.EbSid]);
-                }
+                else
+                    ctrl.setValue(val);
+
             }.bind(this));
             {
                 let td = $(`#${this.TableId} tbody tr[rowid=${rowid}] td:last`)[0];
@@ -143,10 +151,14 @@
             editBtn = "";
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+
+            inpCtrl.Name = col.Name;
             inpCtrl.EbDbType = col.EbDbType;
             inpCtrl.EbSid_CtxId = ctrlEbSid;
+            inpCtrl.__rowid = rowid;
             //inpCtrl.EbSid = ctrlEbSid;
             inpCtrl.ObjType = inpCtrlType.substr(2);
+
             inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}'>

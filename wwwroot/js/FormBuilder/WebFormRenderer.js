@@ -18,6 +18,7 @@ const WebFormRender = function (option) {
     this.userObject = option.userObject;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
+    this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
@@ -57,7 +58,7 @@ const WebFormRender = function (option) {
 
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtended: this.FormDataExtended });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj });
         }.bind(this));
     };
 
@@ -86,7 +87,7 @@ const WebFormRender = function (option) {
             if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
-                opt.FormDataExtended = this.FormDataExtended;
+                opt.FormDataExtdObj = this.FormDataExtdObj;
 
             this.initControls.init(Obj, opt);
 
@@ -152,7 +153,7 @@ const WebFormRender = function (option) {
                 if (!isUnique)
                     this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
                 else
-                    this.FRC.removeInvalidStyle();
+                    this.FRC.removeInvalidStyle(ctrl);
             }.bind(this)
         });
     };
@@ -351,7 +352,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
-                this.FormDataExtended = respObj.FormData.ExtendedTables;
+                this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
             else {
@@ -364,7 +365,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
-                this.FormDataExtended = respObj.FormData.ExtendedTables;
+                this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
             else {

@@ -19,8 +19,8 @@
             catTitle.push(obj.CategoryTitle);
         }.bind(catTitle));
 
-        if (ctrlOpts.FormDataExtended !== null) {
-            files = JSON.parse(ctrlOpts.FormDataExtended[ctrl.EbSid][0].Columns[0].Value);
+        if (ctrlOpts.FormDataExtdObj.val !== null) {
+            files = JSON.parse(ctrlOpts.FormDataExtdObj.val[ctrl.EbSid][0].Columns[0].Value);
         }
         let imgup = new FUPFormControl({
             Type: this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString()),

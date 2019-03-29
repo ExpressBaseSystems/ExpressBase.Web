@@ -1,6 +1,6 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
-    this.FormDataExtended = options.FormDataExtended;
+    this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
@@ -81,7 +81,7 @@
                 ctrl.Name = SingleColumn.Name;
 
                 if (ctrl.ObjType === "PowerSelect") {
-                    ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
+                    ctrl.setDisplayMember(this.FormDataExtdObj.val[ctrl.EbSid]);
                 }
             }.bind(this));
             {

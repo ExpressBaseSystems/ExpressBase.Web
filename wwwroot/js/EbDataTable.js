@@ -83,6 +83,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.permission = [];
     this.isCustomColumnExist = false;
     this.dvformMode = -1;
+    this.IsTree = false;
+    this.GroupFormLink = null;
+    this.ItemFormLink = null;
+    this.treeColumn = null;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -279,9 +283,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.CurrentRowGroup = null;
             this.rowgroupCols = [];
         }
-        else if (Pname === "IsTree") {
-                this.EbObject.DisableRowGrouping = obj.IsTree;
-        }
     }.bind(this);
 
     this.dialogboxAction = function (value) {
@@ -394,6 +395,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.stickBtn.hide();
         }
         this.addSerialAndCheckboxColumns();
+        this.CheckforTree();
         this.treeCols = [];
         //hard coding
         this.orderColl = [];
@@ -429,13 +431,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.rowgroupCols = [];
             
         }
-        if (this.EbObject.IsTree) {
-            if (this.EbObject.TreeNode.$values.length > 0) {
-                var index = this.EbObject.Columns.$values.findIndex(x => x.name === this.EbObject.TreeNode.$values[0].name);
-                this.EbObject.Columns.$values.moveToFirst(index);
-            }
-
-        }
+        
 
         //----------
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
@@ -445,6 +441,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     };
 
+
     this.check4Customcolumn = function () {
         var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.IsCustomColumn; });
         if (temp.length === 0)
@@ -452,6 +449,22 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else
             this.isCustomColumnExist = true;
     };
+
+    this.CheckforTree = function () {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.IsTree; });
+        if (temp.length === 0) {
+            this.EbObject.DisableRowGrouping = false;
+            this.IsTree = false;
+        }
+        else {
+            this.EbObject.DisableRowGrouping = true;
+            this.IsTree = true;
+            this.GroupFormLink = temp[0].GroupFormLink;
+            this.ItemFormLink = temp[0].ItemFormLink;
+            this.treeColumn = temp[0];
+        }
+    };
+
 
     this.InitializeColumns = function () {
         $.each(this.EbObject.Columns.$values, function (i, col) {
@@ -767,11 +780,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 1));
                 }
             }
-        }
-        else if (this.EbObject.IsTree) {
-            if (this.EbObject.ParentColumn.$values.length > 0)
-                tempArray.push(new order_obj(this.EbObject.ParentColumn.$values[0].name, 1));
-        }
+        }        
 
         if (tempArray.length === 0) {
             if (this.EbObject.OrderBy.$values.length > 0) {
@@ -2273,8 +2282,111 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.addFilterEventListeners();
         }
 
-        //$("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
+        if (this.IsTree) {
+            if (this.GroupFormLink !== null) {
+                $.contextMenu({
+                    selector: ".groupform",
+                    items: {
+                        "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
+                        "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
+                        "EditGroup": { name: "Edit Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                    }
+                });
+            }
+            if (this.ItemFormLink !== null) {
+                $.contextMenu({
+                    selector: ".itemform",
+                    items: {
+                        "EditItem": { name: "Edit Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) }
+                    }
+                });
+            }
+        }
+    };
 
+    this.FormNewGroup = function (key, opt, event) {
+        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let url = "../WEBFORM/index?refid=" + this.GroupFormLink;
+        var _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_params";
+        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormParameters.$values)));
+        _form.appendChild(input);
+
+        document.body.appendChild(_form);
+        _form.submit();
+        document.body.removeChild(_form);
+    };
+
+    this.FormNewItem = function (key, opt, event) {
+        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let url = "../WEBFORM/index?refid=" + this.ItemFormLink;
+        var _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_params";
+        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormParameters.$values)));
+        _form.appendChild(input);
+
+        document.body.appendChild(_form);
+        _form.submit();
+        document.body.removeChild(_form);
+    };
+
+    this.FormEditGroup = function (key, opt, event) {
+        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let url = "../WEBFORM/index?refid=" + this.GroupFormLink;
+        var _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_params";
+        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
+        _form.appendChild(input);
+
+        document.body.appendChild(_form);
+        _form.submit();
+        document.body.removeChild(_form);
+    };
+
+    this.FormEditItem = function (key, opt, event) {
+        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let url = "../WEBFORM/index?refid=" + this.ItemFormLink;
+        var _form = document.createElement("form");
+        _form.setAttribute("method", "post");
+        _form.setAttribute("action", url);
+        _form.setAttribute("target", "_blank");
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_params";
+        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
+        _form.appendChild(input);
+
+        document.body.appendChild(_form);
+        _form.submit();
+        document.body.removeChild(_form);
+    };
+
+    this.formatToParameters = function(cols){
+        var filters = [];
+        $.each(cols, function (i, col) {
+            if (this.rowData[col.data] !== "")
+                filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
+        }.bind(this));
+        return filters;
     };
 
     this.setFilterboxValue = function (i, obj) {

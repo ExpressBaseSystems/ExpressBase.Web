@@ -161,7 +161,7 @@
 
             inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
-            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}'>
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}' style='width:${this.getTdWidth(i)}px'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                         <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -169,7 +169,7 @@
                 anyColEditable = true;
 
         }.bind(this));
-        tr += `<td class='ctrlstd' mode='${this.mode_s}'>
+        tr += `<td class='ctrlstd' mode='${this.mode_s}' style='width:54px;'>
                     @editBtn@
                     <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
@@ -178,6 +178,10 @@
             .replace("@del-c@", !anyColEditable ? "del-c" : "");
         return tr;
     };
+
+    this.getTdWidth = function (i) {
+        return $(`#${this.TableId}_head thead th`).eq(i).outerWidth() + 1 + ((i == 0) ? 3 : 0);
+    }
 
     this.getAggTrHTML = function () {
         let tr = `<tr class='dgtr' agg='true' tabindex='0'>`;
@@ -208,7 +212,7 @@
     this.addAggragateRow = function () {
         let tr = this.getAggTrHTML();
         let $tr = $(tr);
-        $(`#${this.TableId} tbody`).append($tr);
+        $(`#${this.TableId}_footer tbody`).append($tr);
     };
 
     this.bindReq_Vali_UniqRow = function ($tr) {

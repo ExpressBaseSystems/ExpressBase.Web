@@ -412,9 +412,7 @@
     }.bind(this);
 
     this.init = function () {
-        this.tryAddRow();
         this.ctrl.currentRow = [];
-        this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             this.ctrl.currentRow[col.Name] = col;
@@ -423,6 +421,8 @@
                 this.isAggragateInDG = true;
         }.bind(this));
 
+        this.tryAddRow();
+        this.isAggragateInDG = false;
 
         this.addAggragateRow();
 

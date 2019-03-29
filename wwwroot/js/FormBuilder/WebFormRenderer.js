@@ -73,6 +73,13 @@ const WebFormRender = function (option) {
     };
 
     this.initNCs = function () {
+
+
+        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
+        }.bind(this));
+
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
 
@@ -87,6 +94,9 @@ const WebFormRender = function (option) {
 
             if (Obj.DefaultValue)
                 Obj.setValue(Obj.DefaultValue);
+
+            if (Obj.IsDisable)
+                Obj.disable();
         }.bind(this));
     };
 
@@ -493,11 +503,6 @@ const WebFormRender = function (option) {
             this.setEditModeCtrls();
             this.SwitchToViewMode();
         }
-
-        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
-        $.each(allFlatControls, function (k, Obj) {
-            this.updateCtrlUI(Obj);
-        }.bind(this));
     };
 
     this.init();

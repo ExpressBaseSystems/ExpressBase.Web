@@ -798,3 +798,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [eb-form=true] .bootstrap-select > .dropdown-toggle {
     z-index: 0 !important;
 }
+.grid-cont .Dg_head, .Dg_footer {
+    padding-right: 17px;
+}

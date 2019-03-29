@@ -62,6 +62,10 @@ namespace ExpressBase.Web.Controllers
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
+
+            ViewBag.__Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            ViewBag.__User = this.LoggedInUser;
+
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
 

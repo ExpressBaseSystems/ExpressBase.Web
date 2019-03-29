@@ -1,5 +1,6 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
+    this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
@@ -78,10 +79,17 @@
                 console.log(val);
                 ctrl.setValue(val);
                 ctrl.Name = SingleColumn.Name;
+
+                if (ctrl.ObjType === "PowerSelect") {
+                    ctrl.setDisplayMember(this.FormDataExtdObj.val[ctrl.EbSid]);
+                }
             }.bind(this));
-            {// call checkRow_click() pass event.target directly
+            {
                 let td = $(`#${this.TableId} tbody tr[rowid=${rowid}] td:last`)[0];
-                this.checkRow_click({ target: td });
+                // call checkRow_click() pass event.target directly
+                setTimeout(function () {
+                    this.checkRow_click({ target: td });
+                }.bind(this), 1);
             }
         }.bind(this));
     };
@@ -139,9 +147,9 @@
             inpCtrl.EbSid_CtxId = ctrlEbSid;
             //inpCtrl.EbSid = ctrlEbSid;
             inpCtrl.ObjType = inpCtrlType.substr(2);
-            inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
+            inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
-            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}'>
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}' style='width:${this.getTdWidth(i)}px'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                         <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -149,15 +157,19 @@
                 anyColEditable = true;
 
         }.bind(this));
-        tr += `<td class='ctrlstd' mode='${this.mode_s}'>
+        tr += `<td class='ctrlstd' mode='${this.mode_s}' style='width:54px;'>
                     @editBtn@
-                    <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
+                    <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
                 </td></tr>`
             .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>" : "")
             .replace("@del-c@", !anyColEditable ? "del-c" : "");
         return tr;
     };
+
+    this.getTdWidth = function (i) {
+        return $(`#${this.TableId}_head thead th`).eq(i).outerWidth() + 1 + ((i == 0) ? 3 : 0);
+    }
 
     this.getAggTrHTML = function () {
         let tr = `<tr class='dgtr' agg='true' tabindex='0'>`;
@@ -188,7 +200,7 @@
     this.addAggragateRow = function () {
         let tr = this.getAggTrHTML();
         let $tr = $(tr);
-        $(`#${this.TableId} tbody`).append($tr);
+        $(`#${this.TableId}_footer tbody`).append($tr);
     };
 
     this.bindReq_Vali_UniqRow = function ($tr) {
@@ -241,6 +253,13 @@
                     return [];//getValsFromForm(this.FormObj);
                 }.bind(this);
             this.initControls.init(inpCtrl, opt);
+
+            if (inpCtrl.DefaultValue)
+                inpCtrl.setValue(inpCtrl.DefaultValue);
+
+            if (inpCtrl.IsDisable)
+                inpCtrl.disable();
+
         }.bind(this));
     };
 
@@ -335,7 +354,7 @@
         let rowid = $tr.attr("rowid");
         if (!this.AllRequired_valid_Check(rowid))
             return;
-        $td.find(".check-row").hide().find(".fa-plus").removeClass("fa-plus").addClass("fa-check");
+        $td.find(".check-row").hide();
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
 
@@ -397,9 +416,7 @@
     }.bind(this);
 
     this.init = function () {
-        this.tryAddRow();
         this.ctrl.currentRow = [];
-        this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             this.ctrl.currentRow[col.Name] = col;
@@ -408,6 +425,8 @@
                 this.isAggragateInDG = true;
         }.bind(this));
 
+        this.tryAddRow();
+        this.isAggragateInDG = false;
 
         this.addAggragateRow();
 

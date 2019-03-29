@@ -235,6 +235,8 @@ const WebFormRender = function (option) {
         let NCCTblNames = this.getNCCTblNames(FormData);
         //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
         $.each(this.DGs, function (k, DG) {
+            if (!FormData.hasOwnProperty(DG.TableName))
+                return true;
             let SingleTable = FormData[DG.TableName];
             DG.setEditModeRows(SingleTable);
         }.bind(this));
@@ -403,7 +405,9 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToViewMode = function () {
+        this.Mode.isView = true;
         this.Mode.isEdit = false;
+        this.Mode.isNew = false;
         setHeader("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
@@ -414,6 +418,8 @@ const WebFormRender = function (option) {
 
     this.SwitchToEditMode = function () {
         this.Mode.isEdit = true;
+        this.Mode.isView = false;
+        this.Mode.isNew = false;
         this.setEditModeCtrls();
         setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions

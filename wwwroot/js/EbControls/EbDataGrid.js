@@ -1,5 +1,6 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
+    this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
@@ -78,10 +79,17 @@
                 console.log(val);
                 ctrl.setValue(val);
                 ctrl.Name = SingleColumn.Name;
+
+                if (ctrl.ObjType === "PowerSelect") {
+                    ctrl.setDisplayMember(this.FormDataExtdObj.val[ctrl.EbSid]);
+                }
             }.bind(this));
-            {// call checkRow_click() pass event.target directly
+            {
                 let td = $(`#${this.TableId} tbody tr[rowid=${rowid}] td:last`)[0];
-                this.checkRow_click({ target: td });
+                // call checkRow_click() pass event.target directly
+                setTimeout(function () {
+                    this.checkRow_click({ target: td });
+                }.bind(this), 1);
             }
         }.bind(this));
     };
@@ -139,7 +147,7 @@
             inpCtrl.EbSid_CtxId = ctrlEbSid;
             //inpCtrl.EbSid = ctrlEbSid;
             inpCtrl.ObjType = inpCtrlType.substr(2);
-            inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
+            inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
             tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}' style='width:${this.getTdWidth(i)}px'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
@@ -248,6 +256,9 @@
 
             if (inpCtrl.DefaultValue)
                 inpCtrl.setValue(inpCtrl.DefaultValue);
+
+            if (inpCtrl.IsDisable)
+                inpCtrl.disable();
 
         }.bind(this));
     };
@@ -405,9 +416,7 @@
     }.bind(this);
 
     this.init = function () {
-        this.tryAddRow();
         this.ctrl.currentRow = [];
-        this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             this.ctrl.currentRow[col.Name] = col;
@@ -416,6 +425,8 @@
                 this.isAggragateInDG = true;
         }.bind(this));
 
+        this.tryAddRow();
+        this.isAggragateInDG = false;
 
         this.addAggragateRow();
 

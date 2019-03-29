@@ -377,7 +377,7 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.SelectRow = function (idx, vmValue) {
-        if (!(this.Vobj.valueMembers.contains(vmValue))) {
+        if (!this.Vobj.valueMembers.contains(vmValue)) {
             if (this.maxLimit === 1) {
                 this.Vobj.valueMembers = [vmValue];
                 this.Vobj.hideDD();
@@ -571,6 +571,8 @@ const EbSelect = function (ctrl, options) {
                 this.ApplyRowFocusStyle($cell.closest("tr"));
             }.bind(this), 10);
         }
+
+        this.V_updateCk();
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
         //setTimeout(this.colAdjust, 520);
     };

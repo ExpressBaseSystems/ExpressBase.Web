@@ -2,6 +2,7 @@
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
+using ExpressBase.Objects.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -60,6 +61,10 @@ namespace ExpressBase.Web.Components
                         SimpleSelectColumn.EbSimpleSelect.InitFromDataBase(this.ServiceClient);
 
                         SimpleSelectColumn.DBareHtml = SimpleSelectColumn.EbSimpleSelect.GetBareHtml();
+                    }
+                    else if (control is EbUserLocation)
+                    {
+                        (control as EbUserLocation).InitFromDataBase(this.ServiceClient, ViewBag.__User, ViewBag.__Solution, ViewBag.formRefId);
                     }
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();

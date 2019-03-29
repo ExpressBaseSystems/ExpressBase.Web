@@ -103,13 +103,13 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
                 else if (cObj.ObjType === 'UserLocation') {
                     this.onChangeExeFlag = true;
                     $("body").on("change", "#" + cObj.EbSid_CtxId, this.ctrlValueChanged.bind(this, cObj.Name));
-                    $("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
+                    //$("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
                 }
             }
             else {
-                if (cObj.ObjType === 'UserLocation') {
-                    $("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
-                }
+                //if (cObj.ObjType === 'UserLocation') {
+                //    $("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
+                //}
             }
         }.bind(this));
 
@@ -151,18 +151,18 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         //    this.$filterBox.parent().css("width", this.FormObj.Width + "px");
     };
 
-    this.UserLocationCheckboxChanged = function (cObj) {
-        if ($(event.target).prop("checked")) {
-            $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
-            $('#' + cObj.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
-        }
-        else {
-            $('#' + cObj.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
-            if ($('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
-                $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+    //this.UserLocationCheckboxChanged = function (cObj) {
+    //    if ($(event.target).prop("checked")) {
+    //        $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+    //        $('#' + cObj.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
+    //    }
+    //    else {
+    //        $('#' + cObj.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
+    //        if ($('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
+    //            $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
 
-        }
-    };
+    //    }
+    //};
 
     this.init();
 };

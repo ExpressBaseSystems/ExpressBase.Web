@@ -18,6 +18,7 @@ const WebFormRender = function (option) {
     this.userObject = option.userObject;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
+    this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
@@ -48,42 +49,66 @@ const WebFormRender = function (option) {
         });
     };
 
-    this.initWebFormCtrls = function () {
-        JsonToEbControls(this.FormObj);
-        this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
-        this.formObject = {};
-
-        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
-        let flatControlsWithDG = this.flatControls.concat(this.DGs);
+    this.setFormObject = function () {
+        let flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
         $.each(flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+    };
 
-        // temp
+    this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj });
+        }.bind(this));
+    };
+
+    this.bindFnsToctrls = function (Obj) {
+        if (Obj.Required)
+            this.bindRequired(Obj);
+        if (Obj.Unique)
+            this.bindUniqueCheck(Obj);
+        if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
+            this.bindOnChange(Obj);
+        if (Obj.Validators.$values.length > 0)
+            this.bindValidators(Obj);
+    };
+
+    this.initNCs = function () {
+
+
+        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
         }.bind(this));
 
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
+
             if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
-                opt.FormDataExtended = this.FormDataExtended;
+                opt.FormDataExtdObj = this.FormDataExtdObj;
+
             this.initControls.init(Obj, opt);
-            if (Obj.Required)
-                this.bindRequired(Obj);
-            if (Obj.Unique)
-                this.bindUniqueCheck(Obj);
-            if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
-                this.bindOnChange(Obj);
-            if (Obj.Validators.$values.length > 0)
-                this.bindValidators(Obj);
+
+            this.bindFnsToctrls(Obj);
+
             if (Obj.DefaultValue)
                 Obj.setValue(Obj.DefaultValue);
 
+            if (Obj.IsDisable)
+                Obj.disable();
         }.bind(this));
+    };
 
+    this.initWebFormCtrls = function () {
+        JsonToEbControls(this.FormObj);
+        this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
+        this.formObject = {};// for passing to user defined functions
+        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
+        this.setFormObject();
+        this.initDGs();
+        this.initNCs();
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
@@ -128,7 +153,7 @@ const WebFormRender = function (option) {
                 if (!isUnique)
                     this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
                 else
-                    this.FRC.removeInvalidStyle();
+                    this.FRC.removeInvalidStyle(ctrl);
             }.bind(this)
         });
     };
@@ -137,12 +162,34 @@ const WebFormRender = function (option) {
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
+    //this.j = function (p1) {
+    //    let VMs = this.initializer.Vobj.valueMembers;
+    //    let DMs = this.initializer.Vobj.displayMembers;
+
+    //    if (VMs.length > 0) {// clear if already values there
+    //        this.initializer.clearValues();
+    //        //VMs.splice(0, VMs.length);
+    //        //$.each(this.DisplayMembers.$values, function (j, dm) {
+    //        //    DMs[dm.name].splice(0, DMs[dm.name].length);
+    //        //}.bind(this));
+    //    }
+
+    //    $.each(p1, function (i, row) {
+    //        VMs.push(getObjByval(row.Columns, "Name", this.ValueMember.name).Value);
+
+    //        $.each(this.DisplayMembers.$values, function (j, dm) {
+    //            DMs[dm.name].push(getObjByval(row.Columns, "Name", dm.name).Value);
+    //        }.bind(this));
+    //    }.bind(this));
+    //};
+
     this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
         $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
             if (SingleColumn.Name === "id")
                 return true;
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (ctrl.ObjType === "PowerSelect") {
+                //ctrl.setDisplayMember = this.j;
                 ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
             }
             else
@@ -305,6 +352,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
+                this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
             else {
@@ -317,6 +365,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
+                this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
             else {
@@ -455,11 +504,6 @@ const WebFormRender = function (option) {
             this.setEditModeCtrls();
             this.SwitchToViewMode();
         }
-
-        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
-        $.each(allFlatControls, function (k, Obj) {
-            this.updateCtrlUI(Obj);
-        }.bind(this));
     };
 
     this.init();

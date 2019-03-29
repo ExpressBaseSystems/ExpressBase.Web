@@ -339,6 +339,7 @@
 .searchable [type="search"] {
     width: 90px !important;
     min-width: 100%;
+    z-index: 0;
 }
 
 .DDdiv {

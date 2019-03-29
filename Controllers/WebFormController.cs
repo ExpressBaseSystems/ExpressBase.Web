@@ -27,39 +27,45 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Index(string refId, string _params, int _mode)
         {
-            //ViewBag.editModeObj = _params ?? "false";
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-            if (_params != null)
+            
+            if(_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
-                Param _temp = ob.FirstOrDefault(e => e.Name.Equals("id"));
-                if (_temp != null)
+                if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
-                    //ViewBag.formData = EbSerializers.Json_Serialize(getRowdata(refId, _temp.ValueTo));
-                    WebformData wfd = getRowdata(refId, _temp.ValueTo);
-
+                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo));
                     if (wfd.MultipleTables.Count == 0)
                     {
-                        //ViewBag.rowId = -1;
                         ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
                     }
-                    else if (_temp.ValueTo > 0)
+                    else if (ob[0].ValueTo > 0)
                     {
-                        ViewBag.rowId = _temp.ValueTo;
+                        ViewBag.rowId = ob[0].ValueTo;
                         ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
                         ViewBag.formData = JsonConvert.SerializeObject(wfd);
                     }
-
+                }
+                else if((int)WebFormDVModes.New_Mode == _mode)
+                {
+                    EbWebForm _form = this.Redis.Get<EbWebForm>(refId);
+                    _form.RefreshFormData(ob);
+                    ViewBag.formData = JsonConvert.SerializeObject(_form.FormData);
                 }
             }
+                                   
             if(ViewBag.wc == TokenConstants.DC)
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
+
+            ViewBag.__Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            ViewBag.__User = this.LoggedInUser;
+
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
 

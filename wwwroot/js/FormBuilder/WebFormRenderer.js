@@ -48,42 +48,56 @@ const WebFormRender = function (option) {
         });
     };
 
-    this.initWebFormCtrls = function () {
-        JsonToEbControls(this.FormObj);
-        this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
-        this.formObject = {};
-
-        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");
-        let flatControlsWithDG = this.flatControls.concat(this.DGs);
+    this.setFormObject = function () {
+        let flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
         $.each(flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+    };
 
-        // temp
+    this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtended: this.FormDataExtended });
         }.bind(this));
+    };
 
+    this.bindFnsToctrls = function (Obj) {
+        if (Obj.Required)
+            this.bindRequired(Obj);
+        if (Obj.Unique)
+            this.bindUniqueCheck(Obj);
+        if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
+            this.bindOnChange(Obj);
+        if (Obj.Validators.$values.length > 0)
+            this.bindValidators(Obj);
+    };
+
+    this.initNCs = function () {
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
+
             if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
                 opt.FormDataExtended = this.FormDataExtended;
+
             this.initControls.init(Obj, opt);
-            if (Obj.Required)
-                this.bindRequired(Obj);
-            if (Obj.Unique)
-                this.bindUniqueCheck(Obj);
-            if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
-                this.bindOnChange(Obj);
-            if (Obj.Validators.$values.length > 0)
-                this.bindValidators(Obj);
+
+            this.bindFnsToctrls(Obj);
+
             if (Obj.DefaultValue)
                 Obj.setValue(Obj.DefaultValue);
-
         }.bind(this));
+    };
 
+    this.initWebFormCtrls = function () {
+        JsonToEbControls(this.FormObj);
+        this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
+        this.formObject = {};// for passing to user defined functions
+        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
+        this.setFormObject();
+        this.initDGs();
+        this.initNCs();
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);

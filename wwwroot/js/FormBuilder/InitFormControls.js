@@ -188,6 +188,21 @@
         $input.multiselect({
             includeSelectAllOption: true
         });
+
+        $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
+    };
+
+    this.UserLocationCheckboxChanged = function (ctrl) {
+        if ($(event.target).prop("checked")) {
+            $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+            $('#' + ctrl.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
+        }
+        else {
+            $('#' + ctrl.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
+            if ($('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
+                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
+
+        }
     };
 
     this.InputGeoLocation = function (ctrl) {

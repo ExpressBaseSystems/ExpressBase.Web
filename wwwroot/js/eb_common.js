@@ -93,6 +93,11 @@ Array.prototype.moveToFirst = function (index) {
     this.unshift(temp);
 };
 
+Array.prototype.swap = function (x, y) {
+    var b = this[x];
+    this[x] = this[y];
+    this[y] = b;
+}
 //Array.prototype.splice = function (startIdx, noOfEleRet) {
 //    var arr = [];
 //    for (var i = startIdx; i < (startIdx+noOfEleRet); i++) {

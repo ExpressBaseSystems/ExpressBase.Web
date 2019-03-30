@@ -22,6 +22,7 @@
 <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/css/bootstrap-select.css">
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" asp-append-version=@bApnd />@*amal*@
 
 
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
@@ -36,24 +37,27 @@
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/EbControls/EbDataGrid.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/js/bootstrap-select.js"></script>
+<script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>
+
 @{
 
     EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.WebForm);
     //ivide
-    <script>
+<script>
     @Html.Raw(_toolBox.EbOnChangeUIfns);
     @Html.Raw(_toolBox.AllMetas);
     @Html.Raw(_toolBox.AllControlls);
-    </script>
+</script>
 }
 
 
-    <script>
+<script>
     @Html.Raw(ViewBag.HtmlHead);
-    </script>
+</script>
 
 <style>
     .webform-cont {
@@ -125,7 +129,6 @@
         .fmode[mode="View Mode"] {
             background-color: #222222;
         }
-
 </style>
 
 <div id='WebForm-cont' class="webform-cont">
@@ -159,7 +162,7 @@
     header.insertButton(`<button id="webformdelete" class='btn' title='Delete'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformedit" class='btn' title='Edit'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
 
-    //header.insertButton(' <button class="btn" id="webformsave"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');        
+    //header.insertButton(' <button class="btn" id="webformsave"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
     //let _editModeObj =  '@Html.Raw(ViewBag.editModeObj)';
 
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
@@ -175,7 +178,7 @@
     let uploadedFileRefList = {};
 
     function setHeader(reqstMode) {
-        _mode = reqstMode;// 
+        _mode = reqstMode;//
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
             header.showElement(["webformnew", "webformsave"]);
@@ -202,9 +205,9 @@
         $('title').text(_formObj.DisplayName + `(${reqstMode})`);
     }
     setHeader(_mode);
-    
+
     //let _$saveBtn = $("#webformsave");
-    //let FormMode = "New Mode";    
+    //let FormMode = "New Mode";
 
     const renderer = new WebFormRender({
         formObj: _formObj,
@@ -232,7 +235,7 @@
     //header.setMode(`<span class="fmode"style="color: #444;font-weight: normal;">(${FormMode})</span>`);
     //$('title').text(_formObj.DisplayName);
 
-    
+
 
     $("#webformaudittrail").on("click", function () {
         $("#AuditHistoryModal").modal("show");

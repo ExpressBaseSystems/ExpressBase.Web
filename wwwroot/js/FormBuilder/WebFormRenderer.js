@@ -16,7 +16,7 @@ const WebFormRender = function (option) {
     this.rowId = option.rowId;
     this.mode = option.mode;
     this.userObject = option.userObject;
-    this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
+    this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;//EditModeFormData
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
     this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
@@ -183,8 +183,8 @@ const WebFormRender = function (option) {
     //    }.bind(this));
     //};
 
-    this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
-        $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
+    this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
+        $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
             if (SingleColumn.Name === "id")
                 return true;
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
@@ -208,10 +208,10 @@ const WebFormRender = function (option) {
         return NCCTblNames;
     };
 
-    this.getNCCSingleColumns_flat = function (FormData, NCCTblNames) {
+    this.getNCCSingleColumns_flat = function (EditModeFormData, NCCTblNames) {
         let NCCSingleColumns_flat = [];
         $.each(NCCTblNames, function (i, TblName) {
-            let SingleRowColums = FormData[TblName][0].Columns;
+            let SingleRowColums = EditModeFormData[TblName][0].Columns;
             NCCSingleColumns_flat = NCCSingleColumns_flat.concat(SingleRowColums);
         });
         return NCCSingleColumns_flat;
@@ -231,16 +231,18 @@ const WebFormRender = function (option) {
             }.bind(this));
             return;
         }
-        let FormData = this.EditModeFormData;
-        let NCCTblNames = this.getNCCTblNames(FormData);
-        //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
+        let EditModeFormData = this.EditModeFormData;
+        let NCCTblNames = this.getNCCTblNames(EditModeFormData);
+        //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
         $.each(this.DGs, function (k, DG) {
-            let SingleTable = FormData[DG.TableName];
+            if (!EditModeFormData.hasOwnProperty(DG.TableName))
+                return true;
+            let SingleTable = EditModeFormData[DG.TableName];
             DG.setEditModeRows(SingleTable);
         }.bind(this));
 
-        let NCCSingleColumns_flat = this.getNCCSingleColumns_flat(FormData, NCCTblNames);
-        this.setNCCSingleColumns(NCCSingleColumns_flat);
+        let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
+        this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
         this.isEditModeCtrlsSet = true;
     };
 
@@ -403,7 +405,9 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToViewMode = function () {
+        this.Mode.isView = true;
         this.Mode.isEdit = false;
+        this.Mode.isNew = false;
         setHeader("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
@@ -414,6 +418,8 @@ const WebFormRender = function (option) {
 
     this.SwitchToEditMode = function () {
         this.Mode.isEdit = true;
+        this.Mode.isView = false;
+        this.Mode.isNew = false;
         this.setEditModeCtrls();
         setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
@@ -498,8 +504,10 @@ const WebFormRender = function (option) {
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         $(window).off("keydown").on("keydown", this.windowKeyDown);
-
         this.initWebFormCtrls();
+
+        if (this.Mode.isNew && this.EditModeFormData)
+            this.setEditModeCtrls();
         if (this.mode === "View Mode") {
             this.setEditModeCtrls();
             this.SwitchToViewMode();

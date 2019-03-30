@@ -50,9 +50,15 @@ namespace ExpressBase.Web.Controllers
                 }
                 else if((int)WebFormDVModes.New_Mode == _mode)
                 {
-                    EbWebForm _form = this.Redis.Get<EbWebForm>(refId);
-                    _form.RefreshFormData(ob);
-                    ViewBag.formData = JsonConvert.SerializeObject(_form.FormData);
+                    try
+                    {
+                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob });
+                        ViewBag.formData = JsonConvert.SerializeObject(Resp.FormData);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
+                    }
                 }
             }
                                    

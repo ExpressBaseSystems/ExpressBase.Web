@@ -181,7 +181,7 @@
 
     this.getTdWidth = function (i) {
         return $(`#${this.TableId}_head thead th`).eq(i).outerWidth() + 1 + ((i == 0) ? 3 : 0);
-    }
+    };
 
     this.getAggTrHTML = function () {
         let tr = `<tr class='dgtr' agg='true' tabindex='0'>`;

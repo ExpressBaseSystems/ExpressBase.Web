@@ -2318,6 +2318,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormParameters.$values)));
         _form.appendChild(input);
 
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_mode";
+        input.value = 1;
+        _form.appendChild(input);
+
         document.body.appendChild(_form);
         _form.submit();
         document.body.removeChild(_form);
@@ -2336,6 +2342,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         input.name = "_params";
         input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormParameters.$values)));
         _form.appendChild(input);
+
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_mode";
+        input.value = 1;
+        _form.appendChild(input);
+
 
         document.body.appendChild(_form);
         _form.submit();
@@ -2356,6 +2369,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         _form.appendChild(input);
 
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_mode";
+        input.value = 0;
+        _form.appendChild(input);
+
+
         document.body.appendChild(_form);
         _form.submit();
         document.body.removeChild(_form);
@@ -2374,6 +2394,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         input.name = "_params";
         input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         _form.appendChild(input);
+
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = "_mode";
+        input.value = 0;
+        _form.appendChild(input);
+
 
         document.body.appendChild(_form);
         _form.submit();

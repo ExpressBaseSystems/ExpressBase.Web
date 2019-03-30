@@ -181,8 +181,8 @@ var EbBasicDataTable = function (Option) {
         //});
 
 
-        //$('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
-        //$('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
+        $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
+        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
         //this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
     };
@@ -196,7 +196,7 @@ var EbBasicDataTable = function (Option) {
             //    serialObj.data = this.ebSettings.Columns.$values.length;
         }
         this.addcheckbox();
-    }
+    };
 
     this.CheckforColumnID = function () {
         $.each(this.ebSettings.Columns.$values, function (i, col) {

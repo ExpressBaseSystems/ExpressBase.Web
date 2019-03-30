@@ -504,6 +504,10 @@ const WebFormRender = function (option) {
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         $(window).off("keydown").on("keydown", this.windowKeyDown);
+        this.initWebFormCtrls();
+
+        if (this.Mode.isNew && this.EditModeFormData)
+            this.setEditModeCtrls();
 
         this.initWebFormCtrls();
         if (this.mode === "View Mode") {

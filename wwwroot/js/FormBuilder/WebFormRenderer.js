@@ -508,8 +508,6 @@ const WebFormRender = function (option) {
 
         if (this.Mode.isNew && this.EditModeFormData)
             this.setEditModeCtrls();
-
-        this.initWebFormCtrls();
         if (this.mode === "View Mode") {
             this.setEditModeCtrls();
             this.SwitchToViewMode();

@@ -2286,22 +2286,39 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.GroupFormLink !== null) {
                 $.contextMenu({
                     selector: ".groupform",
-                    items: {
-                        "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                        "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                        "EditGroup": { name: "Edit Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
-                    }
+                    build: function ($trigger, e) {
+                        $("body").find("td").removeClass("focus");
+                        $("body").find("[role=row]").removeClass("selected");
+                        $trigger.closest("[role=row]").addClass("selected");
+                        return {
+                            items: {
+                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "Edit Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                            }
+                        };
+                    }.bind(this)
+                    
                 });
             }
             if (this.ItemFormLink !== null) {
                 $.contextMenu({
                     selector: ".itemform",
-                    items: {
-                        "EditItem": { name: "Edit Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) }
-                    }
+                    build: function ($trigger, e) {
+                        $("body").find("td").removeClass("focus");
+                        $("body").find("[role=row]").removeClass("selected");
+                        $trigger.closest("[role=row]").addClass("selected");
+                        return {
+                            items: {
+                                "EditItem": { name: "Edit Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) }
+                            }
+                        };
+                    }.bind(this)
+                    
                 });
             }
         }
+        $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
     };
 
     this.FormNewGroup = function (key, opt, event) {
@@ -2415,6 +2432,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }.bind(this));
         return filters;
     };
+
+    this.collapseTreeGroup = function (e) {
+        var el = (typeof (e.target) !== "undefined") ? $(e.target) : $(e);
+        elem = $(el).parents().closest("[role=row]");
+        var level = parseInt($(el).closest("[data-level]").attr("data-level"));
+        //var childItemRows = elem.nextAll("tr").children().find("[data-level=" + (level + 1) + "].itemform");
+        //childItemRows.parents().closest("[role=row]").hide();
+        //var childGroupRows = elem.nextAll("tr").children().find("[data-level=" + (level + 1) + "].groupform");
+        //if (childGroupRows.length > 0) {
+        //    $.each(childGroupRows, function (i, obj) {
+        //        this.collapseTreeGroup(obj);
+        //        $(obj).parents().closest("[role=row]").hide();
+        //    }.bind(this));
+        //}
+    }.bind(this);
 
     this.setFilterboxValue = function (i, obj) {
         $(obj).children('div').children('.eb_finput').on("keydown", function (event) {

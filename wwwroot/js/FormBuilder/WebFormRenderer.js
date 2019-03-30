@@ -166,19 +166,25 @@ const WebFormRender = function (option) {
     //    let VMs = this.initializer.Vobj.valueMembers;
     //    let DMs = this.initializer.Vobj.displayMembers;
 
-    //    if (VMs.length > 0) {// clear if already values there
+    //    if (VMs.length > 0)// clear if already values there
     //        this.initializer.clearValues();
-    //        //VMs.splice(0, VMs.length);
-    //        //$.each(this.DisplayMembers.$values, function (j, dm) {
-    //        //    DMs[dm.name].splice(0, DMs[dm.name].length);
-    //        //}.bind(this));
-    //    }
 
-    //    $.each(p1, function (i, row) {
-    //        VMs.push(getObjByval(row.Columns, "Name", this.ValueMember.name).Value);
+    //    let valMsArr = p1[0].split(",");
+    //    let DMtable = p1[1];
 
+
+    //    $.each(valMsArr, function (i, vm) {
+    //        VMs.push(vm);
     //        $.each(this.DisplayMembers.$values, function (j, dm) {
-    //            DMs[dm.name].push(getObjByval(row.Columns, "Name", dm.name).Value);
+    //            valMsArr;
+    //            DMtable;
+
+    //            $.each(DMtable, function (j, r) {
+    //                if (getObjByval(r.Columns, "Name", this.ValueMember.name).Value === vm) {
+    //                    let _dm = getObjByval(r.Columns, "Name", dm.name).Value;
+    //                    DMs[dm.name].push(_dm);
+    //                }
+    //            }.bind(this));
     //        }.bind(this));
     //    }.bind(this));
     //};
@@ -190,7 +196,7 @@ const WebFormRender = function (option) {
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (ctrl.ObjType === "PowerSelect") {
                 //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
+                ctrl.setDisplayMember([SingleColumn.Value, this.FormDataExtended[ctrl.EbSid]]);
             }
             else
                 ctrl.setValue(SingleColumn.Value);
@@ -508,6 +514,7 @@ const WebFormRender = function (option) {
 
         if (this.Mode.isNew && this.EditModeFormData)
             this.setEditModeCtrls();
+
         if (this.mode === "View Mode") {
             this.setEditModeCtrls();
             this.SwitchToViewMode();

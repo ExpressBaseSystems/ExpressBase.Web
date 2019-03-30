@@ -134,7 +134,11 @@ const WebFormRender = function (option) {
     };
 
     this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.checkUnique.bind(this, control));
+        $("#" + control.EbSid_CtxId).on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+    };
+
+    this.unbindUniqueCheck = function (control) {
+        $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
     };
 
     this.checkUnique = function (ctrl) {/////////////// move
@@ -430,7 +434,11 @@ const WebFormRender = function (option) {
         setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.flatControls, function (k, ctrl) {
-            ctrl.enable();
+            if (!ctrl.IsDisable)
+                ctrl.enable();
+            if (ctrl.Unique)
+                this.unbindUniqueCheck(ctrl);
+
         }.bind(this));
     };
 

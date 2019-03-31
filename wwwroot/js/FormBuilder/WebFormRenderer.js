@@ -25,6 +25,7 @@ const WebFormRender = function (option) {
     this.formValidationflag = true;
     this.isEditModeCtrlsSet = false;
     this.DGBuilderObjs = {};
+    this.uniqCtrlsInitialVals = {};
     this.FRC = new FormRenderCommon({
         FO: this
     });
@@ -137,11 +138,18 @@ const WebFormRender = function (option) {
         $("#" + control.EbSid_CtxId).on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 
-    this.unbindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
+    //this.unbindUniqueCheck = function (control) {
+    //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
+    //};
+
+    this.isSameValInUniqCtrl = function (ctrl) {
+        let val = ctrl.getValue();
+        return val === this.uniqCtrlsInitialVals[ctrl.EbSid];
     };
 
     this.checkUnique = function (ctrl) {/////////////// move
+        if (Object.entries(this.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl))
+            return;
         let val = ctrl.getValue();
         if (isNaNOrEmpty(val))
             return;
@@ -437,7 +445,7 @@ const WebFormRender = function (option) {
             if (!ctrl.IsDisable)
                 ctrl.enable();
             if (ctrl.Unique)
-                this.unbindUniqueCheck(ctrl);
+                this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
         }.bind(this));
     };

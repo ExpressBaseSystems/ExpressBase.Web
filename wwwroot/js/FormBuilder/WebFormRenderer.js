@@ -159,8 +159,10 @@ const WebFormRender = function (option) {
         let val = ctrl.getValue();
         if (isNaNOrEmpty(val))
             return;
-        this.hideLoader();
-        this.showLoader();
+        //this.hideLoader();
+        //this.showLoader();
+        hide_inp_loader($ctrl, this.$saveBtn);
+        show_inp_loader($ctrl, this.$saveBtn);
         $.ajax({
             type: "POST",
             url: "../WebForm/DoUniqueCheck",
@@ -168,7 +170,8 @@ const WebFormRender = function (option) {
                 TableName: this.FormObj.TableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
             },
             success: function (isUnique) {
-                this.hideLoader();
+                //this.hideLoader();
+                hide_inp_loader($ctrl, this.$saveBtn);
                 if (!isUnique) {
                     //unique_flag = false;
                     $ctrl.attr("uniq-ok", "false");

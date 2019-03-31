@@ -412,7 +412,7 @@ const WebFormRender = function (option) {
             if (!control.Required)
                 return true;
             let $ctrl = $("#" + control.EbSid_CtxId);
-            if ($ctrl.attr("uniq-ok") === "true") {
+            if ($ctrl.attr("uniq-ok") === "false") {
                 this.FRC.addInvalidStyle(control, "This field is unique, try another value");
                 unique_flag = false;
                 if (!$notOk1stCtrl)

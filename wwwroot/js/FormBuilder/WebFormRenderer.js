@@ -148,10 +148,13 @@ const WebFormRender = function (option) {
     };
 
     this.checkUnique = function (ctrl) {/////////////// move
-        if (Object.entries(this.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl))
+        if (Object.entries(this.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl))// avoid check if edit mode and value is same as initial
             return;
-        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)
+        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)// avoid check if numeric and value is 0
             return;
+
+        //let unique_flag = true;
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
         let val = ctrl.getValue();
         if (isNaNOrEmpty(val))
             return;
@@ -164,10 +167,16 @@ const WebFormRender = function (option) {
             },
             success: function (isUnique) {
                 this.hideLoader();
-                if (!isUnique)
+                if (!isUnique) {
+                    //unique_flag = false;
+                    $ctrl.attr("uniq-ok", "false");
                     this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
-                else
+                }
+                else {
+                    $ctrl.attr("uniq-ok", "true");
                     this.FRC.removeInvalidStyle(ctrl);
+                }
+                //return unique_flag;
             }.bind(this)
         });
     };
@@ -396,9 +405,33 @@ const WebFormRender = function (option) {
         }
     };
 
+    this.isAllUniqOK = function() {
+        let unique_flag = true;
+        let $notOk1stCtrl = null;
+        $.each(this.flatControls, function (i, control) {
+            if (!control.Required)
+                return true;
+            let $ctrl = $("#" + control.EbSid_CtxId);
+            if ($ctrl.attr("uniq-ok") !== "true") {
+                this.FRC.addInvalidStyle(control, "This field is unique, try another value");
+                unique_flag = false;
+                if (!$notOk1stCtrl)
+                    $notOk1stCtrl = $ctrl;
+            }
+        }.bind(this));
+
+        if ($notOk1stCtrl)
+            $notOk1stCtrl.select();
+        return unique_flag;
+    };
+
     this.saveForm = function () {
         if (!this.FRC.AllRequired_valid_Check())
             return;
+        if (!this.isAllUniqOK())
+            return;
+        //if (!this.FRC.AllUnique_Check())
+        //    return;
         this.showLoader();
         let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         $.ajax({

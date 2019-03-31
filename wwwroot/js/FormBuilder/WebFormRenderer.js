@@ -411,7 +411,7 @@ const WebFormRender = function (option) {
         let unique_flag = true;
         let $notOk1stCtrl = null;
         $.each(this.flatControls, function (i, control) {
-            if (!control.Required)
+            if (!control.Unique)
                 return true;
             let $ctrl = $("#" + control.EbSid_CtxId);
             if ($ctrl.attr("uniq-ok") === "false") {

@@ -135,7 +135,8 @@ const WebFormRender = function (option) {
     };
 
     this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 300)); //delayed check 
+            ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 
     //this.unbindUniqueCheck = function (control) {
@@ -158,6 +159,7 @@ const WebFormRender = function (option) {
         let val = ctrl.getValue();
         if (isNaNOrEmpty(val))
             return;
+        this.hideLoader();
         this.showLoader();
         $.ajax({
             type: "POST",

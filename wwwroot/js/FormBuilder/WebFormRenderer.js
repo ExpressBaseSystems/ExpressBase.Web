@@ -150,6 +150,8 @@ const WebFormRender = function (option) {
     this.checkUnique = function (ctrl) {/////////////// move
         if (Object.entries(this.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl))
             return;
+        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)
+            return;
         let val = ctrl.getValue();
         if (isNaNOrEmpty(val))
             return;

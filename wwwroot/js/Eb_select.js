@@ -563,7 +563,6 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.V_showDD = function () {
-        t = this.ComboObj;
         this.Vobj.DDstate = true;
         if (!this.IsDatatableInit)
             this.InitDT();

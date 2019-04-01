@@ -201,10 +201,7 @@
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
-        if ($(`#${this.TableId} tbody [agg='true']`).length === 0)
-            $(`#${this.TableId} tbody`).append($tr);
-        else
-            $(`#${this.TableId} tbody tr:last`).prev().after($tr);
+        $(`#${this.TableId}>tbody`).append($tr);
         this.bindReq_Vali_UniqRow($tr);
         this.initRowCtrls(rowid);
     }.bind(this);
@@ -212,7 +209,7 @@
     this.addAggragateRow = function () {
         let tr = this.getAggTrHTML();
         let $tr = $(tr);
-        $(`#${this.TableId}_footer tbody`).append($tr);
+        $(`#${this.TableId}_footer>tbody`).append($tr);
     };
 
     this.bindReq_Vali_UniqRow = function ($tr) {
@@ -381,7 +378,7 @@
         if (this.isAggragateInDG) {
             $.each(this.ctrl.Controls.$values, function (i, col) {
                 if (col.IsAggragate)
-                    $(`[agg='true'] [colname='${col.Name}'] .tdtxt-agg span`).text(this.getAggOfCol(col));
+                    $(`#${this.TableId}_footer tbody tr [colname='${col.Name}'] .tdtxt-agg span`).text(this.getAggOfCol(col));
             }.bind(this));
         }
 
@@ -429,6 +426,7 @@
 
     this.init = function () {
         this.ctrl.currentRow = [];
+        this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             this.ctrl.currentRow[col.Name] = col;
@@ -438,9 +436,8 @@
         }.bind(this));
 
         this.tryAddRow();
-        this.isAggragateInDG = false;
-
-        this.addAggragateRow();
+        if (this.isAggragateInDG)
+            this.addAggragateRow();
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

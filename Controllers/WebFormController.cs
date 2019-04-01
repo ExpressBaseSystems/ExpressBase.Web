@@ -25,41 +25,53 @@ namespace ExpressBase.Web.Controllers
     {
         public WebFormController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public IActionResult Index(string refId, string _params)
+        public IActionResult Index(string refId, string _params, int _mode)
         {
-            //ViewBag.editModeObj = _params ?? "false";
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-            if (_params != null)
+            
+            if(_params != null)
             {
-                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(_params)));
-                Param _temp = ob.FirstOrDefault(e => e.Name.Equals("id"));
-                if (_temp != null)
+                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
+                if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
-                    //ViewBag.formData = EbSerializers.Json_Serialize(getRowdata(refId, _temp.ValueTo));
-                    WebformData wfd = getRowdata(refId, _temp.ValueTo);
-
+                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo));
                     if (wfd.MultipleTables.Count == 0)
                     {
-                        //ViewBag.rowId = -1;
                         ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
                     }
-                    else if (_temp.ValueTo > 0)
+                    else if (ob[0].ValueTo > 0)
                     {
-                        ViewBag.rowId = _temp.ValueTo;
+                        ViewBag.rowId = ob[0].ValueTo;
                         ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
                         ViewBag.formData = JsonConvert.SerializeObject(wfd);
                     }
-
+                }
+                else if((int)WebFormDVModes.New_Mode == _mode)
+                {
+                    try
+                    {
+                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob });
+                        ViewBag.formData = JsonConvert.SerializeObject(Resp.FormData);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
+                    }
                 }
             }
+                                   
             if(ViewBag.wc == TokenConstants.DC)
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
+
+            ViewBag.__Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            ViewBag.__User = this.LoggedInUser;
+
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
 
@@ -145,6 +157,8 @@ namespace ExpressBase.Web.Controllers
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
+            if (!TokenConstants.UC.Equals(ViewBag.wc))
+                throw new FormException("Access Denied");
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
             int _CurrentLoc = this.LoggedInUser.Preference.DefaultLocation;
             if (!this.LoggedInUser.LocationIds.Contains(CurrentLoc))

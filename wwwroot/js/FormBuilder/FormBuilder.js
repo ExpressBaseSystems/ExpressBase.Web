@@ -9,7 +9,7 @@
     this.rootContainerObj = null;
     this.builderType = options.builderType;
     this.$propGrid = $("#" + options.PGId);
-    
+
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
 
     this.$form = $("#" + this.formId);
@@ -24,12 +24,17 @@
     this.movingObj = {};
 
     this.GenerateButtons = function () {
-        $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
+        if (options.builderType === 'WebForm' && options.objInEditMode !== null) {
+            $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
                                             <i class='fa fa-eye' aria-hidden='true'></i>
                                         </button>`);
-        $("#form_preview").off("click").on("click", function () {
-            window.open("../WebForm/Index?refid=" + this.EbObject.RefId, '_blank');
-        }.bind(this));
+            $("#form_preview").off("click").on("click", function () {
+                if (this.EbObject.RefId === null || this.EbObject.RefId === "")
+                    EbMessage("show", { Message: 'Refresh page then Try again', AutoHide: true, Background: '#1e1ebf' });
+                else
+                    window.open("../WebForm/Index?refid=" + this.EbObject.RefId, '_blank');
+            }.bind(this));
+        }        
     }.bind(this);
 
     this.del = function (eType, selector, action, originalEvent) {
@@ -155,7 +160,7 @@
         let attr_ebsid = $el.attr("ebsid");
         let attrEbsid_Dgt = parseInt(attr_ebsid.match(/\d+$/)[0]);
         let attrEbsid_Except_Dgt = attr_ebsid.substring(0, attr_ebsid.length - attrEbsid_Dgt.toString().length);
-        
+
         let ctrlCount = this.controlCounters[type + "Counter"];
         this.controlCounters[type + "Counter"] = (attrEbsid_Dgt > ctrlCount) ? attrEbsid_Dgt : ctrlCount;
         let ebsid = attrEbsid_Except_Dgt + attrEbsid_Dgt;// inc counter
@@ -477,9 +482,8 @@
             this.makeTabsDropable();
         }
 
-        if (options.builderType === 'WebForm' && options.objInEditMode !== null) {
-            this.GenerateButtons();
-        }
+        this.GenerateButtons();
+        
     };
 
     this.DSchangeCallBack = function () {

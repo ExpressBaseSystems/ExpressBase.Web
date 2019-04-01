@@ -87,6 +87,17 @@ Array.prototype.contains = function (element) {
     return false;
 };
 
+Array.prototype.moveToFirst = function (index) {
+    var temp = this[index];
+    this.splice(index, 1);
+    this.unshift(temp);
+};
+
+Array.prototype.swap = function (x, y) {
+    var b = this[x];
+    this[x] = this[y];
+    this[y] = b;
+}
 //Array.prototype.splice = function (startIdx, noOfEleRet) {
 //    var arr = [];
 //    for (var i = startIdx; i < (startIdx+noOfEleRet); i++) {
@@ -412,10 +423,10 @@ function getSingleColumn(obj) {
 //    }
 //});
 function Test() {
-    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1MjM2NzkxNSwiZXhwIjoxNTUyMzY4MDA1LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.UYPQmoHqL0TAHpgw9cIRCHlHu_1YMScVWH2b9b1Zt0Lsfqw7Wl5IrytAxl3NmqOSgTmKQ2ESGyoMwIjJB5BoAFMKKGce_iMzNB6dq1mKKt9-PBWV7cVPeUakoHnMAyD9NBZWCkqfMu8t7e8vIoaIPW3nK8zRkMdpyR1y7-S6eKs`;
-    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTIzNjc4MTYsImV4cCI6MTU1MjQ1NDIxNn0.a6CwoatvjEESYI_T0DfnjVLg6vhbiw2TQrz6FkZUxlpaIDoegqLrW06bFCg2OVUIl313lWBS0A8RDhN1j9C9bHJzqtXy2k3VVe2e4owJqYKqBQUykHXWeaCZeqAACJsVhrxubRl45-BfBwFIhlXNIWzqylPio7S15ZdTVI6wGDs`;
+    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1MzY5MTcwMCwiZXhwIjoxNTUzNjkxNzkwLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.OKVOtYy_f1m8Ws85uXraJ5kgsQDtRx7bfsMPQKZ7q1yGMQ5hsKCH_yj0pQ9nCF2MQExDqSfN2RkaXJDIkpviRtqsSmche0i6J3oDEGEgdWoO3GdFN1JQfVMFsTT1IzOR2zVkQ-ji2Nz2CsskXbZUA4xkMqrYcpSrhbTrf5vDhfI`
+    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTM2ODkwMzYsImV4cCI6MTU1Mzc3NTQzNn0.BLXWOA4csdWr2MEOmVzAqQHLirLKiX2a3NfuXlELv7fwSyoFJHCdz_XZQTTqoJ54V6EfposEjlD29ZDaKX7M16V-_eXi9oEiEfAM_XDzNgohqI06qBbFmA2TAYovKj0R0JLn3iN_83t2RO9YSUeN4_pnMFKwq0Kfew6znY51rvs`;
     $.ajax({
-        url: "../api/api_salesmanwsalereport/1.0.0/xml",
+        url: "../api/api_salesman_w_order_report/1.0.0/json",
         type: "POST",
         cache: false,
         beforeSend: function (xhr) {
@@ -423,9 +434,11 @@ function Test() {
             xhr.setRequestHeader("rToken", r);
         },
         data: {
-            "trndate_from": '2015-04-07',
-            "trndate_to": '2015-10-07',
-            "salesman_id":'89'
+            "eb_location_id": -1,
+            "selection_mode": 'All',
+            "salesman_ids": 0,
+            "datefrom": "2016-04-01",
+            "dateto":"2016-04-01"
         },
         success: function (result) {
 

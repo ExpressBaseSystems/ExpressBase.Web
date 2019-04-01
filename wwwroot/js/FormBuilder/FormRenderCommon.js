@@ -1,6 +1,7 @@
 ﻿const FormRenderCommon = function (options) {
     this.FO = options.FO;
     this.$submitButton = options.submitButtonHtml;
+
     this.AllRequired_valid_Check = function () {
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
@@ -17,6 +18,23 @@
             $notOk1stCtrl.select();
         return required_valid_flag;
     };
+
+    //this.AllUnique_Check = function () {
+    //    let unique_flag = true;
+    //    let $notOk1stCtrl = null;
+    //    $.each(this.FO.flatControls, function (i, control) {
+    //        let $ctrl = $("#" + control.EbSid_CtxId);
+    //        if (!this.FO.checkUnique(control)) {
+    //            unique_flag = false;
+    //            if (!$notOk1stCtrl)
+    //                $notOk1stCtrl = $ctrl;
+    //        }
+    //    }.bind(this));
+
+    //    if ($notOk1stCtrl)
+    //        $notOk1stCtrl.select();
+    //    return unique_flag;
+    //};
 
     // check all validations in a control
     this.isValidationsOK = function (ctrl) {

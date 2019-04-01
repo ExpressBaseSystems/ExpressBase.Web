@@ -1,10 +1,12 @@
-﻿.api_body{
-    font-family:open sans;
+﻿.api_body {
+    font-family: open sans;
 }
+
 .eb_apiWrper {
     width: 100%;
     height: calc(100% - 73px);
 }
+
     .eb_apiWrper .eb_apiSideBar {
         width: 25%;
         background: white;
@@ -16,12 +18,14 @@
         height: calc(100% - 73px);
         position: fixed;
     }
+
     .eb_apiWrper .eb_apiPane {
         width: 50%;
         min-height: 300px;
         margin-left: 25%;
         padding: 0 5px;
     }
+
     .eb_apiWrper .eb_apiSideBar .resource_link_Bdy .head {
         padding: 2px 5px;
         border-bottom: 1px solid #ddd;
@@ -29,6 +33,7 @@
         font-size: 13px;
         cursor: pointer;
     }
+
     .eb_apiWrper .eb_apiPane .resource_Body {
         background: white;
         min-height: 80vh;
@@ -36,6 +41,7 @@
         border-radius: 4px;
         border: 1px solid #ccc;
     }
+
     .eb_apiWrper .eb_apiSideBar .resource_link_Bdy .bdy .resource_items {
         width: 50%;
         display: inline-block;
@@ -44,6 +50,7 @@
         float: left;
         cursor: pointer;
     }
+
         .eb_apiWrper .eb_apiSideBar .resource_link_Bdy .bdy .resource_items .resource_items-inner {
             width: 100%;
             padding: 10px 10px;
@@ -53,9 +60,11 @@
             border: solid 1px rgba(0, 0, 255, 0);
             transition-duration: 0.05s;
         }
-.eb_apiWrper .eb_apiSideBar .resource_link_Bdy .bdy .resource_items i {
-    padding-right: 10px;
-}
+
+        .eb_apiWrper .eb_apiSideBar .resource_link_Bdy .bdy .resource_items i {
+            padding-right: 10px;
+        }
+
     .eb_apiWrper .pgContainer {
         position: fixed;
         top: 0;
@@ -68,9 +77,11 @@
         background-color: white;
         width: 25%;
     }
+
 .drop-hover {
     border: 2px solid #316396 !important;
 }
+
 .strt_circ {
     border-radius: 50%;
     width: 25px;
@@ -78,6 +89,7 @@
     background-color: #78ca77;
     position: relative;
 }
+
 .stop_circ {
     border-radius: 50%;
     width: 25px;
@@ -85,11 +97,13 @@
     background-color: #e87575;
     position: relative;
 }
+
 .resource_append_wraper .apiPrcItem {
     display: flex;
     justify-content: center;
     margin: 40px 0;
 }
+
 .drpbox {
     min-height: 60px;
     border: 1px solid #ccc;
@@ -103,32 +117,38 @@
     flex-flow: column;
     text-align: center;
 }
+
 .resource_append_wraper .apiPrcItem .drpbox .CompLabel {
     width: 100%;
     padding-top: 5px;
-    font-size:15px;
+    font-size: 15px;
 }
+
 .resource_append_wraper .apiPrcItem .drpbox .CompName {
     width: 100%;
     font-size: 13px;
     color: #6f6f6f;
 }
+
 .resource_append_wraper .apiPrcItem .drpbox .CompVersion {
     width: 100%;
     font-size: 11px;
     color: #6f6f6f;
     padding-bottom: 5px;
 }
+
 .resource_append_wraper .apiPrcItem .drpbox:focus {
     border-color: blue !important;
 }
-.refIdMsetNotfy{
-    background:red;
-    color:white;
-}
-.resource_Body_head{
 
+.refIdMsetNotfy {
+    background: red;
+    color: white;
 }
+
+.resource_Body_head {
+}
+
 .Json_reqOrRespWrpr {
     position: fixed;
     width: 100%;
@@ -140,38 +160,45 @@
     left: 0;
     display: none;
 }
+
     .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner {
         width: 100%;
         height: 100%;
         display: flex;
         flex-flow: row nowrap;
     }
+
         .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner .JsonReq {
             width: 50%;
             padding: 10px;
         }
+
         .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner .JsonResp {
             width: 50%;
-            padding:10px;
+            padding: 10px;
         }
+
             .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner .JsonResp .JsonResp_inner {
                 border: 1px solid #ccc;
                 border-radius: 4px;
-                height:100%;
-                width:100%;
+                height: 100%;
+                width: 100%;
             }
+
         .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner .JsonReq .JsonReq_inner {
             border: 1px solid #ccc;
             border-radius: 4px;
             height: 100%;
             width: 100%;
         }
+
         .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h {
             padding: 2px 5px;
             border-bottom: 1px solid #ddd;
             background: #eee;
             font-size: 13px;
         }
+
             .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn {
                 background: transparent;
                 background-color: transparent;
@@ -181,27 +208,31 @@
                 padding: 0 5px;
                 cursor: pointer;
             }
+
                 .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn:hover {
                     background: #cecece;
                     border-radius: 4px;
                 }
+
                 .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._h .jsw_btn .fa {
                     color: green;
                     margin-top: 3px;
                     font-weight: 600;
                 }
-            .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._b {
-                background:black;
-                overflow: auto;
-                height: calc(100% - 23px);
-                position:relative;
-            }
+
+        .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ._b {
+            background: white;
+            overflow: auto;
+            height: calc(100% - 23px);
+            position: relative;
+        }
+
         .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner ol {
             padding-left: 15px;
             list-style: none;
         }
-        /*json window*/
-        /*.objkey {
+    /*json window*/
+    /*.objkey {
             color: #204a87;
         }
 .objval {
@@ -221,12 +252,13 @@
         -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
         clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
     }
+
         .Json_reqOrRespWrpr .regRespWHead i {
             font-size: 13px;
             margin-top: 3px;
             margin-right: 0;
             margin-left: 10px;
-            cursor:pointer;
+            cursor: pointer;
         }
 
 .strt_circ:after, .stop_circ:after {
@@ -239,7 +271,8 @@
     top: 5px;
     left: 5px;
 }
-.formatType select{
+
+.formatType select {
     margin-left: 15px;
     height: 20px;
 }
@@ -249,33 +282,35 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: black;
+    background: white;
     top: 0;
     z-index: 1000;
     display: none;
     overflow: auto;
 }
+
     .api_RqFullSwrapr .FS_head {
         padding: 5px 30px;
         font-size: 15px;
-        color: #1a2973;
         font-family: open sans;
         font-weight: 600;
-        color: white;
+        color: #3a3838;
         position: fixed;
         width: 100%;
-        background: black;
+        background: #eee;
     }
-        .api_RqFullSwrapr .FS_head i{
-            cursor:pointer;
+
+        .api_RqFullSwrapr .FS_head i {
+            cursor: pointer;
         }
+
     .api_RqFullSwrapr .FS_bdy {
         width: 100%;
         height: 100%;
         padding: 40px 10px 10px 20px;
     }
 
-    /*code sample*/
+/*code sample*/
 .api_scodeMd .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
     color: #555;
     cursor: default;
@@ -283,38 +318,69 @@
     border: none;
     border-bottom: 3px solid #1580ef;
 }
+
 .api_scodeMd .nav > li > a {
     padding: 5px 15px;
 }
+
 .api_scodeMd .modal-body {
     padding-top: 5px;
 }
+
 .code_wrpr {
     padding-top: 10px;
 }
+
 .cod_line {
     margin: 5px 0;
 }
+
 .code_comment {
     color: #116711;
     padding-left: 15px;
 }
+
 .reserved {
     color: #0f0fc3;
 }
+
 .higlite {
     color: #ce3838;
 }
-.tab{
-    margin-left:20px;
+
+.tab {
+    margin-left: 20px;
 }
 
-.formatType_fullscreen select{
-    margin-left:15px;
-    background: transparent;
-    color: white !important;
+.formatType_fullscreen select {
+    margin-left: 15px;
+    color: #3a3838 !important;
     border-radius: 4px;
 }
+
     .formatType_fullscreen select option {
         color: #333 !important;
+    }
+
+.JsonEditWindow {
+    display: none;
+}
+
+.Json_reqOrRespWrpr_inner .CodeMirror {
+    background: white;
+    height: 100%;
+}
+
+.Json_reqOrRespWrpr_inner .CodeMirror-line {
+    color: #729fcf;
+}
+
+    .Json_reqOrRespWrpr_inner .CodeMirror-line .cm-string {
+        color: #4e9a06;
+        font-weight: 600;
+    }
+
+    .Json_reqOrRespWrpr_inner .CodeMirror-line .cm-property {
+        color: #7f2f76 !important;
+        font-weight: 600;
     }

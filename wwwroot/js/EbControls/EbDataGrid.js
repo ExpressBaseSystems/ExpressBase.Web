@@ -1,5 +1,6 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
+    this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
@@ -73,15 +74,30 @@
             $.each(SingleRow.Columns, function (j, SingleColumn) {
                 if (j === 0)// to skip id column
                     return true;
-                let ctrl = this.rowCtrls[rowid][(j - 1)];
+
+                let ctrl = getObjByval(this.rowCtrls[rowid], "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
+                if (!ctrl) {// to alert if no ctrl for such data
+                    alert("error");
+                    console.error();
+                }
+
+                //let ctrl = this.rowCtrls[rowid][(j - 1)];
                 let val = SingleColumn.Value;
                 console.log(val);
-                ctrl.setValue(val);
-                ctrl.Name = SingleColumn.Name;
+                //ctrl.Name = SingleColumn.Name;
+
+                if (ctrl.ObjType === "PowerSelect")
+                    ctrl.setDisplayMember(this.FormDataExtdObj.val[ctrl.EbSid]);
+                else
+                    ctrl.setValue(val);
+
             }.bind(this));
-            {// call checkRow_click() pass event.target directly
+            {
                 let td = $(`#${this.TableId} tbody tr[rowid=${rowid}] td:last`)[0];
-                this.checkRow_click({ target: td });
+                // call checkRow_click() pass event.target directly
+                setTimeout(function () {
+                    this.checkRow_click({ target: td });
+                }.bind(this), 1);
             }
         }.bind(this));
     };
@@ -135,13 +151,17 @@
             editBtn = "";
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+
+            inpCtrl.Name = col.Name;
             inpCtrl.EbDbType = col.EbDbType;
             inpCtrl.EbSid_CtxId = ctrlEbSid;
+            inpCtrl.__rowid = rowid;
             //inpCtrl.EbSid = ctrlEbSid;
             inpCtrl.ObjType = inpCtrlType.substr(2);
-            inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);
+
+            inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
-            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}'>
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}' style='width:${this.getTdWidth(i)}px'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                         <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -149,14 +169,18 @@
                 anyColEditable = true;
 
         }.bind(this));
-        tr += `<td class='ctrlstd' mode='${this.mode_s}'>
+        tr += `<td class='ctrlstd' mode='${this.mode_s}' style='width:54px;'>
                     @editBtn@
-                    <span class='check-row rowc' tabindex='1'><span class='fa fa-plus'></span></span>
+                    <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
                 </td></tr>`
             .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>" : "")
             .replace("@del-c@", !anyColEditable ? "del-c" : "");
         return tr;
+    };
+
+    this.getTdWidth = function (i) {
+        return $(`#${this.TableId}_head thead th`).eq(i).outerWidth() + 1 + ((i == 0) ? 3 : 0);
     };
 
     this.getAggTrHTML = function () {
@@ -188,7 +212,7 @@
     this.addAggragateRow = function () {
         let tr = this.getAggTrHTML();
         let $tr = $(tr);
-        $(`#${this.TableId} tbody`).append($tr);
+        $(`#${this.TableId}_footer tbody`).append($tr);
     };
 
     this.bindReq_Vali_UniqRow = function ($tr) {
@@ -241,6 +265,13 @@
                     return [];//getValsFromForm(this.FormObj);
                 }.bind(this);
             this.initControls.init(inpCtrl, opt);
+
+            if (inpCtrl.DefaultValue)
+                inpCtrl.setValue(inpCtrl.DefaultValue);
+
+            if (inpCtrl.IsDisable)
+                inpCtrl.disable();
+
         }.bind(this));
     };
 
@@ -397,9 +428,7 @@
     }.bind(this);
 
     this.init = function () {
-        this.tryAddRow();
         this.ctrl.currentRow = [];
-        this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             this.ctrl.currentRow[col.Name] = col;
@@ -408,6 +437,8 @@
                 this.isAggragateInDG = true;
         }.bind(this));
 
+        this.tryAddRow();
+        this.isAggragateInDG = false;
 
         this.addAggragateRow();
 

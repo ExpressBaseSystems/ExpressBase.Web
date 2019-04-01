@@ -1,6 +1,7 @@
 ﻿
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbBasicDataTable = function (Option) {
+    console.log(100000000000000000000);
     this.contId = Option.containerId;
     this.dsid = Option.dsid || null;
     this.tableId = Option.tableId;
@@ -144,11 +145,11 @@ var EbBasicDataTable = function (Option) {
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
-        //this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
+        this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
-        this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
+        //this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
 
-        this.Api.off('key-blur').on('key-blur', Option.arrowBlurCallback);
+        //this.Api.off('key-blur').on('key-blur', Option.arrowBlurCallback);
 
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
@@ -171,21 +172,18 @@ var EbBasicDataTable = function (Option) {
 
             return sum / data.length;
         });
-        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
-        this.table_jQO.off('order.dt').on('order.dt', this.doSerial.bind(this));
-        //this.table_jQO.off('init.dt').on('init.dt', this.doSerial.bind(this));
+        //this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        //this.table_jQO.off('order.dt').on('order.dt', this.doSerial.bind(this));
+        ////this.table_jQO.off('init.dt').on('init.dt', this.doSerial.bind(this));
 
-        this.table_jQO.on('length.dt', function (e, settings, len) {
-            console.log('New page length: ' + len);
-        });
+        //this.table_jQO.on('length.dt', function (e, settings, len) {
+        //    console.log('New page length: ' + len);
+        //});
 
-        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-            alert(message);
-        };
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
         $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
-        this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
+        //this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
     };
 
@@ -198,7 +196,7 @@ var EbBasicDataTable = function (Option) {
             //    serialObj.data = this.ebSettings.Columns.$values.length;
         }
         this.addcheckbox();
-    }
+    };
 
     this.CheckforColumnID = function () {
         $.each(this.ebSettings.Columns.$values, function (i, col) {

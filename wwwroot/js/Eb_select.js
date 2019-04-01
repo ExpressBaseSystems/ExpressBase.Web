@@ -90,24 +90,29 @@ const EbSelect = function (ctrl, options) {
 
     //init() for event binding....
     this.init = function () {
-        $('#' + this.name + 'Wraper [class=open-indicator]').hide();
-        this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
-        $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
-        $('#' + this.name + 'Wraper  [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
-        $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
-        $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
-        this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-        this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
-        this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
-        this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
+        try {
+            $('#' + this.name + 'Wraper [class=open-indicator]').hide();
+            this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
+            $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
+            $('#' + this.name + 'Wraper  [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
+            $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
+            $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+            this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
+            this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
+            this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
+            this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
 
-        //set id for searchBox
-        $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
+            //set id for searchBox
+            $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
 
 
-        //styles
-        $('#' + this.name + 0).children().css("border-top-left-radius", "5px");
-        $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
+            //styles
+            $('#' + this.name + 0).children().css("border-top-left-radius", "5px");
+            $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
+        }
+        catch (err) {
+            console.error(err.message);
+        }
     };
 
     this.searchBoxFocus = function () {
@@ -377,7 +382,7 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.SelectRow = function (idx, vmValue) {
-        if (!(this.Vobj.valueMembers.contains(vmValue))) {
+        if (!this.Vobj.valueMembers.contains(vmValue)) {
             if (this.maxLimit === 1) {
                 this.Vobj.valueMembers = [vmValue];
                 this.Vobj.hideDD();
@@ -571,6 +576,8 @@ const EbSelect = function (ctrl, options) {
                 this.ApplyRowFocusStyle($cell.closest("tr"));
             }.bind(this), 10);
         }
+
+        this.V_updateCk();
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
         //setTimeout(this.colAdjust, 520);
     };

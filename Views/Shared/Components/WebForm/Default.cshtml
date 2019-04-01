@@ -157,11 +157,12 @@
     @Html.Raw(ViewBag.ControlOperations);
 
     let header = new EbHeader();
-    header.insertButton('<button id="webformsave"  class="btn"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
-    header.insertButton('<button id="webformnew" class="btn"  onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-plus" aria-hidden="true"></i></button>');
     header.insertButton(`<button id="webformdelete" class='btn' title='Delete'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
+    header.insertButton(`<button id="webformcancel" class='btn' title='Cancel'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
+    header.insertButton('<button id="webformnew" class="btn"  onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-plus" aria-hidden="true"></i></button>');
     header.insertButton(`<button id="webformedit" class='btn' title='Edit'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
-
+    header.insertButton('<button id="webformsave"  class="btn"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
+       
     //header.insertButton(' <button class="btn" id="webformsave"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
     //let _editModeObj =  '@Html.Raw(ViewBag.editModeObj)';
 
@@ -182,22 +183,22 @@
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
             header.showElement(["webformnew", "webformsave"]);
-            header.hideElement(["webformedit", "webformdelete"]);
+            header.hideElement(["webformedit", "webformdelete", "webformcancel"]);
         }
         else if (reqstMode === "New Mode") {
             header.showElement(["webformsave"]);
-            header.hideElement(["webformnew", "webformedit", "webformdelete"]);
+            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformcancel"]);
         }
         else if (reqstMode === "View Mode") {
-            header.showElement(["webformnew", "webformedit", "webformdelete"]);
+            header.showElement(["webformnew", "webformedit", "webformdelete", "webformcancel"]);
             header.hideElement(["webformsave"]);
         }
         else if (reqstMode === "Fail Mode") {
-            header.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete"]);
+            header.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel"]);
             EbMessage("show", { Message: 'Data Not Found!', AutoHide: false, Background: '#aa0000' });
         }
         else if (reqstMode === "Preview Mode") {
-            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformsave"]);
+            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformsave", "webformcancel"]);
             _mode = "New Mode";////////////
         }
         header.setName(_formObj.DisplayName);
@@ -211,7 +212,7 @@
 
     const renderer = new WebFormRender({
         formObj: _formObj,
-        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete"},
+        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel"},
         formRefId: _formRefId,
         mode: _mode,
         rowId: _rowId,

@@ -21,6 +21,7 @@ using ExpressBase.Security;
 using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Web.Controllers;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace EbControllers
@@ -85,6 +86,7 @@ namespace EbControllers
 
 
             ViewBag.grpdetails = ServiceClient.Get<RedisGroupDetailsResponse>(new RedisGetGroupDetails { }).GroupsDict;
+
             return View();
 
         }
@@ -158,6 +160,19 @@ namespace EbControllers
             grp = new EbGroup("Api Builders", @"(\w+\-\w+\-)20(\-\w+\-\w+\-\w+\-\w)");
             output = JsonConvert.SerializeObject(grp);
             Redis.Set("Grp_ob_ApiBuilder", output);
+
+
+            grp = new EbGroup("Column Colletion", @"(\w +\-\w +\-)2(\-\d +\-\d +\-\d +\-\d + _columns$)");
+            output = JsonConvert.SerializeObject(grp);
+            Redis.Set("Grp_ob_ColumnColletion", output);
+
+            grp = new EbGroup("Connection Sting", @"(EbSolutionConnections *)");
+            output = JsonConvert.SerializeObject(grp);
+            Redis.Set("Grp_ob_ConnectionString", output);
+
+            grp = new EbGroup("Users", @"(?:(?:.*):(?:.*):)(uc+$|dc+$)");
+            output = JsonConvert.SerializeObject(grp);
+            Redis.Set("Grp_ob_Users", output);
         }
 
         public List<string> FindMatch(string text)
@@ -240,9 +255,13 @@ namespace EbControllers
                 LogId = logid
 
             });
-            return x;
+            string p = x.RedisLogValues.Prev_val.Replace(",", ",\n");
+            string q = x.RedisLogValues.New_val.Replace(",", ",\n");
+            object o = new Eb_ObjectController(this.ServiceClient, this.Redis).GetDiffer(p, q);
+            return o;
 
         }
+
 
         public bool Keyvalueinput(string textkey, string textvalue)
         {
@@ -266,8 +285,10 @@ namespace EbControllers
         //    return lst3;
         //}
 
-        public List<string> FindRegexMatch(string textregex)
+        public Dictionary<int, List<string>> FindRegexMatch(string textregex)
         {
+            List<string> list4 = new List<string>();
+            Dictionary<int, List<string>> regxsearch = new Dictionary<int, List<string>>();
             try
             {
                 var base64EncodedBytes = Convert.FromBase64String(textregex);
@@ -276,14 +297,17 @@ namespace EbControllers
                 foreach (var m in Redis.GetKeysByPattern("*" + ViewBag.cid + "*"))
                 {
                     if (rgx.IsMatch(m))
-                        list1.Add(m);
+                        list4.Add(m);
                 }
-                return list1;
+                regxsearch.Add(1, list4);
+                return regxsearch;
             }
             catch (Exception e)
             {
-                list1.Add(e.Message);
-                return list1;
+                list4.Add(e.Message);
+                regxsearch.Add(2, list4);
+                return regxsearch;
+
             }
 
 
@@ -298,20 +322,21 @@ namespace EbControllers
             if (Redis.Exists("Group_" + t1 + "_" + textgroup) > 0)
             {
                 Redis.Remove(Encoding.UTF8.GetBytes("Group_" + t1 + "_" + textgroup));
-
-
-                foreach (var i in ptnlst)
-                {
-                    var base64EncodedBytes = Convert.FromBase64String(i);
-                    var regx = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-                    EbGroup grp = new EbGroup(textgroup, regx);
-                    string output = JsonConvert.SerializeObject(grp);
-                    Redis.RPush("Group_" + t1 + "_" + textgroup, Encoding.UTF8.GetBytes(output));
-                    EbGroup dobj = JsonConvert.DeserializeObject<EbGroup>(output);
-                    string s1 = dobj.Pattern;
-                    string s2 = dobj.Name;
-                }
             }
+
+            foreach (var i in ptnlst)
+            {
+                var base64EncodedBytes = Convert.FromBase64String(i);
+                var regx = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+                EbGroup grp = new EbGroup(textgroup, regx);
+                string output = JsonConvert.SerializeObject(grp);
+                Redis.RPush("Group_" + t1 + "_" + textgroup, Encoding.UTF8.GetBytes(output));
+                EbGroup dobj = JsonConvert.DeserializeObject<EbGroup>(output);
+                string s1 = dobj.Pattern;
+                string s2 = dobj.Name;
+            }
+
+
         }
 
 
@@ -589,6 +614,6 @@ namespace EbControllers
             catch (Exception e) { return e.Message; }
         }
 
-     
+
     }
 }

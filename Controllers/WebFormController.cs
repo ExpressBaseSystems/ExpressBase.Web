@@ -30,7 +30,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-            
+
             if(_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
@@ -178,10 +178,16 @@ namespace ExpressBase.Web.Controllers
             //return 0;
         }
 
-        public bool DeleteWebformData(string RefId, int RowId)
+        public int DeleteWebformData(string RefId, int RowId)
         {
             DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = RowId });
-            return Resp.RowAffected > 0;
+            return Resp.RowAffected;
+        }
+
+        public int CancelWebformData(string RefId, int RowId)
+        {
+            CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId });
+            return Resp.RowAffected;
         }
 
         public bool DoUniqueCheck(string TableName, string Field, string Value, string type)

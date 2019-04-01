@@ -53,11 +53,27 @@
     padding: 10px;
 }
 
+.btnbackground {
+    background-color: #157490;
+    color: white;
+    border-color: #10a8d6;
+}
+
 .borders {
     /*display: inline-block;*/
     border-style: solid;
     border-width: 1px;
     border-color: black;
+}
+
+.infodiv {
+    background-color: lightgrey;
+    width: 300px;
+    height: 200px;
+    border: 10px solid;
+    border-color: #a4a3ad;
+    padding: 25px;
+    margin: 25px;
 }
 
 .column2 {
@@ -136,6 +152,13 @@
     word-wrap: break-word;
 }
 /* horizontal panel*/
+.li_select {
+    background: #bbd5ec;
+}
+
+.li_select1 {
+    background: red;
+}
 
 .panel-container {
     display: flex;
@@ -236,6 +259,55 @@
     background-image: none;
 }
 
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    transition: opacity 0ms;
+    visibility: hidden;
+    opacity: 0;
+}
+
+    .overlay:target {
+        visibility: visible;
+        opacity: 1;
+    }
+
+.popup {
+    margin: 10px auto;
+    padding: 10px;
+    background: #fff;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
+    transition: all 5s ease-in-out;
+}
+
+
+    .popup .close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        transition: all 200ms;
+        font-size: 30px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #333;
+    }
+
+        .popup .close:hover {
+            color: #06D85F;
+        }
+
+    .popup .content {
+        max-height: 30%;
+        overflow: auto;
+    }
+
+
 .list-group-hover .list-group-item:hover {
     background-color: #dfe5ea;
 }
@@ -245,6 +317,10 @@
     color: #fff;
     background-color: #007bff;
 }
+
+
+
+
 
 .Grid {
     border: 1px solid #ccc;
@@ -289,4 +365,199 @@
     font-weight: 600;
     background: #f2f2f2;
     padding: 5px 10px;
+}
+
+.hdrtabs .nav-tabs {
+}
+
+.hdrtabs li a {
+    border-color: blue;
+    background-color: #336699;
+    color: white;
+}
+
+    .hdrtabs li a:hover {
+        background-color: #22508a;
+        color: #FFFFFF;
+    }
+
+    .hdrtabs li a:focus {
+        background-color: #22508a;
+        color: #FFFFFF;
+    }
+
+.hdrtabs .nav .open a, .nav .open a:hover, .nav .open a:focus {
+    background-color: #22508a;
+    border-color: none;
+}
+
+.hdrtabs li.active a, .nav-tabs li.active a:hover, .nav-tabs li.active a:focus {
+    color: #FFFFFF;
+    cursor: default;
+    background-color: #22508a;
+    border: 1px solid blue;
+    border-bottom-color: transparent
+}
+
+.hdrtabs .nav-tabs li.active a {
+    color: #FFFFFF;
+    cursor: default;
+    background-color: #22508a;
+    border: 1px solid blue;
+    border-bottom-color: transparent
+}
+
+#diffBar {
+    width: 3%;
+    height: 100%;
+    float: left;
+    position: relative;
+    background: #DDDDDD;
+}
+
+.diffBarLineLeft, .diffBarLineRight {
+    width: 50%;
+    float: left;
+    height: 0px;
+    cursor: pointer;
+}
+
+.inView {
+    background-repeat: repeat;
+}
+
+#activeBar {
+    position: absolute;
+    top: 0px;
+    background-color: #6699FF;
+    opacity: 0.5;
+    filter: alpha(opacity= '50');
+}
+
+
+#diffBox {
+    margin-left: auto;
+    margin-right: auto;
+    border: solid 2px #000000;
+}
+
+
+.leftPane, .rightPane {
+    float: left;
+    width: 50%;
+    font-family: monospace;
+    height: 400px;
+    color: black;
+    overflow-x: scroll;
+}
+
+.leftPane {
+    border-right: solid 1px #bbb4b4;
+}
+
+.rightPane {
+    border-left: solid 1px #bbb4b4;
+}
+
+.diffHeader {
+    font-weight: bold;
+    padding: 2px 0px 2px 10px;
+    background-color: #FFFFFF;
+    text-align: center;
+}
+
+.diffPane {
+    margin-right: 0px;
+    padding: 0px;
+    overflow-y: scroll;
+    font-family: Consolas;
+    font-size: xx-small;
+    background-color: #FFFFFF;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+    .diffPane table {
+        width: 100%;
+    }
+
+.line {
+    padding-left: .2em;
+    white-space: nowrap;
+    width: 50%;
+}
+
+.lineNumber {
+    padding: 0 .3em;
+    background-color: #FFFFFF;
+    //text-align: center;
+}
+
+.InsertedLine {
+    background-color: lightgreen;
+}
+
+.ModifiedLine {
+    background-color: lightyellow;
+}
+
+.DeletedLine {
+    background-color: lightpink;
+}
+
+.UnchangedLine {
+    background-color: #FFFFFF;
+}
+
+.ImaginaryLine {
+    background-color: #C8C8C8;
+}
+
+.InsertedCharacter {
+    background-color: palegreen;
+}
+
+.DeletedCharacter {
+    background-color: hotpink;
+}
+
+.UnchangedCharacter {
+}
+
+.ImaginaryCharacter {
+}
+
+.clear {
+    clear: both;
+}
+
+#oldtext .diffTable {
+    width: 50%;
+    height: 50%;
+    padding-left: 0px;
+    overflow-y: scroll;
+}
+
+#newtext .diffTable {
+    width: 50%;
+    height: 50%;
+    padding-right: 0px;
+    overflow-y: scroll;
+}
+
+.ViewCode_btn {
+    width: 32px;
+    height: 37px;
+    background: #5dddd3;
+    border-radius: 50%;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.fd-loader {
+    position: absolute;
+    color: dodgerblue;
+    display: inline-block;
+    top: 6px;
+    height: 100%;
 }

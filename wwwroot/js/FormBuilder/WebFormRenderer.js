@@ -8,6 +8,7 @@ const WebFormRender = function (option) {
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
+    this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
     this.Env = option.env;
     this.Cid = option.cid;
     this.initControls = new InitControls(this);
@@ -493,7 +494,7 @@ const WebFormRender = function (option) {
     this.deleteForm = function () {
         EbDialog("show",
             {
-                Message: "Are you sure?",
+                Message: "Are you sure to delete this data entry?",
                 Buttons: {
                     "Yes": {
                         Background: "green",
@@ -519,9 +520,58 @@ const WebFormRender = function (option) {
                             }.bind(this),
                             success: function (result) {
                                 this.hideLoader();
-                                if (result) {
+                                if (result > 0) {
                                     EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
+                                }
+                                else if (result === -1) {
+                                    EbMessage("show", { Message: 'Delete operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                }
+                                else {
+                                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                                }
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this)
+            });
+    };
+
+    this.cancelForm = function () {
+        EbDialog("show",
+            {
+                Message: "Are you sure to cancel this data entry?",
+                Buttons: {
+                    "Yes": {
+                        Background: "green",
+                        Align: "left",
+                        FontColor: "white;"
+                    },
+                    "No": {
+                        Background: "violet",
+                        Align: "right",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        this.showLoader();
+                        $.ajax({
+                            type: "POST",
+                            url: "../WebForm/CancelWebformData",
+                            data: { RefId: this.formRefId, RowId: this.rowId },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                                this.hideLoader();
+                            }.bind(this),
+                            success: function (result) {
+                                this.hideLoader();
+                                if (result > 0) {
+                                    EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
+                                    setTimeout(function () { window.close(); }, 3000);
+                                }
+                                else if (result === -1) {
+                                    EbMessage("show", { Message: 'Cancel operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else {
                                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
@@ -564,6 +614,7 @@ const WebFormRender = function (option) {
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
+        this.$cancelBtn.on("click", this. cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();

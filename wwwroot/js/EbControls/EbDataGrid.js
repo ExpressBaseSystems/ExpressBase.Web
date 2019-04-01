@@ -327,18 +327,6 @@
         $td.find(".tdtxt").show();
     }.bind(this);
 
-    this.editRow_click = function (e) {
-        $td = $(e.target).closest("td");
-        $td.find(".del-row").hide();
-        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
-        $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`).hide().attr("is-editing", "false");
-        $td.find(".check-row").show();
-        let $tr = $td.closest("tr");
-        $tr.attr("is-editing", "true");
-        let rowid = $tr.attr("rowid");
-        this.spanToCtrl_row($tr);
-    }.bind(this);
-
     this.AllRequired_valid_Check = function (rowid) {//////
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
@@ -356,8 +344,22 @@
         return required_valid_flag;
     };
 
+    this.editRow_click = function (e) {
+        $td = $(e.target).closest("td");
+        $td.find(".del-row").hide();
+        $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
+        $addRow.hide().attr("is-editing", "false");
+        $td.find(".check-row").show();
+        let $tr = $td.closest("tr");
+        $tr.attr("is-editing", "true");
+        let rowid = $tr.attr("rowid");
+        this.spanToCtrl_row($tr);
+    }.bind(this);
+
     this.checkRow_click = function (e) {
         $td = $(e.target).closest("td");
+        $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let $tr = $td.closest("tr");
         $tr.attr("mode", "false");
         let rowid = $tr.attr("rowid");
@@ -368,12 +370,12 @@
         $td.find(".edit-row").show();
 
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
-        $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`).show().attr("is-editing", "true").focus();
+        $addRow.show().attr("is-editing", "true");
 
         this.ctrlToSpan_row(rowid);
         if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
             this.addRow();
-        $tr.attr("is-checked", "true");
+        $tr.attr("is-checked", "true").attr("is-editing", "false");
 
         if (this.isAggragateInDG) {
             $.each(this.ctrl.Controls.$values, function (i, col) {
@@ -381,6 +383,7 @@
                     $(`#${this.TableId}_footer tbody tr [colname='${col.Name}'] .tdtxt-agg span`).text(this.getAggOfCol(col));
             }.bind(this));
         }
+        $addRow.focus();
 
     }.bind(this);
 

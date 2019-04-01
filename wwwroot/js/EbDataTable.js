@@ -2435,8 +2435,30 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.collapseTreeGroup = function (e) {
         var el = (typeof (e.target) !== "undefined") ? $(e.target) : $(e);
+        if (!(el.is("i"))) {
+            el = $(el).closest("i");
+        }
         elem = $(el).parents().closest("[role=row]");
         var level = parseInt($(el).closest("[data-level]").attr("data-level"));
+        var isShow = ($(el).hasClass("fa-minus-square-o")) ? false : true;
+        $.each($(elem).nextAll(), function (i, obj) {
+            var ielem = $(obj).children().find("[data-level=" + level + "]");
+            var eachlevel = parseInt($(obj).children().find("i").attr("data-level"));
+            if (eachlevel > level) {
+                if ($(obj).is(":hidden") && isShow) {
+                    $(obj).show();
+                    el.removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+                    if ($(obj).children().find("i").hasClass("fa-plus-square-o"))
+                        $(obj).children().find("i").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+                }
+                else {
+                    $(obj).hide();
+                    el.removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
+                }
+            }
+            else
+                return false;
+        });
         //var childItemRows = elem.nextAll("tr").children().find("[data-level=" + (level + 1) + "].itemform");
         //childItemRows.parents().closest("[role=row]").hide();
         //var childGroupRows = elem.nextAll("tr").children().find("[data-level=" + (level + 1) + "].groupform");

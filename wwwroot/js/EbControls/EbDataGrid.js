@@ -376,16 +376,19 @@
         if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
             this.addRow();
         $tr.attr("is-checked", "true").attr("is-editing", "false");
+        this.updateAggCols();
+        $addRow.focus();
 
+    }.bind(this);
+
+    this.updateAggCols = function () {
         if (this.isAggragateInDG) {
             $.each(this.ctrl.Controls.$values, function (i, col) {
                 if (col.IsAggragate)
                     $(`#${this.TableId}_footer tbody tr [colname='${col.Name}'] .tdtxt-agg span`).text(this.getAggOfCol(col));
             }.bind(this));
         }
-        $addRow.focus();
-
-    }.bind(this);
+    };
 
     this.getAggOfCol = function (col) {
         let sum = 0;
@@ -393,6 +396,7 @@
             let val = parseInt($(span).text());
             sum += val || 0;
         }.bind(this));
+        this.ctrl[col.Name + "_sum"] = sum;
         return sum;
     };
 

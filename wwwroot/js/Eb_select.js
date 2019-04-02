@@ -490,7 +490,7 @@ const EbSelect = function (ctrl, options) {
         $("#" + this.ComboObj.EbSid_CtxId).val(this.Vobj.valueMembers);
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
-            this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////
+            this.Vobj.valueMembers.shift();////
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
         //max limit
@@ -525,11 +525,12 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.trimDmValues = function (i) {
+        let DMs =  this.Vobj.displayMembers[this.dmNames[i]];
         if (this.maxLimit === 1) {   //single select
-            this.Vobj.displayMembers[this.dmNames[i]].shift(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(1, 1);
+            DMs.shift(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(1, 1);
         }
         else {                        //max limit
-            this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
+            DMs.pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
         }
     };
 

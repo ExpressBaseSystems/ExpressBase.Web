@@ -486,8 +486,8 @@ const EbSelect = function (ctrl, options) {
 
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
-        this.ComboObj.TempValue = [...this.Vobj.valueMembers]
-        $("#" + this.name).val(this.Vobj.valueMembers);
+        this.ComboObj.TempValue = [...this.Vobj.valueMembers];
+        $("#" + this.ComboObj.EbSid_CtxId).val(this.Vobj.valueMembers);
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
             this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////

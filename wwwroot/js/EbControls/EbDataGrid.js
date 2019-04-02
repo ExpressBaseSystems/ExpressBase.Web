@@ -87,7 +87,7 @@
                 //ctrl.Name = SingleColumn.Name;
 
                 if (ctrl.ObjType === "PowerSelect")
-                    ctrl.setDisplayMember(this.FormDataExtdObj.val[ctrl.EbSid]);
+                    ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
                 else
                     ctrl.setValue(val);
 

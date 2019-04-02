@@ -161,7 +161,7 @@
 
             inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);
-            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${inpCtrl.Name}' style='width:${this.getTdWidth(i)}px'>
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' colname='${col.Name}' style='width:${this.getTdWidth(i)}px'>
                         <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                         <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                     </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -382,21 +382,27 @@
     }.bind(this);
 
     this.updateAggCols = function () {
-        if (this.isAggragateInDG) {
-            $.each(this.ctrl.Controls.$values, function (i, col) {
-                if (col.IsAggragate)
-                    $(`#${this.TableId}_footer tbody tr [colname='${col.Name}'] .tdtxt-agg span`).text(this.getAggOfCol(col));
-            }.bind(this));
-        }
+        let $e = $(event.target);
+        let $td = $e.closest("td");
+        let colname = $td.attr("colname");
+        $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
     };
 
-    this.getAggOfCol = function (col) {
+    this.getAggOfCol = function (colname) {
         let sum = 0;
-        $.each($(`[colname='${col.Name}'] .tdtxt span`), function (i, span) {
-            let val = parseInt($(span).text());
+        $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
+            let val;
+            let typing_inp = event.target;
+            //let Iter_Inp = $(span).closest("td").find("[ui-inp]")[0];
+
+            if (typing_inp === Iter_Inp)
+                val = parseInt(typing_inp.value);
+            else
+                val = parseInt($(Iter_Inp).val());
+
             sum += val || 0;
         }.bind(this));
-        this.ctrl[col.Name + "_sum"] = sum;
+        this.ctrl[colname + "_sum"] = sum;
         return sum;
     };
 
@@ -431,6 +437,16 @@
             $(e.target).prev().focus();
     }.bind(this);
 
+    this.initAgg = function () {
+        this.addAggragateRow();
+
+        $.each(this.ctrl.Controls.$values, function (i, col) {
+            this.ctrl[col.Name + "_sum"] = 0;
+        }.bind(this));
+
+        $(`#${this.TableId}`).on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCols.bind(this));
+    };
+
     this.init = function () {
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
@@ -444,7 +460,7 @@
 
         this.tryAddRow();
         if (this.isAggragateInDG)
-            this.addAggragateRow();
+            this.initAgg();
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

@@ -53,7 +53,7 @@ const EbSelect = function (ctrl, options) {
 
     this.maxLimit = (ctrl.MaxLimit === 0) ? 9999999999999999999999 : ctrl.MaxLimit;
     this.minLimit = ctrl.MinLimit;//ctrl.minLimit;
-    this.multiSelect = (ctrl.MaxLimit > 1);
+    this.ComboObj.MultiSelect = (ctrl.MaxLimit !== 1);
     this.required = ctrl.Required;//ctrl.required;
     this.servicestack_url = "";//ctrl.servicestack_url;
     //this.vmValues = (ctrl.vmValues !== null) ? ctrl.vmValues : [];
@@ -327,7 +327,7 @@ const EbSelect = function (ctrl, options) {
 
         //});
         //settings: {
-        //    hideCheckbox: (this.multiSelect === false) ? true : false,
+        //    hideCheckbox: (this.ComboObj.MultiSelect === false) ? true : false,
         //    scrollY: "200px",//this.dropdownHeight,
         //},
         //filterParams: { colName: "id", FilterValue: "ac" }, //{ id : "ac", }

@@ -70,7 +70,7 @@
         this.resetBuffers();
         $.each(SingleTable, function (i, SingleRow) {
             let rowid = SingleRow.RowId;
-            this.addRow(rowid, false);
+            this.addRow({ rowid: rowid, isAdded: false });
             $.each(SingleRow.Columns, function (j, SingleColumn) {
                 if (j === 0)// to skip id column
                     return true;
@@ -197,13 +197,20 @@
         return tr;
     };
 
-    this.addRow = function (rowid, isAdded) {
+    this.addRow = function (opt = {}) {
+        let rowid = opt.rowid;
+        let isAdded = opt.isAdded;
+        let isAddBeforeLast = opt.isAddBeforeLast;
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
-        $(`#${this.TableId}>tbody`).append($tr);
+        if (isAddBeforeLast) {
+            $tr.insertBefore($(`#${this.TableId}>tbody tr:last`));
+        }
+        else
+            $(`#${this.TableId}>tbody`).append($tr);
         this.bindReq_Vali_UniqRow($tr);
-        this.initRowCtrls(rowid);
+        return this.initRowCtrls(rowid);
     }.bind(this);
 
     this.addAggragateRow = function () {
@@ -268,8 +275,8 @@
 
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
-
         }.bind(this));
+        return this.rowCtrls[rowid];
     };
 
     this.getValues = function () {
@@ -357,7 +364,7 @@
         this.spanToCtrl_row($tr);
     }.bind(this);
 
-    this.checkRow_click = function (e) {
+    this.checkRow_click = function (e, isAddRow = true) {
         $td = $(e.target).closest("td");
         $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let $tr = $td.closest("tr");
@@ -373,7 +380,7 @@
         $addRow.show().attr("is-editing", "true");
 
         this.ctrlToSpan_row(rowid);
-        if ($tr.attr("is-checked") !== "true" && $tr.attr("is-added") === "true")
+        if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true")
             this.addRow();
         $tr.attr("is-checked", "true").attr("is-editing", "false");
         this.updateAggCols();
@@ -447,11 +454,47 @@
         $(`#${this.TableId}`).on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCols.bind(this));
     };
 
+    this.AddRowWithData = function (_rowdata) {
+        let addedRow = this.addRow({ isAddBeforeLast: true });
+        $.each(addedRow, function (i, col) {
+            let data = _rowdata[col.Name];
+            if (data)
+                col.setValue(data);
+        }.bind(this));
+
+        // call checkRow_click() pass event.target directly
+        setTimeout(function () {
+            let td = $(`#${this.TableId} tbody tr[rowid=${addedRow[0].__rowid}] .ctrlstd`)[0];
+            this.checkRow_click({ target: td }, false);
+        }.bind(this), 1);
+    };
+
+    this.ColGetvalueFn = function (p1) {
+        return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] [ui-inp]`).val();        
+    };
+
+    this.ColSetvalueFn = function (p1) {
+        return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] [ui-inp]`).val();        
+    };
+
+    this.EnableFn = function (p1) {
+        return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] .ctrl-cover *`).prop('disabled', false).css('pointer-events', 'inherit').find('input').css('background-color', '#fff');
+    };
+
+    this.DisableFn = function (p1) {
+        return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] .ctrl-cover *`).attr('disabled', 'disabled').css('pointer-events', 'none').find('input').css('background-color', '#eee');
+    };
+
+
     this.init = function () {
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
+            col.getValue = this.ColGetvalueFn;
+            col.setValue = this.ColSetvalueFn;
+            col.enable = this.EnableFn;
+            col.disable = this.DisableFn;
             this.ctrl.currentRow[col.Name] = col;
 
             if (col.IsAggragate)
@@ -461,6 +504,8 @@
         this.tryAddRow();
         if (this.isAggragateInDG)
             this.initAgg();
+
+        this.ctrl.addRow = this.AddRowWithData.bind(this);
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

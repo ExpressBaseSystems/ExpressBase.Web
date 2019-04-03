@@ -153,12 +153,12 @@
     position: fixed;
     width: 100%;
     background: white;
-    height: 300px;
+    height: 250px;
     bottom: 0;
     z-index: 1000;
     border-top: 1px solid #ccc;
     left: 0;
-    display: none;
+    /*display: none;*/
 }
 
     .Json_reqOrRespWrpr .Json_reqOrRespWrpr_inner {
@@ -310,48 +310,6 @@
         padding: 40px 10px 10px 20px;
     }
 
-/*code sample*/
-.api_scodeMd .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-    color: #555;
-    cursor: default;
-    background-color: #fff;
-    border: none;
-    border-bottom: 3px solid #1580ef;
-}
-
-.api_scodeMd .nav > li > a {
-    padding: 5px 15px;
-}
-
-.api_scodeMd .modal-body {
-    padding-top: 5px;
-}
-
-.code_wrpr {
-    padding-top: 10px;
-}
-
-.cod_line {
-    margin: 5px 0;
-}
-
-.code_comment {
-    color: #116711;
-    padding-left: 15px;
-}
-
-.reserved {
-    color: #0f0fc3;
-}
-
-.higlite {
-    color: #ce3838;
-}
-
-.tab {
-    margin-left: 20px;
-}
-
 .formatType_fullscreen select {
     margin-left: 15px;
     color: #3a3838 !important;
@@ -366,21 +324,48 @@
     display: none;
 }
 
-.Json_reqOrRespWrpr_inner .CodeMirror {
+.CpMdWrpr .CodeMirror {
     background: white;
     height: 100%;
 }
 
-.Json_reqOrRespWrpr_inner .CodeMirror-line {
+.CpMdWrpr .CodeMirror-line {
     color: #729fcf;
 }
 
-    .Json_reqOrRespWrpr_inner .CodeMirror-line .cm-string {
+    .CpMdWrpr .CodeMirror-line .cm-string {
         color: #4e9a06;
         font-weight: 600;
     }
 
-    .Json_reqOrRespWrpr_inner .CodeMirror-line .cm-property {
+    .CpMdWrpr .CodeMirror-line .cm-property {
         color: #7f2f76 !important;
         font-weight: 600;
     }
+    /*custom parameter modal*/
+.CpMdWrpr {
+    display: flex;
+    flex-direction: column;
+}
+.Custom_Param_val {
+    padding: 0 15px;
+}
+.CpVcdMIrror {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 250px;
+    max-height: 250px;
+    overflow: auto;
+}
+.context-menu-item {
+    font-family: Montserrat !important;
+    padding: 8px 2em;
+    font-size: 14px;
+}
+.deleteCustom_p{
+    cursor:pointer;
+}
+.editCustom_p {
+    margin-left: 14px;
+    display:none;
+}

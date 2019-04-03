@@ -156,6 +156,7 @@
             inpCtrl.EbDbType = col.EbDbType;
             inpCtrl.EbSid_CtxId = ctrlEbSid;
             inpCtrl.__rowid = rowid;
+            inpCtrl.__Col = col;
             //inpCtrl.EbSid = ctrlEbSid;
             inpCtrl.ObjType = inpCtrlType.substr(2);
 
@@ -210,7 +211,9 @@
         else
             $(`#${this.TableId}>tbody`).append($tr);
         this.bindReq_Vali_UniqRow($tr);
+        this.setCurRow(rowid);
         return this.initRowCtrls(rowid);
+
     }.bind(this);
 
     this.addAggragateRow = function () {
@@ -368,6 +371,7 @@
         $tr.attr("is-editing", "true");
         let rowid = $tr.attr("rowid");
         this.spanToCtrl_row($tr);
+        this.setCurRow(rowid);
     }.bind(this);
 
     this.checkRow_click = function (e, isAddRow = true) {
@@ -391,6 +395,7 @@
         $tr.attr("is-checked", "true").attr("is-editing", "false");
         this.updateAggCols();
         $addRow.focus();
+        this.setCurRow($addRow.attr("rowid"));
 
     }.bind(this);
 
@@ -476,11 +481,11 @@
     };
 
     this.ColGetvalueFn = function (p1) {
-        return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] [ui-inp]`).val();        
+        return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] [ui-inp]`).val();
     };
 
     this.ColSetvalueFn = function (p1) {
-        return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] [ui-inp]`).val();        
+        return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] [ui-inp]`).val();
     };
 
     this.EnableFn = function (p1) {
@@ -499,6 +504,13 @@
         this.addRow();
     };
 
+    this.setCurRow = function (rowId) {
+        this.ctrl.currentRow = [];
+        $.each(this.rowCtrls[rowId], function (i, inpctrl) {
+            this.ctrl.currentRow[inpctrl.__Col.Name] = inpctrl;
+        }.bind(this));
+    };
+
 
     this.init = function () {
         this.ctrl.currentRow = [];
@@ -509,8 +521,6 @@
             col.setValue = this.ColSetvalueFn;
             col.enable = this.EnableFn;
             col.disable = this.DisableFn;
-            this.ctrl.currentRow[col.Name] = col;
-
             if (col.IsAggragate)
                 this.isAggragateInDG = true;
         }.bind(this));

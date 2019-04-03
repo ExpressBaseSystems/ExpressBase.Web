@@ -275,6 +275,12 @@
 
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
+            // run DG onChangeFns initially
+            if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
+                let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                onChangeFn();
+            }
+
         }.bind(this));
         return this.rowCtrls[rowid];
     };

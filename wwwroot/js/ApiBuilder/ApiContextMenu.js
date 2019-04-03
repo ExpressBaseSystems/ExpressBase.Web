@@ -20,7 +20,7 @@
                     cache: false,
                     data: { "refid": o.Reference },
                     success: function (result) {
-                        this.Api.toggleReqWindow(JSON.parse(result));
+                        this.Api.toggleReqWindow(o.RefName,JSON.parse(result));
                         this.Api.ComponentRun = true;
                     }.bind(this)
                 });
@@ -34,7 +34,7 @@
 
     this.options = {
         "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) },
-        "req&resp": { name: "Request JSON & Response JSON", icon:"fa-exchange",callback:this.getReq_RespJSON.bind(this)}
+        "req&resp": { name: "Request Parameter", icon:"fa-exchange",callback:this.getReq_RespJSON.bind(this)}
     };
 
     this.initContextMenu = function () {
@@ -45,6 +45,29 @@
                 return { items: this.getMenu($trigger, e) };
             }.bind(this)
         });
+        $.contextMenu({
+            selector: '#api_request',
+            autoHide: false,
+            build: function ($trigger, e) {
+                return {
+                    items: {
+                        "Addcustomparam": {
+                            name: "Add Custom Param", icon: "fa-plus", callback: function () { $("#api_scodeMd").modal("toggle"); } },
+                        "requestparam": { name: "Request Parameter", icon: "fa-exchange", callback: this.requestParameters.bind(this) }
+                    }
+                };
+            }.bind(this)
+        });
+    };
+
+    this.requestParameters = function (eType, selector, action, originalEvent) {
+        this.Api.ComponentRun = false;
+        $("#Json_reqOrRespWrp .reqLabel").text(` (${this.Api.EbObject.Name || "Api"}) `);
+        $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).empty();
+        this.Api.setRequestW(this.Api.EbObject.Request.Default.$values);
+        this.Api.setRequestW(this.Api.EbObject.Request.Custom.$values,'custom');
+        this.Api.Request.Default = this.Api.EbObject.Request.Default.$values;
+        this.Api.Request.Custom = this.Api.EbObject.Request.Custom.$values;
     };
 
     this.getMenu = function ($trigger, e) {

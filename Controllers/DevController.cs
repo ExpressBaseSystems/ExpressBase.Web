@@ -627,18 +627,35 @@ namespace ExpressBase.Web.Controllers
         {
             var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
             var o = EbSerializers.Json_Deserialize(obj.Data[0].Json);
-            return new ApiComponent { Name = o.Name, Version = o.VersionNumber };
+            string p= null; 
+            if (o is EbDataReader || o is EbDataWriter || o is EbSqlFunction)
+            {
+                if (o.InputParams == null || o.InputParams.Count <= 0)
+                    p = JsonConvert.SerializeObject(this.GetSqlParams(o, obj.Data[0].EbObjectType));
+                else
+                    p = JsonConvert.SerializeObject(o.InputParams);
+            }
+            else if (o is EbApi)
+            {
+                p = this.GetReq_respJson(EbSerializers.Json_Serialize((o as EbApi).Resources));
+            }
+            return new ApiComponent { Name = o.Name, Version = o.VersionNumber,Parameters=(p==null)?"[]":p };
         }
 
         [HttpGet]
         public string GetApiResponse(string name, string vers, string param, string component = null)
         {
+            ApiParams pr = JsonConvert.DeserializeObject<ApiParams>(param);
             ApiResponse resp = null;
             if (component == null)
             {
-                List<Param> pr = JsonConvert.DeserializeObject<List<Param>>(param);
-                Dictionary<string, object> d = pr.Select(p => new { prop = p.Name, val = p.Value })
+                Dictionary<string, object> d = pr.Default.Select(p => new { prop = p.Name, val = p.Value })
                     .ToDictionary(x => x.prop, x => x.val as object);
+
+                foreach(Param p in pr.Custom)
+                {
+                    d.Add(p.Name, p.ValueTo);
+                }
 
                 resp = this.ServiceClient.Get(new ApiRequest
                 {
@@ -652,7 +669,7 @@ namespace ExpressBase.Web.Controllers
                 resp = this.ServiceClient.Post(new ApiComponetRequest
                 {
                     Component = EbSerializers.Json_Deserialize(component),
-                    Params = JsonConvert.DeserializeObject<List<Param>>(param)
+                    Params = pr.Default
                 });
             }
             if(resp.Result != null && resp.Result.GetType()== typeof(ApiScript))

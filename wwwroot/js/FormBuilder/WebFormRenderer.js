@@ -8,6 +8,7 @@ const WebFormRender = function (option) {
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
+    this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
     this.Env = option.env;
     this.Cid = option.cid;
     this.initControls = new InitControls(this);
@@ -16,7 +17,7 @@ const WebFormRender = function (option) {
     this.rowId = option.rowId;
     this.mode = option.mode;
     this.userObject = option.userObject;
-    this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;
+    this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;//EditModeFormData
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
     this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
@@ -25,6 +26,7 @@ const WebFormRender = function (option) {
     this.formValidationflag = true;
     this.isEditModeCtrlsSet = false;
     this.DGBuilderObjs = {};
+    this.uniqCtrlsInitialVals = {};
     this.FRC = new FormRenderCommon({
         FO: this
     });
@@ -134,14 +136,34 @@ const WebFormRender = function (option) {
     };
 
     this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.checkUnique.bind(this, control));
+        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 500)); //delayed check 
+            ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+    };
+
+    //this.unbindUniqueCheck = function (control) {
+    //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
+    //};
+
+    this.isSameValInUniqCtrl = function (ctrl) {
+        let val = ctrl.getValue();
+        return val === this.uniqCtrlsInitialVals[ctrl.EbSid];
     };
 
     this.checkUnique = function (ctrl) {/////////////// move
+        if (Object.entries(this.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl))// avoid check if edit mode and value is same as initial
+            return;
+        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)// avoid check if numeric and value is 0
+            return;
+
+        //let unique_flag = true;
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
         let val = ctrl.getValue();
         if (isNaNOrEmpty(val))
             return;
-        this.showLoader();
+        //this.hideLoader();
+        //this.showLoader();
+        hide_inp_loader($ctrl, this.$saveBtn);
+        show_inp_loader($ctrl, this.$saveBtn);
         $.ajax({
             type: "POST",
             url: "../WebForm/DoUniqueCheck",
@@ -149,11 +171,18 @@ const WebFormRender = function (option) {
                 TableName: this.FormObj.TableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
             },
             success: function (isUnique) {
-                this.hideLoader();
-                if (!isUnique)
+                //this.hideLoader();
+                hide_inp_loader($ctrl, this.$saveBtn);
+                if (!isUnique) {
+                    //unique_flag = false;
+                    $ctrl.attr("uniq-ok", "false");
                     this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
-                else
+                }
+                else {
+                    $ctrl.attr("uniq-ok", "true");
                     this.FRC.removeInvalidStyle(ctrl);
+                }
+                //return unique_flag;
             }.bind(this)
         });
     };
@@ -166,31 +195,37 @@ const WebFormRender = function (option) {
     //    let VMs = this.initializer.Vobj.valueMembers;
     //    let DMs = this.initializer.Vobj.displayMembers;
 
-    //    if (VMs.length > 0) {// clear if already values there
+    //    if (VMs.length > 0)// clear if already values there
     //        this.initializer.clearValues();
-    //        //VMs.splice(0, VMs.length);
-    //        //$.each(this.DisplayMembers.$values, function (j, dm) {
-    //        //    DMs[dm.name].splice(0, DMs[dm.name].length);
-    //        //}.bind(this));
-    //    }
 
-    //    $.each(p1, function (i, row) {
-    //        VMs.push(getObjByval(row.Columns, "Name", this.ValueMember.name).Value);
+    //    let valMsArr = p1[0].split(",");
+    //    let DMtable = p1[1];
 
+
+    //    $.each(valMsArr, function (i, vm) {
+    //        VMs.push(vm);
     //        $.each(this.DisplayMembers.$values, function (j, dm) {
-    //            DMs[dm.name].push(getObjByval(row.Columns, "Name", dm.name).Value);
+    //            valMsArr;
+    //            DMtable;
+
+    //            $.each(DMtable, function (j, r) {
+    //                if (getObjByval(r.Columns, "Name", this.ValueMember.name).Value === vm) {
+    //                    let _dm = getObjByval(r.Columns, "Name", dm.name).Value;
+    //                    DMs[dm.name].push(_dm);
+    //                }
+    //            }.bind(this));
     //        }.bind(this));
     //    }.bind(this));
     //};
 
-    this.setNCCSingleColumns = function (NCCSingleColumns_flat) {
-        $.each(NCCSingleColumns_flat, function (i, SingleColumn) {
+    this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
+        $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
             if (SingleColumn.Name === "id")
                 return true;
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (ctrl.ObjType === "PowerSelect") {
                 //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember(this.FormDataExtended[ctrl.EbSid]);
+                ctrl.setDisplayMember([SingleColumn.Value, this.FormDataExtended[ctrl.EbSid]]);
             }
             else
                 ctrl.setValue(SingleColumn.Value);
@@ -208,10 +243,10 @@ const WebFormRender = function (option) {
         return NCCTblNames;
     };
 
-    this.getNCCSingleColumns_flat = function (FormData, NCCTblNames) {
+    this.getNCCSingleColumns_flat = function (EditModeFormData, NCCTblNames) {
         let NCCSingleColumns_flat = [];
         $.each(NCCTblNames, function (i, TblName) {
-            let SingleRowColums = FormData[TblName][0].Columns;
+            let SingleRowColums = EditModeFormData[TblName][0].Columns;
             NCCSingleColumns_flat = NCCSingleColumns_flat.concat(SingleRowColums);
         });
         return NCCSingleColumns_flat;
@@ -231,16 +266,18 @@ const WebFormRender = function (option) {
             }.bind(this));
             return;
         }
-        let FormData = this.EditModeFormData;
-        let NCCTblNames = this.getNCCTblNames(FormData);
-        //let DGTblNames = this.getSCCTblNames(FormData, "DataGrid");
+        let EditModeFormData = this.EditModeFormData;
+        let NCCTblNames = this.getNCCTblNames(EditModeFormData);
+        //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
         $.each(this.DGs, function (k, DG) {
-            let SingleTable = FormData[DG.TableName];
+            if (!EditModeFormData.hasOwnProperty(DG.TableName))
+                return true;
+            let SingleTable = EditModeFormData[DG.TableName];
             DG.setEditModeRows(SingleTable);
         }.bind(this));
 
-        let NCCSingleColumns_flat = this.getNCCSingleColumns_flat(FormData, NCCTblNames);
-        this.setNCCSingleColumns(NCCSingleColumns_flat);
+        let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
+        this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
         this.isEditModeCtrlsSet = true;
     };
 
@@ -374,9 +411,33 @@ const WebFormRender = function (option) {
         }
     };
 
+    this.isAllUniqOK = function() {
+        let unique_flag = true;
+        let $notOk1stCtrl = null;
+        $.each(this.flatControls, function (i, control) {
+            if (!control.Unique)
+                return true;
+            let $ctrl = $("#" + control.EbSid_CtxId);
+            if ($ctrl.attr("uniq-ok") === "false") {
+                this.FRC.addInvalidStyle(control, "This field is unique, try another value");
+                unique_flag = false;
+                if (!$notOk1stCtrl)
+                    $notOk1stCtrl = $ctrl;
+            }
+        }.bind(this));
+
+        if ($notOk1stCtrl)
+            $notOk1stCtrl.select();
+        return unique_flag;
+    };
+
     this.saveForm = function () {
         if (!this.FRC.AllRequired_valid_Check())
             return;
+        if (!this.isAllUniqOK())
+            return;
+        //if (!this.FRC.AllUnique_Check())
+        //    return;
         this.showLoader();
         let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         $.ajax({
@@ -403,7 +464,9 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToViewMode = function () {
+        this.Mode.isView = true;
         this.Mode.isEdit = false;
+        this.Mode.isNew = false;
         setHeader("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
@@ -414,18 +477,24 @@ const WebFormRender = function (option) {
 
     this.SwitchToEditMode = function () {
         this.Mode.isEdit = true;
+        this.Mode.isView = false;
+        this.Mode.isNew = false;
         this.setEditModeCtrls();
         setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.flatControls, function (k, ctrl) {
-            ctrl.enable();
+            if (!ctrl.IsDisable)
+                ctrl.enable();
+            if (ctrl.Unique)
+                this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
+
         }.bind(this));
     };
 
     this.deleteForm = function () {
         EbDialog("show",
             {
-                Message: "Are you sure?",
+                Message: "Are you sure to delete this data entry?",
                 Buttons: {
                     "Yes": {
                         Background: "green",
@@ -451,9 +520,58 @@ const WebFormRender = function (option) {
                             }.bind(this),
                             success: function (result) {
                                 this.hideLoader();
-                                if (result) {
+                                if (result > 0) {
                                     EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
+                                }
+                                else if (result === -1) {
+                                    EbMessage("show", { Message: 'Delete operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                }
+                                else {
+                                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                                }
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this)
+            });
+    };
+
+    this.cancelForm = function () {
+        EbDialog("show",
+            {
+                Message: "Are you sure to cancel this data entry?",
+                Buttons: {
+                    "Yes": {
+                        Background: "green",
+                        Align: "left",
+                        FontColor: "white;"
+                    },
+                    "No": {
+                        Background: "violet",
+                        Align: "right",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function (name) {
+                    if (name === "Yes") {
+                        this.showLoader();
+                        $.ajax({
+                            type: "POST",
+                            url: "../WebForm/CancelWebformData",
+                            data: { RefId: this.formRefId, RowId: this.rowId },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                                this.hideLoader();
+                            }.bind(this),
+                            success: function (result) {
+                                this.hideLoader();
+                                if (result > 0) {
+                                    EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
+                                    setTimeout(function () { window.close(); }, 3000);
+                                }
+                                else if (result === -1) {
+                                    EbMessage("show", { Message: 'Cancel operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else {
                                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
@@ -496,10 +614,14 @@ const WebFormRender = function (option) {
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
+        this.$cancelBtn.on("click", this. cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         $(window).off("keydown").on("keydown", this.windowKeyDown);
-
         this.initWebFormCtrls();
+
+        if (this.Mode.isNew && this.EditModeFormData)
+            this.setEditModeCtrls();
+
         if (this.mode === "View Mode") {
             this.setEditModeCtrls();
             this.SwitchToViewMode();

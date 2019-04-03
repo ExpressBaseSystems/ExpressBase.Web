@@ -53,7 +53,7 @@ const EbSelect = function (ctrl, options) {
 
     this.maxLimit = (ctrl.MaxLimit === 0) ? 9999999999999999999999 : ctrl.MaxLimit;
     this.minLimit = ctrl.MinLimit;//ctrl.minLimit;
-    this.multiSelect = (ctrl.MaxLimit > 1);
+    this.ComboObj.MultiSelect = (ctrl.MaxLimit !== 1);
     this.required = ctrl.Required;//ctrl.required;
     this.servicestack_url = "";//ctrl.servicestack_url;
     //this.vmValues = (ctrl.vmValues !== null) ? ctrl.vmValues : [];
@@ -90,24 +90,29 @@ const EbSelect = function (ctrl, options) {
 
     //init() for event binding....
     this.init = function () {
-        $('#' + this.name + 'Wraper [class=open-indicator]').hide();
-        this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
-        $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
-        $('#' + this.name + 'Wraper  [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
-        $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
-        $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
-        this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-        this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
-        this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
-        this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
+        try {
+            $('#' + this.name + 'Wraper [class=open-indicator]').hide();
+            this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
+            $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
+            $('#' + this.name + 'Wraper  [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
+            $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
+            $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
+            this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
+            this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
+            this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
+            this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
 
-        //set id for searchBox
-        $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
+            //set id for searchBox
+            $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
 
 
-        //styles
-        $('#' + this.name + 0).children().css("border-top-left-radius", "5px");
-        $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
+            //styles
+            $('#' + this.name + 0).children().css("border-top-left-radius", "5px");
+            $('#' + this.name + 0).children().css("border-bottom-left-radius", "5px");
+        }
+        catch (err) {
+            console.error(err.message);
+        }
     };
 
     this.searchBoxFocus = function () {
@@ -322,7 +327,7 @@ const EbSelect = function (ctrl, options) {
 
         //});
         //settings: {
-        //    hideCheckbox: (this.multiSelect === false) ? true : false,
+        //    hideCheckbox: (this.ComboObj.MultiSelect === false) ? true : false,
         //    scrollY: "200px",//this.dropdownHeight,
         //},
         //filterParams: { colName: "id", FilterValue: "ac" }, //{ id : "ac", }
@@ -481,11 +486,11 @@ const EbSelect = function (ctrl, options) {
 
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
-        this.ComboObj.TempValue = [...this.Vobj.valueMembers]
-        $("#" + this.name).val(this.Vobj.valueMembers);
+        this.ComboObj.TempValue = [...this.Vobj.valueMembers];
+        $("#" + this.ComboObj.EbSid_CtxId).val(this.Vobj.valueMembers);
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
-            this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////
+            this.Vobj.valueMembers.shift();////
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
         //max limit
@@ -520,11 +525,12 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.trimDmValues = function (i) {
+        let DMs =  this.Vobj.displayMembers[this.dmNames[i]];
         if (this.maxLimit === 1) {   //single select
-            this.Vobj.displayMembers[this.dmNames[i]].shift(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(1, 1);
+            DMs.shift(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(1, 1);
         }
         else {                        //max limit
-            this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
+            DMs.pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
         }
     };
 
@@ -558,7 +564,6 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.V_showDD = function () {
-        t = this.ComboObj;
         this.Vobj.DDstate = true;
         if (!this.IsDatatableInit)
             this.InitDT();

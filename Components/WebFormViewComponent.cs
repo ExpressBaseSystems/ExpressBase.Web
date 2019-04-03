@@ -66,6 +66,14 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbUserLocation).InitFromDataBase(this.ServiceClient, ViewBag.__User, ViewBag.__Solution, ViewBag.formRefId);
                     }
+                    else if((control is EbRadioButton) && control.Name.Equals("eb_default"))
+                    {
+                        if (ViewBag.wc == RoutingConstants.UC)
+                        {
+                            if (ViewBag.__User.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || ViewBag.__User.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) || ViewBag.__User.Roles.Contains(SystemRoles.SolutionPM.ToString()))
+                                control.IsDisable = true;
+                        }
+                    }
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 WebForm_L.IsRenderMode = true;

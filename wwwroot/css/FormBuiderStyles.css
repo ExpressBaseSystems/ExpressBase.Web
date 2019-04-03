@@ -808,3 +808,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .grid-cont .Dg_head, .Dg_footer {
     padding-right: 17px;
 }
+
+.inp-inner-loader {
+    background: url(../images/gifs/loader2.gif) !important;
+    background-repeat: no-repeat !important;
+    background-position: calc(100% - 2px) !important;
+ }

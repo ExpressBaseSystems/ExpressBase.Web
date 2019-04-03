@@ -42,7 +42,7 @@ function slide(dir, $leftDiv, $rightDiv, $stickBtn, delay) {
 
         $rightDiv.show();
         $leftDiv.css("margin-left", "-20px");
-        $leftDiv.animate({ width: (lW - rW) + "%", marginLeft: 0}, delay);
+        $leftDiv.animate({ width: (lW - rW) + "%", marginLeft: 0 }, delay);
         $rightDiv.animate({ opacity: 1, marginLeft: 0, marginLeft: 0 }, delay);
     }
 };
@@ -139,4 +139,19 @@ function debounce(func, wait, immediate) {
         timeout = setTimeout(later, wait);
         if (callNow) func.apply(context, args);
     };
+};
+
+function hide_inp_loader($ctrl, $item) {
+    if ($ctrl.hasClass("inp-inner-loader")) {
+        $item.prop('disabled', false).css('pointer-events', 'inherit').css('color', $item.data("_color"));
+        $ctrl.removeClass("inp-inner-loader");
+    }
+};
+
+function show_inp_loader($ctrl, $item) {
+    if (!$ctrl.hasClass("inp-inner-loader")) {
+        $item.data("_color", $item.css('color'));
+        $ctrl.addClass("inp-inner-loader");
+        $item.attr('disabled', 'disabled').css('pointer-events', 'none').css('color', '#777');
+    }
 };

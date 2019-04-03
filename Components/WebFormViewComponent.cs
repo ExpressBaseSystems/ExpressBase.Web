@@ -70,7 +70,7 @@ namespace ExpressBase.Web.Components
                     {
                         if (ViewBag.wc == RoutingConstants.UC)
                         {
-                            if (ViewBag.__User.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || ViewBag.__User.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) || ViewBag.__User.Roles.Contains(SystemRoles.SolutionPM.ToString()))
+                            if (!(ViewBag.__User.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || ViewBag.__User.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) || ViewBag.__User.Roles.Contains(SystemRoles.SolutionPM.ToString())))
                                 control.IsDisable = true;
                         }
                     }

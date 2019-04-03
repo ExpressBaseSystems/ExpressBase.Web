@@ -53,7 +53,7 @@ const EbSelect = function (ctrl, options) {
 
     this.maxLimit = (ctrl.MaxLimit === 0) ? 9999999999999999999999 : ctrl.MaxLimit;
     this.minLimit = ctrl.MinLimit;//ctrl.minLimit;
-    this.multiSelect = (ctrl.MaxLimit > 1);
+    this.ComboObj.MultiSelect = (ctrl.MaxLimit !== 1);
     this.required = ctrl.Required;//ctrl.required;
     this.servicestack_url = "";//ctrl.servicestack_url;
     //this.vmValues = (ctrl.vmValues !== null) ? ctrl.vmValues : [];
@@ -327,7 +327,7 @@ const EbSelect = function (ctrl, options) {
 
         //});
         //settings: {
-        //    hideCheckbox: (this.multiSelect === false) ? true : false,
+        //    hideCheckbox: (this.ComboObj.MultiSelect === false) ? true : false,
         //    scrollY: "200px",//this.dropdownHeight,
         //},
         //filterParams: { colName: "id", FilterValue: "ac" }, //{ id : "ac", }
@@ -486,11 +486,11 @@ const EbSelect = function (ctrl, options) {
 
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
-        this.ComboObj.TempValue = [...this.Vobj.valueMembers]
-        $("#" + this.name).val(this.Vobj.valueMembers);
+        this.ComboObj.TempValue = [...this.Vobj.valueMembers];
+        $("#" + this.ComboObj.EbSid_CtxId).val(this.Vobj.valueMembers);
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
-            this.Vobj.valueMembers = this.Vobj.valueMembers.splice(1, 1);////
+            this.Vobj.valueMembers.shift();////
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
         //max limit
@@ -525,11 +525,12 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.trimDmValues = function (i) {
+        let DMs =  this.Vobj.displayMembers[this.dmNames[i]];
         if (this.maxLimit === 1) {   //single select
-            this.Vobj.displayMembers[this.dmNames[i]].shift(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(1, 1);
+            DMs.shift(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(1, 1);
         }
         else {                        //max limit
-            this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
+            DMs.pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
         }
     };
 
@@ -563,7 +564,6 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.V_showDD = function () {
-        t = this.ComboObj;
         this.Vobj.DDstate = true;
         if (!this.IsDatatableInit)
             this.InitDT();

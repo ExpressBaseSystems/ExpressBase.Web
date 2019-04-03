@@ -11,10 +11,12 @@
 <link rel="stylesheet" href="~/css/RedisClient/rediscss.css" />
 <link rel="stylesheet" href="~/css/RedisClient/jquery.splitter.css" />
 <link rel="stylesheet" href="~/css/ApiRelated/EbPrettyJson.css" />
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 <title>Index</title>
 <script src="~/js/RedisClient/RedisClietJS.js" type="text/javascript"></script>
 <script src="~/js/RedisClient/jquery.splitter.js" type="text/javascript"></script>
 <script src="~/js/ApiBuilder/EbPrettyJson.js" type="text/javascript"></script>
+<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
 
 <script>
     var cm = new EbHeader().setName("Redis Explorer");
@@ -26,7 +28,7 @@
             <div class="input-group mb-3 ">
                 @*<input type="text" id="t3" value="@ViewBag.cc" />*@
 
-                <input type="text" id="t1" value="" class=" form-control " placeholder="Key" />
+                <input type="text" id="t1" value="" class=" form-control " placeholder="Key/Display name" />
                 <div class="input-group-btn">
                     <button id="Btnsrch" class="btn btn-default" type="submit">
                         <i class="glyphicon glyphicon-search"></i>
@@ -35,14 +37,16 @@
             </div>
             @{
                 <select id="ptns" class="form-control">
-                    <option value="1">At beginning</option>
-                    <option value="2">End</option>
-                    <option value="3">Middle</option>
+                    <option value="1">Refid At Beginning</option>
+                    <option value="2">Refid At End</option>
+                    <option value="3">Refid At Middle</option>
+                    <option value="4">Display name</option>
                 </select>
             }
         </div>
         <div style="max-height:540px; height:540px;" id="group_div" class="borderstyle">
-            <span href="#defaultgrp" id="dfltgrp" style="display:block; border: 1px  solid blue ; border-left: 4px solid blue;   border-radius: 5px;" data-toggle="collapse">Group                        <i class="fa fa-caret-down"></i></span>
+
+            <span href="#defaultgrp" id="dfltgrp" align="center" style="display:block; height:25px; border: 1px solid;background-color:#336699;color:white;  border-left: 4px solid ;   border-radius: 9px;" data-toggle="collapse"><b>Group</b>                        <i class="fa fa-caret-down"></i></span>
             <div id="defaultgrp" class=" collapse  in">
                 <ul id="keyslist" class="nav nav-pills nav-stacked scrol_0 ">
                     @{
@@ -56,7 +60,7 @@
                     }
                 </ul>
             </div>
-            <span href="#customgrp" id="cstmgrp" style="display:block; border: 1px  solid blue;  border-radius: 5px;  border-left: 4px solid blue; border-radius: 5px;" data-toggle="collapse"> Custom Groups                <i class="fa fa-caret-down"></i></span>
+            <div href="#customgrp" id="cstmgrp" style="display:block;height:25px; border: 1px  solid ;text-align: center; background-color:#316396; color:white;  border-left: 4px solid ; border-radius: 9px;" data-toggle="collapse"><b>Custom Groups</b>                <i class="fa fa-caret-down"></i></div>
             <div id="customgrp" class="collapse  ">
                 <ul id="grplists" class="nav nav-pills nav-stacked scrol_1 ">
                     @{
@@ -79,9 +83,11 @@
     <div class="col-md-10 pading0">
         <div class="row">
             <nav>
-                <ul class="nav nav-tabs" id="hdbar">
-                    <li id="btninfo"><a class="active " role="tab" href="#dispvalue" data-toggle="tab">Info</a></li>
+                <ul class="nav hdrtabs nav-tabs">
+                    <li id="btninfo"><a class="active " role="tab" href="#infos" data-toggle="tab">Info</a></li>
+                    <li id="btnkeydiff"><a class="active " role="tab" href="#dispvalue" data-toggle="tab">Orphaned  Keys</a></li>
                     <li class="dropdown">
+
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add Keys <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href="#" role="tab" data-toggle="modal" data-target="#modalstring">String</a></li>
@@ -104,7 +110,7 @@
                     <li id="tablog"><a role="tab" href="#tbllog" data-toggle="tab">Activity log</a></li>
                     @*<li style=" float: right;"> <button id="btnregex" class="glyphicon  glyphicon-search"></button>  </li>*@
                     <li style=" float: right;"><button type="button" id="btnregex" class="glyphicon glyphicon-search btn btn-default btn-sm"></button></li>
-                    <li style=" float: right;"> <input type="text" id="txtregex" class="form-control pading" placeholder="Search Based on RegEx"> </li>
+                    <li style=" float: right;"> <input type="text" id="txtregex" class="form-control pading " placeholder="Search Based on RegEx"> </li>
 
                 </ul>
 
@@ -112,9 +118,9 @@
         </div>
 
         <div class="tab-content">
+
             <div id="infos" class="tab-pane fade in active">
-                <input type="text" id="tl" class="margin_sml7 marginleft" value="" placeholder="Value" padding-top:1px; padding-left: 1px;
-                       padding-right: 1px;" />
+
             </div>
 
             <div id="termnl" class="tab-pane fade position-relative borderstyle  margin_sml7  " style=" padding-top:1px; padding-left: 1px;
@@ -123,6 +129,7 @@
                 </div>
 
             </div>
+            <br />
             <div id="dispvalue" class="tab-pane fade " style=" height: 555px;  width: 100%;">
                 <div id="subkeydiv" class="col-md-3 pading0  margin_sml7 scrol  " style=" width: 200px;">
                     <ul id="sublist" class="nav nav-pills nav-stacked"></ul>
@@ -131,10 +138,11 @@
                 <div id="outerdisp" class=" position-relative borderstyle  col-md-9  margin_sml7  " style=" padding-top:1px; padding-left: 3px;
                                       padding-right: 1px;" hidden>
                     <div id="smallbtn" hidden style=" margin-bottom: 3px;">
-                        <input type="button" id="btnkeydel" value="Delete" class="btn btn-info btn-xs" />
-                        <input type="button" id="btnrename" value="Rename" class="btn btn-xs btn-info" role="tab" href="#" data-toggle="modal" data-target="#modalrename" />
-                        <input type="button" id="btnjsonview" value="JSON View" class="btn btn-info btn-xs" />
-                        <input type="button" id="btnedit" value="Edit" class="btn btn-info btn-xs" />
+                        <input type="button" id="btnkeydel" value="Delete" class="btn btn-info btn-xs btnbackground" />
+                        <input type="button" id="btnrename" value="Rename" class="btn btn-xs btn-info btnbackground" role="tab" href="#" data-toggle="modal" data-target="#modalrename " />
+                        <input type="button" id="btnjsonview" value="JSON View" class="btn btn-info btn-xs btnbackground" />
+                        <input type="button" id="btnedit" value="Edit" class="btn btn-info btn-xs btnbackground" />
+                        <input type="button" id="sqlview" value="Sql View" style="float:right;margin-right: 10px;" href="#popup1" class="btn btn-info btn-xs btnbackground " />
 
                     </div>
 
@@ -143,22 +151,23 @@
                 </div>
             </div>
             <div id="tbllog" class=" tab-pane fade">
-                <div id="logtable" class="scrol_4">
-                    <table class="tablelog table table-striped table-bordered">
-                        <tr> <th>User</th> <th>Time</th> <th>Command</th> <th>Key</th></tr>
-                    </table>
+                <div id="logtable" style="  height: 320px;">
+                    <table id="tbllogs" class="tablelog table table-bordered"></table>
+
+
+
                 </div>
                 <div id="logshowvalues">
-                    <div class="col-md-6 borderstyle " style="height:250px ">
+                    <div class="col-md-6 borderstyle pading0" style="height:250px ">
                         <h4><b>Previous Value</b>           </h4>
 
                         <div class="previousval scrol_2">
                         </div>
                     </div>
-                    <div class="col-md-6 borderstyle " style="height:250px">
+                    <div class="col-md-6 borderstyle pading0" style="height:250px">
                         <h4><b>Current Value</b>                  </h4>
 
-                        <div class="currentval scrol_2">
+                        <div class="currentval scrol_2 ">
                         </div>
                     </div>
                 </div>
@@ -166,7 +175,9 @@
 
 
 
+            <div id="popup1">
 
+            </div>
 
 
             <!-- Modal string key insert-->
@@ -412,7 +423,7 @@
                             <input type="text" id="txtnm" value="" class=" form-control" placeholder="Group Name" />
                             <div>
                                 <div class="input-group " style="width:auto">
-                                    <input type="text" id="txtptn1" class=" txtadnlptn form-control pading" placeholder="(\w+\-\w+\-)object_number(\-\w+\-\w+\-\w+\-\w">
+                                    <input type="text" id="txtptn1" class=" txtadnlptn form-control pading" placeholder="(\w+\-\w+\-)object_number(\-\w+\-\w+\-\w+\-\w)">
                                     <div class="input-group-btn ">
                                         <div>
                                             <button class="btn btn-primary " id="btnsave1" type="submit" hidden="hidden">
@@ -503,7 +514,7 @@
             auto_arr =@Html.Raw(Json.Serialize(ViewBag.cmdbag));
             custom_grps=@Html.Raw(Json.Serialize(ViewBag.csgrplst));
                 var client = new RedisClientJS();
-
+            $("#btninfo").click();
 
     });
 
@@ -511,6 +522,7 @@
             $('#dispval').empty();
         });
         $("#tabterminal").click(function () {
+      $('.nav-pills  li').removeClass('active');
             $('#divterminal').empty();
             //$('.terminalcls').val('');
             //$('.divanswer').empty();
@@ -532,3 +544,7 @@
         //});
 
 </script>
+
+
+
+

@@ -61,8 +61,8 @@
     };
 
     this.SwitchToEditMode = function () {
+        $(`#${this.TableId} tbody [is-editing=true]`).remove();
         this.tryAddRow();
-
     };
 
     this.addEditModeRows = function (SingleTable) {
@@ -485,6 +485,14 @@
         return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] .ctrl-cover *`).attr('disabled', 'disabled').css('pointer-events', 'none').find('input').css('background-color', '#eee');
     };
 
+    this.clearDG = function () {
+        $(`#${this.TableId} tbody .ctrlstd .del-row`).each(function (i, e) {
+            $(e).trigger("click");
+        }.bind(this));
+        this.rowCtrls = {};
+        this.addRow();
+    };
+
 
     this.init = function () {
         this.ctrl.currentRow = [];
@@ -506,6 +514,7 @@
             this.initAgg();
 
         this.ctrl.addRow = this.AddRowWithData.bind(this);
+        this.ctrl.clear = this.clearDG.bind(this);
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

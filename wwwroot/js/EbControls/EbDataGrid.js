@@ -65,6 +65,42 @@
         this.tryAddRow();
     };
 
+    //this.j = function (p1) {
+    //    let VMs = this.initializer.Vobj.valueMembers;
+    //    let DMs = this.initializer.Vobj.displayMembers;
+    //    let columnvals = this.initializer.columnvals;
+
+    //    if (VMs.length > 0)// clear if already values there
+    //        this.initializer.clearValues();
+
+    //    let valMsArr = p1[0].split(',');
+    //    let DMtable = p1[1];
+
+
+    //    $.each(valMsArr, function (i, vm) {
+    //        VMs.push(vm);
+    //        $.each(this.DisplayMembers.$values, function (j, dm) {
+    //            $.each(DMtable, function (j, r) {
+    //                if (getObjByval(r.Columns, 'Name', this.ValueMember.name).Value === vm) {
+    //                    let _dm = getObjByval(r.Columns, 'Name', dm.name).Value;
+    //                    DMs[dm.name].push(_dm);
+    //                }
+    //            }.bind(this));
+    //        }.bind(this));
+    //    }.bind(this));
+
+    //    $.each(DMtable, function (j, r) {
+    //        $.each(r.Columns, function (j, item) {
+    //            if (!columnvals[item.Name]) {
+    //                console.warn('Mismatch found in Colums in datasource and Colums in object');
+    //                return true;
+    //            }
+    //            columnvals[item.Name].push(item.Value);
+    //        }.bind(this));
+    //    }.bind(this));
+
+    //};
+
     this.addEditModeRows = function (SingleTable) {
         $(`#${this.TableId} tbody`).empty();
         this.resetBuffers();
@@ -86,8 +122,10 @@
                 console.log(val);
                 //ctrl.Name = SingleColumn.Name;
 
-                if (ctrl.ObjType === "PowerSelect")
+                if (ctrl.ObjType === "PowerSelect") {
+                    //ctrl.setDisplayMember = this.j;
                     ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
+                }
                 else
                     ctrl.setValue(val);
 
@@ -189,7 +227,7 @@
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
                 return true;
-            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${col.Name}'>
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${col.Name}' style='width:${this.getTdWidth(i)}px'>
                         <div class='tdtxt-agg' coltype='${col.ObjType}'><span></span></div>                        
                    </td>`;
 
@@ -393,15 +431,13 @@
         if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true")
             this.addRow();
         $tr.attr("is-checked", "true").attr("is-editing", "false");
-        this.updateAggCols();
+        this.updateAggCols($td);
         $addRow.focus();
         this.setCurRow($addRow.attr("rowid"));
 
     }.bind(this);
 
-    this.updateAggCols = function () {
-        let $e = $(event.target);
-        let $td = $e.closest("td");
+    this.updateAggCols = function ($td) {
         let colname = $td.attr("colname");
         $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
     };

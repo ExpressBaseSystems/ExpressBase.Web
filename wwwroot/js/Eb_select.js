@@ -193,6 +193,7 @@ const EbSelect = function (ctrl, options) {
         });
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
+        this.columnvals = {};
 
     };
 
@@ -403,6 +404,8 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.setColumnvals = function () {
+        if (!this.$curEventTarget)
+            return;
         let vmValue = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
         if (event.target.nodeName === "SPAN")
             vmValue = this.ClosedItem;
@@ -442,7 +445,8 @@ const EbSelect = function (ctrl, options) {
     //double click on option in DD
     this.dblClickOnOptDDEventHand = function (e) {
         this.$curEventTarget = $(e.target);
-        let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
+        //let idx = this.datatable.ebSettings.Columns.$values[getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
+        let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === "id"; }.bind(this))[0].data;
         let vmValue = this.datatable.Api.row($(e.target).closest("tr")).data()[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             this.SelectRow(idx, vmValue);

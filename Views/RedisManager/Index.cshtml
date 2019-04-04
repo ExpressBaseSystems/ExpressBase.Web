@@ -69,7 +69,6 @@
                             var kname = "Group" + ViewBag.cid + "_" + item.Key;
                             <li>
                                 <a class="cstmgrp_link list-group-item" role="tab" href="#dispvalue" data-toggle="tab" cgrpkey="kname" data-name="@item.Key" grp-ptns=@JsonConvert.SerializeObject(item.Value)>@item.Key</a>
-                                @*<ul id="sub_@p.pattern"></ul>*@
                             </li>
                         }
                     }
@@ -151,8 +150,8 @@
                 </div>
             </div>
             <div id="tbllog" class=" tab-pane fade">
-                <div id="logtable" style="  height: 320px;">
-                    <table id="tbllogs" class="tablelog table table-bordered"></table>
+                <div id="logtable" style="  height: 300px;">
+                    <table id="tbllogs" class="tablelog table table-bordered" style="margin-bottom: 0px;"></table>
 
 
 

@@ -1,5 +1,9 @@
 ﻿
 
+
+
+
+
 var RedisClientJS = function () {
     this.currentGrpLink = null;
     this.subnm = null;
@@ -24,7 +28,7 @@ var RedisClientJS = function () {
         $("#Btnsrch").off('click').on('click', this.Srchfn.bind(this));
         $("#btnregex").off('click').on('click', this.Regxfn.bind(this));
         $("#btnkeys").off('click').on('click', this.Allkeysfn.bind(this));
-        $("#infos").on('click', "#totkeys", this.Allkeysfn.bind(this));
+        $("body").on('click', "#totkeys", this.Allkeysfn.bind(this));
 
         $("#btnlpush").off('click').on('click', this.ListInsertLpushfn.bind(this));
         $("#btnrpush").off('click').on('click', this.ListInsertRpushfn.bind(this));
@@ -469,6 +473,7 @@ var RedisClientJS = function () {
     this.GroupPatternfn = function () {
         if (($("#txtnm").val() != "")) {
             var list = document.getElementById('ptnslist').childNodes;
+            var s = $("#txtnm").val();
             if (list.length != 0) {
                 var theArray = [];
                 var ary = [];
@@ -480,9 +485,11 @@ var RedisClientJS = function () {
                 }
             }
             var x = JSON.stringify(ary);
-            var k = `<li>  <a class="cstmgrp_link list-group-item " role="tab" href="#dispvalue" data-toggle="tab" cgrpkey="kname" data-name="${$("#txtnm").val()}" grp-ptns="${x}">${$("#txtnm").val()}</a>    </li>`
+            var k = `<li>  <a class="cstmgrp_link list-group-item " role="tab" href="#dispvalue" data-toggle="tab" cgrpkey="kname" data-name="${$("#txtnm").val()}" grp-ptns='${x}'>${$("#txtnm").val()}</a>    </li>`
             $("#grplists").append(k);
-
+            //s = s;
+            //var cgdict = { s: ary };
+            //custom_grps.push(cgdict);
             $.ajax({
 
                 url: "../RedisManager/GroupPattern",
@@ -938,8 +945,8 @@ var RedisClientJS = function () {
 
         }
 
-
         $('#smallbtn').hide();
+
         $(`#outerdisp`).hide();
     }.bind(this);
 
@@ -1314,6 +1321,7 @@ var RedisClientJS = function () {
             h.push(`<li class="sub_link list-group-item"refid=${diff[i]}>${diff[i]}</li>`);
         }
         $(`#subkeydiv`).empty().append(h.join(""));
+        $('#dispvalue').show();
         $("#eb_common_loader").EbLoader("hide");
     };
     this.init();

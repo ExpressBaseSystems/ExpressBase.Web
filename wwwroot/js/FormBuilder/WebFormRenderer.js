@@ -19,6 +19,8 @@ const WebFormRender = function (option) {
     this.userObject = option.userObject;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;//EditModeFormData
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
+    this.DisableDeleteData = option.formData === null ? {} : option.formData.DisableDelete;
+    this.DisableCancelData = option.formData === null ? {} : option.formData.DisableCancel;
     this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
@@ -468,6 +470,7 @@ const WebFormRender = function (option) {
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
         setHeader("View Mode");
+        this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
         $.each(this.flatControls, function (k, ctrl) {
@@ -480,6 +483,7 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isNew = false;
         this.setEditModeCtrls();
+        this.BeforeModeSwitch("Edit Mode");
         setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.flatControls, function (k, ctrl) {
@@ -489,6 +493,49 @@ const WebFormRender = function (option) {
                 this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
         }.bind(this));
+    };
+
+    this.BeforeModeSwitch = function(newMode){
+        if (newMode === "View Mode") {
+            this.flatControls = getFlatCtrlObjs(this.FormObj);
+            $.each(this.flatControls, function (k, ctrl) {
+                if (ctrl.ObjType === "RadioButton" && ctrl.Name === "eb_default") {
+                    let c = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", "eb_default");
+                    if (c !== undefined && c.Value === "T") {
+                        if (this.userObject.Roles.contains("SolutionOwner") || this.userObject.Roles.contains("SolutionAdmin") || this.userObject.Roles.contains("SolutionPM"))
+                            return;
+                        this.$saveBtn.prop("disabled", true);
+                        this.$deleteBtn.prop("disabled", true);
+                        this.$editBtn.prop("disabled", true);
+                        this.$cancelBtn.prop("disabled", true);
+                        //this.$saveBtn.prop("title", "Save Disabled");                        
+                    }
+                    return;                    
+                }
+            }.bind(this));
+            $.each(this.FormObj.DisableDelete.$values, function (k, v) {
+                if (!v.IsDisabled && !v.IsWarningOnly) {
+                    if (this.DisableDeleteData[v.Name]) {
+                        this.$deleteBtn.prop("disabled", true);
+                        return;
+                    }
+                }
+            }.bind(this));
+            $.each(this.FormObj.DisableCancel.$values, function (k, v) {
+                if (!v.IsDisabled && !v.IsWarningOnly) {
+                    if (this.DisableCancelData[v.Name]) {
+                        this.$cancelBtn.prop("disabled", true);
+                        return;
+                    }
+                }
+            }.bind(this));
+        }
+        else {
+            this.$saveBtn.prop("disabled", false);
+            this.$deleteBtn.prop("disabled", false);
+            this.$editBtn.prop("disabled", false);
+            this.$cancelBtn.prop("disabled", false);
+        }
     };
 
     this.deleteForm = function () {

@@ -32,6 +32,7 @@ using System.Text.RegularExpressions;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Data;
 using ExpressBase.Objects.Helpers;
+using Newtonsoft.Json.Linq;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -583,7 +584,7 @@ namespace ExpressBase.Web.Controllers
                 else
                     p = o.InputParams;
             }
-            else if(o is EbApi)
+            else if (o is EbApi)
             {
                 return this.GetReq_respJson(EbSerializers.Json_Serialize((o as EbApi).Resources));
             }
@@ -627,7 +628,7 @@ namespace ExpressBase.Web.Controllers
         {
             var obj = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
             var o = EbSerializers.Json_Deserialize(obj.Data[0].Json);
-            string p= null; 
+            string p = null;
             if (o is EbDataReader || o is EbDataWriter || o is EbSqlFunction)
             {
                 if (o.InputParams == null || o.InputParams.Count <= 0)
@@ -639,7 +640,7 @@ namespace ExpressBase.Web.Controllers
             {
                 p = this.GetReq_respJson(EbSerializers.Json_Serialize((o as EbApi).Resources));
             }
-            return new ApiComponent { Name = o.Name, Version = o.VersionNumber,Parameters=(p==null)?"[]":p };
+            return new ApiComponent { Name = o.Name, Version = o.VersionNumber, Parameters = (p == null) ? "[]" : p };
         }
 
         [HttpGet]
@@ -652,11 +653,10 @@ namespace ExpressBase.Web.Controllers
                 Dictionary<string, object> d = pr.Default.Select(p => new { prop = p.Name, val = p.Value })
                     .ToDictionary(x => x.prop, x => x.val as object);
 
-                foreach(Param p in pr.Custom)
+                foreach (Param p in pr.Custom)
                 {
-                    d.Add(p.Name, p.ValueTo);
+                        d.Add(p.Name, p.ValueTo);
                 }
-
                 resp = this.ServiceClient.Get(new ApiRequest
                 {
                     Name = name,
@@ -672,7 +672,7 @@ namespace ExpressBase.Web.Controllers
                     Params = pr.Default
                 });
             }
-            if(resp.Result != null && resp.Result.GetType()== typeof(ApiScript))
+            if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
             {
                 resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
             }

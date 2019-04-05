@@ -58,6 +58,7 @@ const WebFormRender = function (option) {
         $.each(flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+        return this.formObject;
     };
 
     this.initDGs = function () {
@@ -434,6 +435,7 @@ const WebFormRender = function (option) {
     };
 
     this.saveForm = function () {
+        this.BeforeSave();
         if (!this.FRC.AllRequired_valid_Check())
             return;
         if (!this.isAllUniqOK())
@@ -463,6 +465,14 @@ const WebFormRender = function (option) {
             success: this.ajaxsuccess.bind(this)
         });
 
+    };
+
+    this.BeforeSave = function () {
+        $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {
+            if (!r.IsDisabled && r.Script.Lang === 0 && r.Script.Code !== "") {
+                new Function("form", "user", `event`, atob(r.Script.Code)).bind("this-placeholder", this.setFormObject(), this.userObject)();
+            }
+        }.bind(this));        
     };
 
     this.SwitchToViewMode = function () {

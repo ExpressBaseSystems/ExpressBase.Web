@@ -69,136 +69,136 @@ namespace ExpressBase.Web.Controllers
         //}
 
 
-        [HttpGet]
-        public IActionResult DataDb()
-        {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
-            if ((solutionConnections.EBSolutionConnections.DataDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.DataDbConnection = new EbDataDbConnection();
-            ViewBag.DataDb = solutionConnections.EBSolutionConnections.DataDbConnection;
+        //[HttpGet]
+        //public IActionResult DataDb()
+        //{
+        //    GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
+        //    if ((solutionConnections.EBSolutionConnections.DataDbConnection.IsDefault == true))
+        //        solutionConnections.EBSolutionConnections.DataDbConnection = new EbDataDbConnection();
+        //    ViewBag.DataDb = solutionConnections.EBSolutionConnections.DataDbConnection;
 
-            return View();
-        }
+        //    return View();
+        //}
 
-        [HttpGet]
-        public IActionResult ObjectsDb()
-        {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
-            if ((solutionConnections.EBSolutionConnections.ObjectsDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.ObjectsDbConnection = new EbObjectsDbConnection();
-            ViewBag.ObjDb = solutionConnections.EBSolutionConnections.ObjectsDbConnection;
+        //[HttpGet]
+        //public IActionResult ObjectsDb()
+        //{
+        //    GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
+        //    if ((solutionConnections.EBSolutionConnections.ObjectsDbConnection.IsDefault == true))
+        //        solutionConnections.EBSolutionConnections.ObjectsDbConnection = new EbObjectsDbConnection();
+        //    ViewBag.ObjDb = solutionConnections.EBSolutionConnections.ObjectsDbConnection;
 
-            return View();
-        }
+        //    return View();
+        //}
 
-        [HttpGet]
-        public IActionResult FilesDb()
-        {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
-            if ((solutionConnections.EBSolutionConnections.FilesDbConnection.IsDefault == true))
-                solutionConnections.EBSolutionConnections.FilesDbConnection = new EbFilesDbConnection();
-            ViewBag.FilesDb = solutionConnections.EBSolutionConnections.FilesDbConnection;
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult FilesDb()
+        //{
+        //    GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA });
+        //    if ((solutionConnections.EBSolutionConnections.FilesDbConnection.IsDefault == true))
+        //        solutionConnections.EBSolutionConnections.FilesDbConnection = new EbFilesDbConnection();
+        //    ViewBag.FilesDb = solutionConnections.EBSolutionConnections.FilesDbConnection;
+        //    return View();
+        //}
 
-        [HttpGet]
-        public IActionResult SMTP()
-        {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP });
-            if ((solutionConnections.EBSolutionConnections.EmailConnections == null))
-                solutionConnections.EBSolutionConnections.EmailConnections = new EbMailConCollection();
-            ViewBag.SMTP = solutionConnections.EBSolutionConnections.EmailConnections;
+        //[HttpGet]
+        //public IActionResult SMTP()
+        //{
+        //    GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP });
+        //    if ((solutionConnections.EBSolutionConnections.EmailConnections == null))
+        //        solutionConnections.EBSolutionConnections.EmailConnections = new EbMailConCollection();
+        //    ViewBag.SMTP = solutionConnections.EBSolutionConnections.EmailConnections;
 
-            return View();
-        }
+        //    return View();
+        //}
 
-        [HttpGet]
-        public IActionResult SMSAccount()
-        {
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS });
-            if (solutionConnections.EBSolutionConnections == null)
-                solutionConnections.EBSolutionConnections.SMSConnections = new EbSmsConCollection();
-            ViewBag.SMS = solutionConnections.EBSolutionConnections.SMSConnections;
-            return View();
-        }
-        
-        [HttpPost]
-        public string DataDb(int i)
-        {
-            var req = this.HttpContext.Request.Form;
+        //[HttpGet]
+        //public IActionResult SMSAccount()
+        //{
+        //    GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS });
+        //    if (solutionConnections.EBSolutionConnections == null)
+        //        solutionConnections.EBSolutionConnections.SMSConfigs = new EbSmsConCollection();
+        //    ViewBag.SMS = solutionConnections.EBSolutionConnections.SMSConfigs;
+        //    return View();
+        //}
 
-            GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA, SolutionId = req["SolutionId"] });
-             string solutionid = this.HttpContext.Request.Query["Sid"];
+        //[HttpPost]
+        //public string DataDb(int i)
+        //{
+        //    var req = this.HttpContext.Request.Form;
 
-            EbDataDbConnection dbcon = new EbDataDbConnection()
-            {
-                DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
-                DatabaseName = req["databaseName"],
-                Server = req["server"],
-                Port = Convert.ToInt32(req["port"]),
-                UserName = req["userName"],
-                Password = req["password"],
-                ReadWriteUserName = req["readWriteUserName"],
-                ReadWritePassword = req["readWritePassword"],
-                ReadOnlyUserName = req["readOnlyUserName"],
-                ReadOnlyPassword = req["readOnlyPassword"],
-                Timeout = Convert.ToInt32(req["timeout"]),
-                IsDefault = false,
-                IsSSL = (req["IsSSL"] == "on") ? true : false
-            };
+        //    GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbDATA, SolutionId = req["SolutionId"] });
+        //     string solutionid = this.HttpContext.Request.Query["Sid"];
 
-            EbObjectsDbConnection objdbcon = new EbObjectsDbConnection()
-            {
-                DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
-                DatabaseName = req["databaseName"],
-                Server = req["server"],
-                Port = Convert.ToInt32(req["port"]),
-                UserName = req["userName"],
-                Password = req["password"],
-                ReadWriteUserName = req["readWriteUserName"],
-                ReadWritePassword = req["readWritePassword"],
-                ReadOnlyUserName = req["readOnlyUserName"],
-                ReadOnlyPassword = req["readOnlyPassword"],
-                Timeout = Convert.ToInt32(req["timeout"]),
-                IsDefault = false,
-                IsSSL = (req["IsSSL"] == "on") ? true : false
-            };
+        //    EbDataDbConnection dbcon = new EbDataDbConnection()
+        //    {
+        //        DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
+        //        DatabaseName = req["databaseName"],
+        //        Server = req["server"],
+        //        Port = Convert.ToInt32(req["port"]),
+        //        UserName = req["userName"],
+        //        Password = req["password"],
+        //        ReadWriteUserName = req["readWriteUserName"],
+        //        ReadWritePassword = req["readWritePassword"],
+        //        ReadOnlyUserName = req["readOnlyUserName"],
+        //        ReadOnlyPassword = req["readOnlyPassword"],
+        //        Timeout = Convert.ToInt32(req["timeout"]),
+        //        IsDefault = false,
+        //        IsSSL = (req["IsSSL"] == "on") ? true : false
+        //    };
 
-            this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });
-            this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = false, SolutionId = req["SolutionId"] });
-           
-            //if (solutionConnections.EBSolutionConnections.DataDbConnection != null)
-            //{
-            //    if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
-            //        dbcon.Password = solutionConnections.EBSolutionConnections.DataDbConnection.Password;
-            //    if (!this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false }))
-            //    {
-            //        if (req["databaseVendor"].ToString() == "ORACLE")
-            //        {
-            //            var response = this.ServiceClient.Post(new EbDbCreateRequest { dbName = dbcon.DatabaseName, ischange = "true" });
-            //        }       
-            //    }
+        //    EbObjectsDbConnection objdbcon = new EbObjectsDbConnection()
+        //    {
+        //        DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
+        //        DatabaseName = req["databaseName"],
+        //        Server = req["server"],
+        //        Port = Convert.ToInt32(req["port"]),
+        //        UserName = req["userName"],
+        //        Password = req["password"],
+        //        ReadWriteUserName = req["readWriteUserName"],
+        //        ReadWritePassword = req["readWritePassword"],
+        //        ReadOnlyUserName = req["readOnlyUserName"],
+        //        ReadOnlyPassword = req["readOnlyPassword"],
+        //        Timeout = Convert.ToInt32(req["timeout"]),
+        //        IsDefault = false,
+        //        IsSSL = (req["IsSSL"] == "on") ? true : false
+        //    };
 
-            //}
-            //else
-            //    this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });
-            //if (solutionConnections.EBSolutionConnections.ObjectsDbConnection != null)
-            //{
-            //    if (String.IsNullOrEmpty(objdbcon.Password) && objdbcon.UserName == solutionConnections.EBSolutionConnections.ObjectsDbConnection.UserName && objdbcon.Server == solutionConnections.EBSolutionConnections.ObjectsDbConnection.Server)
-            //        objdbcon.Password = solutionConnections.EBSolutionConnections.ObjectsDbConnection.Password;
-            //    if (!this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = false }))
-            //    {
-            //        if (req["databaseVendor"].ToString() == "ORACLE")
-            //            this.ServiceClient.Post<bool>(new EbCreateOracleDBRequest { });
-            //    }
+        //    this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });
+        //    this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = false, SolutionId = req["SolutionId"] });
 
-            //}
-            //else
-            //    this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = true });
-            return JsonConvert.SerializeObject(dbcon);
-        }
+        //    //if (solutionConnections.EBSolutionConnections.DataDbConnection != null)
+        //    //{
+        //    //    if (String.IsNullOrEmpty(dbcon.Password) && dbcon.UserName == solutionConnections.EBSolutionConnections.SMSConnection.UserName && dbcon.Server == solutionConnections.EBSolutionConnections.DataDbConnection.Server)
+        //    //        dbcon.Password = solutionConnections.EBSolutionConnections.DataDbConnection.Password;
+        //    //    if (!this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = false }))
+        //    //    {
+        //    //        if (req["databaseVendor"].ToString() == "ORACLE")
+        //    //        {
+        //    //            var response = this.ServiceClient.Post(new EbDbCreateRequest { dbName = dbcon.DatabaseName, ischange = "true" });
+        //    //        }       
+        //    //    }
 
-         [HttpPost]
+        //    //}
+        //    //else
+        //    //    this.ServiceClient.Post<bool>(new ChangeDataDBConnectionRequest { DataDBConnection = dbcon, IsNew = true });
+        //    //if (solutionConnections.EBSolutionConnections.ObjectsDbConnection != null)
+        //    //{
+        //    //    if (String.IsNullOrEmpty(objdbcon.Password) && objdbcon.UserName == solutionConnections.EBSolutionConnections.ObjectsDbConnection.UserName && objdbcon.Server == solutionConnections.EBSolutionConnections.ObjectsDbConnection.Server)
+        //    //        objdbcon.Password = solutionConnections.EBSolutionConnections.ObjectsDbConnection.Password;
+        //    //    if (!this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = false }))
+        //    //    {
+        //    //        if (req["databaseVendor"].ToString() == "ORACLE")
+        //    //            this.ServiceClient.Post<bool>(new EbCreateOracleDBRequest { });
+        //    //    }
+
+        //    //}
+        //    //else
+        //    //    this.ServiceClient.Post<bool>(new ChangeObjectsDBConnectionRequest { ObjectsDBConnection = objdbcon, IsNew = true });
+        //    return JsonConvert.SerializeObject(dbcon);
+        //}
+
+        // [HttpPost]
         //public IActionResult ObjectsDb(int i)
         //{
         //    ChangeConnectionResponse res = new ChangeConnectionResponse();
@@ -233,212 +233,212 @@ namespace ExpressBase.Web.Controllers
         //    return Redirect("/ConnectionManager");
         //}
 
-        [HttpPost]
-        public string FilesDb(int i)
-        {
-            ChangeConnectionResponse res = new ChangeConnectionResponse();
-            try
-            {
-                var req = this.HttpContext.Request.Form;
+        //[HttpPost]
+        //public string FilesDb(int i)
+        //{
+        //    ChangeConnectionResponse res = new ChangeConnectionResponse();
+        //    try
+        //    {
+        //        var req = this.HttpContext.Request.Form;
 
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbFILES, SolutionId = req["SolutionId"] });
-                EbFilesDbConnection dbcon = new EbFilesDbConnection()
-                {
-                    FilesDbVendor = Enum.Parse<FilesDbVendors>(req["DatabaseVendor"].ToString()),
-                    FilesDB_url = req["ConnectionString"].ToString(),
-                    NickName = req["NickName"].ToString(),
-                    IsDefault = false
-                };
+        //        GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.EbFILES, SolutionId = req["SolutionId"] });
+        //        EbFilesDbConnection dbcon = new EbFilesDbConnection()
+        //        {
+        //            FilesDbVendor = Enum.Parse<FilesDbVendors>(req["DatabaseVendor"].ToString()),
+        //            FilesDB_url = req["ConnectionString"].ToString(),
+        //            NickName = req["NickName"].ToString(),
+        //            IsDefault = false
+        //        };
 
-                if (solutionConnections.EBSolutionConnections.FilesDbConnection != null)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });
-                else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = true, SolutionId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(dbcon);
+        //        //if (solutionConnections.EBSolutionConnections.FilesDbConnection != null)
+        //        //    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = false, SolutionId = req["SolutionId"] });
+        //        //else
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFilesDBConnectionRequest { FilesDBConnection = dbcon, IsNew = true, SolutionId = req["SolutionId"] });
+        //        return JsonConvert.SerializeObject(dbcon);
 
-            }
-            catch (Exception e)
-            {
-                res.ResponseStatus.Message = e.Message;
-                return null;
-            }
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        res.ResponseStatus.Message = e.Message;
+        //        return null;
+        //    }
+        //}
 
-        [HttpPost]
-        public string TwilioAccount()
-        {
-            ChangeConnectionResponse res = new ChangeConnectionResponse();
-            try
-            {
-                var req = this.HttpContext.Request.Form;
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS, SolutionId = req["SolutionId"] });
+        //[HttpPost]
+        //public string TwilioAccount()
+        //{
+        //    ChangeConnectionResponse res = new ChangeConnectionResponse();
+        //    try
+        //    {
+        //        var req = this.HttpContext.Request.Form;
+        //        GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS, SolutionId = req["SolutionId"] });
 
-                TwilioConnection smscon = new TwilioConnection
-                {
-                    UserName = req["UserName"],
-                    From = req["From"],
-                    Password = req["Password"],
-                    Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
-                };
+        //        TwilioConnection smscon = new TwilioConnection
+        //        {
+        //            UserName = req["UserName"],
+        //            From = req["From"],
+        //            Password = req["Password"],
+        //            Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
+        //        };
 
-                if (solutionConnections.EBSolutionConnections.SMSConnections.Capacity == 0)
-                {
-                    smscon.Preference = ConPreferences.PRIMARY;
-                }
+        //        //if (solutionConnections.EBSolutionConnections.SMSConfigs.Capacity == 0)
+        //        //{
+        //        //    smscon.Preference = ConPreferences.PRIMARY;
+        //        //}
 
-                if (Convert.ToInt32(req["Conid"]) > 0)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
-                else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true, SolutionId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(smscon);
-            }
-            catch (Exception e)
-            {
-                res.ResponseStatus.Message = e.Message;
-                return null;
-            }
-        }
+        //        if (Convert.ToInt32(req["Conid"]) > 0)
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
+        //        else
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true, SolutionId = req["SolutionId"] });
+        //        return JsonConvert.SerializeObject(smscon);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        res.ResponseStatus.Message = e.Message;
+        //        return null;
+        //    }
+        //}
 
-        [HttpPost]
-        public string ExpertTextingAccount()
-        {
-            ChangeConnectionResponse res = new ChangeConnectionResponse();
-            try
-            {
-                var req = this.HttpContext.Request.Form;
-                ExpertTextingConnection smscon = new ExpertTextingConnection
-                {
-                    UserName = req["UserName"],
-                    From = req["From"],
-                    Password = req["Password"],
-                    Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
-                    ApiKey = req["ApiKey"]
-                };
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS, SolutionId = req["SolutionId"] });
-                if (solutionConnections.EBSolutionConnections.SMSConnections.Capacity == 0)
-                {
-                    smscon.Preference = ConPreferences.PRIMARY;
-                }
-                if (Convert.ToInt32(req["Conid"]) > 0)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
-                else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true, SolutionId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(smscon);
-            }
-            catch (Exception e)
-            {
-                res.ResponseStatus.Message = e.Message;
-                return null;
-            }
-        }
+        //[HttpPost]
+        //public string ExpertTextingAccount()
+        //{
+        //    ChangeConnectionResponse res = new ChangeConnectionResponse();
+        //    try
+        //    {
+        //        var req = this.HttpContext.Request.Form;
+        //        ExpertTextingConnection smscon = new ExpertTextingConnection
+        //        {
+        //            UserName = req["UserName"],
+        //            From = req["From"],
+        //            Password = req["Password"],
+        //            Preference = (ConPreferences)Convert.ToInt32(req["Preference"]),
+        //            ApiKey = req["ApiKey"]
+        //        };
+        //        GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMS, SolutionId = req["SolutionId"] });
+        //        //if (solutionConnections.EBSolutionConnections.SMSConfigs.Capacity == 0)
+        //        //{
+        //        //    smscon.Preference = ConPreferences.PRIMARY;
+        //        //}
+        //        if (Convert.ToInt32(req["Conid"]) > 0)
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = false, SolutionId = req["SolutionId"] });
+        //        else
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMSConnectionRequest { SMSConnection = smscon, IsNew = true, SolutionId = req["SolutionId"] });
+        //        return JsonConvert.SerializeObject(smscon);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        res.ResponseStatus.Message = e.Message;
+        //        return null;
+        //    }
+        //}
 
-        [HttpPost]
-        public string Cloudinary(int i)
-        {
-            ChangeConnectionResponse res = new ChangeConnectionResponse();
-            try
-            {
-                var req = this.HttpContext.Request.Form;
+        //[HttpPost]
+        //public string Cloudinary(int i)
+        //{
+        //    ChangeConnectionResponse res = new ChangeConnectionResponse();
+        //    try
+        //    {
+        //        var req = this.HttpContext.Request.Form;
 
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.Cloudinary, SolutionId = req["SolutionId"] });
-                EbCloudinaryConnection con = new EbCloudinaryConnection()
-                {
-                    Account = new CloudinaryDotNet.Account(req["Cloud"], req["ApiKey"], req["ApiSecret"]),
-                    IsDefault = false
-                };
+        //        GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.Cloudinary, SolutionId = req["SolutionId"] });
+        //        EbCloudinaryConnection con = new EbCloudinaryConnection()
+        //        {
+        //            Account = new CloudinaryDotNet.Account(req["Cloud"], req["ApiKey"], req["ApiSecret"]),
+        //            IsDefault = false
+        //        };
 
-                if (String.IsNullOrEmpty(con.Account.Cloud) &&
-                    con.Account.Cloud == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.Cloud &&
-                    con.Account.ApiKey == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.ApiKey)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = false, SolutionId = req["SolutionId"] });
-                else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = true, SolutionId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(con);
-            }
-            catch (Exception e)
-            {
-                res.ResponseStatus.Message = e.Message;
-                return null;
-            }
-        }
+        //        //if (String.IsNullOrEmpty(con.Account.Cloud) &&
+        //        //    //con.Account.Cloud == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.Cloud &&
+        //        //    //con.Account.ApiKey == solutionConnections.EBSolutionConnections.CloudinaryConnection.Account.ApiKey)
+        //        //    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = false, SolutionId = req["SolutionId"] });
+        //        //else
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeCloudinaryConnectionRequest { ImageManipulateConnection = con, IsNew = true, SolutionId = req["SolutionId"] });
+        //        return JsonConvert.SerializeObject(con);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        res.ResponseStatus.Message = e.Message;
+        //        return null;
+        //    }
+        //}
 
 
-        [HttpPost]
-        public string FTP(int i)
-        {
-            ChangeConnectionResponse res = new ChangeConnectionResponse();
-            try
-            {
-                var req = this.HttpContext.Request.Form;
+        //[HttpPost]
+        //public string FTP(int i)
+        //{
+        //    ChangeConnectionResponse res = new ChangeConnectionResponse();
+        //    try
+        //    {
+        //        var req = this.HttpContext.Request.Form;
 
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.FTP, SolutionId = req["SolutionId"] });
-                EbFTPConnection con = new EbFTPConnection()
-                {
-                    Host = req["Host"],
-                    Username = req["Username"],
-                    Password = req["Password"],
-                    NickName = req["NickName"],
-                    IsDefault = false
-                };
+        //        GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.FTP, SolutionId = req["SolutionId"] });
+        //        EbFTPConnection con = new EbFTPConnection()
+        //        {
+        //            Host = req["Host"],
+        //            Username = req["Username"],
+        //            Password = req["Password"],
+        //            NickName = req["NickName"],
+        //            IsDefault = false
+        //        };
 
-                if (String.IsNullOrEmpty(con.Host) &&
-                    con.Host == solutionConnections.EBSolutionConnections.FTPConnection.Host &&
-                    con.Username == solutionConnections.EBSolutionConnections.FTPConnection.Username)
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFTPConnectionRequest { FTPConnection = con, IsNew = false, SolutionId = req["SolutionId"] });
-                else
-                    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFTPConnectionRequest { FTPConnection = con, IsNew = true, SolutionId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(con);
-            }
-            catch (Exception e)
-            {
-                res.ResponseStatus.Message = e.Message;
-                return null;
-            }
-        }
+        //        //if (String.IsNullOrEmpty(con.Host) &&
+        //        //    //con.Host == solutionConnections.EBSolutionConnections.FTPConnection.Host &&
+        //        //    //con.Username == solutionConnections.EBSolutionConnections.FTPConnection.Username)
+        //        //    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFTPConnectionRequest { FTPConnection = con, IsNew = false, SolutionId = req["SolutionId"] });
+        //        //else
+        //            res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeFTPConnectionRequest { FTPConnection = con, IsNew = true, SolutionId = req["SolutionId"] });
+        //        return JsonConvert.SerializeObject(con);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        res.ResponseStatus.Message = e.Message;
+        //        return null;
+        //    }
+        //}
 
-        [HttpPost]
-        public string SMTP(int i)
-        {
-            ChangeConnectionResponse res = new ChangeConnectionResponse();
-            try
-            {
-                var req = this.HttpContext.Request.Form;
+        //[HttpPost]
+        //public string SMTP(int i)
+        //{
+        //    ChangeConnectionResponse res = new ChangeConnectionResponse();
+        //    try
+        //    {
+        //        var req = this.HttpContext.Request.Form;
 
-                GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP, SolutionId = req["SolutionId"] });
-                EbEmail smtpcon = new EbEmail
-                {
-                    ProviderName = req["Emailvendor"],
-                    NickName = req["NickName"],
-                    Host = req["SMTP"],
-                    Port = Convert.ToInt32(req["Port"]),
-                    EmailAddress = req["Email"],
-                    Password = req["Password"],
-                    EnableSsl = Convert.ToBoolean(req["IsSSL"]),
-                    IsDefault = false
-                };
-                if (solutionConnections.EBSolutionConnections.EmailConnections == null || solutionConnections.EBSolutionConnections.EmailConnections.Capacity == 0)
-                    smtpcon.Preference = ConPreferences.PRIMARY;
-                //if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
-                //{
-                //    smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
-                //    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { email = smtpcon, IsNew = false, SolutionId = req["SolutionId"] });
-                //}
-                //else
-                res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { Email = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(smtpcon);
-            }
-            catch (Exception e)
-            {
-                res.ResponseStatus.Message = e.Message;
-                return null;
-            }
-        }
+        //        GetConnectionsResponse solutionConnections = this.ServiceClient.Post<GetConnectionsResponse>(new GetConnectionsRequest { ConnectionType = (int)EbConnectionTypes.SMTP, SolutionId = req["SolutionId"] });
+        //        EbEmail smtpcon = new EbEmail
+        //        {
+        //            ProviderName = req["Emailvendor"],
+        //            NickName = req["NickName"],
+        //            Host = req["SMTP"],
+        //            Port = Convert.ToInt32(req["Port"]),
+        //            EmailAddress = req["Email"],
+        //            Password = req["Password"],
+        //            EnableSsl = Convert.ToBoolean(req["IsSSL"]),
+        //            IsDefault = false
+        //        };
+        //        //if (solutionConnections.EBSolutionConnections.EmailConnections == null || solutionConnections.EBSolutionConnections.EmailConnections.Capacity == 0)
+        //        //    smtpcon.Preference = ConPreferences.PRIMARY;
+        //        //if (String.IsNullOrEmpty(smtpcon.Password) && smtpcon.EmailAddress == solutionConnections.EBSolutionConnections.SMTPConnection.EmailAddress)
+        //        //{
+        //        //    smtpcon.Password = solutionConnections.EBSolutionConnections.SMTPConnection.Password;
+        //        //    res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { email = smtpcon, IsNew = false, SolutionId = req["SolutionId"] });
+        //        //}
+        //        //else
+        //        res = this.ServiceClient.Post<ChangeConnectionResponse>(new ChangeSMTPConnectionRequest { Email = smtpcon, IsNew = true, SolutionId = req["SolutionId"] });
+        //        return JsonConvert.SerializeObject(smtpcon);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        res.ResponseStatus.Message = e.Message;
+        //        return null;
+        //    }
+        //}
 
         [HttpPost]
         public bool DataDbTest()
         {
             var req = this.HttpContext.Request.Form;
-            EbDataDbConnection dbcon = new EbDataDbConnection()
+            EbDbConfig dbcon = new EbDbConfig()
             {
                 DatabaseVendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString()),
                 DatabaseName = req["databaseName"],
@@ -453,23 +453,23 @@ namespace ExpressBase.Web.Controllers
                 Timeout = Convert.ToInt32(req["timeout"]),
                 IsSSL = (req["IsSSL"] == "on") ? true : false
             };
-            TestConnectionResponse res = this.ServiceClient.Post<TestConnectionResponse>(new TestConnectionRequest { DataDBConnection = dbcon });
+            TestConnectionResponse res = this.ServiceClient.Post<TestConnectionResponse>(new TestConnectionRequest { DataDBConfig = dbcon });
             return res.ConnectionStatus;
         }
 
-        [HttpPost]
-        public bool FilesDbTest()
-        {
-            var req = this.HttpContext.Request.Form;
-            EbFilesDbConnection dbcon = new EbFilesDbConnection()
-            {
-                FilesDbVendor = Enum.Parse<FilesDbVendors>(req["DatabaseVendor"].ToString()),
-                FilesDB_url = req["ConnectionString"].ToString(),
-                NickName = req["NickName"].ToString()
-            };
-            TestFileDbconnectionResponse resp = this.ServiceClient.Post<TestFileDbconnectionResponse>(new TestFileDbconnectionRequest { FilesDBConnection = dbcon });
-            return resp.ConnectionStatus;
-        }
+        //[HttpPost]
+        //public bool FilesDbTest()
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    EbFilesDbConnection dbcon = new EbFilesDbConnection()
+        //    {
+        //        FilesDbVendor = Enum.Parse<FilesDbVendors>(req["DatabaseVendor"].ToString()),
+        //        FilesDB_url = req["ConnectionString"].ToString(),
+        //        NickName = req["NickName"].ToString()
+        //    };
+        //    TestFileDbconnectionResponse resp = this.ServiceClient.Post<TestFileDbconnectionResponse>(new TestFileDbconnectionRequest { FilesDBConnection = dbcon });
+        //    return resp.ConnectionStatus;
+        //}
         //[HttpGet]
         //public IActionResult EditDataDB()
         //{
@@ -772,7 +772,7 @@ namespace ExpressBase.Web.Controllers
         public string IntegrateSMTP()
         {
             AddSmtpResponse res = new AddSmtpResponse();
-        //    var req = this.HttpContext.Request.Form;
+            //    var req = this.HttpContext.Request.Form;
             try
             {
                 EbSmtpConfig con = new EbSmtpConfig
@@ -798,6 +798,28 @@ namespace ExpressBase.Web.Controllers
                 //    Id = Convert.ToInt32(req["Id"])
                 //};
                 res = this.ServiceClient.Post<AddSmtpResponse>(new AddSmtpRequest { Config = con/*, IsNew = true, SolutionId = req["SolutionId"]*/ });
+                return JsonConvert.SerializeObject(con);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+        public string IntegrateCloudinary()
+        {
+            AddCloudinaryResponse res = new AddCloudinaryResponse();
+            var req = this.HttpContext.Request.Form;
+            try
+            {
+                EbCloudinaryConfig con = new EbCloudinaryConfig
+                {
+                    Cloud = req["Cloud"],
+                    ApiKey = req["ApiKey"],
+                    ApiSecret = req["ApiSecret"]
+                };
+
+                res = this.ServiceClient.Post<AddCloudinaryResponse>(new AddCloudinaryRequest { Config = con/*, IsNew = true, SolutionId = req["SolutionId"]*/ });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)

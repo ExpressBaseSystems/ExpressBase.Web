@@ -527,7 +527,7 @@ const EbSelect = function (ctrl, options) {
     //single select & max limit
     this.V_watchVMembers = function (VMs) {
         this.ComboObj.TempValue = [...this.Vobj.valueMembers];
-        $("#" + this.ComboObj.EbSid_CtxId).val(this.Vobj.valueMembers);
+        $("#" + this.ComboObj.EbSid_CtxId).val(this.Vobj.valueMembers).trigger("change");
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
             this.Vobj.valueMembers.shift();////

@@ -139,7 +139,7 @@ const WebFormRender = function (option) {
     };
 
     this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 500)); //delayed check 
+        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
             ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 

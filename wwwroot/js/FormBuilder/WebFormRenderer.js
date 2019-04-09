@@ -549,6 +549,7 @@ const WebFormRender = function (option) {
     };
 
     this.deleteForm = function () {
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         EbDialog("show",
             {
                 Message: "Are you sure to delete this data entry?",
@@ -570,7 +571,7 @@ const WebFormRender = function (option) {
                         $.ajax({
                             type: "POST",
                             url: "../WebForm/DeleteWebformData",
-                            data: { RefId: this.formRefId, RowId: this.rowId },
+                            data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                                 this.hideLoader();
@@ -595,6 +596,7 @@ const WebFormRender = function (option) {
     };
 
     this.cancelForm = function () {
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         EbDialog("show",
             {
                 Message: "Are you sure to cancel this data entry?",
@@ -616,7 +618,7 @@ const WebFormRender = function (option) {
                         $.ajax({
                             type: "POST",
                             url: "../WebForm/CancelWebformData",
-                            data: { RefId: this.formRefId, RowId: this.rowId },
+                            data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                                 this.hideLoader();

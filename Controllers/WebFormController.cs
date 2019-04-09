@@ -157,37 +157,73 @@ namespace ExpressBase.Web.Controllers
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
-            if (!TokenConstants.UC.Equals(ViewBag.wc))
+            string Operation = OperationConstants.NEW;
+            if (RowId > 0)
+                Operation = OperationConstants.EDIT;
+            if (!this.HasPermission(RefId, Operation, CurrentLoc))
                 throw new FormException("Access Denied");
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
-            int _CurrentLoc = this.LoggedInUser.Preference.DefaultLocation;
-            if (!this.LoggedInUser.LocationIds.Contains(CurrentLoc))
-            {
-                if (this.LoggedInUser.LocationIds.Contains(-1))
-                {
-                    List<EbLocation> t = JsonConvert.DeserializeObject<List<EbLocation>>(ViewBag.Locations);
-                    var temp = t.FirstOrDefault<EbLocation>(e => e.LocId == CurrentLoc);
-                    if (temp != null)
-                        _CurrentLoc = CurrentLoc;
-                }
-            }
-            else
-                _CurrentLoc = CurrentLoc;
-            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, FormData = Values, RowId = RowId, CurrentLoc = _CurrentLoc });
+            //int _CurrentLoc = this.LoggedInUser.Preference.DefaultLocation;
+            //if (!this.LoggedInUser.LocationIds.Contains(CurrentLoc))
+            //{
+            //    if (this.LoggedInUser.LocationIds.Contains(-1))
+            //    {
+            //        List<EbLocation> t = JsonConvert.DeserializeObject<List<EbLocation>>(ViewBag.Locations);
+            //        var temp = t.FirstOrDefault<EbLocation>(e => e.LocId == CurrentLoc);
+            //        if (temp != null)
+            //            _CurrentLoc = CurrentLoc;
+            //    }
+            //}
+            //else
+            //    _CurrentLoc = CurrentLoc;
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, TableName = TableName, FormData = Values, RowId = RowId, CurrentLoc = CurrentLoc });
             return JsonConvert.SerializeObject(Resp);
             //return 0;
         }
 
-        public int DeleteWebformData(string RefId, int RowId)
+        public int DeleteWebformData(string RefId, int RowId, int CurrentLoc)
         {
+            if (!this.HasPermission(RefId, OperationConstants.DELETE, CurrentLoc))
+                throw new FormException("Access Denied");
             DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
             return Resp.RowAffected;
         }
 
-        public int CancelWebformData(string RefId, int RowId)
+        public int CancelWebformData(string RefId, int RowId, int CurrentLoc)
         {
+            if (!this.HasPermission(RefId, OperationConstants.CANCEL, CurrentLoc))
+                throw new FormException("Access Denied");
             CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
             return Resp.RowAffected;
+        }
+
+        private bool HasPermission(string RefId, string ForWhat, int LocId)
+        {
+            if (ViewBag.wc != RoutingConstants.UC)
+                return false;
+            if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) ||
+                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) ||
+                this.LoggedInUser.Roles.Contains(SystemRoles.SolutionPM.ToString()))
+                return true;
+            
+            EbOperation Op = EbWebForm.Operations.Get(ForWhat);
+            if (!Op.IsAvailableInWeb)
+                return false;
+
+            try
+            {
+                string Ps = string.Concat(RefId.Split("-")[2].PadLeft(2, '0'), '-', RefId.Split("-")[3].PadLeft(5, '0'), '-', Op.IntCode.ToString().PadLeft(2, '0'));
+                string t = this.LoggedInUser.Permissions.FirstOrDefault(p => p.Substring(p.IndexOf("-") + 1).Equals(Ps + ":" + LocId) ||
+                            (p.Substring(p.IndexOf("-") + 1, 11).Equals(Ps) && p.Substring(p.LastIndexOf(":") + 1).Equals("-1")));
+                if (!t.IsNullOrEmpty())
+                    return true;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception when checking user permission: " + e.Message);
+            }
+
+            return false;
         }
 
         public bool DoUniqueCheck(string TableName, string Field, string Value, string type)

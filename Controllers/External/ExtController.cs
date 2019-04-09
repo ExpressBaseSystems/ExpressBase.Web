@@ -93,7 +93,7 @@ namespace ExpressBase.Web.Controllers
 
         private bool isAvailSolution(string url)
         {
-            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_CONNECTION_REDIS_KEY, url.Split(CharConstants.DASH)[0]));
+            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, url.Split(CharConstants.DASH)[0]));
             if (resp.Any())
                 return true;
             else

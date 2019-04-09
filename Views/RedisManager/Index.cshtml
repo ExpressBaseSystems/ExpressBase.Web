@@ -44,7 +44,8 @@
             </div>*@
         <div class="toolbox_innerB borderstyle" id="group_div">
             <div data-toggle="collapse" data-target="#defaultgrp" class="toolBHead" id="dfltgrp">Group<i class="fa fa-caret-down"></i></div>
-            <div id="defaultgrp" class="collapse in defaultgrp">
+            <div id="defaultgrp" class="collapse ">
+                @*in defaultgrp*@
                 <ul id="keyslist" class="nav nav-pills nav-stacked scrol_0 ">
                     @{
                         foreach (EbGroup p in @ViewBag.defltgrplst)
@@ -93,10 +94,33 @@
                             <input type="text" id="txtregex" class="form-control pading tab-searchInpt" placeholder="Search Based on RegEx">
                         </li>*@
                     <li class="pull-right mr-l-r">
-                        <div class="input-group tab-searchInpt">
-                            <input type="text" id="txtregex" class="form-control" placeholder="Search Based on RegEx">
-                            <span class="input-group-addon" id="btnregex" style="font-size: 9px;"><i class="fa fa-search"></i></span>
+                        @*<div class="input-group tab-searchInpt">
+                                <input type="text" id="txt" class="form-control" placeholder="Search Based on RegEx">
+                                <span class="input-group-addon" id="btnregex" style="font-size: 9px;"><i class="fa fa-search"></i></span>
+                            </div>*@
+
+
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text" id="txtsrch" style="height:100%;padding: 2px 12px;" class="form-control" aria-label="...">
+                            <div class="input-group-btn">
+                                <button type="button" id="Btnsrch" style="height: 100%;font-size: 13px;padding: 2px 12px;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>
+                                <ul id="Bsrch" class="dropdown-menu dropdown-menu-right">
+                                    <li id="refbeg" lival="1">Refid At Beginning</li>
+                                    <li id="refend" lival="2"> Refid At End</li>
+                                    <li id="refmid" lival="3"> Refid At Middle</li>
+                                    <li id="disnam" lival="4">Display name</li>
+                                    <li id="regxscrh" lival="5">Search Based on RegEx</li>
+                                </ul>
+                            </div>
                         </div>
+
+
+
+
+
+
+
+
                     </li>
                     <li class="dropdown pull-right mr-l-r">
                         <button class="btn-RcTab dropdown-toggle" data-toggle="dropdown" href="#">Add Keys <b class="caret"></b></button>
@@ -144,6 +168,7 @@
                             <input type="button" id="btnrename" value="Rename" class="btn btn-xs btnbackground" role="tab" href="#" data-toggle="modal" data-target="#modalrename " />
                             <input type="button" id="btnjsonview" value="JSON View" class="btn btn-xs btnbackground" />
                             <input type="button" id="btnedit" value="Edit" class="btn btn-xs btnbackground" />
+                            <input type="button" id="objexplorer" value="Object Explorer" style="float:right;" class="btn btn-info btn-xs btnbackground " />
                             <input type="button" id="sqlview" value="Sql View" style="float:right;margin-right: 10px;" href="#popup1" class="btn btn-xs btnbackground " />
                         </div>
                         <div id="savediv" class=" position-relative"></div>
@@ -429,41 +454,41 @@
                 </div>
 
             </div>
-        </div>
-        <!-- Modal edit group-->
-        <div class="modal fade" id="modalgrpedit" role="dialog">
-            <div class="modal-dialog">
+            <!-- Modal edit group-->
+            <div class="modal fade" id="modalgrpedit" role="dialog">
+                <div class="modal-dialog">
 
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Edit Group</h4>
-                    </div>
-                    <div class="grpeditbody modal-body">
-                        <input type="text" id="txtgrp_name" value="" class=" form-control" placeholder="Group Name" />
-
-                        <div class="input-group" id="newptn_div" style="margin-top: 10px;">
-                            <input type="text" id="txtnewptn" class="  form-control pading" placeholder="Pattern" disabled="disabled">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" id="btnsave_newptn" type="button" disabled="disabled">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </span>
-                        </div><!-- /input-group -->
-                        <div id="edit_grp_list" class="scrol_2" contenteditable="false">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Edit Group</h4>
                         </div>
-                    </div>
-                    <div class="grpinsertfooter modal-footer">
-                        @*<input type="button" id="btngrpadd" value="More Patterns?" class="btn btn-primary" />*@
-                        @*<input type="button" id="btngrp_add_ptn" value="Add Pattern" class="btn btn-primary" disabled="disabled" />*@
-                        <input type="button" id="btngrp_save" value="Save" class="btn bg-b" data-dismiss="modal" disabled="disabled" />
+                        <div class="grpeditbody modal-body">
+                            <input type="text" id="txtgrp_name" value="" class=" form-control" placeholder="Group Name" />
+
+                            <div class="input-group" id="newptn_div" style="margin-top: 10px;">
+                                <input type="text" id="txtnewptn" class="  form-control pading" placeholder="Pattern" disabled="disabled">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" id="btnsave_newptn" type="button" disabled="disabled">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </span>
+                            </div><!-- /input-group -->
+                            <div id="edit_grp_list" class="scrol_2" contenteditable="false">
+                            </div>
+                        </div>
+                        <div class="grpinsertfooter modal-footer">
+                            @*<input type="button" id="btngrpadd" value="More Patterns?" class="btn btn-primary" />*@
+                            @*<input type="button" id="btngrp_add_ptn" value="Add Pattern" class="btn btn-primary" disabled="disabled" />*@
+                            <input type="button" id="btngrp_save" value="Save" class="btn bg-b" data-dismiss="modal" disabled="disabled" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
-</div>
 </div>
 
 

@@ -76,7 +76,6 @@ namespace EbControllers
             ViewBag.csgrplst = ptndict;
 
             var text = "*" + ViewBag.cid + "*";
-
             foreach (var n in Redis.GetKeysByPattern(text))
 
             {
@@ -85,9 +84,18 @@ namespace EbControllers
 
             ViewBag.allkeylist = JsonConvert.SerializeObject(lst2);
 
+            foreach (var q in lst2)
+            {
+                if ((new Regex(@"(^solution_\w+)")).IsMatch(q))
+                {
+                    ViewBag.slnkey = Redis.Get<Eb_Solution>(q);
+                }
+            }
 
             ViewBag.grpdetails = ServiceClient.Get<RedisGroupDetailsResponse>(new RedisGetGroupDetails { }).GroupsDict;
-
+            Dictionary<string, string> infodic = new Dictionary<string, string>();
+            infodic = Redis.Info;
+            ViewBag.infodict = infodic;
             return View();
 
         }
@@ -167,17 +175,18 @@ namespace EbControllers
             output = JsonConvert.SerializeObject(grp);
             Redis.Set("Grp_ob_ColumnColletion", output);
 
-            grp = new EbGroup("Connection String", @"(EbSolutionConnections *)");
-            output = JsonConvert.SerializeObject(grp);
-            Redis.Set("Grp_ob_ConnectionString", output);
+            //grp = new EbGroup("Connection String", @"(EbSolutionConnections*)");
+            //output = JsonConvert.SerializeObject(grp);
+            //Redis.Set("Grp_ob_ConnectionString", output);
 
-            grp = new EbGroup("Users", @"(?:(?:.*):(?:.*):)(uc+$|dc+$)");
-            output = JsonConvert.SerializeObject(grp);
-            Redis.Set("Grp_ob_Users", output);
+            //grp = new EbGroup("Users", @"(?:(?:.*):(?:.*):)(uc+$|dc+$)");
+            //output = JsonConvert.SerializeObject(grp);
+            //Redis.Set("Grp_ob_Users", output);
         }
 
         public List<string> FindMatch(string text)
         {
+
             IEnumerable<string> ptn = Redis.GetKeysByPattern("*" + ViewBag.cid + "*");
             foreach (var m in ptn)
 
@@ -515,18 +524,18 @@ namespace EbControllers
             var zsethval = Encoding.UTF8.GetBytes(txtzsetval);
             Redis.ZAdd(txtzsetkey, scor, zsethval);
         }
-        //public bool Renamekey(string oldkey, string newkey)
-        //{
-        //    bool b;
-        //    if (Redis.ContainsKey(newkey))
-        //        b = false;
-        //    else
-        //    {
-        //        Redis.RenameKey(oldkey, newkey);
-        //        b = true;
-        //    }
-        //    return b;
-        //}
+        public bool Renamekey(string oldkey, string newkey)
+        {
+            bool b;
+            if (Redis.ContainsKey(newkey))
+                b = false;
+            else
+            {
+                Redis.RenameKey(oldkey, newkey);
+                b = true;
+            }
+            return b;
+        }
         public bool StringvalEdit(string key1, string value1)
         {
             bool bl;

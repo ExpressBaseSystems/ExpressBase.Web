@@ -360,9 +360,10 @@
                 logdetails = logdetails + "&nbsp&nbsp<b style='color:indigo;'>Executed by</b>: " + response.username;
                 logdetails = logdetails + "&nbsp&nbsp<b style='color:indigo;'>Executed at</b>: " + response.created_at;
                 var html = "<table class='table table-bordered paramtable' style='width:100%';><th>Name</th><th>Type</th><th>Value</th>";
-                for (let i = 0; i < response.params.length; i++) {
-                    html += "<tr><td>" + response.params[i].name + "</td><td>" + response.params[i].type + "</td><td>" + response.params[i].value + "</td></tr>";
-                }
+                if (response.params !== null)
+                    for (let i = 0; i < response.params.length; i++) {
+                        html += "<tr><td>" + response.params[i].name + "</td><td>" + response.params[i].type + "</td><td>" + response.params[i].value + "</td></tr>";
+                    }
                 html += "</table>";
                 logdetails += html;
                 $("#paramsalert").append(logdetails);

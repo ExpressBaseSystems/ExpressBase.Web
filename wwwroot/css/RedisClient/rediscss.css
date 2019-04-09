@@ -54,9 +54,10 @@
 }
 
 .btnbackground {
-    background-color: #157490;
+    background-color: #316396 !important;
     color: white;
     border-color: #10a8d6;
+    margin: 0 3px;
 }
 
 .borders {
@@ -67,13 +68,13 @@
 }
 
 .infodiv {
-    background-color: lightgrey;
-    width: 300px;
-    height: 200px;
-    border: 10px solid;
-    border-color: #a4a3ad;
+    border: 1px solid #ccc;
     padding: 25px;
     margin: 25px;
+    box-shadow: 0 7px 20px 0 rgba(0,0,0,.1);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
 }
 
 .column2 {
@@ -114,6 +115,7 @@
     height: 100px;
     overflow-x: hidden;
     word-wrap: break-word;
+    margin-top: 10px;
 }
 
 .resizes {
@@ -123,14 +125,15 @@
 
 .scrol_1 {
     width: 100%;
-    overflow: scroll;
+    overflow: auto;
     outline: 0px;
     position: relative;
-    height: 470px;
-    /*overflow-y: scroll;*/
-    word-wrap: break-word
-    /*overflow-x: hidden;*/
-    /*width: 10%;*/
+    min-height: 200px;
+    word-wrap: break-word;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+    border-radius: 4px;
+    max-height: 550px;
 }
 
 .scrol_0 {
@@ -370,7 +373,7 @@
 .hdrtabs .nav-tabs {
 }
 
-.hdrtabs li a {
+/*.hdrtabs li a {
     border-color: blue;
     background-color: #336699;
     color: white;
@@ -384,9 +387,9 @@
     .hdrtabs li a:focus {
         background-color: #22508a;
         color: #FFFFFF;
-    }
+    }*/
 
-.hdrtabs .nav .open a, .nav .open a:hover, .nav .open a:focus {
+/*.hdrtabs .nav .open a, .nav .open a:hover, .nav .open a:focus {
     background-color: #22508a;
     border-color: none;
 }
@@ -405,7 +408,7 @@
     background-color: #22508a;
     border: 1px solid blue;
     border-bottom-color: transparent
-}
+}*/
 
 #diffBar {
     width: 3%;
@@ -560,4 +563,157 @@
     display: inline-block;
     top: 6px;
     height: 100%;
+}
+
+/*new style edits by amal*/
+.toolBHead {
+    padding: 2px 5px;
+    border-bottom: 1px solid #ddd;
+    background: #eee;
+    font-size: 13px;
+    cursor: pointer;
+    border-top: 1px solid #ccc;
+}
+
+.redisWC {
+    font-family: open sans;
+    height: 100vh;
+    padding-top: 42px;
+}
+
+.toolbox_innerB {
+    height: 100%;
+    border: 1px solid #ccc;
+    background: white;
+    border-top: none;
+}
+
+    .toolbox_innerB .list-group-item {
+        background-color: transparent;
+        border: none;
+    }
+
+    .toolbox_innerB .defaultgrp {
+        background-color: white;
+    }
+
+.WrkPne-RC {
+    height: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.RcWp-Nav {
+    background-color: #eaeaea;
+}
+
+.WrkPne-RC .nav > .active a {
+    background: #316396;
+    color: white;
+}
+
+.WrkPne-RC .nav > li > a {
+    padding: 4px 20px 4px 15px;
+    text-align: center;
+    border: none;
+    border-bottom: none;
+    border-radius: 0;
+    background-color: white;
+    border-top-left-radius: 2px;
+    -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    color: #403939;
+}
+/*.WrkPne-RC .nav > li > a::after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-top: 27px solid white;
+    border-left: 19px solid transparent;
+    position: absolute;
+    top: 0;
+    right: 0px;
+}*/
+.tab-searchInpt {
+    width: 200px;
+    margin-right: 10px;
+}
+
+    .tab-searchInpt input[type='text'] {
+        padding: 2px 12px;
+        height: 100%;
+        font-size: 13px;
+    }
+
+.WrkPne-RC .nav-tabs {
+    border-bottom: 2px solid #316396;
+    padding-bottom: 1px;
+}
+
+.btn-RcTab {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.mr-l-r {
+    margin: 0px 3px;
+}
+
+.keyInfoRc {
+    width: 40%;
+}
+
+.SlnInfoRc {
+    width: 59%;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    overflow: auto;
+    max-height: 500px;
+    margin-top: 20px;
+    margin-right: 10px;
+    border-radius: 4px;
+}
+
+.outerdisp_inner {
+    padding: 0 0px 0 20px;
+}
+
+.RcOkBtnCtr {
+    display: block;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.KeyInfo_OK {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fafafa;
+    padding: 5px;
+    line-height: 2.2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.RcTerminal {
+    height: 100%;
+}
+
+    .RcTerminal .divterm {
+        height: 100%;
+        background: #0f1315;
+        color: #aba1a1;
+    }
+
+.ui-widget-content {
+    min-width: 500px !important;
+    min-height: 200px !important;
+}
+
+.bg-b {
+    background: #316396 !important;
+    color: white;
 }

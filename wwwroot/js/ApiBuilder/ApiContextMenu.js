@@ -2,6 +2,27 @@
     this.Api = option;
 
     this.contextMenudelete = function (eType, selector, action, originalEvent) {
+        let o = this.Api.Procs[selector.$trigger.attr("id")];
+        let eb_type = o.$type.split(',')[0].split('.')[2];
+        if (eb_type !== "EbProcessor") {
+            if (o.Reference !== "" && o.Reference !== null) {
+                $.ajax({
+                    url: "../Dev/GetCompReqJson",
+                    type: "GET",
+                    cache: false,
+                    data: { "refid": o.Reference },
+                    success: function (result) {
+                        let ob = JSON.parse(result);
+                        for (let i = 0; i < ob.length; i++) {
+                            this.Api.EbObject.Request.Default.$values = this.Api.EbObject.Request.Default.$values.filter(el => el.Name !== ob[i].Name);
+                        }
+                        $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).empty();
+                        this.Api.setRequestW(this.Api.EbObject.Request.Default.$values);
+                        this.Api.setRequestW(this.Api.EbObject.Request.Custom.$values,"custom");
+                    }.bind(this)
+                });
+            }
+        }
         delete this.Api.Procs[$(selector.$trigger).attr("id")];
         $(selector.$trigger).remove();
         this.Api.pg.removeFromDD($(selector.$trigger).attr("id"));

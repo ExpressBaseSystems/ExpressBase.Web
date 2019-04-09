@@ -37,6 +37,7 @@ namespace EbControllers
             List<string> cmdlst = new List<string>();
             Type t = typeof(Commands);
             FieldInfo[] fields = t.GetFields(BindingFlags.Static | BindingFlags.Public);
+
             foreach (FieldInfo fi in fields)
             {
                 cmdlst.Add(fi.Name.ToString());
@@ -75,7 +76,6 @@ namespace EbControllers
             ViewBag.csgrplst = ptndict;
 
             var text = "*" + ViewBag.cid + "*";
-
             foreach (var n in Redis.GetKeysByPattern(text))
 
             {
@@ -84,9 +84,18 @@ namespace EbControllers
 
             ViewBag.allkeylist = JsonConvert.SerializeObject(lst2);
 
+            foreach (var q in lst2)
+            {
+                if ((new Regex(@"(^solution_\w+)")).IsMatch(q))
+                {
+                    ViewBag.slnkey = Redis.Get<Eb_Solution>(q);
+                }
+            }
 
             ViewBag.grpdetails = ServiceClient.Get<RedisGroupDetailsResponse>(new RedisGetGroupDetails { }).GroupsDict;
-
+            Dictionary<string, string> infodic = new Dictionary<string, string>();
+            infodic = Redis.Info;
+            ViewBag.infodict = infodic;
             return View();
 
         }
@@ -166,17 +175,18 @@ namespace EbControllers
             output = JsonConvert.SerializeObject(grp);
             Redis.Set("Grp_ob_ColumnColletion", output);
 
-            grp = new EbGroup("Connection Sting", @"(EbSolutionConnections *)");
-            output = JsonConvert.SerializeObject(grp);
-            Redis.Set("Grp_ob_ConnectionString", output);
+            //grp = new EbGroup("Connection String", @"(EbSolutionConnections*)");
+            //output = JsonConvert.SerializeObject(grp);
+            //Redis.Set("Grp_ob_ConnectionString", output);
 
-            grp = new EbGroup("Users", @"(?:(?:.*):(?:.*):)(uc+$|dc+$)");
-            output = JsonConvert.SerializeObject(grp);
-            Redis.Set("Grp_ob_Users", output);
+            //grp = new EbGroup("Users", @"(?:(?:.*):(?:.*):)(uc+$|dc+$)");
+            //output = JsonConvert.SerializeObject(grp);
+            //Redis.Set("Grp_ob_Users", output);
         }
 
         public List<string> FindMatch(string text)
         {
+
             IEnumerable<string> ptn = Redis.GetKeysByPattern("*" + ViewBag.cid + "*");
             foreach (var m in ptn)
 
@@ -197,18 +207,18 @@ namespace EbControllers
         //}
         public bool Keydeletes(string textdel)
         {
-            string prev_value;
+            string prev_value = null;
             if (Redis.ContainsKey(textdel))
             {
                 if (Redis.Type(textdel) == "list")
-                    prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromList(textdel));
+                { prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromList(textdel)); }
                 else if (Redis.Type(textdel) == "hash")
-                    prev_value = JsonConvert.SerializeObject(Redis.GetAllEntriesFromHash(textdel));
+                { prev_value = JsonConvert.SerializeObject(Redis.GetAllEntriesFromHash(textdel)); }
                 else if (Redis.Type(textdel) == "set")
-                    prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSet(textdel));
+                { prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSet(textdel)); }
                 else if (Redis.Type(textdel) == "zset")
-                    prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSortedSet(textdel));
-                else
+                { prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSortedSet(textdel)); }
+                else if (Redis.Type(textdel) == "string")
                 { prev_value = Redis.GetValue(textdel); }
                 Redis.Remove(textdel);
                 string new_value = "";
@@ -319,8 +329,13 @@ namespace EbControllers
         public void GroupPattern(string textgroup, List<string> ptnlst)
         {
             var t1 = ViewBag.cid;
+            var flg = 0;
+            string prev_value, new_value;
+            var k = "Group_" + t1 + "_" + textgroup;
+            prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromList(k));
             if (Redis.Exists("Group_" + t1 + "_" + textgroup) > 0)
             {
+                flg = 1;
                 Redis.Remove(Encoding.UTF8.GetBytes("Group_" + t1 + "_" + textgroup));
             }
 
@@ -334,6 +349,14 @@ namespace EbControllers
                 EbGroup dobj = JsonConvert.DeserializeObject<EbGroup>(output);
                 string s1 = dobj.Pattern;
                 string s2 = dobj.Name;
+            }
+            if (flg == 1)
+            {
+                new_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromList(k));
+                RedisOperations opn = RedisOperations.Edit;
+                ActivityLog(prev_value, new_value, opn, textgroup);
+
+
             }
 
 
@@ -501,18 +524,18 @@ namespace EbControllers
             var zsethval = Encoding.UTF8.GetBytes(txtzsetval);
             Redis.ZAdd(txtzsetkey, scor, zsethval);
         }
-        //public bool Renamekey(string oldkey, string newkey)
-        //{
-        //    bool b;
-        //    if (Redis.ContainsKey(newkey))
-        //        b = false;
-        //    else
-        //    {
-        //        Redis.RenameKey(oldkey, newkey);
-        //        b = true;
-        //    }
-        //    return b;
-        //}
+        public bool Renamekey(string oldkey, string newkey)
+        {
+            bool b;
+            if (Redis.ContainsKey(newkey))
+                b = false;
+            else
+            {
+                Redis.RenameKey(oldkey, newkey);
+                b = true;
+            }
+            return b;
+        }
         public bool StringvalEdit(string key1, string value1)
         {
             bool bl;
@@ -531,9 +554,10 @@ namespace EbControllers
         public void ListValEdit(string l_keyid, string dict)
         {
             Dictionary<int, string> val = JsonConvert.DeserializeObject<Dictionary<int, string>>(dict);
-
+            string prev_value, new_value;
             int v = Convert.ToInt32(Redis.LLen(l_keyid));
             int i;
+            prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromList(l_keyid));
             for (i = v; i < val.Count; i++)
             {
                 var lv = Encoding.UTF8.GetBytes(val[i]);
@@ -546,9 +570,14 @@ namespace EbControllers
                 var listval = Encoding.UTF8.GetBytes(item.Value);
                 Redis.LSet(l_keyid, item.Key, listval);
             }
+            new_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromList(l_keyid));
+            RedisOperations opn = RedisOperations.Edit;
+            ActivityLog(prev_value, new_value, opn, l_keyid);
         }
         public void SetValEdit(string l_keyid, string dict)
         {
+            string prev_value, new_value;
+            prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSet(l_keyid));
             Dictionary<string, string> val = JsonConvert.DeserializeObject<Dictionary<string, string>>(dict);
             Redis.SPop(l_keyid, Convert.ToInt32(Redis.SCard(l_keyid)));
             foreach (var item in val)
@@ -556,16 +585,21 @@ namespace EbControllers
                 var setval = Encoding.UTF8.GetBytes(item.Value);
                 Redis.SAdd(l_keyid, setval);
             }
-
+            new_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSet(l_keyid));
+            RedisOperations opn = RedisOperations.Edit;
+            ActivityLog(prev_value, new_value, opn, l_keyid);
         }
 
 
         public void HashValEdit(string h_keyid, string dict)
         {
+            string prev_value, new_value;
+
             Dictionary<string, string> val = JsonConvert.DeserializeObject<Dictionary<string, string>>(dict);
             var tp = Redis.Type(h_keyid);
             if (tp == "zset")
             {
+                prev_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSortedSet(h_keyid));
                 Redis.ZRemRangeByRank(h_keyid, 0, -1);
                 foreach (var item in val)
                 {
@@ -574,16 +608,24 @@ namespace EbControllers
 
                     Redis.ZAdd(h_keyid, scor, zsethval);
                 }
+                new_value = JsonConvert.SerializeObject(Redis.GetAllItemsFromSortedSet(h_keyid));
+                RedisOperations opn = RedisOperations.Edit;
+                ActivityLog(prev_value, new_value, opn, h_keyid);
             }
             if (tp == "hash")
             {
+                prev_value = JsonConvert.SerializeObject(Redis.GetAllEntriesFromHash(h_keyid));
                 foreach (var item in val)
                 {
                     var field = Encoding.UTF8.GetBytes(item.Key);
                     var v = Encoding.UTF8.GetBytes(item.Value);
                     Redis.HSet(h_keyid, field, v);
                 }
+                new_value = JsonConvert.SerializeObject(Redis.GetAllEntriesFromHash(h_keyid));
+                RedisOperations opn = RedisOperations.Edit;
+                ActivityLog(prev_value, new_value, opn, h_keyid);
             }
+
 
         }
         public object Terminal(string cmd)

@@ -640,3 +640,18 @@ input:checked + .proslider:before {
     .proslider.round:before {
         border-radius: 50%;
     }
+/* Rounded sliders */
+
+.LocInfCr {
+    float: left;
+    height: 33px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+    font-family: Montserrat;
+    font-weight: 500;
+    border-right: 1px solid #ccc;
+    margin-right: 5px;
+    border-left: 1px solid #ccc;
+}

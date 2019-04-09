@@ -844,5 +844,11 @@ namespace ExpressBase.Web.Controllers
             };
             EbIntegrationResponse res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = _obj });
         }
+
+        public void ConnectionsHelper()
+        {
+            _GetConectionsResponse res = ServiceClient.Get<_GetConectionsResponse>(new _GetConectionsRequest { });
+        }
     }
 }
+

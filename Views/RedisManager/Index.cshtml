@@ -22,46 +22,45 @@
     var cm = new EbHeader().setName("Redis Explorer");
 </script>
 
-<div style=" margin-top: 3%;">
-    <div class="col-md-2">
-        <div class="borderstyle " style="margin-bottom: 1px;">
-            <div class="input-group mb-3 ">
-                @*<input type="text" id="t3" value="@ViewBag.cc" />*@
+<div class="row redisWC">
+    <div class="col-md-2 col-sm-2 col-lg-2 pd-0" style="height:100%;padding-right: 5px;">
+        @*<div class="borderstyle " style="margin-bottom: 1px;">
+                <div class="input-group mb-3 ">
+                    @*<input type="text" id="t3" value="@ViewBag.cc" />
 
-                <input type="text" id="t1" value="" class=" form-control " placeholder="Key/Display name" />
-                <div class="input-group-btn">
-                    <button id="Btnsrch" class="btn btn-default" type="submit">
-                        <i class="glyphicon glyphicon-search"></i>
-                    </button>
+                    <input type="text" id="t1" value="" class=" form-control " placeholder="Key/Display name" />
+                    <div class="input-group-btn">
+                        <button id="Btnsrch" class="btn btn-default" type="submit">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            @{
-                <select id="ptns" class="form-control">
-                    <option value="1">Refid At Beginning</option>
-                    <option value="2">Refid At End</option>
-                    <option value="3">Refid At Middle</option>
-                    <option value="4">Display name</option>
-                </select>
-            }
-        </div>
-        <div style="max-height:540px; height:540px;" id="group_div" class="borderstyle">
-
-            <span href="#defaultgrp" id="dfltgrp" align="center" style="display:block; height:25px; border: 1px solid;background-color:#336699;color:white;  border-left: 4px solid ;   border-radius: 9px;" data-toggle="collapse"><b>Group</b>                        <i class="fa fa-caret-down"></i></span>
-            <div id="defaultgrp" class=" collapse  in">
+                    <select id="ptns" class="form-control">
+                        <option value="1">Refid At Beginning</option>
+                        <option value="2">Refid At End</option>
+                        <option value="3">Refid At Middle</option>
+                        <option value="4">Display name</option>
+                    </select>
+            </div>*@
+        <div class="toolbox_innerB borderstyle" id="group_div">
+            <div data-toggle="collapse" data-target="#defaultgrp" class="toolBHead" id="dfltgrp">Group<i class="fa fa-caret-down"></i></div>
+            <div id="defaultgrp" class="collapse ">
+                @*in defaultgrp*@
                 <ul id="keyslist" class="nav nav-pills nav-stacked scrol_0 ">
                     @{
                         foreach (EbGroup p in @ViewBag.defltgrplst)
                         {
+                            var c = ViewBag.grpdetails.ContainsKey(p.Name) ? ViewBag.grpdetails[p.Name].Count : 0;
                             <li>
-                                <a class="grp_link list-group-item" role="tab" href="#dispvalue" data-toggle="tab" data-ptn="@p.Pattern" grp_name="@p.Name">@p.Name</a>
+                                <a class="grp_link list-group-item" role="tab" href="#dispvalue" data-toggle="tab" data-ptn="@p.Pattern" grp_name="@p.Name">@p.Name <sup>[@c]</sup></a>
                             </li>
                         }
 
                     }
                 </ul>
             </div>
-            <div href="#customgrp" id="cstmgrp" style="display:block;height:25px; border: 1px  solid ;text-align: center; background-color:#316396; color:white;  border-left: 4px solid ; border-radius: 9px;" data-toggle="collapse"><b>Custom Groups</b>                <i class="fa fa-caret-down"></i></div>
-            <div id="customgrp" class="collapse  ">
+            <div id="cstmgrp" class="toolBHead" data-toggle="collapse" data-target="#customgrp">Custom Groups<i class="fa fa-caret-down"></i></div>
+            <div id="customgrp" class="collapse">
                 <ul id="grplists" class="nav nav-pills nav-stacked scrol_1 ">
                     @{
                         foreach (KeyValuePair<string, List<string>> item in @ViewBag.csgrplst)
@@ -69,7 +68,6 @@
                             var kname = "Group" + ViewBag.cid + "_" + item.Key;
                             <li>
                                 <a class="cstmgrp_link list-group-item" role="tab" href="#dispvalue" data-toggle="tab" cgrpkey="kname" data-name="@item.Key" grp-ptns=@JsonConvert.SerializeObject(item.Value)>@item.Key</a>
-                                @*<ul id="sub_@p.pattern"></ul>*@
                             </li>
                         }
                     }
@@ -80,15 +78,52 @@
 
         </div>
     </div>
-    <div class="col-md-10 pading0">
-        <div class="row">
+    <div class="col-md-10 col-sm-10 col-lg-10 pading0 WrkPne-RC">
+        <div class="w-100 RcWp-Nav">
             <nav>
                 <ul class="nav hdrtabs nav-tabs">
-                    <li id="btninfo"><a class="active " role="tab" href="#infos" data-toggle="tab">Info</a></li>
+                    <li id="btninfo" class="active"><a class="active " role="tab" href="#infos" data-toggle="tab">Info</a></li>
                     <li id="btnkeydiff"><a class="active " role="tab" href="#dispvalue" data-toggle="tab">Orphaned  Keys</a></li>
-                    <li class="dropdown">
 
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add Keys <b class="caret"></b></a>
+                    <li id="btnkeys"><a role="tab" href="#dispvalue" data-toggle="tab">Display keys</a></li>
+                    <li id="tabterminal"><a class="active" role="tab" href="#termnl" data-toggle="tab">Terminal</a></li>
+                    <li id="tablog"><a role="tab" href="#tbllog" data-toggle="tab">Activity log</a></li>
+                    @*<li style=" float: right;"> <button id="btnregex" class="glyphicon  glyphicon-search"></button>  </li>*@
+                    @*<li style=" float: right;"><button type="button" id="btnregex" class="glyphicon glyphicon-search btn btn-default btn-sm"></button></li>
+                        <li style=" float: right;">
+                            <input type="text" id="txtregex" class="form-control pading tab-searchInpt" placeholder="Search Based on RegEx">
+                        </li>*@
+                    <li class="pull-right mr-l-r">
+                        @*<div class="input-group tab-searchInpt">
+                                <input type="text" id="txt" class="form-control" placeholder="Search Based on RegEx">
+                                <span class="input-group-addon" id="btnregex" style="font-size: 9px;"><i class="fa fa-search"></i></span>
+                            </div>*@
+
+
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text" id="txtsrch" style="height:100%;padding: 2px 12px;" class="form-control" aria-label="...">
+                            <div class="input-group-btn">
+                                <button type="button" id="Btnsrch" style="height: 100%;font-size: 13px;padding: 2px 12px;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>
+                                <ul id="Bsrch" class="dropdown-menu dropdown-menu-right">
+                                    <li id="refbeg" lival="1">Refid At Beginning</li>
+                                    <li id="refend" lival="2"> Refid At End</li>
+                                    <li id="refmid" lival="3"> Refid At Middle</li>
+                                    <li id="disnam" lival="4">Display name</li>
+                                    <li id="regxscrh" lival="5">Search Based on RegEx</li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+                    </li>
+                    <li class="dropdown pull-right mr-l-r">
+                        <button class="btn-RcTab dropdown-toggle" data-toggle="dropdown" href="#">Add Keys <b class="caret"></b></button>
                         <ul class="dropdown-menu">
                             <li><a href="#" role="tab" data-toggle="modal" data-target="#modalstring">String</a></li>
                             <li><a href="#" role="tab" data-toggle="modal" data-target="#modallist">List</a></li>
@@ -97,65 +132,53 @@
                             <li><a href="#" role="tab" data-toggle="modal" data-target="#modalsortedset">Sorted Set</a></li>
                         </ul>
                     </li>
-                    <li id="btnkeys"><a role="tab" href="#dispvalue" data-toggle="tab">Display keys</a></li>
-                    <li id="tabterminal"><a class="active" role="tab" href="#termnl" data-toggle="tab">Terminal</a></li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Manage Groups<b class="caret"></b></a>
+                    <li class="dropdown pull-right mr-l-r">
+                        <button class="dropdown-toggle btn-RcTab" data-toggle="dropdown" href="#">Manage Groups<b class="caret"></b></button>
                         <ul class="dropdown-menu">
                             <li id="tabgrpinsert"><a role="tab" href="#" data-toggle="modal" data-target="#modalgrp">Create Group</a></li>
                             <li><a href="#" role="tab" data-toggle="modal" data-target="#modalgrpedit">Edit Group</a></li>
 
                         </ul>
                     </li>
-                    <li id="tablog"><a role="tab" href="#tbllog" data-toggle="tab">Activity log</a></li>
-                    @*<li style=" float: right;"> <button id="btnregex" class="glyphicon  glyphicon-search"></button>  </li>*@
-                    <li style=" float: right;"><button type="button" id="btnregex" class="glyphicon glyphicon-search btn btn-default btn-sm"></button></li>
-                    <li style=" float: right;"> <input type="text" id="txtregex" class="form-control pading " placeholder="Search Based on RegEx"> </li>
-
                 </ul>
 
             </nav>
         </div>
 
-        <div class="tab-content">
-
+        <div class="tab-content" style="height: calc(100% - 30px);">
             <div id="infos" class="tab-pane fade in active">
-
-            </div>
-
-            <div id="termnl" class="tab-pane fade position-relative borderstyle  margin_sml7  " style=" padding-top:1px; padding-left: 1px;
-                              padding-right: 1px;">
-                <div id="divterminal" style=" background-color: #0f1315; color: #f5f2f2; max-height:567px;height:567px; width: 100%;overflow-y: scroll;" class=" divterm">
+                <div id="infocol1" class="col-md-3 keyInfoRc">
                 </div>
+                <div id="infocol2" class="col-md-4 SlnInfoRc">
 
+                </div>
             </div>
-            <br />
-            <div id="dispvalue" class="tab-pane fade " style=" height: 555px;  width: 100%;">
-                <div id="subkeydiv" class="col-md-3 pading0  margin_sml7 scrol  " style=" width: 200px;">
+            <div id="termnl" class="tab-pane fade position-relative borderstyle margin_sml7 RcTerminal">
+                <div id="divterminal" class="divterm">
+                </div>
+            </div>
+            <div id="dispvalue" class="tab-pane fade" style="height: 100% !important;width: 100%;">
+                <div id="subkeydiv" class="col-md-3 col-lg-3 pading0  margin_sml7 scrol">
                     <ul id="sublist" class="nav nav-pills nav-stacked"></ul>
                 </div>
-
-                <div id="outerdisp" class=" position-relative borderstyle  col-md-9  margin_sml7  " style=" padding-top:1px; padding-left: 3px;
-                                      padding-right: 1px;" hidden>
-                    <div id="smallbtn" hidden style=" margin-bottom: 3px;">
-                        <input type="button" id="btnkeydel" value="Delete" class="btn btn-info btn-xs btnbackground" />
-                        <input type="button" id="btnrename" value="Rename" class="btn btn-xs btn-info btnbackground" role="tab" href="#" data-toggle="modal" data-target="#modalrename " />
-                        <input type="button" id="btnjsonview" value="JSON View" class="btn btn-info btn-xs btnbackground" />
-                        <input type="button" id="btnedit" value="Edit" class="btn btn-info btn-xs btnbackground" />
-                        <input type="button" id="sqlview" value="Sql View" style="float:right;margin-right: 10px;" href="#popup1" class="btn btn-info btn-xs btnbackground " />
-
+                <div id="outerdisp" class="position-relative col-md-9 col-lg-9  margin_sml7" hidden>
+                    <div class="outerdisp_inner">
+                        <div id="smallbtn" class="RcOkBtnCtr" hidden>
+                            <input type="button" id="btnkeydel" value="Delete" class="btn btn-xs btnbackground" />
+                            <input type="button" id="btnrename" value="Rename" class="btn btn-xs btnbackground" role="tab" href="#" data-toggle="modal" data-target="#modalrename " />
+                            <input type="button" id="btnjsonview" value="JSON View" class="btn btn-xs btnbackground" />
+                            <input type="button" id="btnedit" value="Edit" class="btn btn-xs btnbackground" />
+                            <input type="button" id="objexplorer" value="Object Explorer" style="float:right;" class="btn btn-info btn-xs btnbackground " />
+                            <input type="button" id="sqlview" value="Sql View" style="float:right;margin-right: 10px;" href="#popup1" class="btn btn-xs btnbackground " />
+                        </div>
+                        <div id="savediv" class=" position-relative"></div>
+                        <div id="dispval" class="scrol_1" contenteditable="false"></div>
                     </div>
-
-                    <div id="savediv" class=" position-relative borderstyle"></div>
-                    <div id="dispval" class="scrol_1" contenteditable="false"></div>
                 </div>
             </div>
             <div id="tbllog" class=" tab-pane fade">
-                <div id="logtable" style="  height: 320px;">
-                    <table id="tbllogs" class="tablelog table table-bordered"></table>
-
-
-
+                <div id="logtable" style="  height: 300px;">
+                    <table id="tbllogs" class="tablelog table table-bordered" style="margin-bottom: 0px;"></table>
                 </div>
                 <div id="logshowvalues">
                     <div class="col-md-6 borderstyle pading0" style="height:250px ">
@@ -172,14 +195,9 @@
                     </div>
                 </div>
             </div>
-
-
-
             <div id="popup1">
 
             </div>
-
-
             <!-- Modal string key insert-->
             <div class="modal fade" id="modalstring" role="dialog">
                 <div class="modal-dialog">
@@ -191,12 +209,12 @@
                         </div>
                         <div class="modal-body">
                             <input type="text" id="txtkey" value="" placeholder="Key" class="form-control" />
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top: 10px;">
                                 <textarea class="form-control" rows="5" placeholder="Value" id="txtval"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <input type="button" id="btninset" value="Insert" class="btn btn-primary" data-dismiss="modal" />
+                            <input type="button" id="btninset" value="Insert" class="btn bg-b" data-dismiss="modal" />
                         </div>
                     </div>
                 </div>
@@ -215,8 +233,7 @@
                             <input type="text" id="txtlistkey" value="" placeholder="Key" class="form-control" />
                         </div>
                         <div class="modal-footer">
-                            <input type="button" id="btnlistkey" value="OK" role="tab" data-toggle="modal" data-target="#modallistval" class="btn btn-primary" data-dismiss="modal" />
-
+                            <input type="button" id="btnlistkey" value="OK" role="tab" data-toggle="modal" data-target="#modallistval" class="btn bg-b" data-dismiss="modal" />
                         </div>
                     </div>
                 </div>
@@ -261,7 +278,7 @@
                             <input type="text" id="txthashkey" value="" placeholder="Key" class="form-control" />
                         </div>
                         <div class="modal-footer">
-                            <input type="button" id="btnhashkey" value="OK" class="btn btn-primary" role="tab" data-toggle="modal" data-target="#modalhashval" data-dismiss="modal" />
+                            <input type="button" id="btnhashkey" value="OK" class="btn bg-b" role="tab" data-toggle="modal" data-target="#modalhashval" data-dismiss="modal" />
                         </div>
                     </div>
                 </div>
@@ -307,7 +324,7 @@
                             <input type="text" id="txtsetkey" value="" placeholder="Key" class="form-control" />
                         </div>
                         <div class="modal-footer">
-                            <input type="button" id="btnsetkey" value="OK" role="tab" data-toggle="modal" data-target="#modalsetval" class="btn btn-primary" data-dismiss="modal" />
+                            <input type="button" id="btnsetkey" value="OK" role="tab" data-toggle="modal" data-target="#modalsetval" class="btn bg-b" data-dismiss="modal" />
 
                         </div>
                     </div>
@@ -348,7 +365,7 @@
                             <input type="text" id="txtsortedsetkey" value="" placeholder="Key" class="form-control" />
                         </div>
                         <div class="modal-footer">
-                            <input type="button" id="btnsortedsetkey" value="OK" role="tab" data-toggle="modal" data-target="#modalsortedsetval" class="btn btn-primary" data-dismiss="modal" />
+                            <input type="button" id="btnsortedsetkey" value="OK" role="tab" data-toggle="modal" data-target="#modalsortedsetval" class="btn bg-b" data-dismiss="modal" />
 
                         </div>
                     </div>
@@ -419,36 +436,24 @@
                         </div>
 
                         <div class="grpinsertbody modal-body">
-
                             <input type="text" id="txtnm" value="" class=" form-control" placeholder="Group Name" />
-                            <div>
-                                <div class="input-group " style="width:auto">
-                                    <input type="text" id="txtptn1" class=" txtadnlptn form-control pading" placeholder="(\w+\-\w+\-)object_number(\-\w+\-\w+\-\w+\-\w)">
-                                    <div class="input-group-btn ">
-                                        <div>
-                                            <button class="btn btn-primary " id="btnsave1" type="submit" hidden="hidden">
-                                                save
-                                                <i class="glyphicon glyphicon-upload"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="ptnsdiv" class="scrol_3">
-                                    <ul id="ptnslist" class="list-group"></ul>
-                                </div>
+                            <div class="input-group" style="margin-top: 10px;">
+                                <input type="text" id="txtptn1" class=" txtadnlptn form-control pading" placeholder="(\w+\-\w+\-)object_number(\-\w+\-\w+\-\w+\-\w)">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" id="btnsave1" type="button"><i class="fa fa-plus"></i></button>
+                                </span>
+                            </div><!-- /input-group -->
+                            <div id="ptnsdiv" class="scrol_3">
+                                <ul id="ptnslist" class="list-group"></ul>
                             </div>
                         </div>
                         <div class="grpinsertfooter modal-footer">
-                            <input type="button" id="btngrpcancel1" value="Cancel" class="btn btn-primary " data-dismiss="modal" />
-                            <input type="button" id="btngrpinsert" value="Create Group" class="btn btn-primary " data-dismiss="modal" />
-
+                            <input type="button" id="btngrpinsert" value="Create Group" class="btn bg-b" data-dismiss="modal" />
                         </div>
                     </div>
-
                 </div>
+
             </div>
-
-
             <!-- Modal edit group-->
             <div class="modal fade" id="modalgrpedit" role="dialog">
                 <div class="modal-dialog">
@@ -459,44 +464,31 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Edit Group</h4>
                         </div>
-
                         <div class="grpeditbody modal-body">
-
                             <input type="text" id="txtgrp_name" value="" class=" form-control" placeholder="Group Name" />
-                            <div id="newptn_div" class="input-group " style="width:auto">
+
+                            <div class="input-group" id="newptn_div" style="margin-top: 10px;">
                                 <input type="text" id="txtnewptn" class="  form-control pading" placeholder="Pattern" disabled="disabled">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-default" id="btnsave_newptn" type="submit" disabled="disabled">
-                                        <i class="glyphicon glyphicon-floppy-disk"></i>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" id="btnsave_newptn" type="button" disabled="disabled">
+                                        <i class="fa fa-plus"></i>
                                     </button>
-
-                                </div>
-                            </div>
+                                </span>
+                            </div><!-- /input-group -->
                             <div id="edit_grp_list" class="scrol_2" contenteditable="false">
-
                             </div>
-
                         </div>
                         <div class="grpinsertfooter modal-footer">
-                            <input type="button" id="btngrpcancel2" value="Cancel" class="btn btn-primary " data-dismiss="modal" />
                             @*<input type="button" id="btngrpadd" value="More Patterns?" class="btn btn-primary" />*@
                             @*<input type="button" id="btngrp_add_ptn" value="Add Pattern" class="btn btn-primary" disabled="disabled" />*@
-                            <input type="button" id="btngrp_save" value="Save" class="btn btn-primary " data-dismiss="modal" disabled="disabled" />
-
+                            <input type="button" id="btngrp_save" value="Save" class="btn bg-b" data-dismiss="modal" disabled="disabled" />
                         </div>
-
-
                     </div>
-
                 </div>
             </div>
-
-
         </div>
+
     </div>
-
-
-
 </div>
 
 
@@ -509,7 +501,7 @@
         $(document).ready(function () {
              sln_name = location.hostname.split("-")[0];
             _temp = @Html.Raw(ViewBag.allkeylist);
-
+            slnkey=@Html.Raw(Json.Serialize(ViewBag.slnkey));
             dgrpnames =@Html.Raw(Json.Serialize(ViewBag.grpdetails));
             auto_arr =@Html.Raw(Json.Serialize(ViewBag.cmdbag));
             custom_grps=@Html.Raw(Json.Serialize(ViewBag.csgrplst));
@@ -530,10 +522,6 @@
                                 <div class="tresponse" style=" background-color: #0f1315; color: #2795ee;">
                                 </div> `;
             $('#divterminal').append(html);
-
-
-
-
         });
         //$("#subkeydiv").click(function () {
         //    $('#dispval').show();

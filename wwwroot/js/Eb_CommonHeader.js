@@ -31,5 +31,9 @@
         _btnContainer.empty();
     };
 
+    this.setLocation = function (t) {
+        $("#LocInfoCr_name").text(t);
+    };
+
     _layout.data("EbHeader", this);
 };

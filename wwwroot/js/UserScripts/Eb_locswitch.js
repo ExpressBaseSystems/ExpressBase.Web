@@ -13,12 +13,15 @@
 
     this.Locations = JSON.parse(options.Location) || [];
     this.CurrentLoc = (["0", "-1", 0, -1].indexOf(options.Current) > 0) ? 1 : options.Current;
+    this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+    this.EbHeader = new EbHeader();
 
     this.trigger = function () {
         //$(document).bind('keypress', function (event) {
         //    if (event.which === 108)
         //        this.showSwitcher();
         //}.bind(this));
+        this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         this.drawLocs();
         this.setDeafault();
         $(TriggerId).off("click").on("click", this.showSwitcher.bind(this));
@@ -70,6 +73,8 @@
             radioContainer.find(".unchecked").hide();
             radioContainer.attr("ischecked", true);
             this.CurrentLoc = radioContainer.attr("LocId");
+            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+            this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
             this.uncheckOthers($(e.target).closest(".locationwrapper"));
         }
         else {

@@ -814,3 +814,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background-repeat: no-repeat !important;
     background-position: calc(100% - 2px) !important;
  }
+
+.uc-col-wraper {
+    display:none;
+}

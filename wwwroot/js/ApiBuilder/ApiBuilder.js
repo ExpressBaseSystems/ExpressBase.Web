@@ -31,7 +31,8 @@ function EbApiBuild(config) {
     this.ComponentRun = false;
     this.Component = null;
     this.ResultData = {};
-    this.JsonEditMode = false;
+    this.Request = { Default: [], Custom: [] };
+    this.Customparams = {};
 
     this.pg = new Eb_PropertyGrid({
         id: "pgContainer_wrpr",
@@ -141,7 +142,7 @@ function EbApiBuild(config) {
     }
 
     this.loopProcess = function (i, o) {
-        if (["start_item", "end_item"].indexOf(o.id) < 0) {
+        if (["start_item", "end_item", "api_request"].indexOf(o.id) < 0) {
             if (this.validateRefid(o.id)) {
                 this.Procs[o.id].RouteIndex = $(o).index();
                 this.EbObject.Resources.$values.push(this.Procs[o.id]);
@@ -185,9 +186,31 @@ function EbApiBuild(config) {
                     obj.RefName = component.name;
                     obj.Version = component.version;
                     this.RefreshControl(obj);
+                    this.setApiRequest(JSON.parse(component.parameters));
                 }.bind(this)
             });
         }
+    };
+
+    this.setApiRequest = function (p) {
+        for (i = 0; i < p.length; i++) {
+            this.EbObject.Request.Default.$values.push(p[i]);
+            this.setRequestW([p[i]]);
+        }
+    };
+
+    this.setRequestW = function (o,type) {
+        let html = [];
+        for (let i = 0, n = o.length; i < n; i++) {
+            edit = (type == "custom") ? "<td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>" : "";
+            html.push(`<tr p-name='${o[i].Name}'>
+                        <td>${o[i].Name}</td>
+                        <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o[i].Type)}</td>
+                        <td><input type='text' style='width:100%;' Json-prop='${o[i].Name}' value='${o[i].Value || ""}'></input></td>
+                        ${edit}
+                       </tr>`);
+        }
+        $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).append(html.join(""));
     };
 
     this.drawProcsEmode = function () {
@@ -213,49 +236,41 @@ function EbApiBuild(config) {
         }
     }
 
-    this.toggleReqWindow = function (resp) {
-        $(`#Json_reqOrRespWrp`).show().find("#JsonReq_CMW").show();
-        $(`#Json_reqOrRespWrp #JsonReq_CMW`).html(window.Api.JsonWindow.build(resp));
-        $(`#Json_reqOrRespWrp #JsonResp_CMW`).empty();
-        $("#JsonEditWindow").hide();
-        this.JsonEditMode = false;
-        this.setSampleCode(resp);
-    };
-
-    this.setSampleCode = function (req) {
-        $('#api_scodeMd .url').text(`'${location.origin}/api/${this.EbObject.Name}/${commonO.getVersion()}'`);
-        $('#api_scodeMd .method').text(`'${this.EbObject.Method || "POST/GET"}'`);
-        var s = "";
-        var o = {};
-        for (let i = 0; i < req.length; i++) {
-            s = s + req[i].Name + "=" + req[i].ValueTo + ((i == req.length - 1) ? "" : "&");
-            o[req[i].Name] = req[i].ValueTo;
-        }
-        $(`#api_scodeMd #js .data`).text(`'${s}'`);
-        $(`#api_scodeMd #ajax .data`).text(JSON.stringify(o));
+    this.toggleReqWindow = function (name, resp) {
+        $("#Json_reqOrRespWrp .reqLabel").text(` (${name}) `);
+        $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).empty();
+        this.Request.Default = resp;
+        this.setRequestW(resp);
     };
 
     this.newApi = function () {
         this.EbObject = new EbObjects["EbApi"]("Api");
         this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
-        this.setLine('start', 'stop');
+        //this.setLine('start', 'stop');
+        this.resetLinks();
     };
 
     this.editApi = function () {
         this.EbObject = new EbObjects["EbApi"](this.EditObj.Name);
-        this.replaceProp(this.EbObject, this.EditObj);
-        //$.extend(this.EbObject, this.EditObj);
+        {
+            var _o = $.extend(true, {}, this.EditObj);
+            $.extend(this.EbObject, _o);
+        }
         this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
         this.EbObject.Resources.$values.length = 0;
         this.drawProcsEmode();
         this.resetLinks();
+        this.setRequestW(this.EbObject.Request.Default.$values);
+        this.setRequestW(this.EbObject.Request.Custom.$values,'custom');
+        this.Request.Default = this.EbObject.Request.Default.$values;
+        this.Request.Custom = this.EbObject.Request.Custom.$values;
     };
 
     this.setBtns = function () {
         $("#obj_icons").empty().append(`<button class='btn run' id='api_run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
                                             <i class='fa fa-play' aria-hidden='true'></i>
                                         </button>`);
-        $("#api_run").off("click").on("click", this.apiRun.bind(this));
+        $("#api_run").off("click").on("click", this.getApiResponse.bind(this));
     };
 
     commonO.saveOrCommitSuccess = function (ref) {
@@ -266,41 +281,47 @@ function EbApiBuild(config) {
         this.setBtns();
     };
 
-    this.apiRun = function (ev) {
-        this.reidStat = true;
-        this.prepareApiobject();
-        if (this.reidStat) {
-            $.ajax({
-                url: "../Dev/GetReq_respJson",
-                type: "GET",
-                cache: false,
-                beforeSend: function () {
-                    $("#eb_common_loader").EbLoader("show");
-                },
-                data: { "components": JSON.stringify(this.EbObject.Resources) },
-                success: function (result) {
-                    this.toggleReqWindow(JSON.parse(result));
-                    this.ComponentRun = false;
-                    $("#eb_common_loader").EbLoader("hide");
-                }.bind(this)
-            });
-        }
-    }
+    //this.apiRun = function (ev) {
+    //    this.reidStat = true;
+    //    this.prepareApiobject();
+    //    if (this.reidStat) {
+    //        $.ajax({
+    //            url: "../Dev/GetReq_respJson",
+    //            type: "GET",
+    //            cache: false,
+    //            beforeSend: function () {
+    //                $("#eb_common_loader").EbLoader("show");
+    //            },
+    //            data: { "components": JSON.stringify(this.EbObject.Resources) },
+    //            success: function (result) {
+    //                this.toggleReqWindow((this.EbObject.Name||"Api"),JSON.parse(result));
+    //                this.ComponentRun = false;
+    //                $("#eb_common_loader").EbLoader("hide");
+    //            }.bind(this)
+    //        });
+    //    }
+    //}
 
     this.getRequest = function () {
-        if (this.JsonEditMode)
-            return this.JsonEditW.getValue();
-        else
-            return $(`#Json_reqOrRespWrp #JsonReq_CMW`).text();
+        for (let i = 0, n = this.Request.Default.length; i < n; i++) {
+            this.Request.Default[i].Value = $(`input[Json-prop='${this.Request.Default[i].Name}']`).val();
+        }
+        if (!this.ComponentRun) {
+            for (let i = 0, n = this.Request.Custom.length; i < n; i++) {
+                this.Request.Custom[i].Value = $(`input[Json-prop='${this.Request.Custom[i].Name}']`).val();
+            }
+        }
+        return JSON.stringify(this.Request);
     };
 
     this.getApiResponse = function (ev) {
         let _data = null;
+        let param = this.getRequest();
         if (!this.ComponentRun) {
-            _data = { "name": this.EbObject.Name, "vers": commonO.getVersion(), "param": this.getRequest() };
+            _data = { "name": this.EbObject.Name, "vers": commonO.getVersion(), "param": param };
         }
         else {
-            _data = { "param": this.getRequest(), "component": JSON.stringify(this.Component) }
+            _data = { "param": param, "component": JSON.stringify(this.Component) }
         }
         $.ajax({
             url: "../Dev/GetApiResponse",
@@ -326,16 +347,12 @@ function EbApiBuild(config) {
         $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
     };
 
-    this.showSampleCode = function (ev) {
-        $("#api_scodeMd").modal("toggle");
-    };
-
     this.foramatChange = function (ev) {
         let o = null;
         let html = "";
-        if (this.ComponentRun) 
+        if (this.ComponentRun)
             o = this.Component;
-        else 
+        else
             o = this.EbObject;
 
         if ($(ev.target).val() === 'xml') {
@@ -351,11 +368,50 @@ function EbApiBuild(config) {
         $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
     };
 
-    this.toggleEditWindow = function (e) {
-        $("#JsonReq_CMW").hide();
-        this.JsonEditMode = true;
-        $("#JsonEditWindow").show();
+    this.saveCustomParam = function () {
+        let pname = $('#api_scodeMd input[name="param_name"]').val();
+        let type = $('#api_scodeMd select[name="param_type"]').val();
+        let val = this.CustomPval.getValue();
+        if (!pname || !val)
+            EbMessage('show', { Message: "field cannot be empty", Background: 'red' });
+        else {
+            var o = {};
+            o.Name = pname;
+            o.Type = type;
+            o.Value = val;
+            o.ValueTo = val;
+            if (this.Request.Custom.filter(e => e.Name === o.Name).length > 0) {
+                EbMessage('show', { Message: "parameter " + o.Name + " already exist", Background: 'red' });
+            }
+            else {
+                this.EbObject.Request.Custom.$values.push(o);
+                var formated_val = (o.Type === "13") ? JSON.stringify(o.Value) : o.Value;
+                $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).append(`<tr p-name='${o.Name}'>
+                        <td>${o.Name}</td>
+                        <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o.Type)}</td>
+                        <td><input type='text' style='width:100%;' Json-prop='${o.Name}' value='${formated_val|| ""}'></input></td>
+                        <td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>
+                       </tr>`);
+                $('#api_scodeMd').modal('hide');
+            }
+        }
     };
+
+    this.RmCustParam = function () {
+        let el = $(event.target).closest('tr');
+        this.EbObject.Request.Custom.$values = this.EbObject.Request.Custom.$values.filter(e => e.Name !== el.attr("p-name"));
+        this.Request.Custom = this.EbObject.Request.Custom.$values.filter(e => e.Name !== el.attr("p-name"));
+        el.remove();
+    };
+
+    //this.editCustParam = function () {
+    //    let el = $(event.target).closest('tr');
+    //    let p = this.EbObject.Request.Custom.$values.filter(e => e.Name === el.attr("p-name"));
+    //    $('#api_scodeMd input[name="param_name"]').val(p[0].Name);
+    //    $(`#api_scodeMd select[name="param_type"] option[value="${p[0].Type}"]`).prop('selected', true);
+    //    this.CustomPval.setValue(JSON.parse(p[0].Value));
+    //    $("#api_scodeMd").modal("toggle");
+    //};
 
     this.start = function () {
         this.setBtns();
@@ -370,12 +426,12 @@ function EbApiBuild(config) {
             minHeight: 50
         });
 
-        this.JsonEditW = CodeMirror(document.getElementById("JsonEditWindow"), { mode: {name:"javascript",json:true}});
-
-        $(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
-        //$("#sample_codes").off("click").on("click", this.showSampleCode.bind(this));
+        //$(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
         $('.format_type').off("change").on("change", this.foramatChange.bind(this));
-        $(".reqEditWbtn").off("click").on("click", this.toggleEditWindow.bind(this));
+        this.CustomPval = CodeMirror(document.getElementById('CpVcdMIrror'), { mode: 'javascript' });
+        $('#adCpToObj').off('click').on('click', this.saveCustomParam.bind(this));
+        $('body').off("click").on("click", ".deleteCustom_p", this.RmCustParam.bind(this));
+        //$('body').off("click").on("click", ".editCustom_p", this.editCustParam.bind(this));
     };
 
     this.start();

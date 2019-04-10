@@ -1,5 +1,9 @@
 ﻿
 
+
+
+
+
 var RedisClientJS = function () {
     this.currentGrpLink = null;
     this.subnm = null;
@@ -21,10 +25,10 @@ var RedisClientJS = function () {
         $("#keyslist").off("click").on("click", ".grp_link", this.groupClick.bind(this));
         $("#btninset").off("click").on("click", this.Keyinsertfn.bind(this));
         $("#btngrpinsert").off('click').on("click", this.GroupPatternfn.bind(this));
-        $("#Btnsrch").off('click').on('click', this.Srchfn.bind(this));
+        $("#Bsrch").off('click').on('click', this.Keysearchfn.bind(this));
         $("#btnregex").off('click').on('click', this.Regxfn.bind(this));
         $("#btnkeys").off('click').on('click', this.Allkeysfn.bind(this));
-        $("#infos").on('click', "#totkeys", this.Allkeysfn.bind(this));
+        $("body").on('click', "#totkeys", this.Allkeysfn.bind(this));
 
         $("#btnlpush").off('click').on('click', this.ListInsertLpushfn.bind(this));
         $("#btnrpush").off('click').on('click', this.ListInsertRpushfn.bind(this));
@@ -46,7 +50,8 @@ var RedisClientJS = function () {
         $("#btnsave1").off("click").on("click", this.PatternSavefn.bind(this));
         $("#grplists").off("click").on("click", ".cstmgrp_link", this.CustomGroupClick.bind(this));
         $("#btnkeydiff").off('click').on('click', this.Keydifferencefn.bind(this));
-        $("#infos").on('click', "#ophnkeys", function () { $("#btnkeydiff").click(); }.bind(this));
+        $("#infocol1").on('click', "#ophnkeys", function () { $("#btnkeydiff").click(); }.bind(this));
+        $("#objexplorer").off('click').on('click', this.ViewObjectfn.bind(this));
 
         $("#txtgrp_name").on("keypress", this.EditGrpfn.bind(this));
         $("#btnsave_newptn").off("click").on("click", this.AddPatternfn.bind(this));
@@ -77,7 +82,8 @@ var RedisClientJS = function () {
         });
     }.bind(this);
     this.Infofn = function () {
-        $("#infos").empty();
+
+        $("#infocol1").empty();
         $('.nav-pills  li').removeClass('active');
         var totkey = _temp.length;
         var opndkey = 0;
@@ -118,7 +124,13 @@ var RedisClientJS = function () {
             }
         }
 
-        $("#infos").append(`<div class="infodiv"><a ><h3 id="totkeys">Total keys :${totkey} </h3></a> </div><div class="infodiv"><a><h3 id="ophnkeys"> Orphaned keys:${opndkey}  </h3></a></div>`)
+        $("#infocol1").append(`<div class="infodiv"><a ><h3 id="totkeys">Total keys :${totkey} </h3></a> </div><div class="infodiv"><a><h3 id="ophnkeys"> Orphaned keys:${opndkey}  </h3></a></div>`)
+
+        $("#infocol2").empty().append(this.pjson.build(slnkey));
+
+        $(".prety_jsonWrpr").css("background-color", "#f2f2f2");
+
+
     }
 
     this.groupClick = function (ev) {
@@ -135,6 +147,7 @@ var RedisClientJS = function () {
         //  var p = "^" + this.GroupName;
         var p = this.GroupName;
         $.each(dgrpnames, function (i, k) {
+            //$.each(m, function (i, k) {
             var match = (i.match(p));
             if (match != null) {
 
@@ -145,6 +158,7 @@ var RedisClientJS = function () {
                 });
 
             }
+            //});
         });
 
         let h = [];
@@ -153,7 +167,8 @@ var RedisClientJS = function () {
         }
         $(`#subkeydiv`).empty().append(h.join(""));
         if (data.length === 0) {
-            alert("No keys found");
+
+            $("#keyslist").notify("No keys found", { className: "info", autoHideDelay: 750, position: "right top" });
         }
         $(`#savediv`).hide();
         //$(`#smallbtn`).hide();
@@ -199,7 +214,7 @@ var RedisClientJS = function () {
             $(`#subkeydiv`).empty().append(h.join(""));
         }
         catch (e) {
-            alert(e.message);
+            $("#grplists").notify(e.message, { className: "info", autoHideDelay: 1200, position: "right top" });
         }
         $(`#savediv`).hide();
         $(`#dispval`).hide();
@@ -231,11 +246,15 @@ var RedisClientJS = function () {
                         window.tp = ob.type;
                         this.objsn = ob;
                         if (ob.type === "string") {
-                            var html = `<div> 
-                                            <div  height=10%> <strong>KEY :</strong>${ob.key}  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>TYPE :</strong>${ob.type}  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <strong>Last Modified :</strong>${ob.idltm} sec
-                                           <input type="button"  id="btnstringedit" class="btn btn-xs btn-info  col-md-offset-10"  value="Save"/>
-                                                 </div>
+                            var html = `<div class="KeyInfo_OK">
+                                            <div class="KeyInfo_OK_lines"><b>Key: </b> ${ob.key}</div>
+                                            <div class="KeyInfo_OK_lines"><b>Type: </b> ${ob.type}</div>
+                                            <div class="KeyInfo_OK_lines"><b>Last Modified: </b> ${ob.idltm} sec</div>
+                                            <div class="KeyInfo_OK_btnWrpr">
+                                                <input type="button"  id="btnstringedit" class="btn btn-xs btnbackground pull-right"  value="Save"/>
+                                            </div>
                                         </div>`;
+
                             $("#savediv").empty().append(html);
                             $(`#sqlview`).hide();
                             if (ob.obj.hasOwnProperty("sql")) {
@@ -247,14 +266,17 @@ var RedisClientJS = function () {
                         }
 
 
-                        //<div style=" display: inline-block;  float: right; "  >  /div> 
+                        //<div style=" display: inline-block;  float: right; "  >  /div>
                         else
                             if ((ob.type === "list") || (ob.type === "set")) {
-                                var html = `<div>
-                                                <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type} &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <strong>Last Accessed :</strong>${ob.idltm} sec
-                                                <input type="button" id="btnlistedit" rediskey="${ob.key}" class="btn btn-xs btn-info col-md-offset-10" value="Save" />
-                                                  </div >
-                                           </div >`
+                                var html = `<div class="KeyInfo_OK">
+                                            <div class="KeyInfo_OK_lines"><b>Key: </b> ${ob.key}</div>
+                                            <div class="KeyInfo_OK_lines"><b>Type: </b> ${ob.type}</div>
+                                            <div class="KeyInfo_OK_lines"><b>Last Modified: </b> ${ob.idltm} sec</div>
+                                            <div class="KeyInfo_OK_btnWrpr">
+                                                <input type="button"  id="btnlistedit" class="btn btn-xs  btnbackground pull-right"  value="Save"/>
+                                            </div>
+                                        </div>`;
 
                                 let html1 = `<table class="listtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}" contenteditable="false">
                                              <thead><tr><th>#</th> <th>MEMBERS</th></tr></thead><tbody>`;
@@ -298,11 +320,15 @@ var RedisClientJS = function () {
 
                             else
                                 if ((ob.type === "hash") || (ob.type === "zset")) {
-                                    var html2 = `<div>
-                                                <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type}  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <strong>Last Modified :</strong>${ob.idltm} sec
-                                               <input type="button" id="btnhashedit" rediskey="${ob.key}" class="btn btn-xs btn-info col-md-offset-10" value="Save" />
-                                                  </div >
-                                           </div >`
+                                    var html2 = `<div class="KeyInfo_OK">
+                                           <div class="KeyInfo_OK_lines"><b>Key: </b> ${ob.key}</div>
+                                            <div class="KeyInfo_OK_lines"><b>Type: </b> ${ob.type}</div>
+                                            <div class="KeyInfo_OK_lines"><b>Last Modified: </b> ${ob.idltm}</div>
+                                            <div class="KeyInfo_OK_btnWrpr">
+                                                <input type="button"  id="btnhashedit" class="btn btn-xs btnbackground pull-right"  value="Save"/>
+                                            </div>
+                                        </div>`;
+
                                     //border = "1" width = "100" style = "width:100%"
                                     var html = `<table  class="hashtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}" contenteditable="false" >
                                            <thead><tr><th>#</th> <th> FIELD</th><th>VALUE</th></tr></thead><tbody>`;
@@ -330,7 +356,8 @@ var RedisClientJS = function () {
                                     }.bind(this));
                                 }
                                 else if (ob.type === "none") {
-                                    alert("Key not set in redis")
+                                    //alert("Key not set in redis")
+                                    $.notify("Key not set in redis", { className: "info", autoHideDelay: 1000, position: "top center" });
                                 }
                         $("#eb_common_loader").EbLoader("hide");
                         $('#smallbtn').show();
@@ -339,9 +366,23 @@ var RedisClientJS = function () {
                     }.bind(this)
 
                 });
+
+
         }
 
     }.bind(this);
+
+    this.ViewObjectfn = function () {
+        let temp_arr = [];
+        //var ref = this.subnm;
+        temp_arr = this.subnm.split('-');
+        // window.location.href = "../Eb_Object/Index?objid=" + temp_arr[3] + "&objtype=" + temp_arr[2] + "";
+        window.open("../Eb_Object/Index?objid=" + temp_arr[3] + "&objtype=" + temp_arr[2] + "");
+        temp_arr = [];
+
+
+    };
+
 
     this.Keyinsertfn = function () {
         if ((($("#txtkey").val() != "")) && ($("#txtval").val())) {
@@ -352,8 +393,7 @@ var RedisClientJS = function () {
                 type: "POST",
                 success: function (status) {
                     if (status) {
-                        alert("Success");
-
+                        $.notify("Success", { className: "success", autoHideDelay: 1000, position: "top center" });
                         this.insertKeyToArr($("#txtkey").val());
                         if (this.currentGrpLink !== null)
                             $(this.currentGrpLink).click();
@@ -363,7 +403,7 @@ var RedisClientJS = function () {
                         $("#txtval").val('');
                     }
                     else {
-                        alert("Key Already Exists");
+                        $.notify("Key Already Exists", { className: "info", autoHideDelay: 1000, position: "top center" });
                         $("#txtkey").val('');
                         $("#txtval").val('');
                     }
@@ -371,7 +411,7 @@ var RedisClientJS = function () {
             });
         }
         else {
-            alert("Please Specify Key and Value");
+            $.notify("Please Specify Key and Value", { className: "info", autoHideDelay: 1000, position: "top center" });
         }
     };
 
@@ -397,7 +437,8 @@ var RedisClientJS = function () {
                 type: "POST",
                 success: function (status) {
                     if (status) {
-                        alert(this.subnm + " Deleted");
+                        //alert(this.subnm + " Deleted");
+                        $.notify(this.subnm + " Deleted", { className: "success", autoHideDelay: 1000, position: "top center" });
                         this.deleteKeyFromArr(this.subnm);
                         $(this.currentGrpLink).click();
                         $("#dispval").empty();
@@ -411,7 +452,8 @@ var RedisClientJS = function () {
                         }
                     }
                     else {
-                        alert("Key not found");
+                        //alert("Key not found");
+                        $.notify("Key not found", { className: "warn", autoHideDelay: 1000, position: "top center" });
                         $("#dispval").empty();
                         $("#dispval").hide();
                         $(`#outerdisp`).hide();
@@ -431,21 +473,25 @@ var RedisClientJS = function () {
                 type: "POST",
                 success: function (status) {
                     if (status) {
-                        alert(this.subnm + " Reanmed to " + $("#txtrename").val());
+                        //alert(this.subnm + " Reanmed to " + $("#txtrename").val());
+                        $.notify(this.subnm + " Reanmed to " + $("#txtrename").val(), { className: "success", autoHideDelay: 1000, position: "top center" });
                         $("#smallbtn").hide();
                         $("#txtrename").val('');
                         this.Allkeysfn();
                         $("#dispval").empty();
                     }
                     else {
-                        alert("Key with same name found");
+                        //alert("Key with same name found");
+                        $.notify("Key with same name found", { className: "info", autoHideDelay: 1000, position: "top center" });
                         $("#txtrename").val('');
                     }
                 }.bind(this)
             });
         }
         else {
-            alert("Key cannot be empty");
+            //alert("Key cannot be empty");
+            $.notify("Key cannot be empty", { className: "warn", autoHideDelay: 1000, position: "top center" });
+
         }
     };
 
@@ -455,6 +501,24 @@ var RedisClientJS = function () {
 
             $("#ptnslist").append(`<li class=" list-group-item  " ><a>${$(".txtadnlptn").val()}</a>
             <span class="close closeitem">&times</span></li>`);
+            var regptn = new RegExp($(".txtadnlptn").val());
+            var c = 0;
+            $.each(dgrpnames, function (i, k) {
+
+                $.each(k, function (m) {
+                    if ((k[m].refid).match(regptn)) {
+                        c = c + 1;
+
+                    }
+                });
+
+            });
+            if (c === 0)
+                $(".modal-header").notify("No Match Found", { position: "right", arrowShow: false });
+            if (c > 0)
+                $("#btnclosegc").notify(c + "Match Found", "success", { arrowShow: false });
+
+
             $(".txtadnlptn").val("");
             $(".closeitem").click(function () {
                 this.parentElement.style.display = 'none';
@@ -469,6 +533,7 @@ var RedisClientJS = function () {
     this.GroupPatternfn = function () {
         if (($("#txtnm").val() != "")) {
             var list = document.getElementById('ptnslist').childNodes;
+            var s = $("#txtnm").val();
             if (list.length != 0) {
                 var theArray = [];
                 var ary = [];
@@ -480,9 +545,11 @@ var RedisClientJS = function () {
                 }
             }
             var x = JSON.stringify(ary);
-            var k = `<li>  <a class="cstmgrp_link list-group-item " role="tab" href="#dispvalue" data-toggle="tab" cgrpkey="kname" data-name="${$("#txtnm").val()}" grp-ptns="${x}">${$("#txtnm").val()}</a>    </li>`
+            var k = `<li>  <a class="cstmgrp_link list-group-item " role="tab" href="#dispvalue" data-toggle="tab" cgrpkey="kname" data-name="${$("#txtnm").val()}" grp-ptns='${x}'>${$("#txtnm").val()}</a>    </li>`
             $("#grplists").append(k);
-
+            //s = s;
+            //var cgdict = { s: ary };
+            //custom_grps.push(cgdict);
             $.ajax({
 
                 url: "../RedisManager/GroupPattern",
@@ -490,7 +557,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("success");
+                    //alert("success");
+                    $.notify("Success", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#txtnm").val("");
                     $("#txtptn1").val("");
                     $("#ptnslist").empty();
@@ -500,7 +568,8 @@ var RedisClientJS = function () {
             });
         }
         else {
-            alert("Please Specify Group Name and pattern");
+            //alert("Please Specify Group Name and pattern");
+            $.notify("Please Specify Group Name and pattern", { className: "info", autoHideDelay: 1000, position: "top center" });
             $("#txtnm").val('');
             $("#txtptn").val('');
         }
@@ -527,7 +596,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("success");
+                    //alert("success");
+                    $.notify("Success", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#txtgrp_name").val("");
                     $("#txtnewptn").val("");
                     $("#edgrp_lst").empty();
@@ -535,7 +605,8 @@ var RedisClientJS = function () {
             });
         }
         else {
-            alert("Please Specify Group Name and pattern");
+            //alert("Please Specify Group Name and pattern");
+            $.notify("Please Specify Group Name and pattern", { className: "info", autoHideDelay: 1000, position: "top center" });
             $("#txtgrp_name").val('');
             $("#txtnewptn").val('');
         }
@@ -582,7 +653,8 @@ var RedisClientJS = function () {
 
             }
             else {
-                alert("Group Not Found..");
+                //alert("Group Not Found..");
+                $.notify("Group Not Found..", { className: "warn", autoHideDelay: 1000, position: "top center" });
             }
         }
     };
@@ -619,7 +691,7 @@ var RedisClientJS = function () {
 
     this.Terminalfn = function (e) {
         $('.nav-pills  li').removeClass('active');
-        $("#eb_common_loader").EbLoader("show");
+
         this.pos = this.history.length
         var tar = e.target;
         var keycode = e.which;
@@ -641,6 +713,7 @@ var RedisClientJS = function () {
 
         if (keycode === 13) {
             this.history.push(tar.value);
+            $("#eb_common_loader").EbLoader("show");
             $.ajax({
                 url: "../RedisManager/Terminal",
                 data: { cmd: tar.value },
@@ -749,7 +822,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("success");
+                    //alert("success");
+                    $.notify("Success", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#btnlistedit").hide();
                     $(".btnl_add").hide();
 
@@ -759,7 +833,8 @@ var RedisClientJS = function () {
             $("#dispval").attr('contenteditable', false);
         }
         else {
-            alert("Value not Specified");
+            //alert("Value not Specified");
+            $.notify("Value not Specified", { className: "warn", autoHideDelay: 1000, position: "top center" });
         }
     };
 
@@ -777,7 +852,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("success");
+                    //alert("success");
+                    $.notify("Success", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#btnhashedit").hide();
                     $(".btnh_add").hide();
 
@@ -787,7 +863,8 @@ var RedisClientJS = function () {
             $("#dispval").attr('contenteditable', false);
         }
         else {
-            alert("Value not Specified");
+            //alert("Value not Specified");
+            $.notify("Value not Specified", { className: "warn", autoHideDelay: 1000, position: "top center" });
             $("#btnhashedit").hide();
         }
     };
@@ -805,7 +882,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("success");
+                    //alert("success");
+                    $.notify("Success", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#btnlistedit").hide();
                     $(".btnl_add").hide();
 
@@ -815,7 +893,8 @@ var RedisClientJS = function () {
             $("#dispval").attr('contenteditable', false);
         }
         else {
-            alert("Value not Specified");
+            //alert("Value not Specified");
+            $.notify("Value not Specified", { className: "warn", autoHideDelay: 1000, position: "top center" });
         }
     };
 
@@ -829,18 +908,22 @@ var RedisClientJS = function () {
                 type: "POST",
                 success: function (status) {
                     if (status) {
-                        alert("Success");
+                        //alert("Success");
+                        $.notify("Success", { className: "success", autoHideDelay: 1000, position: "top center" });
                         $("#btnstringedit").hide();
                         $("#dispval").attr('contenteditable', false);
                     }
                     else {
-                        alert("Not Successful");
+                        //alert("Not Successful");
+                        $.notify("Not Successful", { className: "warn", autoHideDelay: 1000, position: "top center" });
                     }
                 }
             });
         }
         else {
-            alert("Please Specify Value Properly");
+            //alert("Please Specify Value Properly");
+            $.notify("Please Specify Value Properly", { className: "info", autoHideDelay: 1000, position: "top center" });
+
         }
     };
 
@@ -851,45 +934,16 @@ var RedisClientJS = function () {
             position: '25%',
             invisible: true
         });
-        if ($("#txtregex").val() != "") {
-            if ($("#txtregex").val() != "\\") {
-                var ptn;
-                ptn = $("#txtregex").val();
-                var regptn = btoa(ptn);
-                $("#txtregex").val('');
-                $.ajax({
-                    url: "../RedisManager/FindRegexMatch",
-                    //data: { text :$("#t1").val() },
-                    data: { textregex: regptn },
-                    //$("#t1").val(),
-                    cache: false,
-                    type: "POST",
-                    success: function (reslt) {
-                        if (reslt.hasOwnProperty(1)) {
-                            this.Showkeys(reslt[1]);
-                        }
-                        else if (reslt.hasOwnProperty(2)) {
-                            alert(reslt[2]);
-                        }
-                    }.bind(this)
-                });
-                $('#smallbtn').hide();
-                $(`#outerdisp`).hide();
 
-            }
 
-        }
-        else { alert("Please Specify the regular expresion"); }
     };
 
-    this.Srchfn = function () {
-        $(this.Keysearchfn).click();
-        //$(this.dispnamesrch).click();
-    }
+
     this.dispnamesrch = function () {
 
     }
-    this.Keysearchfn = function () {
+    this.Keysearchfn = function (ev) {
+        var objptn = parseInt($(ev.target).attr("lival"));
         $('.nav-pills  li').removeClass('active');
         $('#dispvalue').split({
             orientation: 'vertical',
@@ -897,14 +951,14 @@ var RedisClientJS = function () {
             invisible: true
         });
         var ptn;
-        var objptn = $("#ptns").val();
+        //var objptn = $("#ptns").val();
         if ((objptn == 1) || (objptn == 2) || (objptn == 3)) {
             if (objptn == 1)
-                ptn = $("#t1").val() + "*";
+                ptn = $("#txtsrch").val() + "*";
             if (objptn == 2)
-                ptn = "*" + $("#t1").val();
+                ptn = "*" + $("#txtsrch").val();
             if (objptn == 3)
-                ptn = "*" + $("#t1").val() + "*";
+                ptn = "*" + $("#txtsrch").val() + "*";
             $.ajax({
                 url: "../RedisManager/FindMatch",
                 data: { text: ptn },
@@ -917,7 +971,7 @@ var RedisClientJS = function () {
             $('#btnkeys a[href="#dispvalue"]').tab('show');
             var data = [];
             var rfid = [];
-            var ptn = $("#t1").val();
+            var ptn = $("#txtsrch").val();
             var p = new RegExp(ptn);
             $.each(dgrpnames, function (i, k) {
                 $.each(k, function (j) {
@@ -937,9 +991,42 @@ var RedisClientJS = function () {
             $(`#subkeydiv`).empty().append(h.join(""));
 
         }
+        else if (objptn == 5) {
+            if ($("#txtsrch").val() != "") {
+                if ($("#txtsrch").val() != "\\") {
+                    var pt;
+                    pt = $("#txtsrch").val();
+                    var regptn = btoa(pt);
+                    $("#txtsrch").val('');
+                    $.ajax({
+                        url: "../RedisManager/FindRegexMatch",
+                        //data: { text :$("#t1").val() },
+                        data: { textregex: regptn },
+                        //$("#t1").val(),
+                        cache: false,
+                        type: "POST",
+                        success: function (reslt) {
+                            if (reslt.hasOwnProperty(1)) {
+                                this.Showkeys(reslt[1]);
+                            }
+                            else if (reslt.hasOwnProperty(2)) {
+                                //alert(reslt[2]);
+                                $.notify(reslt[2], { className: "warn", autoHideDelay: 1000, position: "top center" });
+                            }
+                        }.bind(this)
+                    });
 
+                }
+
+            }
+            else {
+                //alert("Please Specify the regular expresion");
+                $.notify("Please Specify the regular expresion", { className: "info", autoHideDelay: 1000, position: "top center" });
+            }
+        }
 
         $('#smallbtn').hide();
+        $("#txtsrch").val('');
         $(`#outerdisp`).hide();
     }.bind(this);
 
@@ -954,7 +1041,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("Value Inserted to List");
+                    //alert("Value Inserted to List");
+                    $.notify("Value Inserted to List", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#txtlistval").val('');
                     this.Allkeysfn();
                 }.bind(this)
@@ -972,7 +1060,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("Value Inserted to List");
+                    //alert("Value Inserted to List");
+                    $.notify("Value Inserted to List", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#txtlistval").val('');
                     this.Allkeysfn();
                 }.bind(this)
@@ -998,7 +1087,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("Value Inserted to Hash");
+                    //alert("Value Inserted to Hash");
+                    $.notify("Value Inserted to Hash", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#txthashval").val('');
                     $("#txthashfield").val('');
                     this.Allkeysfn();
@@ -1025,7 +1115,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("Value inserted to set");
+                    //alert("Value inserted to set");
+                    $.notify("Value inserted to set", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#txtsetval").val('');
                     this.Allkeysfn();
                 }.bind(this)
@@ -1046,7 +1137,8 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
-                    alert("Value inserted to set");
+                    //alert("Value inserted to set");
+                    $.notify("Value inserted to set", { className: "success", autoHideDelay: 1000, position: "top center" });
                     $("#txtsortedsetscr").val('');
                     $("#txtsortedsetval").val('');
                     this.Allkeysfn();
@@ -1070,9 +1162,6 @@ var RedisClientJS = function () {
             position: '25%',
             invisible: true
         });
-
-
-
         $("#dispval").hide();
         $("#savediv").hide();
         $("#smallbtn").hide();
@@ -1091,7 +1180,8 @@ var RedisClientJS = function () {
         $("#eb_common_loader").EbLoader("show");
         $('#btnkeys a[href="#dispvalue"]').tab('show');
         this.currentGrpLink = null;
-        $('#subkeydiv').empty()
+        $('#subkeydiv').empty();
+        var fl = 0;
         let html = [];
         list1 = list1.sort();
         let arr2 = [];
@@ -1113,7 +1203,7 @@ var RedisClientJS = function () {
             });
             if (flg === 1) {
                 html.push(`<li class="sub_link list-group-item  " refid="${refid[0]}" >${arr1[0]}</li>`);
-
+                fl = 1;
             }
             else {
                 arr2.push(list1[i]);
@@ -1125,11 +1215,15 @@ var RedisClientJS = function () {
         $.each(arr2, function (i) {
 
             html.push(`<li class="sub_link list-group-item  " refid="${arr2[i]}" >${arr2[i]} </li>`);
+            fl = 1;
         });
 
         //html += `</table>`;
         //$("#subkeydiv").append(html);
         $(`#subkeydiv`).empty().append(html.join(""));
+        if (fl === 0) {
+            $.notify("No Keys Found", { className: "info", autoHideDelay: 1000, position: "top center" });
+        }
         $("#eb_common_loader").EbLoader("hide");
     };
 
@@ -1163,6 +1257,7 @@ var RedisClientJS = function () {
     }.bind(this);
 
     this.Sqlviewfn = function () {
+        $("#popup1").empty();
         var sqltxt = atob(this.objsn.obj.sql);
         $("#popup1").append(sqltxt);
         $("#popup1").dialog({
@@ -1314,6 +1409,7 @@ var RedisClientJS = function () {
             h.push(`<li class="sub_link list-group-item"refid=${diff[i]}>${diff[i]}</li>`);
         }
         $(`#subkeydiv`).empty().append(h.join(""));
+        $('#subkeydiv').show();
         $("#eb_common_loader").EbLoader("hide");
     };
     this.init();

@@ -154,4 +154,13 @@ function show_inp_loader($ctrl, $item) {
         $ctrl.addClass("inp-inner-loader");
         $item.attr('disabled', 'disabled').css('pointer-events', 'none').css('color', '#777');
     }
-};
+}
+
+function ItemCount(array, item) {
+    var count = 0;
+    for (var i = 0; i < array.length; ++i) {
+        if (array[i] === item)
+            count++;
+    }
+    return count;
+}

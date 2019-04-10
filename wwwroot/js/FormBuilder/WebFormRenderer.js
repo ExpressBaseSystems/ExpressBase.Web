@@ -19,6 +19,8 @@ const WebFormRender = function (option) {
     this.userObject = option.userObject;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;//EditModeFormData
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
+    this.DisableDeleteData = option.formData === null ? {} : option.formData.DisableDelete;
+    this.DisableCancelData = option.formData === null ? {} : option.formData.DisableCancel;
     this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
@@ -56,6 +58,7 @@ const WebFormRender = function (option) {
         $.each(flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+        return this.formObject;
     };
 
     this.initDGs = function () {
@@ -136,7 +139,7 @@ const WebFormRender = function (option) {
     };
 
     this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 500)); //delayed check 
+        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
             ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 
@@ -432,6 +435,7 @@ const WebFormRender = function (option) {
     };
 
     this.saveForm = function () {
+        this.BeforeSave();
         if (!this.FRC.AllRequired_valid_Check())
             return;
         if (!this.isAllUniqOK())
@@ -463,11 +467,20 @@ const WebFormRender = function (option) {
 
     };
 
+    this.BeforeSave = function () {
+        $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {
+            if (!r.IsDisabled && r.Script.Lang === 0 && r.Script.Code !== "") {
+                new Function("form", "user", `event`, atob(r.Script.Code)).bind("this-placeholder", this.setFormObject(), this.userObject)();
+            }
+        }.bind(this));        
+    };
+
     this.SwitchToViewMode = function () {
         this.Mode.isView = true;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
         setHeader("View Mode");
+        this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
         $.each(this.flatControls, function (k, ctrl) {
@@ -480,6 +493,7 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isNew = false;
         this.setEditModeCtrls();
+        this.BeforeModeSwitch("Edit Mode");
         setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.flatControls, function (k, ctrl) {
@@ -491,7 +505,51 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.BeforeModeSwitch = function(newMode){
+        if (newMode === "View Mode") {
+            this.flatControls = getFlatCtrlObjs(this.FormObj);
+            $.each(this.flatControls, function (k, ctrl) {
+                if (ctrl.ObjType === "RadioButton" && ctrl.Name === "eb_default") {
+                    let c = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", "eb_default");
+                    if (c !== undefined && c.Value === "T") {
+                        if (this.userObject.Roles.contains("SolutionOwner") || this.userObject.Roles.contains("SolutionAdmin") || this.userObject.Roles.contains("SolutionPM"))
+                            return;
+                        this.$saveBtn.prop("disabled", true);
+                        this.$deleteBtn.prop("disabled", true);
+                        this.$editBtn.prop("disabled", true);
+                        this.$cancelBtn.prop("disabled", true);
+                        //this.$saveBtn.prop("title", "Save Disabled");                        
+                    }
+                    return;                    
+                }
+            }.bind(this));
+            $.each(this.FormObj.DisableDelete.$values, function (k, v) {
+                if (!v.IsDisabled && !v.IsWarningOnly) {
+                    if (this.DisableDeleteData[v.Name]) {
+                        this.$deleteBtn.prop("disabled", true);
+                        return;
+                    }
+                }
+            }.bind(this));
+            $.each(this.FormObj.DisableCancel.$values, function (k, v) {
+                if (!v.IsDisabled && !v.IsWarningOnly) {
+                    if (this.DisableCancelData[v.Name]) {
+                        this.$cancelBtn.prop("disabled", true);
+                        return;
+                    }
+                }
+            }.bind(this));
+        }
+        else {
+            this.$saveBtn.prop("disabled", false);
+            this.$deleteBtn.prop("disabled", false);
+            this.$editBtn.prop("disabled", false);
+            this.$cancelBtn.prop("disabled", false);
+        }
+    };
+
     this.deleteForm = function () {
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         EbDialog("show",
             {
                 Message: "Are you sure to delete this data entry?",
@@ -513,7 +571,7 @@ const WebFormRender = function (option) {
                         $.ajax({
                             type: "POST",
                             url: "../WebForm/DeleteWebformData",
-                            data: { RefId: this.formRefId, RowId: this.rowId },
+                            data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                                 this.hideLoader();
@@ -538,6 +596,7 @@ const WebFormRender = function (option) {
     };
 
     this.cancelForm = function () {
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         EbDialog("show",
             {
                 Message: "Are you sure to cancel this data entry?",
@@ -559,7 +618,7 @@ const WebFormRender = function (option) {
                         $.ajax({
                             type: "POST",
                             url: "../WebForm/CancelWebformData",
-                            data: { RefId: this.formRefId, RowId: this.rowId },
+                            data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                                 this.hideLoader();

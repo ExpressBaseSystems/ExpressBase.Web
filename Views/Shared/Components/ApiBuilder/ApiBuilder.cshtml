@@ -60,6 +60,11 @@
 
                         </div>
                     </div>
+                    <div class='apiPrcItem' eb-type='Request' id="api_request">
+                        <div tabindex='1' class='drpbox' onclick='$(this).focus();'>
+                            <div class='CompLabel'>Request</div>
+                        </div>
+                    </div>
                     <div class="apiPrcItem" id="end_item">
                         <div class="stop_circ" id="stop">
 
@@ -83,13 +88,25 @@
             <div class="JsonReq">
                 <div class="JsonReq_inner">
                     <div class="_h">
-                        Request
-                        <button class="jsw_btn runReq_btn">Run <i class="fa fa-play pull-right"></i></button>
+                        Request<span class="reqLabel"></span>
+                        @*<button class="jsw_btn runReq_btn">Run <i class="fa fa-play pull-right"></i></button>*@
                         @*<buton class="jsw_btn" id="sample_codes"><i class="fa fa-code" aria-hidden="true"></i></buton>*@
-                        <button class="jsw_btn reqEditWbtn" title="write json request"><i class="fa fa-pencil pull-right"></i></button>
                     </div>
-                    <div class="_b" id="JsonReq_CMW"></div>
-                    <div class="_b" id="JsonEditWindow" contenteditable="true"></div>
+                    <div class="_b" id="JsonReq_CMW">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Value</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="JsonResp">
@@ -131,36 +148,32 @@
     <div class="modal fade api_scodeMd" id="api_scodeMd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
             <div class="modal-content" style="overflow: hidden;">
-                <div class="modal-body" style="max-height: 409px; overflow-y: auto;">
-                    <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#js">Js</a></li>
-                        <li><a data-toggle="tab" href="#ajax">Jquery</a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div id="js" class="tab-pane fade in active">
-                            <div class="code_wrpr">
-                                <div class="cod_line"><span class="reserved">var</span> xhr = <span class="reserved">new</span> XMLHttpRequest();</div>
-                                <div class="cod_line"><span class="reserved">var</span> url =<span class="higlite url">'https://'</span>;</div>
-                                <div class="cod_line">xhr.open(<span class="higlite method">'POST'</span>,url, <span class="reserved">true</span>);</div>
-                                <div class="code_comment">// your api key in header</div>
-                                <div class="cod_line">xhr.setRequestHeader(<span class="higlite">'key'</span>,<span class="higlite">'your api key'</span>);</div>
-                                <div class="cod_line">xhr.onload = <span class="reserved">function ()</span> {</div>
-                                <div class="code_comment">// do something to response</div>
-                                <div class="cod_line">};</div>
-                                <div class="cod_line">xhr.send(<span class="higlite data">'user=person&pwd=password&organization=place&requiredkey=key'</span>);</div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Custom Parameter</h4>
+                </div>
+                <div class="modal-body" style="padding: 15px 0;">
+                    <div class="CpMdWrpr">
+                        <div class="form-inline">
+                            <div class="form-group col-md-6">
+                                <label style="width:100%">Parameter</label>
+                                <input type="text" class="form-control" name="param_name" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label style="width:100%">Type</label>
+                                <select class="form-control" name="param_type" id="param_type"></select>
                             </div>
                         </div>
-                        <div id="ajax" class="tab-pane fade">
-                            <div class="cod_line"> $.ajax({</div>
-                            <div class="cod_line tab">url: <span class="higlite url">'https://'</span>,</div>
-                            <div class="cod_line tab">type: <span class="higlite method">'POST'</span>,</div>
-                            <div class="cod_line tab">data: <span class="higlite data"></span>,</div>
-                            <div class="cod_line tab">success: <span class="reserved">function </span>(result){</div>
-                            <div class="code_comment tab">// do something to response</div>
-                            <div class="cod_line tab">}</div>
-                            <div class="cod_line">});,</div>
+                        <div class="Custom_Param_val">
+                            <Label>Value</Label>
+                            <div class="CpVcdMIrror" id="CpVcdMIrror" contenteditable="true">
+
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="adCpToObj" class="btn btn-default">Save</button>
                 </div>
             </div>
         </div>
@@ -189,8 +202,14 @@
         $("#pin_jswindow").hide();
     });
     $(`#unpin_jswindow`).click(function (ev) {
-        $("#Json_reqOrRespWrp").animate({ height: 300 }, 300).css("top", "unset");
+        $("#Json_reqOrRespWrp").animate({ height: 250 }, 300).css("top", "unset");
         $(`#unpin_jswindow`).hide();
         $("#pin_jswindow").show();
     });
+
+    $("#param_type")
+
+    for (key in EbEnums.EbDbTypes) {
+        $("#param_type").append(`<option value='${EbEnums.EbDbTypes[key]}'>${key}</option>`);
+    }
 </script>

@@ -280,7 +280,7 @@ const EbSelect = function (ctrl, options) {
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
         o.columnSearch = this.filterArray;
-        o.headerDisplay = (this.Vobj.displayMembers.length > 1) ? true : false;
+        o.headerDisplay = (this.ComboObj.DisplayMembers.$values.length > 1) ? true : false;
         o.dom = "rt";
 
         o.keys = true;

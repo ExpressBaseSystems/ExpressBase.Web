@@ -32,7 +32,7 @@ var EbBasicDataTable = function (Option) {
     this.FlagPresentId = false;
     this.columnSearch = Option.columnSearch || [];
     this.data = Option.data || null;
-    this.headerDisplay = Option.headerDisplay;
+    this.headerDisplay = (typeof Option.headerDisplay !== "undefined") ? Option.headerDisplay : true;
     this.getFilterValues = Option.getFilterValuesFn || function () { };
     this.source = Option.source || "";
     this.IsQuery = Option.IsQuery || false;
@@ -147,9 +147,9 @@ var EbBasicDataTable = function (Option) {
 
         this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
 
-        //this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
+        this.Api.off('key-focus').on('key-focus', Option.arrowFocusCallback);
 
-        //this.Api.off('key-blur').on('key-blur', Option.arrowBlurCallback);
+        this.Api.off('key-blur').on('key-blur', Option.arrowBlurCallback);
 
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
@@ -182,8 +182,7 @@ var EbBasicDataTable = function (Option) {
 
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
-        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
-        //this.Api.off('key').on('key', this.DTKeyPressCallback.bind(this));
+        $('#' + this.tableId + ' tbody tr').off('click').on('click', this.rowclick.bind(this));
 
     };
 
@@ -507,8 +506,9 @@ var EbBasicDataTable = function (Option) {
         if (Option.fninitComplete4SetVal)
             Option.fninitComplete4SetVal();
         //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
-        if (!this.headerDisplay)
-            $(".Eb-ctrlContainer .dataTables_scrollHead").hide();
+        if (!this.headerDisplay) {
+            $(".Eb-ctrlContainer .dataTables_scrollHead").addClass("headhide");
+        }
         if (this.data.length > 7 && this.Aggregateflag) {
             $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
             $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "140px", "important");

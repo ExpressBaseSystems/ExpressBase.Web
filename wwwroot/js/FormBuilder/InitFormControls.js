@@ -101,6 +101,12 @@
         return ids;
     };
 
+    this.UserControl = function (ctrl, ctrlOpts) {
+        let $ctrl_modal = $("#" + ctrl.EbSid_CtxId).remove();
+        $("body").prepend($ctrl_modal);
+    };
+
+
     this.Date = function (ctrl, ctrlOpts) {
         let formObject = ctrlOpts.formObject;
         let userObject = ctrlOpts.userObject;

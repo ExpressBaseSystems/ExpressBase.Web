@@ -16,7 +16,7 @@
     this.FlagSave = false;
     this.saveOrCommitSuccess = function (refif) { };//edit by amal
     this.PreviewObject = function () { };//edits by amal
-    this.RedColor = "#e83c46";
+    this.RedColor = "#aa0000";
     this.GreenColor = "#00AD6E";
 
     this.init = function () {
@@ -62,29 +62,33 @@
         $('#close_popup').trigger('click');
     };
 
+    this.showMessage = function (Delay = 4000) {
+        EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: true, Delay: Delay });
+    };
+
     this.UpdateTab = function (data) {
         if (data.message !== null && data.message !== "") {
             if (data.message.indexOf("Specify a diffrent name.") > 0) {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = data.message;
-                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+                this.showMessage();
             }
             //var target = $("#versionNav li.active a").attr("href");
             else if (data.message === "RestrictedStatementinQuerry") {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = "Querry Contains Restricted Keywords !!";
-                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+                this.showMessage();
             }
             else if (data.message === "nameIsNotUnique") {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
-                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+                this.showMessage();
             } 
             else
             {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = data.message;
-                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+                this.showMessage();
             }
         }
         else {

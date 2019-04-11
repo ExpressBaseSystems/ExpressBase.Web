@@ -44,7 +44,7 @@
             </div>*@
         <div class="toolbox_innerB borderstyle" id="group_div">
             <div data-toggle="collapse" data-target="#defaultgrp" class="toolBHead" id="dfltgrp">Group<i class="fa fa-caret-down"></i></div>
-            <div id="defaultgrp" class="collapse ">
+            <div id="defaultgrp" class="collapse in">
                 @*in defaultgrp*@
                 <ul id="keyslist" class="nav nav-pills nav-stacked scrol_0 ">
                     @{
@@ -83,9 +83,8 @@
             <nav>
                 <ul class="nav hdrtabs nav-tabs">
                     <li id="btninfo" class="active"><a class="active " role="tab" href="#infos" data-toggle="tab">Info</a></li>
+                    <li id="btnkeys"><a role="tab" href="#dispvalue" data-toggle="tab">All keys</a></li>
                     <li id="btnkeydiff"><a class="active " role="tab" href="#dispvalue" data-toggle="tab">Orphaned  Keys</a></li>
-
-                    <li id="btnkeys"><a role="tab" href="#dispvalue" data-toggle="tab">Display keys</a></li>
                     <li id="tabterminal"><a class="active" role="tab" href="#termnl" data-toggle="tab">Terminal</a></li>
                     <li id="tablog"><a role="tab" href="#tbllog" data-toggle="tab">Activity log</a></li>
                     @*<li style=" float: right;"> <button id="btnregex" class="glyphicon  glyphicon-search"></button>  </li>*@
@@ -104,12 +103,13 @@
                             <input type="text" id="txtsrch" style="height:100%;padding: 2px 12px;" class="form-control" aria-label="...">
                             <div class="input-group-btn">
                                 <button type="button" id="Btnsrch" style="height: 100%;font-size: 13px;padding: 2px 12px;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></button>
-                                <ul id="Bsrch" class="dropdown-menu dropdown-menu-right">
-                                    <li id="refbeg" lival="1">Refid At Beginning</li>
-                                    <li id="refend" lival="2"> Refid At End</li>
-                                    <li id="refmid" lival="3"> Refid At Middle</li>
-                                    <li id="disnam" lival="4">Display name</li>
-                                    <li id="regxscrh" lival="5">Search Based on RegEx</li>
+                                <ul id="Bsrch" class=" Bsrch dropdown-menu dropdown-menu-right">
+                                    <li id="refbeg" style="padding-left: 10px;padding-bottom: 5px;padding-top: 5px;padding-right: 10px;" lival="1">Refid At Beginning</li>
+                                    <li id="refend" style="padding-left: 10px;padding-bottom: 5px;padding-top: 5px;padding-right: 10px;" lival="2"> Refid At End</li>
+                                    <li id="refmid" style="padding-left: 10px;padding-bottom: 5px;padding-top: 5px;padding-right: 10px;" lival="3"> Refid At Middle</li>
+                                    <li id="disnam" style="padding-left: 10px;padding-bottom: 5px;padding-top: 5px;padding-right: 10px;" lival="4">Display name</li>
+                                    <li id="regxscrh" style="padding-left: 10px;padding-bottom: 5px;padding-top: 5px;padding-right: 10px;" lival="5">Search Based on RegEx</li>
+                                    @*<li id="redissrvr" style="padding-left: 10px;padding-bottom: 5px;padding-top: 5px;padding-right: 10px;" lival="6">Redis server search</li>*@
                                 </ul>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
                         </ul>
                     </li>
                     <li class="dropdown pull-right mr-l-r">
-                        <button class="dropdown-toggle btn-RcTab" data-toggle="dropdown" href="#">Manage Groups<b class="caret"></b></button>
+                        <button class="dropdown-toggle btn-RcTab" data-toggle="dropdown" href="#">Groups<b class="caret"></b></button>
                         <ul class="dropdown-menu">
                             <li id="tabgrpinsert"><a role="tab" href="#" data-toggle="modal" data-target="#modalgrp">Create Group</a></li>
                             <li><a href="#" role="tab" data-toggle="modal" data-target="#modalgrpedit">Edit Group</a></li>

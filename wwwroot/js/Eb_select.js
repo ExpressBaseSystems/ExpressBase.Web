@@ -193,7 +193,7 @@ const EbSelect = function (ctrl, options) {
         });
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
-        this.columnvals = {};
+        $.each(this.ColNames, function (i, name) { this.columnvals[name] = []; }.bind(this));
 
     };
 
@@ -370,8 +370,8 @@ const EbSelect = function (ctrl, options) {
         let row = datatable.row(cell.index().row);
         let $tr = $(row.nodes());
         let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
-        let vmValue = this.datatable.Api.row($(this.DTSelector + " tr.selected")).data()[idx];
-        this.$curEventTarget = $(this.DTSelector + " tr.selected");
+        let vmValue = this.datatable.Api.row($tr.index()).data()[idx];
+        this.$curEventTarget = $tr;
         this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
     };

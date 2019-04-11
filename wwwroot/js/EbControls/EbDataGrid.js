@@ -146,8 +146,15 @@
         SingleRow.IsUpdate = (rowId !== 0);
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
-            if (!obj.DoNotPersist)
-                SingleRow.Columns.push(getSingleColumn(obj));
+            if (!obj.DoNotPersist) {
+                if (obj.ObjType !== "UserControl")
+                    SingleRow.Columns.push(getSingleColumn(obj));
+                else {
+                    $.each(obj.Columns.$values, function (i, obj) {
+                        SingleRow.Columns.push(getSingleColumn(obj));
+                    }.bind(this));
+                }
+            }
         }.bind(this));
         return SingleRow;
     };
@@ -178,6 +185,17 @@
         return SingleTable;
     };
 
+    this.initInpCtrl = function (inpCtrl, col) {
+        inpCtrl.Name = col.Name;
+        inpCtrl.EbDbType = col.EbDbType;
+        inpCtrl.EbSid_CtxId = ctrlEbSid;
+        inpCtrl.__rowid = rowid;
+        inpCtrl.__Col = col;
+        //inpCtrl.EbSid = ctrlEbSid;
+        inpCtrl.ObjType = inpCtrlType.substr(2);
+
+    };
+
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let anyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>`;
@@ -189,14 +207,7 @@
             editBtn = "";
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
-
-            inpCtrl.Name = col.Name;
-            inpCtrl.EbDbType = col.EbDbType;
-            inpCtrl.EbSid_CtxId = ctrlEbSid;
-            inpCtrl.__rowid = rowid;
-            inpCtrl.__Col = col;
-            //inpCtrl.EbSid = ctrlEbSid;
-            inpCtrl.ObjType = inpCtrlType.substr(2);
+            this.initInpCtrl(inpCtrl, col);
 
             inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);

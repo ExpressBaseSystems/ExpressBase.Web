@@ -185,14 +185,14 @@
         return SingleTable;
     };
 
-    this.initInpCtrl = function (inpCtrl, col) {
+    this.initInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
         inpCtrl.Name = col.Name;
         inpCtrl.EbDbType = col.EbDbType;
         inpCtrl.EbSid_CtxId = ctrlEbSid;
         inpCtrl.__rowid = rowid;
         inpCtrl.__Col = col;
         //inpCtrl.EbSid = ctrlEbSid;
-        inpCtrl.ObjType = inpCtrlType.substr(2);
+        inpCtrl.ObjType = col.InputControlType.substr(2);
 
     };
 
@@ -204,10 +204,10 @@
             if (col.Hidden)
                 return true;
             let inpCtrlType = col.InputControlType;
-            editBtn = "";
+
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
-            this.initInpCtrl(inpCtrl, col);
+            this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
 
             inpCtrl = new ControlOps[col.ObjType](inpCtrl);
             this.rowCtrls[rowid].push(inpCtrl);

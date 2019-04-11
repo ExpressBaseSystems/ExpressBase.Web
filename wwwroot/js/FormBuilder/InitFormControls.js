@@ -115,6 +115,7 @@
             });
         }
         else {
+            let sdp = this.mapDatePattern(userObject.Preference.ShortDatePattern);
 
             if (typeof ctrl === typeof "")
                 ctrl = { name: ctrl, ebDateType: 5 };
@@ -122,7 +123,7 @@
 
             if (ctrl.EbDateType === 5) {
                 settings.timepicker = false;
-                settings.format = "Y/m/d";
+                settings.format = sdp;
             }
             else if (ctrl.EbDateType === 17) {
                 settings.datepicker = false;
@@ -131,10 +132,9 @@
             else {
                 settings.timepicker = true;
                 settings.datepicker = true;
-                settings.format = "Y/m/d H:i";
+                settings.format = sdp + " H:i";
             }
-
-
+            
 
             //if (ctrl.DateFormat === 0) {
             //    settings.formatDate = "d/m/Y";
@@ -154,8 +154,14 @@
             //settings.maxDate = ctrl.Max;
 
             //$input.mask("0000-00-00");
-            $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
-            //$input.datetimepicker(settings);
+
+            if (ctrlOpts.source === "webform") {
+                $input.val(userObject.Preference.ShortDate);
+                $input.datetimepicker(settings);
+            }                  
+            else
+                $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
+                      
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
             if (ctrl.IsNullable) {
@@ -163,6 +169,10 @@
                 $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             }
         }
+    };
+
+    this.mapDatePattern = function(CSPtn){
+        return CSPtn.replace("yyyy", "Y").replace("MM", "m").replace("dd", "d");
     };
 
     //created by amal

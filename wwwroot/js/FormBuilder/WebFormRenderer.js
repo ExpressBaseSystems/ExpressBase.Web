@@ -93,6 +93,10 @@ const WebFormRender = function (option) {
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
                 opt.FormDataExtdObj = this.FormDataExtdObj;
+            else if (Obj.ObjType === "Date") {
+                opt.userObject = this.userObject;
+                opt.source = "webform";
+            }
 
             this.initControls.init(Obj, opt);
 
@@ -389,27 +393,33 @@ const WebFormRender = function (option) {
         let respObj = JSON.parse(_respObj);
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
+                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
+            else if (respObj.RowAffected === -2) {
+                EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+            }
             else {
-                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
             }
         }
         else {
             if (respObj.RowId > 0) {// if insertion success -NewToedit
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
+                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
+            else if (respObj.RowId === -2) {
+                EbMessage("show", { Message: "Access denied to save this data entry!", AutoHide: true, Background: '#aa0000' });
+            }
             else {
-                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
             }
         }
     };
@@ -585,6 +595,9 @@ const WebFormRender = function (option) {
                                 else if (result === -1) {
                                     EbMessage("show", { Message: 'Delete operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
                                 }
+                                else if (result === -2) {
+                                    EbMessage("show", { Message: 'Access denied to delete this entry.', AutoHide: true, Background: '#aa0000' });
+                                }
                                 else {
                                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                                 }
@@ -631,6 +644,9 @@ const WebFormRender = function (option) {
                                 }
                                 else if (result === -1) {
                                     EbMessage("show", { Message: 'Cancel operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                }
+                                else if (result === -2) {
+                                    EbMessage("show", { Message: 'Access denied to cancel this entry.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else {
                                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });

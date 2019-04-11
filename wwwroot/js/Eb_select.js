@@ -161,7 +161,7 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues) {
         this.clearValues();
-        this.setvaluesColl = StrValues.split(",");
+        this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.datatable) {
             this.datatable.columnSearch = [];

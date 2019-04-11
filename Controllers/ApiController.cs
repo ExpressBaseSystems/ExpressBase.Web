@@ -131,6 +131,20 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet("/api/login")]
+        [HttpPost("/api/login")]
+        public void ApiLogin(string username,string password)
+        {
+
+        }
+
+        [HttpGet("/api/logout")]
+        [HttpPost("/api/logout")]
+        public void ApiLogOut()
+        {
+
+        }
+
         private Dictionary<string, object> F2D(FormCollection collection)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();

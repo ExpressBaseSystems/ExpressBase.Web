@@ -4,7 +4,8 @@
             Background: "#31d031",
             Message: "nothing to display",
             FontColor: "#fff",
-            AutoHide:true
+            AutoHide: true,
+            Delay:4000
         }, options);       
 
         function onHide() {
@@ -30,7 +31,7 @@
         function showMsg() {
             div();
             $(`#eb_messageBox_container`).fadeIn();
-            settings.AutoHide ? setTimeout(function () { hideMsg(); }, 4000) : null;
+            settings.AutoHide ? setTimeout(function () { hideMsg(); }, settings.Delay) : null;
             if (options.onShow)
                 onShow();
         };

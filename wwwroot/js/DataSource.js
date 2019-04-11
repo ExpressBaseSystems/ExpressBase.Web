@@ -169,7 +169,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.getInputParams = function () {
         this.Sql = window["editor" + tabNum].getValue().trim();
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: "../CE/GetSqlParams",
             data: { "sql": this.Sql, "obj_type": this.ObjectType },
             beforeSend: function () { }

@@ -244,7 +244,7 @@ namespace ExpressBase.Web.Controllers
             return _table;
         }
 
-        [HttpGet]
+        [HttpPost]
         public string GetSqlParams(string sql, int obj_type)
         {
             return JsonConvert.SerializeObject(SqlHelper.GetSqlParams(sql, obj_type));

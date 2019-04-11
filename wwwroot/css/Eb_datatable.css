@@ -521,3 +521,9 @@ table.dataTable tr.group td {
 .containerrow .form-control[disabled] {
     background-color: #ffffff !important;
 }
+
+.headhide {
+    height :0;
+    padding-bottom :0px !important;
+    margin-bottom :0px !important;
+}

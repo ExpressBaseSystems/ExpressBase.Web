@@ -385,7 +385,7 @@ function EbApiBuild(config) {
             }
             else {
                 this.EbObject.Request.Custom.$values.push(o);
-                var formated_val = (o.Type === "13") ? JSON.stringify(o.Value) : o.Value;
+                var formated_val = (o.Type === "13") ? o.Value : o.Value;
                 $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).append(`<tr p-name='${o.Name}'>
                         <td>${o.Name}</td>
                         <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o.Type)}</td>

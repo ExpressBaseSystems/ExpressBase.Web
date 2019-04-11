@@ -143,7 +143,7 @@ const WebFormRender = function (option) {
     };
 
     this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 500)); //delayed check 
+        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
             ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 
@@ -478,6 +478,8 @@ const WebFormRender = function (option) {
     };
 
     this.BeforeSave = function () {
+        if (!this.FormObj.BeforeSaveRoutines)
+            return;
         $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {
             if (!r.IsDisabled && r.Script.Lang === 0 && r.Script.Code !== "") {
                 new Function("form", "user", `event`, atob(r.Script.Code)).bind("this-placeholder", this.setFormObject(), this.userObject)();

@@ -36,7 +36,7 @@ namespace ExpressBase.Web.Controllers
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
                 if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
-                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo));
+                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), -1);////////////////////////current location
                     if (wfd.MultipleTables.Count == 0)
                     {
                         ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
@@ -141,12 +141,16 @@ namespace ExpressBase.Web.Controllers
             return MLPair;
         }
 
-        public WebformData getRowdata(string refid, int rowid)
+        public WebformData getRowdata(string refid, int rowid, int currentloc)
         {
             try
             {
-                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
-                return DataSet.FormData;
+                if(this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
+                {
+                    GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+                    return DataSet.FormData;
+                }
+                throw new FormException("Access Denied for rowid " + rowid + " , current location " + currentloc);
             }
             catch (Exception ex)
             {

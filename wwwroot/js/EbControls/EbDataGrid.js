@@ -445,13 +445,24 @@
         if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
             this.addRow();
         $tr.attr("is-checked", "true").attr("is-editing", "false");
-        this.updateAggCols($td);
+        this.updateAggCols($addRow.attr("rowid"));
         $addRow.focus();
         this.setCurRow($addRow.attr("rowid"));
 
     }.bind(this);
 
-    this.updateAggCols = function ($td) {
+    this.updateAggCols = function (rowId) {
+        $.each(this.rowCtrls[rowId], function (i, inpctrl) {
+            if (inpctrl.IsAggragate) {
+                let colname = inpctrl.Name;
+                $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+            }
+        }.bind(this));
+
+    };
+
+    this.updateAggCol = function (e) {
+        let $td = $(e.target).closest("td");
         let colname = $td.attr("colname");
         $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
     };
@@ -511,7 +522,7 @@
             this.ctrl[col.Name + "_sum"] = 0;
         }.bind(this));
 
-        $(`#${this.TableId}`).on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCols.bind(this));
+        $(`#${this.TableId}`).on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCol.bind(this));
     };
 
     this.AddRowWithData = function (_rowdata) {
@@ -524,7 +535,7 @@
 
         // call checkRow_click() pass event.target directly
         setTimeout(function () {
-            let td = $(`#${this.TableId} tbody tr[rowid=${addedRow[0].__rowid}] .ctrlstd`)[0];
+            let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRow[0].__rowid}] td:last`)[0];
             this.checkRow_click({ target: td }, false);
         }.bind(this), 1);
     };

@@ -358,7 +358,7 @@ function getValsFromForm(formObj) {
 }
 
 function isNaNOrEmpty(val) {
-    return (typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "")
+    return (typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "");
 };
 
 function getFlatObjOfType(ContObj, type) {

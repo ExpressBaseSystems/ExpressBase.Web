@@ -518,7 +518,7 @@
         let addedRow = this.addRow({ isAddBeforeLast: true });
         $.each(addedRow, function (i, col) {
             let data = _rowdata[col.Name];
-            if (data)
+            if (data !== null)
                 col.setValue(data);
         }.bind(this));
 

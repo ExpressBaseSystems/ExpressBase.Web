@@ -144,7 +144,7 @@ const WebFormRender = function (option) {
 
     this.bindUniqueCheck = function (control) {
         $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
-            ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+        ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 
     //this.unbindUniqueCheck = function (control) {
@@ -424,7 +424,7 @@ const WebFormRender = function (option) {
         }
     };
 
-    this.isAllUniqOK = function() {
+    this.isAllUniqOK = function () {
         let unique_flag = true;
         let $notOk1stCtrl = null;
         $.each(this.flatControls, function (i, control) {
@@ -446,34 +446,37 @@ const WebFormRender = function (option) {
 
     this.saveForm = function () {
         this.BeforeSave();
-        if (!this.FRC.AllRequired_valid_Check())
-            return;
-        if (!this.isAllUniqOK())
-            return;
-        //if (!this.FRC.AllUnique_Check())
-        //    return;
-        this.showLoader();
-        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
-        $.ajax({
-            type: "POST",
-            //url: this.ssurl + "/bots",
-            url: "../WebForm/InsertWebformData",
-            data: {
-                TableName: this.FormObj.TableName,
-                ValObj: this.getFormValuesObjWithTypeColl(),
-                RefId: this.formRefId,
-                RowId: this.rowId,
-                CurrentLoc: currentLoc
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                this.hideLoader();
-                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
-            }.bind(this),
-            //beforeSend: function (xhr) {
-            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            //}.bind(this),
-            success: this.ajaxsuccess.bind(this)
-        });
+
+        setTimeout(function () {// temp
+            if (!this.FRC.AllRequired_valid_Check())
+                return;
+            if (!this.isAllUniqOK())
+                return;
+            //if (!this.FRC.AllUnique_Check())
+            //    return;
+            this.showLoader();
+            let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+            $.ajax({
+                type: "POST",
+                //url: this.ssurl + "/bots",
+                url: "../WebForm/InsertWebformData",
+                data: {
+                    TableName: this.FormObj.TableName,
+                    ValObj: this.getFormValuesObjWithTypeColl(),
+                    RefId: this.formRefId,
+                    RowId: this.rowId,
+                    CurrentLoc: currentLoc
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    this.hideLoader();
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
+                //beforeSend: function (xhr) {
+                //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+                //}.bind(this),
+                success: this.ajaxsuccess.bind(this)
+            });
+        }.bind(this), 2);
 
     };
 
@@ -484,7 +487,7 @@ const WebFormRender = function (option) {
             if (!r.IsDisabled && r.Script.Lang === 0 && r.Script.Code !== "") {
                 new Function("form", "user", `event`, atob(r.Script.Code)).bind("this-placeholder", this.setFormObject(), this.userObject)();
             }
-        }.bind(this));        
+        }.bind(this));
     };
 
     this.SwitchToViewMode = function () {
@@ -517,7 +520,7 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.BeforeModeSwitch = function(newMode){
+    this.BeforeModeSwitch = function (newMode) {
         if (newMode === "View Mode") {
             this.flatControls = getFlatCtrlObjs(this.FormObj);
             $.each(this.flatControls, function (k, ctrl) {
@@ -532,7 +535,7 @@ const WebFormRender = function (option) {
                         this.$cancelBtn.prop("disabled", true);
                         //this.$saveBtn.prop("title", "Save Disabled");                        
                     }
-                    return;                    
+                    return;
                 }
             }.bind(this));
             $.each(this.FormObj.DisableDelete.$values, function (k, v) {
@@ -691,7 +694,7 @@ const WebFormRender = function (option) {
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
-        this.$cancelBtn.on("click", this. cancelForm.bind(this));
+        this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();

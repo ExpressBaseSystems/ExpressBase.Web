@@ -187,13 +187,13 @@
         let $ctrl = $(event.target).closest("input[type='checkbox']");
         if ($ctrl.is(":checked")) {
             $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false).next(".input-group-addon").css('pointer-events', 'auto');
-            ctrl.DoNotPersist = false;
+            //ctrl.DoNotPersist = false;
         }
         else {
             $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
-            ctrl.DoNotPersist = true;
+            //ctrl.DoNotPersist = true;
         }
-    }
+    };
 
     this.SimpleSelect = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);

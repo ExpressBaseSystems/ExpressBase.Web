@@ -219,11 +219,14 @@
                 anyColEditable = true;
 
         }.bind(this));
-        tr += `<td class='ctrlstd' mode='${this.mode_s}' style='width:54px;'>
+        tr += `@cogs@
+                </tr>`
+            .replace("@cogs@", !this.ctrl.IsDisable ? `
+                <td class='ctrlstd' mode='${this.mode_s}' style='width:54px;'>
                     @editBtn@
                     <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
-                </td></tr>`
+                </td>` : "")
             .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>" : "")
             .replace("@del-c@", !anyColEditable ? "del-c" : "");
         return tr;
@@ -254,8 +257,8 @@
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr);
-        if (isAddBeforeLast) {
-            $tr.insertBefore($(`#${this.TableId}>tbody tr:last`));
+        if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
+            $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
         }
         else
             $(`#${this.TableId}>tbody`).append($tr);
@@ -439,7 +442,7 @@
         $addRow.show().attr("is-editing", "true");
 
         this.ctrlToSpan_row(rowid);
-        if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true")
+        if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
             this.addRow();
         $tr.attr("is-checked", "true").attr("is-editing", "false");
         this.updateAggCols($td);
@@ -472,8 +475,7 @@
     };
 
     this.delRow_click = function (e) {
-        $td = $(e.target).closest("td");
-        $td.closest("tr").remove();
+        $(e.target).closest("tr").remove();
     }.bind(this);
 
     this.spanToCtrl_row = function ($tr) {
@@ -544,11 +546,13 @@
     };
 
     this.clearDG = function () {
-        $(`#${this.TableId} tbody .ctrlstd .del-row`).each(function (i, e) {
-            $(e).trigger("click");
+        $(`#${this.TableId}>tbody>tr`).each(function (i, e) {
+            //$(e).trigger("click");
+            this.delRow_click({ target: e });
         }.bind(this));
         this.rowCtrls = {};
-        this.addRow();
+        if (!this.ctrl.IsDisable)
+            this.addRow();
     };
 
     this.setCurRow = function (rowId) {

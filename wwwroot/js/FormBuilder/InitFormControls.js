@@ -121,8 +121,7 @@
             });
         }
         else {
-            //let sdp = this.mapDatePattern(userObject.Preference.ShortDatePattern);
-            let sdp = "Y-m-d";
+            let sdp = this.mapDatePattern(userObject.Preference.ShortDatePattern);
 
             if (typeof ctrl === typeof "")
                 ctrl = { name: ctrl, ebDateType: 5 };
@@ -163,7 +162,7 @@
             //$input.mask("0000-00-00");
 
             if (ctrlOpts.source === "webform") {
-                //$input.val(userObject.Preference.ShortDate);
+                $input.val(userObject.Preference.ShortDate);
                 $input.datetimepicker(settings);
             }
             else

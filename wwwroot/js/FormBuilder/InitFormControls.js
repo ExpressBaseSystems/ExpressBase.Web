@@ -8,7 +8,7 @@
 
     this.init = function (control, ctrlOpts) {
         if (this[control.ObjType] !== undefined) {
-            return this[control.ObjType](control, ctrlOpts);             
+            return this[control.ObjType](control, ctrlOpts);
         }
     };
 
@@ -39,7 +39,7 @@
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
-        
+
         imgup.uploadSuccess = function (fileid) {
             if (uploadedFileRefList[ctrl.Name].indexOf(fileid) === -1)
                 uploadedFileRefList[ctrl.Name].push(fileid);
@@ -77,7 +77,7 @@
                                     for (let i = 0; i < refids.length; i++) {
                                         let index = uploadedFileRefList[ctrl.Name].indexOf(refids[i]);
                                         if (index !== -1) {
-                                            uploadedFileRefList[ctrl.Name].splice(index, 1);                                            
+                                            uploadedFileRefList[ctrl.Name].splice(index, 1);
                                         }
                                     }
                                     if (initLen > uploadedFileRefList[ctrl.Name].length) {
@@ -141,7 +141,7 @@
                 settings.datepicker = true;
                 settings.format = sdp + " H:i";
             }
-            
+
 
             //if (ctrl.DateFormat === 0) {
             //    settings.formatDate = "d/m/Y";
@@ -165,10 +165,10 @@
             if (ctrlOpts.source === "webform") {
                 //$input.val(userObject.Preference.ShortDate);
                 $input.datetimepicker(settings);
-            }                  
+            }
             else
                 $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
-                      
+
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
             if (ctrl.IsNullable) {
@@ -178,7 +178,7 @@
         }
     };
 
-    this.mapDatePattern = function(CSPtn){
+    this.mapDatePattern = function (CSPtn) {
         return CSPtn.replace("yyyy", "Y").replace("MM", "m").replace("dd", "d");
     };
 
@@ -383,6 +383,9 @@
     this.Numeric = function (ctrl) {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
+
+        $input.val("0.00");//temp hoc
+
         $input.focusout(function () {
             var val = $(this).val().toString();
             var l = 'SZZZZZZZZZZZ'.length - 1;
@@ -411,11 +414,33 @@
         });
 
         $input.focus(function () { $(this).select(); });
+
+        {// temp for hairo craft
+            $input.blur(function () {
+                var val = $input.val();
+                let decLen = 2;
+
+                if (val.trim() === "") {
+                    $input.val("0.00");
+                }
+                else if (!val.trim().includes(".")) {
+                    let newVal = val + ".00";
+                    $input.val(newVal);
+                }
+                else {
+                    let p1 = val.split(".")[0];
+                    let p2 = val.split(".")[1];
+                    let newVal = p1 + "." + p2 + "0".repeat(decLen - p2.length);
+                    $input.val(newVal);
+                }
+            });
+        }
         $input.keypress(function (e) {
 
             var val = $input.val();
             var cs = document.getElementById(id).selectionStart;
             var ce = document.getElementById(id).selectionEnd;
+
             if (e.which === 46 && val.includes('.')) {
                 setTimeout(function () {
                     $input.val(val);

@@ -349,7 +349,7 @@
                 let colObj = {};
                 colObj.Name = obj.Name;
                 _type = obj.EbDbType;
-                colObj.Value = (_type === 7) ? parseInt(obj.getValue()) : obj.getValue();
+                colObj.Value = (_type === 7) ? parseFloat(obj.getValue()) : obj.getValue();
                 colObj.Type = _type;
                 colObj.AutoIncrement = obj.AutoIncrement || false;
                 rowObjs[0].push(colObj);
@@ -475,9 +475,9 @@
             //let Iter_Inp = $(span).closest("td").find("[ui-inp]")[0];
 
             if (typing_inp === Iter_Inp)
-                val = parseInt(typing_inp.value);
+                val = parseFloat(typing_inp.value);
             else
-                val = parseInt($(Iter_Inp).val());
+                val = parseFloat($(Iter_Inp).val());
 
             sum += val || 0;
         }.bind(this));

@@ -430,7 +430,8 @@
                 else {
                     let p1 = val.split(".")[0];
                     let p2 = val.split(".")[1];
-                    let newVal = p1 + "." + p2 + "0".repeat(decLen - p2.length);
+                    zerolen = decLen - p2.length;
+                    let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
                     $input.val(newVal);
                 }
             });
@@ -446,6 +447,7 @@
                     $input.val(val);
                 }, 1);
             }
+
             //// containes '.' and no selection
             //if (val.includes('.') && cs === ce) {
             //    setTimeout(function () {
@@ -485,11 +487,15 @@
             //}
         });
 
+        let sPattern = /[0-9.]/;
+        if (!ctrl.AllowNegative)
+            sPattern = /[0-9]/;
+
         $input.mask('SZZZZZZZZZZZ', {
             //reverse: true,
             translation: {
                 'S': {
-                    pattern: /-/,
+                    pattern: sPattern,
                     optional: true
                 },
                 'Z': {

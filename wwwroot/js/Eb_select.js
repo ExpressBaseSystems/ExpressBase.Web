@@ -150,7 +150,7 @@ const EbSelect = function (ctrl, options) {
         else {
             $filterInp.val($e.val());
             this.Vobj.DDstate = true;
-            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.Name}Wraper`);
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
             if (searchVal.trim() === "" || this.ComboObj.MinSeachLength > searchVal.length)
                 return;
             this.datatable.columnSearch = [];
@@ -611,7 +611,7 @@ const EbSelect = function (ctrl, options) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
-            EbMakeValid(`#${this.ComboObj.Name}Container`, `#${this.ComboObj.Name}Wraper`);
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');

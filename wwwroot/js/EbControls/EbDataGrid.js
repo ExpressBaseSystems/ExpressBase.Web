@@ -323,8 +323,10 @@
                 opt.getAllCtrlValuesFn = function () {
                     return [];//getValsFromForm(this.FormObj);
                 }.bind(this);
-            else if (inpCtrl.ObjType === "Date")
+            else if (inpCtrl.ObjType === "Date") {
+                opt.source = "webform";
                 opt.userObject = this.ctrl.__userObject;
+            }
             this.initControls.init(inpCtrl, opt);
 
             if (inpCtrl.DefaultValue)

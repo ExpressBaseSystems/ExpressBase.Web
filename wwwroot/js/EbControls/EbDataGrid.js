@@ -570,6 +570,27 @@
             this.addRow();
     };
 
+    this.editRow = function (rowIdx, rowData) {
+        let rowId = $(`#${this.TableId}>tbody>tr:eq(${(rowIdx - 1)})`).attr("rowid");
+
+
+        $.each(Object.keys(rowData), function (i, key) {
+            let obj = getObjByval(this.rowCtrls[rowId], "Name", key);
+            if (obj) {
+                obj.setValue(rowData[key]);
+            }
+        }.bind(this));
+        this.ctrlToSpan_row(rowId);
+
+        //$(`#${this.TableId}>tbody>tr`).each(function (i, e) {
+        //    //$(e).trigger("click");
+        //    this.delRow_click({ target: e });
+        //}.bind(this));
+        //this.rowCtrls = {};
+        //if (!this.ctrl.IsDisable)
+        //    this.addRow();
+    };
+
     this.setCurRow = function (rowId) {
         this.ctrl.currentRow = [];
         $.each(this.rowCtrls[rowId], function (i, inpctrl) {
@@ -597,6 +618,8 @@
 
         this.ctrl.addRow = this.AddRowWithData.bind(this);
         this.ctrl.clear = this.clearDG.bind(this);
+
+        this.ctrl.editRow = this.editRow.bind(this);
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

@@ -613,7 +613,8 @@
         this.ctrl.addRow = this.AddRowWithData.bind(this);
         this.ctrl.clear = this.clearDG.bind(this);
 
-        this.ctrl.editRow = this.editRow.bind(this);
+        this.ctrl.updateRowByRowId = this.updateRowByRowId.bind(this);
+        this.ctrl.updateRowByRowIndex = this.updateRowByRowIndex.bind(this);
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

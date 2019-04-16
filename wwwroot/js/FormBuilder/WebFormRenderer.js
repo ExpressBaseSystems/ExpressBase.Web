@@ -114,6 +114,7 @@ const WebFormRender = function (option) {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
+        this.formObject.__mode = "new";
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
         this.initDGs();
@@ -491,6 +492,7 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToViewMode = function () {
+        this.formObject.__mode = "view";
         this.Mode.isView = true;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
@@ -504,6 +506,7 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToEditMode = function () {
+        this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
         this.Mode.isView = false;
         this.Mode.isNew = false;

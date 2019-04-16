@@ -570,10 +570,12 @@
             this.addRow();
     };
 
-    this.editRow = function (rowIdx, rowData) {
+    this.updateRowByRowIndex = function (rowIdx, rowData) {
         let rowId = $(`#${this.TableId}>tbody>tr:eq(${(rowIdx - 1)})`).attr("rowid");
+        this.updateRowByRowId(rowId, rowData);
+    };
 
-
+    this.updateRowByRowId = function (rowId, rowData) {
         $.each(Object.keys(rowData), function (i, key) {
             let obj = getObjByval(this.rowCtrls[rowId], "Name", key);
             if (obj) {
@@ -581,14 +583,6 @@
             }
         }.bind(this));
         this.ctrlToSpan_row(rowId);
-
-        //$(`#${this.TableId}>tbody>tr`).each(function (i, e) {
-        //    //$(e).trigger("click");
-        //    this.delRow_click({ target: e });
-        //}.bind(this));
-        //this.rowCtrls = {};
-        //if (!this.ctrl.IsDisable)
-        //    this.addRow();
     };
 
     this.setCurRow = function (rowId) {

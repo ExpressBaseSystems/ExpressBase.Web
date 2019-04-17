@@ -93,6 +93,10 @@ const WebFormRender = function (option) {
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
                 opt.FormDataExtdObj = this.FormDataExtdObj;
+            else if (Obj.ObjType === "Date") {
+                opt.userObject = this.userObject;
+                opt.source = "webform";
+            }
 
             this.initControls.init(Obj, opt);
 
@@ -110,6 +114,7 @@ const WebFormRender = function (option) {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
+        this.formObject.__mode = "new";
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
         this.initDGs();
@@ -140,7 +145,7 @@ const WebFormRender = function (option) {
 
     this.bindUniqueCheck = function (control) {
         $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
-            ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+        ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 
     //this.unbindUniqueCheck = function (control) {
@@ -389,32 +394,38 @@ const WebFormRender = function (option) {
         let respObj = JSON.parse(_respObj);
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
+                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
+            else if (respObj.RowAffected === -2) {
+                EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+            }
             else {
-                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
             }
         }
         else {
             if (respObj.RowId > 0) {// if insertion success -NewToedit
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
+                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
+            else if (respObj.RowId === -2) {
+                EbMessage("show", { Message: "Access denied to save this data entry!", AutoHide: true, Background: '#aa0000' });
+            }
             else {
-                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
             }
         }
     };
 
-    this.isAllUniqOK = function() {
+    this.isAllUniqOK = function () {
         let unique_flag = true;
         let $notOk1stCtrl = null;
         $.each(this.flatControls, function (i, control) {
@@ -436,46 +447,52 @@ const WebFormRender = function (option) {
 
     this.saveForm = function () {
         this.BeforeSave();
-        if (!this.FRC.AllRequired_valid_Check())
-            return;
-        if (!this.isAllUniqOK())
-            return;
-        //if (!this.FRC.AllUnique_Check())
-        //    return;
-        this.showLoader();
-        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
-        $.ajax({
-            type: "POST",
-            //url: this.ssurl + "/bots",
-            url: "../WebForm/InsertWebformData",
-            data: {
-                TableName: this.FormObj.TableName,
-                ValObj: this.getFormValuesObjWithTypeColl(),
-                RefId: this.formRefId,
-                RowId: this.rowId,
-                CurrentLoc: currentLoc
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                this.hideLoader();
-                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
-            }.bind(this),
-            //beforeSend: function (xhr) {
-            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            //}.bind(this),
-            success: this.ajaxsuccess.bind(this)
-        });
+
+        setTimeout(function () {// temp
+            if (!this.FRC.AllRequired_valid_Check())
+                return;
+            if (!this.isAllUniqOK())
+                return;
+            //if (!this.FRC.AllUnique_Check())
+            //    return;
+            this.showLoader();
+            let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+            $.ajax({
+                type: "POST",
+                //url: this.ssurl + "/bots",
+                url: "../WebForm/InsertWebformData",
+                data: {
+                    TableName: this.FormObj.TableName,
+                    ValObj: this.getFormValuesObjWithTypeColl(),
+                    RefId: this.formRefId,
+                    RowId: this.rowId,
+                    CurrentLoc: currentLoc
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    this.hideLoader();
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                }.bind(this),
+                //beforeSend: function (xhr) {
+                //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+                //}.bind(this),
+                success: this.ajaxsuccess.bind(this)
+            });
+        }.bind(this), 2);
 
     };
 
     this.BeforeSave = function () {
+        if (!this.FormObj.BeforeSaveRoutines)
+            return;
         $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {
             if (!r.IsDisabled && r.Script.Lang === 0 && r.Script.Code !== "") {
                 new Function("form", "user", `event`, atob(r.Script.Code)).bind("this-placeholder", this.setFormObject(), this.userObject)();
             }
-        }.bind(this));        
+        }.bind(this));
     };
 
     this.SwitchToViewMode = function () {
+        this.formObject.__mode = "view";
         this.Mode.isView = true;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
@@ -489,6 +506,7 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToEditMode = function () {
+        this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
         this.Mode.isView = false;
         this.Mode.isNew = false;
@@ -505,7 +523,7 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.BeforeModeSwitch = function(newMode){
+    this.BeforeModeSwitch = function (newMode) {
         if (newMode === "View Mode") {
             this.flatControls = getFlatCtrlObjs(this.FormObj);
             $.each(this.flatControls, function (k, ctrl) {
@@ -520,7 +538,7 @@ const WebFormRender = function (option) {
                         this.$cancelBtn.prop("disabled", true);
                         //this.$saveBtn.prop("title", "Save Disabled");                        
                     }
-                    return;                    
+                    return;
                 }
             }.bind(this));
             $.each(this.FormObj.DisableDelete.$values, function (k, v) {
@@ -585,6 +603,9 @@ const WebFormRender = function (option) {
                                 else if (result === -1) {
                                     EbMessage("show", { Message: 'Delete operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
                                 }
+                                else if (result === -2) {
+                                    EbMessage("show", { Message: 'Access denied to delete this entry.', AutoHide: true, Background: '#aa0000' });
+                                }
                                 else {
                                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                                 }
@@ -632,6 +653,9 @@ const WebFormRender = function (option) {
                                 else if (result === -1) {
                                     EbMessage("show", { Message: 'Cancel operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
                                 }
+                                else if (result === -2) {
+                                    EbMessage("show", { Message: 'Access denied to cancel this entry.', AutoHide: true, Background: '#aa0000' });
+                                }
                                 else {
                                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                                 }
@@ -673,7 +697,7 @@ const WebFormRender = function (option) {
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
-        this.$cancelBtn.on("click", this. cancelForm.bind(this));
+        this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();

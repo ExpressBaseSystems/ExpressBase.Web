@@ -82,6 +82,9 @@
     };
 
     this.addInvalidStyle = function (ctrl, msg, type) {
-        EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+        if (ctrl.ObjType === "PowerSelect")
+            EbMakeInvalid(`#${ctrl.EbSid_CtxId}Container`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
+        else
+            EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
     };
 };

@@ -222,7 +222,7 @@
         tr += `@cogs@
                 </tr>`
             .replace("@cogs@", !this.ctrl.IsDisable ? `
-                <td class='ctrlstd' mode='${this.mode_s}' style='width:54px;'>
+                <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
                     <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
                     <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
@@ -384,9 +384,7 @@
             let html = "";
             $("#" + ctrl.EbSid_CtxId + "Wraper .search-block").each(function (i, block) {
                 html += "<span iblock>";
-                $(block).find(".selected-tag").each(function (i, tag) {
-                    html += $(tag).outerHTML();
-                });
+                $(block).find(".selected-tag").each(function (i, tag) { html += $(tag).outerHTML(); });
                 html += "</span>&nbsp;&nbsp;&nbsp;";
             });
             $td.find(".tdtxt span").html(html.substr(0, html.length - 18));
@@ -395,7 +393,6 @@
             let val = ctrl.getDisplayMember() || ctrl.getValue();
             $td.find(".tdtxt span").text(val);
         }
-
         $td.find(".tdtxt").show();
     }.bind(this);
 
@@ -576,13 +573,17 @@
     };
 
     this.updateRowByRowId = function (rowId, rowData) {
-        $.each(Object.keys(rowData), function (i, key) {
+
+        let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+        $.each(Object.keys(rowData), function (i, key) { 
             let obj = getObjByval(this.rowCtrls[rowId], "Name", key);
             if (obj) {
                 obj.setValue(rowData[key]);
             }
         }.bind(this));
-        this.ctrlToSpan_row(rowId);
+
+        if ($tr.attr("is-editing") === "false")
+            this.ctrlToSpan_row(rowId);
     };
 
     this.setCurRow = function (rowId) {

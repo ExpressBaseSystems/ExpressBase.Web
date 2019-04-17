@@ -453,7 +453,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.CheckforTree = function () {
         var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.IsTree; });
         if (temp.length === 0) {
-            this.EbObject.DisableRowGrouping = false;
+            //this.EbObject.DisableRowGrouping = false;
             this.IsTree = false;
         }
         else {
@@ -869,11 +869,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else {
             var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.linkDV; }.bind(this));
             this.dvformMode = temp[0].FormMode;
-            if (temp[0].FormMode === 0) {
+            if (temp[0].FormMode === 1) {
                 var col = temp[0].FormId.$values[0];
                 filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
             }
-            else {
+            else if (temp[0].FormMode === 2) {
                 var cols = temp[0].FormParameters.$values;
                 $.each(cols, function (i, col) {
                     if (this.rowData[col.data] !== "")
@@ -1293,6 +1293,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input.type = 'hidden';
             input.name = "_mode";
             input.value = this.dvformMode;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -3007,7 +3013,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.rowData = [];
         }
         var x = this.getStaticParameter(colindex);
-        this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
+        if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
+            this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
+        else
+            this.filterValues = this.getfilterFromRowdata();
 
         if ($(e.target).parent("b").attr("data-rowgroup") !== undefined) {
 

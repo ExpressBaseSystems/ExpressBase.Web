@@ -150,7 +150,7 @@ const EbSelect = function (ctrl, options) {
         else {
             $filterInp.val($e.val());
             this.Vobj.DDstate = true;
-            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.Name}Wraper`);
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
             if (searchVal.trim() === "" || this.ComboObj.MinSeachLength > searchVal.length)
                 return;
             this.datatable.columnSearch = [];
@@ -161,7 +161,7 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues) {
         this.clearValues();
-        this.setvaluesColl = StrValues.split(",");
+        this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.datatable) {
             this.datatable.columnSearch = [];
@@ -176,6 +176,7 @@ const EbSelect = function (ctrl, options) {
             this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
             if (this.setvaluesColl.length > 0) {
+                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this);
                 this.InitDT();
                 this.V_showDD();
             }
@@ -297,6 +298,7 @@ const EbSelect = function (ctrl, options) {
         if (options)
             o.wc = options.wc;
         o.getFilterValuesFn = this.getFilterValuesFn;
+        o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         this.datatable = new EbBasicDataTable(o);
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
@@ -370,9 +372,7 @@ const EbSelect = function (ctrl, options) {
         let row = datatable.row(cell.index().row);
         let $tr = $(row.nodes());
         let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
-        //let vmValue = this.datatable.Api.row($(this.DTSelector + " tr.selected")).data()[idx];
         let vmValue = this.datatable.Api.row($tr.index()).data()[idx];
-        //this.$curEventTarget = $(this.DTSelector + " tr.selected");
         this.$curEventTarget = $tr;
         this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
@@ -611,7 +611,7 @@ const EbSelect = function (ctrl, options) {
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
-            EbMakeValid(`#${this.ComboObj.Name}Container`, `#${this.ComboObj.Name}Wraper`);
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');

@@ -25,6 +25,9 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using System.Text;
+using ExpressBase.Common.Extensions;
+using ExpressBase.Common.Constants;
+using ServiceStack.Auth;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -131,11 +134,40 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet("/api/login")]
-        [HttpPost("/api/login")]
-        public void ApiLogin(string username,string password)
+        [HttpGet("/api/authenticate")]
+        [HttpPost("/api/authenticate")]
+        public ApiAuthResponse ApiLogin(string username,string password)
         {
+            ApiAuthResponse response = new ApiAuthResponse();
+            try
+            {
+                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = username,
+                    Password = (password + username).ToMD5Hash(),
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.UC }, { TokenConstants.CID, this.SultionId } },
+                    RememberMe = true
+                    //UseTokenCookie = true
+                });
 
+                if (authResponse != null && authResponse.User != null)
+                {
+                    response.IsValid = true;
+                    response.BToken = authResponse.BearerToken;
+                    response.RToken = authResponse.RefreshToken;
+                    response.UserId = authResponse.User.UserId;
+                    response.DisplayName = authResponse.User.DisplayName;
+                }
+                else
+                    response.IsValid = false;
+            }
+            catch(Exception e)
+            {
+                response.IsValid = false;
+                Console.WriteLine("api auth request failed: " + e.Message);
+            }
+            return response;
         }
 
         [HttpGet("/api/logout")]

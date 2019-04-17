@@ -2344,7 +2344,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         input = document.createElement('input');
         input.type = 'hidden';
         input.name = "_mode";
-        input.value = 1;
+        input.value = 2;
         _form.appendChild(input);
 
         document.body.appendChild(_form);
@@ -2369,7 +2369,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         input = document.createElement('input');
         input.type = 'hidden';
         input.name = "_mode";
-        input.value = 1;
+        input.value = 2;
         _form.appendChild(input);
 
 
@@ -2395,7 +2395,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         input = document.createElement('input');
         input.type = 'hidden';
         input.name = "_mode";
-        input.value = 0;
+        input.value = 1;
         _form.appendChild(input);
 
 
@@ -2421,7 +2421,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         input = document.createElement('input');
         input.type = 'hidden';
         input.name = "_mode";
-        input.value = 0;
+        input.value = 1;
         _form.appendChild(input);
 
 

@@ -391,11 +391,13 @@
         $input.inputmask("currency", {
             radixPoint: ".",
             allowMinus: ctrl.AllowNegative,
-            groupSeparator: ",",
+            groupSeparator: "",
             digits: 2,
             prefix: '',
             autoGroup: true,
         });
+
+        $input.focus(function () { $(this).select(); });
 
         //$input.focusout(function () {
         //    var val = $(this).val().toString();
@@ -423,8 +425,6 @@
         //        $(this).val(val);
         //    }
         //});
-
-        //$input.focus(function () { $(this).select(); });
 
         {// temp for hairo craft
             $input.blur(function () {

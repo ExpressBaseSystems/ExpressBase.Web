@@ -164,8 +164,8 @@
                 let maskPattern = "yyyy-mm-dd";
                 $input.attr("placeholder", maskPattern);
                 $input.inputmask(maskPattern);
-
-                $input.val(userObject.Preference.ShortDate);
+                if (!ctrl.IsNullable)
+                    $input.val(userObject.Preference.ShortDate);
                 $input.datetimepicker(settings);
             }
             else
@@ -188,6 +188,8 @@
     this.toggleNullableCheck = function (ctrl) {
         let $ctrl = $(event.target).closest("input[type='checkbox']");
         if ($ctrl.is(":checked")) {
+            if ($ctrl.closest(".input-group").find("input[type='text']").val() === "")
+                $ctrl.closest(".input-group").find("input[type='text']").val(ebcontext.user.Preference.ShortDate);
             $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false).next(".input-group-addon").css('pointer-events', 'auto');
             //ctrl.DoNotPersist = false;
         }

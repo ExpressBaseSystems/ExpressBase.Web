@@ -398,6 +398,7 @@ const WebFormRender = function (option) {
                 //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
+                this.FormDataExtended = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
             else if (respObj.RowAffected === -2) {
@@ -414,6 +415,7 @@ const WebFormRender = function (option) {
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
+                this.FormDataExtended = respObj.FormData.ExtendedTables;
                 this.SwitchToViewMode();
             }
             else if (respObj.RowId === -2) {

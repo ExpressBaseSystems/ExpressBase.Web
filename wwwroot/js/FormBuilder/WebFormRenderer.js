@@ -58,7 +58,17 @@ const WebFormRender = function (option) {
         $.each(flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+        this.setFormObjectMode();
         return this.formObject;
+    };
+
+    this.setFormObjectMode = function () {
+        if (this.Mode.isView)
+            this.formObject.__mode = "view";
+        else if (this.Mode.isNew)
+            this.formObject.__mode = "new";
+        else if (this.Mode.Edit)
+            this.formObject.__mode = "edit";
     };
 
     this.initDGs = function () {

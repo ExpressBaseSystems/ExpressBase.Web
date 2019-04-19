@@ -334,12 +334,14 @@
 
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
+        }.bind(this));
+        //should fire after onChangeFn init
+        $.each(this.rowCtrls[rowid], function (i, inpCtrl) {
             // run DG onChangeFns initially
             if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
                 let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                 onChangeFn();
             }
-
         }.bind(this));
         return this.rowCtrls[rowid];
     };

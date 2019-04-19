@@ -74,8 +74,8 @@ const EbSelect = function (ctrl, options) {
     ctrl._ValueMembers = [];
     this.valueMembers = ctrl._ValueMembers;
     this.localDMS = ctrl._DisplayMembers;
-    this.columnvals = {};
-    $.each(this.ColNames, function (i, name) { this.columnvals[name] = []; }.bind(this));
+    this.columnVals = {};
+    $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
 
     this.$curEventTarget = null;
     this.IsDatatableInit = false;
@@ -119,7 +119,7 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
-    this.getColumn = function (colName) { return this.columnvals[colName]; }.bind(this);
+    this.getColumn = function (colName) { return this.columnVals[colName]; }.bind(this);
 
     this.searchBoxFocus = function () {
         this.IsSearchBoxFocused = true;
@@ -194,7 +194,7 @@ const EbSelect = function (ctrl, options) {
         });
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
-        $.each(this.ColNames, function (i, name) { this.columnvals[name] = []; }.bind(this));
+        $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
 
     };
 
@@ -413,7 +413,7 @@ const EbSelect = function (ctrl, options) {
         if (event.target.nodeName === "SPAN")
             vmValue = this.ClosedItem;
 
-        if (!this.columnvals[this.vmName].contains(vmValue)) {
+        if (!this.columnVals[this.vmName].contains(vmValue)) {
             this.addColVals();
         }
         else {
@@ -426,15 +426,15 @@ const EbSelect = function (ctrl, options) {
         $.each(this.ColNames, function (i, name) {
             let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
             //if (this.maxLimit === 1)
-            //    this.columnvals[name] = cellData;
-            this.columnvals[name].push(cellData);
+            //    this.columnVals[name] = cellData;
+            this.columnVals[name].push(cellData);
         }.bind(this));
     };
 
     this.removeColVals = function (vmValue) {
-        let idx = this.columnvals[this.vmName].indexOf(vmValue);
+        let idx = this.columnVals[this.vmName].indexOf(vmValue);
         $.each(this.ColNames, function (i, name) {
-            this.columnvals[name].splice(idx, 1);
+            this.columnVals[name].splice(idx, 1);
         }.bind(this));
     };
 

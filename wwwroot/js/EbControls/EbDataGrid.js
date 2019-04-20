@@ -447,10 +447,11 @@
         this.ctrlToSpan_row(rowid);
         if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
             this.addRow();
+        else
+            this.setCurRow($addRow.attr("rowid"));
         $tr.attr("is-checked", "true").attr("is-editing", "false");
         this.updateAggCols($addRow.attr("rowid"));
         $addRow.focus();
-        this.setCurRow($addRow.attr("rowid"));
 
     }.bind(this);
 

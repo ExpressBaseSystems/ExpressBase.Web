@@ -195,45 +195,58 @@
         inpCtrl.ObjType = col.InputControlType.substr(2);
 
     };
+    this.attachFns = function (inpCtrl, colType) {
+        return new ControlOps[colType](inpCtrl);
+    };
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
-        let anyColEditable = false;
+        let isAnyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>`;
         this.rowCtrls[rowid] = [];
+
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
                 return true;
             let inpCtrlType = col.InputControlType;
-
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+
             this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
-
-            inpCtrl = new ControlOps[col.ObjType](inpCtrl);
+            inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.rowCtrls[rowid].push(inpCtrl);
-            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' colname='${col.Name}' style='width:${this.getTdWidth(i)}px'>
-                        <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
-                        <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
-                    </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
-            if (col.IsEditable)
-                anyColEditable = true;
 
+            tr += this.getTdHtml(inpCtrl, col, i);
+            if (col.IsEditable)
+                isAnyColEditable = true;
         }.bind(this));
-        tr += `@cogs@
+        if (this.S_cogsTdHtml === "")
+            this.S_cogsTdHtml = this.getCogsTdHtml(isAnyColEditable);
+        tr += this.S_cogsTdHtml;
+        return tr;
+    };
+
+    this.getTdHtml = function (inpCtrl, col, i) {
+        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' colname='${col.Name}' style='width:${this.getTdWidth(i)}px'>
+                    <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
+                    <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
+                </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+    };
+
+    this.getCogsTdHtml = function (isAnyColEditable) {
+        return `@cogs@
                 </tr>`
             .replace("@cogs@", !this.ctrl.IsDisable ? `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
-                    <span class='check-row rowc' tabindex='1'><span class='fa fa-check'></span></span>
-                    <span class='del-row rowc @del-c@' tabindex='1'><span class='fa fa-minus'></span></span>
+                    <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
+                    <button type='button' class='del-row rowc @del-c@'><span class='fa fa-minus'></span></button>
                 </td>` : "")
-            .replace("@editBtn@", anyColEditable ? "<span class='edit-row rowc' tabindex='1'><span class='fa fa-pencil'></span></span>" : "")
-            .replace("@del-c@", !anyColEditable ? "del-c" : "");
-        return tr;
+            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
+            .replace("@del-c@", !isAnyColEditable ? "del-c" : "");
     };
 
     this.getTdWidth = function (i) {
-        return $(`#${this.TableId}_head thead th`).eq(i).outerWidth() + 1 + ((i == 0) ? 3 : 0);
+        return $(`#${this.TableId}_head thead th`).eq(i).outerWidth() + 1 + (i === 0 ? 3 : 0);
     };
 
     this.getAggTrHTML = function () {
@@ -367,7 +380,7 @@
     t = this.getValues;
 
     this.ctrlToSpan_row = function (rowid) {
-        let $tr = $(`#${this.TableId}`).find(`[rowid=${rowid}]`);
+        let $tr = this.$table.find(`[rowid=${rowid}]`);
         $.each($tr.find("td[ctrltdidx]"), function (i, td) {
             this.ctrlToSpan_td($(td));
         }.bind(this));
@@ -427,6 +440,7 @@
         let rowid = $tr.attr("rowid");
         this.spanToCtrl_row($tr);
         this.setCurRow(rowid);
+        $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
     }.bind(this);
 
     this.checkRow_click = function (e, isAddRow = true) {
@@ -451,7 +465,8 @@
             this.setCurRow($addRow.attr("rowid"));
         $tr.attr("is-checked", "true").attr("is-editing", "false");
         this.updateAggCols($addRow.attr("rowid"));
-        $addRow.focus();
+        //$addRow.focus();
+        $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
 
     }.bind(this);
 
@@ -517,6 +532,12 @@
             $(e.target).next().focus();
         if (e.which === 38)//up arrow
             $(e.target).prev().focus();
+        //alt + enter
+        if ((event.altKey || event.metaKey) && event.which === 13) {
+            if (this.$table.has(document.activeElement).length === 1) {
+                $(document.activeElement).closest(".dgtr").find(".check-row").trigger("click");
+            }
+        }
     }.bind(this);
 
     this.initAgg = function () {
@@ -526,7 +547,7 @@
             this.ctrl[col.Name + "_sum"] = 0;
         }.bind(this));
 
-        $(`#${this.TableId}`).on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCol.bind(this));
+        this.$table.on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCol.bind(this));
     };
 
     this.AddRowWithData = function (_rowdata) {
@@ -578,7 +599,7 @@
     this.updateRowByRowId = function (rowId, rowData) {
 
         let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
-        $.each(Object.keys(rowData), function (i, key) { 
+        $.each(Object.keys(rowData), function (i, key) {
             let obj = getObjByval(this.rowCtrls[rowId], "Name", key);
             if (obj) {
                 obj.setValue(rowData[key]);
@@ -600,6 +621,7 @@
     this.init = function () {
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
+        this.S_cogsTdHtml = "";
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             col.getValue = this.ColGetvalueFn;

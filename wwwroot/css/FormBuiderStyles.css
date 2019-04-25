@@ -835,3 +835,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .uc-col-wraper {
     display:none;
 }
+.ucspan {
+    padding: 0px 7px!important;
+}
+
+.ucbtn {
+    border: solid 1px #dddddd;
+    border-radius: 100%;
+    padding: 3px 4px!important;
+    background-color: transparent;
+}
+

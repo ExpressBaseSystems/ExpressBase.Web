@@ -116,16 +116,41 @@
             </div>
         </div>
         <div class="page-outer-cont" id="page-outer-cont">
-            <div id="columns-list" class="dv-divs">
+            <div id="table_header1" class="dv-divs tableheader" data-tableheaderCount="1">
                 <div class="tool_item_head">
-                    <i class="fa fa-caret-down"></i> Columns
+                    <i class="fa fa-caret-down"></i> <label>Table Header</label>
+                    <i class="fa fa-plus" id="NewTableHeader"></i>
                 </div>
             </div>
-            <div id="orderby-list" class="dv-divs">
-                <div class="tool_item_head">
-                    <i class="fa fa-caret-down"></i> OrderBy
+            <div id="primary_table_cont">
+                <div id="Rowgroup_cont" class="dv-divs">
+                    <div class="tool_item_head">
+                        <i class="fa fa-caret-down"></i> RowGroup
+                        <i class="fa fa-plus" id="NewRowGroup"></i>
+                    </div>
+                </div>
+                <div id="columns-list" class="dv-divs" tabindex="1">
+                    <div class="tool_item_head">
+                        <i class="fa fa-caret-down"></i> Columns
+                    </div>
+                    <div class="tool_item_body" id="columns-list-body"></div>
+                </div>
+                <div id="Rowgroup_Footer_cont" class="dv-divs">
+                    <div class="tool_item_head">
+                        <i class="fa fa-caret-down"></i> RowGroup Footer
+                        <i class="fa fa-plus" id="NewRowGroupFooter"></i>
+                    </div>
                 </div>
             </div>
+            <div id="table_footer1" class="dv-divs tablefooter">
+                <div class="tool_item_head">
+                    <i class="fa fa-caret-down"></i> Table Footer
+                    <i class="fa fa-plus" id="NewTableFooter"></i>
+                </div>
+            </div>
+        </div>
+        <div id="side-orderby" class="side-orderby">
+
         </div>
     </div>
 </div>

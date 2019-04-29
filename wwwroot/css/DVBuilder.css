@@ -6,9 +6,52 @@
     height: 200px;
 }
 
+
+
 .dv-divs {
     border: 1px solid #ccc;
-    margin-top:3px;
-    background-color:white;
+    margin-top: 3px;
+    background-color: white;
+}
+.tool_item_head .fa-plus, .fa-trash {
+    float: right;
+    margin-right:2px;
+}
+.tool_item_head label {
+    margin-bottom: 0px;
+    font-weight: 100;
+    cursor:pointer;
+}
+.tool_item_headerbody {
+    min-height: 40px;
+    background: white;
+}
+.dv-divs .tool_item_body {
+    display: flex;
+    flex-flow: row wrap;
+    height: calc( 100% - 23px );
+}
+.dv-divs .colTile {
+    height: max-content;
+    list-style-type: none;
+}
+
+.dv-divs .colTile .close {
+    font-size: 16px;
+    margin-top: -1px;
+    color: #4a4a4a;
+    padding: 1px;
+    margin-left: 10px;
+}
+.rowgroup_select button, .rowgrouptype_select button {
+    padding: 0px 12px;
+    border-radius: 1px;
+    width: calc(100% - 24px) !important;
+    background-color: white;
+    height: 24px;
+    font-size: 11.5px;
+    box-shadow: none;
+    margin-left: 4px !important;
+    margin-bottom: 1px;
 }
 

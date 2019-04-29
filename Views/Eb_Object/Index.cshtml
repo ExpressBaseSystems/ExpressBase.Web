@@ -76,12 +76,12 @@
                 {
                     @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
                 }
-                @*else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization || ViewBag.ObjType == (int)EbObjectTypes.ChartVisualization)
+                else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization && ViewBag.mode)
                     {
                         object o = null;
                         @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
 
-                    }*@
+                    }
                 /**/
                 else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization)
                 {

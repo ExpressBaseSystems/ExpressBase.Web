@@ -21,11 +21,10 @@
 
     this.ajax_call = function (e) {
         e.preventDefault();
-
-        var exe_window = $("#TabAdderMain li.active a").attr("href");
-        exe_window = exe_window[exe_window.length - 1];
-        var data = this.editor[exe_window].getValue();
         $(".show_loader").EbLoader("show");
+        var exe_window = $("#TabAdderMain li.active").attr("id");
+        exe_window = exe_window[exe_window.length - 1];
+        var data = this.editor[exe_window].getValue();        
         $.ajax({
             type: "POST",
             url: "../DbClient/ExecuteQuery",
@@ -34,17 +33,14 @@
             data: { Query: data },
             traditional: true,
             success: function (result) {
-                console.log(result);
-
-                if (result.columnCollection !== null) {
+                if (result[0].columnCollection != null) {
                     this.query_result(result);
                     $('#t' + (res - 1) + ' a').trigger('click');
-                } else if (result.Message !== "") {
-                    alert(result.message);
-                } else if (result.Result === 0) {
+                } else if (result[0].message != "") {
+                    alert(result[0].message);
+                } else if (result[0].Result === 0) {
                     alert('Oh Yes success :(  : ' + result);
                 }
-
                 $(".show_loader").EbLoader("hide");
             }.bind(this),
             error: function (result) {
@@ -61,7 +57,7 @@
         exe_window = exe_window[exe_window.length - 1];
         for (var Result_ in result) {
             $.each(result[Result_].columnCollection, function (i, columns) {
-                $(`#Result_Tab${exe_window}`).append(' <li id="t' + res + '"><a data-toggle="tab" href="#tab' + tab + 'R' + res + '" style="margin: 25px 5px 0px 5px;">Result ' + res + ' <button class="btn" id="Result_' + res + '" data-toggle="modal" data-target="#myModal' + res + '"><i class="fa fa-expand"></i></button><i class="fa fa-window-close fa-1x Result_close" style="padding: 4px; " id="Resultclose"></i></a></li>')
+                $(`#Result_Tab${exe_window}`).append(' <li id="t' + res + '"><a data-toggle="tab" class="cetab" href="#tab' + tab + 'R' + res + '" style="margin: 18px 0px 0px 0px; padding :0%">Result ' + res + ' <button class="btn" id="Result_' + res + '" data-toggle="modal" data-target="#myModal' + res + '"><i class="fa fa-expand"></i></button><i class="fa fa-window-close fa-1x Result_close" style="padding: 4px; " id="Resultclose"></i></a></li>')
                 $("#resulttab" + exe_window).append("<div id='tab" + tab + "R" + res + "' class='Result_Cont tab-pane fade'><table id='tableid" + res + "'></table></div>")
                 $("#resulttab" + exe_window).append(`<!-- Modal -->
                                                     <div class="modal fade" id="myModal${res}" role="dialog">
@@ -184,7 +180,7 @@
             let posTop = event.pageY;// - $("#pannel").position().top;
             //let tid = `${tableName}_table${t_ounter++}`;
             let tid = `drop_table${t_ounter++}`;
-            let $tableBoxHtml = $(`<div is-draggable="false" class="table-box" id="${tid}" ">
+            let $tableBoxHtml = $(`<div is-draggable="false" class="table-box ui-widget-content" id="${tid}" ">
                                         <div class="t_drophead"><div class="tname">${tableName}</div> <i class="fa fa-window-close-o draggeer pull-right" onClick="$(${tid}).remove();"></i></div>
                                         <div class="t_dropbdy">${this.getCols(this.TCobj.TableCollection[tableName].Columns, tid, tableName)}</div>
                                 </div>`);
@@ -192,6 +188,7 @@
             $(`#${tid}`).css("left", posLeft + "px");
             $(`#${tid}`).css("top", posTop + "px");
             if ($(`#${tid}`).attr("is-draggable") == "false") {// if called first time
+                options["handle"] = $('.t_drophead', $(`#${tid}`));
                 $(`#${tid}`).draggable(options);
                 $(`#${tid}`).attr("is-draggable", "true");
 
@@ -200,6 +197,7 @@
             tid++;
         }
         $(".table-box").on("click", this.draw());
+        $(".table-box").resizable();
     }.bind(this);
 
     this.draw = function () {
@@ -256,10 +254,10 @@
 
 
     this.codemirrorloader = function () {
-        let $TabHtml = $(`<li id="query_li${++tab}"><a data-toggle="tab" href="#result_set${tab}">QUERY ${++quer}<i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; "  onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
+        let $TabHtml = $(`<li id="query_li${++quer}"><a data-toggle="tab" class="cetab" href="#result_set${++tab}">QUERY ${quer}<i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; "  onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
         $('#pannel #TabAdderMain').append($TabHtml);
         $(`body`).off("click").on("click", ".Tabclose", this.Tab_Closer.bind(this));
-        let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div class="show_loader"></div><div id="code' + quer + '" ><textarea id="coder' + quer + '" name="coder" style="visibility:hidden"></textarea></div ><ul class="nav nav-tabs" id="Result_Tab' + tab + '"></ul><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
+        let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div class="show_loader"></div><div id="code' + quer + '" class="Resize_toolbox"><textarea id="coder' + quer + '" name="coder" style="visibility:hidden"></textarea></div ><div class="tttab-session"><ul class="nav nav-tabs tab-section" id="Result_Tab' + tab + '"></ul></div><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
         $('#maintab').append($TabHtml_cont);
         //let $ResultHtml = $(' <li class="active"><a data-toggle="tab" href="#queryresult' + res + '" style="margin: 25px 5px 0px 5px;">Result ' + res + '</a></li>');
         //$('#Result_Tab').append($ResultHtml);
@@ -276,21 +274,21 @@
         //'editor' + tab;
         this.editor[quer] = CodeMirror.fromTextArea(document.getElementById('coder' + quer), {
             mode: mime,
-            lineNumbers: false,
-            lineWrapping: false,
+            lineNumbers: true,
+            lineWrapping: true,
             extraKeys: { "Ctrl-Space": "autocomplete" },
             autoRefresh: true,
             readOnly: false,
             foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-            //gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
         });
     };
 
     this.DaggAdder = function () {
-        let $dragHtml = $(`<li id="Drag_li${++tab}"><a data-toggle="tab" href="#result_set${tab}">Drag ${++drag}<i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; " onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
+        let $dragHtml = $(`<li id="Drag_li${++drag}"><a data-toggle="tab" class="cetab" href="#result_set${++tab}">Drag ${drag}<i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; " onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
         $('#pannel #TabAdderMain').append($dragHtml);
         $(`body`).off("click").on("click", ".Tabclose", this.Tab_Closer.bind(this));
-        let $draghtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div id="droppable' + drag + '" class="drop-box" "></div></div>');
+        let $draghtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div id="droppable' + drag + '" class="drop-box page_grid Resize_toolbox" "></div></div>');
         $('#maintab').append($draghtml_cont);
         $(".drop-box").droppable({ drop: this.onDrop.bind(this) });
         $('#Drag_li' + tab + ' a').trigger('click');
@@ -333,10 +331,155 @@
         });
     }
 
-    this.tableHide = function () {
-        $(".TablePannelHead").click(function () {
-            $(".mytree").toggle();
-        });
+    //this.tableHide = function () {
+    //    $(".TablePannelHead").click(function () {
+    //        $(".mytree").toggle();
+    //    });
+    //}
+
+    this.SearchTool = function () {
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        //ul = document.getElementById("myUL");
+        //li = ul.getElementsByTagName("span");
+        li = $(".table-name")
+        for (i = 0; i < li.length; i++) {
+            //a = li[i].getElementsByTagName("a")[0];
+            txtValue = li[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }.bind(this);
+
+    $.contextMenu({
+        selector: '.table-name',
+        build: function (key, opt) {
+            $(".mytree .selected").removeClass("selected");
+            key.parent().addClass("selected");
+            return {
+                items: {
+                    View: {
+                        name: "View",
+                        items: {
+                            F100: {
+                                name: "View First 100",
+                                callback: function (opt, key) {
+                                    //$(".mytree .selected").removeClass("selected");
+                                    //opt.$trigger.parent().addClass("selected");
+                                    var exe_window = $("#TabAdderMain li.active").attr("id");
+                                    exe_window = exe_window[exe_window.length - 1];
+                                    var tb_name = key.$trigger.attr("data-name");
+                                    this.editor[exe_window].setValue("select * from " + tb_name + " ORDER BY id ASC LIMIT 100;");
+                                    $('#sqlquery').trigger('click');
+                                }.bind(this)
+                            },
+                            L100: {
+                                name: "View Last 100",
+                                callback: function (opt, key) {
+                                    //$(".mytree .selected").removeClass("selected");
+                                    //opt.$trigger.parent().addClass("selected");
+                                    var exe_window = $("#TabAdderMain li.active").attr("id");
+                                    exe_window = exe_window[exe_window.length - 1];
+                                    var tb_name = key.$trigger.attr("data-name");
+                                    this.editor[exe_window].setValue("select * from " + tb_name + " ORDER BY id DESC LIMIT 100;");
+                                    $('#sqlquery').trigger('click');
+                                }.bind(this)
+                            },
+                            ALLROWS: {
+                                name: "ALL ROWS",
+                                callback: function (opt, key) {
+                                    //$(".mytree .selected").removeClass("selected");
+                                    //opt.$trigger.parent().addClass("selected");
+                                    var exe_window = $("#TabAdderMain li.active").attr("id");
+                                    exe_window = exe_window[exe_window.length - 1];
+                                    var tb_name = key.$trigger.attr("data-name");
+                                    this.editor[exe_window].setValue("select * from " + tb_name + ";");
+                                    $('#sqlquery').trigger('click');
+                                }.bind(this)
+                            }
+                        }
+                    },  
+                    script: {
+                        name: "Script",
+                        items: {
+                            insert: {
+                                name: "Insert",
+                                callback: function (opt, key) {
+
+                                    //$(".mytree .selected").removeClass("selected");
+                                    //opt.$trigger.parent().addClass("selected");
+                                    var exe_window = $("#TabAdderMain li.active").attr("id");
+                                    exe_window = exe_window[exe_window.length - 1];
+                                    var tb_name = key.$trigger.attr("data-name");
+                                    var Col_name;
+                                    $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
+                                        Col_name += column['ColumnName'] + ", ";
+                                    }.bind(this))
+                                    this.editor[exe_window].setValue("INSERT INTO \n" + tb_name + " \n( " + Col_name +" )\nvalues(); ");
+                                }.bind(this)
+                            },
+                            selecter: {
+                                name: "Select",
+                                callback: function (opt, key) {
+                                    //$(".mytree .selected").removeClass("selected");
+                                    //opt.$trigger.parent().addClass("selected");
+                                    var exe_window = $("#TabAdderMain li.active").attr("id");
+                                    exe_window = exe_window[exe_window.length - 1];
+                                    var tb_name = key.$trigger.attr("data-name");
+                                    var Col_name;
+                                    $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
+                                        Col_name += column['ColumnName'] + ", ";
+                                    }.bind(this))
+                                    this.editor[exe_window].setValue("SELECT \n" + Col_name + " \nFROM " + tb_name  +";");
+                                }.bind(this)
+                            },
+                            update: {
+                                name: "Update",
+                                callback: function (opt, key) {
+                                    //$(".mytree .selected").removeClass("selected");
+                                    //opt.$trigger.parent().addClass("selected");
+                                    var exe_window = $("#TabAdderMain li.active").attr("id");
+                                    exe_window = exe_window[exe_window.length - 1];
+                                    var tb_name = key.$trigger.attr("data-name");
+                                    var Col_name;
+                                    $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
+                                        Col_name += column['ColumnName'] + "= ?, ";
+                                    }.bind(this))
+                                    this.editor[exe_window].setValue("UPDATE \n" + tb_name + " FROM \n" + Col_name + "\nWHERE <condition>;");
+                                }.bind(this)
+                            }
+                        }
+                    }, 
+                    Count: {
+                        name: "Row Count",
+                        callback: function (opt, key) {
+                            //$(".mytree .selected").removeClass("selected");
+                            //opt.$trigger.parent().addClass("selected");
+                            var exe_window = $("#TabAdderMain li.active").attr("id");
+                            exe_window = exe_window[exe_window.length - 1];
+                            var tb_name = key.$trigger.attr("data-name");
+                            this.editor[exe_window].setValue("select COUNT(*) from " + tb_name + ";");
+                            $('#sqlquery').trigger('click');
+                        }.bind(this)
+                    },
+                    select: {
+                        name: "Select",
+                        callback: function (key, opt) {
+                            alert("Clicked on " + key);
+                        }
+                    }
+                }
+
+            };
+        }.bind(this)
+    });
+
+    this.cursor = function () {
+        var exe_window = $("#TabAdderMain li.active a").attr("href");
     }
 
 
@@ -348,9 +491,13 @@
         this.makeDrop();
         this.pannelhide();
         this.codemirrorloader();
-        this.tableHide();
+        //this.tableHide();
         $('#TabAdder').click(this.codemirrorloader.bind(this));
         $('#DragAdder').click(this.DaggAdder.bind(this));
+        $('#myInput').keyup(this.SearchTool.bind(this));
+        $(".DbClient_toolbox").resizable();
+        $('[data-toggle="tooltip"]').tooltip(); 
+
 
     };
     this.init();

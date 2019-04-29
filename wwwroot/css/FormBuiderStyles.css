@@ -319,7 +319,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
-.Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
+.Eb-ctrlContainer input:not([type=radio]):not([type=checkbox]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
     height: auto;
     min-height: 28px;
@@ -381,7 +381,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .check-wraper {
     background-color: white;
-    height: 28px;
+   // height: 21px;
+    margin: 1px;
+    padding: 4px;
 }
 
 .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
@@ -835,14 +837,3 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .uc-col-wraper {
     display:none;
 }
-.ucspan {
-    padding: 0px 7px!important;
-}
-
-.ucbtn {
-    border: solid 1px #dddddd;
-    border-radius: 100%;
-    padding: 3px 4px!important;
-    background-color: transparent;
-}
-

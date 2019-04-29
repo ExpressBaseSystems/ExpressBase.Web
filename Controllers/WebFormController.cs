@@ -74,73 +74,7 @@ namespace ExpressBase.Web.Controllers
 
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
-
-        public string AuditTrail(string refid, int rowid)
-        {
-            //sourc == dest == type == dst id == dst verid== src id == src verid
-            //ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-0-2257-2976-2257-2976
-            try
-            {
-                string[] refidparts = refid.Split("-");
-                if (refidparts[1].Equals(ViewBag.cid))
-                {
-                    if (this.LoggedInUser.EbObjectIds.Contains(refidparts[3].PadLeft(5, '0')) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
-                    {
-                        GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
-                        //----------------------This code should be changed
-
-                        EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-                        EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
-                        if (WebForm != null)
-                        {
-                            string[] Keys = EbControlContainer.GetKeys(WebForm);
-                            Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = this.LoggedInUser.Preference.Locale }).Dict;
-                            EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
-
-                            Dictionary<string, string> MLPair = GetMLPair(WebForm_L);
-
-                            foreach (KeyValuePair<int, FormTransaction> item in Resp.Logs)
-                            {
-                                foreach (FormTransactionLine initem in item.Value.Details)
-                                {
-                                    if (MLPair.ContainsKey(initem.FieldName))
-                                        initem.FieldName = MLPair[initem.FieldName];
-                                }
-                            }
-                        }
-
-                        //--------------------------------
-                        return JsonConvert.SerializeObject(Resp.Logs);
-                    }
-                }
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
-                return string.Empty;
-            }
-        }
-
-        private Dictionary<string, string> GetMLPair(EbWebForm WebForm_L)
-        {
-            Dictionary<string, string> MLPair = new Dictionary<string, string>();
-            EbControl[] controls = (WebForm_L as EbControlContainer).Controls.FlattenAllEbControls();
-            foreach (EbControl control in controls)
-            {
-                PropertyInfo[] props = control.GetType().GetProperties();
-                foreach (PropertyInfo prop in props)
-                {
-                    if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == (int)PropertyEditorType.MultiLanguageKeySelector)
-                    {
-                        if (prop.Name == "Label")
-                            MLPair.Add(control.Name, control.GetType().GetProperty(prop.Name).GetValue(control, null) as String);
-                    }
-                }
-            }
-            return MLPair;
-        }
-
+                
         public WebformData getRowdata(string refid, int rowid, int currentloc)
         {
             try
@@ -202,6 +136,25 @@ namespace ExpressBase.Web.Controllers
             return Resp.RowAffected;
         }
 
+        public string GetAuditTrail(string refid, int rowid, int currentloc = -1)
+        {
+            throw new FormException("Exception: AuditTrail not implemented");
+            //try
+            //{
+            //    if (this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
+            //    {
+            //        GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+            //        return Resp.Json;
+            //    }
+            //    throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
+            //    return string.Empty;
+            //}            
+        }
+
         private bool HasPermission(string RefId, string ForWhat, int LocId)
         {
             if (ViewBag.wc != RoutingConstants.UC)
@@ -256,5 +209,72 @@ namespace ExpressBase.Web.Controllers
             GetDesignHtmlResponse resp = ServiceClient.Post<GetDesignHtmlResponse>(new GetDesignHtmlRequest { RefId = refId });
             return resp.Html;
         }
+
+        //public string AuditTrail(string refid, int rowid)
+        //{
+        //    //sourc == dest == type == dst id == dst verid== src id == src verid
+        //    //ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-0-2257-2976-2257-2976
+        //    try
+        //    {
+        //        string[] refidparts = refid.Split("-");
+        //        if (refidparts[1].Equals(ViewBag.cid))
+        //        {
+        //            if (this.LoggedInUser.EbObjectIds.Contains(refidparts[3].PadLeft(5, '0')) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+        //            {
+        //                GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
+        //                //----------------------This code should be changed
+
+        //                EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+        //                EbWebForm WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
+        //                if (WebForm != null)
+        //                {
+        //                    string[] Keys = EbControlContainer.GetKeys(WebForm);
+        //                    Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = this.LoggedInUser.Preference.Locale }).Dict;
+        //                    EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
+
+        //                    Dictionary<string, string> MLPair = GetMLPair(WebForm_L);
+
+        //                    foreach (KeyValuePair<int, FormTransaction> item in Resp.Logs)
+        //                    {
+        //                        foreach (FormTransactionLine initem in item.Value.Details)
+        //                        {
+        //                            if (MLPair.ContainsKey(initem.FieldName))
+        //                                initem.FieldName = MLPair[initem.FieldName];
+        //                        }
+        //                    }
+        //                }
+
+        //                //--------------------------------
+        //                return JsonConvert.SerializeObject(Resp.Logs);
+        //            }
+        //        }
+        //        return string.Empty;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
+        //        return string.Empty;
+        //    }
+        //}
+
+        //private Dictionary<string, string> GetMLPair(EbWebForm WebForm_L)
+        //{
+        //    Dictionary<string, string> MLPair = new Dictionary<string, string>();
+        //    EbControl[] controls = (WebForm_L as EbControlContainer).Controls.FlattenAllEbControls();
+        //    foreach (EbControl control in controls)
+        //    {
+        //        PropertyInfo[] props = control.GetType().GetProperties();
+        //        foreach (PropertyInfo prop in props)
+        //        {
+        //            if (prop.IsDefined(typeof(PropertyEditor)) && prop.GetCustomAttribute<PropertyEditor>().PropertyEditorType == (int)PropertyEditorType.MultiLanguageKeySelector)
+        //            {
+        //                if (prop.Name == "Label")
+        //                    MLPair.Add(control.Name, control.GetType().GetProperty(prop.Name).GetValue(control, null) as String);
+        //            }
+        //        }
+        //    }
+        //    return MLPair;
+        //}
+
     }
 }

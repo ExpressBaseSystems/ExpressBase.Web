@@ -12,6 +12,7 @@
 <script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript"></script>
 <script src="~/js/DBExplorer.js" type="text/javascript"></script>
 <script src="~/js/Eb_CommonHeader.js" type="text/javascript"></script>
+<script src="https://codemirror.net/addon/display/autorefresh.js" type="text/javascript"></script>
 
 @await Component.InvokeAsync("PageHeaderCommon");
 <script>
@@ -23,22 +24,26 @@
 </script>
 <div class="row">
     <div class="cont">
-        <div class="DbClient_toolbox" style="width:25%;">
-            <div class="db_client_toolbox TablePannelHead">Table Explorer : @ViewBag.DB_Name</div>
-            <div class="mytree db_client_toolbox_bdy">
+        <div class="Resize_toolbox" style="width:25%;">
+            <div class="db_client_toolbox TablePannelHead">
+                Table Explorer : @ViewBag.DB_Name : @ViewBag.TableCount
+                <input type="text" id="myInput" placeholder="Search for Table.." title="Table Name">
+            </div>
+            <div class="mytree db_client_toolbox_bdy" id="myUL">
                 @{
                     foreach (KeyValuePair<string, EbDbExplorerTable> Table_kvp in ViewBag.Tables.TableCollection)
                     {
                         <div table-name="@Table_kvp.Key" id="@Table_kvp.Key">
 
-
-                            <span class="table-name">@Table_kvp.Key</span>
                             @{
                                 EbDbExplorerTable table = Table_kvp.Value;
                                 string schema = table.Schema;
                                 List<string> Indexes = table.Index;
                                 List<EbDbExplorerColumn> Columns = table.Columns;
-                                <div>
+
+                                <span class="table-name" data-name="@Table_kvp.Key" data-toggle="tooltip" data-placement="left" title="No. of Columns : @Columns.Count()">@Table_kvp.Key</span>
+
+                                <div class="child">
                                     <span>Schema</span>
                                     <div>@schema</div>
                                 </div>
@@ -50,16 +55,29 @@
                                     }
                                 </div>
                                 <div>
-                                    <span>Column</span>
+                                    <span data-toggle="tooltip" data-placement="left" title="Count : @Columns.Count()">Column</span>
                                     @foreach (EbDbExplorerColumn Column in Columns)
                                     {
                                         <div>
                                             @{ if (Column.ColumnKey == "Primary key")
                                                 { <i class="fa fa-key fa-1x gold" aria-hidden="true"></i> }
                                                 else if (Column.ColumnKey == "Foreign key")
-                                                {<i class="fa fa-key fa-1x fkey" aria-hidden="true"></i> } }@Column.ColumnName ::@Column.ColumnType :: @Column.ColumnTable
-                                            </div>
-                                        }
+                                                {<i class="fa fa-key fa-1x fkey" aria-hidden="true"></i> }
+                                                if (Column.ColumnType == "integer" || Column.ColumnType == "numeric")
+                                                {
+                                                    <i class="fa fa-sort-numeric-asc data-type" aria-hidden="true"></i>
+                                                }
+                                                else if (Column.ColumnType == "text" || Column.ColumnType == "character")
+                                                {
+                                                    <i class="fa fa-font data-type" aria-hidden="true"></i>
+                                                }
+                                                if (Column.ColumnType == "timestamp without time zone")
+                                                {
+                                                    <i class="fa fa-calendar fa-1 data-type" aria-hidden="true"></i>
+                                                }
+                                            } :: <span id="@Column.ColumnName" data-toggle="tooltip" data-placement="left" title="@Column.ColumnType :: @Column.ColumnKey">@Column.ColumnName     @Column.ColumnTable</span>
+                                        </div>
+                                    }
                                 </div>
                             }
                         </div>
@@ -68,21 +86,10 @@
             </div>
         </div>
         <div id="pannel">
-            <ul id="TabAdderMain" class="nav nav-tabs"></ul>
-            @*<div id="droppable" class="drop-box" style="display:none"></div>*@
-
-
-
-            <div class="tab-content draggeer" id="maintab">
-                @*<div id="result_set">
-                        <div id="code1" class="tab-pane fade"><textarea id="coder1" name="coder1" style="visibility:hidden"></textarea></div>
-
-                        <ul class="nav nav-tabs" id="Result_Tab"></ul>
-                        <div class="tab-content resulttab" id="resulttab">
-
-                        </div>
-                    </div>*@
+            <div class="tab-section">
+                <ul id="TabAdderMain" class="nav nav-tabs"></ul>
             </div>
+            <div class="tab-content draggeer" id="maintab"></div>
         </div>
     </div>
 </div>

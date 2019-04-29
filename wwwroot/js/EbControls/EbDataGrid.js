@@ -161,28 +161,20 @@
 
     this.changedRowWT = function () {
         let SingleTable = [];
-        //            [
-        //              { RowId: 1,
-        //                IsUpdate: true,
-        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
-        //              },
-        //              {
-        //                RowId: 0,
-        //                IsUpdate: false,
-        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
-        //              },
-        //              {
-        //                RowId: 0,
-        //                IsUpdate: false,
-        //                Columns:[{ name: 1, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 }, { name: 10, val: 100 },]
-        //              },
-        //            ]
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
             if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true")
                 SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
         console.log(SingleTable);
         return SingleTable;
+    };
+
+    this.getType = function (_inpCtrl) {
+        let type = _inpCtrl.ObjType;
+        if (type === "TextBox")
+            type = "String";
+        return `EbDG${type}Column`;
+
     };
 
     this.initInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
@@ -192,10 +184,24 @@
         inpCtrl.__rowid = rowid;
         inpCtrl.__Col = col;
         //inpCtrl.EbSid = ctrlEbSid;
-        inpCtrl.ObjType = col.InputControlType.substr(2);
 
+        if (inpCtrl.ObjType === "DGUserControlColumn") {
+            $.each(inpCtrl.Columns.$values, function (i, _inpCtrl) {
+                let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+                _inpCtrl = new EbObjects[this.getType(_inpCtrl)](ctrlEbSid, _inpCtrl);
+                inpCtrl.Columns.$values[i] = this.initInpCtrl(_inpCtrl, col, _ctrlEbSid, rowid);
+            }.bind(this));
+        }
+        else
+            inpCtrl.ObjType = col.InputControlType.substr(2);
+        return inpCtrl;
     };
     this.attachFns = function (inpCtrl, colType) {
+        if (colType === "DGUserControlColumn") {
+            $.each(inpCtrl.Columns.$values, function (i, col) {
+                inpCtrl.Columns.$values[i] = this.attachFns(col, col.ObjType);
+            }.bind(this));
+        }
         return new ControlOps[colType](inpCtrl);
     };
 
@@ -225,9 +231,24 @@
         return tr;
     };
 
+    this.getDBareHtml = function (col) {
+        let DBareHtml = "";
+        let ChildDBareHtmls = "";
+
+
+        if (col.ObjType === "DGUserControlColumn") {
+            $.each(col.Columns.$values, function (i, ctrl) {
+                ChildDBareHtmls += col.ChildDBareHtmlColl[ctrl.EbSid_CtxId].replace(/@ebsid@/g, ctrl.EbSid_CtxId);
+            }.bind(this));
+        }
+        else
+            DBareHtml = col.DBareHtml;
+        return DBareHtml;
+    };
+
     this.getTdHtml = function (inpCtrl, col, i) {
         return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' colname='${col.Name}' style='width:${this.getTdWidth(i)}px'>
-                    <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
+                    <div id='@ebsid@Wraper' class='ctrl-cover'>${this.getDBareHtml(col, inpCtrl.EbSid_CtxId) || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                 </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
@@ -344,10 +365,8 @@
         }.bind(this));
         //should fire after onChangeFn init
         $.each(this.rowCtrls[rowid], function (i, inpCtrl) {
-
             if (inpCtrl.DefaultValue)
                 inpCtrl.setValue(inpCtrl.DefaultValue);
-
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
             // run DG onChangeFns initially

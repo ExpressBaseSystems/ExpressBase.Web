@@ -842,7 +842,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .ucbtn {
     border: solid 1px #dddddd;
     border-radius: 100%;
-    padding: 3px 4px!important;
-    background-color: transparent;
+    margin-top: 0.5px;
+    padding: 3px 4px !important;
+    color: black;
+    background-color: white;
+    box-shadow: inset 0px 0px 5px 0px rgba(195, 188, 188, 0.72), -0.5px 0.5px 2px 0px rgba(107, 107, 107, 0.72);
 }
 
+    .ucbtn:focus {
+        outline: none;
+        border: solid 1px #6ebfe6;
+        box-shadow: 0px 0px 3px 0 #6ebfe6 !important;
+    }

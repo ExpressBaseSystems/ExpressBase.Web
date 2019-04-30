@@ -238,7 +238,7 @@
 
         if (col.ObjType === "DGUserControlColumn") {
             $.each(col.Columns.$values, function (i, ctrl) {
-                ChildDBareHtmls += col.ChildDBareHtmlColl[ctrl.EbSid_CtxId].replace(/@ebsid@/g, ctrl.EbSid_CtxId);
+                ChildDBareHtmls += col.ChildDBareHtmlColl[ctrl.EbSid].replace(/@ebsid@/g, ctrl.EbSid_CtxId);
             }.bind(this));
         }
         else

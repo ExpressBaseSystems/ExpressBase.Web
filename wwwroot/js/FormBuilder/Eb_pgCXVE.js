@@ -282,7 +282,7 @@
         if (this.editor === 8) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.changeCopyToRef();
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();
+            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();// hide PG
         }
         else if (this.editor === 10) {
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
@@ -387,7 +387,7 @@
                     this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24 || this.editor === 26) {
                 idx = this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", $sibling.attr("id")));
-                //this.movingObj[this.Dprop] = true;
+                this.movingObj[this.Dprop] = true;
                 this.movingObj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", el.id)), 1)[0];
                 if ($sibling.length > 0)
                     this.CElistFromSrc.splice(idx, 0, this.movingObj);
@@ -404,7 +404,7 @@
                     this.CElistFromSrc.push(this.movingObj);
             }
             else if (this.editor === 24 || this.editor === 26) {
-                //this.movingObj[this.Dprop] = false;
+                this.movingObj[this.Dprop] = false;
                 this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
             }
             this.CEOnDeselectFn(this.movingObj, el);
@@ -831,8 +831,11 @@
             return false;
         e.stopPropagation();
         $tile.remove();
-        if (this.editor === 9 || this.editor === 8 || this.editor === 26) {
-            this.selectedCols.push(getObjByval(this.CElistFromSrc, "name", $tile.attr("id")));
+        if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26) {
+            let tileObj = getObjByval(this.CElistFromSrc, "name", $tile.attr("id"));
+            if (this.editor === 26 || this.editor === 24)
+                tileObj[this.Dprop] = true;
+            this.selectedCols.push(tileObj);
             $("#" + this.CEctrlsContId).append($tile);
             $tile.focus();
         }
@@ -843,7 +846,7 @@
         e.stopPropagation();
         let $tile = $(e.target).closest(".colTile").remove();
         if (this.selectedCols)// temp condition
-            var tileObj = getObjByval(this.selectedCols, "name", $tile.attr("id"));
+            var tileObj= getObjByval(this.selectedCols, "name", $tile.attr("id"));
         if (this.editor === 7) {
             this.PGobj.removeFromDD.bind(this.PGobj)($tile.attr("id"));
             let DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("ebsid"))), 1)[0];
@@ -858,7 +861,9 @@
                 });
             }
         }
-        else if (this.editor === 9 || this.editor === 8 || this.editor === 24) {
+        else if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26) {
+            if (this.editor === 26 || this.editor === 24)
+                tileObj[this.Dprop] = false;
             this.selectedCols.splice(this.selectedCols.indexOf(tileObj), 1);
             $("#" + this.CE_all_ctrlsContId).prepend($tile);
         }

@@ -101,7 +101,7 @@
         return ids;
     };
 
-    this.UserControl = function (ctrl, ctrlOpts) {
+    this.DGUserControlColumn = function (ctrl, ctrlOpts) {
         let $ctrl_modal = $("#" + ctrl.EbSid_CtxId).remove();
         $("body").prepend($ctrl_modal);
     };

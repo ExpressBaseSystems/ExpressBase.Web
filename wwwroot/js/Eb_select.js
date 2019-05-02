@@ -372,7 +372,7 @@ const EbSelect = function (ctrl, options) {
         let row = datatable.row(cell.index().row);
         let $tr = $(row.nodes());
         //let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
-        let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === "id"; }.bind(this))[0].data;
+        let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
         let vmValue = this.datatable.Api.row($tr.index()).data()[idx];
         this.$curEventTarget = $tr;
         this.SelectRow(idx, vmValue);
@@ -449,7 +449,7 @@ const EbSelect = function (ctrl, options) {
     this.dblClickOnOptDDEventHand = function (e) {
         this.$curEventTarget = $(e.target);
         //let idx = this.datatable.ebSettings.Columns.$values[getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
-        let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === "id"; }.bind(this))[0].data;
+        let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
         let vmValue = this.datatable.Api.row($(e.target).closest("tr")).data()[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             this.SelectRow(idx, vmValue);

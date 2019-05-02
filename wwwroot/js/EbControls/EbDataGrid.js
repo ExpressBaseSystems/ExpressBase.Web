@@ -238,8 +238,34 @@
 
         if (col.ObjType === "DGUserControlColumn") {
             $.each(col.Columns.$values, function (i, ctrl) {
-                ChildDBareHtmls += col.ChildDBareHtmlColl[ctrl.EbSid_CtxId].replace(/@ebsid@/g, ctrl.EbSid_CtxId);
+                ChildDBareHtmls += col.ChildDBareHtmlColl[ctrl.EbSid].replace(new RegExp(`${ctrl.EbSid}`, 'g'), ctrl.EbSid_CtxId);
             }.bind(this));
+            DBareHtml = `<div class='input-group' style='width:100%;'>            
+    <input id='' ui-inp data-toggle='tooltip' title='' type='text' tabindex='0' style='width:100%; data-original-title=''>
+    <span class='input-group-addon ucspan' data-toggle='modal' data-target='#@ebsid@' style='padding: 0px;'> <button type='button' id='Date1TglBtn' class='fa  fa-ellipsis-h ucbtn' aria-hidden='true' style='padding: 6px 12px;'></button> </span>
+</div>
+
+
+<!-- Modal -->
+<div class='modal fade' id='@ebsid@' tabindex='-1' role='dialog' aria-labelledby='@ebsid@Title' aria-hidden='true'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='exampleModalLongTitle'>@modaltitle@</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+        <div class='modal-body'>` +
+                ChildDBareHtmls +
+                `
+        </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>`;
         }
         else
             DBareHtml = col.DBareHtml;
@@ -247,7 +273,7 @@
     };
 
     this.getTdHtml = function (inpCtrl, col, i) {
-        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' colname='${col.Name}' style='width:${this.getTdWidth(i)}px'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
                     <div id='@ebsid@Wraper' class='ctrl-cover'>${this.getDBareHtml(col, inpCtrl.EbSid_CtxId) || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                 </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -266,8 +292,8 @@
             .replace("@del-c@", !isAnyColEditable ? "del-c" : "");
     };
 
-    this.getTdWidth = function (i) {
-        return $(`#${this.TableId}_head thead th`).eq(i).outerWidth() + 1 + (i === 0 ? 3 : 0);
+    this.getTdWidth = function (i, col) {
+        return (i === 0 ? col.Width + 0.1 : col.Width) + "%";
     };
 
     this.getAggTrHTML = function () {
@@ -275,7 +301,7 @@
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
                 return true;
-            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${col.Name}' style='width:${this.getTdWidth(i)}px'>
+            tr += `<td id ='td_@ebsid@' ctrltdidx='${i}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
                         <div class='tdtxt-agg' coltype='${col.ObjType}'><span></span></div>                        
                    </td>`;
 

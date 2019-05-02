@@ -83,9 +83,8 @@
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
                 this.showMessage();
-            } 
-            else
-            {
+            }
+            else {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = data.message;
                 this.showMessage();
@@ -133,10 +132,10 @@
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
 
-            if (this.flagRun) 
+            if (this.flagRun)
                 this.ObjCollection[target].SaveSuccess();
 
-                this.ShowMessage();
+            this.ShowMessage();
             this.saveOrCommitSuccess(data);//edit by amal
         }
         //$.LoadingOverlay("hide");
@@ -399,7 +398,7 @@
         }
     };
 
-    this.Save = function () {
+    this.Save = async function () {
         this.FlagSave = true;
         $("#eb_common_loader").EbLoader("show");
         var tagvalues = $('#tags').val();
@@ -409,7 +408,7 @@
         var getNav = this.target;/*$("#versionNav li.active a").attr("href");*/
         if (this.isBeforSaveImplemets(getNav)) {
             if (this.ObjCollection[getNav].BeforeSave())
-                this.ajaxSave(tagvalues, apps, getNav);
+                await this.ajaxSave(tagvalues, apps, getNav);
             else
                 $("#eb_common_loader").EbLoader("hide");
         }
@@ -437,7 +436,7 @@
 
     this.ajaxSave = function (tagvalues, apps, getNav) {
         if (this.Current_obj.Validate === undefined || this.Current_obj.Validate()) {
-            $.post("../Eb_Object/SaveEbObject", {
+             $.post("../Eb_Object/SaveEbObject", {
                 _refid: this.ver_Refid,
                 _json: JSON.stringify(this.Current_obj),
                 _rel_obj: this.ObjCollection[getNav].relatedObjects,

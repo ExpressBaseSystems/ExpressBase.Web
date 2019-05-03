@@ -53,7 +53,14 @@
     });
 </script>
 <div>
-    @await Component.InvokeAsync("SchedulerListing", new { objid = Convert.ToInt32(ViewBag.Obj_id) })
+    @{ 
+        int objid = Convert.ToInt32(ViewBag.Obj_id) ;
+        if (objid != 0)
+        {
+            await Component.InvokeAsync("SchedulerListing", new { objid });
+        }
+    }
+    
 </div>
 <div class="modal SchedulerModal fade" id="SchedulerModal" role="dialog">
     <div class="modal-dialog">

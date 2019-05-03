@@ -91,6 +91,7 @@ namespace ExpressBase.Web.Controllers
         {
             EbDataVisualization dvobj = EbSerializers.Json_Deserialize(dvobjt);
             dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
+            ReturnColumns returnobj = new ReturnColumns();
             try
             {
                 DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
@@ -105,8 +106,8 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
                 DSController dscont = new DSController(this.ServiceClient, this.Redis);
-                dvobj.ColumnsCollection = dscont.GetDVColumnCollection(columnresp.Columns);
-                dvobj.ParamsList = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() : null;
+                returnobj.ColumnsCollection = dscont.GetDVColumnCollection(columnresp.Columns);
+                returnobj.Paramlist = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() : null;
                 var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
                 int _pos = __columns.Count + 100;
 
@@ -136,16 +137,16 @@ namespace ExpressBase.Web.Controllers
                 }
                 //dvobj.Columns.Add(new DVNumericColumn { Data = ++indx, Name = "RATE_GRAFT", sTitle = "RATE+GRAFT", Type = EbDbTypes.Int32, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right",Formula = "T0.RATE+T0.GRAFT" });
                 if (dvobj.Columns == null || dvobj.Columns.Count == 0)
-                    dvobj.Columns = Columns;
+                    returnobj.Columns = Columns;
                 else
-                    dvobj.Columns = compareDVColumns(dvobj.Columns, Columns, CustomColumn);
-                dvobj.DSColumns = dvobj.Columns;
+                    returnobj.Columns = compareDVColumns(dvobj.Columns, Columns, CustomColumn);
+                returnobj.DsColumns = returnobj.Columns;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception (GetdvObject): " + e.StackTrace);
             }
-            return EbSerializers.Json_Serialize( dvobj );
+            return EbSerializers.Json_Serialize(returnobj);
         }
 
         private DVColumnCollection compareDVColumns(DVColumnCollection OldColumns, DVColumnCollection CurrentColumns, bool CustomColumn)
@@ -353,6 +354,18 @@ namespace ExpressBase.Web.Controllers
                 return resultStream.ToArray();
             }
         }
+       
+    }
+
+    public class ReturnColumns
+    {
+        public List<DVColumnCollection> ColumnsCollection { get; set; }
+
+        public DVColumnCollection Columns { get; set; }
+
+        public List<Param> Paramlist { get; set; }
+
+        public DVColumnCollection DsColumns { get; set; }
     }
 }
 

@@ -9,22 +9,22 @@
     string Logourl = "/images/logo/" + ViewBag.cid + ".png";
 
     string DpUrl = "/images/dp/" + ViewBag.UId + ".png";
-
+    string[] wrkcpy = (ViewBag.Workingcopy == null)? new string[] { } : ViewBag.Workingcopy;
     EbObj_Dashboard tile = ViewBag.tile;
-}
+    }
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>@*dona*@
 <script type="text/javascript" src="~/js/Eb_ObjectCommon.js"></script>
 <div class="row">
     <div class="toolbar objectDashB-toolbar">
         <div class="col-md-7 pd-0">
             <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
-            
+
             @if (ViewBag.wc == "uc")
             {
-            <button class="btn loc_switchbtn pull-left" id="switch_loc">
-                <i class="fa fa-code-fork fa-rotate-180" aria-hidden="true"></i>
-                <i class="fa fa-code-fork fa-rotate-180 fa-flip-vertical _neg_icon-left" aria-hidden="true"></i>
-            </button>
+                <button class="btn loc_switchbtn pull-left" id="switch_loc">
+                    <i class="fa fa-code-fork fa-rotate-180" aria-hidden="true"></i>
+                    <i class="fa fa-code-fork fa-rotate-180 fa-flip-vertical _neg_icon-left" aria-hidden="true"></i>
+                </button>
             }
 
             <div class="solution_logo_cont pull-left">
@@ -113,29 +113,29 @@
                 <input type="text" id="apps" class="typeahead form-control" data-role="tagsinput" />
             </div>
             @*<div class="firstcommit">
-                <h6 class="smallfont">Owner/Assignee</h6>
-                <div style="display:block">
-                    <div class="userimg">
-                        <img src="../static/dp/dp_@(tile.Owner_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle"/>
-                    </div>
-                    <div class="profileInfo">
-                        <h6 class="xtrasmall">@tile.Owner_Name</h6>
-                        <h6 class="xtrasmall">@tile.Owner_Ts</h6>
+                    <h6 class="smallfont">Owner/Assignee</h6>
+                    <div style="display:block">
+                        <div class="userimg">
+                            <img src="../static/dp/dp_@(tile.Owner_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle"/>
+                        </div>
+                        <div class="profileInfo">
+                            <h6 class="xtrasmall">@tile.Owner_Name</h6>
+                            <h6 class="xtrasmall">@tile.Owner_Ts</h6>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-1 box4">
-                <h6 class="smallfont">Application</h6>
-                <select class="selectpicker btn" id="apps" name="Apps">
-                    <option id="" value="0">Select Application</option>
-                    @{
-                        foreach (KeyValuePair<string, object> entry in ViewBag.Apps)
-                        {
-                            <option id="" value="@entry.Key">@entry.Value</option>
+                <div class="col-md-1 box4">
+                    <h6 class="smallfont">Application</h6>
+                    <select class="selectpicker btn" id="apps" name="Apps">
+                        <option id="" value="0">Select Application</option>
+                        @{
+                            foreach (KeyValuePair<string, object> entry in ViewBag.Apps)
+                            {
+                                <option id="" value="@entry.Key">@entry.Value</option>
+                            }
                         }
-                    }
-                </select>
-            </div>*@
+                    </select>
+                </div>*@
         </div>
 
         <div class="box2">
@@ -150,19 +150,20 @@
                         <div class="count text-center workcopies">
                             @using Newtonsoft.Json;
                             @{
-                                string[] wrkcpy = ViewBag.Workingcopy;
-                                if (wrkcpy[0] == "")
+                        
+                                if (wrkcpy!=null|| wrkcpy.Count() < 1 || wrkcpy[0] == "")
                                 {
                                     <p>No working copies</p>
                                 }
                                 else
                                 {
-                                    foreach (var w in wrkcpy)
+                                    foreach (string w in wrkcpy)
                                     {
-                                        var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
-                                        foreach (var k in wcpy)
+                                        if (!string.IsNullOrEmpty(w))
                                         {
-                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@k.Value" data-verNum="@k.Key">@k.Key.Replace(".w", " w")</a>
+                                            var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
+                                            foreach (KeyValuePair<string, string> k in wcpy)
+                                            {<a href="#" class="wrkcpylink tag label label-primary" data-id="@k.Value" data-verNum="@k.Key">@k.Key.Replace(".w", " w")</a>}
                                         }
                                     }
                                 }
@@ -268,7 +269,7 @@
                 </label>
             </div>
         }
-        </div>
+    </div>
 </div>
 
 <div class="changLog-container" id="changelogPopup">
@@ -293,7 +294,7 @@
 	h201.797v2.993H151.848V132.527z" />
 <path style="fill:#FFCA4F;" d="M242.616,290.481l-40.247,21.682l18.587,18.589l21.663-40.271H242.616z" />
 <path style="fill:#20D0C2;" d="M207.801,317.602c4.64,0.422,7.399,2.801,7.717,7.714L70.149,470.685l-7.717-7.717L207.801,317.602z" />
-<path style="fill:#15BDB1;" d="M207.801,317.602c0.391-3.714-1.199-5.718-5.435-5.437L56.998,457.534l5.435,5.435L207.801,317.602z" />
+                <path style="fill:#15BDB1;" d="M207.801,317.602c0.391-3.714-1.199-5.718-5.435-5.437L56.998,457.534l5.435,5.435L207.801,317.602z" />
 <path style="fill:#ECF0F1;" d="M75.584,476.12l-18.587-18.587l-4.59,4.59l18.587,18.587L75.584,476.12z" />
 <path style="fill:#FFCA4F;" d="M57.221,485.303l-9.403-9.406c-2.526-2.526-2.526-6.657,0-9.18l4.593-4.59l18.587,18.587l-4.59,4.59
 	c-2.523,2.523-6.655,2.526-9.18,0H57.221z" />
@@ -400,7 +401,7 @@
         if ('@Appid'.length > 0)
         {
             $('#apps').tagsinput('add', '@Appid');
-        }      
+        }
 
          if ('@ViewBag.IsLogEnabled' === 'True') {
             $('#profiler').prop("checked",true);

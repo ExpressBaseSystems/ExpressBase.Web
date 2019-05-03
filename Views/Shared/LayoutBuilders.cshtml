@@ -137,6 +137,12 @@
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     }
+    <script>
+    window.ebcontext= {
+        sid: "@ViewBag.cid",
+        user: JSON.parse('@Html.Raw(ViewBag.UserObject)')
+    }
+    </script>
 </head>
 <body>
     <div id="tenatDtls" class="container-fluid">

@@ -160,16 +160,6 @@
     border: 0 !important;
 }
 
-.check-row {
-    position: absolute;
-    left: 7.5px;
-    top: 0.5px;
-    color: green;
-    height: 28px;
-    width: 29px;
-    border-radius: 100%;
-}
-
 .del-row, .edit-row {
     display: none;
     position: absolute;
@@ -183,22 +173,27 @@
     left: 23.5px;
     color: red;
     border-radius: 0 50px 50px 0;
+    direction: rtl;
 }
 
 .edit-row {
     left: 7.5px;
     color: rgb(192, 110, 3);
     border-radius: 50px 0 0 50px;
+    padding-top: 1.5px !important;
+    padding-left: 4.5px;
 }
 
 .tdtxt {
     display: none;
-    padding: 5px;
+    padding: 6px;
 }
 
 .rowc {
     text-align: center;
     padding-top: 5px;
+    background-color: transparent;
+    border: none;
 }
 
 .del-c {
@@ -212,6 +207,22 @@
 .rowc:focus {
     outline: none;
     box-shadow: 0px 0px 6px 0 !important;
+    background-color:white;
+}
+
+.rowc:hover {
+    background-color: white;
+}
+
+.check-row {
+    position: absolute;
+    left: 7.5px;
+    /*top: 0.5px;*/
+    color: green;
+    height: 28px;
+    width: 29px;
+    padding-top: 3px;
+    border-radius: 100%;
 }
 
 .edit-row:hover {
@@ -228,6 +239,12 @@
 
 .check-row:hover, .del-c:hover {
     box-shadow: 0 0 2.5px 0 !important;
+}
+
+.dgtr:focus {
+    border: solid 1.5px rgb(85, 94, 167);
+    box-shadow: 0 0 3px rgb(255, 255, 255) inset;
+    outline: 0 none;
 }
 
 .ctrl-edit {
@@ -302,7 +319,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
-.Eb-ctrlContainer input:not([type=radio]), .Eb-ctrlContainer select {
+.Eb-ctrlContainer input:not([type=radio]):not([type=checkbox]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
     height: auto;
     min-height: 28px;
@@ -364,7 +381,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .check-wraper {
     background-color: white;
-    height: 28px;
+   // height: 21px;
+    margin: 1px;
+    padding: 4px;
 }
 
 .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
@@ -814,3 +833,26 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background-repeat: no-repeat !important;
     background-position: calc(100% - 2px) !important;
  }
+
+.uc-col-wraper {
+    display:none;
+}
+.ucspan {
+    padding: 0px 7px!important;
+}
+
+.ucbtn {
+    border: solid 1px #dddddd;
+    border-radius: 100%;
+    margin-top: 0.5px;
+    padding: 3px 4px !important;
+    color: black;
+    background-color: white;
+    box-shadow: inset 0px 0px 5px 0px rgba(195, 188, 188, 0.72), -0.5px 0.5px 2px 0px rgba(107, 107, 107, 0.72);
+}
+
+    .ucbtn:focus {
+        outline: none;
+        border: solid 1px #6ebfe6;
+        box-shadow: 0px 0px 3px 0 #6ebfe6 !important;
+    }

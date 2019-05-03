@@ -23,6 +23,7 @@ namespace ExpressBase.Web.Controllers
             GetDbTablesResponse res = this.ServiceClient.Get(new GetDbTablesRequest { });
             ViewBag.Tables = res.Tables;
             ViewBag.DB_Name = res.DB_Name;
+            ViewBag.TableCount = res.TableCount;
             return View();
         }
 
@@ -44,9 +45,12 @@ namespace ExpressBase.Web.Controllers
                         }
                         else if (Query.IndexOf("select ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
-                            DbClientQueryResponse ress = new DbClientQueryResponse();
-                            ress = SelectQuery(SplitQuery);
-                            responses.Add(ress);
+                            if (Query.IndexOf("eb_", StringComparison.OrdinalIgnoreCase) < 0)
+                            {
+                                DbClientQueryResponse ress = new DbClientQueryResponse();
+                                ress = SelectQuery(SplitQuery);
+                                responses.Add(ress);
+                            }                                
                         }
                         else if (Query.IndexOf("delete ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {

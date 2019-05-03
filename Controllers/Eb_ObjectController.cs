@@ -34,7 +34,7 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Builders/", "ObjectType")]
         [HttpGet]
         [HttpPost]
-        public IActionResult Index(string objid, int objtype)
+        public IActionResult Index(string objid, int objtype, bool buildermode = true)
         {
             dynamic dsobj = null;
             Context2Js _c2js = new Context2Js();
@@ -42,6 +42,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.currentUser = LoggedInUser;
             EbObjectType type = (EbObjectType)(objtype);
             HttpContext.Items["ObjectType"] = type;
+            ViewBag.mode = buildermode;
             if (objid != "null")
             {
                 ViewBag.Obj_id = objid;

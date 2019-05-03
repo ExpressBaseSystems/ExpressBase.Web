@@ -93,7 +93,7 @@
                 this.drake.containers.push(el);
             }
         }
-    }
+    };
 
     this.makeTabsDropable = function () {
         $.each($("#" + this.formId + " .tab-pane"), function (i, el) {

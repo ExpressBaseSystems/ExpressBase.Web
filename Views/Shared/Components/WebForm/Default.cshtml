@@ -23,13 +23,14 @@
 <link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/css/bootstrap-select.css">
 <link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" asp-append-version=@bApnd />@*amal*@
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
 
 
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
-<script src="~/js/Eb_Basic_DataTable.js"></script>
+<script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
 <script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
 <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
@@ -38,20 +39,22 @@
 <script type="text/javascript" src="~/js/EbControls/EbDataGrid.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/js/bootstrap-select.js"></script>
 <script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
 
 @{
 
     EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.WebForm);
     //ivide
-<script>
+    <script>
     @Html.Raw(_toolBox.EbOnChangeUIfns);
     @Html.Raw(_toolBox.AllMetas);
     @Html.Raw(_toolBox.AllControlls);
-</script>
+    </script>
 }
 
 
@@ -129,6 +132,24 @@
         .fmode[mode="View Mode"] {
             background-color: #222222;
         }
+
+    #divAuditTrail tbody {
+        max-height: calc(100vh - 225px);
+        overflow-y: auto;
+        width: 100%;
+    }
+
+    #divAuditTrail thead, #divAuditTrail tbody, #divAuditTrail tr, #divAuditTrail td, #divAuditTrail th {
+        display: block;
+    }
+
+    #divAuditTrail tbody td {
+        float: left;
+    }
+
+    #divAuditTrail thead tr th {
+        float: left;
+    }
 </style>
 
 <div id='WebForm-cont' class="webform-cont">
@@ -137,13 +158,13 @@
 </div>
 
 <div class="modal fade" id="AuditHistoryModal" role="dialog">
-    <div class="modal-dialog" style="width: 550px;">
+    <div class="modal-dialog" style="width: 600px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Audit History</h4>
             </div>
-            <div class="modal-body" style="height:450px; overflow: auto;">
+            <div class="modal-body" style="height:calc(100vh - 190px); overflow: auto; padding: 0px;">
                 <div id="divAuditTrail"> </div>
             </div>
             <div class="modal-footer">
@@ -159,10 +180,11 @@
     let header = new EbHeader();
     header.insertButton(`<button id="webformdelete" class='btn' title='Delete'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformcancel" class='btn' title='Cancel'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
-    header.insertButton('<button id="webformnew" class="btn"  onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-plus" aria-hidden="true"></i></button>');
+    header.insertButton('<button id="webformnew" class="btn" onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-plus" aria-hidden="true"></i></button>');
     header.insertButton(`<button id="webformedit" class='btn' title='Edit'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
-    header.insertButton('<button id="webformsave"  class="btn"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
-       
+    header.insertButton('<button id="webformsave" class="btn" title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
+    header.insertButton('<button id="webformaudittrail" class="btn" title="Audit Trail"><i class="fa fa-history" aria-hidden="true"></i></button>')
+
     //header.insertButton(' <button class="btn" id="webformsave"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
     //let _editModeObj =  '@Html.Raw(ViewBag.editModeObj)';
 
@@ -182,23 +204,23 @@
         _mode = reqstMode;//
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
-            header.showElement(["webformnew", "webformsave"]);
+            header.showElement(["webformnew", "webformsave", "webformaudittrail"]);
             header.hideElement(["webformedit", "webformdelete", "webformcancel"]);
         }
         else if (reqstMode === "New Mode") {
             header.showElement(["webformsave"]);
-            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformcancel"]);
+            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
         }
         else if (reqstMode === "View Mode") {
-            header.showElement(["webformnew", "webformedit", "webformdelete", "webformcancel"]);
+            header.showElement(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
             header.hideElement(["webformsave"]);
         }
         else if (reqstMode === "Fail Mode") {
-            header.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel"]);
+            header.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
             EbMessage("show", { Message: 'Data Not Found!', AutoHide: false, Background: '#aa0000' });
         }
         else if (reqstMode === "Preview Mode") {
-            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformsave", "webformcancel"]);
+            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformsave", "webformcancel", "webformaudittrail"]);
             _mode = "New Mode";////////////
         }
         header.setName(_formObj.DisplayName);
@@ -241,48 +263,76 @@
     $("#webformaudittrail").on("click", function () {
         $("#AuditHistoryModal").modal("show");
         $("#divAuditTrail").children().remove();
-        $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 30%;"><i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>`);
+        $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 45%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
-            url: "../WebForm/AuditTrail",
-            data: { refid: _formRefId, rowid: getObjByval(_editModeObj, "Name", "id").Value },
+            url: "../WebForm/GetAuditTrail",
+            data: { refid: _formRefId, rowid: renderer.rowId },
             error: function () {
                 $("#divAuditTrail").children().remove();
-                $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 30%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);
+                $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 45%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);
             },
             success: function (result) {
                 if (result === "{}") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 30%; font-size: 20px; color: #ccc; "> Nothing to Display </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 45%; font-size: 20px; color: #ccc; "> Nothing to Display </div>`);
                     return;
                 }
-                let auditObj = JSON.parse(result);
-                var appendHtml = `<table class="table" style="width:100%">`;
-                $.each(auditObj, function (idx, Obj) {
-                    appendHtml += `
-                        <tr class="info">
-                            <th colspan="3"><div style="display: inline;">Event Date: ${Obj.CreatedAt}</div><div style="float: right; display: inline;">Done By: ${Obj.CreatedBy}</div></th>
-                        </tr>
-                        <tr class="success">
-                            <td>Field Name</td>
-                            <td>Before Change</td>
-                            <td>After Change</td>
-                        </tr>`;
-                    $.each(Obj.Details, function (j, InObj) {
-                        appendHtml += `
-                        <tr>
-                            <td>${InObj.FieldName}</td>
-                            <td>${InObj.OldValue}</td>
-                            <td>${InObj.NewValue}</td>
-                        </tr>`;
-                    });
-                });
-                appendHtml += `</table>`;
-                $("#divAuditTrail").children().remove();
-                $("#divAuditTrail").append(appendHtml);
+                else if (result === "") {
+                    $("#divAuditTrail").children().remove();
+                    $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 45%; font-size: 20px; color: #ccc; "> Something went wrong </div>`);
+                    return;
+                }
+                drawAuditTrail(result);
             }
         });
-
-
     });
+
+    function drawAuditTrail(result) {
+        let auditObj = JSON.parse(result);
+        var appendHtml = `<table class="table" style="width:100%; margin: 0px;">
+                            <thead>
+                                <tr class="info">
+                                    <th class="col-md-4 col-sm-4">Field Name</th>
+                                    <th class="col-md-4 col-sm-4">Before Change</th>
+                                    <th class="col-md-4 col-sm-4">After Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+        $.each(auditObj, function (idx, Obj) {
+            appendHtml += `
+                        <tr class="danger">
+                            <td class="col-md-5 col-sm-5" style = "padding: 0px 8px;">DateTime: ${Obj.CreatedAt}</td>
+                            <td class="col-md-3 col-sm-3" style = "padding: 0px 8px;">Operation: ${Obj.ActionType}</td>
+                            <td class="col-md-4 col-sm-4" style = "padding: 0px 8px;">Done By: ${Obj.CreatedBy}</td>
+                        </tr>
+                        `;
+            appendHtml += getAudiTrailHtmlRec(Obj.Tables, 0);
+        });
+        appendHtml += `</tbody></table>`;
+        $("#divAuditTrail").children().remove();
+        $("#divAuditTrail").append(appendHtml);
+    }
+
+    function getAudiTrailHtmlRec(tables, level) {
+        if (Object.entries(tables).length === 0)
+            return ``;
+        let appendHtml = ``;
+        $.each(tables, function (i, tblObj) {
+            appendHtml += `<tr class="success"><td class="col-md-12 col-sm-12" style = "padding-top: 0px; padding-bottom: 0px; padding-left: ${(level * 16) + 8}px;"><i class="fa fa-chevron-down" aria-hidden="true" style="color: #aaa;"></i> Container: ${i}</td></tr>`;
+            $.each(tblObj.Rows, function (j, rowObj) {
+                appendHtml += `<tr class="active"><td class="col-md-12 col-sm-12" style = "padding-top: 0px; padding-bottom: 0px; padding-left: ${((level + 1) * 16) + 8}px;"><i class="fa fa-chevron-down" aria-hidden="true" style="color: #aaa;"></i> Record Id: ${j}</td></tr>`;
+                $.each(rowObj.Columns, function (k, colObj) {
+                    appendHtml += `
+                        <tr>
+                            <td class="col-md-4 col-sm-4" style="padding-left: ${((level + 2) * 16) + 8}px;">${k}</td>
+                            <td class="col-md-4 col-sm-4">${colObj.OldValue}</td>
+                            <td class="col-md-4 col-sm-4">${colObj.NewValue}</td>
+                        </tr>`;
+                });
+            });
+            appendHtml += getAudiTrailHtmlRec(tblObj.LinesTable, level + 1);
+        });
+        return appendHtml;
+    }
 </script>

@@ -398,7 +398,7 @@
         }
     };
 
-    this.Save = async function () {
+    this.Save = function () {
         this.FlagSave = true;
         $("#eb_common_loader").EbLoader("show");
         var tagvalues = $('#tags').val();
@@ -408,7 +408,7 @@
         var getNav = this.target;/*$("#versionNav li.active a").attr("href");*/
         if (this.isBeforSaveImplemets(getNav)) {
             if (this.ObjCollection[getNav].BeforeSave())
-                await this.ajaxSave(tagvalues, apps, getNav);
+                this.ajaxSave(tagvalues, apps, getNav);
             else
                 $("#eb_common_loader").EbLoader("hide");
         }
@@ -468,6 +468,8 @@
         else if (this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1)
             return true;
         else if (this.ObjCollection[getNav].EbObject.$type.indexOf("Api") !== -1)
+            return true;
+        else if (this.ObjCollection[getNav].EbObject.$type.indexOf("TableVisualization") !== -1)
             return true;
         else
             return false;

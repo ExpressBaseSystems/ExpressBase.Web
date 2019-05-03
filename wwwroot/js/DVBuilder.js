@@ -18,6 +18,7 @@
         this.CurrentRowgroupkey = {};
         this.calcfieldCounter = 0;
         this.isCustomColumnExist = false;
+        this.isPreview = false;
 
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
@@ -61,11 +62,14 @@
     }
 
     previewClick() {
-        commonO.Save().then(this.rendertable.bind(this));
+        this.isPreview = true;
+        commonO.Save();
     }
 
-    rendertable(res) {
-        setTimeout(function () { window.open(`../DV/dv?refid=${this.EbObject.RefId}`, '_blank');}.bind(this), 100);
+    rendertable() {
+        if (this.isPreview)
+            window.open(`../DV/dv?refid=${this.EbObject.RefId}`, '_blank');
+        this.isPreview = false;
     }
 
     init() {
@@ -84,7 +88,7 @@
             objid = this.EbObject.RefId.split("-")[3];
         $("#obj_icons").prepend(`<a class='btn' id="oldbuilder" href='../Eb_Object/index?objid=${objid}&objtype=16&buildermode=false'><i class="fa fa-external-link" aria-hidden="true"></i></a>`);
 
-        //commonO.saveOrCommitSuccess = this.rendertable.bind(this);
+        commonO.saveOrCommitSuccess = this.rendertable.bind(this);
         //commonO.PreviewObject = function () {
         //    $("#preview_wrapper").empty();
         //    commonO.Save();
@@ -169,8 +173,18 @@
                 $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${icon}'></i> ${obj.name}</li>`);
             }.bind(this));
         }.bind(this));
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            if (obj.IsCustomColumn) {
+                $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
+                    class='columns textval calcfield' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+            }
+        }.bind(this));
         $('#data-table-list').killTree();
         $('#data-table-list').treed();
+        $('#calcFields').killTree();
+        $('#calcFields').treed();
+        this.SetContextmenu4CalcField();
+
         this.initializeDragula();
         this.ColumnDropped();
         if (!this.isNew) {
@@ -251,6 +265,7 @@
         var obj = this.objCollection[key];
         var type = $(e.target).closest("li").attr('eb-type');
         this.propGrid.setObject(obj, AllMetas[type]);
+        //$("#columns-list").focusout();
     }
 
     AddNewTableHeader() {
@@ -298,41 +313,35 @@
                 $(element).off("click").on("click", this.elementOnFocus.bind(this));
                 $(element).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
             }
-            if (obj.IsCustomColumn) {
-                $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
-            class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
-            }
         }.bind(this));
-        $('#calcFields').killTree();
-        $('#calcFields').treed();
     }
 
     RowgroupColumnDropped() {
-        let type = "";
-        let options = "";
         $.each(this.EbObject.RowGroupCollection.$values, function (i, objOuter) {
             this.RwogroupCounter++;
             $("#Rowgroup_cont #rowgroup_body").empty();
             if (i === 0) {
                 this.MakeDiv4Rowgroup();
             }
-            options = `<option value=${objOuter.Name}>${objOuter.DisplayName}</option>`;
-            if (objOuter.$type.indexOf("MultipleLevelRowGroup") > -1) {
-                type = "MultipleLevelRowGroup";
-                this.RowgroupDropRelated(type, objOuter);
-            }
-            else {
-                type = "SingleLevelRowGroup";
-                this.RowgroupDropRelated(type, objOuter);
-            }
+            let options = `<option value=${objOuter.Name}>${objOuter.DisplayName}</option>`;
+            let type = this.getRowgrouptype(objOuter);
+            this.RowgroupDropRelated(type, objOuter);
             this.drawRowgroupColumn(objOuter);
             $(".rowgroup_select").append(options);
         }.bind(this));
+
         $(".rowgroup_select").selectpicker();
         $('.rowgroup_select').on('changed.bs.select', this.RowgroupChanged.bind(this));
         $('.rowgroup_select option').eq(1).trigger("change");
-        $(".rowgroup_select").val(this.CurrentRowgroup.Name);
-        $(".rowgroup_select").selectpicker('refresh');
+    }
+
+    getRowgrouptype(objOuter) {
+        if (objOuter.$type.indexOf("MultipleLevelRowGroup") > -1) {
+            return "MultipleLevelRowGroup";
+        }
+        else {
+            return "SingleLevelRowGroup";
+        }
     }
 
     getType(type) {
@@ -371,9 +380,6 @@
         this.Objtype = this.col.attr('eb-type');
         let name = this.col.attr('eb-name');
         let obj = {};
-        //if (this.isNew)
-        //    obj = new EbObjects[this.Objtype](name);
-        //else
         obj = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; })[0];
         this.objCollection[name] = obj;
         this.col.attr("id", obj.EbSid).attr("tabindex", "1");
@@ -416,7 +422,7 @@
 
     AddNewRowGroup(e) {
         $(e.target).hide();
-        $("#Rowgroup_cont #rowgroup_body").empty();
+        this.arrangeRowGroupHeaders();
         if (this.RwogroupCounter === 0) {
             this.MakeDiv4Rowgroup();
             $(".rowgroup_select").selectpicker();
@@ -432,6 +438,14 @@
         this.RwogroupCounter++;
     }
 
+    arrangeRowGroupHeaders() {
+        $("#Rowgroup_cont #rowgroup_body").empty();
+        $("#rowgroup_disname").val("");
+        $('select.rowgroup_select').append(`<option value='newrowgroup'>--newrowgroup--</option>`);
+        $(".rowgroup_select").val("newrowgroup");
+        $(".rowgroup_select").selectpicker("refresh");
+    }
+
     RemoveRowGroupColumn(e) {
         let element = $(e.target).closest("li");
         let key = element.attr("eb-name");
@@ -440,6 +454,7 @@
     }
 
     RowgroupChanged(e, clickedIndex, isSelected, previousValue) {
+        this.removeNewOption();
         $("#Rowgroup_cont #rowgroup_body").empty();
         clickedIndex = typeof (clickedIndex) !== "undefined" ? clickedIndex : $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).index();
         let option = $(e.target).children("option").eq(clickedIndex);
@@ -448,6 +463,17 @@
         this.CurrentRowgroup = obj;
         this.propGrid.setObject(obj, AllMetas[this.Objtype]);
         this.drawRowgroupColumn(obj);
+        this.RowgroupChangedRelated();
+    }
+
+    RowgroupChangedRelated() {
+        $("#rowgroup_disname").val(this.CurrentRowgroup.DisplayName);
+        $(".rowgroup_select").val(this.CurrentRowgroup.Name);
+        $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).text(this.CurrentRowgroup.DisplayName);
+        $(".rowgroup_select").selectpicker('refresh');
+        let type = this.getRowgrouptype(this.CurrentRowgroup);
+        $(".rowgrouptype_select").val(type);
+        $(".rowgrouptype_select option[value=" + type + "]").trigger("change");
     }
 
     drawRowgroupColumn(objOuter) {
@@ -462,7 +488,7 @@
     MakeDiv4Rowgroup() {
         $("#Rowgroup_cont").css("height", "100px");
         $("#Rowgroup_cont .tool_item_head").after(`<div class="tool_item_body" id="rowgroup_body"></div>`);
-        let elements = `<input type="text" placeholder="Untitled...">
+        let elements = `<input type="text" id="rowgroup_disname" placeholder="Display Name Here...">
             <select class='rowgrouptype_select'>
                 <option value='SingleLevelRowGroup'>SingleLevelRowGroup</option>
                 <option value='MultipleLevelRowGroup'>MultipleLevelRowGroup</option>
@@ -476,6 +502,7 @@
     }
 
     deleteRowgroup() {
+        this.removeNewOption();
         let obj = $.grep(this.EbObject.RowGroupCollection.$values, function (obj, i) { return obj.Name === this.CurrentRowgroup.Name; }.bind(this));
         let objectExist = false;
         if (obj.length !== 0) {
@@ -492,8 +519,6 @@
         }
         if ($('.rowgroup_select option').length > 1) {
             $('.rowgroup_select option').eq(1).trigger("change");
-            $(".rowgroup_select").val(this.CurrentRowgroup.Name);
-            $(".rowgroup_select").selectpicker('refresh');
         }
         if ($('.rowgroup_select option').length === 1) {
             $("#Rowgroup_cont").css("height", "25px");
@@ -510,14 +535,15 @@
     }
 
     SaveRowgroup() {
+        this.removeNewOption();
         if (!jQuery.isEmptyObject(this.CurrentRowgroup)) {
             let index = this.EbObject.RowGroupCollection.$values.findIndex(function (obj) { return obj.Name === this.CurrentRowgroup.Name; }.bind(this));
+            let disname = $("#rowgroup_disname").val().trim() !== "" ? $("#rowgroup_disname").val().trim() : this.CurrentRowgroup.Name;
+            this.CurrentRowgroup.DisplayName = disname;
             if (index === -1 && this.CurrentRowgroup.RowGrouping.$values.length > 0) {
                 this.EbObject.RowGroupCollection.$values.push(this.CurrentRowgroup);
                 let options = `<option value=${this.CurrentRowgroup.Name}>${this.CurrentRowgroup.DisplayName}</option>`;
                 $("select[class='rowgroup_select']").append(options);
-                $(".rowgroup_select").val(this.CurrentRowgroup.Name);
-                $(".rowgroup_select").selectpicker('refresh');
                 $("#NewRowGroup").show();
                 $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).trigger("change");
 
@@ -526,12 +552,16 @@
                 this.EbObject.RowGroupCollection.$values[index] = this.CurrentRowgroup;
                 $("#NewRowGroup").show();
                 $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).trigger("change");
-                $(".rowgroup_select").val(this.CurrentRowgroup.Name);
-                $(".rowgroup_select").selectpicker('refresh');
             }
             else
                 return false;
         }
+    }
+
+    removeNewOption() {
+        $("select[class='rowgroup_select'] option[value='newrowgroup']").remove();
+        $(".rowgroup_select").selectpicker('refresh');
+        $("#NewRowGroup").show();
     }
 
     check4EmptyRowgroupObject() {
@@ -586,10 +616,11 @@
         obj.bVisible = true;
         obj.data = this.EbObject.Columns.$values.length;
         $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" 
-            class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+            class='columns textval calcfield' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
         this.addCalcFieldToColumnlist(obj);
         $('#calcFields').killTree();
         $('#calcFields').treed();
+        this.SetContextmenu4CalcField();
     }
     addCalcFieldToColumnlist(obj) {
         this.EbObject.Columns.$values.push(obj);
@@ -598,5 +629,49 @@
         $("#columns-list-body").append(element);
         $(element).off("click").on("click", this.elementOnFocus.bind(this));
         $(element).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
+    }
+
+    BeforeSave() {
+        this.ReArrangeObjects();
+        return true;
+    }
+
+    ReArrangeObjects() {
+        let elemnts = $("#columns-list-body li");
+        let visibleobjects = [];
+        $.each(elemnts, function (i, item) {
+            let name = $(item).attr("eb-name");
+            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; });
+            visibleobjects.push(obj[0]);
+        }.bind(this));
+
+        let nonvisibleobjcts = this.EbObject.Columns.$values.filter(function (obj) { return obj.bVisible !== true; });
+        this.EbObject.NotVisibleColumns.$values = nonvisibleobjcts;
+        this.EbObject.Columns.$values = visibleobjects.concat(nonvisibleobjcts);
+    }
+
+    SetContextmenu4CalcField() {
+        $.contextMenu('destroy', ".calcfield");
+        $.contextMenu({
+            selector: ".calcfield",
+            build: function ($trigger, e) {
+                return {
+                    items: {
+                        "Delete": { name: "Delete", icon: "fa-trash", callback: this.DeleteCalcField.bind(this) }
+                    }
+                };
+            }.bind(this)
+
+        });
+    }
+
+    DeleteCalcField(key, opt, event) {
+        let elem = opt.$trigger;
+        let name = elem.attr("eb-name");
+        this.EbObject.Columns.$values = this.EbObject.Columns.$values.filter(function (obj) { return obj.name !== name; });
+        delete this.objCollection[name];
+        elem.remove();
+        $("#columns-list-body li[eb-name=" + name + "]").remove();
+        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
     }
 }

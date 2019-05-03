@@ -102,8 +102,7 @@
     };
 
     this.DGUserControlColumn = function (ctrl, ctrlOpts) {
-        let $ctrl_modal = $("#" + ctrl.EbSid_CtxId).remove();
-        $("body").prepend($ctrl_modal);
+        ctrl.__Col.__DGUCC.initForctrl(ctrl);
     };
 
 
@@ -158,7 +157,7 @@
 
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
-            
+
 
             if (ctrlOpts.source === "webform") {
                 let maskPattern = "yyyy-mm-dd";

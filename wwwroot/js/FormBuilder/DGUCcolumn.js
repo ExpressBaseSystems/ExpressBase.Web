@@ -1,7 +1,7 @@
 ﻿const DGUCColumn = function (_col, _ctrlOpt) {
-    this._col= _col;
+    this._col = _col;
     this.base = {};
-    this._col.__base= this.base;
+    this._col.__base = this.base;
 
     this.addModal = function () {
         this.$modal = `
@@ -29,12 +29,12 @@
 
     this.SetCtrlValues = function (rowId) {
         let ctrls = this.curCtrl.Columns.$values;
-        this.curCtrl.__base.values = {};
         let valDict = this.curCtrl.__base.values;
         valDict[rowId] = {};
 
         $.each(ctrls, function (i, ctrl) {
             valDict[rowId][ctrl.EbSid] = ctrl.getValue();
+            ctrl.clear();
         }.bind(this));
         console.log(valDict);
     };
@@ -43,9 +43,14 @@
         let ctrls = this.curCtrl.Columns.$values;
         let rowId = this.$modalShowBtn.closest("tr").attr("rowid");
         this.$OkBtn.attr("rowid", rowId);
+        let valDict = this.curCtrl.__base.values;
 
         $.each(ctrls, function (i, ctrl) {
-            valDict[rowId][ctrl.EbSid] = ctrl.getValue();
+            if (valDict[rowId]) {
+                let val = valDict[rowId][ctrl.EbSid];
+                if (val)
+                    ctrl.setValue(val);
+            }
         }.bind(this));
 
     }.bind(this);
@@ -61,6 +66,7 @@
 
     this.initForctrl = function (ctrl) {
         this.curCtrl = ctrl;
+        this.curCtrl.__base.values = {};
         this.$modalShowBtn = $(`#${this.curCtrl.EbSid_CtxId}_showbtn`);
         this.$modalShowBtn.on("click", this.modalShowBtn_click);
     };

@@ -1,10 +1,12 @@
 ﻿const DGUCColumn = function (_col, _ctrlOpt) {
-    this._col= _col;
+    this._col = _col;
     this.base = {};
-    this._col.__base= this.base;
+    this.base.values = {};
+    this.UCs = {};
+    this._col.__base = this.base;
 
     this.addModal = function () {
-        this.$modal = `
+        this.$modal = $(`
 <div class='modal fade' id='${this._col.EbSid}_usercontrolmodal' tabindex='-1' role='dialog' aria-labelledby='@ebsid@Title' aria-hidden='true'>
   <div class='modal-dialog modal-dialog-centered' role='document'>
     <div class='modal-content'>
@@ -23,31 +25,39 @@
     </div>
   </div>
 </div>
-`.replace("@modaltitle@", this._col.Title);
+`.replace("@modaltitle@", this._col.Title));
         $("body").prepend(this.$modal);
     };
 
     this.SetCtrlValues = function (rowId) {
         let ctrls = this.curCtrl.Columns.$values;
-        this.curCtrl.__base.values = {};
-        let valDict = this.curCtrl.__base.values;
+        let valDict = this.base.values;
         valDict[rowId] = {};
 
         $.each(ctrls, function (i, ctrl) {
             valDict[rowId][ctrl.EbSid] = ctrl.getValue();
+            ctrl.clear();
         }.bind(this));
         console.log(valDict);
     };
 
-    this.modalShowBtn_click = function () {
+    this.modalShowCallBack = function () {
         let ctrls = this.curCtrl.Columns.$values;
-        let rowId = this.$modalShowBtn.closest("tr").attr("rowid");
-        this.$OkBtn.attr("rowid", rowId);
+        this.$OkBtn.attr("rowid", this.curRowid);
+        let valDict = this.base.values;
 
         $.each(ctrls, function (i, ctrl) {
-            valDict[rowId][ctrl.EbSid] = ctrl.getValue();
+            if (valDict[this.curRowid]) {
+                let val = valDict[this.curRowid][ctrl.EbSid];
+                if (val)
+                    ctrl.setValue(val);
+            }
         }.bind(this));
+    }.bind(this);
 
+    this.modalShowBtn_click = function (e) {
+        this.curRowid = $(e.target).closest("tr").attr("rowid");
+        this.curCtrl = this.UCs[this.curRowid];
     }.bind(this);
 
     this.ok_click = function () {
@@ -57,10 +67,12 @@
 
     this.bindFns = function () {
         this.$OkBtn.on("click", this.ok_click);
+        this.$modal.on("show.bs.modal", this.modalShowCallBack);
     };
 
     this.initForctrl = function (ctrl) {
         this.curCtrl = ctrl;
+        this.UCs[this.curCtrl.__rowid] = this.curCtrl;
         this.$modalShowBtn = $(`#${this.curCtrl.EbSid_CtxId}_showbtn`);
         this.$modalShowBtn.on("click", this.modalShowBtn_click);
     };

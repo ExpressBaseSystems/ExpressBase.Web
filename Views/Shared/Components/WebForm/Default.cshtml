@@ -134,7 +134,7 @@
             background-color: #222222;
         }
 
-    #divAuditTrail tbody {
+    /*#divAuditTrail tbody {
         max-height: calc(100vh - 225px);
         overflow-y: auto;
         width: 100%;
@@ -150,7 +150,23 @@
 
     #divAuditTrail thead tr th {
         float: left;
+    }*/
+    #divAuditTrail .trans-title-tr th {
+        background-color: darkcyan;
+        color: white;
     }
+    #divAuditTrail .table-title-tr th {
+        padding: 4px 8px;
+        background-color: #ddd;
+    }
+    #divAuditTrail .second-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    #divAuditTrail .second-table tr:hover, #divAuditTrail .first-table tr:hover {
+        background-color: #ddd;
+    }
+
 </style>
 
 <div id='WebForm-cont' class="webform-cont">
@@ -159,14 +175,14 @@
 </div>
 
 <div class="modal fade" id="AuditHistoryModal" role="dialog">
-    <div class="modal-dialog" style="width: 600px;">
+    <div class="modal-dialog" style="width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Audit History</h4>
             </div>
             <div class="modal-body" style="height:calc(100vh - 190px); overflow: auto; padding: 0px;">
-                <div id="divAuditTrail"> </div>
+                <div id="divAuditTrail" style="height: inherit;"> </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -264,24 +280,24 @@
     $("#webformaudittrail").on("click", function () {
         $("#AuditHistoryModal").modal("show");
         $("#divAuditTrail").children().remove();
-        $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 45%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
+        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
             url: "../WebForm/GetAuditTrail",
             data: { refid: _formRefId, rowid: renderer.rowId },
             error: function () {
                 $("#divAuditTrail").children().remove();
-                $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 45%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);
+                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);
             },
             success: function (result) {
                 if (result === "{}") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 45%; font-size: 20px; color: #ccc; "> Nothing to Display </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 50%; font-size: 20px; color: #ccc; "> Nothing to Display </div>`);
                     return;
                 }
                 else if (result === "") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center; padding-top: 45%; font-size: 20px; color: #ccc; "> Something went wrong </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something went wrong </div>`);
                     return;
                 }
                 drawAuditTrail(result);
@@ -291,31 +307,80 @@
 
     function drawAuditTrail(result) {
         let auditObj = JSON.parse(result);
-        var appendHtml = `<table class="table" style="width:100%; margin: 0px;">
-                            <thead>
-                                <tr class="info">
-                                    <th class="col-md-4 col-sm-4">Field Name</th>
-                                    <th class="col-md-4 col-sm-4">Before Change</th>
-                                    <th class="col-md-4 col-sm-4">After Change</th>
+        let missingAE = false;
+        var appendHtml = ``;
+        $.each(auditObj, function (idx, Obj) {
+            appendHtml += `<table class="table first-table" style="width:100%; margin: 0px;">
+                            <thead>`;
+            if (missingAE)
+                appendHtml += `<tr><th colspan="3" style="color: red; text-align: center;">Missing audit trail entry identified</th></tr>`;
+            appendHtml +=       `<tr class="trans-title-tr">
+                                    <th class="col-md-4 col-sm-4">Event DateTime: ${Obj.CreatedAt}</th>
+                                    <th class="col-md-4 col-sm-4">Operation: ${Obj.ActionType}</th>
+                                    <th class="col-md-4 col-sm-4">Done By: ${Obj.CreatedBy}</th>
                                 </tr>
                             </thead>
                             <tbody>`;
-        $.each(auditObj, function (idx, Obj) {
-            appendHtml += `
-                        <tr class="danger">
-                            <td class="col-md-5 col-sm-5" style = "padding: 0px 8px;">DateTime: ${Obj.CreatedAt}</td>
-                            <td class="col-md-3 col-sm-3" style = "padding: 0px 8px;">Operation: ${Obj.ActionType}</td>
-                            <td class="col-md-4 col-sm-4" style = "padding: 0px 8px;">Done By: ${Obj.CreatedBy}</td>
-                        </tr>
-                        `;
-            appendHtml += getAudiTrailHtmlRec(Obj.Tables, 0);
+            if (Obj.MissingEntry)
+                missingAE = true;
+            else
+                missingAE = false;
+
+            let tempHtml = ``;                        
+            $.each(Obj.Tables, function (i, Tbl) {
+                $.each(Tbl.Columns, function (j, Row) {
+                    tempHtml += `
+                        <tr>
+                            <td class="col-md-4 col-sm-4">${j}</td>
+                            <td class="col-md-4 col-sm-4">${Row.NewValue}</td>
+                            <td class="col-md-4 col-sm-4">${Row.OldValue}</td>
+                        </tr>`;
+                });
+            });
+            if (tempHtml.length !== 0) {
+                appendHtml += ` <tr class="table-title-tr">                            
+                                    <th class="col-md-4 col-sm-4">Field Name</th>
+                                    <th class="col-md-4 col-sm-4">New Value</th>
+                                    <th class="col-md-4 col-sm-4">Old Value</th>
+                                </tr>` + tempHtml;
+            }
+
+            appendHtml += `</tbody></table>`;
+
+            $.each(Obj.GridTables, function (i, Tbl) {
+                appendHtml += `<table class="table table-bordered second-table" style="width:100%; margin: 0px;">
+                                <thead>
+                                    <tr class="table-title-tr">
+                                        <th></th>`;
+                $.each(Tbl.ColumnMeta, function (j, cmeta) {
+                    appendHtml += `<th>${cmeta}</th>`;
+                });
+                appendHtml += `     </tr>
+                                </thead><tbody>`;
+                $.each(Tbl.Rows, function (m, Cols) {
+                    let newRow = `<tr><td>New</td>`;
+                    let oldRow = `<tr><td>Old</td>`;
+                    $.each(Cols.Columns, function (n, Col) {
+                        if (Col.IsModified)
+                            newRow += `<td style="color: red;">${Col.NewValue}</td>`;                            
+                        else
+                            newRow += `<td>${Col.NewValue}</td>`;
+                        oldRow += `<td>${Col.OldValue}</td>`;
+                    });
+                    newRow += `</tr>`;
+                    oldRow += `</tr>`;
+                    appendHtml += newRow + oldRow;
+                });
+                
+                appendHtml += `</tbody></table>`;
+            });
         });
-        appendHtml += `</tbody></table>`;
+        
         $("#divAuditTrail").children().remove();
         $("#divAuditTrail").append(appendHtml);
     }
 
-    function getAudiTrailHtmlRec(tables, level) {
+    function getAudiTrailHtml(tables, level) {
         if (Object.entries(tables).length === 0)
             return ``;
         let appendHtml = ``;

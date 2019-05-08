@@ -398,7 +398,7 @@
 
     this.ctrlToSpan_td = function ($td) {
         let ctrl = this.getCtrlByTd($td);
-        $td.find(".ctrl-cover").hide();
+        $td.find(".ctrl-cover").hide(100);
         if (ctrl.ObjType === "PowerSelect") {
             let html = "";
             $("#" + ctrl.EbSid_CtxId + "Wraper .search-block").each(function (i, block) {
@@ -412,7 +412,7 @@
             let val = ctrl.getDisplayMember() || ctrl.getValue();
             $td.find(".tdtxt span").text(val);
         }
-        $td.find(".tdtxt").show();
+        $td.find(".tdtxt").show(300);
     }.bind(this);
 
     this.AllRequired_valid_Check = function (rowid) {//////
@@ -437,7 +437,7 @@
         $td.find(".del-row").hide();
         $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
-        $addRow.hide().attr("is-editing", "false");
+        $addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
         let $tr = $td.closest("tr");
         $tr.attr("is-editing", "true");
@@ -508,8 +508,17 @@
         return sum;
     };
 
+    this.removeTr = function ($tr) {
+        $tr.find("td *").hide(200);
+        setTimeout(function () {
+            $tr.remove();
+        }, 201);
+    };
+
     this.delRow_click = function (e) {
-        $(e.target).closest("tr").remove();
+        $tr = $(e.target).closest("tr");
+        this.removeTr($tr);
+
     }.bind(this);
 
     this.spanToCtrl_row = function ($tr) {
@@ -527,8 +536,8 @@
         let ctrl = this.getCtrlByTd($td);
         let oldVal = ctrl.getValue();
         $td.attr("edited", "true");
-        $td.find(".tdtxt").hide();
-        $td.find(".ctrl-cover").show();
+        $td.find(".tdtxt").hide(300);
+        $td.find(".ctrl-cover").show(300);
     }.bind(this);
 
     this.dg_rowKeydown = function (e) {
@@ -635,7 +644,7 @@
             if (col.IsAggragate)
                 this.isAggragateInDG = true;
             if (col.ObjType === "DGUserControlColumn")
-                col.__DGUCC = new DGUCColumn(col);
+                col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
         }.bind(this));
 
         this.tryAddRow();

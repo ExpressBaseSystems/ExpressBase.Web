@@ -164,6 +164,12 @@
         });
     }
 
+    SetColumnRef() {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            obj.ColumnsRef = this.EbObject.Columns;
+        }.bind(this));
+    }
+
     drawDsColTree() {
         var type, icon = "";
         $.each(this.EbObject.ColumnsCollection.$values, function (i, columnCollection) {
@@ -185,11 +191,12 @@
         $('#calcFields').treed();
         this.SetContextmenu4CalcField();
 
+        this.SetColumnRef();
         this.initializeDragula();
         this.ColumnDropped();
         if (!this.isNew) {
             this.RowgroupColumnDropped();
-            this.CreateButtons()
+            this.CreateButtons();
         }
     }
 
@@ -248,7 +255,7 @@
             $(el).children(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
         }
         else if ($(target).attr("id") === "columns-list-body" && $(source).attr("id") === "columns-list-body") {
-            return true;
+            this.ReplaceObjects(el, target, source, sibling);
         }
         else if ($(target).attr("id") === "columns-list-body") {
             this.ColumnDropRelated(el);
@@ -402,7 +409,7 @@
         this.CurrentRowgroupkey = name;
         this.objCollection[name] = Rowobj;
         this.CurrentRowgroup = Rowobj;
-        this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);
+        //this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);
     }
 
     AlldropElements(el) {
@@ -461,7 +468,7 @@
         this.CurrentRowgroupkey = $(option).attr("value");
         let obj = this.objCollection[this.CurrentRowgroupkey];
         this.CurrentRowgroup = obj;
-        this.propGrid.setObject(obj, AllMetas[this.Objtype]);
+        //this.propGrid.setObject(obj, AllMetas[this.Objtype]);
         this.drawRowgroupColumn(obj);
         this.RowgroupChangedRelated();
     }
@@ -622,6 +629,7 @@
         $('#calcFields').treed();
         this.SetContextmenu4CalcField();
     }
+
     addCalcFieldToColumnlist(obj) {
         this.EbObject.Columns.$values.push(obj);
         let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
@@ -633,6 +641,7 @@
 
     BeforeSave() {
         this.ReArrangeObjects();
+        this.RemoveColumnRef();
         return true;
     }
 
@@ -648,6 +657,11 @@
         let nonvisibleobjcts = this.EbObject.Columns.$values.filter(function (obj) { return obj.bVisible !== true; });
         this.EbObject.NotVisibleColumns.$values = nonvisibleobjcts;
         this.EbObject.Columns.$values = visibleobjects.concat(nonvisibleobjcts);
+    }
+
+    ReplaceObjects(el, target, source, sibling) {
+        let curcolName = $(el).attr("eb-name");
+        let nextorPrevName = (sibling !== null) ? $(sibling).attr("eb_name") : curcol.prev().attr("eb_name");
     }
 
     SetContextmenu4CalcField() {
@@ -673,5 +687,11 @@
         elem.remove();
         $("#columns-list-body li[eb-name=" + name + "]").remove();
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+    }
+
+    RemoveColumnRef() {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            obj.ColumnsRef = null;
+        }.bind(this));
     }
 }

@@ -1,9 +1,11 @@
-﻿const DGUCColumn = function (_col, _ctrlOpt) {
+﻿const DGUCColumn = function (_col, userObject) {
     this._col = _col;
     this.base = {};
+    this.userObject = userObject;
     this.base.values = {};
     this.UCs = {};
     this._col.__base = this.base;
+    this.initControls = new InitControls(this);
 
     this.addModal = function () {
         this.$modal = $(`
@@ -30,11 +32,10 @@
     };
 
     this.SetCtrlValues = function (rowId) {
-        let ctrls = this.curCtrl.Columns.$values;
         let valDict = this.base.values;
         valDict[rowId] = {};
 
-        $.each(ctrls, function (i, ctrl) {
+        $.each(this.ChildCtrls, function (i, ctrl) {
             valDict[rowId][ctrl.EbSid] = ctrl.getValue();
             ctrl.clear();
         }.bind(this));
@@ -42,11 +43,10 @@
     };
 
     this.modalShowCallBack = function () {
-        let ctrls = this.curCtrl.Columns.$values;
         this.$OkBtn.attr("rowid", this.curRowid);
         let valDict = this.base.values;
 
-        $.each(ctrls, function (i, ctrl) {
+        $.each(this.ChildCtrls, function (i, ctrl) {
             if (valDict[this.curRowid]) {
                 let val = valDict[this.curRowid][ctrl.EbSid];
                 if (val)
@@ -77,10 +77,27 @@
         this.$modalShowBtn.on("click", this.modalShowBtn_click);
     };
 
+    this.initModalCtrls = function () {
+        this.ChildCtrls.forEach(function (ctrl, i) {
+            let opt = {};
+            if (ctrl.ObjType === "PowerSelect")// || ctrl.ObjType === "DGPowerSelectColumn")
+                opt.getAllCtrlValuesFn = function () {
+                    return [];//getValsFromForm(this.FormObj);
+                }.bind(this);
+            else if (ctrl.ObjType === "Date") {
+                opt.source = "webform";
+                opt.userObject = this.userObject;
+            }
+            this.initControls.init(ctrl, opt);
+        }.bind(this));
+    };
+
     this.init = function () {
         //this.$modalShowBtns = $(`#${this._col.EbSid}_showbtn`);
         //this.$modal = $(`#${this._col.EbSid}_usercontrolmodal`);
+        this.ChildCtrls = this._col.Columns.$values;
         this.addModal();
+        this.initModalCtrls();
 
         this.$modalBody = $(`#${this._col.EbSid}_usercontrolmodal .modal-body`);
         this.$OkBtn = $(`#${this._col.EbSid}_ucmodalok`);

@@ -437,7 +437,7 @@
         $td.find(".del-row").hide();
         $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
-        $addRow.hide().attr("is-editing", "false");
+        $addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
         let $tr = $td.closest("tr");
         $tr.attr("is-editing", "true");
@@ -536,8 +536,8 @@
         let ctrl = this.getCtrlByTd($td);
         let oldVal = ctrl.getValue();
         $td.attr("edited", "true");
-        $td.find(".tdtxt").hide();
-        $td.find(".ctrl-cover").show();
+        $td.find(".tdtxt").hide(300);
+        $td.find(".ctrl-cover").show(300);
     }.bind(this);
 
     this.dg_rowKeydown = function (e) {
@@ -644,7 +644,7 @@
             if (col.IsAggragate)
                 this.isAggragateInDG = true;
             if (col.ObjType === "DGUserControlColumn")
-                col.__DGUCC = new DGUCColumn(col);
+                col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
         }.bind(this));
 
         this.tryAddRow();

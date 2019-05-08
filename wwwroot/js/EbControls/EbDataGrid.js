@@ -508,8 +508,17 @@
         return sum;
     };
 
+    this.removeTr = function ($tr) {
+        $tr.find("td *").hide(200);
+        setTimeout(function () {
+            $tr.remove();
+        }, 201);
+    };
+
     this.delRow_click = function (e) {
-        $(e.target).closest("tr").remove();
+        $tr = $(e.target).closest("tr");
+        this.removeTr($tr);
+
     }.bind(this);
 
     this.spanToCtrl_row = function ($tr) {

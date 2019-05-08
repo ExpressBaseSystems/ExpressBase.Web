@@ -181,7 +181,7 @@ const WebFormRender = function (option) {
         //this.hideLoader();
         //this.showLoader();
         hide_inp_loader($ctrl, this.$saveBtn);
-        show_inp_loader($ctrl, this.$saveBtn);
+        //show_inp_loader($ctrl, this.$saveBtn);
         $.ajax({
             type: "POST",
             url: "../WebForm/DoUniqueCheck",
@@ -469,7 +469,8 @@ const WebFormRender = function (option) {
             //    return;
             this.showLoader();
             let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
-            $.ajax({
+            this.getFormValuesObjWithTypeColl();
+            /*$.ajax({
                 type: "POST",
                 //url: this.ssurl + "/bots",
                 url: "../WebForm/InsertWebformData",
@@ -488,7 +489,7 @@ const WebFormRender = function (option) {
                 //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
                 //}.bind(this),
                 success: this.ajaxsuccess.bind(this)
-            });
+            });*/
         }.bind(this), 2);
 
     };

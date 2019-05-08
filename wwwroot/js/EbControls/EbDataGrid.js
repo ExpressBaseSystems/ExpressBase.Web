@@ -398,7 +398,7 @@
 
     this.ctrlToSpan_td = function ($td) {
         let ctrl = this.getCtrlByTd($td);
-        $td.find(".ctrl-cover").hide();
+        $td.find(".ctrl-cover").hide(100);
         if (ctrl.ObjType === "PowerSelect") {
             let html = "";
             $("#" + ctrl.EbSid_CtxId + "Wraper .search-block").each(function (i, block) {
@@ -412,7 +412,7 @@
             let val = ctrl.getDisplayMember() || ctrl.getValue();
             $td.find(".tdtxt span").text(val);
         }
-        $td.find(".tdtxt").show();
+        $td.find(".tdtxt").show(300);
     }.bind(this);
 
     this.AllRequired_valid_Check = function (rowid) {//////

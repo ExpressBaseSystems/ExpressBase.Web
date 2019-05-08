@@ -42,10 +42,10 @@ namespace ExpressBase.Web.Components
             List<string> ObjIds = new List<string>();
             foreach (string perm in this.UserObject.Permissions)
             {
-                string id = perm.Split(CharConstants.DASH)[2];
+                int id = Convert.ToInt32(perm.Split(CharConstants.DASH)[2]);
                 int locid = Convert.ToInt32(perm.Split(CharConstants.COLON)[1]);
-                if (lid == locid || locid == -1)
-                    ObjIds.Add(id);
+                if ((lid == locid || locid == -1) && !ObjIds.Contains(id.ToString()))
+                    ObjIds.Add(id.ToString());
             }
             return ObjIds;
         }
@@ -55,7 +55,7 @@ namespace ExpressBase.Web.Components
             var resultlist = new SidebarUserResponse();
             this.UserObject = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, solnid, email, console));
             Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
-
+            
             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
             {
                 _dict.Add(objectType.IntCode, new EbObjectTypeWrap

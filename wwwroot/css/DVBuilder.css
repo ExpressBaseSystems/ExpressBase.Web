@@ -6,7 +6,21 @@
     height: 200px;
 }
 
-
+.page-outer-cont{
+    margin-left:260px !important; 
+}
+.table-out-cont {
+    display: flex;
+    flex-flow: row;
+}
+.table-container{
+    width:100%;
+}
+.side-orderby {
+    width: 23%;
+    background: white;
+    margin-left: 12px;
+}
 
 .dv-divs {
     border: 1px solid #ccc;
@@ -27,13 +41,12 @@
     background: white;
 }
 .dv-divs .tool_item_body {
-    display: flex;
-    flex-flow: row wrap;
     height: calc( 100% - 23px );
 }
 .dv-divs .colTile {
     height: max-content;
     list-style-type: none;
+    float:left;
 }
 
 .dv-divs .colTile .close {

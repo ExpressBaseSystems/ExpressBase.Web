@@ -147,13 +147,13 @@
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
             if (!obj.DoNotPersist) {
-                if (obj.ObjType !== "UserControl")
-                    SingleRow.Columns.push(getSingleColumn(obj));
-                else {
+                if (obj.ObjType === "DGUserControlColumn") {
                     $.each(obj.Columns.$values, function (i, obj) {
                         SingleRow.Columns.push(getSingleColumn(obj));
                     }.bind(this));
                 }
+                else
+                    SingleRow.Columns.push(getSingleColumn(obj));
             }
         }.bind(this));
         return SingleRow;
@@ -185,17 +185,22 @@
         inpCtrl.__Col = col;
         //inpCtrl.EbSid = ctrlEbSid;
 
-        if (inpCtrl.ObjType === "DGUserControlColumn") {
-            //$.each(inpCtrl.Columns.$values, function (i, _inpCtrl) {
-            //    let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
-            //    _inpCtrl = new EbObjects[this.getType(_inpCtrl)](ctrlEbSid, _inpCtrl);
-            //    inpCtrl.Columns.$values[i] = this.initInpCtrl(_inpCtrl, col, _ctrlEbSid, rowid);
-            //}.bind(this));
+        if (inpCtrl.ObjType === "DGUserControlColumn") {///////////
+            $.each(col.Columns.$values, function (i, _inpCtrl) {
+                let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+                let NewInpCtrl = $.extend({}, new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl));
+                NewInpCtrl.EbSid_CtxId = _ctrlEbSid;
+
+                let tmp = this.initInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
+                inpCtrl.Columns.$values[i] = tmp;
+                console.log(1);
+            }.bind(this));
         }
         else
             inpCtrl.ObjType = col.InputControlType.substr(2);
         return inpCtrl;
     };
+
     this.attachFns = function (inpCtrl, colType) {
         if (colType === "DGUserControlColumn") {
             $.each(inpCtrl.Columns.$values, function (i, col) {
@@ -203,6 +208,14 @@
             }.bind(this));
         }
         return new ControlOps[colType](inpCtrl);
+    };
+
+    this.cloneObjArr = function (arr) {
+        let newArr = [];
+        $.each(arr, function (i, obj) {
+            newArr[i] = $.extend(true, {}, obj);
+        });
+        return newArr;
     };
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
@@ -215,8 +228,22 @@
                 return true;
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
-            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+            let inpCtrl = $.extend({}, col);
+            if (inpCtrlType === "EbUserControl") {
+                console.log(1);
 
+                let a = inpCtrl.__DG;///////////////////
+                let b = inpCtrl.__DGUCC;
+
+                inpCtrl.__DG = undefined;
+                inpCtrl.__DGUCC = undefined;
+
+                inpCtrl.Columns = { ...inpCtrl.Columns };
+                inpCtrl.Columns.$values = this.cloneObjArr(inpCtrl.Columns.$values);
+
+                inpCtrl.__DG = a;
+                inpCtrl.__DGUCC = b;
+            }
             this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.rowCtrls[rowid].push(inpCtrl);
@@ -398,7 +425,7 @@
 
     this.ctrlToSpan_td = function ($td) {
         let ctrl = this.getCtrlByTd($td);
-        $td.find(".ctrl-cover").hide();
+        $td.find(".ctrl-cover").hide(100);
         if (ctrl.ObjType === "PowerSelect") {
             let html = "";
             $("#" + ctrl.EbSid_CtxId + "Wraper .search-block").each(function (i, block) {
@@ -412,7 +439,7 @@
             let val = ctrl.getDisplayMember() || ctrl.getValue();
             $td.find(".tdtxt span").text(val);
         }
-        $td.find(".tdtxt").show();
+        $td.find(".tdtxt").show(300);
     }.bind(this);
 
     this.AllRequired_valid_Check = function (rowid) {//////
@@ -437,7 +464,7 @@
         $td.find(".del-row").hide();
         $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
-        $addRow.hide().attr("is-editing", "false");
+        $addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
         let $tr = $td.closest("tr");
         $tr.attr("is-editing", "true");
@@ -508,8 +535,17 @@
         return sum;
     };
 
+    this.removeTr = function ($tr) {
+        $tr.find("td *").hide(200);
+        setTimeout(function () {
+            $tr.remove();
+        }, 201);
+    };
+
     this.delRow_click = function (e) {
-        $(e.target).closest("tr").remove();
+        $tr = $(e.target).closest("tr");
+        this.removeTr($tr);
+
     }.bind(this);
 
     this.spanToCtrl_row = function ($tr) {
@@ -527,8 +563,8 @@
         let ctrl = this.getCtrlByTd($td);
         let oldVal = ctrl.getValue();
         $td.attr("edited", "true");
-        $td.find(".tdtxt").hide();
-        $td.find(".ctrl-cover").show();
+        $td.find(".tdtxt").hide(300);
+        $td.find(".ctrl-cover").show(300);
     }.bind(this);
 
     this.dg_rowKeydown = function (e) {
@@ -635,7 +671,7 @@
             if (col.IsAggragate)
                 this.isAggragateInDG = true;
             if (col.ObjType === "DGUserControlColumn")
-                col.__DGUCC = new DGUCColumn(col);
+                col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
         }.bind(this));
 
         this.tryAddRow();

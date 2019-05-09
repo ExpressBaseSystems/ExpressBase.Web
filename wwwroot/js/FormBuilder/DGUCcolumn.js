@@ -1,9 +1,11 @@
-﻿const DGUCColumn = function (_col, _ctrlOpt) {
+﻿const DGUCColumn = function (_col, userObject) {
     this._col = _col;
     this.base = {};
+    this.userObject = userObject;
     this.base.values = {};
     this.UCs = {};
     this._col.__base = this.base;
+    this.initControls = new InitControls(this);
 
     this.addModal = function () {
         this.$modal = $(`
@@ -29,24 +31,11 @@
         $("body").prepend(this.$modal);
     };
 
-    this.SetCtrlValues = function (rowId) {
-        let ctrls = this.curCtrl.Columns.$values;
-        let valDict = this.base.values;
-        valDict[rowId] = {};
-
-        $.each(ctrls, function (i, ctrl) {
-            valDict[rowId][ctrl.EbSid] = ctrl.getValue();
-            ctrl.clear();
-        }.bind(this));
-        console.log(valDict);
-    };
-
     this.modalShowCallBack = function () {
-        let ctrls = this.curCtrl.Columns.$values;
         this.$OkBtn.attr("rowid", this.curRowid);
         let valDict = this.base.values;
 
-        $.each(ctrls, function (i, ctrl) {
+        $.each(this.ChildCtrls, function (i, ctrl) {
             if (valDict[this.curRowid]) {
                 let val = valDict[this.curRowid][ctrl.EbSid];
                 if (val)
@@ -70,21 +59,70 @@
         this.$modal.on("show.bs.modal", this.modalShowCallBack);
     };
 
+    this.setCtrlFns = function (Uctrl) {
+        $.each(Uctrl.Columns.$values, function (i, _ctrl) {
+            let Mfn = new ControlOps[_ctrl.ObjType](new EbObjects.EbTextBox("a")).getValue;
+            _ctrl.getValueForModal = Mfn;
+            _ctrl.getValue = function (uc) { return _ctrl.__tempVal; }.bind(this, Uctrl);
+
+        }.bind(this));
+    };
+
+    this.SetCtrlValues = function (rowId) {
+        let valDict = this.base.values;
+        valDict[rowId] = {};
+        $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
+            ctrl.__tempVal = ctrl.getValueForModal();
+            valDict[rowId][ctrl.EbSid] = ctrl.__tempVal;
+            ctrl.clear();
+            this.curCtrl.__Col.Columns.$values[i].clear();
+        }.bind(this));
+        console.log(valDict);
+    };
+
+    //this.initCtrlChildrens = function (UC) {
+    //    $.each(UC.Columns.$values, function (i, _inpCtrl) {
+    //        let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+    //        _inpCtrl = new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl);
+    //        UC.Columns.$values[i] = _inpCtrl;
+    //    }.bind(this));
+    //};
+
     this.initForctrl = function (ctrl) {
         this.curCtrl = ctrl;
+        //this.initCtrlChildrens(ctrl);
+        this.setCtrlFns(ctrl);
         this.UCs[this.curCtrl.__rowid] = this.curCtrl;
         this.$modalShowBtn = $(`#${this.curCtrl.EbSid_CtxId}_showbtn`);
         this.$modalShowBtn.on("click", this.modalShowBtn_click);
     };
 
+    this.initModalCtrls = function () {
+        this.ChildCtrls.forEach(function (ctrl, i) {
+            let opt = {};
+            if (ctrl.ObjType === "PowerSelect")// || ctrl.ObjType === "DGPowerSelectColumn")
+                opt.getAllCtrlValuesFn = function () {
+                    return [];//getValsFromForm(this.FormObj);
+                }.bind(this);
+            else if (ctrl.ObjType === "Date") {
+                opt.source = "webform";
+                opt.userObject = this.userObject;
+            }
+            this.initControls.init(ctrl, opt);
+        }.bind(this));
+    };
+
     this.init = function () {
         //this.$modalShowBtns = $(`#${this._col.EbSid}_showbtn`);
         //this.$modal = $(`#${this._col.EbSid}_usercontrolmodal`);
+        this.ChildCtrls = this._col.Columns.$values;
         this.addModal();
+        this.initModalCtrls();
 
         this.$modalBody = $(`#${this._col.EbSid}_usercontrolmodal .modal-body`);
         this.$OkBtn = $(`#${this._col.EbSid}_ucmodalok`);
         this.bindFns();
+
     };
 
     this.init();

@@ -108,7 +108,7 @@
 
     this.Date = function (ctrl, ctrlOpts) {
         let formObject = ctrlOpts.formObject;
-        let userObject = ctrlOpts.userObject;
+        let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });

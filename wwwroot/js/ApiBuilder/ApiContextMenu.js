@@ -24,8 +24,8 @@
             }
         }
         delete this.Api.Procs[$(selector.$trigger).attr("id")];
-        $(selector.$trigger).remove();
         this.Api.pg.removeFromDD($(selector.$trigger).attr("id"));
+        $(selector.$trigger).remove();
         this.Api.resetLinks();
     };
 

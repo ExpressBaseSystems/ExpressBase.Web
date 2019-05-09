@@ -196,15 +196,28 @@ namespace EbControllers
             }
             return list1;
         }
-        //public List<string> FindMatch(string text)
+        //public List<string> FindMatchall(string text)
         //{
-        //    foreach (var m in Redis.GetKeysByPattern(text))
 
-        //    {
+        //    IEnumerable<string> ptn = Redis.GetKeysByPattern(text);
+        //    foreach (var m in ptn)
         //        list1.Add(m);
-        //    }
+           
         //    return list1;
         //}
+
+
+
+        //public List<string> FindMatch()
+
+        //{
+        //    List<String> lst3 = new List<String>();
+        //lst3 = Redis.GetAllKeys();
+
+        //    return lst3;
+        //}
+
+
         public bool Keydeletes(string textdel)
         {
             string prev_value = null;

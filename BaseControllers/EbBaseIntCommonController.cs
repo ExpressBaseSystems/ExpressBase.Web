@@ -123,6 +123,8 @@ namespace ExpressBase.Web.BaseControllers
 
                     this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
 
+                    controller.ViewBag.UserObject = JsonConvert.SerializeObject(this.LoggedInUser);
+
                     if (controller.ViewBag.wc == TokenConstants.UC)
                     {
                         ViewBag.Locations = GetAccessLoc(controller);

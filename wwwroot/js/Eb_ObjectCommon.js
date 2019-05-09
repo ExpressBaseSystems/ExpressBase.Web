@@ -16,7 +16,7 @@
     this.FlagSave = false;
     this.saveOrCommitSuccess = function (refif) { };//edit by amal
     this.PreviewObject = function () { };//edits by amal
-    this.RedColor = "#e83c46";
+    this.RedColor = "#aa0000";
     this.GreenColor = "#00AD6E";
 
     this.init = function () {
@@ -62,29 +62,32 @@
         $('#close_popup').trigger('click');
     };
 
+    this.showMessage = function (Delay = 4000) {
+        EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: true, Delay: Delay });
+    };
+
     this.UpdateTab = function (data) {
         if (data.message !== null && data.message !== "") {
             if (data.message.indexOf("Specify a diffrent name.") > 0) {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = data.message;
-                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+                this.showMessage();
             }
             //var target = $("#versionNav li.active a").attr("href");
             else if (data.message === "RestrictedStatementinQuerry") {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = "Querry Contains Restricted Keywords !!";
-                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+                this.showMessage();
             }
             else if (data.message === "nameIsNotUnique") {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
-                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
-            } 
-            else
-            {
+                this.showMessage();
+            }
+            else {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = data.message;
-                EbMessage("show", { Message: this.alertMsg, Background: this.alertBgColor, AutoHide: false });
+                this.showMessage();
             }
         }
         else {
@@ -129,10 +132,10 @@
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
 
-            if (this.flagRun) 
+            if (this.flagRun)
                 this.ObjCollection[target].SaveSuccess();
 
-                this.ShowMessage();
+            this.ShowMessage();
             this.saveOrCommitSuccess(data);//edit by amal
         }
         //$.LoadingOverlay("hide");
@@ -433,7 +436,7 @@
 
     this.ajaxSave = function (tagvalues, apps, getNav) {
         if (this.Current_obj.Validate === undefined || this.Current_obj.Validate()) {
-            $.post("../Eb_Object/SaveEbObject", {
+             $.post("../Eb_Object/SaveEbObject", {
                 _refid: this.ver_Refid,
                 _json: JSON.stringify(this.Current_obj),
                 _rel_obj: this.ObjCollection[getNav].relatedObjects,
@@ -465,6 +468,8 @@
         else if (this.ObjCollection[getNav].EbObject.$type.indexOf("Email") !== -1)
             return true;
         else if (this.ObjCollection[getNav].EbObject.$type.indexOf("Api") !== -1)
+            return true;
+        else if (this.ObjCollection[getNav].EbObject.$type.indexOf("TableVisualization") !== -1)
             return true;
         else
             return false;

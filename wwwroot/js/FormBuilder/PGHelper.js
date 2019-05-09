@@ -22,7 +22,7 @@
             if (meta.source === prop)
                 this.clearProp(meta);
         }.bind(this));
-    }
+    };
 
     this.clearProp = function (meta) {
         if (meta.editor === 24 || meta.editor === 8 && meta.Limit !== 1)

@@ -244,7 +244,28 @@ namespace ExpressBase.Web.Controllers
             return _table;
         }
 
-        [HttpGet]
+        [HttpPost]
+        public DataWriterDataTable ExecDataWriter(string qry, string _params)
+        {
+            DataWriterDataTable _table = new DataWriterDataTable();
+            qry = Base64Decode(qry);
+            EbDataTable _data = this.ServiceClient.Post<DatawriterResponse>(new DatawriterRequest
+            {
+                Sql= qry,
+                Parameters = JsonConvert.DeserializeObject<List<Param>>(_params)
+            }).Data;
+
+            DVColumnCollection _columns = new DVColumnCollection();
+            foreach (EbDataColumn column in _data.Columns)
+            {
+                _columns.Add(new DVBaseColumn { Data = column.ColumnIndex, sTitle = column.ColumnName, Name = column.ColumnName, bVisible = true });
+            }
+            _table.Colums = _columns;
+            _table.Rows = _data.Rows;
+            return _table;
+        }
+
+        [HttpPost]
         public string GetSqlParams(string sql, int obj_type)
         {
             return JsonConvert.SerializeObject(SqlHelper.GetSqlParams(sql, obj_type));

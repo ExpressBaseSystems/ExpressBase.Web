@@ -350,15 +350,23 @@ function RecurFlatControls(src_obj, dest_coll) {
 
 function getValsFromForm(formObj) {
     let fltr_collection = [];
-
+    let flag = 0;
     $.each(getFlatCtrlObjs(formObj), function (i, obj) {
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
+        if (obj.ObjType === "PowerSelect")
+            flag++;
     });
+    if (flag > 0) {
+        var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
+        if(temp.length === 0)
+            fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+    }
+
     return fltr_collection;
 }
 
 function isNaNOrEmpty(val) {
-    return (typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "")
+    return (typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "");
 };
 
 function getFlatObjOfType(ContObj, type) {
@@ -422,23 +430,47 @@ function getSingleColumn(obj) {
 //        _z = val;
 //    }
 //});
+var invoiceObj = function(){
+    this.imei = "";
+    this.route = "";
+    this.salesman = "";
+    this.xid = "";
+    this.trndate = "";
+    this.trntype = "";
+    this.acmaster1_id = 100;
+    this.discper = 1.1;
+    this.discamt = 100;
+    this.cash = "";
+    this.grossamt = 100;
+    this.netamt = 1000;
+    this.forms_id = 34;
+    this.uid = "12";
+    this.route_id = "13";
+    this.sys_location_id = "1";
+    this.today = "";
+    this.appversion = "";
+    this.appsubmit_ts = "";
+    this.lpo = "";
+    this.vatamt = 50;
+    this.TotalQty = 30;
+    this.TotalFree = 200;
+    this.items = [];
+}
+
 function Test() {
     var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1MzY5MTcwMCwiZXhwIjoxNTUzNjkxNzkwLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.OKVOtYy_f1m8Ws85uXraJ5kgsQDtRx7bfsMPQKZ7q1yGMQ5hsKCH_yj0pQ9nCF2MQExDqSfN2RkaXJDIkpviRtqsSmche0i6J3oDEGEgdWoO3GdFN1JQfVMFsTT1IzOR2zVkQ-ji2Nz2CsskXbZUA4xkMqrYcpSrhbTrf5vDhfI`
     var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTM2ODkwMzYsImV4cCI6MTU1Mzc3NTQzNn0.BLXWOA4csdWr2MEOmVzAqQHLirLKiX2a3NfuXlELv7fwSyoFJHCdz_XZQTTqoJ54V6EfposEjlD29ZDaKX7M16V-_eXi9oEiEfAM_XDzNgohqI06qBbFmA2TAYovKj0R0JLn3iN_83t2RO9YSUeN4_pnMFKwq0Kfew6znY51rvs`;
     $.ajax({
-        url: "../api/api_salesman_w_order_report/1.0.0/json",
+        url: "https://ebdbllz23nkqd620180220120030.eb-test.xyz/api/authenticate",
         type: "POST",
         cache: false,
         beforeSend: function (xhr) {
-            xhr.setRequestHeader("bToken", b);
-            xhr.setRequestHeader("rToken", r);
+            //xhr.setRequestHeader("bToken", b);
+            //xhr.setRequestHeader("rToken", r);
         },
         data: {
-            "eb_location_id": -1,
-            "selection_mode": 'All',
-            "salesman_ids": 0,
-            "datefrom": "2016-04-01",
-            "dateto":"2016-04-01"
+            "username": "binivarghese@gmail.com",
+            "password":"123123123"
         },
         success: function (result) {
 

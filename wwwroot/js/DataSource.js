@@ -103,6 +103,17 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                 this.DrawDataTable(data);
             }.bind(this));
         }
+        else if (this.ObjectType === 4) {
+            $.ajax({
+                type: 'POST',
+                url: "../CE/ExecDataWriter",
+                data: { "qry": this.EbObject.Sql, "_params": JSON.stringify(this.getParamVal(this.InputParams)) },
+                beforeSend: function () {
+                }
+            }).done(function (data) {
+                this.DrawDataTable(data);
+            }.bind(this));
+        }
         else {
             this.EbObject.InputParams.$values = this.getParamVal(this.InputParams);
             commonO.Save();
@@ -169,7 +180,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.getInputParams = function () {
         this.Sql = window["editor" + tabNum].getValue().trim();
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: "../CE/GetSqlParams",
             data: { "sql": this.Sql, "obj_type": this.ObjectType },
             beforeSend: function () { }
@@ -178,11 +189,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             if (this.InputParams.length > 0) {
                 $(`#paramsModal-toggle`).modal("show");
                 this.configParamWindo();
-                if (this.ObjectType === 5)
-                    this.AppendInpuParams();
-                else {
+                if (this.isEqual(this.InputParams, this.EbObject.InputParams.$values)) {
                     this.AppendInpuParams();
                     this.setValues();
+                }
+                else {
+                    this.EbObject.InputParams.$values = this.InputParams;
+                    this.AppendInpuParams();
                 }
             }
             else {
@@ -192,10 +205,23 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }.bind(this));
     };
 
+    this.isEqual = function (ar1, ar2) {
+        var status = false;
+        for (let i = 0; i < ar1.length; i++) {
+            if (ar2.filter(param => param.Name === ar1[i].Name).length > 0) {
+                status = true;
+            }
+            else {
+                status = false;
+                break;
+            }
+        }
+        return status;
+    };
+
     this.AppendInpuParams = function () {
         let param_list = [];
         param_list = this.InputParams;
-        this.EbObject.InputParams.$values = this.InputParams;
 
         $("#paraWinTab_" + tabNum + " tbody").empty();
         if (param_list.length <= 0) {

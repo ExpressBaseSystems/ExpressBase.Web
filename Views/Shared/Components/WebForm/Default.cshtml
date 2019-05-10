@@ -331,8 +331,8 @@
                 $.each(Tbl.Columns, function (j, Row) {
                     tempHtml += `
                         <tr>
-                            <td class="col-md-4 col-sm-4">${j}</td>
-                            <td class="col-md-4 col-sm-4">${Row.NewValue}</td>
+                            <td class="col-md-4 col-sm-4">${Row.Title}</td>
+                            <td class="col-md-4 col-sm-4" style="color: red;">${Row.NewValue}</td>
                             <td class="col-md-4 col-sm-4">${Row.OldValue}</td>
                         </tr>`;
                 });
@@ -380,25 +380,4 @@
         $("#divAuditTrail").append(appendHtml);
     }
 
-    function getAudiTrailHtml(tables, level) {
-        if (Object.entries(tables).length === 0)
-            return ``;
-        let appendHtml = ``;
-        $.each(tables, function (i, tblObj) {
-            appendHtml += `<tr class="success"><td class="col-md-12 col-sm-12" style = "padding-top: 0px; padding-bottom: 0px; padding-left: ${(level * 16) + 8}px;"><i class="fa fa-chevron-down" aria-hidden="true" style="color: #aaa;"></i> Container: ${i}</td></tr>`;
-            $.each(tblObj.Rows, function (j, rowObj) {
-                appendHtml += `<tr class="active"><td class="col-md-12 col-sm-12" style = "padding-top: 0px; padding-bottom: 0px; padding-left: ${((level + 1) * 16) + 8}px;"><i class="fa fa-chevron-down" aria-hidden="true" style="color: #aaa;"></i> Record Id: ${j}</td></tr>`;
-                $.each(rowObj.Columns, function (k, colObj) {
-                    appendHtml += `
-                        <tr>
-                            <td class="col-md-4 col-sm-4" style="padding-left: ${((level + 2) * 16) + 8}px;">${k}</td>
-                            <td class="col-md-4 col-sm-4">${colObj.OldValue}</td>
-                            <td class="col-md-4 col-sm-4">${colObj.NewValue}</td>
-                        </tr>`;
-                });
-            });
-            appendHtml += getAudiTrailHtmlRec(tblObj.LinesTable, level + 1);
-        });
-        return appendHtml;
-    }
 </script>

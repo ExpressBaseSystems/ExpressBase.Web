@@ -240,9 +240,8 @@
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
-            if (inpCtrlType === "EbUserControl") {
+            if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
-            }
             this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.rowCtrls[rowid].push(inpCtrl);

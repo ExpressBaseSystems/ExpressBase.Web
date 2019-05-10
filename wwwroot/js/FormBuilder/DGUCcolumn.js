@@ -1,12 +1,13 @@
 ﻿const DGUCColumn = function (_col, userObject) {
-    this._col = _col;
+    this._col = _col;// UserControl Column Object
     this.base = {};
     this.userObject = userObject;
-    this.base.values = {};
-    this.UCs = {};
-    this._col.__base = this.base;
-    this.initControls = new InitControls(this);
+    this.AllCtrlValues = {};// row wise userControls values dict 
+    this.UCs = {};// All row UserControls dict [ { rowid : object } ]
+    this.initControls = new InitControls(this);// form controls initializer library
+    this.curCtrl = {};// usercontrol instance which is currently represented by the modal
 
+    // prepend modal to body
     this.addModal = function () {
         this.$modal = $(`
 <div class='modal fade' id='${this._col.EbSid}_usercontrolmodal' tabindex='-1' role='dialog' aria-labelledby='@ebsid@Title' aria-hidden='true'>
@@ -34,8 +35,8 @@
     this.loadValues = function () {
 
         $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
-            if (this.base.values[this.curRowid]) {
-                let val = this.base.values[this.curRowid][ctrl.EbSid];
+            if (this.AllCtrlValues[this.curRowid]) {
+                let val = this.AllCtrlValues[this.curRowid][ctrl.EbSid];
                 if (val)
                     ctrl.setValue(val);
             }
@@ -57,6 +58,7 @@
         this.SetCtrlValues(rowId);
     }.bind(this);
 
+    //bind functions to modal events
     this.bindFns = function () {
         this.$OkBtn.on("click", this.ok_click);
         this.$modal.on("show.bs.modal", this.modalShowCallBack);
@@ -72,7 +74,7 @@
     };
 
     this.SetCtrlValues = function (rowId) {
-        let valDict = this.base.values;
+        let valDict = this.AllCtrlValues;
         valDict[rowId] = {};
         $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
             ctrl.__tempVal = ctrl.getValueForModal();
@@ -82,6 +84,7 @@
         console.log(valDict);
     };
 
+    // add and initialize new UserControl instance to this - when a new row with UserControl added to datagrid
     this.initForctrl = function (ctrl) {
         this.curCtrl = ctrl;
         //this.initCtrlChildrens(ctrl);
@@ -91,8 +94,9 @@
         this.$modalShowBtn.on("click", this.modalShowBtn_click);
     };
 
+    //initialize Controls rendered inside modal
     this.initModalCtrls = function () {
-        this.ChildCtrls.forEach(function (ctrl, i) {
+        this.ChildCols.forEach(function (ctrl, i) {
             let opt = {};
             if (ctrl.ObjType === "PowerSelect")// || ctrl.ObjType === "DGPowerSelectColumn")
                 opt.getAllCtrlValuesFn = function () {
@@ -106,15 +110,13 @@
         }.bind(this));
     };
 
+    //this function initialize a modal exclusively for one UserControl column in a datagrid
     this.init = function () {
-        //this.$modalShowBtns = $(`#${this._col.EbSid}_showbtn`);
-        //this.$modal = $(`#${this._col.EbSid}_usercontrolmodal`);
-        this.ChildCtrls = this._col.Columns.$values;
+        this.ChildCols= this._col.Columns.$values;// list of controls in the userControl Column
         this.addModal();
         this.initModalCtrls();
 
-        this.$modalBody = $(`#${this._col.EbSid}_usercontrolmodal .modal-body`);
-        this.$OkBtn = $(`#${this._col.EbSid}_ucmodalok`);
+        this.$OkBtn = $(`#${this._col.EbSid}_ucmodalok`);//OK button inside modal
         this.bindFns();
 
     };

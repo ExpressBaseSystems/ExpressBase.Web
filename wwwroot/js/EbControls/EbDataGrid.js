@@ -179,7 +179,7 @@
 
     this.initInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
         //inpCtrl.Name = col.Name;
-        inpCtrl.EbDbType = col.EbDbType;
+        //inpCtrl.EbDbType = col.EbDbType;
         inpCtrl.EbSid_CtxId = ctrlEbSid;
         inpCtrl.__rowid = rowid;
         inpCtrl.__Col = col;

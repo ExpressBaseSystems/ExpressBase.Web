@@ -148,8 +148,8 @@
         $.each(inpCtrls, function (i, obj) {
             if (!obj.DoNotPersist) {
                 if (obj.ObjType === "DGUserControlColumn") {
-                    $.each(obj.Columns.$values, function (i, obj) {
-                        SingleRow.Columns.push(getSingleColumn(obj));
+                    $.each(obj.Columns.$values, function (i, ctrl) {
+                        SingleRow.Columns.push(getSingleColumn(ctrl));
                     }.bind(this));
                 }
                 else
@@ -178,22 +178,18 @@
     };
 
     this.initInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
-        inpCtrl.Name = col.Name;
+        //inpCtrl.Name = col.Name;
         inpCtrl.EbDbType = col.EbDbType;
         inpCtrl.EbSid_CtxId = ctrlEbSid;
         inpCtrl.__rowid = rowid;
         inpCtrl.__Col = col;
-        //inpCtrl.EbSid = ctrlEbSid;
 
         if (inpCtrl.ObjType === "DGUserControlColumn") {///////////
             $.each(col.Columns.$values, function (i, _inpCtrl) {
                 let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
                 let NewInpCtrl = $.extend({}, new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl));
                 NewInpCtrl.EbSid_CtxId = _ctrlEbSid;
-
-                let tmp = this.initInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
-                inpCtrl.Columns.$values[i] = tmp;
-                console.log(1);
+                inpCtrl.Columns.$values[i] = this.initInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
             }.bind(this));
         }
         else
@@ -228,21 +224,24 @@
                 return true;
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
-            let inpCtrl = $.extend({}, col);
+            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
             if (inpCtrlType === "EbUserControl") {
-                console.log(1);
+                //remove circular reference and take copy
+                {
+                    let dg = inpCtrl.__DG;///////////////////
+                    let dgucc = inpCtrl.__DGUCC;
 
-                let a = inpCtrl.__DG;///////////////////
-                let b = inpCtrl.__DGUCC;
+                    delete inpCtrl.__DG;
+                    delete inpCtrl.__DGUCC;
 
-                inpCtrl.__DG = undefined;
-                inpCtrl.__DGUCC = undefined;
+                    inpCtrl.Columns = { ...inpCtrl.Columns };
+                    inpCtrl.Columns.$values = this.cloneObjArr(inpCtrl.Columns.$values);
 
-                inpCtrl.Columns = { ...inpCtrl.Columns };
-                inpCtrl.Columns.$values = this.cloneObjArr(inpCtrl.Columns.$values);
+                    inpCtrl.__DG = dg;
+                    inpCtrl.__DGUCC = dgucc;
 
-                inpCtrl.__DG = a;
-                inpCtrl.__DGUCC = b;
+                    col = this.attachFns(col, col.ObjType);
+                }
             }
             this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);

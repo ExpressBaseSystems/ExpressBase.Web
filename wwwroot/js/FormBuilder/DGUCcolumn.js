@@ -31,17 +31,20 @@
         $("body").prepend(this.$modal);
     };
 
-    this.modalShowCallBack = function () {
-        this.$OkBtn.attr("rowid", this.curRowid);
-        let valDict = this.base.values;
+    this.loadValues = function () {
 
-        $.each(this.ChildCtrls, function (i, ctrl) {
-            if (valDict[this.curRowid]) {
-                let val = valDict[this.curRowid][ctrl.EbSid];
+        $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
+            if (this.base.values[this.curRowid]) {
+                let val = this.base.values[this.curRowid][ctrl.EbSid];
                 if (val)
                     ctrl.setValue(val);
             }
         }.bind(this));
+    };
+
+    this.modalShowCallBack = function () {
+        this.$OkBtn.attr("rowid", this.curRowid);
+        this.loadValues();
     }.bind(this);
 
     this.modalShowBtn_click = function (e) {
@@ -59,11 +62,11 @@
         this.$modal.on("show.bs.modal", this.modalShowCallBack);
     };
 
-    this.setCtrlFns = function (Uctrl) {
+    this.setCtrlFns = function (Uctrl) {///////////////
         $.each(Uctrl.Columns.$values, function (i, _ctrl) {
-            let Mfn = new ControlOps[_ctrl.ObjType](new EbObjects.EbTextBox("a")).getValue;
-            _ctrl.getValueForModal = Mfn;
-            _ctrl.getValue = function (uc) { return _ctrl.__tempVal; }.bind(this, Uctrl);
+            _ctrl.getValueForModal = function () { return $("#" + this.EbSid).val(); };
+            _ctrl.getValue = function (uc) { return this.__tempVal; };
+            _ctrl.setValue = function (p1) { $('#' + this.EbSid).val(p1).trigger('change'); }
 
         }.bind(this));
     };
@@ -74,19 +77,10 @@
         $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
             ctrl.__tempVal = ctrl.getValueForModal();
             valDict[rowId][ctrl.EbSid] = ctrl.__tempVal;
-            ctrl.clear();
             this.curCtrl.__Col.Columns.$values[i].clear();
         }.bind(this));
         console.log(valDict);
     };
-
-    //this.initCtrlChildrens = function (UC) {
-    //    $.each(UC.Columns.$values, function (i, _inpCtrl) {
-    //        let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
-    //        _inpCtrl = new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl);
-    //        UC.Columns.$values[i] = _inpCtrl;
-    //    }.bind(this));
-    //};
 
     this.initForctrl = function (ctrl) {
         this.curCtrl = ctrl;

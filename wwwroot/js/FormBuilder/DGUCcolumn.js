@@ -10,11 +10,11 @@
     // prepend modal to body
     this.addModal = function () {
         this.$modal = $(`
-<div class='modal fade' id='${this._col.EbSid}_usercontrolmodal' tabindex='-1' role='dialog' aria-labelledby='@ebsid@Title' aria-hidden='true'>
-  <div class='modal-dialog modal-dialog-centered' role='document'>
+<div class='modal fade uc-modal' id='${this._col.EbSid}_usercontrolmodal' tabindex='-1' role='dialog' aria-labelledby='@ebsid@Title' aria-hidden='true'>
+  <div class='modal-dialog modal-dialog-centered modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='exampleModalLongTitle'>@modaltitle@</h5>
+        <h5 class='modal-title' id='exampleModalLongTitle'><b>@modaltitle@</b></h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
@@ -46,6 +46,7 @@
     this.modalShowCallBack = function () {
         this.$OkBtn.attr("rowid", this.curRowid);
         this.loadValues();
+        this.$modal.find(`.modal-body input[type!=hidden]:last`).focus();
     }.bind(this);
 
     this.modalShowBtn_click = function (e) {
@@ -68,7 +69,7 @@
         $.each(Uctrl.Columns.$values, function (i, _ctrl) {
             _ctrl.getValueForModal = function () { return $("#" + this.EbSid).val(); };
             _ctrl.getValue = function (uc) { return this.__tempVal; };
-            _ctrl.setValue = function (p1) { $('#' + this.EbSid).val(p1).trigger('change'); }
+            _ctrl.setValue = function (p1) { $('#' + this.EbSid).val(p1).trigger('change'); };
 
         }.bind(this));
     };

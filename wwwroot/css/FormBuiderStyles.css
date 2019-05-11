@@ -856,3 +856,43 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         border: solid 1px #6ebfe6;
         box-shadow: 0px 0px 3px 0 #6ebfe6 !important;
     }
+
+.uc-modal .modal-footer .btn[data-dismiss="modal"] {
+    background-color: #00a27d;
+    color: white;
+    border-radius: 29px;
+    padding: 7px 7px;
+    box-shadow: 1px 1px 3px 0px #000000c2;
+}
+
+
+.uc-modal > div > div > div.modal-header > button[aria-label="Close"] {
+    margin-top: -26.5px;
+    color: red;
+    opacity: 0.45;
+    margin-right: 4px;
+    font-size: 35px;
+}
+
+.uc-modal > div > div > div.modal-body {
+    padding: 5px 20px;
+    padding-top: 0px;
+}
+
+.uc-modal > div > div > div.modal-footer {
+    padding: 8px 11px;
+    border-top: none;
+}
+
+.uc-modal > div > div > div.modal-header {
+    border-bottom: none;
+}
+
+.uc-modal > div > div.modal-content {
+    border-radius: 2px;
+}
+
+.modal-open .container-fluid, .modal-open .container {
+    -webkit-filter: blur(1.5px) grayscale(60%);
+}
+

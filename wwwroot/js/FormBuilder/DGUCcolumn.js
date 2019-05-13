@@ -15,15 +15,13 @@
     <div class='modal-content'>
       <div class='modal-header'>
         <h4 class='modal-title' id='exampleModalLongTitle'><b>@modaltitle@</b></h4>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
       </div>
         <div class='modal-body'>
             ${this._col.ChildHtml}
         </div>
       <div class='modal-footer'>
-        <button id='${this._col.EbSid}_ucmodalok' type='button' class='btn btn-secondary' data-dismiss='modal'>OK</button>
+        <button id='${this._col.EbSid}_ucmodalclose' type='button' class='btn btn-secondary ucm-btn' data-dismiss='modal'>Cancel</button>
+        <button id='${this._col.EbSid}_ucmodalok' type='button' class='btn btn-primary  ucm-btn' data-dismiss='modal'>OK</button>
       </div>
     </div>
   </div>
@@ -59,9 +57,16 @@
         this.SetCtrlValues(rowId);
     }.bind(this);
 
+    this.cancel_click = function () {
+        $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
+            this.curCtrl.__Col.Columns.$values[i].clear();
+        }.bind(this));
+    }.bind(this);
+
     //bind functions to modal events
     this.bindFns = function () {
         this.$OkBtn.on("click", this.ok_click);
+        this.$Cancel.on("click", this.cancel_click);
         this.$modal.on("show.bs.modal", this.modalShowCallBack);
     };
 
@@ -118,6 +123,7 @@
         this.initModalCtrls();
 
         this.$OkBtn = $(`#${this._col.EbSid}_ucmodalok`);//OK button inside modal
+        this.$Cancel= $(`#${this._col.EbSid}_ucmodalclose`);//close button inside modal
         this.bindFns();
 
     };

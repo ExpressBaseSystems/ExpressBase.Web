@@ -126,6 +126,10 @@
                     //ctrl.setDisplayMember = this.j;
                     ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
                 }
+                else if (ctrl.ObjType === "DGUserControlColumn") {
+                    //ctrl.setDisplayMember = this.j;
+                    ctrl.setValue(val);
+                }
                 else
                     ctrl.setValue(val);
 
@@ -163,7 +167,10 @@
     this.changedRowWT = function () {
         let SingleTable = [];
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true" || $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to mange deleted row and unchecked row
+            if (parseInt(rowId) < 0 && $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to skip newly added and then deleted rows
+                return true;
+            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true" || /* - if checked*/
+                $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to manage deleted row
                 SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
         console.log(SingleTable);

@@ -144,6 +144,7 @@
         let SingleRow = {};
         SingleRow.RowId = rowId;
         SingleRow.IsUpdate = (rowId !== 0);
+        SingleRow.IsDelete = inpCtrls.IsDelete;
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
             if (!obj.DoNotPersist) {
@@ -162,7 +163,7 @@
     this.changedRowWT = function () {
         let SingleTable = [];
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true")
+            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true" || $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to mange deleted row and unchecked row
                 SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
         console.log(SingleTable);
@@ -174,7 +175,6 @@
         if (type === "TextBox")
             type = "String";
         return `EbDG${type}Column`;
-
     };
 
     this.initInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
@@ -208,10 +208,25 @@
 
     this.cloneObjArr = function (arr) {
         let newArr = [];
-        $.each(arr, function (i, obj) {
-            newArr[i] = $.extend(true, {}, obj);
-        });
+        $.each(arr, function (i, obj) { newArr[i] = $.extend(true, {}, obj); });
         return newArr;
+    };
+
+    //remove circular reference and take copy
+    this.manageUCObj = function (inpCtrl, col) {
+        let dg = inpCtrl.__DG;
+        let dgucc = inpCtrl.__DGUCC;
+
+        delete inpCtrl.__DG;
+        delete inpCtrl.__DGUCC;
+
+        inpCtrl.Columns = { ...inpCtrl.Columns };
+        inpCtrl.Columns.$values = this.cloneObjArr(inpCtrl.Columns.$values);
+
+        inpCtrl.__DG = dg;
+        inpCtrl.__DGUCC = dgucc;
+
+        col = this.attachFns(col, col.ObjType);
     };
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
@@ -225,24 +240,8 @@
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
-            if (inpCtrlType === "EbUserControl") {
-                //remove circular reference and take copy
-                {
-                    let dg = inpCtrl.__DG;///////////////////
-                    let dgucc = inpCtrl.__DGUCC;
-
-                    delete inpCtrl.__DG;
-                    delete inpCtrl.__DGUCC;
-
-                    inpCtrl.Columns = { ...inpCtrl.Columns };
-                    inpCtrl.Columns.$values = this.cloneObjArr(inpCtrl.Columns.$values);
-
-                    inpCtrl.__DG = dg;
-                    inpCtrl.__DGUCC = dgucc;
-
-                    col = this.attachFns(col, col.ObjType);
-                }
-            }
+            if (inpCtrlType === "EbUserControl")
+                this.manageUCObj(inpCtrl, col);
             this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.rowCtrls[rowid].push(inpCtrl);
@@ -535,10 +534,10 @@
     };
 
     this.removeTr = function ($tr) {
+        let rowId = $tr.attr("rowid");
         $tr.find("td *").hide(200);
-        setTimeout(function () {
-            $tr.remove();
-        }, 201);
+        setTimeout(function () { $tr.remove(); }, 201);
+        this.rowCtrls[rowId].IsDelete = true;
     };
 
     this.delRow_click = function (e) {

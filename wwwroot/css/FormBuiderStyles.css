@@ -1,4 +1,8 @@
-﻿.formB-box {
+﻿body {
+    --lightshadow: 2px 2px 3px 0px rgba(41, 41, 41, 0.325);
+}
+
+.formB-box {
     display: inline-block;
     background-color: white;
     padding: 0px;
@@ -207,7 +211,7 @@
 .rowc:focus {
     outline: none;
     box-shadow: 0px 0px 6px 0 !important;
-    background-color:white;
+    background-color: white;
 }
 
 .rowc:hover {
@@ -381,7 +385,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .check-wraper {
     background-color: white;
-   // height: 21px;
+    // height: 21px;
     margin: 1px;
     padding: 4px;
 }
@@ -597,6 +601,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px solid #e3e3e3;
     border-radius: 2px;*/
 }
+
 .req-cont label {
     font-weight: normal !important;
     margin-bottom: 0 !important;
@@ -824,6 +829,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [eb-form=true] .bootstrap-select > .dropdown-toggle {
     z-index: 0 !important;
 }
+
 .grid-cont .Dg_head, .Dg_footer {
     padding-right: 17px;
 }
@@ -832,13 +838,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background: url(../images/gifs/loader2.gif) !important;
     background-repeat: no-repeat !important;
     background-position: calc(100% - 2px) !important;
- }
+}
 
 .uc-col-wraper {
-    display:none;
+    display: none;
 }
+
 .ucspan {
-    padding: 0px 7px!important;
+    padding: 0px 7px !important;
 }
 
 .ucbtn {
@@ -860,17 +867,17 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .uc-modal .modal-footer .btn[data-dismiss="modal"] {
     background-color: #00a27d;
     color: white;
-    border-radius: 29px;
-    padding: 7px 7px;
-    box-shadow: 1px 1px 3px 0px #000000c2;
+    border-radius: 0px;
+    padding: 5px 19.5px;
+    margin-right: 9px;
+    box-shadow: var(--lightshadow);
 }
-
 
 .uc-modal > div > div > div.modal-header > button[aria-label="Close"] {
     margin-top: -26.5px;
     color: red;
     opacity: 0.45;
-    margin-right: 4px;
+    margin-right: 3px;
     font-size: 35px;
 }
 
@@ -888,11 +895,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-bottom: none;
 }
 
+    .uc-modal > div > div > div.modal-header > .modal-title {
+        margin-left: 6px;
+    }
+
 .uc-modal > div > div.modal-content {
     border-radius: 2px;
 }
 
 .modal-open .container-fluid, .modal-open .container {
     -webkit-filter: blur(1.5px) grayscale(60%);
+    filter: blur(1.5px) grayscale(60%);
 }
-

@@ -104,7 +104,6 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "FileUploader")
                 opt.FormDataExtdObj = this.FormDataExtdObj;
             else if (Obj.ObjType === "Date") {
-                opt.userObject = this.userObject;
                 opt.source = "webform";
             }
 

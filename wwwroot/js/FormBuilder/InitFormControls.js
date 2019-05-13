@@ -120,7 +120,7 @@
             });
         }
         else {
-            let sdp = this.mapDatePattern(userObject.Preference.ShortDatePattern);
+            let sdp = "Y-m-d";//userObject.Preference.ShortDatePattern;
 
             if (typeof ctrl === typeof "")
                 ctrl = { name: ctrl, ebDateType: 5 };
@@ -178,11 +178,7 @@
             }
         }
     };
-
-    this.mapDatePattern = function (CSPtn) {
-        return CSPtn.replace("yyyy", "Y").replace("MM", "m").replace("dd", "d");
-    };
-
+    
     //created by amal
     this.toggleNullableCheck = function (ctrl) {
         let $ctrl = $(event.target).closest("input[type='checkbox']");

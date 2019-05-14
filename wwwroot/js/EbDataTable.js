@@ -188,6 +188,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.EbObject = dvcontainerObj.currentObj;
         }
         //this.InitializeColumns();
+        this.SetColumnRef();
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         if (this.PcFlag === true)
             this.compareAndModifyRowGroup();
@@ -224,6 +225,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.PcFlag = false;
     }.bind(this);
 
+    this.SetColumnRef = function () {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            obj.ColumnsRef = this.EbObject.Columns;
+        }.bind(this));
+    };
+
+    this.RemoveColumnRef = function () {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            obj.ColumnsRef = null;
+        }.bind(this));
+    };
+
     this.CloseParamDiv = function () {
         //if (this.login === "dc") {
         //    this.stickBtn.minimise();
@@ -244,7 +257,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.isContextual = false;
                 this.isPipped = false;
                 this.rowData = null;
-                
+
                 this.orderColl = [];
                 this.check4Customcolumn();
                 this.EbObject.OrderBy.$values = [];
@@ -431,9 +444,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.CurrentRowGroup = null;
             this.RGIndex = [];
             this.rowgroupCols = [];
-            
+
         }
-        
+
 
         //----------
         if (this.ebSettings.$type.indexOf("EbTableVisualization") !== -1) {
@@ -595,7 +608,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             alert("ajax erpttt......");
         };
 
-        
+
         //this.Api.on('row-reorder', function (e, diff, edit) {
         //});
 
@@ -768,6 +781,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         dq.Ispaging = this.EbObject.IsPaging;
         if (dq.length === -1)
             dq.length = this.RowCount;
+        this.RemoveColumnRef();
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
@@ -793,7 +807,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 1));
                 }
             }
-        }        
+        }
 
         if (tempArray.length === 0) {
             if (this.EbObject.OrderBy.$values.length > 0) {
@@ -1043,8 +1057,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.summary = dd.summary;
         this.tableName = dd.tableName;
         this.treeData = dd.tree;
+        this.SetColumnRef();
+        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         return dd.formattedData;
-
     };
 
     this.fixedColumnCount = function () {
@@ -2304,41 +2319,73 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
         if (this.IsTree) {
-            if (this.GroupFormLink !== null) {
-                $.contextMenu({
-                    selector: ".groupform",
-                    build: function ($trigger, e) {
-                        $("body").find("td").removeClass("focus");
-                        $("body").find("[role=row]").removeClass("selected");
-                        $trigger.closest("[role=row]").addClass("selected");
+            $.contextMenu({
+                selector: ".groupform",
+                build: function ($trigger, e) {
+                    $("body").find("td").removeClass("focus");
+                    $("body").find("[role=row]").removeClass("selected");
+                    $trigger.closest("[role=row]").addClass("selected");
+                    if (this.GroupFormLink !== null) {
+                        if ($(e.currentTarget).hasClass("levelzero")) {
+                            return {
+                                items: {
+                                    "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
+                                    "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
+                                    "EditGroup": { name: "Edit Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                                }
+                            };
+                        }
+                        else {
+                            return {
+                                items: {
+                                    "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
+                                    "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
+                                    "EditGroup": { name: "Edit Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
+                                    "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                                }
+                            };
+                        }
+                    }
+                    else {
+                        if ($(e.currentTarget).hasClass("levelzero")) {
+                            return {};
+                        }
+                        else {
+                            return {
+                                items: {
+                                    "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                                }
+                            };
+                        }
+                    }
+                }.bind(this)
+
+            });
+
+            $.contextMenu({
+                selector: ".itemform",
+                build: function ($trigger, e) {
+                    $("body").find("td").removeClass("focus");
+                    $("body").find("[role=row]").removeClass("selected");
+                    $trigger.closest("[role=row]").addClass("selected");
+                    if (this.ItemFormLink !== null) {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "Edit Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
-                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroup.bind(this) }
+                                "EditItem": { name: "Edit Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) },
+                                "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
                             }
                         };
-                    }.bind(this)
-                    
-                });
-            }
-            if (this.ItemFormLink !== null) {
-                $.contextMenu({
-                    selector: ".itemform",
-                    build: function ($trigger, e) {
-                        $("body").find("td").removeClass("focus");
-                        $("body").find("[role=row]").removeClass("selected");
-                        $trigger.closest("[role=row]").addClass("selected");
+                    }
+                    else {
                         return {
                             items: {
-                                "EditItem": { name: "Edit Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) }
+                                "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
                             }
                         };
-                    }.bind(this)
-                    
-                });
-            }
+                    }
+                }.bind(this)
+
+            });
         }
         $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
     };
@@ -2446,7 +2493,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         document.body.removeChild(_form);
     };
 
-    this.formatToParameters = function(cols){
+    this.formatToParameters = function (cols) {
         var filters = [];
         $.each(cols, function (i, col) {
             if (this.rowData[col.data] !== "")
@@ -2492,7 +2539,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //}
     }.bind(this);
 
-    this.MoveGroup = function (key, opt, event) {
+    this.AppendTreeModal = function () {
         $("#treemodal").remove();
         let modal = `<div class="modal" tabindex="-1" role="dialog" id="treemodal">
                   <div class="modal-dialog" role="document">
@@ -2516,11 +2563,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     </div>
                   </div>
                 </div>`;
-        $("#layout_div").append(modal);
+        $("body").prepend(modal);
+    };
+
+    this.MoveGroupOrItem = function (key, opt, event) {
+        this.AppendTreeModal();
         let rowindex = this.Api.row(opt.$trigger.parent().closest("[role=row]")).index();
         this.movefromtext = this.unformatedData[rowindex][this.treeColumn.data];
         $("#movefrom").text(this.movefromtext);
-        this.IdColumnIndex = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === "id";})[0].data;
+        this.IdColumnIndex = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === "id"; })[0].data;
         this.movefromId = this.unformatedData[rowindex][this.IdColumnIndex];
         $.each(this.treeData, function (i, item) {
             let Exist = item.item.filter(function (obj) { return obj === this.movefromtext; }.bind(this));
@@ -2547,7 +2598,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             e.stopPropagation();
             e.preventDefault();
         });
-        
+
         let elem = $("#treemodal .dropdown-submenu .dropdown-menu");
         $.each(elem, function (i, obj) {
             if ($(obj).children("li").length === 0) {
@@ -2557,6 +2608,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         });
     };
+
+    this.MoveItem = function (key, opt, event) {
+        this.AppendTreeModal();
+    }
 
     this.MoveDDClick = function (e) {
         let text = $(e.target).closest("a").text();

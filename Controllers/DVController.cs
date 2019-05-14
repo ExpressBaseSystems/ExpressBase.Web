@@ -187,7 +187,11 @@ namespace ExpressBase.Web.Controllers
             return NewColumns;
         }
 
-
+        public object ExecuteTreeUpdate(string sql)
+        {
+            var resultlist = this.ServiceClient.Get<UpdateTreeColumnResponse>(new UpdateTreeColumnRequest { sql = sql});
+            return new object();
+        }
         //[HttpPost]//copied to boti - febin
         //public IActionResult dvView1(string dvobj)
         //{

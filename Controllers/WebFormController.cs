@@ -276,5 +276,11 @@ namespace ExpressBase.Web.Controllers
         //    return MLPair;
         //}
 
+        public string GetFormControlsFlat( string refId) {
+            string SCtrls = string.Empty;
+            SCtrls = EbSerializers.Json_Serialize(this.ServiceClient.Post<GetCtrlsFlatResponse>(new GetCtrlsFlatRequest() { RefId = refId }).Controls);
+            return SCtrls;
+        }
+
     }
 }

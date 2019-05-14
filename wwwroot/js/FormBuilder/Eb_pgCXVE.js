@@ -4,6 +4,7 @@
     this.pgCXE_Cont_Slctr = "#" + this.PGobj.wraperId + " .pgCXEditor-Cont";
     this.CEctrlsContId = this.PGobj.wraperId + "_CEctrlsCont";
     this.CE_all_ctrlsContId = this.PGobj.wraperId + "_CE_all_ctrlsCont";
+    this.CE_mapper_ctrlsContId = this.PGobj.wraperId + "_CE_mapper_ctrlsCont";
     this.modalBg_Slctr = "#" + this.PGobj.wraperId + " .pgCXEditor-bg";
     this.OnCXE_OK = function (obj) { };
     this.OSE_curTypeObj = null;
@@ -139,7 +140,7 @@
 
         $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").empty();
         //this.CurEditor = this.CurMeta.editor;
-        if (this.editor > 6 && this.editor < 11 || this.editor === 22 || this.editor === 24 || this.editor === 26)
+        if (this.editor > 6 && this.editor < 11 || this.editor === 22 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35)
             this.initCE();
         else if (this.editor === 11)// JS
             this.initJE();
@@ -159,9 +160,11 @@
 
         if (this.editor < 64 || this.editor === 64 || this.editor === 128 || this.editor === 156)
             $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
-
+        
         if (this.editor !== 8)
             $("#" + this.CEctrlsContId).off("focus", ".colTile").on("focus", ".colTile", this.colTileFocusFn.bind(this));
+        if (this.editor === 35)
+            $("#" + this.CE_mapper_ctrlsContId).off("focus", ".mapper-ColTile").on("focus", ".mapper-ColTile", this.mapperColTileFocusFn.bind(this));
         $("#" + this.PGobj.wraperId + ' .modal-footer').off("click", "[name=CXE_OK]").on("click", "[name=CXE_OK]", this.CXE_OKclicked.bind(this));
         $("#" + this.PGobj.wraperId + ' .modal-header').off("click", ".close").on("click", ".close", this.CXVE_close.bind(this));
 
@@ -229,7 +232,7 @@
         if (this.editor === 7 || this.editor === 22) {
             this.initHelper7_22();
         }
-        else if ((this.editor > 7 && this.editor < 11) || this.editor === 24 || this.editor === 26) {
+        else if ((this.editor > 7 && this.editor < 11) || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             let sourceProp = this.CurMeta.source;
             this.CEHelper(sourceProp);
         }
@@ -273,22 +276,61 @@
         return _CElistFromSrc;
     };
 
+    this.buildMapObjList = function (data) {
+        this.CE_mapList = data ? JSON.parse(data).$values : this.CE_mapList;
+        $.each(this.CE_mapList, function (i, control) {
+            let NS1 = control.$type.split(",")[0].split(".");
+            let type = NS1[NS1.length - 1];
+            let _name = control.Name;
+            if (!_name)
+                _name = control.EbSid;
+            let $tile = $('<div class="colTile mapper-ColTile" id="' + _name + '" ebsid="' + control.EbSid + '" tabindex="1" eb-type="' + type + '">'
+                + '<span>' + _name + '</span>'
+                + `<i class="fa fa-check-circle mapper-check" aria-hidden="true"></i>`
+                + '</div>');
+            $("#" + this.CE_mapper_ctrlsContId).append($tile);
+            //this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
+        }.bind(this));
+        $.LoadingOverlay("hide");
+
+    }.bind(this);
+
+    this.setCEMaplistFromSrc = function (mapListSrc) {/////////////
+        if (!this.CE_mapList) {
+            $.LoadingOverlay("show");
+            $.ajax({
+                url: "../WebForm/GetFormControlsFlat",
+                type: "POST",
+                data: { refId: this.PGobj.PropsObj[this.CurMeta.Dprop] },
+                success: this.buildMapObjList
+            });
+        }
+        else
+            this.buildMapObjList();
+    };
+
     this.CEHelper = function (sourceProp) {
         this.Dprop = this.CurMeta.Dprop;
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };
-
         this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
-        if (this.editor === 8) {
+        if (this.editor === 8 || this.editor === 27 || this.editor === 35) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.changeCopyToRef();
-            $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();// hide PG
+            if (this.editor === 8)
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();// hide PG
+            if (this.editor === 35) {
+                let mapListSrc = this.CurMeta.Dprop; // Dprop meta as head
+                $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").empty().prepend(`<div class='CE-controls-head'>${this.CurMeta.Dprop2}</div><div id="${this.CE_mapper_ctrlsContId}" class="CE-mapper-ctrlsCont"></div>`);
+
+                this.setCEMaplistFromSrc(mapListSrc);
+            }
         }
         else if (this.editor === 10) {
             $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(1)").hide();
             $("#" + this.CE_all_ctrlsContId).off("focus", ".colTile").on("focus", ".colTile", this.colTileFocusFn.bind(this));
         }
-        else if (this.editor === 24 || this.editor === 26) {
+        else if (this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             if (this.editor === 26) {
                 this.setObjTypeDD();
                 this.CElist = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
@@ -760,6 +802,8 @@
                     $("#" + this.CEctrlsContId).append($tile);// 2nd column
             }
         }.bind(this));
+        if (containerId === this.CEctrlsContId)
+            this.colTileFocusFn({ target: $("#" + containerId + " .colTile:first")[0] });
         $(this.pgCXE_Cont_Slctr + " .editTbl").off("click", ".coltile-delete").on("click", ".coltile-delete", this.colTileDel);
         $("#" + this.CEctrlsContId).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
         $("#" + this.CE_all_ctrlsContId).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
@@ -831,7 +875,7 @@
             return false;
         e.stopPropagation();
         $tile.remove();
-        if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26) {
+        if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             let tileObj = getObjByval(this.CElistFromSrc, "name", $tile.attr("id"));
             if (this.editor === 26 || this.editor === 24)
                 tileObj[this.Dprop] = true;
@@ -846,7 +890,7 @@
         e.stopPropagation();
         let $tile = $(e.target).closest(".colTile").remove();
         if (this.selectedCols)// temp condition
-            var tileObj= getObjByval(this.selectedCols, "name", $tile.attr("id"));
+            var tileObj = getObjByval(this.selectedCols, "name", $tile.attr("id"));
         if (this.editor === 7) {
             this.PGobj.removeFromDD.bind(this.PGobj)($tile.attr("id"));
             let DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("ebsid"))), 1)[0];
@@ -861,7 +905,7 @@
                 });
             }
         }
-        else if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26) {
+        else if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26 ||this.editor === 27 || this.editor === 35) {
             if (this.editor === 26 || this.editor === 24)
                 tileObj[this.Dprop] = false;
             this.selectedCols.splice(this.selectedCols.indexOf(tileObj), 1);
@@ -875,9 +919,8 @@
         this.CEOnDeselectFn(tileObj);
     }.bind(this);
 
-    this.colTileFocusFn = function (e) {
-        let $e = $(e.target).closest(".colTile");
-        let id = $e.attr("id");
+    this.loadPG = function ($e, id) {
+
         $(':focus').blur();
         if (!$e.hasClass("colTile")) {
             this.colTileFocusFn.bind(this)({ target: $e.parent() });
@@ -892,7 +935,7 @@
             if (!obj)
                 obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
         }
-        else if (this.editor === 9 || this.editor === 10 || this.editor === 24 || this.editor === 26) {
+        else if (this.editor === 9 || this.editor === 10 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
         }
         else if (this.editor === 22) {
@@ -901,6 +944,42 @@
         if (!obj)
             console.error("Object " + obj);
         this.CE_PGObj.setObject(obj, AllMetas[type]);
+    };
+
+    this.mapperColTileFocusFn = function (e) {
+        let $e = $(e.target).closest(".mapper-ColTile");
+        $(`#${this.CE_mapper_ctrlsContId} .mapper-ColTile`).attr("is-selected", "false");
+        $e.attr("is-selected", "true");
+        let colEbsid = $(`#${this.CEctrlsContId} .colTile[is-selected=true]`).attr("ebsid");
+        let CtrlEbsid = $e.attr("ebsid");
+        let colObj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", colEbsid);
+        colObj[this.CurMeta.Dprop2] = getObjByval(this.CE_mapList, "EbSid", CtrlEbsid);
+        console.log(colObj[this.CurMeta.Dprop2]);
+    }.bind(this);
+
+    this.mapperShowCallback = function ($e) {
+        $(`#${this.CE_mapper_ctrlsContId} .mapper-ColTile`).attr("is-selected", "false");
+        let colEbsid = $e.attr("ebsid");
+        let colObj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", colEbsid);
+        if (!colObj)
+            console.log(11);
+        if (colObj[this.CurMeta.Dprop2])
+            $(`#${this.CE_mapper_ctrlsContId} .mapper-ColTile[ebsid=${colObj[this.CurMeta.Dprop2].EbSid}]`).attr("is-selected", "true");
+    }.bind(this);
+
+    this.loadMapperObjs = function ($e, id) {
+        $(`#${this.CEctrlsContId} .colTile`).removeAttr("style").attr("is-selected", "false");
+        $e.css("background-color", "#b1bfc1").css("color", "#222").attr("is-selected", "true");
+        $(`#${this.CE_mapper_ctrlsContId}`).hide().show(300, this.mapperShowCallback.bind(this, $e));
+    };
+
+    this.colTileFocusFn = function (e) {
+        let $e = $(e.target).closest(".colTile");
+        let id = $e.attr("id");
+        if (this.editor === 35)
+            this.loadMapperObjs($e, id);
+        else
+            this.loadPG($e, id);
     };
 
     this.getPropsObj = function () {

@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http.Features;
 using ServiceStack;
 using ServiceStack.Redis;
-using Stripe;
 using System;
 
 namespace ExpressBase.Web2
@@ -104,7 +103,7 @@ namespace ExpressBase.Web2
                 return new EbStaticFileClient();
             });
 
-            StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
+          //  StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
 
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);

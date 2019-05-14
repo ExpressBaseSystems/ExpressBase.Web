@@ -787,7 +787,7 @@
 .pg-wraper ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     /*background-image: var(--gbm);*/
-    background-color: rgba(0, 0, 0, 0.10980392156862745);
+    background-color: rgba(0, 0, 0, 0.1098);
 }
 
 .strE-texarea {

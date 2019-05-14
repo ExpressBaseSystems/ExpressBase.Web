@@ -14,7 +14,6 @@ using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Auth;
 using ServiceStack.Redis;
-using Stripe;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;

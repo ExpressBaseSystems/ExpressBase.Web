@@ -145,11 +145,12 @@
     </script>
 </head>
 <body>
+    @if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+    {
+        Html.RenderPartial("EbQuickMenu");
+    }
     <div id="tenatDtls" class="container-fluid">
-        @if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-        {
-            Html.RenderPartial("EbQuickMenu");
-        }
+
         @if (ViewBag.wc == "uc")
         {
             <div class="loc_switchModal_fade"></div>

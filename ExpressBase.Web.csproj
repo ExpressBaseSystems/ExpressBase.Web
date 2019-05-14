@@ -32,7 +32,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.1.1" />
     <PackageReference Include="RestSharp.NetCore" Version="105.2.3" />
-    <PackageReference Include="Stripe.net" Version="15.8.0" />
   </ItemGroup>
 
   <ItemGroup>

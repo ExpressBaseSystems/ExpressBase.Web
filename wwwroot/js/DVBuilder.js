@@ -67,6 +67,7 @@
     }
 
     rendertable() {
+        this.SetColumnRef();
         if (this.isPreview)
             window.open(`../DV/dv?refid=${this.EbObject.RefId}`, '_blank');
         this.isPreview = false;
@@ -149,7 +150,7 @@
                 let returnobj = JSON.parse(result);
                 this.EbObject.Columns.$values = returnobj.Columns.$values;
                 this.EbObject.ColumnsCollection.$values = returnobj.ColumnsCollection.$values;
-                this.EbObject.ParamsList.$values = returnobj.Paramlist.$values;
+                this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? []: returnobj.Paramlist.$values;
                 this.EbObject.DSColumns.$values = returnobj.DsColumns.$values;
                 commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -201,10 +202,16 @@
     }
 
     initializeDragula() {
-        this.drake = new dragula([document.getElementById("columns-list-body"), document.getElementById("calcfields-childul")], {
-            accepts: this.acceptDrop.bind(this),
-            copy: this.copyfunction.bind(this)
-        });
+        if (this.drake === null) {
+            this.drake = new dragula([document.getElementById("columns-list-body"), document.getElementById("calcfields-childul")], {
+                accepts: this.acceptDrop.bind(this),
+                copy: this.copyfunction.bind(this)
+            });
+        }
+        else {
+            this.drake.containers.push(document.getElementById("columns-list-body"));
+            this.drake.containers.push(document.getElementById("calcfields-childul"));
+        }
         for (var i = 0; i < $(".tablecolumns").length; i++) {
             this.drake.containers.push(document.getElementById("t" + i));
         }
@@ -494,7 +501,7 @@
 
     MakeDiv4Rowgroup() {
         $("#Rowgroup_cont").css("height", "100px");
-        $("#Rowgroup_cont .tool_item_head").after(`<div class="tool_item_body" id="rowgroup_body"></div>`);
+        $("#Rowgroup_cont .tool_item_head").after(`<div class="tool_item_body accordion" id="rowgroup_body"></div>`);
         let elements = `<input type="text" id="rowgroup_disname" placeholder="Display Name Here...">
             <select class='rowgrouptype_select'>
                 <option value='SingleLevelRowGroup'>SingleLevelRowGroup</option>
@@ -506,6 +513,45 @@
         $("#deleteRowGroup").off("click").on("click", this.deleteRowgroup.bind(this));
         $("#saveRowGroup").off("click").on("click", this.SaveRowgroup.bind(this));
         $(".rowgrouptype_select").selectpicker();
+        //this.MakeCollapsedDiv();
+        
+    }
+
+    MakeCollapsedDiv() {
+        let div = `<div class="card">
+            <div class="card-header" id="rowgroup${this.RwogroupCounter}cardheader">
+              <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#rowgroup${this.RwogroupCounter}body" aria-expanded="true" aria-controls="collapseOne">
+                  Rowgroup${this.RwogroupCounter}
+                </button>
+              </h5>
+            </div>
+            <div id="rowgroup${this.RwogroupCounter}body" class="collapse show" aria-labelledby="rowgroup${this.RwogroupCounter}header" data-parent="#accordion">
+              <div class="card-body">
+                <div id="card-body${this.RwogroupCounter}header">
+                    <input type="text" id="rowgroup_disname${this.RwogroupCounter}" placeholder="Display Name Here..." >
+                    <select class='rowgrouptype_select' id="rowgrouptype_select${this.RwogroupCounter}">
+                        <option value='SingleLevelRowGroup'>SingleLevelRowGroup</option>
+                        <option value='MultipleLevelRowGroup'>MultipleLevelRowGroup</option>
+                        </select>
+                    <i class="fa fa-save" id="saveRowGroup${this.RwogroupCounter}"></i><i class="fa fa-trash" id="deleteRowGroup${this.RwogroupCounter}"></i>
+                </div>
+                <div id="card-body${this.RwogroupCounter}body"></div>
+                </div>
+            </div>
+          </div>`;
+        $("#rowgroup_body").append(div);
+        if (this.drake !== null)
+            this.drake.containers.push(document.getElementById(`card-body${this.RwogroupCounter}body`));
+        else {
+            this.drake = new dragula([document.getElementById(`card-body${this.RwogroupCounter}body`)], {
+                accepts: this.acceptDrop.bind(this),
+                copy: this.copyfunction.bind(this)
+            });
+        }
+        $("#deleteRowGroup" + this.RwogroupCounter).off("click").on("click", this.deleteRowgroup.bind(this));
+        $("#saveRowGroup" + this.RwogroupCounter).off("click").on("click", this.SaveRowgroup.bind(this));
+        $("#rowgrouptype_select" + this.RwogroupCounter).selectpicker();
     }
 
     deleteRowgroup() {

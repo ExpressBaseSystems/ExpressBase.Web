@@ -674,7 +674,8 @@
     }.bind(this);
     
     this.newReport = function () {
-        this.EbObject = new EbObjects["EbReport"]("Report");
+        this.EbObject = new EbObjects["EbReport"]("Report_" + Date.now().toString(36));
+        this.EbObject.DisplayName = this.EbObject.Name;
         this.height = this.repExtern.convertPointToPixel(this.pages[this.type].height) + "px";
         this.width = this.repExtern.convertPointToPixel(this.pages[this.type].width) + "px";
         this.designHeight = "300px";

@@ -105,10 +105,23 @@
         ctrl.__Col.__DGUCC.initForctrl(ctrl);
     };
 
+    this.SetDateFormatter = function () {
+        $.datetimepicker.setDateFormatter({
+            parseDate: function (date, format) {
+                var d = moment(date, format);
+                return d.isValid() ? d.toDate() : false;
+            },
+
+            formatDate: function (date, format) {
+                return moment(date).format(format);
+            }
+        });
+    };
+    this.SetDateFormatter();
 
     this.Date = function (ctrl, ctrlOpts) {
         let formObject = ctrlOpts.formObject;
-        let userObject = ctrlOpts.userObject;
+        let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
@@ -120,55 +133,53 @@
             });
         }
         else {
-            let sdp = this.mapDatePattern(userObject.Preference.ShortDatePattern);
+            let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
+            let stp = userObject.Preference.ShortTimePattern;//"HH mm"
 
             if (typeof ctrl === typeof "")
                 ctrl = { name: ctrl, ebDateType: 5 };
             var settings = { timepicker: false };
 
             if (ctrl.EbDateType === 5) {
-                settings.timepicker = false;
-                settings.format = sdp;
+                $input.datetimepicker({
+                    format: sdp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: false,
+                    datepicker: true,
+                    mask: true
+                });
             }
             else if (ctrl.EbDateType === 17) {
-                settings.datepicker = false;
-                settings.format = "H:i";
+                $input.datetimepicker({
+                    format: stp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: true,
+                    datepicker: false
+                });
             }
             else {
-                settings.timepicker = true;
-                settings.datepicker = true;
-                settings.format = sdp + " H:i";
+                $input.datetimepicker({
+                    format: sdp + " " + stp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: true,
+                    datepicker: true
+                });
             }
-
-
-            //if (ctrl.DateFormat === 0) {
-            //    settings.formatDate = "d/m/Y";
-            //}
-            //else if (ctrl.DateFormat === 1) {
-            //    settings.formatDate = "m/d/Y";
-            //}
-            //else if (ctrl.DateFormat === 2) {
-            //    settings.formatDate = "Y/m/d";
-            //} 
-            //else {
-            //    settings.formatDate = "Y/d/m";
-            //}
-
-
+            
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
 
-
             if (ctrlOpts.source === "webform") {
-                let maskPattern = "yyyy-mm-dd";
-                $input.attr("placeholder", maskPattern);
-                $input.inputmask(maskPattern);
+                //let maskPattern = "DD-MM-YYYY";
+                //$input.attr("placeholder", maskPattern);
+                //$input.inputmask(maskPattern);               
+                
                 if (!ctrl.IsNullable)
                     $input.val(userObject.Preference.ShortDate);
-                $input.datetimepicker(settings);
             }
-            else
-                $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
 
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
@@ -178,11 +189,7 @@
             }
         }
     };
-
-    this.mapDatePattern = function (CSPtn) {
-        return CSPtn.replace("yyyy", "Y").replace("MM", "m").replace("dd", "d");
-    };
-
+    
     //created by amal
     this.toggleNullableCheck = function (ctrl) {
         let $ctrl = $(event.target).closest("input[type='checkbox']");

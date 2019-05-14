@@ -27,8 +27,8 @@
         $(`#parmSetupSave${this.Option.Container}`).off("click").on("click", this.SaveParamsetup.bind(this));
     }
 
-    constructHtml() {
-        $("body").append(`<div id="${this.Option.Container}-IpEdw" class="modal fade" role="dialog">
+    constructHtml() {/// append changed to prepend
+        $("body").prepend(`<div id="${this.Option.Container}-IpEdw" class="modal fade" role="dialog">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">

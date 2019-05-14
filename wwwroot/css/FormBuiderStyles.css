@@ -354,7 +354,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     }
 
     .grid-cont .grid-col-title {
-        width: inherit;
+        width: 100%;
         position: relative;
         display: block;
         overflow: hidden;
@@ -637,6 +637,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .Eb-ctrlContainer {
     min-height: 28.18px;
+    padding-top: 5px;
 }
 
 .eb-ctrl-label {
@@ -870,7 +871,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .uc-modal .modal-footer .ucm-btn {
     background-color: #00a27d;
     color: white;
-    border-radius: 4px;
+    border-radius: 3px;
     margin-right: 9px;
     box-shadow: var(--lightshadow);
     min-width: 75px;
@@ -883,12 +884,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .uc-modal > div > div > div.modal-body {
-    padding: 30px 30px 15px 30px;
+    padding: 20px 30px 15px 30px;
 }
 
 .uc-modal > div > div > div.modal-footer {
     padding: 8px 11px;
-    padding-bottom: 12px;
+    padding-bottom: 16px;
     border-top: none;
 }
 

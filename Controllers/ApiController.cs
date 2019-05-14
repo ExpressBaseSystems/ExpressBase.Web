@@ -157,7 +157,7 @@ namespace ExpressBase.Web.Controllers
                     response.BToken = authResponse.BearerToken;
                     response.RToken = authResponse.RefreshToken;
                     response.UserId = authResponse.User.UserId;
-                    response.DisplayName = authResponse.User.DisplayName;
+                    response.DisplayName = authResponse.User.FullName;
                 }
                 else
                     response.IsValid = false;

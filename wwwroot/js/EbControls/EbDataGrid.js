@@ -126,6 +126,10 @@
                     //ctrl.setDisplayMember = this.j;
                     ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
                 }
+                else if (ctrl.ObjType === "DGUserControlColumn") {
+                    //ctrl.setDisplayMember = this.j;
+                    ctrl.setValue(val);
+                }
                 else
                     ctrl.setValue(val);
 
@@ -144,16 +148,17 @@
         let SingleRow = {};
         SingleRow.RowId = rowId;
         SingleRow.IsUpdate = (rowId !== 0);
+        SingleRow.IsDelete = inpCtrls.IsDelete;
         SingleRow.Columns = [];
         $.each(inpCtrls, function (i, obj) {
             if (!obj.DoNotPersist) {
-                if (obj.ObjType !== "UserControl")
-                    SingleRow.Columns.push(getSingleColumn(obj));
-                else {
-                    $.each(obj.Columns.$values, function (i, obj) {
-                        SingleRow.Columns.push(getSingleColumn(obj));
+                if (obj.ObjType === "DGUserControlColumn") {
+                    $.each(obj.Columns.$values, function (i, ctrl) {
+                        SingleRow.Columns.push(getSingleColumn(ctrl));
                     }.bind(this));
                 }
+                else
+                    SingleRow.Columns.push(getSingleColumn(obj));
             }
         }.bind(this));
         return SingleRow;
@@ -162,7 +167,10 @@
     this.changedRowWT = function () {
         let SingleTable = [];
         $.each(this.rowCtrls, function (rowId, inpCtrls) {
-            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true")
+            if (parseInt(rowId) < 0 && $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to skip newly added and then deleted rows
+                return true;
+            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true" || /* - if checked*/
+                $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to manage deleted row
                 SingleTable.push(this.getRowWTs(rowId, inpCtrls));
         }.bind(this));
         console.log(SingleTable);
@@ -174,28 +182,28 @@
         if (type === "TextBox")
             type = "String";
         return `EbDG${type}Column`;
-
     };
 
     this.initInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
-        inpCtrl.Name = col.Name;
-        inpCtrl.EbDbType = col.EbDbType;
+        //inpCtrl.Name = col.Name;
+        //inpCtrl.EbDbType = col.EbDbType;
         inpCtrl.EbSid_CtxId = ctrlEbSid;
         inpCtrl.__rowid = rowid;
         inpCtrl.__Col = col;
-        //inpCtrl.EbSid = ctrlEbSid;
 
-        if (inpCtrl.ObjType === "DGUserControlColumn") {
-            //$.each(inpCtrl.Columns.$values, function (i, _inpCtrl) {
-            //    let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
-            //    _inpCtrl = new EbObjects[this.getType(_inpCtrl)](ctrlEbSid, _inpCtrl);
-            //    inpCtrl.Columns.$values[i] = this.initInpCtrl(_inpCtrl, col, _ctrlEbSid, rowid);
-            //}.bind(this));
+        if (inpCtrl.ObjType === "DGUserControlColumn") {///////////
+            $.each(col.Columns.$values, function (i, _inpCtrl) {
+                let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+                let NewInpCtrl = $.extend({}, new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl));
+                NewInpCtrl.EbSid_CtxId = _ctrlEbSid;
+                inpCtrl.Columns.$values[i] = this.initInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
+            }.bind(this));
         }
         else
             inpCtrl.ObjType = col.InputControlType.substr(2);
         return inpCtrl;
     };
+
     this.attachFns = function (inpCtrl, colType) {
         if (colType === "DGUserControlColumn") {
             $.each(inpCtrl.Columns.$values, function (i, col) {
@@ -203,6 +211,29 @@
             }.bind(this));
         }
         return new ControlOps[colType](inpCtrl);
+    };
+
+    this.cloneObjArr = function (arr) {
+        let newArr = [];
+        $.each(arr, function (i, obj) { newArr[i] = $.extend(true, {}, obj); });
+        return newArr;
+    };
+
+    //remove circular reference and take copy
+    this.manageUCObj = function (inpCtrl, col) {
+        let dg = inpCtrl.__DG;
+        let dgucc = inpCtrl.__DGUCC;
+
+        delete inpCtrl.__DG;
+        delete inpCtrl.__DGUCC;
+
+        inpCtrl.Columns = { ...inpCtrl.Columns };
+        inpCtrl.Columns.$values = this.cloneObjArr(inpCtrl.Columns.$values);
+
+        inpCtrl.__DG = dg;
+        inpCtrl.__DGUCC = dgucc;
+
+        col = this.attachFns(col, col.ObjType);
     };
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
@@ -216,7 +247,8 @@
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
-
+            if (inpCtrlType === "EbUserControl")
+                this.manageUCObj(inpCtrl, col);
             this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.rowCtrls[rowid].push(inpCtrl);
@@ -509,10 +541,10 @@
     };
 
     this.removeTr = function ($tr) {
+        let rowId = $tr.attr("rowid");
         $tr.find("td *").hide(200);
-        setTimeout(function () {
-            $tr.remove();
-        }, 201);
+        setTimeout(function () { $tr.remove(); }, 201);
+        this.rowCtrls[rowId].IsDelete = true;
     };
 
     this.delRow_click = function (e) {

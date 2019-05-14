@@ -676,7 +676,8 @@
             $e.removeClass("Eb-invalid");// clear previuos invalid style if there
         }
         $.each(this.AllObjects, function (i, iterObj) {
-            if (iterObj.EbSid === curObj.EbSid) // skip iteration if same object
+            if (iterObj.EbSid === curObj.EbSid// skip iteration if same object
+                || iterObj[this.CurProp] === undefined || iterObj[this.CurProp] === null)
                 return true;
 
             if (iterObj[this.CurProp] !== undefined && iterObj[this.CurProp].trim() === curVal.trim()) {

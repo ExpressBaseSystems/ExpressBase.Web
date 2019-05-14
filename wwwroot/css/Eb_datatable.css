@@ -527,3 +527,27 @@ table.dataTable tr.group td {
     padding-bottom :0px !important;
     margin-bottom :0px !important;
 }
+
+#treemodal .dropdown-submenu {
+    position: relative;
+}
+
+#treemodal .dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+}
+
+#treemodal .modal-content {
+    max-width: 360px;
+    width: 100%;
+}
+
+#treemodal .dropdown .btn {
+    padding: 0px !important;
+}
+
+#treemodal .modal-header .close {
+    margin-top: -25px;
+}
+ 

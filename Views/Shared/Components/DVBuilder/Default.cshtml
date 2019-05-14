@@ -190,7 +190,10 @@
     </div>
 </div>
 
-<div class="modal fade" id="eb_calcF_summarry" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+
+
+<script>
+    $("body").prepend(`<div class="modal fade" id="eb_calcF_summarry" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="summarry-editor-container">
             <div class="close_md" data-dismiss="modal"><i class="fa fa-close"></i></div>
@@ -208,9 +211,8 @@
             </div>
         </div>
     </div>
-</div>
+</div>`);
 
-<script>
     $('#data-table-list').treed();
     $('#ds_parameter_list').treed();
     $('#calcFields').treed();

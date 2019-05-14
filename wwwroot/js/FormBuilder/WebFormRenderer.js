@@ -399,12 +399,12 @@ const WebFormRender = function (option) {
 
     this.ajaxsuccess = function (_respObj) {
         this.hideLoader();
-        //let msg = "";
         let respObj = JSON.parse(_respObj);
+        let locName = loc__.CurrentLocObj.LongName;
+        let formName = this.FormObj.DisplayName;
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
-                //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
+                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
@@ -415,12 +415,11 @@ const WebFormRender = function (option) {
             }
             else {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
-                //msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
             }
         }
         else {
             if (respObj.RowId > 0) {// if insertion success -NewToedit
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
+                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;

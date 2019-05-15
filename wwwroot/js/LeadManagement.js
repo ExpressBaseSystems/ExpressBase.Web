@@ -779,15 +779,34 @@
         new ListViewCustom(this.divSrgy, this.SurgeryList, function (id, data) {
             this.$MdlSurgery.attr("data-id", id);
             var tempObj = JSON.parse(window.atob(data));
-            this.$SrgyDate.val(tempObj.Date);
-            this.$SrgyBranch.val(tempObj.Branch);
+            this.$SrgyDate.val(tempObj.Date);            
+            $('#selSrgyBranch option').filter(function () { return $(this).html() === tempObj.Branch; }).prop("selected", true);
+            $('#selSrgyExtrDnBy option').filter(function () { return $(this).html() === tempObj.Extract_By; }).prop("selected", true);
+            $('#selSrgyImplantBy option').filter(function () { return $(this).html() === tempObj.Implant_By; }).prop("selected", true);
+            $('#selSrgyConsentBy option').filter(function () { return $(this).html() === tempObj.Consent_By; }).prop("selected", true);
+            $('#selSrgyAnasthBy option').filter(function () { return $(this).html() === tempObj.Anaesthesia_By; }).prop("selected", true);
+            $('#selSrgyPostBrfBy option').filter(function () { return $(this).html() === tempObj.Post_Brief_By; }).prop("selected", true);
+            $('#selSrgyNurse option').filter(function () { return $(this).html() === tempObj.Nurse; }).prop("selected", true);
+            this.$SrgyCmpltry.val(tempObj.Complimentary);
+            this.$SrgyMethod.val(tempObj.Method);
+            this.$SrgyComnt.val(tempObj.Comment);
+            
             this.$MdlSurgery.modal('show');
         }.bind(this));
 
         this.$MdlSurgery.on('shown.bs.modal', function (e) {
             if (this.$MdlSurgery.attr("data-id") === "") {
-                this.$SrgyDate.val(moment(new Date()).format("DD-MM-YYYY"));
-                //this.$SrgyBranch.val("");
+                this.$SrgyDate.val(moment(new Date()).format("DD-MM-YYYY"));                
+                this.$SrgyBranch.val("1");
+                this.$SrgyExtrDnBy.val("0");
+                this.$SrgyImplantBy.val("0");
+                this.$SrgyConsentBy.val("0");
+                this.$SrgyAnasthBy.val("0");
+                this.$SrgyPostBrfBy.val("0");
+                this.$SrgyNurse.val("0");
+                this.$SrgyCmpltry.val("No");
+                this.$SrgyMethod.val("Pen");
+                this.$SrgyComnt.val("");
                 this.$SrgySave.children().hide();
                 this.$SrgySave.prop("disabled", false);
             }
@@ -975,7 +994,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });//for id
         for (var i = 2; i <= parseInt(this.metadata[0]); i++)
             tblcols.push({ data: i, title: this.metadata[i].replace("_", " ").replace("_", " "), orderable: true, className: "MyTempColStyle" });
-        if (intSpecialPermission === "True" && this.metadata.indexOf("_feedback") !== -1)
+        if (intSpecialPermission === "True" && (this.metadata.indexOf("_feedback") !== -1 || this.metadata.indexOf("_surgery") !== -1))
             tblcols.push({ data: null, title: "View/Edit", render: this.tblEditColumnRender, searchable: false, orderable: false, className: "text-center"});
 
         if (this.metadata.indexOf("_feedback") !== -1) {// to fill tbldata with appropriate data

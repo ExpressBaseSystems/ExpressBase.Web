@@ -283,21 +283,22 @@
     }
 
     AddNewTableHeader() {
-        this.tableHeaderCounter++;
-        if (this.tableHeaderCounter === 1) {
+        //this.tableHeaderCounter++;
+        if (this.tableHeaderCounter === 0) {
+            this.tableHeaderCounter++;
             $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
             $("#table_header1 .tool_item_head").after(`<div class="tool_item_headerbody"></div>`);
         }
-        else {
-            $("#table_header1 .fa-trash").remove();
-            $("#table_header" + (this.tableHeaderCounter - 1)).after(`<div id="table_header${this.tableHeaderCounter}" class="dv-divs tableheader"  data-tableheaderCount="${this.tableHeaderCounter}">
-                <div class="tool_item_head">
-                    <i class="fa fa-caret-down"></i> <label>Table Header${this.tableHeaderCounter}</label>
-                    <i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>
-                </div>
-                <div class="tool_item_headerbody"></div>
-            </div>`);
-        }
+        //else {
+        //    $("#table_header1 .fa-trash").remove();
+        //    $("#table_header" + (this.tableHeaderCounter - 1)).after(`<div id="table_header${this.tableHeaderCounter}" class="dv-divs tableheader"  data-tableheaderCount="${this.tableHeaderCounter}">
+        //        <div class="tool_item_head">
+        //            <i class="fa fa-caret-down"></i> <label>Table Header${this.tableHeaderCounter}</label>
+        //            <i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>
+        //        </div>
+        //        <div class="tool_item_headerbody"></div>
+        //    </div>`);
+        //}
         $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
     }
 
@@ -308,14 +309,14 @@
             $(e.target).closest(".fa-trash").remove();
             this.tableHeaderCounter--;
         }
-        else {
-            $(e.target).closest(".tableheader").remove();
-            this.tableHeaderCounter--;
-            if (this.tableHeaderCounter === 1) {
-                $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
-                $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
-            }
-        }
+        //else {
+        //    $(e.target).closest(".tableheader").remove();
+        //    this.tableHeaderCounter--;
+        //    if (this.tableHeaderCounter === 1) {
+        //        $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
+        //        $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
+        //    }
+        //}
     }
 
     ColumnDropped() {

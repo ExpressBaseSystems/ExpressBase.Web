@@ -383,18 +383,18 @@
     this.onDragFn = function (el, source) {
         $(':focus').blur();
         $(el).find('.close').css("opacity", "0");
-        if (source.id !== this.CE_all_ctrlsContId) {// target 2nd source
+        if (source.id !== this.CE_all_ctrlsContId) {// source 2nd
             if (this.editor === 7)
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.getAttribute("ebsid"))), 1)[0];
-            else if (this.editor === 9 || this.editor === 8)
+            else if (this.editor === 9 || this.editor === 8 || this.editor === 27 || this.editor === 35)
                 this.movingObj = this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1)[0];
-            else if (this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35)
+            else if (this.editor === 24 || this.editor === 26)
                 this.movingObj = getObjByval(this.CElistFromSrc, "name", el.id);
         }
-        else {
+        else {// source 1st
             if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35)
                 this.movingObj = getObjByval(this.CElistFromSrc, "name", el.id);
-            else if (this.editor === 10 )
+            else if (this.editor === 10)
                 this.movingObj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", el.id)), 1)[0];
             else
                 this.movingObj = null;
@@ -423,13 +423,13 @@
                     this.CElist.splice(idx, 0, this.movingObj);
                 else
                     this.CElist.push(this.movingObj);
-            } else if (this.editor === 9 || this.editor === 8 || this.editor === 27 || this.editor === 35) {
+            } else if (this.editor === 9 || this.editor === 8) {
                 if ($sibling.length > 0)
                     this.selectedCols.splice(idx, 0, this.movingObj);
                 else
                     this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24 || this.editor === 26) {
-                    this.movingObj[this.Dprop] = true;
+                this.movingObj[this.Dprop] = true;
                 idx = this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", $sibling.attr("id")));
                 this.movingObj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", el.id)), 1)[0];
                 if ($sibling.length > 0)
@@ -447,7 +447,7 @@
                     this.CElistFromSrc.push(this.movingObj);
             }
             else if (this.editor === 24 || this.editor === 26) {
-                    this.movingObj[this.Dprop] = false;
+                this.movingObj[this.Dprop] = false;
                 this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1);
             }
             this.CEOnDeselectFn(this.movingObj, el);
@@ -799,7 +799,7 @@
             if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
-                if (containerId === this.CEctrlsContId && this.editor !== 8)
+                if (containerId === this.CEctrlsContId)
                     $("#" + this.CEctrlsContId).append($tile);// 2nd column
             }
         }.bind(this));
@@ -818,7 +818,9 @@
             if (!(Object.keys(this.CElistFromSrc[0]).includes("name")))//////////////////
                 idField = "ColumnName";////////////////////////
             $.each(this.selectedCols, function (i, ctrl) {
-                selObjs.push(getObjByval(this.CElistFromSrc, idField, ctrl[idField]));
+                let obj = getObjByval(this.CElistFromSrc, idField, ctrl[idField]);
+                if (obj)
+                    selObjs.push(obj);
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
         }

@@ -138,21 +138,21 @@ namespace ExpressBase.Web.Controllers
 
         public string GetAuditTrail(string refid, int rowid, int currentloc = -1)
         {
-            throw new FormException("Exception: AuditTrail not implemented");
-            //try
-            //{
-            //    if (this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
-            //    {
-            //        GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid, UserObj = this.LoggedInUser });
-            //        return Resp.Json;
-            //    }
-            //    throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
-            //    return string.Empty;
-            //}            
+            //throw new FormException("Exception: AuditTrail not implemented");
+            try
+            {
+                if (this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
+                {
+                    GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+                    return Resp.Json;
+                }
+                throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
+                return string.Empty;
+            }
         }
 
         private bool HasPermission(string RefId, string ForWhat, int LocId)

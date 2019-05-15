@@ -423,7 +423,7 @@
                     this.CElist.splice(idx, 0, this.movingObj);
                 else
                     this.CElist.push(this.movingObj);
-            } else if (this.editor === 9 || this.editor === 8) {
+            } else if (this.editor === 9 || this.editor === 8 || this.editor === 27 || this.editor === 35) {
                 if ($sibling.length > 0)
                     this.selectedCols.splice(idx, 0, this.movingObj);
                 else
@@ -440,7 +440,7 @@
             this.CEOnSelectFn(this.movingObj);
         }// target 1st column
         else {
-            if (this.editor === 10 || this.editor === 27 || this.editor === 35) {
+            if (this.editor === 10 ) {
                 if ($sibling.length > 0)
                     this.CElistFromSrc.splice(idx, 0, this.movingObj);
                 else

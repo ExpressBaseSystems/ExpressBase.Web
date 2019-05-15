@@ -798,7 +798,7 @@
             if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
-                if (containerId === this.CEctrlsContId)
+                if (containerId === this.CEctrlsContId && this.editor !== 8)
                     $("#" + this.CEctrlsContId).append($tile);// 2nd column
             }
         }.bind(this));

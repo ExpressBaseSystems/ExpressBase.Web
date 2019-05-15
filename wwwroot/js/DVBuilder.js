@@ -158,6 +158,14 @@
             this.isCustomColumnExist = true;
     };
 
+    CheckforTree = function () {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.IsTree; });
+        if (temp.length > 0) {
+            this.IsTree = true;
+            this.treeColumn = temp[0];
+        }
+    }
+
     dialogboxAction = function (value) {
         this.getColumns(value);
     }
@@ -216,7 +224,6 @@
         $('#calcFields').killTree();
         $('#calcFields').treed();
         this.SetContextmenu4CalcField();
-
         this.SetColumnRef();
         this.initializeDragula();
         this.ColumnDropped();

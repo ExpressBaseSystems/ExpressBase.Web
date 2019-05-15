@@ -127,7 +127,26 @@
     PropertyChanged(obj, pname) {
         if (pname === "DataSourceRefId") {
             this.check4Customcolumn();
-            this.getColumns();
+            if (this.isCustomColumnExist) {
+                EbDialog("show", {
+                    Message: "Retain Custom Columns?",
+                    Buttons: {
+                        "Yes": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        },
+                        "No": {
+                            Background: "red",
+                            Align: "left",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: this.dialogboxAction.bind(this)
+                });
+            }
+            else
+                this.getColumns();
         }
     }
 
@@ -139,18 +158,24 @@
             this.isCustomColumnExist = true;
     };
 
-    getColumns() {
+    dialogboxAction = function (value) {
+        this.getColumns(value);
+    }
+
+    getColumns(value) {
+        var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
+        this.RemoveColumnRef();
         $("#get-col-loader").show();
         $.ajax({
             url: "../DV/GetColumns",
             type: "POST",
             cache: false,
-            data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: this.isCustomColumnExist },
+            data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: isCustom },
             success: function (result) {
                 let returnobj = JSON.parse(result);
                 this.EbObject.Columns.$values = returnobj.Columns.$values;
                 this.EbObject.ColumnsCollection.$values = returnobj.ColumnsCollection.$values;
-                this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? []: returnobj.Paramlist.$values;
+                this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? [] : returnobj.Paramlist.$values;
                 this.EbObject.DSColumns.$values = returnobj.DsColumns.$values;
                 commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -320,6 +345,7 @@
     }
 
     ColumnDropped() {
+        $("#columns-list-body").empty();
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.bVisible) {
                 let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
@@ -515,7 +541,7 @@
         $("#saveRowGroup").off("click").on("click", this.SaveRowgroup.bind(this));
         $(".rowgrouptype_select").selectpicker();
         //this.MakeCollapsedDiv();
-        
+
     }
 
     MakeCollapsedDiv() {

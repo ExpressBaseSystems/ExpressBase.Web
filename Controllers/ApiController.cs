@@ -30,6 +30,7 @@ using ExpressBase.Common.Constants;
 using ServiceStack.Auth;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
+using Microsoft.Net.Http.Headers;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -179,7 +180,6 @@ namespace ExpressBase.Web.Controllers
 
         }
 
-        [HttpGet("/api/upload")]
         [HttpPost("/api/upload")]
         public async Task<ApiResponse> UploadFile()
         {
@@ -236,6 +236,38 @@ namespace ExpressBase.Web.Controllers
                 });
             }
             return ApiResp;
+        }
+
+        [HttpGet("api/files/{filename}")]
+        public IActionResult GetFile(string filename)
+        {
+            DownloadFileResponse dfs = null;
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadFileByIdRequest
+                        {
+                            FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
+                        });
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+            return resp;
+        }
+
+        private string GetMime(string fname)
+        {
+            return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
         }
 
         private Dictionary<string, object> F2D(FormCollection collection)

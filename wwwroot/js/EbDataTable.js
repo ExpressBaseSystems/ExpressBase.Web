@@ -2401,7 +2401,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var input = document.createElement('input');
         input.type = 'hidden';
         input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormParameters.$values)));
+        input.value = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
         _form.appendChild(input);
 
         input = document.createElement('input');
@@ -2426,7 +2426,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var input = document.createElement('input');
         input.type = 'hidden';
         input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormParameters.$values)));
+        input.value = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         _form.appendChild(input);
 
         input = document.createElement('input');
@@ -2498,6 +2498,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.each(cols, function (i, col) {
             if (this.rowData[col.data] !== "")
                 filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
+        }.bind(this));
+        return filters;
+    };
+
+    this.formatToMutipleParameters = function (cols) {
+        var filters = [];
+        $.each(cols, function (i, col) {
+            if (this.rowData[col.data] !== "")
+                filters.push(new fltr_obj(col.Type, col.FormControl.Name, this.rowData[col.data]));
         }.bind(this));
         return filters;
     };
@@ -2630,6 +2639,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.UpdateSuccess = function () {
         this.$submit.trigger("click");
+        $("#treemodal").modal("hide");
     };
 
     this.recursiveTree = function (node) {

@@ -906,7 +906,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 4px;
 }
 
-.modal-open .container-fluid, .modal-open .container {
+.modal-open .for-modal-blur, .modal-open .for-modal-blur {
     -webkit-filter: blur(1.5px) grayscale(60%);
     filter: blur(1.5px) grayscale(60%);
 }

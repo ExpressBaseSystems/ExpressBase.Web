@@ -160,7 +160,7 @@
 
         if (this.editor < 64 || this.editor === 64 || this.editor === 128 || this.editor === 156)
             $(this.pgCXE_Cont_Slctr + " .modal-title").text(this.CurProplabel + ": " + this.curEditorLabel);
-        
+
         if (this.editor !== 8)
             $("#" + this.CEctrlsContId).off("focus", ".colTile").on("focus", ".colTile", this.colTileFocusFn.bind(this));
         if (this.editor === 35)
@@ -291,6 +291,7 @@
             $("#" + this.CE_mapper_ctrlsContId).append($tile);
             //this.colTileFocusFn({ "target": $("#" + control.EbSid).click()[0] });//hack
         }.bind(this));
+        $("#" + this.CE_mapper_ctrlsContId).hide();
         $.LoadingOverlay("hide");
 
     }.bind(this);
@@ -371,7 +372,7 @@
             return true;
         }
         return false;
-    }
+    };
 
     this.acceptFn = function (el, target, source, sibling) {
         if (this.checkLimit($(el), 1000))
@@ -382,16 +383,16 @@
     this.onDragFn = function (el, source) {
         $(':focus').blur();
         $(el).find('.close').css("opacity", "0");
-        if (source.id !== this.CE_all_ctrlsContId) {// target 2nd source
+        if (source.id !== this.CE_all_ctrlsContId) {// source 2nd
             if (this.editor === 7)
                 this.movingObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", el.getAttribute("ebsid"))), 1)[0];
-            else if (this.editor === 9 || this.editor === 8)
+            else if (this.editor === 9 || this.editor === 8 || this.editor === 27 || this.editor === 35)
                 this.movingObj = this.selectedCols.splice(this.selectedCols.indexOf(getObjByval(this.selectedCols, "name", el.id)), 1)[0];
             else if (this.editor === 24 || this.editor === 26)
                 this.movingObj = getObjByval(this.CElistFromSrc, "name", el.id);
         }
-        else {
-            if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26)
+        else {// source 1st
+            if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35)
                 this.movingObj = getObjByval(this.CElistFromSrc, "name", el.id);
             else if (this.editor === 10)
                 this.movingObj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", el.id)), 1)[0];
@@ -422,14 +423,14 @@
                     this.CElist.splice(idx, 0, this.movingObj);
                 else
                     this.CElist.push(this.movingObj);
-            } else if (this.editor === 9 || this.editor === 8) {
+            } else if (this.editor === 9 || this.editor === 8 || this.editor === 27 || this.editor === 35) {
                 if ($sibling.length > 0)
                     this.selectedCols.splice(idx, 0, this.movingObj);
                 else
                     this.selectedCols.push(this.movingObj);
             } else if (this.editor === 24 || this.editor === 26) {
-                idx = this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", $sibling.attr("id")));
                 this.movingObj[this.Dprop] = true;
+                idx = this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", $sibling.attr("id")));
                 this.movingObj = this.CElistFromSrc.splice(this.CElistFromSrc.indexOf(getObjByval(this.CElistFromSrc, "name", el.id)), 1)[0];
                 if ($sibling.length > 0)
                     this.CElistFromSrc.splice(idx, 0, this.movingObj);
@@ -439,7 +440,7 @@
             this.CEOnSelectFn(this.movingObj);
         }// target 1st column
         else {
-            if (this.editor === 10) {
+            if (this.editor === 10 ) {
                 if ($sibling.length > 0)
                     this.CElistFromSrc.splice(idx, 0, this.movingObj);
                 else
@@ -798,15 +799,16 @@
             if (!getObjByval(this.selectedCols, idField, control[idField])) {
                 $("#" + containerId).append($tile);// 1st column
             } else {
-                if (containerId === this.CEctrlsContId && this.editor !== 8)
+                if (containerId === this.CEctrlsContId)
                     $("#" + this.CEctrlsContId).append($tile);// 2nd column
             }
         }.bind(this));
-        if (containerId === this.CEctrlsContId)
-            this.colTileFocusFn({ target: $("#" + containerId + " .colTile:first")[0] });
         $(this.pgCXE_Cont_Slctr + " .editTbl").off("click", ".coltile-delete").on("click", ".coltile-delete", this.colTileDel);
         $("#" + this.CEctrlsContId).off("click", ".coltile-left-arrow").on("click", ".coltile-left-arrow", this.colTileLeftArrow);
         $("#" + this.CE_all_ctrlsContId).off("click", ".coltile-right-arrow").on("click", ".coltile-right-arrow", this.colTileRightArrow);
+
+        if (containerId === this.CEctrlsContId && this.editor === 35)
+            this.colTileFocusFn({ target: $("#" + containerId + " .colTile:first")[0] });
     };
 
     this.setSelColtiles = function () {
@@ -816,7 +818,9 @@
             if (!(Object.keys(this.CElistFromSrc[0]).includes("name")))//////////////////
                 idField = "ColumnName";////////////////////////
             $.each(this.selectedCols, function (i, ctrl) {
-                selObjs.push(getObjByval(this.CElistFromSrc, idField, ctrl[idField]));
+                let obj = getObjByval(this.CElistFromSrc, idField, ctrl[idField]);
+                if (obj)
+                    selObjs.push(obj);
             }.bind(this));
             this.set9ColTiles(this.CEctrlsContId, selObjs);
         }
@@ -905,7 +909,7 @@
                 });
             }
         }
-        else if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26 ||this.editor === 27 || this.editor === 35) {
+        else if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             if (this.editor === 26 || this.editor === 24)
                 tileObj[this.Dprop] = false;
             this.selectedCols.splice(this.selectedCols.indexOf(tileObj), 1);
@@ -920,7 +924,6 @@
     }.bind(this);
 
     this.loadPG = function ($e, id) {
-
         $(':focus').blur();
         if (!$e.hasClass("colTile")) {
             this.colTileFocusFn.bind(this)({ target: $e.parent() });
@@ -931,15 +934,15 @@
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
         $e.css("background-color", "#b1bfc1").css("color", "#222");
         if (this.editor === 7) {
-            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", $e.attr("ebsid"));
+            obj = getObjByval(this.selectedCols, "EbSid", $e.attr("ebsid"));
             if (!obj)
-                obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "Name", id);
+                obj = getObjByval(this.selectedCols, "Name", id);
         }
         else if (this.editor === 9 || this.editor === 10 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
-            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "name", id);
+            obj = getObjByval(this.selectedCols, "name", id);
         }
         else if (this.editor === 22) {
-            obj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", $e.attr("ebsid"));
+            obj = getObjByval(this.selectedCols, "EbSid", $e.attr("ebsid"));
         }
         if (!obj)
             console.error("Object " + obj);
@@ -947,12 +950,14 @@
     };
 
     this.mapperColTileFocusFn = function (e) {
+        if (this.selectedCols.length > 0)
+            $("#" + this.CE_mapper_ctrlsContId).show(100);
         let $e = $(e.target).closest(".mapper-ColTile");
         $(`#${this.CE_mapper_ctrlsContId} .mapper-ColTile`).attr("is-selected", "false");
         $e.attr("is-selected", "true");
         let colEbsid = $(`#${this.CEctrlsContId} .colTile[is-selected=true]`).attr("ebsid");
         let CtrlEbsid = $e.attr("ebsid");
-        let colObj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", colEbsid);
+        let colObj = getObjByval(this.selectedCols, "EbSid", colEbsid);
         colObj[this.CurMeta.Dprop2] = getObjByval(this.CE_mapList, "EbSid", CtrlEbsid);
         console.log(colObj[this.CurMeta.Dprop2]);
     }.bind(this);
@@ -960,7 +965,7 @@
     this.mapperShowCallback = function ($e) {
         $(`#${this.CE_mapper_ctrlsContId} .mapper-ColTile`).attr("is-selected", "false");
         let colEbsid = $e.attr("ebsid");
-        let colObj = getObjByval(this.PGobj.PropsObj[this.PGobj.CurProp].$values, "EbSid", colEbsid);
+        let colObj = getObjByval(this.selectedCols, "EbSid", colEbsid);
         if (!colObj)
             console.log(11);
         if (colObj[this.CurMeta.Dprop2])
@@ -970,7 +975,7 @@
     this.loadMapperObjs = function ($e, id) {
         $(`#${this.CEctrlsContId} .colTile`).removeAttr("style").attr("is-selected", "false");
         $e.css("background-color", "#b1bfc1").css("color", "#222").attr("is-selected", "true");
-        $(`#${this.CE_mapper_ctrlsContId}`).hide().show(300, this.mapperShowCallback.bind(this, $e));
+        $(`#${this.CE_mapper_ctrlsContId}`).hide().show(100, this.mapperShowCallback.bind(this, $e));
     };
 
     this.colTileFocusFn = function (e) {

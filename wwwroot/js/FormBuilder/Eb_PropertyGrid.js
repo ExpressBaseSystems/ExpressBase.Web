@@ -791,7 +791,7 @@
     };
 
     // sets Object to property grid
-    this.setObject = function (props, metas) {
+    this.setObject = function (props, metas, setObjectCallBack = function () { }) {
         //params check
         {
             if (typeof props === 'string' || typeof metas === 'string') {
@@ -814,6 +814,7 @@
         this.InitPG();
         $("#" + this.wraperId + " .propgrid-helpbox").show();
         //console.log("default test :" + JSON.stringify(props));
+        setObjectCallBack();
     };
 
     // makes PG readonly

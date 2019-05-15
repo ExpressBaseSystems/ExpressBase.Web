@@ -127,7 +127,26 @@
     PropertyChanged(obj, pname) {
         if (pname === "DataSourceRefId") {
             this.check4Customcolumn();
-            this.getColumns();
+            if (this.isCustomColumnExist) {
+                EbDialog("show", {
+                    Message: "Retain Custom Columns?",
+                    Buttons: {
+                        "Yes": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        },
+                        "No": {
+                            Background: "red",
+                            Align: "left",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: this.dialogboxAction.bind(this)
+                });
+            }
+            else
+                this.getColumns();
         }
     }
 
@@ -139,18 +158,32 @@
             this.isCustomColumnExist = true;
     };
 
-    getColumns() {
+    CheckforTree = function () {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.IsTree; });
+        if (temp.length > 0) {
+            this.IsTree = true;
+            this.treeColumn = temp[0];
+        }
+    }
+
+    dialogboxAction = function (value) {
+        this.getColumns(value);
+    }
+
+    getColumns(value) {
+        var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
+        this.RemoveColumnRef();
         $("#get-col-loader").show();
         $.ajax({
             url: "../DV/GetColumns",
             type: "POST",
             cache: false,
-            data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: this.isCustomColumnExist },
+            data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: isCustom },
             success: function (result) {
                 let returnobj = JSON.parse(result);
                 this.EbObject.Columns.$values = returnobj.Columns.$values;
                 this.EbObject.ColumnsCollection.$values = returnobj.ColumnsCollection.$values;
-                this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? []: returnobj.Paramlist.$values;
+                this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? [] : returnobj.Paramlist.$values;
                 this.EbObject.DSColumns.$values = returnobj.DsColumns.$values;
                 commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -191,7 +224,7 @@
         $('#calcFields').killTree();
         $('#calcFields').treed();
         this.SetContextmenu4CalcField();
-
+        this.removeOldColumnsfromCollection();
         this.SetColumnRef();
         this.initializeDragula();
         this.ColumnDropped();
@@ -199,6 +232,65 @@
             this.RowgroupColumnDropped();
             this.CreateButtons();
         }
+    }
+
+    removeOldColumnsfromCollection() {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            if (obj.IsTree) {
+                this.RemoveOldColumnFromTreeColumn(obj);
+            }
+            if (obj.LinkRefId !== null) {
+                if (parseInt(obj.LinkRefId.split("-")[2]) !== EbObjectTypes.WebForm) {
+                    this.RemoveOldColumnFromFormLink(obj);
+                }
+            }
+        }.bind(this));
+    }
+
+    RemoveOldColumnFromTreeColumn(treecol) {
+        $.each(treecol.GroupFormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupFormId.$values = treecol.GroupFormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.GroupFormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupFormParameters.$values = treecol.GroupFormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ItemFormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ItemFormId.$values = treecol.ItemFormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ItemFormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ItemFormParameters.$values = treecol.ItemFormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.GroupingColumn.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupingColumn.$values = treecol.GroupingColumn.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ParentColumn.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ParentColumn.$values = treecol.ParentColumn.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+    }
+
+    RemoveOldColumnFromFormLink(FormCol) {
+        $.each(FormCol.FormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                FormCol.FormId.$values = FormCol.FormId.$values.filter(function (ob) { return ob.name !== obj.name;});
+        });
+        $.each(FormCol.FormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                FormCol.FormParameters.$values = FormCol.FormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        });
     }
 
     initializeDragula() {
@@ -283,21 +375,22 @@
     }
 
     AddNewTableHeader() {
-        this.tableHeaderCounter++;
-        if (this.tableHeaderCounter === 1) {
+        //this.tableHeaderCounter++;
+        if (this.tableHeaderCounter === 0) {
+            this.tableHeaderCounter++;
             $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
             $("#table_header1 .tool_item_head").after(`<div class="tool_item_headerbody"></div>`);
         }
-        else {
-            $("#table_header1 .fa-trash").remove();
-            $("#table_header" + (this.tableHeaderCounter - 1)).after(`<div id="table_header${this.tableHeaderCounter}" class="dv-divs tableheader"  data-tableheaderCount="${this.tableHeaderCounter}">
-                <div class="tool_item_head">
-                    <i class="fa fa-caret-down"></i> <label>Table Header${this.tableHeaderCounter}</label>
-                    <i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>
-                </div>
-                <div class="tool_item_headerbody"></div>
-            </div>`);
-        }
+        //else {
+        //    $("#table_header1 .fa-trash").remove();
+        //    $("#table_header" + (this.tableHeaderCounter - 1)).after(`<div id="table_header${this.tableHeaderCounter}" class="dv-divs tableheader"  data-tableheaderCount="${this.tableHeaderCounter}">
+        //        <div class="tool_item_head">
+        //            <i class="fa fa-caret-down"></i> <label>Table Header${this.tableHeaderCounter}</label>
+        //            <i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>
+        //        </div>
+        //        <div class="tool_item_headerbody"></div>
+        //    </div>`);
+        //}
         $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
     }
 
@@ -308,17 +401,18 @@
             $(e.target).closest(".fa-trash").remove();
             this.tableHeaderCounter--;
         }
-        else {
-            $(e.target).closest(".tableheader").remove();
-            this.tableHeaderCounter--;
-            if (this.tableHeaderCounter === 1) {
-                $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
-                $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
-            }
-        }
+        //else {
+        //    $(e.target).closest(".tableheader").remove();
+        //    this.tableHeaderCounter--;
+        //    if (this.tableHeaderCounter === 1) {
+        //        $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
+        //        $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
+        //    }
+        //}
     }
 
     ColumnDropped() {
+        $("#columns-list-body").empty();
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.bVisible) {
                 let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
@@ -514,7 +608,7 @@
         $("#saveRowGroup").off("click").on("click", this.SaveRowgroup.bind(this));
         $(".rowgrouptype_select").selectpicker();
         //this.MakeCollapsedDiv();
-        
+
     }
 
     MakeCollapsedDiv() {

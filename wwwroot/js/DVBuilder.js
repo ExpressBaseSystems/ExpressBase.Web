@@ -224,6 +224,7 @@
         $('#calcFields').killTree();
         $('#calcFields').treed();
         this.SetContextmenu4CalcField();
+        this.removeOldColumnsfromCollection();
         this.SetColumnRef();
         this.initializeDragula();
         this.ColumnDropped();
@@ -231,6 +232,65 @@
             this.RowgroupColumnDropped();
             this.CreateButtons();
         }
+    }
+
+    removeOldColumnsfromCollection() {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            if (obj.IsTree) {
+                this.RemoveOldColumnFromTreeColumn(obj);
+            }
+            if (obj.LinkRefId !== null) {
+                if (parseInt(obj.LinkRefId.split("-")[2]) !== EbObjectTypes.WebForm) {
+                    this.RemoveOldColumnFromFormLink(obj);
+                }
+            }
+        }.bind(this));
+    }
+
+    RemoveOldColumnFromTreeColumn(treecol) {
+        $.each(treecol.GroupFormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupFormId.$values = treecol.GroupFormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.GroupFormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupFormParameters.$values = treecol.GroupFormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ItemFormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ItemFormId.$values = treecol.ItemFormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ItemFormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ItemFormParameters.$values = treecol.ItemFormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.GroupingColumn.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupingColumn.$values = treecol.GroupingColumn.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ParentColumn.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ParentColumn.$values = treecol.ParentColumn.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+    }
+
+    RemoveOldColumnFromFormLink(FormCol) {
+        $.each(FormCol.FormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                FormCol.FormId.$values = FormCol.FormId.$values.filter(function (ob) { return ob.name !== obj.name;});
+        });
+        $.each(FormCol.FormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                FormCol.FormParameters.$values = FormCol.FormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        });
     }
 
     initializeDragula() {

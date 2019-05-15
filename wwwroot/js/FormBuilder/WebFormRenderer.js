@@ -607,11 +607,12 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    //EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
-                                    EbMessage("show", { Message: 'Delete operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: 'Delete operation failed due to validation failure.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else if (result === -2) {
                                     EbMessage("show", { Message: 'Access denied to delete this entry.', AutoHide: true, Background: '#aa0000' });
@@ -657,11 +658,12 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    //EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
-                                    EbMessage("show", { Message: 'Cancel operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: 'Cancel operation failed due to validation failure.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else if (result === -2) {
                                     EbMessage("show", { Message: 'Access denied to cancel this entry.', AutoHide: true, Background: '#aa0000' });

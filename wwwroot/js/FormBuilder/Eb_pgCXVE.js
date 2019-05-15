@@ -440,7 +440,7 @@
             this.CEOnSelectFn(this.movingObj);
         }// target 1st column
         else {
-            if (this.editor === 10 ) {
+            if (this.editor === 10) {
                 if ($sibling.length > 0)
                     this.CElistFromSrc.splice(idx, 0, this.movingObj);
                 else
@@ -924,7 +924,7 @@
     }.bind(this);
 
     this.loadPG = function ($e, id) {
-        $(':focus').blur();
+        let selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         if (!$e.hasClass("colTile")) {
             this.colTileFocusFn.bind(this)({ target: $e.parent() });
             return 0;
@@ -934,15 +934,15 @@
         $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
         $e.css("background-color", "#b1bfc1").css("color", "#222");
         if (this.editor === 7) {
-            obj = getObjByval(this.selectedCols, "EbSid", $e.attr("ebsid"));
+            obj = getObjByval(selectedCols, "EbSid", $e.attr("ebsid"));
             if (!obj)
-                obj = getObjByval(this.selectedCols, "Name", id);
+                obj = getObjByval(selectedCols, "Name", id);
         }
         else if (this.editor === 9 || this.editor === 10 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
-            obj = getObjByval(this.selectedCols, "name", id);
+            obj = getObjByval(selectedCols, "name", id);
         }
         else if (this.editor === 22) {
-            obj = getObjByval(this.selectedCols, "EbSid", $e.attr("ebsid"));
+            obj = getObjByval(selectedCols, "EbSid", $e.attr("ebsid"));
         }
         if (!obj)
             console.error("Object " + obj);
@@ -950,16 +950,22 @@
     };
 
     this.mapperColTileFocusFn = function (e) {
-        if (this.selectedCols.length > 0)
-            $("#" + this.CE_mapper_ctrlsContId).show(100);
+        let selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
         let $e = $(e.target).closest(".mapper-ColTile");
-        $(`#${this.CE_mapper_ctrlsContId} .mapper-ColTile`).attr("is-selected", "false");
-        $e.attr("is-selected", "true");
+        if (selectedCols.length > 0)
+            $("#" + this.CE_mapper_ctrlsContId).show(100);
         let colEbsid = $(`#${this.CEctrlsContId} .colTile[is-selected=true]`).attr("ebsid");
         let CtrlEbsid = $e.attr("ebsid");
-        let colObj = getObjByval(this.selectedCols, "EbSid", colEbsid);
-        colObj[this.CurMeta.Dprop2] = getObjByval(this.CE_mapList, "EbSid", CtrlEbsid);
-        console.log(colObj[this.CurMeta.Dprop2]);
+        let colObj = getObjByval(selectedCols, "EbSid", colEbsid);
+        if ($e.attr("is-selected") === "false") {
+            $(`#${this.CE_mapper_ctrlsContId} .mapper-ColTile`).attr("is-selected", "false");
+            $e.attr("is-selected", "true");
+            colObj[this.CurMeta.Dprop2] = getObjByval(this.CE_mapList, "EbSid", CtrlEbsid);
+        }
+        else {
+            $e.attr("is-selected", "false");
+            colObj[this.CurMeta.Dprop2] = undefined;
+        }
     }.bind(this);
 
     this.mapperShowCallback = function ($e) {

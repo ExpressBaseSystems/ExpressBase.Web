@@ -115,7 +115,16 @@ namespace ExpressBase.Web.Controllers
             //}
             //else
             //    _CurrentLoc = CurrentLoc;
-            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, FormData = Values, RowId = RowId, CurrentLoc = CurrentLoc, UserObj = this.LoggedInUser });
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                new InsertDataFromWebformRequest
+                {
+                    RefId = RefId,
+                    FormData = Values,
+                    RowId = RowId,
+                    CurrentLoc = CurrentLoc,
+                    UserObj = this.LoggedInUser,
+                    SolutionObj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid))
+                });
             return JsonConvert.SerializeObject(Resp);
             //return 0;
         }

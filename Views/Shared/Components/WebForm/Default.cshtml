@@ -159,6 +159,7 @@
         padding: 4px 8px;
         background-color: #e5f3ff;
     }
+
     #divAuditTrail .second-table tr:nth-child(even) {
         background-color: #f2f2f2;
     }
@@ -166,6 +167,7 @@
     #divAuditTrail .second-table tr:hover, #divAuditTrail .first-table tr:hover {
         background-color: #ddd;
     }
+
     #divAuditTrail .second-table td, #divAuditTrail .first-table td {
         padding: 4px 8px;
     }
@@ -178,10 +180,10 @@
         margin: 0 0 10px 0;
         border-radius: 4px;
     }
+
     #divAuditTrail .line-table-div, #divAuditTrail .form-table-div {
         margin: 0 10px 10px 10px;
     }
-
 </style>
 
 <div id='WebForm-cont' class="webform-cont">
@@ -329,19 +331,18 @@
 
         $.each(auditObj, function (idx, Obj) {
             let $trans = $(`<div class="single-trans"></div>`);
-
+            let temptitle = (Obj.ActionType === "Insert" ? "Created by " : "Updated by ")+ Obj.CreatedBy + " at " + Obj.CreatedAt;
             $trans.append(` <div class="trans-head row">
-                                <div class="col-md-4" style="padding: 5px 8px;">Event DateTime: ${Obj.CreatedAt}</div>
-                                <div class="col-md-3" style="padding: 5px 8px;">Operation: ${Obj.ActionType}</div>
-                                <div class="col-md-5">
-                                    <div style="display: inline-block;">Done By:</div>
-                                    <div style="display: inline-block;">
-                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/imagenotfound.svg';" style="height: 30px; border-radius: 15px;"> 
-                                    </div>
-                                    <div style="display: inline-block;">${Obj.CreatedBy}</div>
-                                    <div style="display: inline-block; float: right; padding: 5px 0;"><i class="fa fa-chevron-down"></i></div>
+                                <div class="col-md-10" style="padding: 5px 8px;">
+                                    <div style="display:inline-block;"><i class="fa fa-chevron-down"></i></div>
+                                    <div style="display:inline-block;">${temptitle}</div>
                                 </div>
-                            </div>`);            
+                                <div class="col-md-2">
+                                    <div style="float: right;">
+                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/imagenotfound.svg';" style="height: 30px; border-radius: 15px;">
+                                    </div>                                    
+                                </div>
+                            </div>`);
 
             $trans.append(`<div class="trans-body collapse in"></div>`);
             let tempHtml = ``;
@@ -359,14 +360,14 @@
             if (tempHtml.length !== 0) {
                 tempHtml = `<div class="form-table-div"><table class="table table-bordered first-table" style="width:100%; margin: 0px;">
                                 <thead>
-                                    <tr class="table-title-tr">                            
+                                    <tr class="table-title-tr">
                                         <th class="col-md-4 col-sm-4">Field Name</th>
                                         <th class="col-md-4 col-sm-4">New Value</th>
                                         <th class="col-md-4 col-sm-4">Old Value</th>
                                     </tr>
                                 </thead>
                                 <tbody>`
-                                    + tempHtml + 
+                                    + tempHtml +
                                 `</tbody>
                             </table></div>`;
                 $trans.children(".trans-body").append(tempHtml);
@@ -375,7 +376,7 @@
             tempHtml = ``;
 
             $.each(Obj.GridTables, function (i, Tbl) {
-                tempHtml += `<div class="line-table-div"><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
+                tempHtml += `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
                                 <thead>
                                     <tr class="table-title-tr">
                                         <th></th>`;
@@ -420,7 +421,7 @@
                 $iele.removeClass("fa-chevron-down");
                 $iele.addClass("fa-chevron-right");
             }
-                
+
         });
     }
 

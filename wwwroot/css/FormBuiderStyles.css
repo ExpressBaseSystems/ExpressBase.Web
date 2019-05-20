@@ -1,9 +1,11 @@
 ﻿body {
     --lightshadow: 0px 2px 3px 0px rgba(41, 41, 41, 0.325);
 }
+
 .webform-cont {
-    font-size:13px;
+    font-size: 13px;
 }
+
 .formB-box {
     display: inline-block;
     background-color: white;
@@ -872,16 +874,21 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .uc-modal .modal-footer .ucm-btn {
     background-color: #00a27d;
     color: white;
-    border-radius: 3px;
+    border-radius: 2px;
     margin-right: 9px;
-    box-shadow: var(--lightshadow);
+    /*box-shadow: var(--lightshadow);*/
+    font-weight: bold;
     min-width: 75px;
-    border:none;
+    border: solid 1px #00a27d;
 }
 
 .uc-modal .modal-footer .btn-secondary {
     background-color: white;
     color: #00a27d;
+}
+
+.uc-modal .modal-footer .ucm-btn:hover {
+    box-shadow: var(--lightshadow);
 }
 
 .uc-modal > div > div > div.modal-body {
@@ -896,7 +903,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .uc-modal > div > div > div.modal-header {
     border-bottom: none;
-    background-color: #f7f7fa;
+    border-radius: 4px 4px 0px 0px;
+    background-color: #f7faf8;
 }
 
     .uc-modal > div > div > div.modal-header > .modal-title {

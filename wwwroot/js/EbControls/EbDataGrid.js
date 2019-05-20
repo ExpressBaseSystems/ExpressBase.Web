@@ -62,6 +62,8 @@
 
     this.SwitchToEditMode = function () {
         $(`#${this.TableId} tbody [is-editing=true]`).remove();
+        $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "edit");
+        this.mode_s = "edit";
         this.tryAddRow();
     };
 
@@ -268,8 +270,7 @@
             if (col.IsEditable)
                 isAnyColEditable = true;
         }.bind(this));
-        if (this.S_cogsTdHtml === "")
-            this.S_cogsTdHtml = this.getCogsTdHtml(isAnyColEditable);
+        this.S_cogsTdHtml = this.getCogsTdHtml(isAnyColEditable);
         tr += this.S_cogsTdHtml;
         return tr;
     };
@@ -642,6 +643,7 @@
             //$(e).trigger("click");
             this.delRow_click({ target: e });
         }.bind(this));
+        $(`#${this.TableId}>tbody>.dgtr`).remove();
         this.AllRowCtrls = {};
         if (!this.ctrl.IsDisable)
             this.addRow();

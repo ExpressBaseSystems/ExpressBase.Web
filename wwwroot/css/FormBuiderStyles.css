@@ -279,6 +279,7 @@
     /*width: auto !important;
     max-width: inherit !important;*/
     margin-bottom: 0;
+    border-width: 0px 0px 1px 0px;
 }
 
     .dgtbl > tbody > tr > td {

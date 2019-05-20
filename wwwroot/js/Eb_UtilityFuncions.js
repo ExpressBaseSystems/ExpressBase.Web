@@ -45,9 +45,7 @@ function slide(dir, $leftDiv, $rightDiv, $stickBtn, delay) {
         $leftDiv.animate({ width: (lW - rW) + "%", marginLeft: 0 }, delay);
         $rightDiv.animate({ opacity: 1, marginLeft: 0, marginLeft: 0 }, delay);
     }
-};
-
-
+}
 
 function getObjByval(ObjArray, key, val) {
     if (ObjArray === undefined) {
@@ -59,7 +57,29 @@ function getObjByval(ObjArray, key, val) {
     if (key === "name" && !(Object.keys(ObjArray[0]).includes("name")))
         key = "ColumnName";
     return ObjArray.filter(function (obj) { return obj[key] == val; })[0];
-};
+}
+
+function getChildByName(ObjArray, key, val) {
+    if (getObjByval(ObjArray, key, val) === undefined)
+        return getChildByNameRec(ObjArray, key, val);
+    return getObjByval(ObjArray, key, val);
+}
+
+function getChildByNameRec(ObjArray, key, val) {
+    let Value = undefined;
+    $.each(ObjArray, function (i, obj) {
+        if (obj.IsContainer) {
+            if (getObjByval(ObjArray[i].Columns.$values, key, val)) {
+                Value = getObjByval(ObjArray[i].Columns.$values, key, val);
+                return false;
+            }
+            else
+                Value =  getChildByNameRec(ObjArray[i].Columns.$values, key, val);
+        }
+        return;
+    });
+    return Value;
+}
 
 jQuery.fn.outerHTML = function (s) {
     return s
@@ -76,7 +96,7 @@ function getKeyByVal(Obj, val) {
         }
     });
     return Key;
-};
+}
 
 function delKeyAndAfter(Obj, key) {
     var isReachKey = false;

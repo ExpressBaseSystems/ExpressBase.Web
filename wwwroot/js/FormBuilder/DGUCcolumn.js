@@ -1,28 +1,27 @@
 ﻿const DGUCColumn = function (_col, userObject) {
-    this._col = _col;
+    this._col = _col;// UserControl Column Object
     this.base = {};
     this.userObject = userObject;
-    this.base.values = {};
-    this.UCs = {};
-    this._col.__base = this.base;
-    this.initControls = new InitControls(this);
+    this.AllCtrlValues = {};// row wise userControls values dict 
+    this.UCs = {};// All row UserControls dict [ { rowid : object } ]
+    this.initControls = new InitControls(this);// form controls initializer library
+    this.curCtrl = {};// usercontrol instance which is currently represented by the modal
 
+    // prepend modal to body
     this.addModal = function () {
         this.$modal = $(`
-<div class='modal fade' id='${this._col.EbSid}_usercontrolmodal' tabindex='-1' role='dialog' aria-labelledby='@ebsid@Title' aria-hidden='true'>
-  <div class='modal-dialog modal-dialog-centered' role='document'>
+<div class='modal fade uc-modal' id='${this._col.EbSid}_usercontrolmodal' tabindex='-1' role='dialog' aria-labelledby='@ebsid@Title' aria-hidden='true'>
+  <div class='modal-dialog modal-dialog-centered modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='exampleModalLongTitle'>@modaltitle@</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
+        <h4 class='modal-title' id='exampleModalLongTitle'><b>@modaltitle@</b></h4>
       </div>
         <div class='modal-body'>
             ${this._col.ChildHtml}
         </div>
       <div class='modal-footer'>
-        <button id='${this._col.EbSid}_ucmodalok' type='button' class='btn btn-secondary' data-dismiss='modal'>OK</button>
+        <button id='${this._col.EbSid}_ucmodalclose' type='button' class='btn btn-secondary ucm-btn' data-dismiss='modal'>Cancel</button>
+        <button id='${this._col.EbSid}_ucmodalok' type='button' class='btn btn-primary  ucm-btn' data-dismiss='modal'>OK</button>
       </div>
     </div>
   </div>
@@ -31,17 +30,21 @@
         $("body").prepend(this.$modal);
     };
 
-    this.modalShowCallBack = function () {
-        this.$OkBtn.attr("rowid", this.curRowid);
-        let valDict = this.base.values;
+    this.loadValues = function () {
 
-        $.each(this.ChildCtrls, function (i, ctrl) {
-            if (valDict[this.curRowid]) {
-                let val = valDict[this.curRowid][ctrl.EbSid];
+        $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
+            if (this.AllCtrlValues[this.curRowid]) {
+                let val = this.AllCtrlValues[this.curRowid][ctrl.EbSid];
                 if (val)
                     ctrl.setValue(val);
             }
         }.bind(this));
+    };
+
+    this.modalShowCallBack = function () {
+        this.$OkBtn.attr("rowid", this.curRowid);
+        this.loadValues();
+        this.$modal.find(`.modal-body input[type!=hidden]:last`).focus();
     }.bind(this);
 
     this.modalShowBtn_click = function (e) {
@@ -54,40 +57,40 @@
         this.SetCtrlValues(rowId);
     }.bind(this);
 
+    this.cancel_click = function () {
+        $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
+            this.curCtrl.__Col.Columns.$values[i].clear();
+        }.bind(this));
+    }.bind(this);
+
+    //bind functions to modal events
     this.bindFns = function () {
         this.$OkBtn.on("click", this.ok_click);
+        this.$Cancel.on("click", this.cancel_click);
         this.$modal.on("show.bs.modal", this.modalShowCallBack);
     };
 
-    this.setCtrlFns = function (Uctrl) {
+    this.setCtrlFns = function (Uctrl) {///////////////
         $.each(Uctrl.Columns.$values, function (i, _ctrl) {
-            let Mfn = new ControlOps[_ctrl.ObjType](new EbObjects.EbTextBox("a")).getValue;
-            _ctrl.getValueForModal = Mfn;
-            _ctrl.getValue = function (uc) { return _ctrl.__tempVal; }.bind(this, Uctrl);
+            _ctrl.getValueForModal = function () { return $("#" + this.EbSid).val(); };
+            _ctrl.getValue = function (uc) { return this.__tempVal; };
+            _ctrl.setValue = function (p1) { $('#' + this.EbSid).val(p1).trigger('change'); };
 
         }.bind(this));
     };
 
     this.SetCtrlValues = function (rowId) {
-        let valDict = this.base.values;
+        let valDict = this.AllCtrlValues;
         valDict[rowId] = {};
         $.each(this.curCtrl.Columns.$values, function (i, ctrl) {
             ctrl.__tempVal = ctrl.getValueForModal();
             valDict[rowId][ctrl.EbSid] = ctrl.__tempVal;
-            ctrl.clear();
             this.curCtrl.__Col.Columns.$values[i].clear();
         }.bind(this));
         console.log(valDict);
     };
 
-    //this.initCtrlChildrens = function (UC) {
-    //    $.each(UC.Columns.$values, function (i, _inpCtrl) {
-    //        let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
-    //        _inpCtrl = new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl);
-    //        UC.Columns.$values[i] = _inpCtrl;
-    //    }.bind(this));
-    //};
-
+    // add and initialize new UserControl instance to this - when a new row with UserControl added to datagrid
     this.initForctrl = function (ctrl) {
         this.curCtrl = ctrl;
         //this.initCtrlChildrens(ctrl);
@@ -97,8 +100,9 @@
         this.$modalShowBtn.on("click", this.modalShowBtn_click);
     };
 
+    //initialize Controls rendered inside modal
     this.initModalCtrls = function () {
-        this.ChildCtrls.forEach(function (ctrl, i) {
+        this.ChildCols.forEach(function (ctrl, i) {
             let opt = {};
             if (ctrl.ObjType === "PowerSelect")// || ctrl.ObjType === "DGPowerSelectColumn")
                 opt.getAllCtrlValuesFn = function () {
@@ -112,15 +116,14 @@
         }.bind(this));
     };
 
+    //this function initialize a modal exclusively for one UserControl column in a datagrid
     this.init = function () {
-        //this.$modalShowBtns = $(`#${this._col.EbSid}_showbtn`);
-        //this.$modal = $(`#${this._col.EbSid}_usercontrolmodal`);
-        this.ChildCtrls = this._col.Columns.$values;
+        this.ChildCols= this._col.Columns.$values;// list of controls in the userControl Column
         this.addModal();
         this.initModalCtrls();
 
-        this.$modalBody = $(`#${this._col.EbSid}_usercontrolmodal .modal-body`);
-        this.$OkBtn = $(`#${this._col.EbSid}_ucmodalok`);
+        this.$OkBtn = $(`#${this._col.EbSid}_ucmodalok`);//OK button inside modal
+        this.$Cancel= $(`#${this._col.EbSid}_ucmodalclose`);//close button inside modal
         this.bindFns();
 
     };

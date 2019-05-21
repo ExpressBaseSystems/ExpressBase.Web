@@ -85,7 +85,7 @@
         //else if (type === 25) {
         //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
         //}
-        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26) {//  If collection editor
+        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26|| type === 27|| type === 35) {//  If collection editor
             if ((meta.Limit === 1 && type === 25) || (meta.Limit === 1 && type === 8)) {
                 let _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
@@ -676,7 +676,8 @@
             $e.removeClass("Eb-invalid");// clear previuos invalid style if there
         }
         $.each(this.AllObjects, function (i, iterObj) {
-            if (iterObj.EbSid === curObj.EbSid) // skip iteration if same object
+            if (iterObj.EbSid === curObj.EbSid// skip iteration if same object
+                || iterObj[this.CurProp] === undefined || iterObj[this.CurProp] === null)
                 return true;
 
             if (iterObj[this.CurProp] !== undefined && iterObj[this.CurProp].trim() === curVal.trim()) {
@@ -790,7 +791,7 @@
     };
 
     // sets Object to property grid
-    this.setObject = function (props, metas) {
+    this.setObject = function (props, metas, setObjectCallBack = function () { }) {
         //params check
         {
             if (typeof props === 'string' || typeof metas === 'string') {
@@ -813,6 +814,7 @@
         this.InitPG();
         $("#" + this.wraperId + " .propgrid-helpbox").show();
         //console.log("default test :" + JSON.stringify(props));
+        setObjectCallBack();
     };
 
     // makes PG readonly

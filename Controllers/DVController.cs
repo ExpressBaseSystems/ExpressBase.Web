@@ -155,7 +155,7 @@ namespace ExpressBase.Web.Controllers
             var NewColumns = new DVColumnCollection();
             foreach (DVBaseColumn oldcol in OldColumns)
             {
-                var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type);
+                var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type, oldcol.IsCustomColumn);
                 if (tempCol != null)
                 {
                     oldcol.Data = tempCol.Data;
@@ -187,7 +187,11 @@ namespace ExpressBase.Web.Controllers
             return NewColumns;
         }
 
-
+        public object ExecuteTreeUpdate(string sql)
+        {
+            var resultlist = this.ServiceClient.Get<UpdateTreeColumnResponse>(new UpdateTreeColumnRequest { sql = sql});
+            return new object();
+        }
         //[HttpPost]//copied to boti - febin
         //public IActionResult dvView1(string dvobj)
         //{

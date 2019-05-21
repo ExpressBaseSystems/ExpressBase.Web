@@ -104,7 +104,6 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "FileUploader")
                 opt.FormDataExtdObj = this.FormDataExtdObj;
             else if (Obj.ObjType === "Date") {
-                opt.userObject = this.userObject;
                 opt.source = "webform";
             }
 
@@ -400,12 +399,12 @@ const WebFormRender = function (option) {
 
     this.ajaxsuccess = function (_respObj) {
         this.hideLoader();
-        //let msg = "";
         let respObj = JSON.parse(_respObj);
+        let locName = loc__.CurrentLocObj.LongName;
+        let formName = this.FormObj.DisplayName;
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
-                //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
+                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
@@ -416,12 +415,11 @@ const WebFormRender = function (option) {
             }
             else {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
-                //msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
             }
         }
         else {
             if (respObj.RowId > 0) {// if insertion success -NewToedit
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
+                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
@@ -609,11 +607,12 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    //EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
-                                    EbMessage("show", { Message: 'Delete operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: 'Delete operation failed due to validation failure.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else if (result === -2) {
                                     EbMessage("show", { Message: 'Access denied to delete this entry.', AutoHide: true, Background: '#aa0000' });
@@ -659,11 +658,12 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    //EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
-                                    EbMessage("show", { Message: 'Cancel operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: 'Cancel operation failed due to validation failure.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else if (result === -2) {
                                     EbMessage("show", { Message: 'Access denied to cancel this entry.', AutoHide: true, Background: '#aa0000' });
@@ -711,6 +711,7 @@ const WebFormRender = function (option) {
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
+        $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
 

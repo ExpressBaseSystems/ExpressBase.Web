@@ -28,12 +28,15 @@ using System.Text;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Constants;
 using ServiceStack.Auth;
+using ExpressBase.Common.EbServiceStack.ReqNRes;
+using ExpressBase.Common.Enums;
+using Microsoft.Net.Http.Headers;
 
 namespace ExpressBase.Web.Controllers
 {
     public class ApiController : EbBaseIntApiController
     {
-        public ApiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+        public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc) { }
 
         [HttpGet("/api/{_name}/{_version}/{format}")]
         public object Api(string _name, string _version, string format)
@@ -157,7 +160,7 @@ namespace ExpressBase.Web.Controllers
                     response.BToken = authResponse.BearerToken;
                     response.RToken = authResponse.RefreshToken;
                     response.UserId = authResponse.User.UserId;
-                    response.DisplayName = authResponse.User.DisplayName;
+                    response.DisplayName = authResponse.User.FullName;
                 }
                 else
                     response.IsValid = false;
@@ -175,6 +178,96 @@ namespace ExpressBase.Web.Controllers
         public void ApiLogOut()
         {
 
+        }
+
+        [HttpPost("/api/upload")]
+        public async Task<ApiResponse> UploadFile()
+        {
+            ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>()};
+            UploadAsyncResponse res = new UploadAsyncResponse();
+            EbFileCategory _FileType = EbFileCategory.File;
+            var req = this.HttpContext.Request.Form;
+            string fname = string.Empty;
+            try
+            {
+                if (req["FileType"] == "image")
+                {
+                    _FileType = EbFileCategory.Images;
+                }
+                UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
+                uploadFileRequest.FileDetails = new FileMeta();
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        fname = formFile.FileName.ToLower();
+                        byte[] myFileContent;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                            uploadFileRequest.FileByte = myFileContent;
+                        }
+                        uploadFileRequest.FileDetails.FileName = formFile.FileName.ToLower();
+                        uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
+                        uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
+                        uploadFileRequest.FileDetails.FileCategory = _FileType;
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
+
+                        (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData
+                        {
+                            FileName = formFile.FileName.ToLower(),
+                            FileType = req["FileType"],
+                            FileRefId = res.FileRefId
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString());
+                (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData
+                {
+                    FileName = fname,
+                    FileType = req["FileType"],
+                    FileRefId = 0
+                });
+            }
+            return ApiResp;
+        }
+
+        [HttpGet("api/files/{filename}")]
+        public IActionResult GetFile(string filename)
+        {
+            DownloadFileResponse dfs = null;
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadFileByIdRequest
+                        {
+                            FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
+                        });
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+            return resp;
+        }
+
+        private string GetMime(string fname)
+        {
+            return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
         }
 
         private Dictionary<string, object> F2D(FormCollection collection)

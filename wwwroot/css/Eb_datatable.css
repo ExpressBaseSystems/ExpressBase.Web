@@ -538,9 +538,8 @@ table.dataTable tr.group td {
     margin-top: -1px;
 }
 
-#treemodal .modal-content {
-    max-width: 360px;
-    width: 100%;
+#treemodal .modal-dialog {
+    width: max-content;
 }
 
 #treemodal .dropdown .btn {
@@ -550,4 +549,6 @@ table.dataTable tr.group td {
 #treemodal .modal-header .close {
     margin-top: -25px;
 }
- 
+.contextmenu-custom__highlight .context-menu-item > .context-menu-list {
+    top: 20px !important;
+}

@@ -2537,15 +2537,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else
                 return false;
         });
-        //var childItemRows = elem.nextAll("tr").children().find("[data-level=" + (level + 1) + "].itemform");
-        //childItemRows.parents().closest("[role=row]").hide();
-        //var childGroupRows = elem.nextAll("tr").children().find("[data-level=" + (level + 1) + "].groupform");
-        //if (childGroupRows.length > 0) {
-        //    $.each(childGroupRows, function (i, obj) {
-        //        this.collapseTreeGroup(obj);
-        //        $(obj).parents().closest("[role=row]").hide();
-        //    }.bind(this));
-        //}
     }.bind(this);
 
     this.AppendTreeModal = function () {
@@ -2563,9 +2554,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         <div id="modal-body-cont">
                             Move From <label id="movefrom"></label> To 
                             <div class="dropdown" style="display: inline;">
-                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Select Group....
+                                <button class="btn btn-default dropdown-toggle treemodalul" type="button" data-toggle="dropdown">Select Group....
                                 <span class="caret"></span></button>
-                                <ul class="dropdown-menu"></ul>
                             </div>
                         </div>
                       </div>
@@ -2582,82 +2572,90 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#movefrom").text(this.movefromtext);
         this.IdColumnIndex = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === "id"; })[0].data;
         this.movefromId = this.unformatedData[rowindex][this.IdColumnIndex];
-        $.each(this.treeData, function (i, item) {
+        this.moveToId = "";
+        //this.createTreeItems();
+        this.Items = {};
+        this.createTreeItems___(this.treeData, this.Items);
+        this.Items = this.Items.items;
+        $.contextMenu('destroy', '.treemodalul');
+        $.contextMenu({
+            selector: '.treemodalul',
+            className: 'contextmenu-custom__highlight',
+            items: this.Items,
+            trigger: "left",
+            autoHide: true,
+            callback: this.MoveDDClick.bind(this)
+        });
+        this.clickCounter = 0;
+        $("#treemodal").modal("show");
+        $(".contextmenu-custom__highlight .context-menu-item").off("click").on("click", this.MoveDDClick.bind(this));
+    };
+
+    this.createTreeItems___ = function (initems, outitems) {
+        $.each(initems, function (_in, _out, i, item) {
             let Exist = item.item.filter(function (obj) { return obj === this.movefromtext; }.bind(this));
             if (Exist.length === 0) {
                 if (item.isGroup) {
-                    this.ulid = item.item[this.treeColumn.data].split(' ').join("_");
-                    if (item.children.length > 0)
-                        $("#modal-body-cont .dropdown-menu").eq(0).append(`<li class="dropdown-submenu">
-                            <a tabindex="-1" data-pid="${item.item[this.IdColumnIndex]}">${item.item[this.treeColumn.data]}<i class="fa fa-caret-right" style="float: right;"></i></a><ul class="dropdown-menu" id="${this.ulid}"></ul></li>`);
-                    else
-                        $("#modal-body-cont .dropdown-menu").eq(0).append(`<li><a tabindex="-1" data-pid="${item.item[this.IdColumnIndex]}">${item.item[this.treeColumn.data]}</a></li>`);
-
-                    //this.ulid = item.item[this.treeColumn.data].split(' ').join("_");
-                    this.recursiveTree(item);
+                    this.ulid = item.item[this.treeColumn.data];
+                    if (!_out.hasOwnProperty("items"))
+                        _out.items = {};
+                    _out.items[this.ulid] = { "name": this.ulid, "data-pid": item.item[this.IdColumnIndex] };
+                    this.createTreeItems___(item.children, _out.items[this.ulid]);
                 }
             }
-        }.bind(this));
-        $("#treemodal").modal("show");
-        $(".dropdown-menu li a").click(this.MoveDDClick.bind(this));
-        $('.dropdown-submenu a').on("mouseenter", function (e) {
-            $("#treemodal .dropdown-submenu .dropdown-menu").hide();
-            $(this).parents(".dropdown-menu").show();
-            $(this).next('ul').show();
-            e.stopPropagation();
-            e.preventDefault();
-        });
-
-        let elem = $("#treemodal .dropdown-submenu .dropdown-menu");
-        $.each(elem, function (i, obj) {
-            if ($(obj).children("li").length === 0) {
-                $(obj).siblings("a").children("i").remove();
-                $(obj).remove();
-            }
-
-        });
+        }.bind(this, initems, outitems));
     };
 
-    this.MoveItem = function (key, opt, event) {
-        this.AppendTreeModal();
-    }
+    this.getClickedItem = function (key) {
+        $.each(this.Items, function (i, objOuter) {
+            if (objOuter.name === key) {
+                this.moveToPid = objOuter["data-pid"];
+                return false;
+            }
+            else {
+                if (objOuter.hasOwnProperty("items"))
+                    this.getRecursivelyGetClickedItem(key, objOuter);
+            }
+        }.bind(this));
+    };
 
-    this.MoveDDClick = function (e) {
-        let text = $(e.target).closest("a").text();
-        $("#treemodal .btn:first-child").text(text);
-        $("#treemodal .btn:first-child").val(text);
-        let moveToPid = $(e.target).closest("a").attr("data-pid");
-        let sql = `UPDATE ${this.tableName} SET ${this.treeColumn.ParentColumn.$values[0].name}= ${moveToPid}
+    this.getRecursivelyGetClickedItem = function (key, objOuter) {
+        $.each(objOuter.items, function (i, objInner) {
+            if (objInner.name === key) {
+                this.moveToPid = objInner["data-pid"];
+                return false;
+            }
+            else {
+                if (objInner.hasOwnProperty("items"))
+                    this.getRecursivelyGetClickedItem(key, objInner);
+            }
+        }.bind(this));
+    };
+
+    this.MoveDDClick = function (key, options) {
+        if (this.clickCounter === 0) {
+            this.clickCounter++;
+            if (options === undefined)
+                key = $(key.currentTarget).children("span").text();
+            $("#treemodal .btn:first-child").text(key);
+            $("#treemodal .btn:first-child").val(key);
+            this.getClickedItem(key);
+            $(".contextmenu-custom__highlight").hide();
+            let sql = `UPDATE ${this.tableName} SET ${this.treeColumn.ParentColumn.$values[0].name}= ${this.moveToPid}
                         WHERE id=${this.movefromId} `;
-        $.ajax({
-            type: "POST",
-            url: "../DV/ExecuteTreeUpdate",
-            data: { sql: sql },
-            success: this.UpdateSuccess.bind(this)
-        });
+            $.ajax({
+                type: "POST",
+                url: "../DV/ExecuteTreeUpdate",
+                data: { sql: sql },
+                success: this.UpdateSuccess.bind(this)
+            });
+        }
     };
 
     this.UpdateSuccess = function () {
         this.$submit.trigger("click");
         $("#treemodal").modal("hide");
-    };
-
-    this.recursiveTree = function (node) {
-        $.each(node.children, function (i, item) {
-            let Exist = item.item.filter(function (obj) { return obj === this.movefromtext; }.bind(this));
-            if (Exist.length === 0) {
-                if (item.isGroup) {
-                    if (item.children.length > 0)
-                        $("#" + this.ulid).append(`<li class="dropdown-submenu">
-                            <a tabindex="-1" data-pid="${item.item[this.IdColumnIndex]}">${item.item[this.treeColumn.data]}<i class="fa fa-caret-right" style="float: right;"></i></a><ul class="dropdown-menu" id="${item.item[this.treeColumn.data].split(' ').join("_")}"></ul></li>`);
-                    else
-                        $("#" + this.ulid).append(`<li><a tabindex="-1" data-pid="${item.item[this.IdColumnIndex]}">${item.item[this.treeColumn.data]}</a></li>`);
-                    this.ulid = item.item[this.treeColumn.data].split(' ').join("_");
-                    this.recursiveTree(item);
-                }
-            }
-
-        }.bind(this));
+        this.clickCounter = 0;
     };
 
     this.setFilterboxValue = function (i, obj) {

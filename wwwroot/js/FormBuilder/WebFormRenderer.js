@@ -277,7 +277,7 @@ const WebFormRender = function (option) {
     };
 
     this.setEditModeCtrls = function () {
-        if (this.isEditModeCtrlsSet) {// if already set while mode switching
+        if (!this.isEditModeCtrlsSet) {// if already set while mode switching
             $.each(this.DGs, function (k, DG) {
                 this.DGBuilderObjs[DG.Name].SwitchToEditMode();
             }.bind(this));

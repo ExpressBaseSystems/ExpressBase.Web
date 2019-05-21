@@ -611,6 +611,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .req-cont label {
     font-weight: normal !important;
     margin-bottom: 0 !important;
+    padding-left: 2px;
 }
 
 .web-form-wraper .Eb-ctrlContainer {

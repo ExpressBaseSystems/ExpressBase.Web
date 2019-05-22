@@ -168,7 +168,7 @@
                     datepicker: true
                 });
             }
-            
+
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
 
@@ -176,7 +176,7 @@
                 //let maskPattern = "DD-MM-YYYY";
                 //$input.attr("placeholder", maskPattern);
                 //$input.inputmask(maskPattern);               
-                
+
                 if (!ctrl.IsNullable)
                     $input.val(userObject.Preference.ShortDate);
             }
@@ -189,7 +189,7 @@
             }
         }
     };
-    
+
     //created by amal
     this.toggleNullableCheck = function (ctrl) {
         let $ctrl = $(event.target).closest("input[type='checkbox']");
@@ -393,16 +393,18 @@
     this.Numeric = function (ctrl) {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
-
-        $input.val("0.00");//temp hoc
+        let initValue = "0";
+        if (ctrl.DecimalPlaces > 0)
+            initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
+        $input.val(initValue);
 
         $input.inputmask("currency", {
             radixPoint: ".",
             allowMinus: ctrl.AllowNegative,
             groupSeparator: "",
-            digits: 2,
+            digits: ctrl.DecimalPlaces,
             prefix: '',
-            autoGroup: true,
+            autoGroup: true
         });
 
         $input.focus(function () { $(this).select(); });

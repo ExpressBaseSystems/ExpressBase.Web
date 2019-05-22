@@ -167,6 +167,7 @@
 
 .Eb-ctrlContainer .input-group-addon {
     border: 0 !important;
+    padding: 5px 12px;
 }
 
 .del-row, .edit-row {
@@ -651,7 +652,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 1px;
     padding: 2px 0px;
     display: inline-block;
-    margin: 2px 0;
+    margin: 1px 0;
 }
 
 [isrendermode="True"] [eb-hidden="True"] {
@@ -840,8 +841,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .grid-cont .Dg_head, .Dg_footer {
-    display: none;
     padding-right: 17px;
+}
+
+.Dg_footer {
+    display: none;
 }
 .dgtbl > thead > tr > th:last-child {
     text-align: center;

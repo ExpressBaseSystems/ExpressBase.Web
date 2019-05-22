@@ -693,8 +693,10 @@
         }.bind(this));
 
         this.tryAddRow();
-        if (this.isAggragateInDG)
+        if (this.isAggragateInDG) {
             this.initAgg();
+            $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).show();
+        }
 
         this.ctrl.addRow = this.AddRowWithData.bind(this);
         this.ctrl.clear = this.clearDG.bind(this);

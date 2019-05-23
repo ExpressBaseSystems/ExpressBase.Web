@@ -172,7 +172,7 @@
 .del-row, .edit-row {
     display: none;
     position: absolute;
-    height: 29px;
+    height: 27px;
     top: 0px;
     width: 16.5px;
     padding-top: 5px;
@@ -180,6 +180,7 @@
 
 .del-row {
     left: 23.5px;
+    height: 24px !important;
     color: red;
     border-radius: 0 50px 50px 0;
     direction: rtl;
@@ -189,18 +190,18 @@
     left: 7.5px;
     color: rgb(192, 110, 3);
     border-radius: 50px 0 0 50px;
-    padding-top: 1.5px !important;
+    padding-top: 0.5px !important;
     padding-left: 4.5px;
 }
 
 .tdtxt {
     display: none;
-    padding: 6px;
+    padding: 5px 6px;
 }
 
 .rowc {
     text-align: center;
-    padding-top: 5px;
+    padding-top: 3px;
     background-color: transparent;
     border: none;
 }
@@ -226,11 +227,11 @@
 .check-row {
     position: absolute;
     left: 7.5px;
-    /*top: 0.5px;*/
+    top: -0.5px;
     color: green;
-    height: 28px;
-    width: 29px;
-    padding-top: 3px;
+    height: 25px;
+    width: 25px;
+    padding-top: 1px;
     border-radius: 100%;
 }
 
@@ -849,6 +850,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .dgtbl > thead > tr > th:last-child {
     text-align: center;
+}
+
+.dgtbl > thead > tr > th {
+    padding: 5px;
 }
 
 .inp-inner-loader {

@@ -47,7 +47,7 @@ const WebFormRender = function (option) {
                         EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
                     }
                     catch (e) {
-                        alert(e.message);
+                        console.warn(e.message);
                     }
                 }
             }
@@ -842,6 +842,7 @@ const WebFormRender = function (option) {
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
+        $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
 

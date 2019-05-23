@@ -499,7 +499,7 @@
         this.col = $(el);
         this.Objtype = this.col.attr('eb-type');
         let name = this.col.attr('eb-name');
-        let obj = new EbObjects[this.Objtype](name);
+        let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; })[0];
         this.CurrentRowgroup.RowGrouping.$values.push(obj);
         this.AlldropElements(this.col);
     }

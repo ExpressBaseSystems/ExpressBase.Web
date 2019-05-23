@@ -880,7 +880,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /* box-shadow: inset 0px 0px 5px 0px rgba(195, 188, 188, 0.72), -0.5px 0.5px 2px 0px rgba(107, 107, 107, 0.72); */
 }
 
-    /*.ucbtn:focus {
+/*.ucbtn:focus {
         outline: none;
         border: solid 1px #6ebfe6;
         box-shadow: 0px 0px 3px 0 #6ebfe6 !important;
@@ -960,10 +960,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     font-size: 13px;
 }
 
-.form-buider-form .input-group-addon {
+.filter-box .input-group-addon, .form-buider-form .input-group-addon {
     padding: 0px !important;
 }
 
-.form-buider-form .input-group-addon > .fa {
-    padding: 3px 7px !important;
-}
+    .filter-box .input-group-addon > .fa, .form-buider-form .input-group-addon > .fa {
+        padding: 3px 7px !important;
+    }

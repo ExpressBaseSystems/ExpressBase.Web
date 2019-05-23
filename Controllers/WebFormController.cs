@@ -30,7 +30,8 @@ namespace ExpressBase.Web.Controllers
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-
+            ViewBag.IsPartial = _mode > 10;
+            _mode = _mode > 0 ? _mode % 10 : _mode;
             if(_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());

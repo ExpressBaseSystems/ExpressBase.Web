@@ -193,6 +193,56 @@
 
 <script>
     @Html.Raw(ViewBag.ControlOperations);
+        
+    $("body").prepend(`
+<div class="modal fade" id="AuditHistoryModal" role="dialog">
+    <div class="modal-dialog" style="width: 60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Audit Trail</h4>
+            </div>
+            <div class="modal-body" style="height:calc(100vh - 190px); overflow: auto;">
+                <div id="divAuditTrail" style="height:calc(100vh - 220px);"> </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+
+    $("body").prepend(`
+<div class="modal fade" id="iFrameFormModal" role="dialog">
+    <div class="modal-dialog" style="width: 60%; margin: 8% auto;">
+        <div class="modal-content"> 
+            <div class="modal-body" style="height: 60vh; padding: 0px;">
+                <div>
+                    <div id="iFrameFormOverlay" style=" text-align: center; position: absolute; height: 60vh; width: 100%; background-color: white; border-radius: 6px;">
+                        <div style="position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>
+                    </div>
+                    <iframe id="iFrameForm" style="width: 100%; height: 60vh; border: none; border-radius: 6px;" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+
+    window.closeModal = function (func) {// receives call from iFrame
+        //func();
+        $('#iFrameFormModal').modal('hide');
+    };
+    $('#iFrameFormModal').on('hidden.bs.modal', function () {
+        $('#iFrameForm').removeAttr("src");
+        $("#iFrameFormOverlay").show();
+    });
+    $("#iFrameForm").on('load', function (evt) {
+        console.log(evt.target);
+        if ($(evt.target).attr("src") !== undefined)
+            $("#iFrameFormOverlay").hide();
+    });
 
     let header = new EbHeader();
     header.insertButton(`<button id="webformdelete" class='btn' title='Delete'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
@@ -201,10 +251,7 @@
     header.insertButton(`<button id="webformedit" class='btn' title='Edit'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
     header.insertButton('<button id="webformsave" class="btn" title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
     header.insertButton('<button id="webformaudittrail" class="btn" title="Audit Trail"><i class="fa fa-history" aria-hidden="true"></i></button>')
-
-    //header.insertButton(' <button class="btn" id="webformsave"  title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
-    //let _editModeObj =  '@Html.Raw(ViewBag.editModeObj)';
-
+    
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _rowId = @Html.Raw(ViewBag.rowId);
@@ -213,11 +260,29 @@
     let _mode = "@Html.Raw(ViewBag.Mode)";
     let _cid = "@ViewBag.Cid";
     let _env = "@ViewBag.Env";
+    let _ispartial = "@ViewBag.IsPartial";
 
     //to store refids of uploaded files via all fileuploader ctrls
     let uploadedFileRefList = {};
 
     function setHeader(reqstMode) {
+        if (_ispartial === "True") {
+            if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
+                $(".objectDashB-toolbar").find(".pd-0:first-child").children("button").remove();
+                $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
+                $("#Eb_com_menu").remove();
+            }
+            if (reqstMode === "New Mode") {
+                header.showElement(["webformsave"]);
+                header.hideElement(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
+            }
+            else
+                header.hideElement(["webformnew", "webformedit", "webformdelete", "webformsave", "webformcancel", "webformaudittrail"]);
+            header.setName(_formObj.DisplayName);
+            header.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
+            $('title').text(_formObj.DisplayName + `(${reqstMode})`);
+            return;
+        }
         _mode = reqstMode;//
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
@@ -253,7 +318,7 @@
 
     const renderer = new WebFormRender({
         formObj: _formObj,
-        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel"},
+        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail"},
         formRefId: _formRefId,
         mode: _mode,
         rowId: _rowId,
@@ -262,167 +327,11 @@
         cid: _cid,
         env: _env
     });
+   
 
-    //if (_editModeObj === "false") {
-    //    _editModeObj = false;
-    //    FormMode = "New Mode";
-    //}
-    //else {
-    //    FormMode = "Edit Mode";
-    //    header.insertButton('<button class="btn" id="webformaudittrail"><i class="fa fa-history" aria-hidden="true"></i></button>');
-    //    header.insertButton(' <button class="btn" id="webformnew" onclick="window.location.href = window.location.href" title="New form"><i class="fa fa-file-o" aria-hidden="true"></i></button>');
-    //    _editModeObj = JSON.parse(atob(_editModeObj));
-    //}
-    //header.setName(_formObj.DisplayName);
-    //header.setMode(`<span class="fmode"style="color: #444;font-weight: normal;">(${FormMode})</span>`);
-    //$('title').text(_formObj.DisplayName);
-
-
-    $("body").prepend(`
-<div class="modal fade" id="AuditHistoryModal" role="dialog">
-    <div class="modal-dialog" style="width: 60%;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Audit Trail</h4>
-            </div>
-            <div class="modal-body" style="height:calc(100vh - 190px); overflow: auto;">
-                <div id="divAuditTrail" style="height:calc(100vh - 220px);"> </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-`);
-
-    $("#webformaudittrail").on("click", function () {
-        $("#AuditHistoryModal").modal("show");
-        $("#divAuditTrail").children().remove();
-        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
-        $.ajax({
-            type: "POST",
-            url: "../WebForm/GetAuditTrail",
-            data: { refid: _formRefId, rowid: renderer.rowId },
-            error: function () {
-                $("#divAuditTrail").children().remove();
-                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);
-            },
-            success: function (result) {
-                if (result === "{}") {
-                    $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 50%; font-size: 20px; color: #ccc; "> Nothing to Display </div>`);
-                    return;
-                }
-                else if (result === "") {
-                    $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something went wrong </div>`);
-                    return;
-                }
-                drawAuditTrailTest(result);
-            }
-        });
-    });
-
-    function drawAuditTrailTest(result) {
-        let auditObj = JSON.parse(result);
-        let $transAll = $(`<div></div>`);
-
-        $.each(auditObj, function (idx, Obj) {
-            let $trans = $(`<div class="single-trans"></div>`);
-            let temptitle = (Obj.ActionType === "Insert" ? "Created by " : "Updated by ")+ Obj.CreatedBy + " at " + Obj.CreatedAt;
-            $trans.append(` <div class="trans-head row">
-                                <div class="col-md-10" style="padding: 5px 8px;">
-                                    <div style="display:inline-block;"><i class="fa fa-chevron-down"></i></div>
-                                    <div style="display:inline-block;">${temptitle}</div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div style="float: right;">
-                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/imagenotfound.svg';" style="height: 30px; border-radius: 15px;">
-                                    </div>                                    
-                                </div>
-                            </div>`);
-
-            $trans.append(`<div class="trans-body collapse in"></div>`);
-            let tempHtml = ``;
-
-            $.each(Obj.Tables, function (i, Tbl) {
-                $.each(Tbl.Columns, function (j, Row) {
-                    tempHtml += `
-                        <tr>
-                            <td class="col-md-4 col-sm-4">${Row.Title}</td>
-                            <td class="col-md-4 col-sm-4" style="color: red;">${Row.NewValue}</td>
-                            <td class="col-md-4 col-sm-4">${Row.OldValue}</td>
-                        </tr>`;
-                });
-            });
-            if (tempHtml.length !== 0) {
-                tempHtml = `<div class="form-table-div"><table class="table table-bordered first-table" style="width:100%; margin: 0px;">
-                                <thead>
-                                    <tr class="table-title-tr">
-                                        <th class="col-md-4 col-sm-4">Field Name</th>
-                                        <th class="col-md-4 col-sm-4">New Value</th>
-                                        <th class="col-md-4 col-sm-4">Old Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`
-                                    + tempHtml +
-                                `</tbody>
-                            </table></div>`;
-                $trans.children(".trans-body").append(tempHtml);
-            }
-
-            tempHtml = ``;
-
-            $.each(Obj.GridTables, function (i, Tbl) {
-                tempHtml += `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
-                                <thead>
-                                    <tr class="table-title-tr">
-                                        <th></th>`;
-                $.each(Tbl.ColumnMeta, function (j, cmeta) {
-                    tempHtml += `<th>${cmeta}</th>`;
-                });
-                tempHtml += `     </tr>
-                                </thead><tbody>`;
-                $.each(Tbl.Rows, function (m, Cols) {
-                    let newRow = `<tr><td>New</td>`;
-                    let oldRow = `<tr><td>Old</td>`;
-                    $.each(Cols.Columns, function (n, Col) {
-                        if (Col.IsModified)
-                            newRow += `<td style="color: red;">${Col.NewValue}</td>`;
-                        else
-                            newRow += `<td>${Col.NewValue}</td>`;
-                        oldRow += `<td>${Col.OldValue}</td>`;
-                    });
-                    newRow += `</tr>`;
-                    oldRow += `</tr>`;
-                    tempHtml += newRow + oldRow;
-                });
-
-                tempHtml += `</tbody></table></div>`;
-            });
-            $trans.children(".trans-body").append(tempHtml);
-            $transAll.append($trans);
-        });
-
-        $("#divAuditTrail").children().remove();
-        $("#divAuditTrail").append($transAll);
-
-        $("#divAuditTrail .trans-head").on("click", function (e) {
-            $(e.target).closest(".trans-head").next().collapse('toggle');
-            let $iele = $(e.target).closest(".trans-head").find("i");
-
-            if ($iele.hasClass("fa-chevron-right")) {
-                $iele.removeClass("fa-chevron-right");
-                $iele.addClass("fa-chevron-down");
-            }
-            else if ($iele.hasClass("fa-chevron-down")) {
-                $iele.removeClass("fa-chevron-down");
-                $iele.addClass("fa-chevron-right");
-            }
-
-        });
-    }
+    //$("#webformaudittrail").on("click", function () {
+    //    $("#iFrameFormModal").modal("show");
+    //});
+       
 
 </script>

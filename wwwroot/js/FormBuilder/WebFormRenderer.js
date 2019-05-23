@@ -46,7 +46,7 @@ const WebFormRender = function (option) {
                         EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
                     }
                     catch (e) {
-                        alert(e.message);
+                        console.warn(e.message);
                     }
                 }
             }

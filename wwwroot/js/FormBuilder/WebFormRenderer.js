@@ -9,6 +9,7 @@ const WebFormRender = function (option) {
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
     this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
+    this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
     this.Env = option.env;
     this.Cid = option.cid;
     this.initControls = new InitControls(this);
@@ -46,7 +47,7 @@ const WebFormRender = function (option) {
                         EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
                     }
                     catch (e) {
-                        alert(e.message);
+                        console.warn(e.message);
                     }
                 }
             }
@@ -433,6 +434,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
             }
         }
+        //window.parent.closeModal();
     };
 
     this.isAllUniqOK = function () {
@@ -678,6 +680,134 @@ const WebFormRender = function (option) {
             });
     };
 
+    this.GetAuditTrail = function () {
+        $("#AuditHistoryModal").modal("show");
+        $("#divAuditTrail").children().remove();
+        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
+        $.ajax({
+            type: "POST",
+            url: "../WebForm/GetAuditTrail",
+            data: { refid: this.formRefId, rowid: this.rowId },
+            error: function () {
+                $("#divAuditTrail").children().remove();
+                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);
+            },
+            success: function (result) {
+                if (result === "{}") {
+                    $("#divAuditTrail").children().remove();
+                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 50%; font-size: 20px; color: #ccc; "> Nothing to Display </div>`);
+                    return;
+                }
+                else if (result === "") {
+                    $("#divAuditTrail").children().remove();
+                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something went wrong </div>`);
+                    return;
+                }
+                this.drawAuditTrailTest(result);
+            }.bind(this)
+        });
+    };
+
+    this.drawAuditTrailTest = function (result) {
+        let auditObj = JSON.parse(result);
+        let $transAll = $(`<div></div>`);
+
+        $.each(auditObj, function (idx, Obj) {
+            let $trans = $(`<div class="single-trans"></div>`);
+            let temptitle = (Obj.ActionType === "Insert" ? "Created by " : "Updated by ") + Obj.CreatedBy + " at " + Obj.CreatedAt;
+            $trans.append(` <div class="trans-head row">
+                                <div class="col-md-10" style="padding: 5px 8px;">
+                                    <div style="display:inline-block;"><i class="fa fa-chevron-down"></i></div>
+                                    <div style="display:inline-block;">${temptitle}</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div style="float: right;">
+                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/imagenotfound.svg';" style="height: 30px; border-radius: 15px;">
+                                    </div>                                    
+                                </div>
+                            </div>`);
+
+            $trans.append(`<div class="trans-body collapse in"></div>`);
+            let tempHtml = ``;
+
+            $.each(Obj.Tables, function (i, Tbl) {
+                $.each(Tbl.Columns, function (j, Row) {
+                    tempHtml += `
+                        <tr>
+                            <td class="col-md-4 col-sm-4">${Row.Title}</td>
+                            <td class="col-md-4 col-sm-4" style="color: red;">${Row.NewValue}</td>
+                            <td class="col-md-4 col-sm-4">${Row.OldValue}</td>
+                        </tr>`;
+                });
+            });
+            if (tempHtml.length !== 0) {
+                tempHtml = `<div class="form-table-div"><table class="table table-bordered first-table" style="width:100%; margin: 0px;">
+                                <thead>
+                                    <tr class="table-title-tr">
+                                        <th class="col-md-4 col-sm-4">Field Name</th>
+                                        <th class="col-md-4 col-sm-4">New Value</th>
+                                        <th class="col-md-4 col-sm-4">Old Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`
+                    + tempHtml +
+                    `</tbody>
+                            </table></div>`;
+                $trans.children(".trans-body").append(tempHtml);
+            }
+
+            tempHtml = ``;
+
+            $.each(Obj.GridTables, function (i, Tbl) {
+                tempHtml += `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
+                                <thead>
+                                    <tr class="table-title-tr">
+                                        <th></th>`;
+                $.each(Tbl.ColumnMeta, function (j, cmeta) {
+                    tempHtml += `<th>${cmeta}</th>`;
+                });
+                tempHtml += `     </tr>
+                                </thead><tbody>`;
+                $.each(Tbl.Rows, function (m, Cols) {
+                    let newRow = `<tr><td>New</td>`;
+                    let oldRow = `<tr><td>Old</td>`;
+                    $.each(Cols.Columns, function (n, Col) {
+                        if (Col.IsModified)
+                            newRow += `<td style="color: red;">${Col.NewValue}</td>`;
+                        else
+                            newRow += `<td>${Col.NewValue}</td>`;
+                        oldRow += `<td>${Col.OldValue}</td>`;
+                    });
+                    newRow += `</tr>`;
+                    oldRow += `</tr>`;
+                    tempHtml += newRow + oldRow;
+                });
+
+                tempHtml += `</tbody></table></div>`;
+            });
+            $trans.children(".trans-body").append(tempHtml);
+            $transAll.append($trans);
+        });
+
+        $("#divAuditTrail").children().remove();
+        $("#divAuditTrail").append($transAll);
+
+        $("#divAuditTrail .trans-head").on("click", function (e) {
+            $(e.target).closest(".trans-head").next().collapse('toggle');
+            let $iele = $(e.target).closest(".trans-head").find("i");
+
+            if ($iele.hasClass("fa-chevron-right")) {
+                $iele.removeClass("fa-chevron-right");
+                $iele.addClass("fa-chevron-down");
+            }
+            else if ($iele.hasClass("fa-chevron-down")) {
+                $iele.removeClass("fa-chevron-down");
+                $iele.addClass("fa-chevron-right");
+            }
+
+        });
+    };
+    
     this.showLoader = function () {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
@@ -711,6 +841,7 @@ const WebFormRender = function (option) {
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
+        this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
         $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();

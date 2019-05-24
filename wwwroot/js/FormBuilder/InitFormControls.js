@@ -31,7 +31,7 @@
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: 'https://se.eb-test.xyz',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.xyz',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
@@ -140,7 +140,7 @@
                 ctrl = { name: ctrl, ebDateType: 5 };
             var settings = { timepicker: false };
 
-            if (ctrl.EbDateType === 5) {
+            if (ctrl.EbDateType === 5) { //Date
                 $input.datetimepicker({
                     format: sdp,
                     formatTime: stp,
@@ -149,8 +149,9 @@
                     datepicker: true,
                     mask: true
                 });
+                $input.val(userObject.Preference.ShortDate);
             }
-            else if (ctrl.EbDateType === 17) {
+            else if (ctrl.EbDateType === 17) { //Time
                 $input.datetimepicker({
                     format: stp,
                     formatTime: stp,
@@ -158,28 +159,30 @@
                     timepicker: true,
                     datepicker: false
                 });
+                $input.val(userObject.Preference.ShortTime);
             }
             else {
-                $input.datetimepicker({
+                $input.datetimepicker({ //DateTime
                     format: sdp + " " + stp,
                     formatTime: stp,
                     formatDate: sdp,
                     timepicker: true,
                     datepicker: true
                 });
+                $input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
 
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
 
-            if (ctrlOpts.source === "webform") {
+            //if (ctrlOpts.source === "webform") {
                 //let maskPattern = "DD-MM-YYYY";
                 //$input.attr("placeholder", maskPattern);
                 //$input.inputmask(maskPattern);               
-
-                if (!ctrl.IsNullable)
-                    $input.val(userObject.Preference.ShortDate);
-            }
+                
+            //    if (!ctrl.IsNullable)
+            //        $input.val(userObject.Preference.ShortDate);
+            //}
 
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
@@ -388,6 +391,17 @@
             });
             $ctrlDiv.val(values.substring(1));
         });
+    };
+
+    this.Button = function (ctrl) {
+        $('#' + ctrl.EbSid_CtxId).removeAttr("disabled");
+        $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
+    };
+
+    this.iFrameOpen = function (ctrl) {
+        let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
+        $("#iFrameForm").attr("src", url);
+        $("#iFrameFormModal").modal("show");
     };
 
     this.Numeric = function (ctrl) {

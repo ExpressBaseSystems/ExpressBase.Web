@@ -2,12 +2,41 @@
     height: 300px;
 }
 
-#orderby-list {
-    height: 200px;
+#columns-list .tool_item_body {
+    display: flex;
+    flex-direction: row;
 }
 
-.page-outer-cont{
-    margin-left:260px !important; 
+#columns-list .tool_item_head {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 0px!important;
+}
+
+.tool_item_head_columns {
+    padding: 2px 0px;
+}
+
+.tool_item_head_orderby {
+    float: right;
+    width: 17.2%;
+    text-align: center;
+    border-left: 1px solid #ccc;
+    padding: 2px 0px;
+}
+
+#columns-list-body {
+    height: inherit;
+    width: 96%;
+}
+
+#columns-list-orderby {
+    width: 20%;
+    border: 1px solid #ccc;
+}
+
+.page-outer-cont {
+    margin-left: 260px !important;
 }
 .table-out-cont {
     display: flex;

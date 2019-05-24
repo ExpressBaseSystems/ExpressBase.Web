@@ -230,6 +230,7 @@
         this.ColumnDropped();
         if (!this.isNew) {
             this.RowgroupColumnDropped();
+            this.OrderbyColumnDropped();
             this.CreateButtons();
         }
     }
@@ -295,13 +296,14 @@
 
     initializeDragula() {
         if (this.drake === null) {
-            this.drake = new dragula([document.getElementById("columns-list-body"), document.getElementById("calcfields-childul")], {
+            this.drake = new dragula([document.getElementById("columns-list-body"), document.getElementById("columns-list-orderby"), document.getElementById("calcfields-childul")], {
                 accepts: this.acceptDrop.bind(this),
                 copy: this.copyfunction.bind(this)
             });
         }
         else {
             this.drake.containers.push(document.getElementById("columns-list-body"));
+            this.drake.containers.push(document.getElementById("columns-list-orderby"));
             this.drake.containers.push(document.getElementById("calcfields-childul"));
         }
         for (var i = 0; i < $(".tablecolumns").length; i++) {
@@ -338,14 +340,30 @@
             else
                 return true;
         }
+        if ($(target).attr("id") === "columns-list-orderby" && $(source).hasClass("tablecolumns") ) {
+            let key = $(el).attr("eb-name");
+            let obj = $.grep(this.EbObject.OrderBy.$values, function (obj) { return obj.name === key; });//n Or N
+            if (obj.length === 0)
+                return true;
+            else
+                return false;
+        }
         if ($(target).attr("id") === "columns-list-body" && $(source).attr("id") === "columns-list-body") {
+            return true;
+        }
+        if ($(target).attr("id") === "columns-list-orderby" && $(source).attr("id") === "columns-list-orderby") {
             return true;
         }
         return false;
     }
 
     copyfunction(el, source) {
-        return $(source).attr("id") !== "columns-list-body";
+        if ($(source).attr("id") === "columns-list-orderby")
+            return false;
+        else if ($(source).attr("id") === "columns-list-body")
+            return false;
+        else
+            return true;
     }
 
     columnsDrop(el, target, source, sibling) {
@@ -354,7 +372,7 @@
             $(el).children(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
         }
         else if ($(target).attr("id") === "columns-list-body" && $(source).attr("id") === "columns-list-body") {
-            this.ReplaceObjects(el, target, source, sibling);
+            //this.ReplaceObjects(el, target, source, sibling);
         }
         else if ($(target).attr("id") === "columns-list-body") {
             this.ColumnDropRelated(el);
@@ -363,6 +381,16 @@
             this.EbObject.Columns.$values[index].bVisible = true;
             $(el).off("click").on("click", this.elementOnFocus.bind(this));
             $(el).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
+        }
+        else if ($(target).attr("id") === "columns-list-orderby" && $(source).attr("id") === "columns-list-orderby") {
+            //this.ReplaceObjects(el, target, source, sibling);
+        }
+        else if ($(target).attr("id") === "columns-list-orderby") {
+            this.OrderbyColumnDropRelated(el);
+            let name = $(el).attr("eb-name");
+            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
+            this.EbObject.OrderBy.$values.push(obj);
+            $(el).children(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
         }
     }
 
@@ -421,6 +449,16 @@
                 $(element).off("click").on("click", this.elementOnFocus.bind(this));
                 $(element).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
             }
+        }.bind(this));
+    }
+
+    OrderbyColumnDropped() {
+        $("#columns-list-orderby").empty();
+        $.each(this.EbObject.OrderBy.$values, function (i, obj) {
+            let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+            this.OrderbyColumnDropRelated(element);
+            $("#columns-list-orderby").append(element);
+            $(element).children(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
         }.bind(this));
     }
 
@@ -495,6 +533,14 @@
         this.AlldropElements(this.col);
     }
 
+    OrderbyColumnDropRelated(el) {
+        this.col = $(el);
+        let name = this.col.attr('eb-name');
+        let obj = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; })[0];
+        this.col.attr("id", obj.EbSid).attr("tabindex", "1");
+        this.AlldropElements(this.col);
+    }
+
     RowgroupColumnDrop(el) {
         this.col = $(el);
         this.Objtype = this.col.attr('eb-type');
@@ -525,6 +571,13 @@
         let index = this.EbObject.Columns.$values.findIndex(function (obj) { return obj.name === key; }.bind(this));
         delete this.objCollection[key];
         this.EbObject.Columns.$values[index].bVisible = false;
+        element.remove();
+    }
+
+    RemoveOrderbyColumn(e) {
+        let element = $(e.target).closest("li");
+        let key = element.attr("eb-name");
+        this.EbObject.OrderBy.$values = this.EbObject.OrderBy.$values.filter(function (obj) { return obj.name !== key; }.bind(this));
         element.remove();
     }
 
@@ -780,12 +833,13 @@
     }
 
     BeforeSave() {
-        this.ReArrangeObjects();
+        this.ReArrangeColumnObjects();
+        this.ReArrangeOrderbyObjects();
         this.RemoveColumnRef();
         return true;
     }
 
-    ReArrangeObjects() {
+    ReArrangeColumnObjects() {
         let elemnts = $("#columns-list-body li");
         let visibleobjects = [];
         $.each(elemnts, function (i, item) {
@@ -797,6 +851,16 @@
         let nonvisibleobjcts = this.EbObject.Columns.$values.filter(function (obj) { return obj.bVisible !== true; });
         this.EbObject.NotVisibleColumns.$values = nonvisibleobjcts;
         this.EbObject.Columns.$values = visibleobjects.concat(nonvisibleobjcts);
+    }
+
+    ReArrangeOrderbyObjects() {
+        this.EbObject.OrderBy.$values = [];
+        let elemnts = $("#columns-list-orderby li");
+        $.each(elemnts, function (i, item) {
+            let name = $(item).attr("eb-name");
+            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; });
+            this.EbObject.OrderBy.$values.push(obj[0]);
+        }.bind(this));
     }
 
     ReplaceObjects(el, target, source, sibling) {

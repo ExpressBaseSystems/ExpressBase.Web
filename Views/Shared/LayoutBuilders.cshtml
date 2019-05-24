@@ -5,8 +5,7 @@
         bApnd = false;
     }
 }
-<!DOCTYPE html>
-<html>
+
 <head>
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -147,6 +146,8 @@
     }
     </script>
 </head>
+
+
 <body>
     @if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
     {
@@ -179,7 +180,9 @@
         @RenderBody()
     </div>
 </body>
-</html>
+
+
+
 <script>
     var menu = new menujs('@ViewBag.wc','@ViewBag.cid','@ViewBag.UId');//init menu
     $("#layout_div").data("menu", menu);

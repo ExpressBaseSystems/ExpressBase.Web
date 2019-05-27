@@ -36,6 +36,16 @@
     //Builds property Grid rows
     this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf, IsCElimitEditor) {
         let valueHTML;
+        let alias = meta.alias || name
+            // insert a space before all caps
+            .replace(/([A-Z])/g, ' $1').trim()
+            // uppercase the first character
+            .replace(/^./, function (str) { return str.toUpperCase(); })
+            // lowercase the first character after space
+            .replace(/ ([A-Z])/g, function (str) { return str.toLowerCase(); })
+            // replace underscores with space
+            .replace(/_/g, " ").replace(/  +/g, ' ');
+
         let type = meta.editor;
         let elemId = this.wraperId + name;
         let subRow_html = '', subtypeOfAttr = '', req_html = '', arrow = '', isExpandedAttr = '';
@@ -189,7 +199,7 @@
                 if ($subRow_html.length > 0)
                     subRow_html = $subRow_html.wrapAll('<div>').parent().html();
                 else
-                    value23 = `(!No ${(meta.alias || name)} found)`;
+                    value23 = `(!No ${(alias || name)} found)`;
             }
             else {  //  If expandable
                 let _meta = meta.submeta;
@@ -221,7 +231,7 @@
         }
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
-        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + (alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
     // gives expandable prop values as array
@@ -405,7 +415,11 @@
             delete this.PropsObj[this.dependedProp];
         let propArray = Object.keys(this.PropsObj);
         //for (let property in this.PropsObj) { propArray.push(property); }
-        propArray.sort();
+        //propArray.sort();
+        propArray = this.Metas.sort(function (a, b) {
+            return b.Priority - a.Priority;
+        }).map(a => a.name);
+
         let prop = null;
         for (let i in propArray) {
             prop = propArray[i];

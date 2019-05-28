@@ -480,7 +480,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             `<div id='graphcontainer_tab${this.tableId}' style='height:inherit;' class='chartCont'>
                 <div class='col-md-2 no-padd' id='columnsDisplay${this.tableId}' style='height:inherit;'>
                 <div class='tag-cont'>
-                  <div class='tag-wraper'><div class='pgHead'>Data</div><div class='tag-scroll'><div id='ColumnCont${this.tableId}'></div></div></div>
+                  <div class='tag-wraper'><div class='pgHead'>Data</div><div class='tag-scroll'><div id='ColumnCont${this.tableId}'></div>
                     <ul id="data-table-list_${this.tableId}" class="tool-box-items">
                         <li>
                             <a>Diamensions</a>
@@ -491,6 +491,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                             <ul id="measure${this.tableId}"></ul>
                         </li>
                     </ul>
+                </div></div>
                 </div>
                 </div>
                 <div class='col-md-10' id='canvasParentDiv${this.tableId}' style='height:inherit;'>
@@ -842,7 +843,7 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
                 $("#layout_div").prepend(`
                 <script src= "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js" ></script>
                 <script async defer
-                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh12bqSKCYb6sJ9EVzNkEyXEDZ__UA-TE&callback=initMap">
+                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqvPOq5Nuc2pML40vzYaKOA67THK-5UOs&callback=initMap">
                 </script>`);
             }
             else {

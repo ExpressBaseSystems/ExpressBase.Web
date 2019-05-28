@@ -478,6 +478,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
         }
+        this.EbObject.IsPaging = !this.IsTree;
     };
 
 
@@ -794,7 +795,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.CurrentRowGroup !== null) {
             if (this.CurrentRowGroup.RowGrouping.$values.length > 0) {
                 for (let i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
-                    tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 1));
+                    tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 0));
             }
             if (this.orderColl.length > 0) {
                 $.each(this.orderColl, function (i, obj) {
@@ -804,7 +805,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 if (this.CurrentRowGroup.OrderBy.$values.length > 0) {
                     for (let i = 0; i < this.CurrentRowGroup.OrderBy.$values.length; i++)
-                        tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 1));
+                        tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 0));
                 }
             }
         }
@@ -813,7 +814,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.EbObject.OrderBy.$values.length > 0) {
                 $.each(this.EbObject.OrderBy.$values, function (i, obj) {
                     if (tempArray.filter(e => e.Column === obj.name).length === 0)
-                        tempArray.push(new order_obj(obj.name, 1));
+                        tempArray.push(new order_obj(obj.name, obj.Direction));
                 });
             }
 
@@ -823,7 +824,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     tempArray.push(obj);
                 else {
                     tempArray.splice(index, 1);
-                    obj.Direction = (obj.Direction === 1) ? 2 : 1;
+                    obj.Direction = (obj.Direction === 0) ? 1 : 0;
                     tempArray.push(obj);
                 }
 
@@ -2392,7 +2393,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.FormNewGroup = function (key, opt, event) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../WEBFORM/index?refid=" + this.GroupFormLink;
+        let url = "../webform/index?refid=" + this.GroupFormLink;
         var _form = document.createElement("form");
         _form.setAttribute("method", "post");
         _form.setAttribute("action", url);
@@ -2744,7 +2745,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var cls = $(e.target).attr('class');
         if (col !== '' && col !== "#") {
             this.order_info.col = tempobj[0].name;
-            this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 2 : 1;
+            this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 1 : 0;
             //this.orderColl = $.grep(this.orderColl, function (obj) { return obj.Column !== this.order_info.col }.bind(this));
             //if (this.EbObject.rowGrouping.$values.length === 0)
             //    this.orderColl = [];

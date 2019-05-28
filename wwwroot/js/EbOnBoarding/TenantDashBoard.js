@@ -1,38 +1,4 @@
-﻿var TenantDashBoard = function (collection, IsSSO,email,apptype) {
-    this.EbSolutionColl = collection;
-    this.IsSSO = IsSSO;
-    this.EmailForSSO = email;
-    this.apptype = apptype;
-
-    this.drawSolutionTiles = function () {
-        for (var item = 0; item < this.EbSolutionColl.length; item++) {
-            $(".tdash-box-body").prepend(`<div class="solution_container">
-                    <div class="solution_container_pd w-100">
-                        <div class="w-100 s_info_img text-center">
-                            <img class="img-responsive" src="/images/your_company_logo.png" />
-                        </div>
-                        <div class="s_info w-100">
-                                <h4>${this.EbSolutionColl[item].SolutionName}</h4>
-                                <p class="small mr-0">${this.EbSolutionColl[item].Description || 'no description'}</p>
-                                <p class="small mr-0">${this.EbSolutionColl[item].DateCreated}</p>
-                        </div>
-                        <div class="sso_head text-center">
-                            <a sid="${this.EbSolutionColl[item].IsolutionId}" wc="uc" target="_blank" class="btn tdash_btn c-blue single__sso">
-                                <i class="fa fa-user-o" aria-hidden="true"></i>
-                            </a>
-                            <a sid="${this.EbSolutionColl[item].IsolutionId}" wc="dc" target="_blank" class="btn tdash_btn c-orange single__sso">
-                                <i class="fa fa-wrench" aria-hidden="true"></i>
-                            </a>
-                            <a href="MySolutions/${this.EbSolutionColl[item].IsolutionId}" target="_blank" class="btn c-normal tdash_btn">
-                                <i class="fa fa-cog" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>`);
-        }
-        $("body").off("click").on("click",".single__sso", this.goToSolutionWindow.bind(this));
-    };
-
+﻿var TenantDashBoard = function () {        
     this.goToSolutionWindow = function (e) {
         var console = $(e.target).closest(".btn").attr("wc");
         var sid = $(e.target).closest(".btn").attr("sid");
@@ -61,9 +27,22 @@
         document.body.appendChild(form);
         form.submit();
     };
+
+    this.searchSolution = function (e) {
+        var srch = $(e.target).val().toLowerCase();
+        $.each($(".tdash-box-body .solution_container"), function (i, obj) {
+            var cmpstr = $(obj).find('[name="SolutionTitle"]').text().toLowerCase();
+            if (cmpstr.indexOf(srch) !== -1) {
+                $(obj).show();
+            }
+            else
+                $(obj).hide();
+        });
+    }
     
     this.init = function () {
-        this.drawSolutionTiles();
+        $("body").off("click").on("click", ".single__sso", this.goToSolutionWindow.bind(this));
+        $("#solSearch").off("keyup").on("keyup", this.searchSolution.bind(this));
     };
   
     this.init();

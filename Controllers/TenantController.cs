@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Controllers
 
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-        [EbBreadCrumbFilter()]
+        [EbBreadCrumbFilter("Solutions")]
         [HttpGet("MySolutions")]
         public IActionResult TenantDashboard()
         {

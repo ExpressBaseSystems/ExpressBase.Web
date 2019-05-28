@@ -208,8 +208,8 @@ body {
 
 .tdash-box-body {
     padding: 0 12px;
-    float: left;
-    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
 }
 
 .solutionhead {

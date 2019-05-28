@@ -681,13 +681,14 @@ const WebFormRender = function (option) {
     };
 
     this.GetAuditTrail = function () {
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         $("#AuditHistoryModal").modal("show");
         $("#divAuditTrail").children().remove();
         $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
             url: "../WebForm/GetAuditTrail",
-            data: { refid: this.formRefId, rowid: this.rowId },
+            data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: currentLoc },
             error: function () {
                 $("#divAuditTrail").children().remove();
                 $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);

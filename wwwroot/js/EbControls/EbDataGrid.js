@@ -67,6 +67,12 @@
         this.tryAddRow();
     };
 
+    this.SwitchToViewMode = function () {
+        $(`#${this.TableId} tbody [is-editing=true]`).remove();
+        $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "view");
+        this.mode_s = "view";
+    };
+
     //this.j = function (p1) {
     //    let VMs = this.initializer.Vobj.valueMembers;
     //    let DMs = this.initializer.Vobj.displayMembers;

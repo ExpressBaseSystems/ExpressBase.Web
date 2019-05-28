@@ -983,3 +983,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*background-image: var(--gbm);*/
     background-color: rgb(199, 199, 199);
 }
+.webform-cont .eb-textarea {
+    border: solid 1px #eee;
+    resize: none;
+    background-attachment: local;
+    background-image: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #ddd 18px, #ddd 19px, white 19px);
+    line-height: 19px;
+    padding: 2px 0px;
+}

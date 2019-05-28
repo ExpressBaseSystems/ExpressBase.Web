@@ -256,6 +256,11 @@
     box-shadow: 0 0 3px rgb(255, 255, 255) inset;
     outline: 0 none;
 }
+.dgtbl .row-no-td {
+    width: 58px;
+    text-align: center;
+    padding: 3px !important;
+}
 
 .ctrl-edit {
     position: absolute;
@@ -841,7 +846,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .grid-cont .Dg_head, .Dg_footer {
-    padding-right: 17px;
+    padding-right: 8px;
 }
 
 .Dg_footer {
@@ -967,3 +972,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     .filter-box .input-group-addon > .fa, .form-buider-form .input-group-addon > .fa {
         padding: 3px 7px !important;
     }
+
+.grid-cont ::-webkit-scrollbar {
+    width: 8px;
+    background-color: #F5F5F5;
+}
+
+.grid-cont ::-webkit-scrollbar-thumb {
+    border-radius: 1px;
+    /*background-image: var(--gbm);*/
+    background-color: rgb(199, 199, 199);
+}

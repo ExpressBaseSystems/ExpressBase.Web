@@ -37,7 +37,7 @@ namespace ExpressBase.Web.Controllers
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
                 if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
-                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), -1);////////////////////////current location
+                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
                     if (wfd.MultipleTables.Count == 0)
                     {
                         ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
@@ -146,12 +146,12 @@ namespace ExpressBase.Web.Controllers
             return Resp.RowAffected;
         }
 
-        public string GetAuditTrail(string refid, int rowid, int currentloc = -1)
+        public string GetAuditTrail(string refid, int rowid, int currentloc)
         {
             //throw new FormException("Exception: AuditTrail not implemented");
             try
             {
-                if (this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
+                if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
                 {
                     GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid, UserObj = this.LoggedInUser });
                     return Resp.Json;

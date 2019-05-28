@@ -12,6 +12,9 @@
 <link rel="stylesheet" type="text/css" href="~/css/DVBuilder.css" />
 <script type="text/javascript" src="~/js/DVBuilder.js" asp-append-version=@bApnd></script>
 
+<link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" />
+<script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>
+
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -167,21 +170,21 @@
                     </div>
                 </div>
                 @*<div id="side-orderby" class="side-orderby">
-                    <div class="side-inner-orderby" id="side-inner-orderby">
-                        <div id="rowgroup-orderby">
-                            <div class="tool_item_head">
-                                <i class="fa fa-caret-down"></i> Rowgroup Orderby
+                        <div class="side-inner-orderby" id="side-inner-orderby">
+                            <div id="rowgroup-orderby">
+                                <div class="tool_item_head">
+                                    <i class="fa fa-caret-down"></i> Rowgroup Orderby
+                                </div>
+                                <div class="tool_item_body" id="rowgroup-orderby-body"></div>
                             </div>
-                            <div class="tool_item_body" id="rowgroup-orderby-body"></div>
-                        </div>
-                        <div id="column-orderby">
-                            <div class="tool_item_head">
-                                <i class="fa fa-caret-down"></i> Column Orderby
+                            <div id="column-orderby">
+                                <div class="tool_item_head">
+                                    <i class="fa fa-caret-down"></i> Column Orderby
+                                </div>
+                                <div class="tool_item_body" id="column-orderby-body"></div>
                             </div>
-                            <div class="tool_item_body" id="column-orderby-body"></div>
                         </div>
-                    </div>
-                </div>*@
+                    </div>*@
             </div>
         </div>
 
@@ -238,4 +241,43 @@
     });
 
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = DVobj;
+
+    //setTimeout(function () {
+    //    var tour = new Tour(
+    //        {
+    //            Stack: [
+    //                {
+    //                    element: "#quik_menu",
+    //                    content: "Open menu",
+    //                    title: "Menu",
+    //                    click: true
+    //                },
+    //                {
+    //                    element: "#preview_tab_btn",
+    //                    content: "Preview vis",
+    //                    title: "Preview"
+    //                },
+    //                {
+    //                    element: "#oldbuilder",
+    //                    content: "go to older version",
+    //                    title: "Older"
+    //                },
+    //                {
+    //                    element: "#save",
+    //                    content: "save object",
+    //                    title: "Save"
+    //                },
+    //                {
+    //                    element: "#commit_outer",
+    //                    content: "comit object",
+    //                    title: "Commit"
+    //                },
+    //                {
+    //                    element: "#minmize",
+    //                    content: "map appliaction to the current object",
+    //                    title: "Object DashBoard"
+    //                }
+    //            ]
+    //        })
+    //}, 1000)
 </script>

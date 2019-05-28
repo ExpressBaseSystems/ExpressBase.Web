@@ -7,6 +7,11 @@
     const SetLoc = "#setLocSub";
     const container = ".loc_switchModal_outer";
     const EmptyLocs = ".no_loc_config";
+    this.Listener = {
+        ChangeLocation: function (LocObject) {
+
+        }
+    };
 
     this.Tid = options.Tid || null;
     this.Uid = options.Uid || null;
@@ -68,17 +73,24 @@
 
     this.selectLoc = function (e) {
         let radioContainer = $(e.target).closest(".locationwrapper").find(".md-radio_wrapr");
-        if (!eval(radioContainer.attr("ischecked"))) {
-            radioContainer.find(".checked").show();
-            radioContainer.find(".unchecked").hide();
-            radioContainer.attr("ischecked", true);
-            this.CurrentLoc = radioContainer.attr("LocId");
-            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
-            this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
-            this.uncheckOthers($(e.target).closest(".locationwrapper"));
+        try {
+            if (!eval(radioContainer.attr("ischecked"))) {
+                radioContainer.find(".checked").show();
+                radioContainer.find(".unchecked").hide();
+                radioContainer.attr("ischecked", true);
+                this.CurrentLoc = radioContainer.attr("LocId");
+                this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+                this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+                this.uncheckOthers($(e.target).closest(".locationwrapper"));
+                this.Listener.ChangeLocation(this.CurrentLocObj);
+            }
+            else {
+                this.uncheckOthers($(e.target).closest(".locationwrapper"));
+            }
         }
-        else {
-            this.uncheckOthers($(e.target).closest(".locationwrapper"));
+        catch (err) {
+            console.log(err);
+            this.Listener.ChangeLocation(null);
         }
     };
 
@@ -105,6 +117,28 @@
             else
                 $(".loc_switchModal_fade").hide();
         });
+    };
+
+    this.SwitchLocation = function (id) {
+        try {
+            let radioContainer = $(container + " .locs_bdy").find(`div[Locid='${id}']`);
+            this.CurrentLoc = radioContainer.attr("LocId");
+            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+            if ($.isEmptyObject(this.CurrentLocObj) || this.CurrentLocObj === undefined)
+                throw "no such location";
+            else {
+                radioContainer.find(".checked").show();
+                radioContainer.find(".unchecked").hide();
+                radioContainer.attr("ischecked", true);
+                this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+                this.uncheckOthers(radioContainer.closest(".locationwrapper"));
+                return true;
+            }        
+        }
+        catch (error) {
+            console.log(error);
+            return false;
+        }
     };
 
     this.trigger();

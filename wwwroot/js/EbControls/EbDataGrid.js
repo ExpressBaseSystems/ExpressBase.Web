@@ -251,7 +251,8 @@
 
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let isAnyColEditable = false;
-        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>`;
+        let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
+                    <td class='row-no-td' idx='${this.rowCounter++}'>${this.rowCounter}</td>`;
         this.AllRowCtrls[rowid] = [];
 
         $.each(this.ctrl.Controls.$values, function (i, col) {
@@ -680,6 +681,7 @@
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
         this.S_cogsTdHtml = "";
+        this.rowCounter = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             col.getValue = this.ColGetvalueFn;

@@ -36,6 +36,16 @@
     //Builds property Grid rows
     this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf, IsCElimitEditor) {
         let valueHTML;
+        let alias = meta.alias || name
+            // insert a space before all caps
+            .replace(/([A-Z])/g, ' $1').trim()
+            // uppercase the first character
+            .replace(/^./, function (str) { return str.toUpperCase(); })
+            // lowercase the first character after space
+            .replace(/ ([A-Z])/g, function (str) { return str.toLowerCase(); })
+            // replace underscores with space
+            .replace(/_/g, " ").replace(/  +/g, ' ');
+
         let type = meta.editor;
         let elemId = this.wraperId + name;
         let subRow_html = '', subtypeOfAttr = '', req_html = '', arrow = '', isExpandedAttr = '';
@@ -85,7 +95,7 @@
         //else if (type === 25) {
         //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
         //}
-        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26|| type === 27|| type === 35) {//  If collection editor
+        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26 || type === 27 || type === 35) {//  If collection editor
             if ((meta.Limit === 1 && type === 25) || (meta.Limit === 1 && type === 8)) {
                 let _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
@@ -189,7 +199,7 @@
                 if ($subRow_html.length > 0)
                     subRow_html = $subRow_html.wrapAll('<div>').parent().html();
                 else
-                    value23 = `(!No ${(meta.alias || name)} found)`;
+                    value23 = `(!No ${(alias || name)} found)`;
             }
             else {  //  If expandable
                 let _meta = meta.submeta;
@@ -221,17 +231,17 @@
         }
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
-        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + (alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
     // gives expandable prop values as array
     this.getExpandedRows = function (_meta, _obj, name) {
         let subRow_html = "";
-        $.each(_obj, function (key, val) {
-            let CurMeta = getObjByval(_meta, "name", key);
-            if (CurMeta)
-                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
-        }.bind(this));
+            $.each(_obj, function (key, val) {
+                let CurMeta = getObjByval(_meta, "name", key);
+                if (CurMeta)
+                    subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+            }.bind(this));
         return subRow_html;
     };
 
@@ -405,7 +415,10 @@
             delete this.PropsObj[this.dependedProp];
         let propArray = Object.keys(this.PropsObj);
         //for (let property in this.PropsObj) { propArray.push(property); }
-        propArray.sort();
+        //propArray.sort();
+        let _Metas = [...this.Metas];
+        propArray = _Metas.sort(function (a, b) { return b.Priority - a.Priority; }).map(a => a.name);
+
         let prop = null;
         for (let i in propArray) {
             prop = propArray[i];

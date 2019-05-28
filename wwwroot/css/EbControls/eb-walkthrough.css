@@ -1,0 +1,86 @@
+﻿
+.ebTour_bodyWrpr {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    z-index: 2000;
+    opacity: .5;
+    /*display:none;*/
+}
+.ebTour_bodyWrprInner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    /*display:none;*/
+}
+.TourTile {
+    background: white;
+    width: 350px;
+    border-radius: 6px;
+    font-family: open sans;
+    border-top-left-radius: 0;
+    transition: all .3s ease-out;
+    box-shadow: 0 2px 15px rgba(0,0,0,.4);
+    -webkit-transition: all .3s ease-out;
+    -moz-transition: all .3s ease-out;
+    -ms-transition: all .3s ease-out;
+    -o-transition: all .3s ease-out;
+}
+.TourTileInner {
+    padding: 10px;
+}
+.TourTileHead {
+    border-bottom: 1px solid #ccc;
+    padding: 2px 0;
+}
+.TourTileContent {
+    padding: 10px 0;
+    line-height: 1.8em;
+}
+.TourTileFooter {
+    padding-top: 2px;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+}
+.TourTileBtn {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #524f4f;
+}
+.TilePointer {
+    position: absolute;
+    width: 30px;
+    height: 25px;
+    /*left: 0;*/
+    top: -25px;
+    background: white;
+    -webkit-clip-path: polygon(0 0, 0% 100%, 100% 100%);
+    clip-path: polygon(0 0, 0% 100%, 100% 100%);
+}
+.el_current {
+    border: 4px solid #ef6666;
+}
+.touFtr-skip {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    color: white;
+    font-size: 15px;
+    font-weight: 400;
+}
+.touFtr-showAgn {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    color: white;
+    font-size: 15px;
+    font-weight: 400;
+}

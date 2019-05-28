@@ -518,6 +518,9 @@ const WebFormRender = function (option) {
         $.each(this.flatControls, function (k, ctrl) {
             ctrl.disable();
         }.bind(this));
+        $.each(this.DGs, function (k, DG) {
+            this.DGBuilderObjs[DG.Name].SwitchToViewMode();
+        }.bind(this));
     };
 
     this.SwitchToEditMode = function () {

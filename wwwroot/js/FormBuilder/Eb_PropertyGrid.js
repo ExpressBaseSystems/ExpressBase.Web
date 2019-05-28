@@ -95,7 +95,7 @@
         //else if (type === 25) {
         //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
         //}
-        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26|| type === 27|| type === 35) {//  If collection editor
+        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26 || type === 27 || type === 35) {//  If collection editor
             if ((meta.Limit === 1 && type === 25) || (meta.Limit === 1 && type === 8)) {
                 let _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
@@ -237,11 +237,11 @@
     // gives expandable prop values as array
     this.getExpandedRows = function (_meta, _obj, name) {
         let subRow_html = "";
-        $.each(_obj, function (key, val) {
-            let CurMeta = getObjByval(_meta, "name", key);
-            if (CurMeta)
-                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
-        }.bind(this));
+            $.each(_obj, function (key, val) {
+                let CurMeta = getObjByval(_meta, "name", key);
+                if (CurMeta)
+                    subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+            }.bind(this));
         return subRow_html;
     };
 
@@ -416,9 +416,8 @@
         let propArray = Object.keys(this.PropsObj);
         //for (let property in this.PropsObj) { propArray.push(property); }
         //propArray.sort();
-        propArray = this.Metas.sort(function (a, b) {
-            return b.Priority - a.Priority;
-        }).map(a => a.name);
+        let _Metas = [...this.Metas];
+        propArray = _Metas.sort(function (a, b) { return b.Priority - a.Priority; }).map(a => a.name);
 
         let prop = null;
         for (let i in propArray) {

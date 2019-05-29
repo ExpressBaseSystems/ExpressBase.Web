@@ -122,12 +122,16 @@
 @if (ViewBag.wc == "uc")
 {
     <script>
-        let loc__ = new LocSwitch({
+        var loc__ = new LocSwitch({
             Location: '@Html.Raw(ViewBag.Locations)',
             Tid: '@ViewBag.cid',
             Uid:'@ViewBag.UId',
             Current:@ViewBag.CurrentLocation
         });
+
+        //loc__.Listener.ChangeLocation = function (o) {
+        //    console.log(o);
+        //}
     </script>
 }
 <script>

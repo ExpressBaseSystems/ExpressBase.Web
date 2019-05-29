@@ -241,15 +241,20 @@ const WebFormRender = function (option) {
 
     this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
         $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
+            let val = SingleColumn.Value;
+
             if (SingleColumn.Name === "id")
                 return true;
+            if (val === null)
+                return true;
+
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (ctrl.ObjType === "PowerSelect") {
                 //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember([SingleColumn.Value, this.FormDataExtended[ctrl.EbSid]]);
+                ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
             }
             else
-                ctrl.setValue(SingleColumn.Value);
+                ctrl.setValue(val);
         }.bind(this));
     };
 

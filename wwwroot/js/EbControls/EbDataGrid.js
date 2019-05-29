@@ -144,6 +144,8 @@
 
 
                 let val = SingleColumn.Value;
+                if (val === null)
+                    return true;
 
                 if (ctrl.ObjType === "PowerSelect") {
                     //ctrl.setDisplayMember = this.j;

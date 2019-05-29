@@ -929,9 +929,9 @@ const WebFormRender = function (option) {
             this.setEditModeCtrls();
             this.SwitchToViewMode();
 
-            if (store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString() !== _formData.MultipleTables[_formData.MasterTable][0].LocId.toString()) {
-                EbDialog("show",
-                    {
+            setTimeout(function () {
+                if (store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString() !== _formData.MultipleTables[_formData.MasterTable][0].LocId.toString()) {
+                    EbDialog("show",{
                         Message: "Location Switching...",
                         Buttons: {
                             "Ok": {
@@ -945,8 +945,31 @@ const WebFormRender = function (option) {
                             this.setHeader(this.mode);
                         }.bind(this)
                     });
-            }                
+                }  
+
+                loc__.Listener.ChangeLocation = function (o) {
+                    if (this.rowId > 0) {
+                        EbDialog("show", {
+                            Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                            Buttons: {
+                                "Ok": {
+                                    Background: "green",
+                                    Align: "right",
+                                    FontColor: "white;"
+                                }
+                            },
+                            CallBack: function (name) {
+                                window.location = window.location.href;
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this);
+
+            }.bind(this), 500);
+
         }
+
+       
     };
 
     this.init();

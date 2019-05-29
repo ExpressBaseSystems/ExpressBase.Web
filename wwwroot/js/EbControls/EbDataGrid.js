@@ -144,6 +144,8 @@
 
 
                 let val = SingleColumn.Value;
+                if (val === null)
+                    return true;
 
                 if (ctrl.ObjType === "PowerSelect") {
                     //ctrl.setDisplayMember = this.j;
@@ -258,7 +260,7 @@
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let isAnyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
-                    <td class='row-no-td' idx='${this.rowCounter++}'>${this.rowCounter}</td>`;
+                    <td class='row-no-td' idx='${++this.rowCounter}'>${this.rowCounter}</td>`;
         this.AllRowCtrls[rowid] = [];
 
         $.each(this.ctrl.Controls.$values, function (i, col) {

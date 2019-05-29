@@ -1,0 +1,21 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+<script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
+<script>
+        $(document).ready(function () {
+            new addwiki();
+        });
+</script>
+<link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+<div class="">
+   @{
+       Wiki wiki = ViewBag.Wiki;
+       <h1>@wiki.Title</h1>
+       <h3>@wiki.Category</h3>
+       <p>@Html.Raw(wiki.HTML)</p>
+    }
+</div>

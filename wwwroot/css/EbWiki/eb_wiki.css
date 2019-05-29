@@ -1,0 +1,57 @@
+﻿
+.column {
+    float: left;
+    margin-top: 50px;
+    height: 600px;
+}
+
+.left {
+    padding-top: 50px;
+    padding-left: 30px;
+    width: 50%;
+    background-color: lightblue;
+    overflow: auto;
+}
+
+.right {
+    width: 50%;
+    PADDING-TOP: 30PX;
+}
+
+.style-4::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+.style-4::-webkit-scrollbar {
+    width: 5px;
+    background-color: #F5F5F5;
+}
+
+.style-4::-webkit-scrollbar-thumb {
+    background-color: #5650FE;
+    border: 2px solid #5650FE;
+}
+
+.left_view {
+    padding-top: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 20%;
+    background-color: lightblue;
+    overflow: auto;
+}
+
+.right1 {
+    width: 79%;
+    PADDING-TOP: 72PX;
+    padding-left: 139px;
+}
+.render {
+    background-color: lightgrey;
+    max-width: 636px;
+    height: 500px;
+    border: 2px solid blue;
+    padding: 50px;
+    margin: 20px;
+}

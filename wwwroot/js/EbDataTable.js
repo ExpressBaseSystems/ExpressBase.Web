@@ -618,8 +618,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//, 
         var serialObj = (JSON.parse('{ "data":' + this.EbObject.Columns.$values.length + ', "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
-        //if (this.IsTree);
-        //    serialObj.className = "reorder";
+        if (this.IsTree);
+            serialObj.bVisible = false;
         this.extraCol.push(serialObj);
         this.addcheckbox();
     }
@@ -752,7 +752,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 alert(Error);
             }
         }
-        //o.fnRowCallback = this.rowCallBackFunc.bind(this);
+        o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
         //o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
@@ -1183,6 +1183,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.rowCallBackFunc = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
         //this.colorRow(nRow, aData, iDisplayIndex, iDisplayIndexFull);
+        if (this.treeColumn) {
+            let elem = aData[this.treeColumn.data].split("&nbsp;").join("").split("&emsp;").join("");
+            let treeElem = $(elem);
+            $(nRow).attr("data-lvl", treeElem.attr("data-level"));
+        }
     };
 
     this.initCompleteFunc = function (settings, json) {
@@ -2513,31 +2518,37 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.collapseTreeGroup = function (e) {
-        var el = (typeof (e.target) !== "undefined") ? $(e.target) : $(e);
+        let el = (e.target) ? $(e.target) : $(e);
         if (!(el.is("i"))) {
             el = $(el).closest("i");
         }
-        elem = $(el).parents().closest("[role=row]");
-        var level = parseInt($(el).closest("[data-level]").attr("data-level"));
+        let curRow = $(el).parents().closest("[role=row]");
+        var level = parseInt($(curRow).attr("data-lvl"));
         var isShow = ($(el).hasClass("fa-minus-square-o")) ? false : true;
-        $.each($(elem).nextAll(), function (i, obj) {
-            var ielem = $(obj).children().find("[data-level=" + level + "]");
-            var eachlevel = parseInt($(obj).children().find("i").attr("data-level"));
-            if (eachlevel > level) {
-                if ($(obj).is(":hidden") && isShow) {
-                    $(obj).show();
-                    el.removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
-                    if ($(obj).children().find("i").hasClass("fa-plus-square-o"))
-                        $(obj).children().find("i").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
-                }
-                else {
-                    $(obj).hide();
-                    el.removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
-                }
+        //let array = $("[data-level=" + level + "]").toArray();
+        //let curIndex = array.findIndex(function (obj) { return obj === $(el)[0]; });
+        //let toRow = $(array[curIndex + 1]).hasClass("itemform") ? $(array[curIndex + 1]).closest("[role=row]").prev() : $(array[curIndex + 1]).closest("[role=row]");
+        //let rows = (toRow) ? curRow.nextUntil($(toRow)) : curRow.nextAll();
+        let rows = curRow.nextUntil("[data-lvl="+level+"]");
+        let selector = "";
+        if (level !== 0) {
+            for (var i = level; i >= 0; i--) {
+                selector += "i[data-level=" + i + "],";
             }
-            else
-                return false;
-        });
+            selector = selector.substr(0, selector.length - 1);
+            rows = rows.toArray().filter(el => !rows.children().find(selector).closest("tr").toArray().includes(el));
+            rows = $(rows);
+        }
+        if (isShow) {
+            rows.show();
+            el.removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+            rows.children().find("i.fa-plus-square-o").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+        }
+        else {
+            rows.hide();
+            el.removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
+        }
+
     }.bind(this);
 
     this.AppendTreeModal = function () {

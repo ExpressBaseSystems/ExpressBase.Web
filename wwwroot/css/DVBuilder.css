@@ -28,6 +28,7 @@
 #columns-list-body {
     height: inherit;
     width: 75%;
+    overflow-y:auto;
 }
 
 #columns-list-orderby {
@@ -71,11 +72,11 @@
     background: white;
 }
 .dv-divs .tool_item_body {
-    height: calc( 100% - 23px );
+    height: calc( 100% - 15px );
 }
 .dv-divs .focused {
     background-color: #306395 !important;
-    color: white;
+    color:white;
 }
 
 #columns-list-orderby .colTile1 {
@@ -92,8 +93,7 @@
     user-select: none;
     transition-duration: 0.3s;
     border-radius: 0px !important;
-    margin: 5px;
-    background-color: #c8d4ef;
+    padding: 5px;
 }
 
 .dv-divs .colTile1 .close {
@@ -124,6 +124,11 @@
 }
 .dv-divs .colTile1 .spantext {
     margin-left:2px;
+}
+.dv-divs .colTile1 .columnelemsCont {
+    background-color: #c8d4ef;
+    position:relative;
+    padding:4px;
 }
 
 .rowgroup_select button, .rowgrouptype_select button {

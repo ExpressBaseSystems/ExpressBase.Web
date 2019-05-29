@@ -316,7 +316,8 @@
     };
 
     this.getAggTrHTML = function () {
-        let tr = `<tr class='dgtr' agg='true' tabindex='0'>`;
+        let tr = `<tr class='dgtr' agg='true' tabindex='0'>
+                    <td class='row-no-td'></td>`;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
                 return true;

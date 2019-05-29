@@ -38,73 +38,151 @@ namespace ExpressBase.Web.Controllers
     {
         public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc) { }
 
-        [HttpGet("/api/{_name}/{_version}/{format}")]
-        public object Api(string _name, string _version, string format)
+        [HttpGet("/api/{_name}/{_version}/{format?}")]
+        public object Api(string _name, string _version, string format="json")
         {
+            var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             ApiResponse resp = null;
-            format = format.ToLower();
-            Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
-                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
-
-            if (ViewBag.IsValid)
+            try
             {
-                resp = this.ServiceClient.Get(new ApiRequest
+                Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
+               .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+
+                if (ViewBag.IsValid)
+                {
+                    resp = this.ServiceClient.Get(new ApiRequest
+                    {
+                        Name = _name,
+                        Version = _version,
+                        Data = parameters
+                    });
+
+                    if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
+                    {
+                        resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+                    }
+
+                    watch.Stop();
+                    resp.Name = _name;
+                    resp.Version = _version;
+                    resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+                    resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
+                }
+                else
+                {
+                    watch.Stop();
+                    resp = new ApiResponse
+                    {
+                        Name = _name,
+                        Version = _version,
+                        Message = new ApiMessage
+                        {
+                            Status = "Error",
+                            Description = ViewBag.Message,
+                            ExecutedOn = DateTime.UtcNow.ToString(),
+                            ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
+                        }
+                    };
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception:" + e.Message);
+                watch.Stop();
+                resp = new ApiResponse
                 {
                     Name = _name,
                     Version = _version,
-                    Data = parameters
-                });
+                    Message = new ApiMessage
+                    {
+                        Status = "Error",
+                        Description = "Execution failed with unknown error's",
+                        ExecutedOn = DateTime.UtcNow.ToString(),
+                        ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
+                    }
+                };
             }
-            else
-                resp = new ApiResponse { Message = ViewBag.Message };
 
-            if (resp.Result.GetType() == typeof(ApiScript))
-            {
-                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
-            }
-
-            if (format.Equals("xml"))
+            if (format.ToLower().Equals("xml"))
                 return this.ToXML(resp);
             else
                 return resp;
         }
 
-
-        [HttpPost("/api/{_name}/{_version}/{format}")]
-        public object Api(string _name, string _version, string format, [FromForm]Dictionary<string, string> form)
+        [HttpPost("/api/{_name}/{_version}/{format?}")]
+        public object Api(string _name, string _version, [FromForm]Dictionary<string, string> form, string format = "json")
         {
+            var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             ApiResponse resp = null;
-            format = format.ToLower();
             Dictionary<string, object> parameters = null;
-            if (form.Count <= 0)
+            try
             {
-                parameters = HttpContext.Request.Query.Keys.Cast<string>()
-                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
-            }
-            else
-            {
-                parameters = form.Keys.Cast<string>()
-                .ToDictionary(k => k, v => form[v] as object);
-            }
+                if (form.Count <= 0)
+                {
+                    parameters = HttpContext.Request.Query.Keys.Cast<string>()
+                    .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+                }
+                else
+                {
+                    parameters = form.Keys.Cast<string>()
+                    .ToDictionary(k => k, v => form[v] as object);
+                }
 
-            if (ViewBag.IsValid)
+                if (ViewBag.IsValid)
+                {
+                    resp = this.ServiceClient.Get(new ApiRequest
+                    {
+                        Name = _name,
+                        Version = _version,
+                        Data = parameters
+                    });
+
+                    if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
+                    {
+                        resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+                    }
+                    watch.Stop();
+                    resp.Name = _name;
+                    resp.Version = _version;
+                    resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+                    resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
+                }
+                else
+                {
+                    watch.Stop();
+                    resp = new ApiResponse
+                    {
+                        Name = _name,
+                        Version = _version,
+                        Message = new ApiMessage
+                        {
+                            Status = "Error",
+                            Description = ViewBag.Message,
+                            ExecutedOn = DateTime.UtcNow.ToString(),
+                            ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
+                        }
+                    };
+                }
+            }
+            catch (Exception e)
             {
-                resp = this.ServiceClient.Get(new ApiRequest
+                Console.WriteLine("Exception:" + e.Message);
+                watch.Stop();
+                resp = new ApiResponse
                 {
                     Name = _name,
                     Version = _version,
-                    Data = parameters
-                });
+                    Message = new ApiMessage
+                    {
+                        Status = "Error",
+                        Description = "Execution failed with unknown error's",
+                        ExecutedOn = DateTime.UtcNow.ToString(),
+                        ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
+                    }
+                };
             }
-            else
-                resp = new ApiResponse { Message = new ApiMessage { Status = "Error", Description = ViewBag.Message } };
 
-            if (resp.Result.GetType() == typeof(ApiScript))
-            {
-                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
-            }
-
-            if (format.Equals("xml"))
+            if (format.ToLower().Equals("xml"))
                 return this.ToXML(resp);
             else
                 return resp;
@@ -130,7 +208,7 @@ namespace ExpressBase.Web.Controllers
             if (ViewBag.IsValidSol)
             {
                 ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.SultionId });
-                ViewBag.Allmeta = resp.AllMetas;               
+                ViewBag.Allmeta = resp.AllMetas;
             }
             else
                 return Redirect("/StatusCode/700");
@@ -139,7 +217,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/api/authenticate")]
         [HttpPost("/api/authenticate")]
-        public ApiAuthResponse ApiLogin(string username,string password)
+        public ApiAuthResponse ApiLogin(string username, string password)
         {
             ApiAuthResponse response = new ApiAuthResponse();
             try
@@ -165,7 +243,7 @@ namespace ExpressBase.Web.Controllers
                 else
                     response.IsValid = false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 response.IsValid = false;
                 Console.WriteLine("api auth request failed: " + e.Message);
@@ -183,7 +261,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost("/api/upload")]
         public async Task<ApiResponse> UploadFile()
         {
-            ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>()};
+            ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>() };
             UploadAsyncResponse res = new UploadAsyncResponse();
             EbFileCategory _FileType = EbFileCategory.File;
             var req = this.HttpContext.Request.Form;
@@ -283,7 +361,7 @@ namespace ExpressBase.Web.Controllers
         public string ToXML(ApiResponse _apiresp)
         {
             string json = JsonConvert.SerializeObject(_apiresp);
-            XmlDocument doc = JsonConvert.DeserializeXmlNode(json,"Root");
+            XmlDocument doc = JsonConvert.DeserializeXmlNode(json, "Root");
             XmlNode docNode = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
             doc.PrependChild(docNode);
             return doc.InnerXml;

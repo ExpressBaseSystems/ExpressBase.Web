@@ -132,6 +132,8 @@
                 radioContainer.attr("ischecked", true);
                 this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
                 this.uncheckOthers(radioContainer.closest(".locationwrapper"));
+                store.clearAll();
+                store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
                 return true;
             }        
         }

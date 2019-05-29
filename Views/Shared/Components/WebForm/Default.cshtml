@@ -73,7 +73,6 @@
 
     .form-buider-form {
         height: 100vh;
-        padding: 38px 10px 0px 10px;
         border: none;
     }
 
@@ -261,59 +260,11 @@
     let _cid = "@ViewBag.Cid";
     let _env = "@ViewBag.Env";
     let _ispartial = "@ViewBag.IsPartial";
+    let _formPermissions = @Html.Raw(ViewBag.FormPermissions);
 
     //to store refids of uploaded files via all fileuploader ctrls
     let uploadedFileRefList = {};
-
-    function setHeader(reqstMode) {
-        if (_ispartial === "True") {
-            if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
-                $(".objectDashB-toolbar").find(".pd-0:first-child").children("button").remove();
-                $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
-                $("#Eb_com_menu").remove();
-            }
-            if (reqstMode === "New Mode") {
-                header.showElement(["webformsave"]);
-                header.hideElement(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
-            }
-            else
-                header.hideElement(["webformnew", "webformedit", "webformdelete", "webformsave", "webformcancel", "webformaudittrail"]);
-            header.setName(_formObj.DisplayName);
-            header.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-            $('title').text(_formObj.DisplayName + `(${reqstMode})`);
-            return;
-        }
-        _mode = reqstMode;//
-        //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
-        if (reqstMode === "Edit Mode") {
-            header.showElement(["webformnew", "webformsave", "webformaudittrail"]);
-            header.hideElement(["webformedit", "webformdelete", "webformcancel"]);
-        }
-        else if (reqstMode === "New Mode") {
-            header.showElement(["webformsave"]);
-            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
-        }
-        else if (reqstMode === "View Mode") {
-            header.showElement(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
-            header.hideElement(["webformsave"]);
-        }
-        else if (reqstMode === "Fail Mode") {
-            header.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
-            EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
-        }
-        else if (reqstMode === "Preview Mode") {
-            header.hideElement(["webformnew", "webformedit", "webformdelete", "webformsave", "webformcancel", "webformaudittrail"]);
-            _mode = "New Mode";////////////
-        }
-        header.setName(_formObj.DisplayName);
-        header.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-        $('title').text(_formObj.DisplayName + `(${reqstMode})`);
-    }
-    setHeader(_mode);
-
-    //let _$saveBtn = $("#webformsave");
-    //let FormMode = "New Mode";
-
+    
     $("#layout_div").addClass("for-modal-blur");
 
     const renderer = new WebFormRender({
@@ -325,13 +276,15 @@
         formData: _formData,
         userObject: _userObject,
         cid: _cid,
-        env: _env
+        env: _env,
+        isPartial: _ispartial,
+        formPermissions: _formPermissions,
+        headerObj: header
     });
    
 
     //$("#webformaudittrail").on("click", function () {
     //    $("#iFrameFormModal").modal("show");
     //});
-       
 
 </script>

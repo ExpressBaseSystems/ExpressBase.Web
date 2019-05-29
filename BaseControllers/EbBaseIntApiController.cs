@@ -50,12 +50,12 @@ namespace ExpressBase.Web.BaseControllers
             if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
             {
                 controller.ViewBag.IsValid = false;
-                controller.ViewBag.Message = "Header empty";
+                controller.ViewBag.Message = "Authentication token not present in request header";
             }
             else if (!IsTokensValid(sRToken, sBToken, hostParts[0]))
             {
                 controller.ViewBag.IsValid = false;
-                controller.ViewBag.Message = "Invalid Token";
+                controller.ViewBag.Message = "Authentication failed";
             }
             else
             {

@@ -744,5 +744,13 @@ namespace ExpressBase.Web.Controllers
             byte[] b = Convert.FromBase64String(b64);
             return Encoding.UTF8.GetString(b);
         }
+
+        [Microsoft.AspNetCore.Mvc.Route("{stripwebhook}")]
+        public string TestStripeWebhook()
+        {
+            string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+            Console.WriteLine("Webhook Response  : " + json);
+            return json;
+        }
     }
 }

@@ -18,6 +18,9 @@ const WebFormRender = function (option) {
     this.rowId = option.rowId;
     this.mode = option.mode;
     this.userObject = option.userObject;
+    this.isPartial = option.isPartial;//value is true if form is rendering in iframe
+    this.headerObj = option.headerObj;//EbHeader
+    this.formPermissions = option.formPermissions;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;//EditModeFormData
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
     this.DisableDeleteData = option.formData === null ? {} : option.formData.DisableDelete;
@@ -508,12 +511,15 @@ const WebFormRender = function (option) {
         this.Mode.isView = true;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
-        setHeader("View Mode");
+        this.setHeader("View Mode");
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
         $.each(this.flatControls, function (k, ctrl) {
             ctrl.disable();
+        }.bind(this));
+        $.each(this.DGs, function (k, DG) {
+            this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
     };
 
@@ -524,7 +530,7 @@ const WebFormRender = function (option) {
         this.Mode.isNew = false;
         this.setEditModeCtrls();
         this.BeforeModeSwitch("Edit Mode");
-        setHeader("Edit Mode");
+        this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.flatControls, function (k, ctrl) {
             if (!ctrl.IsDisable)
@@ -835,7 +841,71 @@ const WebFormRender = function (option) {
         }
     }.bind(this);
 
+    this.setHeader = function (reqstMode) {
+        let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
+        this.headerObj.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
+
+        if (this.isPartial === "True") {
+            if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
+                $(".objectDashB-toolbar").find(".pd-0:first-child").children("button").remove();
+                $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
+                $("#Eb_com_menu").remove();
+            }
+            if (reqstMode === "New Mode") {
+                this.headerObj.showElement(this.filterHeaderBtns(["webformsave"], currentLoc, reqstMode));
+            }
+            this.headerObj.setName(_formObj.DisplayName);
+            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
+            $('title').text(_formObj.DisplayName + `(${reqstMode})`);
+            return;
+        }
+        this.mode = reqstMode;//
+        //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
+        if (reqstMode === "Edit Mode") {
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave", "webformaudittrail"], currentLoc, reqstMode));
+        }
+        else if (reqstMode === "New Mode") {
+            this.headerObj.showElement(this.filterHeaderBtns(["webformsave"], currentLoc, reqstMode));
+        }
+        else if (reqstMode === "View Mode") {
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"], currentLoc, reqstMode));
+        }
+        else if (reqstMode === "Fail Mode") {
+            EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
+        }
+        else if (reqstMode === "Preview Mode") {
+            this.mode = "New Mode";////////////
+        }
+        this.headerObj.setName(_formObj.DisplayName);
+        this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
+        $('title').text(this.FormObj.DisplayName + `(${reqstMode})`);
+    };
+
+    this.filterHeaderBtns = function (btns, loc, mode) {
+        let r = [];
+        // ["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
+        // ["New", "View", "Edit", "Delete", "Cancel", "Print", "AuditTrail"]
+        for (let i = 0; i < btns.length; i++) {
+            if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')            
+                r.push(btns[i]);
+            else if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
+                r.push(btns[i]);
+            else if (btns[i] === "webformedit" && this.formPermissions[loc].indexOf('Edit') > -1)
+                r.push(btns[i]);
+            else if (btns[i] === "webformdelete" && this.formPermissions[loc].indexOf('Delete') > -1)
+                r.push(btns[i]);
+            else if (btns[i] === "webformcancel" && this.formPermissions[loc].indexOf('Cancel') > -1)
+                r.push(btns[i]);
+            else if (btns[i] === "webformaudittrail" && this.formPermissions[loc].indexOf('AuditTrail') > -1)
+                r.push(btns[i]);
+            else if (btns[i] === "webformnew" && this.formPermissions[loc].indexOf('New') > -1)
+                r.push(btns[i]);
+        }
+        return r;
+    };
+
     this.init = function () {
+        this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
         this.$saveBtn.on("click", this.saveForm.bind(this));
@@ -853,6 +923,24 @@ const WebFormRender = function (option) {
         if (this.mode === "View Mode") {
             this.setEditModeCtrls();
             this.SwitchToViewMode();
+
+            if (store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString() !== _formData.MultipleTables[_formData.MasterTable][0].LocId.toString()) {
+                EbDialog("show",
+                    {
+                        Message: "Location Switching...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            loc__.SwitchLocation(_formData.MultipleTables[_formData.MasterTable][0].LocId);
+                            this.setHeader(this.mode);
+                        }.bind(this)
+                    });
+            }                
         }
     };
 

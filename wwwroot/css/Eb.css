@@ -402,13 +402,13 @@
     position: relative;
     text-overflow: ellipsis;
     overflow: hidden;
-    height: 24px !important;
+    height: 20px !important;
     color: white !important;
     border: none !important;
-    border-radius: 0.31em !important;
-    padding: 0.1em .45em 0.15em 0.45em !important;
+    border-radius: 2px !important;
+    padding: 0.01em .45em 0.15em 0.45em !important;
     margin: 2px 1px 2px 3px !important;
-    font-size: 13.5px;
+    font-size: 12px;
     padding-right: 18px !important;
 }
 
@@ -418,7 +418,7 @@
         opacity: 1;
         opacity: 1;
         position: absolute;
-        top: 4px;
+        top: 2.5px;
         right: 4px;
     }
 

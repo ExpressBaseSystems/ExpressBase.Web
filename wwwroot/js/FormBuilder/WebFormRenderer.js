@@ -95,7 +95,7 @@ const WebFormRender = function (option) {
     this.initNCs = function () {
 
 
-        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
+        let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
         $.each(allFlatControls, function (k, Obj) {
             this.updateCtrlUI(Obj);
         }.bind(this));

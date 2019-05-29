@@ -296,6 +296,7 @@
         border: none !important;
         padding: 0 !important;
         border-right: dotted 1px rgb(241, 241, 241) !important;
+        vertical-align: middle;
     }
 
     .dgtbl > tbody > tr:nth-child(odd) {
@@ -977,17 +978,22 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 8px;
     background-color: #F5F5F5;
 }
-
-.grid-cont ::-webkit-scrollbar-thumb {
-    border-radius: 1px;
-    /*background-image: var(--gbm);*/
-    background-color: rgb(199, 199, 199);
-}
 .webform-cont .eb-textarea {
-    border: solid 1px #eee;
+    position: absolute;
+    z-index: 1;
+    top: 1px;
+    border: none;
     resize: none;
+    height: 24px;
     background-attachment: local;
     background-image: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #ddd 18px, #ddd 19px, white 19px);
     line-height: 19px;
-    padding: 2px 0px;
+    padding: 2px 11px;
 }
+
+    .webform-cont .eb-textarea:focus {
+        position: absolute;
+        box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.31);
+        padding: 2px 11px;
+        height: auto;
+    }

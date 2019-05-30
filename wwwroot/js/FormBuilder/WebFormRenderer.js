@@ -140,7 +140,12 @@ const WebFormRender = function (option) {
     };
 
     this.bindOnChange = function (control) {
-        control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
+        try {
+            control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
+        }
+        catch (e) {
+            alert("error in 'On Change function' of : " + control.Name);
+        }
     };
 
     this.bindValidators = function (control) {

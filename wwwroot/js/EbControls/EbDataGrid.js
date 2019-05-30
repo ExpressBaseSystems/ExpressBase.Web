@@ -417,8 +417,13 @@
                 inpCtrl.disable();
             // run DG onChangeFns initially
             if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
-                let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
-                onChangeFn();
+                try {
+                    let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                    onChangeFn();
+                }
+                catch (e) {
+                    alert("error in 'On Change function' of : " + inpCtrl.Name);
+                }
             }
         }.bind(this));
         return this.AllRowCtrls[rowid];

@@ -259,9 +259,9 @@
 }
 
 .dgtbl .row-no-td {
-    width: 53px;
+    width: 34px;
     text-align: center;
-    padding: 3px !important;
+    padding: 0px !important;
 }
 
 .ctrl-edit {
@@ -874,8 +874,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     text-align: center;
 }
 
-.dgtbl > thead > tr > th {
+.Dg_head .dgtbl > thead > tr > th {
     padding: 5px;
+}
+
+.Dg_head .dgtbl > thead > tr > th:first-child {
+    font-size: 11px;
+    width: 34px;
+    padding: 0;
+    vertical-align: middle;
 }
 
 .inp-inner-loader {
@@ -1010,7 +1017,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
     resize: none;
     background-attachment: local;
-    background-image: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #ddd 18px, #ddd 19px, white 19px);
+    background-image: linear-gradient(to right, white 10px, transparent 10px),
+        linear-gradient(to left, white 10px, transparent 10px),
+        repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
     line-height: 19px;
     padding: 2px 11px;
 }

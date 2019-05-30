@@ -19,7 +19,7 @@
     this.resetBuffers = function () {
         this.AllRowCtrls = {};
         this.newRowCounter = 0;
-        this.rowCounter = 0;
+        this.rowSLCounter = 0;
     }.bind(this);
     this.resetBuffers();
 
@@ -267,7 +267,7 @@
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let isAnyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
-                    <td class='row-no-td' idx='${++this.rowCounter}'>${this.rowCounter}</td>`;
+                    <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.AllRowCtrls[rowid] = [];
 
         $.each(this.ctrl.Controls.$values, function (i, col) {
@@ -336,12 +336,13 @@
         let isAddBeforeLast = opt.isAddBeforeLast;
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
-        let $tr = $(tr);
+        let $tr = $(tr).hide();
         if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
             $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
         }
         else
             $(`#${this.TableId}>tbody`).append($tr);
+        $tr.show(300);
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
         return this.initRowCtrls(rowid);
@@ -585,9 +586,11 @@
     this.resetRowSlNoUnder = function ($tr) {
         let curIdx = parseInt($tr.find(".row-no-td").attr("idx"));
         let rowCount = $(`#${this.TableId}>tbody>tr`).length - 1;
-        for (let i = curIdx; i < rowCount + 1; i++) {
-            $(`#${this.TableId}>tbody>tr td.row-no-td[idx=${i + 1}]`).attr("idx", i).text(i);
+        this.rowSLCounter = curIdx;
+        for (this.rowSLCounter; this.rowSLCounter < rowCount + 1; this.rowSLCounter++) {
+            $(`#${this.TableId}>tbody>tr td.row-no-td[idx=${this.rowSLCounter + 1}]`).attr("idx", this.rowSLCounter).text(this.rowSLCounter);
         }
+        this.rowSLCounter--;
     };
 
     this.spanToCtrl_row = function ($tr) {
@@ -705,7 +708,7 @@
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
         this.S_cogsTdHtml = "";
-        this.rowCounter = 0;
+        this.rowSLCounter = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             col.getValue = this.ColGetvalueFn;

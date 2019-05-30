@@ -549,8 +549,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .gb-wraper {
-    padding: 2px;
-    padding-top: 8px;
+    padding-top: 3px;
 }
 
 .gb-border {

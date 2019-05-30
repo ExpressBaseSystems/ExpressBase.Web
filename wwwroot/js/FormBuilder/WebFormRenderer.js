@@ -931,9 +931,11 @@ const WebFormRender = function (option) {
             this.SwitchToViewMode();
 
             setTimeout(function () {
-                if (store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString() !== _formData.MultipleTables[_formData.MasterTable][0].LocId.toString()) {
+                let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
+                let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
+                if (ol !== nl) {
                     EbDialog("show",{
-                        Message: "Location Switching...",
+                        Message: "Switching from " + getObjByval(loc__.Locations, "LocId", ol).LongName + " to " + getObjByval(loc__.Locations, "LocId", nl).LongName,
                         Buttons: {
                             "Ok": {
                                 Background: "green",

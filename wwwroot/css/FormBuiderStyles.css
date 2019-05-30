@@ -401,8 +401,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .Dg_body > .dgtbl > tbody > tr[is-editing=true] {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    /*border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;*/
+    border: 1px solid #eea100;
+    animation: dim_border 0.8s infinite;
+    transition: all 0.8s ease-in-out
 }
 
 .check-wraper {
@@ -878,12 +881,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 5px;
 }
 
-.Dg_head .dgtbl > thead > tr > th:first-child {
-    font-size: 11px;
-    width: 34px;
-    padding: 0;
-    vertical-align: middle;
-}
+    .Dg_head .dgtbl > thead > tr > th:first-child {
+        font-size: 11px;
+        width: 34px;
+        padding: 0;
+        vertical-align: middle;
+    }
 
 .inp-inner-loader {
     background: url(../images/gifs/loader2.gif) !important;
@@ -1017,9 +1020,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
     resize: none;
     background-attachment: local;
-    background-image: linear-gradient(to right, white 10px, transparent 10px),
-        linear-gradient(to left, white 10px, transparent 10px),
-        repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
+    background-image: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
     line-height: 19px;
     padding: 2px 11px;
 }
@@ -1029,4 +1030,53 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.31);
     padding: 2px 11px;
     height: auto;
+}
+
+.webform-cont sub, .webform-cont sup {
+    font-size: 11px;
+}
+
+
+/*animations*/
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes dim_border {
+    from {
+        border: 1px solid #f9a100;
+    }
+
+    to {
+        border: 3px solid #fFa100;
+    }
+}
+
+
+
+
+
+
+
+
+/*animations*/
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes dim_border {
+    from {
+        border: 1px solid #eeb500;
+    }
+
+    to {
+        border: 1px solid #ffa190;
+    }
+}
+
+/* Standard syntax */
+@keyframes dim_border {
+    from {
+        border: 1px solid #eeb500;
+    }
+
+    to {
+        border: 1px solid #ffa190;
+    }
 }

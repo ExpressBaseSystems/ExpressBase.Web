@@ -1,0 +1,69 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("select.title1").change(function () {
+            var selectedval = $(this).children("option:selected").val();
+            alert("You have selected : - " + selectedval);
+        });
+    });
+
+</script>
+
+<style>
+    .column {
+        float: left;
+        margin-top: 50px;
+        height: 600px;
+    }
+
+    .left {
+        width: 20%;
+        background-color: lightblue;
+        overflow: auto;
+    }
+
+    .right {
+        width: 80%;
+    }
+
+    .style-4::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #F5F5F5;
+    }
+
+    .style-4::-webkit-scrollbar {
+        width: 5px;
+        background-color: #F5F5F5;
+    }
+
+    .style-4::-webkit-scrollbar-thumb {
+        background-color: #5650FE;
+        border: 2px solid #5650FE;
+    }
+</style>
+<div class="column right">
+    <h2> </h2>
+    <p> Some text..</p>
+    <form action="/Wiki/StoreTitle" method="post">
+        <p>
+            Title :
+            <select name="title" class="title1">
+                @{ foreach (var title in ViewBag.titlelist.Title)
+                    {
+                        <option>  @title </option>}
+                }
+            </select>
+        </p>
+
+        <p>Sub Title :<input type="text" id="subtitle" placeholder="SubTitle" name="subtitle" /></p>
+        <p>Content :<textarea rows="4" cols="50" name="content"> </textarea></p>
+        <p> Upload Image :<input type="file" id="myfile"> </p>
+        <p> Codes :<textarea rows="4" cols="50" name="codes"> </textarea></p>
+        <input type="submit" value="submit" name="submit" />
+    </form>
+</div>

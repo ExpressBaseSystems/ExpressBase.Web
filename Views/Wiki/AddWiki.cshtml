@@ -1,0 +1,62 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+<script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
+<script>
+        $(document).ready(function () {
+            new addwiki();
+        });
+   </script>
+<link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+<div class="column left">
+    
+    <p>
+        <b><input type="button" value="B" class="props" val="<b></b>"/></b>
+        <i><input type="button" value="i" class="props" val="<i></i>" /></i>
+        <u><input type="button" value="u" class="props" val="<u></u>" /></u>
+        <input type="button" value="center" class="props"  val="<center></center>"/>
+        <input type="button" value="H1" class="props" val="<h1></h1>"/>
+        <input type="button" value="H2" class="props" val="<h2></h2>"/>
+        <input type="button" value="H3" class="props" val="<h3></h3>" />
+        <input type="button" value="H4" class="props"  val="<h4></h4>"/>
+        <input type="button" value="P" class="props"  val="<p></p>"/>
+        <input type="button" value="code" class="props" val="<code></code>" />
+    </p>
+    <form action="/wiki/save" method="post">
+
+
+        <p>
+            Title :
+            <select name="title" class="title1">
+                @*@{ foreach (var title in ViewBag.titlelist.Title)
+                {
+                <option>  @title </option>}
+                }*@
+                <option>Form</option>
+                <option>Documents</option>
+                <option>Visualization</option>
+                <option>Chatbots</option>
+                <option>Reporting</option>
+            </select>
+        </p>
+        <p>
+            Content Title : <input type="text" name="subtitle" id="contenttitle" />
+        </p>
+<textarea rows="15" cols="80" class="readtext" id="text" name="content"> </textarea>
+        <input type="submit" value="submit" name="submit" />
+    </form>
+</div>
+<div class="column right">
+    <div  class="overflow-auto"> </div>
+    <div class="render" name="render" id="render">
+        <h2>
+
+        </h2>
+
+    </div>
+    <p id="new1"></p>
+
+</div>

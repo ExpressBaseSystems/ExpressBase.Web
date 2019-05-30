@@ -320,7 +320,7 @@
     this.AsyncLoadHtml = function (refId, divId) {
         setTimeout(function () {
             $("#" + divId).append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
-        }, 500);
+        }, 1);
 
         $.ajax({
             type: "POST",

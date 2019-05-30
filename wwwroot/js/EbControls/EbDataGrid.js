@@ -19,6 +19,7 @@
     this.resetBuffers = function () {
         this.AllRowCtrls = {};
         this.newRowCounter = 0;
+        this.rowCounter = 0;
     }.bind(this);
     this.resetBuffers();
 
@@ -171,6 +172,12 @@
         SingleRow.IsUpdate = (rowId !== 0);
         SingleRow.IsDelete = inpCtrls.IsDelete;
         SingleRow.Columns = [];
+        SingleRow.Columns.push({
+            Name: "eb_row_num",
+            Value: parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx")),
+            AutoIncrement: false,
+            Type: 7
+        });
         $.each(inpCtrls, function (i, obj) {
             if (!obj.DoNotPersist) {
                 if (obj.ObjType === "DGUserControlColumn") {
@@ -309,7 +316,8 @@
     };
 
     this.getAggTrHTML = function () {
-        let tr = `<tr class='dgtr' agg='true' tabindex='0'>`;
+        let tr = `<tr class='dgtr' agg='true' tabindex='0'>
+                    <td class='row-no-td'></td>`;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
                 return true;
@@ -571,8 +579,16 @@
     this.delRow_click = function (e) {
         $tr = $(e.target).closest("tr");
         this.removeTr($tr);
-
+        this.resetRowSlNoUnder($tr);
     }.bind(this);
+
+    this.resetRowSlNoUnder = function ($tr) {
+        let curIdx = parseInt($tr.find(".row-no-td").attr("idx"));
+        let rowCount = $(`#${this.TableId}>tbody>tr`).length - 1;
+        for (let i = curIdx; i < rowCount + 1; i++) {
+            $(`#${this.TableId}>tbody>tr td.row-no-td[idx=${i + 1}]`).attr("idx", i).text(i);
+        }
+    };
 
     this.spanToCtrl_row = function ($tr) {
         $tds = $tr.find("td[ctrltdidx]");

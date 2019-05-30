@@ -369,8 +369,10 @@
 
     columnsDrop(el, target, source, sibling) {
         if ($(target).attr("id") === "rowgroup_body") {
+            let name = $(el).attr("eb-name");
+            $(el).find("span").wrap(`<div id="${name}_elemsrowgroupCont" class="columnelemsCont"></div>`);
             this.RowgroupColumnDrop(el);
-            $(el).children(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
+            $(el).find(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
         }
         else if ($(target).attr("id") === "columns-list-body" && $(source).attr("id") === "columns-list-body") {
             //this.ReplaceObjects(el, target, source, sibling);
@@ -378,13 +380,13 @@
         else if ($(target).attr("id") === "columns-list-body") {
             let name = $(el).attr("eb-name");
             $(el).attr("eb-keyname", name);
+            $(el).find("span").wrap(`<div id="${name}_elemsCont" class="columnelemsCont"><div id="${name}_spanCont" class="columnspanCont"></div></div>`);
+            $(el).find(`#${name}_spanCont`).after(`<input class="columntitle" type="text" id="${name}_columntitle"/>`);
             this.ColumnDropRelated(el);
-            $(el).children("span").wrap("<div></div>");
-            $(el).children("div").after(`<input class="columntitle" type="text" id="${name }_columntitle"/>`);
             let index = this.EbObject.Columns.$values.findIndex(function (obj) { return obj.name === name; }.bind(this));
             this.EbObject.Columns.$values[index].bVisible = true;
             $(el).off("click").on("click", this.elementOnFocus.bind(this));
-            $(el).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
+            $(el).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
             $(`#${name }_columntitle`).val(this.EbObject.Columns.$values[index].sTitle);
             $(".columntitle").off("change").on("change", this.ColumnTitleChanged.bind(this));
         }
@@ -394,22 +396,24 @@
         else if ($(target).attr("id") === "columns-list-orderby") {
             let name = $(el).attr("eb-name");
             $(el).attr("eb-keyname", name + "orderby");
-            $(el).children("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`);
+            $(el).find("span").wrap(`<div id="${name}_elemsorderbyCont" class="columnelemsCont"></div>`);
+            $(el).find("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`);
             this.OrderbyColumnDropRelated(el);
             let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
             this.EbObject.OrderBy.$values.push(obj);
-            $(el).children(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
+            $(el).off("click").on("click", this.elementOnFocus.bind(this));
+            $(el).find(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
             $(".orderbycheckbox").off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
         }
     }
 
     elementOnFocus(e) {
-        $("#page-outer-cont").children().find("li").removeClass("focused");
+        $("#page-outer-cont").find(".columnelemsCont").removeClass("focused");
         let key = $(e.target).closest("li").attr("eb-keyname");
         var obj = this.objCollection[key];
         var type = $(e.target).closest("li").attr('eb-type');
         this.propGrid.setObject(obj, AllMetas[type]);
-        $(e.target).closest("li").addClass("focused");
+        $(e.target).closest(".columnelemsCont").addClass("focused");
         //$("#columns-list").focusout();
     }
 
@@ -454,11 +458,11 @@
         $("#columns-list-body").empty();
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.bVisible) {
-                let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns textval' style='font-size: 13px;'><div><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></li>`);
+                let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
                 this.ColumnDropRelated(element);
                 $("#columns-list-body").append(element);
                 $(element).off("click").on("click", this.elementOnFocus.bind(this));
-                $(element).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
+                $(element).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
                 $(`#${obj.name}_columntitle`).val(obj.sTitle);
                 $(".columntitle").off("change").on("change", this.ColumnTitleChanged.bind(this));
             }
@@ -468,16 +472,17 @@
     OrderbyColumnDropped() {
         $("#columns-list-orderby").empty();
         $.each(this.EbObject.OrderBy.$values, function (i, obj) {
-            let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}"  eb-keyname="${obj.name}orderby" class='columns textval' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+            let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}"  eb-keyname="${obj.name}orderby" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsorderbyCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div></li>`);
             this.OrderbyColumnDropRelated(element);
             $("#columns-list-orderby").append(element);
-            $(element).children("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`);
+            $(element).find("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`); 
 
             if (obj.Direction === parseInt(EbEnums.OrderByDirection.DESC))
-                $(element).children().find(".orderbycheckbox").prop("checked", true);
+                $(element).find(".orderbycheckbox").prop("checked", true);
             else
-                $(element).children().find(".orderbycheckbox").prop("checked", false);
-            $(element).children(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
+                $(element).find(".orderbycheckbox").prop("checked", false);
+            $(element).off("click").on("click", this.elementOnFocus.bind(this));
+            $(element).find(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
             $(".orderbycheckbox").off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
         }.bind(this));
     }
@@ -580,19 +585,21 @@
         this.CurrentRowgroupkey = name;
         this.objCollection[name] = Rowobj;
         this.CurrentRowgroup = Rowobj;
-        //this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);
+        //this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);elemsCont
     }
 
     AllColumndropElements(el) {
+        let name = $(el).attr("eb-name");
         this.col = el;
         this.col.addClass("colTile1");
-        this.col.append(`<button class="close close1"> <i class="fa fa-close"></i> </button>`);
+        this.col.find(`#${name}_columntitle`).after(`<button class="close close1"> <i class="fa fa-close"></i> </button>`);
     }
 
     AllOtherColumndropElements(el) {
+        let name = $(el).attr("eb-name");
         this.col = el;
         this.col.addClass("colTile1");
-        this.col.append(`<button class="close"> <i class="fa fa-close"></i> </button>`);
+        this.col.find(`.columnelemsCont`).append(`<button class="close"> <i class="fa fa-close"></i> </button>`);
     }
 
     RemoveColumn(e) {
@@ -605,26 +612,30 @@
         let index = this.EbObject.Columns.$values.findIndex(function (obj) { return obj.name === key; }.bind(this));
         delete this.objCollection[key];
         this.EbObject.Columns.$values[index].bVisible = false;
-        $("#page-outer-cont").children().find(".focused").removeClass("focused");
+        $("#page-outer-cont").find(".focused").removeClass("focused");
         if (element.next().length === 1) {
-            element.next().addClass("focused");
+            element.next().find(".columnelemsCont").addClass("focused");
         }
         else {
-            element.prev().addClass("focused");
+            element.prev().find(".columnelemsCont").addClass("focused");
         }
         element.remove();
     }
 
     RemoveOrderbyColumn(e) {
-        let element = $(e.target).closest("li");
+        let element;
+        if (e.target)
+            element = $(e.target).closest("li");
+        else
+            element = e;
         let key = element.attr("eb-name");
         this.EbObject.OrderBy.$values = this.EbObject.OrderBy.$values.filter(function (obj) { return obj.name !== key; }.bind(this));
-        $("#page-outer-cont").children().find(".focused").removeClass("focused");
+        $("#page-outer-cont").find(".focused").removeClass("focused");
         if (element.next().length === 1) {
-            element.next().addClass("focused");
+            element.next().find(".columnelemsCont").addClass("focused");
         }
         else {
-            element.prev().addClass("focused");
+            element.prev().find(".columnelemsCont").addClass("focused");
         }
         element.remove();
         key = element.attr("eb-keyname");
@@ -649,27 +660,27 @@
     }
 
     ColumnKeyMove(e) {
-        let curElement = $("#page-outer-cont").children().find(".focused");
+        let curElement = $("#page-outer-cont").find(".focused").parent("li");
         if (curElement.length === 1) {
             if (e.which === 39 || e.which === 40) {
                 let nextElement = $(curElement).next();
                 if (nextElement.length === 1) {
-                    $(curElement).removeClass("focused");
-                    $(nextElement).addClass("focused");
+                    $(curElement).find(".columnelemsCont").removeClass("focused");
+                    $(nextElement).find(".columnelemsCont").addClass("focused");
                 }
             }
             else if (e.which === 37 || e.which === 38) {
                 let prevElement = $(curElement).prev();
                 if (prevElement.length === 1) {
-                    $(curElement).removeClass("focused");
-                    $(prevElement).addClass("focused");
+                    $(curElement).find(".columnelemsCont").removeClass("focused");
+                    $(prevElement).find(".columnelemsCont").addClass("focused");
                 }
             }
             else if (e.which === 46) {
-                if (curElement.parents().find("#columns-list-body").length === 1) {
+                if (curElement.parent("#columns-list-body").length === 1) {
                     this.RemoveColumn(curElement);
                 }
-                else if (curElement.parents().find("#columns-list-orderby").length === 1) {
+                else if (curElement.parent("#columns-list-orderby").length === 1) {
                     this.RemoveOrderbyColumn(curElement);
                 }
             }
@@ -713,7 +724,7 @@
         this.removeNewOption();
         $("#Rowgroup_cont #rowgroup_body").empty();
         clickedIndex = typeof (clickedIndex) !== "undefined" ? clickedIndex : $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).index();
-        let option = $(e.target).children("option").eq(clickedIndex);
+        let option = $(e.target).find("option").eq(clickedIndex);
         this.CurrentRowgroupkey = $(option).attr("value");
         let obj = this.objCollection[this.CurrentRowgroupkey];
         this.CurrentRowgroup = obj;
@@ -734,10 +745,10 @@
 
     drawRowgroupColumn(objOuter) {
         $.each(objOuter.RowGrouping.$values, function (i, obj) {
-            let element = $(`<li eb-type='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+            let element = $(`<li eb-type='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsrowgroupCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div></li>`);
             this.AllOtherColumndropElements(element);
             $("#rowgroup_body").append(element);
-            $(element).children(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
+            $(element).find(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
         }.bind(this));
     }
 
@@ -911,7 +922,7 @@
         obj.bVisible = true;
         obj.data = this.EbObject.Columns.$values.length;
         $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" 
-            class='columns textval calcfield' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+            class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
         this.addCalcFieldToColumnlist(obj);
         $('#calcFields').killTree();
         $('#calcFields').treed();
@@ -920,11 +931,14 @@
 
     addCalcFieldToColumnlist(obj) {
         this.EbObject.Columns.$values.push(obj);
-        let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+        obj.sTitle = obj.name;
+        let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
         this.ColumnDropRelated(element);
         $("#columns-list-body").append(element);
         $(element).off("click").on("click", this.elementOnFocus.bind(this));
-        $(element).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
+        $(element).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
+        $(`#${obj.name}_columntitle`).val(obj.sTitle);
+        $(".columntitle").off("change").on("change", this.ColumnTitleChanged.bind(this));
     }
 
     BeforeSave() {

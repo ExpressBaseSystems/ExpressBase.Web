@@ -2,6 +2,7 @@
     this.ctrl = ctrl;
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
+    this.formObject_Full = options.formObject_Full;
     this.ctrl.__userObject = options.userObject;
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
@@ -400,9 +401,7 @@
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
             let opt = {};
             if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
-                opt.getAllCtrlValuesFn = function () {
-                    return [];//getValsFromForm(this.FormObj);
-                }.bind(this);
+                opt.getAllCtrlValuesFn = this.getFormVals;
             else if (inpCtrl.ObjType === "Date") {
                 opt.source = "webform";
                 opt.userObject = this.ctrl.__userObject;
@@ -423,6 +422,10 @@
         }.bind(this));
         return this.AllRowCtrls[rowid];
     };
+
+    this.getFormVals = function () {
+        return getValsFromForm(this.formObject_Full);
+    }.bind(this);
 
     this.getValues = function () {
         this.FVWTObjColl = [];

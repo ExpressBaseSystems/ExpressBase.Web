@@ -350,13 +350,14 @@ function RecurFlatControls(src_obj, dest_coll) {
 
 function getValsFromForm(formObj) {
     let fltr_collection = [];
-    let flag = 0;
+    let flag = 1;
     $.each(getFlatCtrlObjs(formObj), function (i, obj) {
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
-        if (obj.ObjType === "PowerSelect")
-            flag++;
+        //if (obj.ObjType === "PowerSelect")
+        //    flag++;
     });
     if (flag > 0) {
+        console.log(111);
         var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));

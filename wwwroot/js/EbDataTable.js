@@ -618,8 +618,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//, 
         var serialObj = (JSON.parse('{ "data":' + this.EbObject.Columns.$values.length + ', "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
-        if (this.IsTree);
+        if (this.IsTree) {
             serialObj.bVisible = false;
+        }
         this.extraCol.push(serialObj);
         this.addcheckbox();
     }
@@ -1313,7 +1314,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //}
         }
         else if (splitarray[2] === "0") {
-            let url = "../WEBFORM/index?refid=" + this.linkDV;
+            let url = "../webform/index?refid=" + this.linkDV;
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
             _form.setAttribute("action", url);
@@ -2423,7 +2424,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.FormNewItem = function (key, opt, event) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../WEBFORM/index?refid=" + this.ItemFormLink;
+        let url = "../webform/index?refid=" + this.ItemFormLink;
         var _form = document.createElement("form");
         _form.setAttribute("method", "post");
         _form.setAttribute("action", url);
@@ -2449,7 +2450,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.FormEditGroup = function (key, opt, event) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../WEBFORM/index?refid=" + this.GroupFormLink;
+        let url = "../webform/index?refid=" + this.GroupFormLink;
         var _form = document.createElement("form");
         _form.setAttribute("method", "post");
         _form.setAttribute("action", url);
@@ -2475,7 +2476,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.FormEditItem = function (key, opt, event) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../WEBFORM/index?refid=" + this.ItemFormLink;
+        let url = "../webform/index?refid=" + this.ItemFormLink;
         var _form = document.createElement("form");
         _form.setAttribute("method", "post");
         _form.setAttribute("action", url);
@@ -2518,6 +2519,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.collapseTreeGroup = function (e) {
+        $("#eb_common_loader").EbLoader("show");
         let el = (e.target) ? $(e.target) : $(e);
         if (!(el.is("i"))) {
             el = $(el).closest("i");
@@ -2529,7 +2531,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //let curIndex = array.findIndex(function (obj) { return obj === $(el)[0]; });
         //let toRow = $(array[curIndex + 1]).hasClass("itemform") ? $(array[curIndex + 1]).closest("[role=row]").prev() : $(array[curIndex + 1]).closest("[role=row]");
         //let rows = (toRow) ? curRow.nextUntil($(toRow)) : curRow.nextAll();
-        let rows = curRow.nextUntil("[data-lvl="+level+"]");
+        let rows = curRow.nextUntil("[data-lvl=" + level + "]");
         let selector = "";
         if (level !== 0) {
             for (var i = level; i >= 0; i--) {
@@ -2548,7 +2550,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             rows.hide();
             el.removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
         }
-
+        $("#eb_common_loader").EbLoader("hide");
     }.bind(this);
 
     this.AppendTreeModal = function () {

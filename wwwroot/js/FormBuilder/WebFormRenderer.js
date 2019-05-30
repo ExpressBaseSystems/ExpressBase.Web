@@ -77,7 +77,7 @@ const WebFormRender = function (option) {
 
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj });
         }.bind(this));
     };
 
@@ -93,8 +93,6 @@ const WebFormRender = function (option) {
     };
 
     this.initNCs = function () {
-
-
         let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
         $.each(allFlatControls, function (k, Obj) {
             this.updateCtrlUI(Obj);

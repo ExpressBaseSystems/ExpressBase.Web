@@ -17,15 +17,24 @@
     this.Uid = options.Uid || null;
 
     this.Locations = JSON.parse(options.Location) || [];
-    this.CurrentLoc = (["0", "-1", 0, -1].indexOf(options.Current) > 0) ? 1 : options.Current;
-    this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
     this.EbHeader = new EbHeader();
+
+    this.getCurrent = function () {
+        if (store.get("Eb_Loc-" + this.Tid + this.Uid)) {
+            return store.get("Eb_Loc-" + this.Tid + this.Uid);
+        }
+        else {
+            return (["0", "-1", 0, -1].indexOf(options.Current) > 0) ? 1 : options.Current;
+        }
+    }
 
     this.trigger = function () {
         //$(document).bind('keypress', function (event) {
         //    if (event.which === 108)
         //        this.showSwitcher();
         //}.bind(this));
+        this.CurrentLoc = this.getCurrent();
+        this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         this.drawLocs();
         this.setDeafault();
@@ -49,7 +58,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4 flex-center">
-                                        <img src="~/images/EB_Logo.png" class="w-100" />
+                                        <img src="/images/your_company_logo.png" style="max-height:40px;width;auto"/>
                                     </div>
                                     <div class="col-md-6 loc_info display-flex">
                                         <h5 class="mr-0">${this.Locations[i].LongName}</h5>
@@ -142,6 +151,10 @@
             return false;
         }
     };
+
+    this.clearSwitchedLoc = function () {
+        store.remove("Eb_Loc-" + this.Tid + this.Uid);
+    }
 
     this.trigger();
 };

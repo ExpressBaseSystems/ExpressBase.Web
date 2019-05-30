@@ -2519,7 +2519,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.collapseTreeGroup = function (e) {
-        $("#eb_common_loader").EbLoader("show");
         let el = (e.target) ? $(e.target) : $(e);
         if (!(el.is("i"))) {
             el = $(el).closest("i");
@@ -2527,19 +2526,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         let curRow = $(el).parents().closest("[role=row]");
         var level = parseInt($(curRow).attr("data-lvl"));
         var isShow = ($(el).hasClass("fa-minus-square-o")) ? false : true;
-        //let array = $("[data-level=" + level + "]").toArray();
-        //let curIndex = array.findIndex(function (obj) { return obj === $(el)[0]; });
-        //let toRow = $(array[curIndex + 1]).hasClass("itemform") ? $(array[curIndex + 1]).closest("[role=row]").prev() : $(array[curIndex + 1]).closest("[role=row]");
-        //let rows = (toRow) ? curRow.nextUntil($(toRow)) : curRow.nextAll();
-        let rows = curRow.nextUntil("[data-lvl=" + level + "]");
-        let selector = "";
-        if (level !== 0) {
-            for (var i = level; i >= 0; i--) {
-                selector += "i[data-level=" + i + "],";
+        let count = this.RowCount;
+        let rows = {};
+        let j = 0;
+        for (var i = level; i >= 0; i--,j++) {
+            let eee = curRow.nextUntil("[data-lvl=" + level + "]");
+            if (eee.length < count) {
+                count = eee.length;
+                rows = eee;
             }
-            selector = selector.substr(0, selector.length - 1);
-            rows = rows.toArray().filter(el => !rows.children().find(selector).closest("tr").toArray().includes(el));
-            rows = $(rows);
         }
         if (isShow) {
             rows.show();
@@ -2550,7 +2545,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             rows.hide();
             el.removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
         }
-        $("#eb_common_loader").EbLoader("hide");
     }.bind(this);
 
     this.AppendTreeModal = function () {

@@ -693,26 +693,27 @@ const WebFormRender = function (option) {
 
     this.GetAuditTrail = function () {
         let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+        $("#AuditHistoryModal .modal-title").text("Audit Trail - " + this.FormObj.DisplayName);
         $("#AuditHistoryModal").modal("show");
         $("#divAuditTrail").children().remove();
-        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
+        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
             url: "../WebForm/GetAuditTrail",
             data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: currentLoc },
             error: function () {
                 $("#divAuditTrail").children().remove();
-                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);
+                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something unexpected occured </div>`);
             },
             success: function (result) {
                 if (result === "{}") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 50%; font-size: 20px; color: #ccc; "> Nothing to Display </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 45%; font-size: 20px; color: #aaa; "> Nothing to Display </div>`);
                     return;
                 }
                 else if (result === "") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something went wrong </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something went wrong </div>`);
                     return;
                 }
                 this.drawAuditTrailTest(result);
@@ -959,16 +960,14 @@ const WebFormRender = function (option) {
                                 }
                             },
                             CallBack: function (name) {
-                                window.location = window.location.href;
+                                reloadFormPage();
                             }.bind(this)
                         });
                     }
                 }.bind(this);
-
             }.bind(this), 500);
 
         }
-
        
     };
 

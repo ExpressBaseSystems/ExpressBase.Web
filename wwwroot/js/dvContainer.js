@@ -274,7 +274,7 @@ var DvContainerObj = function (settings) {
                 //$("#" + focusedId).css("width", window.outerWidth);
             }
             else if (this.dvRefid.split("-")[2] === "0") {
-                let url = "../WEBFORM/index?refid=" + this.dvRefid;
+                let url = "../webform/index?refid=" + this.dvRefid;
                 var _form = document.createElement("form");
                 _form.setAttribute("method", "post");
                 _form.setAttribute("action", url);

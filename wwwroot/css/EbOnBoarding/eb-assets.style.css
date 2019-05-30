@@ -238,16 +238,6 @@ flex-direction:column;
     height: 100%;
     z-index: 1000;
 }
-.loc_switchbtn {
-    color: #336699;
-    padding: 3px 12px;
-    font-size: 18px;
-    background-color: transparent;
-    margin-right: 5px;
-}
-._neg_icon-left {
-    margin-left: -9px;
-}
 .display-flex{
     display:flex;
 }
@@ -258,8 +248,8 @@ flex-direction:column;
     min-height: 300px;
     display: flex;
     flex-direction: column;
-    padding: 0 10px;
     max-height: 434px;
+    border-radius:6px;
 }
 .loc_switchModal_outer{
     width:100%;
@@ -276,13 +266,15 @@ flex-direction:column;
 }
 .locationwrapper {
     border-bottom: 1px solid #eee;
-    border-top: 1px solid #eee;
     padding: 5px 0;
 }
-.locationwrapper:hover {
-    background: #fafafa; 
-    cursor:pointer;
-}
+    .locationwrapper:last-child {
+        border-bottom: none;
+    }
+    .locationwrapper:hover {
+        background: #fafafa;
+        cursor: pointer;
+    }
     .locationwrapper .loc_info {
         flex-direction: column;
         line-height: 2em;
@@ -291,15 +283,16 @@ flex-direction:column;
     display: none;
 }
 .loc_switchModal_box .locs_head {
-    flex: 0 1 auto;
+    padding: 10px;
+    border-bottom: 1px solid #CCC;
 }
 .loc_switchModal_box .locs_bdy {
-    flex: 1 1 auto;
     overflow: auto;
+    padding: 5px 10px;
 }
 .loc_switchModal_box .locs_foot {
-    flex: 0 1 auto;
-    padding: 8px 0;
+    padding: 10px 20px 10px 10px;
+    border-top: 1px solid #ccc;
 }
 .loc_switchModal_fade {
     display:none;

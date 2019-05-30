@@ -148,6 +148,8 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    padding-left: 5px;
+    border-left: 1px solid #ccc;
 }
 
     .brd_cr_t .brd_row {
@@ -651,7 +653,9 @@ input:checked + .proslider:before {
     padding: 0 10px;
     font-family: Montserrat;
     font-weight: 500;
-    border-right: 1px solid #ccc;
-    margin-right: 5px;
-    border-left: 1px solid #ccc;
+    cursor:pointer;
 }
+    .LocInfCr:hover, .LocInfCr:active, .LocInfCr:focus{
+        background: #3487da;
+        color: white;
+    }

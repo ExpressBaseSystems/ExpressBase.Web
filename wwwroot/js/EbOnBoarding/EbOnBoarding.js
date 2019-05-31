@@ -1,8 +1,12 @@
-﻿var EbOnBoarding = function (context) {
+﻿
+//js file for EbOnBoarding.cshtml ,Resetpassword.cshtml
+//has 2 main function EbOnboarding for...................   and PasswordValidation
+
+var EbOnBoarding = function (context) {
 
     this.solinfo = {};
     this.seldeploy;
-
+    this.ajaxTime;
 
     let _prevId = "#profimage";
     let _tid = "";
@@ -156,19 +160,7 @@
         $("#loader_app_info").EbLoader("show");
     };
 
-    this.Showpsdfn = function (e) {
-        let x = $(e.target).siblings("input");
-        if (x.attr("type") === "password") {
-            x.prop("type", "text");
-            $("#psvisible").hide();
-            $("#pshide").show();
-        } else {
-            x.prop("type", "password");
-            $("#psvisible").show();
-            $("#pshide").hide();
-        }
 
-    }.bind(this);
 
     this.validate = function () {
         let sts = true
@@ -184,7 +176,7 @@
             $("#repeat_passwordlbl").css("visibility", "hidden");
         }
         let strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-        if (pass.length >=8 && strongRegex.test(pass)) {
+        if (pass.length >= 8 && strongRegex.test(pass)) {
             $('#passlbl').text("Strong password");
             $("#passlbl").css({ 'color': 'green' });
             $("#passlbl").focusout();
@@ -219,7 +211,7 @@
 
         return sts;
     }
-  
+
     this.Solutionobjfn = function (e) {
         e.preventDefault();
         let tem = 1;
@@ -243,7 +235,7 @@
             $("#slnid").css("visibility", "hidden");
             $('#ebsid').removeClass('txthighlightred').addClass('txthighlight');
         }
-        
+
         if (tem === 1) {
             this.solinfo.solurl = $("#ebsid").val().trim();
             this.solinfo.solname = $("#solutionname").val().trim();
@@ -252,8 +244,8 @@
             $("#app-info").show();
             EbMessage("show", { Message: "Saved" });
             $("#save-subscrip").hide();
-           
-                this.scrollToLast();
+
+            this.scrollToLast();
         }
 
     }
@@ -262,19 +254,22 @@
         e.preventDefault();
         $("#txtsol").empty();
         $("#txtdb").empty();
-        //$("#txtsol").css("visibility", "visible");
-        //$("#txtdb").css("visibility", "visible");
+        let st = 0;
         this.solinfo.isdeploy = $('input[name=selector]:checked').val();
         $("#txtsol").append("Creating Solution...");
-
-      
+        if (this.solinfo.isdeploy == "true") {
+            st = 1;
+        }
+        //$("#txtsol").css("visibility", "visible");
+        //$("#txtdb").css("visibility", "visible");
 
         $.ajax({
             type: 'POST',
             url: "../Tenant/EbCreateSolution",
             beforeSend: function () {
                 $("#loader_product-info").EbLoader("show");
-            },
+                this.ajaxTime = new Date().getTime();
+            }.bind(this),
             data: {
                 Sname: this.solinfo.solname,
                 SolnId: this.solinfo.solurl.toLowerCase(),
@@ -282,168 +277,68 @@
                 DeployDB: this.solinfo.isdeploy
             },
             success: function (res) {
-                
-                    if (res.errSolMessage != null) {
-                        $("#txtsol").empty();
-                        //$("#txtsol").fadeOut();
-                        $("#txtsol").append(res.errSolMessage);
-                        EbMessage("show", { Message: res.errSolMessage, Background: "red" });
-                }  
+                let totalTime = (new Date().getTime() - this.ajaxTime) / 1000;
+                let tm = 4 - totalTime;
 
-                setTimeout(function () {
-                    if (this.solinfo.isdeploy === "true") {
+                if (res.errSolMessage != null) {
+                    $("#txtsol").empty();
+                    //$("#txtsol").fadeOut();
+                    $("#txtsol").append(res.errSolMessage);
+                    EbMessage("show", { Message: res.errSolMessage, Background: "red" });
+                }
+                if (st == 1) {
+                    if (tm > 0) {
+                        setTimeout(function () {
+                            $("#txtdb").append("Deploying DataBase...")
+                        }, 2000);
+                    }
+                    else {
                         $("#txtdb").append("Deploying DataBase...")
                     }
-                }.bind(this), 2000);
+                }
 
-                    if (res.errDbMessage != null) {
-                        $("#txtdb").empty();
-                        //$("#txtdb").fadeOut();
-                        $("#txtdb").append(res.errDbMessage);
-                        EbMessage("show", { Message: res.errDbMessage, Background: "red" });
+                if (res.errDbMessage != null) {
+                    $("#txtdb").empty();
+                    $("#txtdb").append(res.errDbMessage);
+                    EbMessage("show", { Message: res.errDbMessage, Background: "red" });
+                }
+
+                if (res.status != null) {
+                    $("#loader_product-info").EbLoader("hide");
+                    if (_context) {
+                        setTimeout(function () {
+                            window.location.replace("/MySolutions");
+                            $("#btn1").click();
+                        }, 4000);
                     }
+                    else {
+                        setTimeout(function () {
+                            $("#btn1").click();
+                            EbMessage("show", { Message: "Solution Created" });
+                        }, 4000);
 
-                    if (res.status != null) {
-                        $("#loader_product-info").EbLoader("hide");
-                        if (_context) {
-                            setTimeout(function () {
-                                window.location.replace("/MySolutions");
-                                $("#btn1").click();
-                            }, 4000);
-                        }
-                        else {
-                            setTimeout(function () {
-                                $("#btn1").click();
-                                EbMessage("show", { Message: "Solution Created" });
-                            }, 4000);
-                            
 
-                        }
                     }
+                }
+
             }.bind(this)
         })
     }
 
-    this.password_auto_validation = function () {
-        let pass = $('#inputPassword').val();
-        let number = /[0-9]/;
-        let upperCase = /[A-Z]/;
-        let lowerCase = /[a-z]/;
-        let special_characters = /([~,!,@,#,$,%,^,&,*,-,_,+,=,?,>,<])/;
-
-        if (pass.match(number)) {
-            $('#passcheck_4').removeClass('fa fa-times').addClass('fa fa-check');
-            $("#passcheck_4").css({ 'color': 'green' });
-        }
-        else {
-            $('#passcheck_4').removeClass('fa fa-check').addClass('fa fa-times');
-            $("#passcheck_4").css({ 'color': '#cf4f4f' });
-        }
-
-        if (pass.match(lowerCase)) {
-            $('#passcheck_3').removeClass('fa fa-times').addClass('fa fa-check');
-            $("#passcheck_3").css({ 'color': 'green' });
-        }
-        else {
-            $('#passcheck_3').removeClass('fa fa-check').addClass('fa fa-times');
-            $("#passcheck_3").css({ 'color': '#cf4f4f' });
-        }
-        if (pass.match(upperCase)) {
-            $('#passcheck_2').removeClass('fa fa-times').addClass('fa fa-check');
-            $("#passcheck_2").css({ 'color': 'green' });
-        }
-        else {
-            $('#passcheck_2').removeClass('fa fa-check').addClass('fa fa-times');
-            $("#passcheck_2").css({ 'color': '#cf4f4f' });
-        }
-        if (pass.match(special_characters)) {
-            $('#passcheck_5').removeClass('fa fa-times').addClass('fa fa-check');
-            $("#passcheck_5").css({ 'color': 'green' });
-        }
-        else {
-            $('#passcheck_5').removeClass('fa fa-check').addClass('fa fa-times');
-            $("#passcheck_5").css({ 'color': '#cf4f4f' });
-        }
-
-
-        if (pass.length > 7) {
-            $('#passcheck_1').removeClass('fa fa-times').addClass('fa fa-check');
-            $("#passcheck_1").css({ 'color': 'green' });
-        }
-        else {
-            $('#passcheck_1').removeClass('fa fa-check').addClass('fa fa-times');
-            $("#passcheck_1").css({ 'color': '#cf4f4f' });
-
-        }
-
-        if (pass.length < 8) {
-            $('#passlbl').text("Enter Strong password");
-            $("#passlbl").css({ 'color': 'red' });
-            $("#psdinfo1").css({ 'color': '#cf4f4f' });
-            $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
-            $("#inputPassword").focus();
-            $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
-        } else {
-            if (pass.match(number) && pass.match(upperCase) && pass.match(lowerCase) && pass.match(special_characters)) {
-                $("#passlbl").css({ 'color': 'green' });
-                $("#psdinfo1").css({ 'color': 'green' });
-                $('#psdinfo1').removeClass('fa fa-info-circle').addClass('fa fa-check');
-                $('#passlbl').text("Strong password");
-                $('#inputPassword').removeClass('txthighlightred').addClass('txthighlight');
-            } else {
-                $('#passlbl').text("Enter Strong password");
-                $("#passlbl").css({ 'color': 'red' });
-                $("#psdinfo1").css({ 'color': '#cf4f4f' });
-                $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
-                $("#inputPassword").focus();
-                $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
-            }
-        }
-
-
-    };
-
-    this.repeatpasswordcheck = function () {
-        let pass = $('#inputPassword').val();
-        let confpass = $('#inputPasswordConfirm').val();
-        if (pass != confpass) {
-            $("#repeat_passwordlbl").css("visibility", "visible");
-            $("#inputPasswordConfirm").focus();
-            $('#inputPasswordConfirm').removeClass('txthighlight').addClass('txthighlightred');
-            sts = false;
-        }
-        else {
-            $("#repeat_passwordlbl").css("visibility", "hidden");
-            $('#inputPasswordConfirm').removeClass('txthighlightred').addClass('txthighlight');
-        }
-    }
-
-
-    this.Psdinfofn = function () {
-        //$("#psdinfo").notify("At least eight characters. \n At least one uppercase character. \n At least one lowercase character.\n At least one number. At least one special character", { className: "info1", arrowShow: false, autoHideDelay: 5000, position: "bottom right" });
-        $("#rcorners1").css("visibility", "visible");
-    }
-    this.hidePasswordInfo = function () {
-        $("#rcorners1").css("visibility", "hidden");
-    }
-
-    this.cutcopypaste = function (e) {
-        e.preventDefault();
-    }
 
     this.selradiosecfn = function (e) {
         //let k = $('input[name=selector]:checked').attr("id");
         //let k = e.target.children[0].id;
-  
+
         $("#rcorners1").css("visibility", "visible");
-            $("#s-option").removeAttr("checked");
-            $("#t-option").prop('checked', true);
+        $("#s-option").removeAttr("checked");
+        $("#t-option").prop('checked', true);
     }
     this.selradiofirstfn = function () {
-    
-            $("#t-option").removeAttr("checked");
-            $("#s-option").prop('checked', true);
-        
+
+        $("#t-option").removeAttr("checked");
+        $("#s-option").prop('checked', true);
+
     }
 
 
@@ -500,8 +395,8 @@
 
 
 
-       
-    
+
+
 
     this.init = function () {
         this.LogoImageUpload();
@@ -516,22 +411,178 @@
         $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));
         $("#app-form").on("submit", this.showLoaderOnAppSub.bind(this));
         $("#ebsid").on("change", function (e) { $("#sid_on_appcreation").val($(e.target).val()); });
-        $(".toggle-password").on("click", this.Showpsdfn.bind(this));
         $("#save-subscrip").on("click", this.Solutionobjfn.bind(this));
         //$("#dbdeployform").off("submit").on("submit", this.Savesolutionfn.bind(this));
         $("#save-application").off("click").on("click", this.Savesolutionfn.bind(this));
-        $("#psdinfo1").on("mouseover", this.Psdinfofn.bind(this));
-        $("#psdinfo1").on("mouseout", this.hidePasswordInfo.bind(this));
-        $("#inputPassword").on("keyup", this.password_auto_validation.bind(this));
-        $("#inputPassword").on('bind', this.cutcopypaste.bind(this));
         $("#radio1").on("click", this.selradiofirstfn.bind(this));
         $("#radio2").on("click", this.selradiosecfn.bind(this));
-        $("#inputPasswordConfirm").on("keyup", this.repeatpasswordcheck.bind(this));
         $("#name").on("keyup", this.namevalidate.bind(this));
-       $("#company").on("keyup", this.companyvalidate.bind(this));
+        $("#company").on("keyup", this.companyvalidate.bind(this));
         $("#ebsid").on("keyup", this.solutionurlcheck.bind(this));
         $("#solutionname").on("keyup", this.solutioncheck.bind(this));
 
     };
     this.init();
+};
+
+
+var PasswordValidation = function () {
+    this.initial = function () {
+        $("#psdinfo1").on("mouseover", this.Psdinfofn.bind(this));
+        $("#psdinfo1").on("mouseout", this.hidePasswordInfo.bind(this));
+        $("#inputPassword").on("keyup", this.password_auto_validation.bind(this));
+        $("#inputPassword").on('bind', this.cutcopypaste.bind(this));
+        $("#inputPasswordConfirm").on("keyup", this.repeatpasswordcheck.bind(this));
+        $(".toggle-password").on("click", this.Showpsdfn.bind(this));
+        $("#btnpswreset").on("click", this.Pswresetfn.bind(this));
+    }
+
+    this.Psdinfofn = function () {
+        $("#rcorners1").css("visibility", "visible");
+    }
+    this.hidePasswordInfo = function () {
+        $("#rcorners1").css("visibility", "hidden");
+    }
+    this.repeatpasswordcheck = function () {
+        let pass = $('#inputPassword').val();
+        let confpass = $('#inputPasswordConfirm').val();
+        if (pass != confpass) {
+            $("#repeat_passwordlbl").css("visibility", "visible");
+            $("#inputPasswordConfirm").focus();
+            $('#inputPasswordConfirm').removeClass('txthighlight').addClass('txthighlightred');
+            sts = false;
+        }
+        else {
+            $("#repeat_passwordlbl").css("visibility", "hidden");
+            $('#inputPasswordConfirm').removeClass('txthighlightred').addClass('txthighlight');
+        }
+    }
+
+    this.password_auto_validation = function () {
+        let st = true;
+        let pass = $('#inputPassword').val();
+        let number = /[0-9]/;
+        let upperCase = /[A-Z]/;
+        let lowerCase = /[a-z]/;
+        let special_characters = /([~,!,@,#,$,%,^,&,*,-,_,+,=,?,>,<])/;
+
+        if (pass.match(number)) {
+            $('#passcheck_4').removeClass('fa fa-times').addClass('fa fa-check');
+            $("#passcheck_4").css({ 'color': 'green' });
+        }
+        else {
+            $('#passcheck_4').removeClass('fa fa-check').addClass('fa fa-times');
+            $("#passcheck_4").css({ 'color': '#cf4f4f' });
+            st = false;
+        }
+
+        if (pass.match(lowerCase)) {
+            $('#passcheck_3').removeClass('fa fa-times').addClass('fa fa-check');
+            $("#passcheck_3").css({ 'color': 'green' });
+        }
+        else {
+            $('#passcheck_3').removeClass('fa fa-check').addClass('fa fa-times');
+            $("#passcheck_3").css({ 'color': '#cf4f4f' });
+            st = false;
+        }
+        if (pass.match(upperCase)) {
+            $('#passcheck_2').removeClass('fa fa-times').addClass('fa fa-check');
+            $("#passcheck_2").css({ 'color': 'green' });
+        }
+        else {
+            $('#passcheck_2').removeClass('fa fa-check').addClass('fa fa-times');
+            $("#passcheck_2").css({ 'color': '#cf4f4f' });
+            st = false;
+        }
+        if (pass.match(special_characters)) {
+            $('#passcheck_5').removeClass('fa fa-times').addClass('fa fa-check');
+            $("#passcheck_5").css({ 'color': 'green' });
+        }
+        else {
+            $('#passcheck_5').removeClass('fa fa-check').addClass('fa fa-times');
+            $("#passcheck_5").css({ 'color': '#cf4f4f' });
+            st = false;
+        }
+
+
+        if (pass.length > 7) {
+            $('#passcheck_1').removeClass('fa fa-times').addClass('fa fa-check');
+            $("#passcheck_1").css({ 'color': 'green' });
+        }
+        else {
+            $('#passcheck_1').removeClass('fa fa-check').addClass('fa fa-times');
+            $("#passcheck_1").css({ 'color': '#cf4f4f' });
+            st = false;
+
+        }
+
+        if (pass.length < 8) {
+            $('#passlbl').text("Enter Strong password");
+            $("#passlbl").css({ 'color': 'red' });
+            $("#psdinfo1").css({ 'color': '#cf4f4f' });
+            $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
+            $("#inputPassword").focus();
+            $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
+            st = false;
+        } else {
+            if (pass.match(number) && pass.match(upperCase) && pass.match(lowerCase) && pass.match(special_characters)) {
+                $("#passlbl").css({ 'color': 'green' });
+                $("#psdinfo1").css({ 'color': 'green' });
+                $('#psdinfo1').removeClass('fa fa-info-circle').addClass('fa fa-check');
+                $('#passlbl').text("Strong password");
+                $('#inputPassword').removeClass('txthighlightred').addClass('txthighlight');
+            } else {
+                $('#passlbl').text("Enter Strong password");
+                $("#passlbl").css({ 'color': 'red' });
+                $("#psdinfo1").css({ 'color': '#cf4f4f' });
+                $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
+                $("#inputPassword").focus();
+                $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
+                st = false;
+            }
+        }
+
+        return st;
+    };
+
+    this.cutcopypaste = function (e) {
+        e.preventDefault();
+    }
+    this.Showpsdfn = function (e) {
+        let x = $(e.target).siblings("input");
+        if (x.attr("type") === "password") {
+            x.prop("type", "text");
+            $("#psvisible").hide();
+            $("#pshide").show();
+        } else {
+            x.prop("type", "password");
+            $("#psvisible").show();
+            $("#pshide").hide();
+        }
+
+    }.bind(this);
+
+    this.Pswresetfn = function () {
+
+        let sts = this.password_auto_validation();
+        psdcode = $("#elink").val();
+        if (sts == true) {
+            $.ajax({
+                url: "../Ext/ResetPassword",
+                data: { emcde: psdcode, psw: $("#inputPassword").val() },
+                cache: false,
+                type: "POST",
+                success: function (status) {
+                    if (status == 1) {
+                        location.href = "../Ext/TenantSignin";
+                    }
+                    if (status == 0) {
+                        location.href = "../StatusCode/401";
+                    }
+                }
+            });
+        }
+    }
+
+    this.initial();
 };

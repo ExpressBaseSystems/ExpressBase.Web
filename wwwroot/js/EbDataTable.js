@@ -2399,105 +2399,159 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.FormNewGroup = function (key, opt, event) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../webform/index?refid=" + this.GroupFormLink;
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
+        let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
-        _form.appendChild(input);
+        if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=2&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
+        }
+        else {
+            var _form = document.createElement("form");
+            let url = "../webform/index?refid=" + this.GroupFormLink;
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_mode";
-        input.value = 2;
-        _form.appendChild(input);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = filterparams;
+            _form.appendChild(input);
 
-        document.body.appendChild(_form);
-        _form.submit();
-        document.body.removeChild(_form);
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = 2;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            _form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
     };
 
     this.FormNewItem = function (key, opt, event) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../webform/index?refid=" + this.ItemFormLink;
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
+        let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
+        if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=2&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
+        }
+        else {
+            let url = "../webform/index?refid=" + this.ItemFormLink;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
-        _form.appendChild(input);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = filterparams;
+            _form.appendChild(input);
 
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_mode";
-        input.value = 2;
-        _form.appendChild(input);
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = 2;
+            _form.appendChild(input);
 
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            _form.appendChild(input);
 
-        document.body.appendChild(_form);
-        _form.submit();
-        document.body.removeChild(_form);
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
     };
 
     this.FormEditGroup = function (key, opt, event) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../webform/index?refid=" + this.GroupFormLink;
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
+        let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
+        if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=1&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
+        }
+        else {
+            let url = "../webform/index?refid=" + this.GroupFormLink;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
-        _form.appendChild(input);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = filterparams;
+            _form.appendChild(input);
 
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_mode";
-        input.value = 1;
-        _form.appendChild(input);
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = 1;
+            _form.appendChild(input);
 
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            _form.appendChild(input);
 
-        document.body.appendChild(_form);
-        _form.submit();
-        document.body.removeChild(_form);
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
     };
 
     this.FormEditItem = function (key, opt, event) {
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../webform/index?refid=" + this.ItemFormLink;
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
+        let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
+        if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=1&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
+        }
+        else {
+            let url = "../webform/index?refid=" + this.ItemFormLink;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
-        _form.appendChild(input);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = filterparams;
+            _form.appendChild(input);
 
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_mode";
-        input.value = 1;
-        _form.appendChild(input);
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = 1;
+            _form.appendChild(input);
 
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            _form.appendChild(input);
 
-        document.body.appendChild(_form);
-        _form.submit();
-        document.body.removeChild(_form);
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
     };
 
     this.formatToParameters = function (cols) {
@@ -3190,6 +3244,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.inline = true;
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
+        else if ($(e.target).closest("a").attr("data-popup") !== undefined) {
+            cData = $(e.target).closest("a").attr("data-data");
+            this.popup = true;
+            colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        }
         else {
             cData = $(e.target).text();
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
@@ -3236,6 +3295,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 this.OpenInlineDv(rows, e, idx, colindex);
             }
+        }
+        else if (this.popup) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
         }
         else {
             if (this.login === "uc")

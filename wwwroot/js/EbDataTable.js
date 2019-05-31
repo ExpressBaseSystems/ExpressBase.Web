@@ -2582,12 +2582,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var isShow = ($(el).hasClass("fa-minus-square-o")) ? false : true;
         let count = this.RowCount;
         let rows = {};
-        let j = 0;
-        for (var i = level; i >= 0; i--,j++) {
-            let eee = curRow.nextUntil("[data-lvl=" + level + "]");
-            if (eee.length < count) {
-                count = eee.length;
-                rows = eee;
+        for (var i = level; i >= 0; i--) {
+            let temp = curRow.nextUntil("[data-lvl=" + i + "]");
+            if (temp.length < count) {
+                count = temp.length;
+                rows = temp;
             }
         }
         if (isShow) {

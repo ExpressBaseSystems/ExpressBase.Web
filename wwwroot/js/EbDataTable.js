@@ -89,6 +89,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.treeColumn = null;
     this.treeData = [];
     this.tableName = null;
+    this.moveToPid = null;
+    this.movefromId = null;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -2602,54 +2604,48 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.AppendTreeModal = function () {
         $("#treemodal").remove();
-        let modal = `<div class="modal" tabindex="-1" role="dialog" id="treemodal">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">Modal title</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <div id="modal-body-cont">
-                            Move From <label id="movefrom"></label> To 
-                            <div class="dropdown" style="display: inline;">
-                                <button class="btn btn-default dropdown-toggle treemodalul" type="button" data-toggle="dropdown">Select Group....
-                                <span class="caret"></span></button>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>`;
-        $("body").prepend(modal);
+        let modal1 =`<div class="modal fade" id="treemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="treemodal-container">
+            <h4 class="treemodal-header">Move <span id="itemorgroup"></span></h4>
+            <div class="tree_item_cont">
+                <label>From </label>
+                <span id="movefrom"></span>
+            </div>
+            <div class="tree_item_cont">
+                <label>To</label>
+                <button class="btn treemodalul">Select Group
+                <span class="caret"></span></button>
+            </div>
+            <div class="pull-right">
+                <button class="btn" id="treemodal_submit">Move</button>
+                <button class="btn" id="treemodal_cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>`;
+
+        $("body").prepend(modal1);
     };
 
     this.MoveGroupOrItem = function (key, opt, event) {
         this.AppendTreeModal();
+        if (opt.selector === ".itemform")
+            $("#itemorgroup").text("Item");
+        else
+            $("#itemorgroup").text("Group");
         let rowindex = this.Api.row(opt.$trigger.parent().closest("[role=row]")).index();
         this.movefromtext = this.unformatedData[rowindex][this.treeColumn.data];
         $("#movefrom").text(this.movefromtext);
         this.IdColumnIndex = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === "id"; })[0].data;
         this.movefromId = this.unformatedData[rowindex][this.IdColumnIndex];
-        this.moveToId = "";
-        //this.createTreeItems();
         this.Items = {};
         this.createTreeItems___(this.treeData, this.Items);
         this.Items = this.Items.items;
-        $.contextMenu('destroy', '.treemodalul');
-        $.contextMenu({
-            selector: '.treemodalul',
-            className: 'contextmenu-custom__highlight',
-            items: this.Items,
-            trigger: "left",
-            autoHide: true,
-            callback: this.MoveDDClick.bind(this)
-        });
-        this.clickCounter = 0;
+        this.InitTreemodalContextmenu();
         $("#treemodal").modal("show");
-        $(".contextmenu-custom__highlight .context-menu-item").off("click").on("click", this.MoveDDClick.bind(this));
+        $("#treemodal_submit").off("click").on("click", this.MoveOKClick.bind(this));
+        $("#treemodal_cancel").off("click").on("click", this.MoveCancelClick.bind(this));
     };
 
     this.createTreeItems___ = function (initems, outitems) {
@@ -2665,6 +2661,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }.bind(this, initems, outitems));
+    };
+
+    this.InitTreemodalContextmenu = function () {
+        $.contextMenu('destroy', '.treemodalul');
+        $.contextMenu({
+            selector: '.treemodalul',
+            callback: this.MoveDDClick.bind(this),
+            className: 'contextmenu-custom__highlight',
+            items: this.Items,
+            trigger: "left",
+            autoHide: true,
+            events: {
+                show: function (options) {
+                    this.clickCounter = 0;
+                    return true;
+                }.bind(this)
+            }
+        });
+        this.clickCounter = 0;
+        $(".contextmenu-custom__highlight .context-menu-submenu").off("click").on("click", this.MoveDDClick.bind(this));
     };
 
     this.getClickedItem = function (key) {
@@ -2695,13 +2711,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.MoveDDClick = function (key, options) {
         if (this.clickCounter === 0) {
-            this.clickCounter++;
             if (options === undefined)
                 key = $(key.currentTarget).children("span").text();
-            $("#treemodal .btn:first-child").text(key);
-            $("#treemodal .btn:first-child").val(key);
+            $("#treemodal .treemodalul").text(key).append('<span class="caret"></span></button>');
             this.getClickedItem(key);
             $(".contextmenu-custom__highlight").hide();
+            $(".treemodalul").removeClass("context-menu-active");
+            $("#context-menu-layer").remove();
+            this.clickCounter++;
+        }
+    };
+
+    this.MoveOKClick = function () {
+        if (this.tableName !== null && this.moveToPid !== null && this.movefromId !== null) {
             let sql = `UPDATE ${this.tableName} SET ${this.treeColumn.ParentColumn.$values[0].name}= ${this.moveToPid}
                         WHERE id=${this.movefromId} `;
             $.ajax({
@@ -2711,6 +2733,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 success: this.UpdateSuccess.bind(this)
             });
         }
+        else {
+            alert("Select One Group.....");
+        }
+    };
+
+    this.MoveCancelClick = function () {
+        this.clickCounter = 0;
+        $("#treemodal").modal("hide");
     };
 
     this.UpdateSuccess = function () {

@@ -391,6 +391,10 @@
 <div class="eb-cropie" id="cropsection"></div>
 <script>
     $(document).ready(function () {
+        //disable cut,copy,paste
+        $('#inputPassword,#inputPasswordConfirm').bind('cut copy paste', function (e) {
+            e.preventDefault();
+        });
         var boarding = new EbOnBoarding();
         var psd = new PasswordValidation();
     });

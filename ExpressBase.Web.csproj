@@ -22,6 +22,10 @@
     </Content>
   </ItemGroup>
 
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Deterministic>false</Deterministic>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DiffPlex" Version="1.4.1" />
     <PackageReference Include="Flurl" Version="2.7.1" />

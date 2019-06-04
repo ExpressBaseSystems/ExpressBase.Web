@@ -346,7 +346,7 @@
         $tr.show(300);
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
-        return this.initRowCtrls(rowid);
+        return [$tr, this.initRowCtrls(rowid)];
 
     }.bind(this);
 
@@ -644,18 +644,33 @@
     };
 
     this.AddRowWithData = function (_rowdata) {
-        let addedRow = this.addRow({ isAddBeforeLast: true });
+        let addedRowObj = this.addRow({ isAddBeforeLast: true });
+        let $addedRow = addedRowObj[0];
+        let addedRow = addedRowObj[1];
         $.each(addedRow, function (i, col) {
             let data = _rowdata[col.Name];
             if (data !== null)
                 col.setValue(data);
         }.bind(this));
 
+        this.resetRowSlNo($addedRow.index());
+
         // call checkRow_click() pass event.target directly
         setTimeout(function () {
             let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRow[0].__rowid}] td:last`)[0];
             this.checkRow_click({ target: td }, false);
         }.bind(this), 1);
+    };
+    this.resetRowSlNo = function (slno) {
+        //$(`#${this.TableId}>tbody>tr`).each(function (i, el) {
+        //    $(el).find(`td.row-no-td`).attr("idx", i + 1).text(i + 1);
+        //}.bind(this));
+
+
+        let rowCount = $(`#${this.TableId}>tbody>tr`).length;
+        for (let i = slno; i < rowCount; i++) {
+            $(`#${this.TableId}>tbody>tr td.row-no-td:eq(${i})`).attr("idx", i + 1).text(i + 1);
+        }
     };
 
     this.ColGetvalueFn = function (p1) {

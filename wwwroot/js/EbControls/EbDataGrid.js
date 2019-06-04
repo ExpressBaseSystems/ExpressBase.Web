@@ -704,6 +704,30 @@
             this.ctrlToSpan_row(rowId);
     };
 
+    this.disableRow = function (rowId) {
+        let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+        $tr.find(".ctrlstd").attr("mode", "view").attr("title", "Row Disabled");
+        $.each(this.AllRowCtrls[rowId], function (i, inpCtrl) {
+            inpCtrl.disable();
+        }.bind(this));
+    };
+
+    this.enableRow = function (rowId) {
+        let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+        $tr.find(".ctrlstd").removeAttr('mode').removeAttr('title');
+        $.each(this.AllRowCtrls[rowId], function (i, inpCtrl) {
+            inpCtrl.enable();
+        }.bind(this));
+    };
+
+    this.hideRow = function (rowId) {
+        $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`).hide(200);
+    };
+
+    this.showRow = function (rowId) {
+        $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`).show(200);
+    };
+
     this.setCurRow = function (rowId) {
         this.ctrl.currentRow = [];
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
@@ -740,6 +764,12 @@
 
         this.ctrl.updateRowByRowId = this.updateRowByRowId.bind(this);
         this.ctrl.updateRowByRowIndex = this.updateRowByRowIndex.bind(this);
+
+        this.ctrl.disableRow = this.disableRow.bind(this);
+        this.ctrl.enableRow = this.enableRow.bind(this);
+
+        this.ctrl.showRow = this.showRow.bind(this);
+        this.ctrl.hideRow = this.hideRow.bind(this);
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

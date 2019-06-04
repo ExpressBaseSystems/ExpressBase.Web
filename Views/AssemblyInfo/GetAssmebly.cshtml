@@ -1,0 +1,27 @@
+﻿<table>
+    <tr>
+        <th colspan="2">Assembly Versions</th>
+    </tr>
+
+
+    @{
+        foreach (string v in @ViewBag.Versions)
+        {
+            string[] p = v.Split("-");
+            <tr>
+                <td>@p[0]</td>
+                <td>@p[1]</td>
+            </tr>
+        }
+    }
+</table>
+<style>
+    table {
+        border: 1px solid black;
+       margin-left:20%;
+       margin-top:5%;
+    }
+        th, td {
+            border-bottom: 1px solid black;
+        }
+</style>

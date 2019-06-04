@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http.Features;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
+using System.Reflection;
 
 namespace ExpressBase.Web2
 {
@@ -113,6 +114,12 @@ namespace ExpressBase.Web2
             {
                 return new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
             });
+
+            //Setting Assembly version in Redis
+            RedisClient client = new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
+            AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
+            String version = assembly.Name.ToString() + " - " + assembly.Version.ToString();
+            client.Set("WebAssembly", version);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

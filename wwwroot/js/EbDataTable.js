@@ -814,24 +814,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
         if (tempArray.length === 0) {
-            if (this.EbObject.OrderBy.$values.length > 0) {
+            $.each(this.orderColl, function (i, obj) {
+                tempArray.push(obj);
+            });
+            if (tempArray.length === 0) {
                 $.each(this.EbObject.OrderBy.$values, function (i, obj) {
                     if (tempArray.filter(e => e.Column === obj.name).length === 0)
                         tempArray.push(new order_obj(obj.name, obj.Direction));
                 });
             }
-
-            $.each(this.orderColl, function (i, obj) {
-                var index = tempArray.findIndex(x => x.Column === obj.Column);
-                if (index === -1)
-                    tempArray.push(obj);
-                else {
-                    tempArray.splice(index, 1);
-                    obj.Direction = (obj.Direction === 0) ? 1 : 0;
-                    tempArray.push(obj);
-                }
-
-            });
         }
 
         return tempArray;

@@ -10,6 +10,7 @@ const WebFormRender = function (option) {
     this.$editBtn = $('#' + option.headerBtns['Edit']);
     this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
     this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
+    this.$closeBtn = $('#' + option.headerBtns['Close']);
     this.Env = option.env;
     this.Cid = option.cid;
     this.initControls = new InitControls(this);
@@ -852,7 +853,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
+        this.headerObj.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
@@ -860,14 +861,9 @@ const WebFormRender = function (option) {
                 $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
                 $("#Eb_com_menu").remove();
             }
-            if (reqstMode === "New Mode") {
-                this.headerObj.showElement(this.filterHeaderBtns(["webformsave"], currentLoc, reqstMode));
-            }
-            this.headerObj.setName(_formObj.DisplayName);
-            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-            $('title').text(_formObj.DisplayName + `(${reqstMode})`);
-            return;
+            this.headerObj.showElement(["webformclose"]);
         }
+
         this.mode = reqstMode;//
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
@@ -888,12 +884,16 @@ const WebFormRender = function (option) {
         this.headerObj.setName(_formObj.DisplayName);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
         $('title').text(this.FormObj.DisplayName + `(${reqstMode})`);
+
+        if (this.isPartial === "True") {
+            this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);
+        }
     };
 
     this.filterHeaderBtns = function (btns, loc, mode) {
         let r = [];
         // ["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
-        // ["New", "View", "Edit", "Delete", "Cancel", "Print", "AuditTrail"]
+        // ["New", "View", "Edit", "Delete", "Cancel", "AuditTrail"]
         for (let i = 0; i < btns.length; i++) {
             if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')            
                 r.push(btns[i]);
@@ -922,6 +922,7 @@ const WebFormRender = function (option) {
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
+        this.$closeBtn.on("click", function () { window.parent.closeModal();});
         $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();

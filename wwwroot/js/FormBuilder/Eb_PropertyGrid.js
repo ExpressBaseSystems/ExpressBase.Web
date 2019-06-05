@@ -419,7 +419,10 @@
         //for (let property in this.PropsObj) { propArray.push(property); }
         //propArray.sort();
         let _Metas = [...this.Metas];
-        propArray = _Metas.sort(function (a, b) { return b.Priority - a.Priority; }).map(a => a.name);
+        if (this.IsSortByGroup)
+            propArray = _Metas.sort(function (a, b) { return b.Priority - a.Priority; }).map(a => a.name);
+        else
+            propArray = _Metas.sort(function (a, b) { if ((a.alias || a.name) < (b.alias || b.name)) return -1; if ((a.alias || a.name > b.alias || b.name)) return 1; return 0; }).map(a => a.name);
 
         let prop = null;
         for (let i in propArray) {
@@ -572,11 +575,7 @@
             if (this.Isdraggable) {
                 this.$extCont.draggable({
                     handle: ".outer-pg > .pgHead",
-                    stop: function () {
-                        if (parseInt(this.$extCont.css("top").trim("px")) <= 37)
-                            this.$extCont.css("top", "37px");
-                        this.$fitCornerBtn.show(100);
-                    }.bind(this)
+                    stop: this.pgDragStop
                 });
                 this.$fitCornerBtn.insertAfter(this.$wraper.find(".pgpin"));
                 this.$fitCornerBtn.on("click", function () {
@@ -598,9 +597,22 @@
         this.EbAlert = new EbAlert({
             id: this.wraperId + "PGalertCont",
             top: 24,
-            right: 24,
+            right: 24
         });
     };
+
+    this.pgDragStop = function () {
+        if (parseInt(this.$extCont.css("top").trim("px")) <= 37)
+            this.$extCont.css("top", "37px");
+        if (parseInt(this.$extCont.css("top").trim("px")) >= window.innerHeight)
+            this.$extCont.css("top", "37px");
+        if (parseInt(this.$extCont.css("left").trim("px")) >= window.innerWidth || parseInt(this.$extCont.css("left").trim("px")) < 20 - this.$extCont.width()) {
+            this.$extCont.css("left", "auto");
+            this.$extCont.css("right", "0px");
+        }
+
+        this.$fitCornerBtn.show(100);
+    }.bind(this);
 
     //fires onChange of DDlisting all controls
     this.ctrlsDD_onchange = function (e) {

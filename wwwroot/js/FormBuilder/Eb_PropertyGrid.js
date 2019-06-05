@@ -1,6 +1,7 @@
 ﻿const Eb_PropertyGrid = function (options, parentPG) {
     this.ParentPG = parentPG;
     this.wc = options.wc;
+    this.Isdraggable = options.isDraggable;
     this.cid = options.cid;
     this.IsInnerCall = options.IsInnerCall || false;
     this.wraperId = options.id;
@@ -9,6 +10,7 @@
     this.$extCont = options.$extCont;
     this.parentId = null;
     this.$controlsDD = $(".controls-dd-cont select");
+    this.$fitCornerBtn = $(`<div class="icon-cont  pull-right pgcorner"><i class="fa fa-angle-double-right"></i></div>`);
     this.dependedProp = options.dependedProp;
     this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
     this.AllObjects = {};
@@ -237,11 +239,11 @@
     // gives expandable prop values as array
     this.getExpandedRows = function (_meta, _obj, name) {
         let subRow_html = "";
-            $.each(_obj, function (key, val) {
-                let CurMeta = getObjByval(_meta, "name", key);
-                if (CurMeta)
-                    subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
-            }.bind(this));
+        $.each(_obj, function (key, val) {
+            let CurMeta = getObjByval(_meta, "name", key);
+            if (CurMeta)
+                subRow_html += this.getPropertyRowHtml(key, val, CurMeta, CurMeta.options, name);
+        }.bind(this));
         return subRow_html;
     };
 
@@ -549,7 +551,14 @@
     //Set basic foundation for PG
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
-        this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div><span>Properties </span><div class="icon-cont  pull-right pgpin"><i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
+        this.$wraper.append($(`<div class="pgHead">
+                                    <div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div>
+                                    <div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>
+                                    <span>Properties </span>
+                                    <div class="icon-cont  pull-right pgpin"><i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>
+                                    </div><div class="controls-dd-cont">
+                                    <select class="selectpicker" data-live-search="true"> </select>
+                                </div>`));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div><div id='" + this.wraperId + "_HelpBox' class='propgrid-helpbox'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         if (!this.IsInnerCall) {
@@ -559,7 +568,27 @@
                 label: "Properties",
                 $scope: this.$scope
             });
+            this.$wraper.addClass("outer-pg");
+            if (this.Isdraggable) {
+                this.$extCont.draggable({
+                    handle: ".outer-pg > .pgHead",
+                    stop: function () {
+                        if (parseInt(this.$extCont.css("top").trim("px")) <= 37)
+                            this.$extCont.css("top", "37px");
+                        this.$fitCornerBtn.show(100);
+                    }.bind(this)
+                });
+                this.$fitCornerBtn.insertAfter(this.$wraper.find(".pgpin"));
+                this.$fitCornerBtn.on("click", function () {
+                    this.$extCont.attr("style", "");
+                    this.$fitCornerBtn.hide();
+                }.bind(this));
+            }
         }
+        else
+            this.$wraper.addClass("inner-pg");
+
+
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", ".pgpin", this.CloseFn.bind(this));
         this.CXVE = new Eb_pgCXVE(this);

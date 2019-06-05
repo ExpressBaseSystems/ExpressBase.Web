@@ -209,7 +209,8 @@
         id: "pgWraper",
         wc: this.wc,
         cid: this.cid,
-        $extCont: $(".property-grid-cont")
+        $extCont: $(".property-grid-cont"),
+        isDraggable: true
     });
 
     //Edit mode

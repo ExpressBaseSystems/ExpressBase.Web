@@ -454,11 +454,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .property-grid-cont {
     position: fixed;
-    top: 0;
+    top: 37px;
     right: 0;
     z-index: 4;
-    padding-top: 37px;
-    border: 1px solid #ccc;
+    /*border: 1px solid #ccc;*/
     box-shadow: var(--eb-shadow);
     height: 100%;
     background-color: white;

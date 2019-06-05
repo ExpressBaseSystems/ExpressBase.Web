@@ -14,7 +14,7 @@
     width: auto;
     vertical-align: top;
     /*border-radius: 10px 10px 4px 4px;*/
-    box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+    /*box-shadow: 0 15px 35px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);*/
 }
 
 .form-head {
@@ -122,9 +122,9 @@
     width: 100%;
     height: calc( 100vh - 75px );
     overflow-y: auto;
-    border: solid 1px #ccc;
     background-color: #fefefe;
-    z-index: 0;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
+    z-index: 1;
 }
 
     .form-buider-form:focus {
@@ -458,7 +458,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     right: 0;
     z-index: 4;
     /*border: 1px solid #ccc;*/
-    box-shadow: var(--eb-shadow);
+    /*box-shadow: var(--eb-shadow);*/
+    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12), 0 0 14px 0 rgba(0, 0, 0, 0.17);
     height: 100%;
     background-color: white;
     width: 400px;

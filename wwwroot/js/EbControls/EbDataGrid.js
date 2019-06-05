@@ -422,7 +422,9 @@
                     onChangeFn();
                 }
                 catch (e) {
-                    alert("error in 'On Change function' of : " + inpCtrl.Name);
+                    console.log("eb error :");
+                    console.log(e);
+                    alert("error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
                 }
             }
         }.bind(this));

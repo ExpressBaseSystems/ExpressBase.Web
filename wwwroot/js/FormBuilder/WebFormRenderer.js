@@ -145,7 +145,9 @@ const WebFormRender = function (option) {
             control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
         }
         catch (e) {
-            alert("error in 'On Change function' of : " + control.Name);
+            console.log("eb error :");
+            console.log(e);
+            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
         }
     };
 

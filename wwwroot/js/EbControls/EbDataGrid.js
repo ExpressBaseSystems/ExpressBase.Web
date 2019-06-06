@@ -649,19 +649,27 @@
         let addedRowObj = this.addRow({ isAddBeforeLast: true });
         let $addedRow = addedRowObj[0];
         let addedRow = addedRowObj[1];
+        let callBFn = function () {
+            setTimeout(function () {
+                let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRow[0].__rowid}] td:last`)[0];
+                this.checkRow_click({ target: td }, false);
+            }.bind(this), 1);
+        }.bind(this);
         $.each(addedRow, function (i, col) {
             let data = _rowdata[col.Name];
-            if (data !== null)
-                col.setValue(data);
+            if (data !== null) {
+                if (col.ObjType === "PowerSelect")
+                    col.setValue(data, callBFn);
+                else {
+                    col.setValue(data);
+                }
+
+            }
         }.bind(this));
 
         this.resetRowSlNo($addedRow.index());
-
-        // call checkRow_click() pass event.target directly
-        setTimeout(function () {
-            let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRow[0].__rowid}] td:last`)[0];
-            this.checkRow_click({ target: td }, false);
-        }.bind(this), 1);
+        if (!this.isPSInDG)
+            setTimeout(callBFn, 1);// call checkRow_click() pass event.target directly
     };
     this.resetRowSlNo = function (slno) {
         //$(`#${this.TableId}>tbody>tr`).each(function (i, el) {
@@ -756,6 +764,7 @@
     this.init = function () {
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
+        this.isPSInDG = false;
         this.S_cogsTdHtml = "";
         this.rowSLCounter = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
@@ -766,6 +775,8 @@
             col.disable = this.DisableFn;
             if (col.IsAggragate)
                 this.isAggragateInDG = true;
+            if (col.ObjType === "DGPowerSelectColumn")
+                this.isPSInDG = true;
             if (col.ObjType === "DGUserControlColumn")
                 col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
         }.bind(this));

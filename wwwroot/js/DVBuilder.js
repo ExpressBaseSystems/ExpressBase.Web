@@ -560,6 +560,7 @@
         this.CurrentRowgroupkey = name;
         this.objCollection[name] = Rowobj;
         this.CurrentRowgroup = Rowobj;
+
         //this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);elemsCont
     }
 
@@ -678,6 +679,7 @@
         obj.DisplayName = obj.Name;
         this.RowgroupDropRelated(type, obj);
         this.RwogroupCounter++;
+        this.EbObject.RowGroupCollection.$values.push(obj);
     }
 
     arrangeRowGroupHeaders() {

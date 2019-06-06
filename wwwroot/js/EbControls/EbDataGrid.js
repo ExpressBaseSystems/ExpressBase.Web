@@ -672,11 +672,6 @@
             setTimeout(callBFn, 1);// call checkRow_click() pass event.target directly
     };
     this.resetRowSlNo = function (slno) {
-        //$(`#${this.TableId}>tbody>tr`).each(function (i, el) {
-        //    $(el).find(`td.row-no-td`).attr("idx", i + 1).text(i + 1);
-        //}.bind(this));
-
-
         let rowCount = $(`#${this.TableId}>tbody>tr`).length;
         for (let i = slno; i < rowCount; i++) {
             $(`#${this.TableId}>tbody>tr td.row-no-td:eq(${i})`).attr("idx", i + 1).text(i + 1);
@@ -705,7 +700,8 @@
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
-        this.AllRowCtrls = {};
+        //this.AllRowCtrls = {};
+        this.resetBuffers();
         if (!this.ctrl.IsDisable)
             this.addRow();
     };

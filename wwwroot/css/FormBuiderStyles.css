@@ -1002,6 +1002,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .webform-cont ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
     background-color: #F5F5F5;
 }
 

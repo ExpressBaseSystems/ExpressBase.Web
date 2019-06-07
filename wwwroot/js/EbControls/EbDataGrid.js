@@ -794,6 +794,18 @@
 
         this.ctrl.showRow = this.showRow.bind(this);
         this.ctrl.hideRow = this.hideRow.bind(this);
+        this.ctrl.RowCount = 0;
+
+        Object.defineProperty(this.ctrl, "RowCount", {
+            get: function () {
+                return $(`#${this.TableId}>tbody>tr`).length;
+            }.bind(this),
+            set: function (value) {
+                _RowCount = RowCount;
+                if (value !== RowCount)
+                    console.warn("you have no right to  modify this property");
+            }.bind(this)
+        });
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

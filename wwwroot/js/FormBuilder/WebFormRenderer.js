@@ -955,27 +955,28 @@ const WebFormRender = function (option) {
                         }.bind(this)
                     });
                 }  
-
-                loc__.Listener.ChangeLocation = function (o) {
-                    if (this.rowId > 0) {
-                        EbDialog("show", {
-                            Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                            Buttons: {
-                                "Ok": {
-                                    Background: "green",
-                                    Align: "right",
-                                    FontColor: "white;"
-                                }
-                            },
-                            CallBack: function (name) {
-                                reloadFormPage();
-                            }.bind(this)
-                        });
-                    }
-                }.bind(this);
             }.bind(this), 500);
 
         }
+        setTimeout(function () {
+            loc__.Listener.ChangeLocation = function (o) {
+                if (this.rowId > 0) {
+                    EbDialog("show", {
+                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            reloadFormPage();
+                        }.bind(this)
+                    });
+                }
+            }.bind(this);
+        }.bind(this), 500);
        
     };
 

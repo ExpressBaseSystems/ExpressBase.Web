@@ -581,12 +581,20 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px solid #e3e3e3;*/
 }
 
+.ctrl-cover[hideslno=true] .slno, .ctrl-cover[hideslno=true] .row-no-td {
+    display: none;
+}
+
 .ctrl-cover .dropdown-toggle {
     border-radius: 1px;
     font-size: 13px;
     height: 24px;
     background-color: white;
     box-shadow: none !important;
+}
+
+[ctype=SimpleSelect] .ctrl-cover .dropdown-toggle {
+    padding: 0 12px 0 5px
 }
 
 .ctrl-cover > div > div > div.bs-searchbox > input {

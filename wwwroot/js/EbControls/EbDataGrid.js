@@ -419,6 +419,7 @@
             if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
                 try {
                     let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                    inpCtrl.__onChangeFn = onChangeFn;
                     onChangeFn();
                 }
                 catch (e) {
@@ -648,14 +649,20 @@
     this.AddRowWithData = function (_rowdata) {
         let addedRowObj = this.addRow({ isAddBeforeLast: true });
         let $addedRow = addedRowObj[0];
-        let addedRow = addedRowObj[1];
+        let addedRowCols = addedRowObj[1];
         let callBFn = function () {
             setTimeout(function () {
-                let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRow[0].__rowid}] td:last`)[0];
+                let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRowCols[0].__rowid}] td:last`)[0];
+                {// experimental code
+                    $.each(addedRowCols, function (i, col) {
+                        if (col.__onChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '')
+                            col.__onChangeFn();
+                    }.bind(this));
+                }
                 this.checkRow_click({ target: td }, false);
             }.bind(this), 1);
         }.bind(this);
-        $.each(addedRow, function (i, col) {
+        $.each(addedRowCols, function (i, col) {
             let data = _rowdata[col.Name];
             if (data !== null) {
                 if (col.ObjType === "PowerSelect")
@@ -795,6 +802,8 @@
             this.initAgg();
             $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).show();
         }
+        if (!this.ctrl.IsShowSerialNumber)
+            $(`#${this.ctrl.EbSid}Wraper`).attr("hideslno", "true");
 
         this.ctrl.addRow = this.AddRowWithData.bind(this);
         this.ctrl.clear = this.clearDG.bind(this);

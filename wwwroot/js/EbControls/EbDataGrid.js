@@ -756,6 +756,19 @@
         }.bind(this));
     };
 
+    this.defineRowCount = function () {
+        this.ctrl.RowCount = 0;
+        Object.defineProperty(this.ctrl, "RowCount", {
+            get: function () {
+                return $(`#${this.TableId}>tbody>tr`).length;
+            }.bind(this),
+            set: function (value) {
+                if (value !== this.ctrl.RowCount)
+                    alert(`you have no right to  modify '${this.ctrl.Name}.RowCount'`);
+            }.bind(this)
+        });
+    };
+
 
     this.init = function () {
         this.ctrl.currentRow = [];
@@ -794,6 +807,7 @@
 
         this.ctrl.showRow = this.showRow.bind(this);
         this.ctrl.hideRow = this.hideRow.bind(this);
+        this.defineRowCount();
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

@@ -51,6 +51,13 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+
+        public IActionResult EmailVerifyStructure()
+        {
+
+            return View();
+        }
+
         [HttpGet("ForgotPassword")]
         public IActionResult ForgotPassword()
         {
@@ -61,24 +68,32 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public int ForgotPassword(string email)
         {
-            UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
-            if (result.Unique || !result.HasPassword)
+            try
             {
-                return 0;
-            }
-            else
-            {
-                string resetcode = Guid.NewGuid().ToString();
-                HostString pgurl = this.HttpContext.Request.Host;
-                PathString pgpath = this.HttpContext.Request.Path;
-                ForgotPasswordResponse res = this.ServiceClient.Post<ForgotPasswordResponse>(new ForgotPasswordRequest
+                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+                if (result.Unique || !result.HasPassword)
                 {
-                    Email = email,
-                    Resetcode = resetcode,
-                    PagePath = pgpath.ToString(),
-                    PageUrl = pgurl.ToString()
-                });
-                return 1;
+                    return 0;
+                }
+                else
+                {
+                    string resetcode = Guid.NewGuid().ToString();
+                    HostString pgurl = this.HttpContext.Request.Host;
+                    PathString pgpath = this.HttpContext.Request.Path;
+                    ForgotPasswordResponse res = this.ServiceClient.Post<ForgotPasswordResponse>(new ForgotPasswordRequest
+                    {
+                        Email = email,
+                        Resetcode = resetcode,
+                        PagePath = pgpath.ToString(),
+                        PageUrl = pgurl.ToString()
+                    });
+                    return 1;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+                return 0;
             }
         }
 
@@ -257,7 +272,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void ProfileSetup(int i)
+        public string ProfileSetup(int i)
         {
             var req = this.HttpContext.Request.Form;
             string activationcode = Guid.NewGuid().ToString();
@@ -296,6 +311,7 @@ namespace ExpressBase.Web.Controllers
                     this.ServiceClient.RefreshToken = authResponse.RefreshToken;
                 }
             }
+            return res.Sol_id_autogen;
         }
 
         [HttpGet("em")]

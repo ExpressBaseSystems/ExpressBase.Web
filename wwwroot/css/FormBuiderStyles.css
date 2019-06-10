@@ -229,11 +229,12 @@
     position: absolute;
     left: 11.5px;
     top: -0.5px;
-    color: green;
+    color: #019a01;
     height: 24px;
     width: 24px;
     padding-top: 2px;
     border-radius: 100%;
+    font-size: 13px;
 }
 
 .edit-row:hover {

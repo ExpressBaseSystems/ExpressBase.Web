@@ -208,7 +208,8 @@ const EbSelect = function (ctrl, options) {
             else
                 $(this.DTSelector + ` tbody tr[role="row"]`).trigger("dblclick");
         }
-        callBFn();
+        if (callBFn)
+            callBFn();
     };
 
 

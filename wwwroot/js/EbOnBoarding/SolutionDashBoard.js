@@ -30,7 +30,7 @@
         var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
-            url: "../ConnectionManager/DataDb",
+            url: "../ConnectionManager/AddDB",
             data: postData,
             beforeSend: function () {
                 $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
@@ -48,7 +48,7 @@
         var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
-            url: "../ConnectionManager/FilesDb",
+            url: "../ConnectionManager/AddMongo",
             data: postData,
             beforeSend: function () {
                 $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
@@ -60,65 +60,65 @@
         }.bind(this));
     };
 
-	this.emailConnectionSubmit = function (e) {
-		e.preventDefault();
-		var postData = $(e.target).serializeArray();
-		$.ajax({
-			type: 'POST',
-			url: "../ConnectionManager/SMTP",
-			data: postData,
-			beforeSend: function () {
-				$("#email_loader").EbLoader("show", { maskItem: { Id: "#email_mask", Style: { "left": "0" } } });
-			}
-		}).done(function (data) {
-			$("#email_loader").EbLoader("hide");
-			this.appendEmailConnection(JSON.parse(data));
-			$("#EmailConnectionEdit").modal("toggle");
-		}.bind(this));
-	};
+    this.emailConnectionSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddSMTP",
+            data: postData,
+            beforeSend: function () {
+                $("#email_loader").EbLoader("show", { maskItem: { Id: "#email_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            $("#email_loader").EbLoader("hide");
+            this.appendEmailConnection(JSON.parse(data));
+            $("#EmailConnectionEdit").modal("toggle");
+        }.bind(this));
+    };
 
     this.expertAccountSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
-			url: "../ConnectionManager/ExpertTextingAccount",
+            url: "../ConnectionManager/AddExpertTexting",
             data: postData,
             beforeSend: function () {
                 $("#expertConnection_loder").EbLoader("show", { maskItem: { Id: "#expert_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-			$("#expertConnection_loder").EbLoader("hide");
+            $("#expertConnection_loder").EbLoader("hide");
             var d = JSON.parse(data);
-			this.appendExpertConnection(d);
-            $("#ExpertConnectionEdit").modal("toggle");
+            this.appendExpertConnection(d);
+            $("#ExpertTextingConnectionEdit").modal("hide");
         }.bind(this));
-	};
+    };
 
-	this.twilioAccountSubmit = function (e) {
-		e.preventDefault();
-		var postData = $(e.target).serializeArray();
-		$.ajax({
-			type: 'POST',
-			url: "../ConnectionManager/TwilioAccount",
-			data: postData,
-			beforeSend: function () {
-				$("#twilioConnection_loder").EbLoader("show", { maskItem: { Id: "#twilio_mask", Style: { "left": "0" } } });
-			}
-		}).done(function (data) {
-			$("#twilioConnection_loder").EbLoader("hide");
-			var d = JSON.parse(data);
-			this.appendTwilioConnection(d);
-			$("#TwilioConnectionEdit").modal("toggle");
-		}.bind(this));
-	};
+    this.twilioAccountSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddTwilio",
+            data: postData,
+            beforeSend: function () {
+                $("#twilioConnection_loder").EbLoader("show", { maskItem: { Id: "#twilio_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            $("#twilioConnection_loder").EbLoader("hide");
+            var d = JSON.parse(data);
+            this.appendTwilioConnection(d);
+            $("#TwilioConnectionEdit").modal("toggle");
+        }.bind(this));
+    };
 
     this.CloudnaryConSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
-            url: "../ConnectionManager/Cloudinary",
+            url: "../ConnectionManager/AddCloudinary",
             data: postData,
             beforeSend: function () {
                 $("#cloudnary_loader").EbLoader("show", { maskItem: { Id: "#cloudnary_mask", Style: { "left": "0" } } });
@@ -223,25 +223,25 @@
         }
         else
             o = object;
-		$("#TwilioConnection_config .UserName").text(o.UserName);
+        $("#TwilioConnection_config .UserName").text(o.UserName);
         $("#TwilioConnection_config .SendNo").text(o.From);
         $("#TwilioConnection_config .NickName").text(o.NickName);
-	};
+    };
 
-	this.appendExpertConnection = function (object) {
-		let o = {};
-		if ($.isEmptyObject(object)) {
-			o.ProviderName = "Not Set";
-			o.UserName = "xxxxxxxxxxx";
-			o.From = "00000000000";
-			o.NickName = "Not Set";
-		}
-		else
-			o = object;
-		$("#ExpertTextingConnection_config .UserName").text(o.UserName);
-		$("#ExpertTextingConnection_config .SendNo").text(o.From);
-		$("#ExpertTextingConnection_config .NickName").text(o.NickName);
-	};
+    this.appendExpertConnection = function (object) {
+        let o = {};
+        if ($.isEmptyObject(object)) {
+            o.ProviderName = "Not Set";
+            o.UserName = "xxxxxxxxxxx";
+            o.From = "00000000000";
+            o.NickName = "Not Set";
+        }
+        else
+            o = object;
+        $("#ExpertTextingConnection_config .UserName").text(o.UserName);
+        $("#ExpertTextingConnection_config .SendNo").text(o.From);
+        $("#ExpertTextingConnection_config .NickName").text(o.NickName);
+    };
 
     this.appendCloudnaryConnection = function (object) {
         let o = {};
@@ -302,7 +302,7 @@
             url: "../ConnectionManager/" + ControllerUrl,
             data: form,
             beforeSend: function () {
-                $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
+                //$("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }.bind(this)
         }).done(function (data) {
             $("#dbConnection_loder").EbLoader("hide");
@@ -354,41 +354,438 @@
         }
     };
 
+    this.ShowPassword = function () {
+        if ($(".Password").attr("type") == "password") {
+            $(".Password").attr('type', 'text');
+        } else {
+            $(".Password").attr('type', 'password');
+        }
+    };
+
+    this.ONReset = function () {
+        //$("#dbConnectionSubmit").reset();
+        $(".dbConnectionInput").value = '';
+        //$('.MongoConnection').removeAttr("disabled");
+    };
+
+    this.PostgreinteConfEditr = function (e) {
+        var DatabaseName = $('.EditorModalcaller').attr('data-name');
+        var temp = this.Connections.IntegrationsConfig;
+        temp = temp[DatabaseName];
+        var button = $(e.currentTarget)
+        var INt_conf_id = $(button).attr("datawhater")
+        $('#dbConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id== INt_conf_id) {
+                //$('#dbvendorInput').val(temp[obj].DatabaseVendor);
+                $('#dbNickNameInput').val(temp[obj].NickName);
+                $('#IntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#dbDatabaseNameInput').val(temp1["DatabaseName"]);
+                $('#dbServerInput').val(temp1["Server"]);
+                $('#dbPortInput').val(temp1["Port"]);
+                $('#dbUserNameInput').val(temp1["UserName"]);
+                $('#dbPasswordInput').val(temp1["Password"]);
+                $('#IsSSL').val(temp1["IsSSL"]);
+                $('#dbTimeoutInput').val(temp1["Timeout"]);
+                break;
+            }
+        }
+    };
+    this.MongointeConfEditr = function (e) {
+        var DatabaseName = $('.EditorModalcaller').attr('data-name');
+        var temp = this.Connections.IntegrationsConfig;
+        temp = temp[DatabaseName];
+        var button = $(e.currentTarget)
+        var INt_conf_id = $(button).attr("datawhater")
+        $('#mongointegrationedit').trigger('click');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                //$('#dbvendorInput').val(temp[obj].DatabaseVendor);
+                $('#FilesInputNickname').val(temp[obj].NickName);
+                $('#FilesInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                // $('#dbDatabaseNameInput').val(temp1["DatabaseName"]);
+                $('#FilesInputServer').val(temp1["Host"]);
+                $('#FilesInputPort').val(temp1["Port"]);
+                $('#FilesInputUsername').val(temp1["UserName"]);
+                $('#FilesInputPassword').val(temp1["Password"]);
+                $('#FilesInputIsSSL').val(temp1["IsSSL"]);
+                //  $('#dbTimeoutInput').val(temp1["Timeout"]);
+            }
+        }
+    };
+    this.ColudinaryinteConfEditr = function (e) {
+        var DatabaseName = $('.EditorModalcaller').attr('data-name');
+        var temp = this.Connections.IntegrationsConfig;
+        temp = temp[DatabaseName];
+        var button = $(e.currentTarget)
+        var INt_conf_id = $(button).attr("datawhater")
+        $('#cldnry_conEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#CloudnaryInputNickname').val(temp[obj].NickName);
+                $('#CloudnaryInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#CloudnaryInputCloud').val(temp1["Cloud"]);
+                $('#CloudnaryInputApikey').val(temp1["ApiKey"]);
+                $('#CloudnaryInputApisecret').val(temp1["ApiSecret"]);
+                $('#IsSSL').val(temp1["IsSSL"]);
+                break;
+            }
+        }
+    };
+    this.SmtpinteConfEditr = function (e) {
+        var DatabaseName = $('.EditorModalcaller').attr('data-name');
+        var temp = this.Connections.IntegrationsConfig;
+        temp = temp[DatabaseName];
+        var button = $(e.currentTarget)
+        var INt_conf_id = $(button).attr("datawhater")
+        $('#EmailconnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#EmailInputNickname').val(temp[obj].NickName);
+                $('#SMTPInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#EmailInputEmailvendor').val(temp1["ProviderName"]);
+                $('#EmailInputEmail').val(temp1["EmailAddress"]);
+                $('#EmailInputPassword').val(temp1["Password"]);
+                $('#EmailInputSMTP').val(temp1["Host"]);
+                $('#EmailInputPort').val(temp1["Port"]);
+                $('#SMTPInputIntConfId').val(temp1["Id"]);
+                $('#IsSSL').val(temp1["IsSSL"]);
+            }
+        }
+    };
+    this.twiliointeConfEditr = function (e) {
+        var DatabaseName = $('.EditorModalcaller').attr('data-name');
+        var temp = this.Connections.IntegrationsConfig;
+        temp = temp[DatabaseName];
+        var button = $(e.currentTarget)
+        var INt_conf_id = $(button).attr("datawhater")
+        $('#TwilioConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#TwilioInputNickname').val(temp[obj].NickName);
+                $('#TwilioInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#TwilioInputUsername').val(temp1["UserName"]);
+                $('#TwilioInputPassword').val(temp1["Password"]);
+                $('#TwilioInputFrom').val(temp1["From"]);
+                $('#IsSSL').val(temp1["IsSSL"]);
+            }
+        }
+    };
+    this.expertinteConfEditr = function (e) {
+        var DatabaseName = $('.EditorModalcaller').attr('data-name');
+        var temp = this.Connections.IntegrationsConfig;
+        temp = temp[DatabaseName];
+        var button = $(e.currentTarget)
+        var INt_conf_id = $(button).attr("datawhater")
+        $('#ExpertTextingConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#ExpertInputNickname').val(temp[obj].NickName);
+                $('#ExpertInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#ExpertInputUsername').val(temp1["UserName"]);
+                $('#ExpertInputPassword').val(temp1["Password"]);
+                $('#ExpertInputApi').val(temp1["ApiKey"]);
+                $('#ExpertInputFrom').val(temp1["From"]);
+                $('#IsSSL').val(temp1["IsSSL"]);
+            }
+        }
+    };
+
+    this.VerticalTab = function (evt, cityName) {
+        var button = $(evt.currentTarget)
+        var datatype = button.text()
+        var i, tabcontent, tablinks;
+        tabcontent = $(".tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = $(".tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        $("#" + datatype +"_Call").css("display", "block");
+        evt.currentTarget.className += " active";
+    };
+    this.divCloser = function (e) {
+        var temp = $(e.currentTarget).attr('id');
+        $('#' + temp + 'Display').toggle();
+    };
+
+    this.AllInputClear = function (e) {
+        $(".Inputclear").val("")
+        $("#IntConfId").val("0")
+    };
+
+    this.ModalDataEntry = function (e) {
+        $('#vendor').val(IntergrationConfigCollection.type);
+    };
+
+    this.ShowIntreationModalList = function (e) {
+        var html = [];
+        $('#All_IntreationList').modal('toggle');
+        let which = $(e.target).closest(".Inter_modal_list").attr("data-type");
+        var temp = this.Connections.IntegrationsConfig;
+        $(`#All_Intreation_header h3`).empty().append(which);
+        $(`#All_Intreation_bodyflex`).empty();
+        switch (which) {
+            case "EbOBJECTS":
+                html.push(`<div class="list-group">`);
+                var EbOBJECTS = [
+                    "PGSQL",
+                    "MSSQL",
+                    "MYSQL",
+                    "ORACLE"
+                ];
+                for (let j = 0; j < EbOBJECTS.length; j++)
+                    if (temp[EbOBJECTS[j]] !== undefined) {
+                        for (let i = 0, n = temp[EbOBJECTS[j]].length; i < n; i++) {
+                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[EbOBJECTS[j]][i].NickName}</a>`);
+                        }
+                    }    
+                html.push(`</div>`);
+                $('#All_Intreation_bodyflex').append(html.join(""));
+                break;
+            case "EbDATA":
+                html.push(`<div class="list-group">`);
+                var EbDATA = [
+                    "PGSQL",
+                    "MSSQL",
+                    "MYSQL",
+                    "ORACLE"
+                ];
+                for (let j = 0; j < EbDATA.length; j++)
+                    if (temp[EbDATA[j]] !== undefined) {
+                        for (let i = 0, n = temp[EbDATA[j]].length; i < n; i++) {
+                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[EbDATA[j]][i].NickName}</a>`);
+                        }
+                    }    
+                html.push(`</div>`);
+                $('#All_Intreation_bodyflex').append(html.join(""));
+                break;
+            case "EbFILES":
+                html.push(`<div class="list-group">`);
+                var EbFILES = [
+                    "PGSQL",
+                    "MSSQL",
+                    "MYSQL",
+                    "ORACLE",
+                    "MongoDB"
+                ];
+                for (let j = 0; j < EbFILES.length; j++)
+                    if (temp[EbFILES[j]] !== undefined) {
+                        for (let i = 0, n = temp[EbFILES[j]].length; i < n; i++) {
+                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[EbFILES[j]][i].NickName}</a>`);
+                        }
+                    }
+                html.push(`</div>`);
+                $('#All_Intreation_bodyflex').append(html.join(""));
+                break;
+            case "EbLOGS":
+                html.push(`<div class="list-group">`);
+                var EbLOGS = [
+                    "PGSQL",
+                    "MSSQL",
+                    "MYSQL",
+                    "ORACLE",
+                    "MongoDB"
+                ];
+                for (let j = 0; j < EbLOGS.length; j++)
+                    if (temp[EbLOGS[j]] !== undefined) {
+                        for (let i = 0, n = temp[EbLOGS[j]].length; i < n; i++) {
+                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[EbLOGS[j]][i].NickName}</a>`);
+                        }
+                    }
+                html.push(`</div>`);
+                $('#All_Intreation_bodyflex').append(html.join(""));
+                break;
+            case "SMTP":
+                html.push(`<div class="list-group">`);
+                var SMTP = [
+                    "SMTP"
+                ];
+                for (let j = 0; j < SMTP.length; j++)
+                    if (temp[SMTP[j]] !== undefined) {
+                        for (let i = 0, n = temp[SMTP[j]].length; i < n; i++) {
+                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[SMTP[j]][i].NickName}</a>`);
+                        }
+                    }
+                html.push(`</div>`);
+                $('#All_Intreation_bodyflex').append(html.join(""));
+                break;
+            case "SMS":
+                html.push(`<div class="list-group">`);
+                var SMS = [
+                    "ExpertTexting",
+                    "Twilio"
+                ];
+                for (let j = 0; j < SMS.length; j++)
+                    if (temp[SMS[j]] !== undefined) {
+                        for (let i = 0, n = temp[SMS[j]].length; i < n; i++) {
+                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[SMS[j]][i].NickName}</a>`);
+                        }
+                    }
+                html.push(`</div>`);
+                $('#All_Intreation_bodyflex').append(html.join(""));
+                break;
+            case "Cloudinary":
+                html.push(`<div class="list-group">`);
+                var Cloudinary = [
+                    "Cloudinary"
+                ];
+                for (let j = 0; j < Cloudinary.length; j++)
+                    if (temp[Cloudinary[j]] !== undefined) {
+                        for (let i = 0, n = temp[Cloudinary[j]].length; i < n; i++) {
+                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[Cloudinary[j]][i].NickName}</a>`);
+                        }
+                    }
+                html.push(`</div>`);
+                $('#All_Intreation_bodyflex').append(html.join(""));
+                break;
+                break;
+            default:
+                text = "I have never heard of that fruit...";
+        }
+    }.bind(this);
+
+    this.AllInterationConfigDisp = function (e) {
+
+        let which = $(e.target).closest(".DisplayAllModal").attr("data-whatever");
+        var temp = this.Connections.IntegrationsConfig[which] || [];
+        $(`#All_IntreationConfig_header h3`).empty().append(which);
+        $(`#All_IntreationConfig_bodyflex`).empty();
+        for (let i = 0, n = temp.length; i < n; i++) {
+            let $html = $(`<div class="inteConfContainer">
+                                <div class="inteConfContainer_pd w-100">
+                                     <div class="integrationbody edit-pencil-holder">
+                                          <div class="${which}edit" data-whatever="${which}" datawhater="${temp[i].Id}">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                          </div>
+                                     </div>
+                                     <div id="nm" class="type integrationbody ">
+                                           <div class="vend_img">
+                                                ${this.getType(temp[i].Type)}
+                                           </div>
+                                     </div>
+                                     <div id="nm" class="integrationbody">
+                                           <h4>${temp[i].NickName}</h4>
+                                     </div>
+                                     <div id="nm" class="integrationbody">
+                                          <h6>${temp[i].CreatedOn}</h6>
+                                     </div>
+                                 </div>
+                             </div >`)
+            $(`#All_IntreationConfig_bodyflex`).append($html)
+        }
+        $(`#All_IntreationConfig_footer`).empty();
+        let $html1 = $(`<button data-name="${which}" class="ebbtn eb_btngreen eb_btn-sm pull-right EditorModalcaller">
+                                <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
+                        </button>`);
+        $(`#All_IntreationConfig_header h3`).append($html1);
+        $('#All_IntreationConfig').modal('toggle');
+    }.bind(this);
+
+    this.getType = function (type) {
+        let html = [];
+        if (type == "PGSQL") {
+            html.push('<img class="img-responsive" src="../images/POSTGRES.png" align="middle" style="height:50px" />');
+        } else if (type == "MYSQL") {
+            html.push('<img class="img-responsive" src="../images/mysql.png" align="middle" style="height: 50px;" />');
+        } else if (type == "ORACLE") {
+            html.push('<img class="img-responsive" src="../images/oracle.png" style="height: 50px;" />');
+        } else if (type == "MSSQL") {
+            html.push('<img class="img-responsive" src="../images/sqlserver.png" style="height: 50px;" />');
+        } else if (type == "MongoDB") {
+            html.push('<img class="img-responsive" src="../images/MongodB.png" style="height: 50px;" />');
+        } else if (type == "Cloudinary") {
+            html.push('<img class="img-responsive" src="../images/cloudnary.png" style="height: 25px;" />');
+        } else if (type == "SMTP") {
+            html.push('<img class="img-responsive" src="../images/svg/email.svg" style="height:50px" />');
+        } else if (type == "Twilio") {
+            html.push('<img class="img-responsive" src="../images/twilio.png" style="height: 50px;" />');
+        } else {
+            html.push('<img class="img-responsive" src="../images/expert texting.png" style="height: 35px;" />');
+        }
+        return html.join("");
+    };
+
+    this.AllEditorOpen = function (e) {
+        let temp = e;
+        let which = $(temp.currentTarget).attr("data-name");
+        if (which == "PGSQL" || which == "MYSQL" || which == "MSSQL" || which == "ORACLE") {
+            $('#dbConnectionEdit').modal('toggle');
+        } else if (which == "MongoDb") {
+            $('#filesDbConnectEdit').modal('toggle');
+        } else if (which == "Cloudinary") {
+            $('#cldnry_conEdit').modal('toggle');
+        } else if (which == "SMTP") {
+            $('#EmailconnectionEdit').modal('toggle');
+        } else if (which == "Twilio") {
+            $('#TwilioConnectionEdit').modal('toggle');
+        } else if (which == "ExpertTexting") {
+            $('#ExpertTextingConnectionEdit').modal('toggle');
+        }
+    };
+
     this.init = function () {
-        this.appendDataDb(this.Connections.DataDbConnection);
-        this.appendFilesDb(this.Connections.FilesDbConnection);
-		this.appendEmailConnection(this.Connections.SMTPConnection);
-		if (this.Connections.SMSConnections !== null) {
-			for (let i = 0; i < this.Connections.SMSConnections.length; i++) {
-				if (this.Connections.SMSConnections[i].ProviderName === 2)
-					this.appendExpertConnection(this.Connections.SMSConnections[i]);
-				else if (this.Connections.SMSConnections[i].ProviderName === 1)
-					this.appendTwilioConnection(this.Connections.SMSConnections[i]);
-			}
-		} 
-
-        if (this.Connections.CloudinaryConnection !== null)
-            this.appendCloudnaryConnection(this.Connections.CloudinaryConnection.Account);
-        else
-            this.appendCloudnaryConnection(null);
-
-        this.appendFtpConnection(this.Connections.FTPConnection);
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#emailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
-		$("#TwilioConnectionSubmit").on("submit", this.twilioAccountSubmit.bind(this));
-		$("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
+        $("#TwilioConnectionSubmit").on("submit", this.twilioAccountSubmit.bind(this));
+        $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
+        $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();
+        $("div #ShowPasswordd").on("click", this.ShowPassword.bind(this));
         $(`#EmailconnectionEdit input[name="IsSSL"]`).on("change", function (e) {
             if ($(e.target).is(":checked"))
                 $(e.target).val(true);
             else
                 $(e.target).val(false);
         });
+        $('#dbConnectionEdit').on('show.bs.modal', function (event) {
+            var DatabaseName = $('.EditorModalcaller').attr('data-name');
+            this.AllInputClear();
+            $("#IntConfId").val("0")
+            $("#dbvendorInput").val(DatabaseName)
+        }.bind(this));
+
+        $('.input-clear ').on('show.bs.modal', function (event) {
+            this.AllInputClear();
+            $(".IntConfId").val("0")
+        }.bind(this));
+
+        $('.DisplayAllModal').on('click', this.AllInterationConfigDisp.bind(this));
+        $('#All_IntreationConfig').on('click',".EditorModalcaller", this.AllEditorOpen.bind(this));
+        $('.closeright').on('click', this.divCloser.bind(this));
+        $('.dbConnection').on("click", this.ONReset.bind(this));
+        $(".VerticalTabContent").on("click", this.VerticalTab.bind(this));
+        $("#MyIntegration").on("click", function (e) {
+            $('#defaultOpen').trigger('click');
+        }.bind(this));
+
+        $("#All_IntreationConfig").on("click", ".PGSQLedit", this.PostgreinteConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".MYSQLedit", this.PostgreinteConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".MSSQLedit", this.PostgreinteConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".ORACLEedit", this.PostgreinteConfEditr.bind(this));
+        //$(".oracleintegrationedit").on("click", this.DbinteConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".MongoDbedit", this.MongointeConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".Cloudinaryedit", this.ColudinaryinteConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".SMTPedit", this.SmtpinteConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".Twilioedit", this.twiliointeConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".ExpertTextingedit", "", this.expertinteConfEditr.bind(this));
+
+        $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));
+
+        //$(".inteConfContainer").on("click", this.AllInputClear.bind(this));
     };
 
     this.init();

@@ -327,7 +327,7 @@
 }
 
 [coltype='DGNumericColumn'] {
-    direction: rtl;
+    text-align: right;
 }
 
 tr[agg='true'] [coltype='DGNumericColumn'] span {

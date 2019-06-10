@@ -45,13 +45,29 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        //[EbBreadCrumbFilter("MySolutions/Sid")]
+        //[HttpGet("MySolutions/{Sid}")]
+        //public IActionResult SolutionDashBoard(string Sid)
+        //{
+        //    GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });
+        //    ViewBag.Connections = resp.EBSolutionConnections;
+        //    ViewBag.SolutionInfo = resp.Data;
+        //    ViewBag.cid = Sid;
+        //    ViewBag.Domain = this.HttpContext.Request.Host;
+        //    ViewBag.rToken = Request.Cookies["rToken"];
+        //    ViewBag.bToken = Request.Cookies["bToken"];
+        //    return View();
+        //}
+
         [EbBreadCrumbFilter("MySolutions/Sid")]
         [HttpGet("MySolutions/{Sid}")]
-        public IActionResult SolutionDashBoard(string Sid)
+        public IActionResult SolutionManager(string Sid)
         {
-            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });
-            ViewBag.Connections = resp.EBSolutionConnections;
-            ViewBag.SolutionInfo = resp.Data;
+            GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = Sid });
+            //ViewBag.intergrationconfig = resp.IntegrationsConfig;
+            //ViewBag.integrations = resp.Integrations;
+            //ViewBag.SolutionInfo = resp.SolutionInfo;
+            ViewBag.Connections = resp;
             ViewBag.cid = Sid;
             ViewBag.Domain = this.HttpContext.Request.Host;
             ViewBag.rToken = Request.Cookies["rToken"];

@@ -800,7 +800,7 @@ namespace ExpressBase.Web.Controllers
                     EnableSsl = Convert.ToBoolean(req["IsSSL"]),
                     Id = Convert.ToInt32(req["Id"])
                 };
-                con.ProviderName = req["Emailvendor"];
+                con.ProviderName = (SmtpProviders)Enum.Parse(typeof(SmtpProviders), req["Emailvendor"]);
                 res = this.ServiceClient.Post<AddSmtpResponse>(new AddSmtpRequest { Config = con, /*IsNew = true,*/ SolnId = req["SolnId"] });
                 return JsonConvert.SerializeObject(con);
             }

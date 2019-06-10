@@ -3,8 +3,10 @@
 * to Render WebForm
 * EXPRESSbase Systems Pvt. Ltd , Jith Job
 */
+
 const WebFormRender = function (option) {
     this.FormObj = option.formObj;
+    this.$form = $(`#${this.FormObj.EbSid}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
@@ -122,11 +124,21 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.watchers = function () {
+        Object.defineProperty(this.formObject, "__mode", {
+            set: function (value) {
+                this.$form.attr("mode", value);
+            }.bind(this)
+        });
+    };
+
     this.initWebFormCtrls = function () {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
-        this.formObject.__mode = "new";
+        this.formObject.__mode = "new";// added a watcher to update form attribute
+        this.watchers();
+
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
         this.initDGs();
@@ -826,7 +838,7 @@ const WebFormRender = function (option) {
 
         });
     };
-    
+
     this.showLoader = function () {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
@@ -897,7 +909,7 @@ const WebFormRender = function (option) {
         // ["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
         // ["New", "View", "Edit", "Delete", "Cancel", "AuditTrail"]
         for (let i = 0; i < btns.length; i++) {
-            if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')            
+            if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
                 r.push(btns[i]);
             else if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
                 r.push(btns[i]);
@@ -924,7 +936,7 @@ const WebFormRender = function (option) {
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
-        this.$closeBtn.on("click", function () { window.parent.closeModal();});
+        this.$closeBtn.on("click", function () { window.parent.closeModal(); });
         $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
@@ -940,7 +952,7 @@ const WebFormRender = function (option) {
                 let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
                 let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
                 if (ol !== nl) {
-                    EbDialog("show",{
+                    EbDialog("show", {
                         Message: "Switching from " + getObjByval(loc__.Locations, "LocId", ol).LongName + " to " + getObjByval(loc__.Locations, "LocId", nl).LongName,
                         Buttons: {
                             "Ok": {
@@ -954,7 +966,7 @@ const WebFormRender = function (option) {
                             this.setHeader(this.mode);
                         }.bind(this)
                     });
-                }  
+                }
             }.bind(this), 500);
 
         }
@@ -977,7 +989,7 @@ const WebFormRender = function (option) {
                 }
             }.bind(this);
         }.bind(this), 500);
-       
+
     };
 
     this.init();

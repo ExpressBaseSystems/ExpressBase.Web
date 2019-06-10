@@ -3,12 +3,16 @@
 * to Render WebForm
 * EXPRESSbase Systems Pvt. Ltd , Jith Job
 */
+
 const WebFormRender = function (option) {
     this.FormObj = option.formObj;
+    this.$form = $(`#${this.FormObj.EbSid}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
     this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
+    this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
+    this.$closeBtn = $('#' + option.headerBtns['Close']);
     this.Env = option.env;
     this.Cid = option.cid;
     this.initControls = new InitControls(this);
@@ -17,6 +21,9 @@ const WebFormRender = function (option) {
     this.rowId = option.rowId;
     this.mode = option.mode;
     this.userObject = option.userObject;
+    this.isPartial = option.isPartial;//value is true if form is rendering in iframe
+    this.headerObj = option.headerObj;//EbHeader
+    this.formPermissions = option.formPermissions;
     this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;//EditModeFormData
     this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
     this.DisableDeleteData = option.formData === null ? {} : option.formData.DisableDelete;
@@ -46,7 +53,7 @@ const WebFormRender = function (option) {
                         EbOnChangeUIfns[NS1][NS2](cObj.EbSid_CtxId, cObj);
                     }
                     catch (e) {
-                        alert(e.message);
+                        console.warn(e.message);
                     }
                 }
             }
@@ -73,7 +80,7 @@ const WebFormRender = function (option) {
 
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj });
         }.bind(this));
     };
 
@@ -89,9 +96,7 @@ const WebFormRender = function (option) {
     };
 
     this.initNCs = function () {
-
-
-        let allFlatControls = getInnerFlatContControls(this.FormObj).concat(this.flatControls);
+        let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
         $.each(allFlatControls, function (k, Obj) {
             this.updateCtrlUI(Obj);
         }.bind(this));
@@ -104,7 +109,6 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "FileUploader")
                 opt.FormDataExtdObj = this.FormDataExtdObj;
             else if (Obj.ObjType === "Date") {
-                opt.userObject = this.userObject;
                 opt.source = "webform";
             }
 
@@ -120,11 +124,21 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.watchers = function () {
+        Object.defineProperty(this.formObject, "__mode", {
+            set: function (value) {
+                this.$form.attr("mode", value);
+            }.bind(this)
+        });
+    };
+
     this.initWebFormCtrls = function () {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
-        this.formObject.__mode = "new";
+        this.formObject.__mode = "new";// added a watcher to update form attribute
+        this.watchers();
+
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
         this.initDGs();
@@ -139,7 +153,14 @@ const WebFormRender = function (option) {
     };
 
     this.bindOnChange = function (control) {
-        control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
+        try {
+            control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
+        }
+        catch (e) {
+            console.log("eb error :");
+            console.log(e);
+            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
+        }
     };
 
     this.bindValidators = function (control) {
@@ -238,15 +259,20 @@ const WebFormRender = function (option) {
 
     this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
         $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
+            let val = SingleColumn.Value;
+
             if (SingleColumn.Name === "id")
                 return true;
+            if (val === null)
+                return true;
+
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (ctrl.ObjType === "PowerSelect") {
                 //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember([SingleColumn.Value, this.FormDataExtended[ctrl.EbSid]]);
+                ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
             }
             else
-                ctrl.setValue(SingleColumn.Value);
+                ctrl.setValue(val);
         }.bind(this));
     };
 
@@ -400,12 +426,12 @@ const WebFormRender = function (option) {
 
     this.ajaxsuccess = function (_respObj) {
         this.hideLoader();
-        //let msg = "";
         let respObj = JSON.parse(_respObj);
+        let locName = loc__.CurrentLocObj.LongName;
+        let formName = this.FormObj.DisplayName;
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
-                //msg = `Your ${this.FormObj.EbSid_CtxId} form submitted successfully`;
+                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
@@ -416,12 +442,11 @@ const WebFormRender = function (option) {
             }
             else {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
-                //msg = `Your ${this.FormObj.EbSid_CtxId} form submission failed`;
             }
         }
         else {
             if (respObj.RowId > 0) {// if insertion success -NewToedit
-                EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#00aa00' });
+                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
                 this.rowId = respObj.RowId;
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
@@ -435,6 +460,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
             }
         }
+        //window.parent.closeModal();
     };
 
     this.isAllUniqOK = function () {
@@ -508,12 +534,15 @@ const WebFormRender = function (option) {
         this.Mode.isView = true;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
-        setHeader("View Mode");
+        this.setHeader("View Mode");
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
         $.each(this.flatControls, function (k, ctrl) {
             ctrl.disable();
+        }.bind(this));
+        $.each(this.DGs, function (k, DG) {
+            this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
     };
 
@@ -524,7 +553,7 @@ const WebFormRender = function (option) {
         this.Mode.isNew = false;
         this.setEditModeCtrls();
         this.BeforeModeSwitch("Edit Mode");
-        setHeader("Edit Mode");
+        this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.flatControls, function (k, ctrl) {
             if (!ctrl.IsDisable)
@@ -609,11 +638,12 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    //EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
-                                    EbMessage("show", { Message: 'Delete operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: 'Delete operation failed due to validation failure.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else if (result === -2) {
                                     EbMessage("show", { Message: 'Access denied to delete this entry.', AutoHide: true, Background: '#aa0000' });
@@ -659,11 +689,12 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    //EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
-                                    EbMessage("show", { Message: 'Cancel operation failed due to validation.', AutoHide: true, Background: '#aa0000' });
+                                    EbMessage("show", { Message: 'Cancel operation failed due to validation failure.', AutoHide: true, Background: '#aa0000' });
                                 }
                                 else if (result === -2) {
                                     EbMessage("show", { Message: 'Access denied to cancel this entry.', AutoHide: true, Background: '#aa0000' });
@@ -676,6 +707,136 @@ const WebFormRender = function (option) {
                     }
                 }.bind(this)
             });
+    };
+
+    this.GetAuditTrail = function () {
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+        $("#AuditHistoryModal .modal-title").text("Audit Trail - " + this.FormObj.DisplayName);
+        $("#AuditHistoryModal").modal("show");
+        $("#divAuditTrail").children().remove();
+        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
+        $.ajax({
+            type: "POST",
+            url: "../WebForm/GetAuditTrail",
+            data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: currentLoc },
+            error: function () {
+                $("#divAuditTrail").children().remove();
+                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something unexpected occured </div>`);
+            },
+            success: function (result) {
+                if (result === "{}") {
+                    $("#divAuditTrail").children().remove();
+                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 45%; font-size: 20px; color: #aaa; "> Nothing to Display </div>`);
+                    return;
+                }
+                else if (result === "") {
+                    $("#divAuditTrail").children().remove();
+                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something went wrong </div>`);
+                    return;
+                }
+                this.drawAuditTrailTest(result);
+            }.bind(this)
+        });
+    };
+
+    this.drawAuditTrailTest = function (result) {
+        let auditObj = JSON.parse(result);
+        let $transAll = $(`<div></div>`);
+
+        $.each(auditObj, function (idx, Obj) {
+            let $trans = $(`<div class="single-trans"></div>`);
+            let temptitle = (Obj.ActionType === "Insert" ? "Created by " : "Updated by ") + Obj.CreatedBy + " at " + Obj.CreatedAt;
+            $trans.append(` <div class="trans-head row">
+                                <div class="col-md-10" style="padding: 5px 8px;">
+                                    <div style="display:inline-block;"><i class="fa fa-chevron-down"></i></div>
+                                    <div style="display:inline-block;">${temptitle}</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div style="float: right;">
+                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/imagenotfound.svg';" style="height: 30px; border-radius: 15px;">
+                                    </div>                                    
+                                </div>
+                            </div>`);
+
+            $trans.append(`<div class="trans-body collapse in"></div>`);
+            let tempHtml = ``;
+
+            $.each(Obj.Tables, function (i, Tbl) {
+                $.each(Tbl.Columns, function (j, Row) {
+                    tempHtml += `
+                        <tr>
+                            <td class="col-md-4 col-sm-4">${Row.Title}</td>
+                            <td class="col-md-4 col-sm-4" style="color: red;">${Row.NewValue}</td>
+                            <td class="col-md-4 col-sm-4">${Row.OldValue}</td>
+                        </tr>`;
+                });
+            });
+            if (tempHtml.length !== 0) {
+                tempHtml = `<div class="form-table-div"><table class="table table-bordered first-table" style="width:100%; margin: 0px;">
+                                <thead>
+                                    <tr class="table-title-tr">
+                                        <th class="col-md-4 col-sm-4">Field Name</th>
+                                        <th class="col-md-4 col-sm-4">New Value</th>
+                                        <th class="col-md-4 col-sm-4">Old Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`
+                    + tempHtml +
+                    `</tbody>
+                            </table></div>`;
+                $trans.children(".trans-body").append(tempHtml);
+            }
+
+            tempHtml = ``;
+
+            $.each(Obj.GridTables, function (i, Tbl) {
+                tempHtml += `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
+                                <thead>
+                                    <tr class="table-title-tr">
+                                        <th></th>`;
+                $.each(Tbl.ColumnMeta, function (j, cmeta) {
+                    tempHtml += `<th>${cmeta}</th>`;
+                });
+                tempHtml += `     </tr>
+                                </thead><tbody>`;
+                $.each(Tbl.Rows, function (m, Cols) {
+                    let newRow = `<tr><td>New</td>`;
+                    let oldRow = `<tr><td>Old</td>`;
+                    $.each(Cols.Columns, function (n, Col) {
+                        if (Col.IsModified)
+                            newRow += `<td style="color: red;">${Col.NewValue}</td>`;
+                        else
+                            newRow += `<td>${Col.NewValue}</td>`;
+                        oldRow += `<td>${Col.OldValue}</td>`;
+                    });
+                    newRow += `</tr>`;
+                    oldRow += `</tr>`;
+                    tempHtml += newRow + oldRow;
+                });
+
+                tempHtml += `</tbody></table></div>`;
+            });
+            $trans.children(".trans-body").append(tempHtml);
+            $transAll.append($trans);
+        });
+
+        $("#divAuditTrail").children().remove();
+        $("#divAuditTrail").append($transAll);
+
+        $("#divAuditTrail .trans-head").on("click", function (e) {
+            $(e.target).closest(".trans-head").next().collapse('toggle');
+            let $iele = $(e.target).closest(".trans-head").find("i");
+
+            if ($iele.hasClass("fa-chevron-right")) {
+                $iele.removeClass("fa-chevron-right");
+                $iele.addClass("fa-chevron-down");
+            }
+            else if ($iele.hasClass("fa-chevron-down")) {
+                $iele.removeClass("fa-chevron-down");
+                $iele.addClass("fa-chevron-right");
+            }
+
+        });
     };
 
     this.showLoader = function () {
@@ -704,13 +865,79 @@ const WebFormRender = function (option) {
         }
     }.bind(this);
 
+    this.setHeader = function (reqstMode) {
+        let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
+        this.headerObj.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose"]);
+
+        if (this.isPartial === "True") {
+            if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
+                $(".objectDashB-toolbar").find(".pd-0:first-child").children("button").remove();
+                $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
+                $("#Eb_com_menu").remove();
+            }
+            this.headerObj.showElement(["webformclose"]);
+        }
+
+        this.mode = reqstMode;//
+        //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
+        if (reqstMode === "Edit Mode") {
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave", "webformaudittrail"], currentLoc, reqstMode));
+        }
+        else if (reqstMode === "New Mode") {
+            this.headerObj.showElement(this.filterHeaderBtns(["webformsave"], currentLoc, reqstMode));
+        }
+        else if (reqstMode === "View Mode") {
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"], currentLoc, reqstMode));
+        }
+        else if (reqstMode === "Fail Mode") {
+            EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
+        }
+        else if (reqstMode === "Preview Mode") {
+            this.mode = "New Mode";////////////
+        }
+        this.headerObj.setName(_formObj.DisplayName);
+        this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
+        $('title').text(this.FormObj.DisplayName + `(${reqstMode})`);
+
+        if (this.isPartial === "True") {
+            this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);
+        }
+    };
+
+    this.filterHeaderBtns = function (btns, loc, mode) {
+        let r = [];
+        // ["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
+        // ["New", "View", "Edit", "Delete", "Cancel", "AuditTrail"]
+        for (let i = 0; i < btns.length; i++) {
+            if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
+                r.push(btns[i]);
+            else if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
+                r.push(btns[i]);
+            else if (btns[i] === "webformedit" && this.formPermissions[loc].indexOf('Edit') > -1)
+                r.push(btns[i]);
+            else if (btns[i] === "webformdelete" && this.formPermissions[loc].indexOf('Delete') > -1)
+                r.push(btns[i]);
+            else if (btns[i] === "webformcancel" && this.formPermissions[loc].indexOf('Cancel') > -1)
+                r.push(btns[i]);
+            else if (btns[i] === "webformaudittrail" && this.formPermissions[loc].indexOf('AuditTrail') > -1)
+                r.push(btns[i]);
+            else if (btns[i] === "webformnew" && this.formPermissions[loc].indexOf('New') > -1)
+                r.push(btns[i]);
+        }
+        return r;
+    };
+
     this.init = function () {
+        this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
+        this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
+        this.$closeBtn.on("click", function () { window.parent.closeModal(); });
+        $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
 
@@ -720,7 +947,49 @@ const WebFormRender = function (option) {
         if (this.mode === "View Mode") {
             this.setEditModeCtrls();
             this.SwitchToViewMode();
+
+            setTimeout(function () {
+                let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
+                let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
+                if (ol !== nl) {
+                    EbDialog("show", {
+                        Message: "Switching from " + getObjByval(loc__.Locations, "LocId", ol).LongName + " to " + getObjByval(loc__.Locations, "LocId", nl).LongName,
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            loc__.SwitchLocation(_formData.MultipleTables[_formData.MasterTable][0].LocId);
+                            this.setHeader(this.mode);
+                        }.bind(this)
+                    });
+                }
+            }.bind(this), 500);
+
         }
+        setTimeout(function () {
+            loc__.Listener.ChangeLocation = function (o) {
+                if (this.rowId > 0) {
+                    EbDialog("show", {
+                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            reloadFormPage();
+                        }.bind(this)
+                    });
+                }
+            }.bind(this);
+        }.bind(this), 500);
+
     };
 
     this.init();

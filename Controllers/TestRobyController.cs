@@ -11,6 +11,8 @@ using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
+using ServiceStack.Stripe;
+using ServiceStack.Stripe.Types;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,6 +26,8 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
+
         public IActionResult map()
         {
             return View();
@@ -33,6 +37,7 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
         public IActionResult chart()
         {
             return View();
@@ -50,8 +55,6 @@ namespace ExpressBase.Web.Controllers
             xx["AppName"] = "EXPRESSbase bot(Chatbot)";
             xx["DescApp"] = desc;
             var ds = this.ServiceClient.Get(new CreateApplicationRequest { Description = desc, appid = appid });
-        }
-
-     
+        }         
     }
 }

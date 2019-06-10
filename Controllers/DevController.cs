@@ -650,6 +650,7 @@ namespace ExpressBase.Web.Controllers
             ApiResponse resp = null;
             if (component == null)
             {
+                var watch = new System.Diagnostics.Stopwatch(); watch.Start();
                 Dictionary<string, object> d = pr.Default.Select(p => new { prop = p.Name, val = p.Value })
                     .ToDictionary(x => x.prop, x => x.val as object);
 
@@ -663,6 +664,12 @@ namespace ExpressBase.Web.Controllers
                     Version = vers,
                     Data = d
                 });
+
+                watch.Stop();
+                resp.Name = name;
+                resp.Version = vers;
+                resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+                resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
             }
             else
             {

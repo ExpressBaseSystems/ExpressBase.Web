@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Controllers
 
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-        [EbBreadCrumbFilter()]
+        [EbBreadCrumbFilter("Solutions")]
         [HttpGet("MySolutions")]
         public IActionResult TenantDashboard()
         {
@@ -76,18 +76,21 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void EbCreateSolution(int i)
+        public CreateSolutionResponse EbCreateSolution(int i)
         {
             var req = this.HttpContext.Request.Form;
-            string DbName = req["SolnId"];
+            //string DbName = req["SolnId"];
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
                 SolutionName = req["Sname"],
                 SolnUrl = req["SolnId"],
-                Description = req["Desc"]
+                Description = req["Desc"],
+                DeployDB = Convert.ToBoolean(req["DeployDB"])
+
             });
             if (res.Status > 0)
                 TempData[Msg] = "New Solution Created.";
+            return res;
         }
 
         [HttpPost]
@@ -116,7 +119,7 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("MySolutions/NewSolution", new string[] { "/MySolutions" })]
         public IActionResult CreateSolution()
         {
-            
+
             return View();
         }
 

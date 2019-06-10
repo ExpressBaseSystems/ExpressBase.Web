@@ -7,20 +7,34 @@
     const SetLoc = "#setLocSub";
     const container = ".loc_switchModal_outer";
     const EmptyLocs = ".no_loc_config";
+    this.Listener = {
+        ChangeLocation: function (LocObject) {
+
+        }
+    };
 
     this.Tid = options.Tid || null;
     this.Uid = options.Uid || null;
 
     this.Locations = JSON.parse(options.Location) || [];
-    this.CurrentLoc = (["0", "-1", 0, -1].indexOf(options.Current) > 0) ? 1 : options.Current;
-    this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
     this.EbHeader = new EbHeader();
+
+    this.getCurrent = function () {
+        if (store.get("Eb_Loc-" + this.Tid + this.Uid)) {
+            return store.get("Eb_Loc-" + this.Tid + this.Uid);
+        }
+        else {
+            return (["0", "-1", 0, -1].indexOf(options.Current) > 0) ? 1 : options.Current;
+        }
+    }
 
     this.trigger = function () {
         //$(document).bind('keypress', function (event) {
         //    if (event.which === 108)
         //        this.showSwitcher();
         //}.bind(this));
+        this.CurrentLoc = this.getCurrent();
+        this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         this.drawLocs();
         this.setDeafault();
@@ -44,7 +58,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4 flex-center">
-                                        <img src="~/images/EB_Logo.png" class="w-100" />
+                                        <img src="/images/your_company_logo.png" style="max-height:40px;width;auto"/>
                                     </div>
                                     <div class="col-md-6 loc_info display-flex">
                                         <h5 class="mr-0">${this.Locations[i].LongName}</h5>
@@ -68,17 +82,24 @@
 
     this.selectLoc = function (e) {
         let radioContainer = $(e.target).closest(".locationwrapper").find(".md-radio_wrapr");
-        if (!eval(radioContainer.attr("ischecked"))) {
-            radioContainer.find(".checked").show();
-            radioContainer.find(".unchecked").hide();
-            radioContainer.attr("ischecked", true);
-            this.CurrentLoc = radioContainer.attr("LocId");
-            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
-            this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
-            this.uncheckOthers($(e.target).closest(".locationwrapper"));
+        try {
+            if (!eval(radioContainer.attr("ischecked"))) {
+                radioContainer.find(".checked").show();
+                radioContainer.find(".unchecked").hide();
+                radioContainer.attr("ischecked", true);
+                this.CurrentLoc = radioContainer.attr("LocId");
+                this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+                this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+                this.uncheckOthers($(e.target).closest(".locationwrapper"));
+                this.Listener.ChangeLocation(this.CurrentLocObj);
+            }
+            else {
+                this.uncheckOthers($(e.target).closest(".locationwrapper"));
+            }
         }
-        else {
-            this.uncheckOthers($(e.target).closest(".locationwrapper"));
+        catch (err) {
+            console.log(err);
+            this.Listener.ChangeLocation(null);
         }
     };
 
@@ -106,6 +127,34 @@
                 $(".loc_switchModal_fade").hide();
         });
     };
+
+    this.SwitchLocation = function (id) {
+        try {
+            let radioContainer = $(container + " .locs_bdy").find(`div[Locid='${id}']`);
+            this.CurrentLoc = radioContainer.attr("LocId");
+            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+            if ($.isEmptyObject(this.CurrentLocObj) || this.CurrentLocObj === undefined)
+                throw "no such location";
+            else {
+                radioContainer.find(".checked").show();
+                radioContainer.find(".unchecked").hide();
+                radioContainer.attr("ischecked", true);
+                this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+                this.uncheckOthers(radioContainer.closest(".locationwrapper"));
+                store.clearAll();
+                store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
+                return true;
+            }        
+        }
+        catch (error) {
+            console.log(error);
+            return false;
+        }
+    };
+
+    this.clearSwitchedLoc = function () {
+        store.remove("Eb_Loc-" + this.Tid + this.Uid);
+    }
 
     this.trigger();
 };

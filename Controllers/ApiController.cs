@@ -28,80 +28,161 @@ using System.Text;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Constants;
 using ServiceStack.Auth;
+using ExpressBase.Common.EbServiceStack.ReqNRes;
+using ExpressBase.Common.Enums;
+using Microsoft.Net.Http.Headers;
 
 namespace ExpressBase.Web.Controllers
 {
     public class ApiController : EbBaseIntApiController
     {
-        public ApiController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
+        public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc) { }
 
-        [HttpGet("/api/{_name}/{_version}/{format}")]
-        public object Api(string _name, string _version, string format)
+        [HttpGet("/api/{_name}/{_version}/{format?}")]
+        public object Api(string _name, string _version, string format="json")
         {
+            var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             ApiResponse resp = null;
-            format = format.ToLower();
-            Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
-                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
-
-            if (ViewBag.IsValid)
+            try
             {
-                resp = this.ServiceClient.Get(new ApiRequest
+                Dictionary<string, object> parameters = HttpContext.Request.Query.Keys.Cast<string>()
+               .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+
+                if (ViewBag.IsValid)
+                {
+                    resp = this.ServiceClient.Get(new ApiRequest
+                    {
+                        Name = _name,
+                        Version = _version,
+                        Data = parameters
+                    });
+
+                    if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
+                    {
+                        resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+                    }
+
+                    watch.Stop();
+                    resp.Name = _name;
+                    resp.Version = _version;
+                    resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+                    resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
+                }
+                else
+                {
+                    watch.Stop();
+                    resp = new ApiResponse
+                    {
+                        Name = _name,
+                        Version = _version,
+                        Message = new ApiMessage
+                        {
+                            Status = "Error",
+                            Description = ViewBag.Message,
+                            ExecutedOn = DateTime.UtcNow.ToString(),
+                            ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
+                        }
+                    };
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception:" + e.Message);
+                watch.Stop();
+                resp = new ApiResponse
                 {
                     Name = _name,
                     Version = _version,
-                    Data = parameters
-                });
+                    Message = new ApiMessage
+                    {
+                        Status = "Error",
+                        Description = "Execution failed with unknown error's",
+                        ExecutedOn = DateTime.UtcNow.ToString(),
+                        ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
+                    }
+                };
             }
-            else
-                resp = new ApiResponse { Message = ViewBag.Message };
 
-            if (resp.Result.GetType() == typeof(ApiScript))
-            {
-                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
-            }
-
-            if (format.Equals("xml"))
+            if (format.ToLower().Equals("xml"))
                 return this.ToXML(resp);
             else
                 return resp;
         }
 
-
-        [HttpPost("/api/{_name}/{_version}/{format}")]
-        public object Api(string _name, string _version, string format, [FromForm]Dictionary<string, string> form)
+        [HttpPost("/api/{_name}/{_version}/{format?}")]
+        public object Api(string _name, string _version, [FromForm]Dictionary<string, string> form, string format = "json")
         {
+            var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             ApiResponse resp = null;
-            format = format.ToLower();
             Dictionary<string, object> parameters = null;
-            if (form.Count <= 0)
+            try
             {
-                parameters = HttpContext.Request.Query.Keys.Cast<string>()
-                .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
-            }
-            else
-            {
-                parameters = form.Keys.Cast<string>()
-                .ToDictionary(k => k, v => form[v] as object);
-            }
+                if (form.Count <= 0)
+                {
+                    parameters = HttpContext.Request.Query.Keys.Cast<string>()
+                    .ToDictionary(k => k, v => HttpContext.Request.Query[v] as object);
+                }
+                else
+                {
+                    parameters = form.Keys.Cast<string>()
+                    .ToDictionary(k => k, v => form[v] as object);
+                }
 
-            if (ViewBag.IsValid)
+                if (ViewBag.IsValid)
+                {
+                    resp = this.ServiceClient.Get(new ApiRequest
+                    {
+                        Name = _name,
+                        Version = _version,
+                        Data = parameters
+                    });
+
+                    if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
+                    {
+                        resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+                    }
+                    watch.Stop();
+                    resp.Name = _name;
+                    resp.Version = _version;
+                    resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+                    resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
+                }
+                else
+                {
+                    watch.Stop();
+                    resp = new ApiResponse
+                    {
+                        Name = _name,
+                        Version = _version,
+                        Message = new ApiMessage
+                        {
+                            Status = "Error",
+                            Description = ViewBag.Message,
+                            ExecutedOn = DateTime.UtcNow.ToString(),
+                            ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
+                        }
+                    };
+                }
+            }
+            catch (Exception e)
             {
-                resp = this.ServiceClient.Get(new ApiRequest
+                Console.WriteLine("Exception:" + e.Message);
+                watch.Stop();
+                resp = new ApiResponse
                 {
                     Name = _name,
                     Version = _version,
-                    Data = parameters
-                });
+                    Message = new ApiMessage
+                    {
+                        Status = "Error",
+                        Description = "Execution failed with unknown error's",
+                        ExecutedOn = DateTime.UtcNow.ToString(),
+                        ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms"
+                    }
+                };
             }
-            else
-                resp = new ApiResponse { Message = new ApiMessage { Status = "Error", Description = ViewBag.Message } };
 
-            if (resp.Result.GetType() == typeof(ApiScript))
-            {
-                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
-            }
-
-            if (format.Equals("xml"))
+            if (format.ToLower().Equals("xml"))
                 return this.ToXML(resp);
             else
                 return resp;
@@ -127,7 +208,7 @@ namespace ExpressBase.Web.Controllers
             if (ViewBag.IsValidSol)
             {
                 ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.SultionId });
-                ViewBag.Allmeta = resp.AllMetas;               
+                ViewBag.Allmeta = resp.AllMetas;
             }
             else
                 return Redirect("/StatusCode/700");
@@ -136,7 +217,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/api/authenticate")]
         [HttpPost("/api/authenticate")]
-        public ApiAuthResponse ApiLogin(string username,string password)
+        public ApiAuthResponse ApiLogin(string username, string password)
         {
             ApiAuthResponse response = new ApiAuthResponse();
             try
@@ -157,12 +238,12 @@ namespace ExpressBase.Web.Controllers
                     response.BToken = authResponse.BearerToken;
                     response.RToken = authResponse.RefreshToken;
                     response.UserId = authResponse.User.UserId;
-                    response.DisplayName = authResponse.User.DisplayName;
+                    response.DisplayName = authResponse.User.FullName;
                 }
                 else
                     response.IsValid = false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 response.IsValid = false;
                 Console.WriteLine("api auth request failed: " + e.Message);
@@ -175,6 +256,96 @@ namespace ExpressBase.Web.Controllers
         public void ApiLogOut()
         {
 
+        }
+
+        [HttpPost("/api/upload")]
+        public async Task<ApiResponse> UploadFile()
+        {
+            ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>() };
+            UploadAsyncResponse res = new UploadAsyncResponse();
+            EbFileCategory _FileType = EbFileCategory.File;
+            var req = this.HttpContext.Request.Form;
+            string fname = string.Empty;
+            try
+            {
+                if (req["FileType"] == "image")
+                {
+                    _FileType = EbFileCategory.Images;
+                }
+                UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
+                uploadFileRequest.FileDetails = new FileMeta();
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        fname = formFile.FileName.ToLower();
+                        byte[] myFileContent;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                            uploadFileRequest.FileByte = myFileContent;
+                        }
+                        uploadFileRequest.FileDetails.FileName = formFile.FileName.ToLower();
+                        uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
+                        uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
+                        uploadFileRequest.FileDetails.FileCategory = _FileType;
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
+
+                        (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData
+                        {
+                            FileName = formFile.FileName.ToLower(),
+                            FileType = req["FileType"],
+                            FileRefId = res.FileRefId
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString());
+                (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData
+                {
+                    FileName = fname,
+                    FileType = req["FileType"],
+                    FileRefId = 0
+                });
+            }
+            return ApiResp;
+        }
+
+        [HttpGet("api/files/{filename}")]
+        public IActionResult GetFile(string filename)
+        {
+            DownloadFileResponse dfs = null;
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadFileByIdRequest
+                        {
+                            FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
+                        });
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(filename));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+            return resp;
+        }
+
+        private string GetMime(string fname)
+        {
+            return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
         }
 
         private Dictionary<string, object> F2D(FormCollection collection)
@@ -190,7 +361,7 @@ namespace ExpressBase.Web.Controllers
         public string ToXML(ApiResponse _apiresp)
         {
             string json = JsonConvert.SerializeObject(_apiresp);
-            XmlDocument doc = JsonConvert.DeserializeXmlNode(json,"Root");
+            XmlDocument doc = JsonConvert.DeserializeXmlNode(json, "Root");
             XmlNode docNode = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
             doc.PrependChild(docNode);
             return doc.InnerXml;

@@ -93,7 +93,7 @@
                 this.drake.containers.push(el);
             }
         }
-    }
+    };
 
     this.makeTabsDropable = function () {
         $.each($("#" + this.formId + " .tab-pane"), function (i, el) {
@@ -209,7 +209,8 @@
         id: "pgWraper",
         wc: this.wc,
         cid: this.cid,
-        $extCont: $(".property-grid-cont")
+        $extCont: $(".property-grid-cont"),
+        isDraggable: true
     });
 
     //Edit mode
@@ -320,7 +321,7 @@
     this.AsyncLoadHtml = function (refId, divId) {
         setTimeout(function () {
             $("#" + divId).append(`<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>`);
-        }, 500);
+        }, 1);
 
         $.ajax({
             type: "POST",

@@ -7,6 +7,7 @@ using ExpressBase.Objects;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
+using ExpressBase.Web.Controllers;
 using ExpressBase.Web.Filters;
 using ExpressBase.Web.Models;
 using ExpressBase.Web2;
@@ -82,7 +83,8 @@ namespace ExpressBase.Web.Components
                     }
                 }
 
-
+                DSController dscont = new DSController(this.ServiceClient, this.Redis);
+                dvobj.ColumnsCollection = dscont.GetDVColumnCollection(columnresp.Columns);
                 var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
                 int _pos = __columns.Count + 100;
 
@@ -130,7 +132,7 @@ namespace ExpressBase.Web.Components
             var NewColumns = new DVColumnCollection();
             foreach (DVBaseColumn oldcol in OldColumns)
             {
-                var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type);
+                var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type, oldcol.IsCustomColumn);
                 if (tempCol != null)
                 {
                     oldcol.Data = tempCol.Data;

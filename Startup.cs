@@ -14,8 +14,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http.Features;
 using ServiceStack;
 using ServiceStack.Redis;
-using Stripe;
 using System;
+using System.Reflection;
 
 namespace ExpressBase.Web2
 {
@@ -104,7 +104,7 @@ namespace ExpressBase.Web2
                 return new EbStaticFileClient();
             });
 
-            StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
+          //  StripeConfiguration.SetApiKey("sk_test_eOhkZcaSagCU9Hh33lcS6wQs");
 
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
@@ -114,6 +114,12 @@ namespace ExpressBase.Web2
             {
                 return new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
             });
+
+            //Setting Assembly version in Redis
+            RedisClient client = new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
+            AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
+            String version = assembly.Name.ToString() + " - " + assembly.Version.ToString();
+            client.Set("WebAssembly", version);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

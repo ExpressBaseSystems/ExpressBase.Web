@@ -31,7 +31,7 @@
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: 'https://se.eb-test.xyz',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.xyz',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
@@ -101,15 +101,27 @@
         return ids;
     };
 
-    this.UserControl = function (ctrl, ctrlOpts) {
-        let $ctrl_modal = $("#" + ctrl.EbSid_CtxId).remove();
-        $("body").prepend($ctrl_modal);
+    this.DGUserControlColumn = function (ctrl, ctrlOpts) {
+        ctrl.__Col.__DGUCC.initForctrl(ctrl);
     };
 
+    this.SetDateFormatter = function () {
+        $.datetimepicker.setDateFormatter({
+            parseDate: function (date, format) {
+                var d = moment(date, format);
+                return d.isValid() ? d.toDate() : false;
+            },
+
+            formatDate: function (date, format) {
+                return moment(date).format(format);
+            }
+        });
+    };
+    this.SetDateFormatter();
 
     this.Date = function (ctrl, ctrlOpts) {
         let formObject = ctrlOpts.formObject;
-        let userObject = ctrlOpts.userObject;
+        let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
@@ -121,55 +133,56 @@
             });
         }
         else {
-            let sdp = this.mapDatePattern(userObject.Preference.ShortDatePattern);
+            let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
+            let stp = userObject.Preference.ShortTimePattern;//"HH mm"
 
             if (typeof ctrl === typeof "")
                 ctrl = { name: ctrl, ebDateType: 5 };
             var settings = { timepicker: false };
 
-            if (ctrl.EbDateType === 5) {
-                settings.timepicker = false;
-                settings.format = sdp;
+            if (ctrl.EbDateType === 5) { //Date
+                $input.datetimepicker({
+                    format: sdp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: false,
+                    datepicker: true,
+                    mask: true
+                });
+                $input.val(userObject.Preference.ShortDate);
             }
-            else if (ctrl.EbDateType === 17) {
-                settings.datepicker = false;
-                settings.format = "H:i";
+            else if (ctrl.EbDateType === 17) { //Time
+                $input.datetimepicker({
+                    format: stp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: true,
+                    datepicker: false
+                });
+                $input.val(userObject.Preference.ShortTime);
             }
             else {
-                settings.timepicker = true;
-                settings.datepicker = true;
-                settings.format = sdp + " H:i";
+                $input.datetimepicker({ //DateTime
+                    format: sdp + " " + stp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: true,
+                    datepicker: true
+                });
+                $input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
-
-
-            //if (ctrl.DateFormat === 0) {
-            //    settings.formatDate = "d/m/Y";
-            //}
-            //else if (ctrl.DateFormat === 1) {
-            //    settings.formatDate = "m/d/Y";
-            //}
-            //else if (ctrl.DateFormat === 2) {
-            //    settings.formatDate = "Y/m/d";
-            //} 
-            //else {
-            //    settings.formatDate = "Y/d/m";
-            //}
-
 
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
-            
 
-            if (ctrlOpts.source === "webform") {
-                let maskPattern = "yyyy-mm-dd";
-                $input.attr("placeholder", maskPattern);
-                $input.inputmask(maskPattern);
-                if (!ctrl.IsNullable)
-                    $input.val(userObject.Preference.ShortDate);
-                $input.datetimepicker(settings);
-            }
-            else
-                $input.datetimepicker({ timepicker: false, format: "Y-m-d" });
+            //if (ctrlOpts.source === "webform") {
+                //let maskPattern = "DD-MM-YYYY";
+                //$input.attr("placeholder", maskPattern);
+                //$input.inputmask(maskPattern);               
+                
+            //    if (!ctrl.IsNullable)
+            //        $input.val(userObject.Preference.ShortDate);
+            //}
 
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
@@ -178,10 +191,6 @@
                 $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             }
         }
-    };
-
-    this.mapDatePattern = function (CSPtn) {
-        return CSPtn.replace("yyyy", "Y").replace("MM", "m").replace("dd", "d");
     };
 
     //created by amal
@@ -384,19 +393,32 @@
         });
     };
 
+    this.Button = function (ctrl) {
+        $('#' + ctrl.EbSid_CtxId).removeAttr("disabled");
+        $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
+    };
+
+    this.iFrameOpen = function (ctrl) {
+        let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
+        $("#iFrameForm").attr("src", url);
+        $("#iFrameFormModal").modal("show");
+    };
+
     this.Numeric = function (ctrl) {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
-
-        $input.val("0.00");//temp hoc
+        let initValue = "0";
+        if (ctrl.DecimalPlaces > 0)
+            initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
+        $input.val(initValue);
 
         $input.inputmask("currency", {
             radixPoint: ".",
             allowMinus: ctrl.AllowNegative,
             groupSeparator: "",
-            digits: 2,
+            digits: ctrl.DecimalPlaces,
             prefix: '',
-            autoGroup: true,
+            autoGroup: true
         });
 
         $input.focus(function () { $(this).select(); });

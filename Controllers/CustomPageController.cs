@@ -95,7 +95,13 @@ namespace ExpressBase.Web.Controllers
 		{
 			//if (!this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
 			//	return 0;
-			SaveSurgeryDetailsResponse res = this.ServiceClient.Post<SaveSurgeryDetailsResponse>(new SaveSurgeryDetailsRequest { Data = SurgeryInfo, UserName = this.LoggedInUser.FullName });
+			SaveSurgeryDetailsResponse res = this.ServiceClient.Post<SaveSurgeryDetailsResponse>(
+                new SaveSurgeryDetailsRequest
+                {
+                    Data = SurgeryInfo,
+                    UserName = this.LoggedInUser.FullName,
+                    Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString())
+                });
 			return res.Status;
 		}
 

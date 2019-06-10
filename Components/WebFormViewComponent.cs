@@ -40,6 +40,11 @@ namespace ExpressBase.Web.Components
                 this.Redis.Set<EbWebForm>(refid, WebForm);
             }            
             WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
+            WebForm.RefId = refid;
+            WebForm.UserObj = ViewBag.__User;
+            WebForm.SolutionObj = ViewBag.__Solution;
+            ViewBag.FormPermissions = JsonConvert.SerializeObject(WebForm.GetLocBasedPermissions());
+
             if (WebForm != null)
             {
                 //************Localization - Feature Disabled Temporarily************

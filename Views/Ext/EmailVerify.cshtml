@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPageHeader");
+}
+<link rel="stylesheet" href="~/css/Resetpassword.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
+
+
+
+<div class="container-fluid resetpw-container">
+    <div class="row">
+        <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12 col-md-offset-4 col-lg-offset-4 col-sm-offset-4 wrapper-whitebg">
+            <div class="resetform-container">
+                <form>
+                    <div class="eb-logo-sec">
+                        <img src="~/images/EB_Logo-png.png" />
+                    </div>
+                    <div class="form-group">
+                        <p><h4>WELCOME TO EXPRESSBASE</h4></p>
+                        <br />
+                        <p>Your account has been verified <br />Enjoy our services</p>
+                        <input type="submit" id="subverify" style="display:none;" />
+                    </div>
+
+                    <div class="form-group">
+                        <button id="btnlogin" type="submit" class=" ebbtn eb_btngreen eb_btn_md pull-right">Login <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    console.log("sdf");
+    $(document).ready(function () {
+        
+        $("#btnlogin").click(function (e) {
+            e.preventDefault();
+            location.href = "http://myaccount.localhost:41500/Ext/TenantSignin";
+        });
+
+    });
+</script>

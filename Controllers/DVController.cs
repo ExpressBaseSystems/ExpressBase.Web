@@ -87,7 +87,111 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = solu, contextId = contextId, CustomColumn = customcolumn, wc = ViewBag.wc, curloc = _curloc, submitId = submitId });
         }
 
+        public string GetColumns(string dvobjt, bool CustomColumn)
+        {
+            EbDataVisualization dvobj = EbSerializers.Json_Deserialize(dvobjt);
+            dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
+            ReturnColumns returnobj = new ReturnColumns();
+            try
+            {
+                DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
+                if (columnresp == null || columnresp.Columns.Count == 0)
+                {
+                    Console.WriteLine("Column Object in Redis is null or count 0");
+                    columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = dvobj.DataSourceRefId, SolnId = ViewBag.cid, Params = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() : null });
+                    if (columnresp == null || columnresp.Columns.Count == 0)
+                    {
+                        Console.WriteLine("Column Object from SS is null or count 0");
+                        throw new Exception("Object Not found(Redis + SS)");
+                    }
+                }
+                DSController dscont = new DSController(this.ServiceClient, this.Redis);
+                returnobj.ColumnsCollection = dscont.GetDVColumnCollection(columnresp.Columns);
+                returnobj.Paramlist = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() : null;
+                var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+                int _pos = __columns.Count + 100;
 
+                var Columns = new DVColumnCollection();
+                dvobj.IsPaged = columnresp.IsPaged.ToString();
+
+                var indx = -1;
+                foreach (EbDataColumn column in __columns)
+                {
+                    DVBaseColumn _col = null;
+
+                    if (column.Type == EbDbTypes.String && column.ColumnName == "socialid")
+                        _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, RenderAs = StringRenderType.Image };
+                    else if (column.Type == EbDbTypes.String && column.ColumnName == "latlong")
+                        _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, RenderAs = StringRenderType.Marker };
+                    else if (column.Type == EbDbTypes.String)
+                        _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
+                    else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
+                        _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
+                    else if (column.Type == EbDbTypes.Boolean)
+                        _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
+                    else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
+                        _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
+                    _col.EbSid = column.Type.ToString() + column.ColumnIndex;
+                    Columns.Add(_col);
+                    indx = column.ColumnIndex;
+                }
+                //dvobj.Columns.Add(new DVNumericColumn { Data = ++indx, Name = "RATE_GRAFT", sTitle = "RATE+GRAFT", Type = EbDbTypes.Int32, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right",Formula = "T0.RATE+T0.GRAFT" });
+                if (dvobj.Columns == null || dvobj.Columns.Count == 0)
+                    returnobj.Columns = Columns;
+                else
+                    returnobj.Columns = compareDVColumns(dvobj.Columns, Columns, CustomColumn);
+                returnobj.DsColumns = returnobj.Columns;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception (GetdvObject): " + e.StackTrace);
+            }
+            return EbSerializers.Json_Serialize(returnobj);
+        }
+
+        private DVColumnCollection compareDVColumns(DVColumnCollection OldColumns, DVColumnCollection CurrentColumns, bool CustomColumn)
+        {
+            int _colindex = -1;
+            var NewColumns = new DVColumnCollection();
+            foreach (DVBaseColumn oldcol in OldColumns)
+            {
+                var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type, oldcol.IsCustomColumn);
+                if (tempCol != null)
+                {
+                    oldcol.Data = tempCol.Data;
+                    if (oldcol.EbSid == null || oldcol.EbSid == "")
+                        oldcol.EbSid = oldcol.Type.ToString() + oldcol.Data;
+                    NewColumns.Add(oldcol);
+                }
+            }
+
+            foreach (DVBaseColumn curcol in CurrentColumns)
+            {
+                NewColumns.Add(curcol);
+                _colindex = curcol.Data;
+            }
+            if (CustomColumn)
+            {
+                _colindex = NewColumns.Count;
+                foreach (DVBaseColumn oldcol in OldColumns)
+                {
+                    if (oldcol.IsCustomColumn)
+                    {
+                        oldcol.Data = _colindex;
+                        NewColumns.Add(oldcol);
+                        _colindex++;
+                    }
+                }
+            }
+
+            return NewColumns;
+        }
+
+        public object ExecuteTreeUpdate(string sql)
+        {
+            var resultlist = this.ServiceClient.Get<UpdateTreeColumnResponse>(new UpdateTreeColumnRequest { sql = sql});
+            return new object();
+        }
         //[HttpPost]//copied to boti - febin
         //public IActionResult dvView1(string dvobj)
         //{
@@ -254,6 +358,18 @@ namespace ExpressBase.Web.Controllers
                 return resultStream.ToArray();
             }
         }
+       
+    }
+
+    public class ReturnColumns
+    {
+        public List<DVColumnCollection> ColumnsCollection { get; set; }
+
+        public DVColumnCollection Columns { get; set; }
+
+        public List<Param> Paramlist { get; set; }
+
+        public DVColumnCollection DsColumns { get; set; }
     }
 }
 

@@ -22,6 +22,7 @@ using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Web.Controllers;
+using System.Net.Mail;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace EbControllers
@@ -34,6 +35,10 @@ namespace EbControllers
         [EbBreadCrumbFilter("Redis Explorer")]
         public IActionResult Index()
         {
+            if (ViewBag.wc != RoutingConstants.DC)
+            {
+                return Redirect("/StatusCode/401");
+            }
             List<string> cmdlst = new List<string>();
             Type t = typeof(Commands);
             FieldInfo[] fields = t.GetFields(BindingFlags.Static | BindingFlags.Public);

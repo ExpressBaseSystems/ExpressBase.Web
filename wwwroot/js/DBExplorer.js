@@ -107,7 +107,7 @@
         exe_window = exe_window[exe_window.length - 1];
         var res_window = $("#Result_Tab" + exe_window + " li.active a").attr("href");
         res_window = res_window[res_window.length - 1];
-        $("#resulttab" + exe_window).append(`<button type="button" id ="tt1" class="btn" data-toggle="modal" data-target="#myModal"></button>
+        $("body").prepend(`<button type="button" id ="tt1" class="btn" data-toggle="modal" data-target="#myModal"></button>
                                                     <!-- Modal -->
                                                     <div class="modal fade" id="myModal" role="dialog">
                                                         <div class="modal-dialog">

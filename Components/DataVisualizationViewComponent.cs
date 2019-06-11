@@ -132,7 +132,7 @@ namespace ExpressBase.Web.Components
             var NewColumns = new DVColumnCollection();
             foreach (DVBaseColumn oldcol in OldColumns)
             {
-                var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type);
+                var tempCol = CurrentColumns.Pop(oldcol.Name, oldcol.Type, oldcol.IsCustomColumn);
                 if (tempCol != null)
                 {
                     oldcol.Data = tempCol.Data;

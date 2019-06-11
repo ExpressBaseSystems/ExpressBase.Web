@@ -1,6 +1,7 @@
 ﻿const Eb_PropertyGrid = function (options, parentPG) {
     this.ParentPG = parentPG;
     this.wc = options.wc;
+    this.Isdraggable = options.isDraggable;
     this.cid = options.cid;
     this.IsInnerCall = options.IsInnerCall || false;
     this.wraperId = options.id;
@@ -9,6 +10,7 @@
     this.$extCont = options.$extCont;
     this.parentId = null;
     this.$controlsDD = $(".controls-dd-cont select");
+    this.$fitCornerBtn = $(`<div class="icon-cont  pull-right pgcorner"><i class="fa fa-angle-double-right"></i></div>`);
     this.dependedProp = options.dependedProp;
     this.ctrlsDDCont_Slctr = "#" + this.wraperId + " .controls-dd-cont";
     this.AllObjects = {};
@@ -36,6 +38,16 @@
     //Builds property Grid rows
     this.getPropertyRowHtml = function (name, value, meta, options, SubtypeOf, IsCElimitEditor) {
         let valueHTML;
+        let alias = meta.alias || name
+            // insert a space before all caps
+            .replace(/([A-Z])/g, ' $1').trim()
+            // uppercase the first character
+            .replace(/^./, function (str) { return str.toUpperCase(); })
+            // lowercase the first character after space
+            .replace(/ ([A-Z])/g, function (str) { return str.toLowerCase(); })
+            // replace underscores with space
+            .replace(/_/g, " ").replace(/  +/g, ' ');
+
         let type = meta.editor;
         let elemId = this.wraperId + name;
         let subRow_html = '', subtypeOfAttr = '', req_html = '', arrow = '', isExpandedAttr = '';
@@ -85,7 +97,7 @@
         //else if (type === 25) {
         //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
         //}
-        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26) {//  If collection editor
+        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26 || type === 27 || type === 35) {//  If collection editor
             if ((meta.Limit === 1 && type === 25) || (meta.Limit === 1 && type === 8)) {
                 let _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
@@ -189,7 +201,7 @@
                 if ($subRow_html.length > 0)
                     subRow_html = $subRow_html.wrapAll('<div>').parent().html();
                 else
-                    value23 = `(!No ${(meta.alias || name)} found)`;
+                    value23 = `(!No ${(alias || name)} found)`;
             }
             else {  //  If expandable
                 let _meta = meta.submeta;
@@ -221,7 +233,7 @@
         }
         if (meta.IsRequired)
             req_html = '<sup style="color: red">*</sup>';
-        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + (meta.alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
+        return '<tr class="pgRow" tabindex="1" ' + subtypeOfAttr + isExpandedAttr + ' name="' + name + 'Tr" group="' + this.currGroup + '"><td class="pgTdName" data-toggle="tooltip" data-placement="left" title="' + meta.helpText + '">' + arrow + (alias || name) + req_html + '</td><td class="pgTdval">' + valueHTML + '</td></tr>' + subRow_html;
     };
 
     // gives expandable prop values as array
@@ -356,15 +368,30 @@
         }.bind(this));
     };
 
+    this.HideGroup = function (groupName) {
+        let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
+        let props = $groupRows.filter(function (item) {
+            return item.getAttribute("name").slice(-2) === groupName;
+        });
+
+        $.each(props, function (i, prop) {
+            this.HideProperty(prop);
+        });
+    };
+
     //makes a property row hidden
     this.HideProperty = function (prop) {
         if (this.$hiddenProps[prop])
             return;
         let $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
         let isExpanded = $Tr.attr("is-showprop") === 'true';
-        $Tr.hide()
+        $Tr.hide();
         $Tr.attr("is-showprop", false);
         this.$hiddenProps[prop] = { "$Tr": $Tr };
+
+        let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
+        if ($groupRows.length === 0)
+            $("#" + this.wraperId + " [group-h=" + groupName + "]").hide(300);
     };
 
     //makes a property row visible which hidden by 'HideProperty()'
@@ -405,7 +432,13 @@
             delete this.PropsObj[this.dependedProp];
         let propArray = Object.keys(this.PropsObj);
         //for (let property in this.PropsObj) { propArray.push(property); }
-        propArray.sort();
+        //propArray.sort();
+        let _Metas = [...this.Metas];
+        if (this.IsSortByGroup)
+            propArray = _Metas.sort(function (a, b) { return b.Priority - a.Priority; }).map(a => a.name);
+        else
+            propArray = _Metas.sort(function (a, b) { if ((a.alias || a.name) < (b.alias || b.name)) return -1; if ((a.alias || a.name > b.alias || b.name)) return 1; return 0; }).map(a => a.name);
+
         let prop = null;
         for (let i in propArray) {
             prop = propArray[i];
@@ -536,7 +569,14 @@
     //Set basic foundation for PG
     this.init = function () {
         this.$wraper.empty().addClass("pg-wraper");
-        this.$wraper.append($('<div class="pgHead"><div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div><div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div><span>Properties </span><div class="icon-cont  pull-right pgpin"><i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div></div> <div class="controls-dd-cont"> <select class="selectpicker" data-live-search="true"> </select> </div>'));
+        this.$wraper.append($(`<div class="pgHead">
+                                    <div name="sort" class="icon-cont pull-left"> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></div>
+                                    <div name="sort" class="icon-cont pull-left"> <i class="fa fa-list-ul" aria-hidden="true"></i></div>
+                                    <span>Properties </span>
+                                    <div class="icon-cont  pull-right pgpin"><i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>
+                                    </div><div class="controls-dd-cont">
+                                    <select class="selectpicker" data-live-search="true"> </select>
+                                </div>`));
         this.$wraper.append($("<div id='" + this.wraperId + "_propGrid' class='propgrid-table-cont'></div><div id='" + this.wraperId + "_HelpBox' class='propgrid-helpbox'></div>"));
         this.$PGcontainer = $("#" + this.wraperId + "_propGrid");
         if (!this.IsInnerCall) {
@@ -546,7 +586,23 @@
                 label: "Properties",
                 $scope: this.$scope
             });
+            this.$wraper.addClass("outer-pg");
+            if (this.Isdraggable) {
+                this.$extCont.draggable({
+                    handle: ".outer-pg > .pgHead",
+                    stop: this.pgDragStop
+                });
+                this.$fitCornerBtn.insertAfter(this.$wraper.find(".pgpin"));
+                this.$fitCornerBtn.on("click", function () {
+                    this.$extCont.attr("style", "");
+                    this.$fitCornerBtn.hide();
+                }.bind(this));
+            }
         }
+        else
+            this.$wraper.addClass("inner-pg");
+
+
         $(this.ctrlsDDCont_Slctr + " .selectpicker").on('change', this.ctrlsDD_onchange.bind(this));
         $("#" + this.wraperId + " .pgHead").on("click", ".pgpin", this.CloseFn.bind(this));
         this.CXVE = new Eb_pgCXVE(this);
@@ -556,9 +612,22 @@
         this.EbAlert = new EbAlert({
             id: this.wraperId + "PGalertCont",
             top: 24,
-            right: 24,
+            right: 24
         });
     };
+
+    this.pgDragStop = function () {
+        if (parseInt(this.$extCont.css("top").trim("px")) <= 37)
+            this.$extCont.css("top", "37px");
+        if (parseInt(this.$extCont.css("top").trim("px")) >= window.innerHeight)
+            this.$extCont.css("top", "37px");
+        if (parseInt(this.$extCont.css("left").trim("px")) >= window.innerWidth || parseInt(this.$extCont.css("left").trim("px")) < 20 - this.$extCont.width()) {
+            this.$extCont.css("left", "auto");
+            this.$extCont.css("right", "0px");
+        }
+
+        this.$fitCornerBtn.show(100);
+    }.bind(this);
 
     //fires onChange of DDlisting all controls
     this.ctrlsDD_onchange = function (e) {
@@ -791,7 +860,7 @@
     };
 
     // sets Object to property grid
-    this.setObject = function (props, metas) {
+    this.setObject = function (props, metas, setObjectCallBack = function () { }) {
         //params check
         {
             if (typeof props === 'string' || typeof metas === 'string') {
@@ -814,6 +883,7 @@
         this.InitPG();
         $("#" + this.wraperId + " .propgrid-helpbox").show();
         //console.log("default test :" + JSON.stringify(props));
+        setObjectCallBack();
     };
 
     // makes PG readonly

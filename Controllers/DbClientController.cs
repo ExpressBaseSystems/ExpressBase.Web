@@ -20,6 +20,8 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult DbClient()
         {
+            if(ViewBag.wc == RoutingConstants.UC)
+                return Redirect("/StatusCode/401");
             GetDbTablesResponse res = this.ServiceClient.Get(new GetDbTablesRequest { });
             ViewBag.Tables = res.Tables;
             ViewBag.DB_Name = res.DB_Name;

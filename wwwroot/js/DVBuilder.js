@@ -90,44 +90,39 @@
         $("#obj_icons").prepend(`<a class='btn' id="oldbuilder" href='../Eb_Object/index?objid=${objid}&objtype=16&buildermode=false'><i class="fa fa-external-link" aria-hidden="true"></i></a>`);
 
         commonO.saveOrCommitSuccess = this.rendertable.bind(this);
-        //commonO.PreviewObject = function () {
-        //    $("#preview_wrapper").empty();
-        //    commonO.Save();
-        //};
-
-        //commonO.saveOrCommitSuccess = function (res) {
-        //   this.renderTable();
-        //}.bind(this);
     }
-
-    //renderTable() {
-    //    $.ajax({
-    //        url: `../DV/dv?refid=${this.EbObject.RefId}`,
-    //        type: "POST",
-    //        cache: false,
-    //        success: function (result) {
-    //            $("#preview_wrapper").html(result);
-    //            $("#btnGo").off("click").on("click", this.render.bind(this));
-    //            if ($("#btnGo").length <= 0) {
-    //                $("#sub_windows_sidediv_dv").hide();
-    //                $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
-    //                $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}`);
-    //            }
-    //        }.bind(this)
-    //    });
-    //}
 
     EventBind() {
         $("#NewTableHeader").off("click").on("click", this.AddNewTableHeader.bind(this));
         $("#NewRowGroup").off("click").on("click", this.AddNewRowGroup.bind(this));
         $("#columns-list").off("focusin").on("focusin", this.ColumnDivFocused.bind(this));
         $(".add_calcfield").on("click", this.newCalcFieldSum.bind(this));
+        document.onkeydown = this.ColumnKeyMove.bind(this);
     }
 
     PropertyChanged(obj, pname) {
         if (pname === "DataSourceRefId") {
             this.check4Customcolumn();
-            this.getColumns();
+            if (this.isCustomColumnExist) {
+                EbDialog("show", {
+                    Message: "Retain Custom Columns?",
+                    Buttons: {
+                        "Yes": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        },
+                        "No": {
+                            Background: "red",
+                            Align: "left",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: this.dialogboxAction.bind(this)
+                });
+            }
+            else
+                this.getColumns();
         }
     }
 
@@ -139,18 +134,32 @@
             this.isCustomColumnExist = true;
     };
 
-    getColumns() {
+    CheckforTree = function () {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.IsTree; });
+        if (temp.length > 0) {
+            this.IsTree = true;
+            this.treeColumn = temp[0];
+        }
+    }
+
+    dialogboxAction = function (value) {
+        this.getColumns(value);
+    }
+
+    getColumns(value) {
+        var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
+        this.RemoveColumnRef();
         $("#get-col-loader").show();
         $.ajax({
             url: "../DV/GetColumns",
             type: "POST",
             cache: false,
-            data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: this.isCustomColumnExist },
+            data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: isCustom },
             success: function (result) {
                 let returnobj = JSON.parse(result);
                 this.EbObject.Columns.$values = returnobj.Columns.$values;
                 this.EbObject.ColumnsCollection.$values = returnobj.ColumnsCollection.$values;
-                this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? []: returnobj.Paramlist.$values;
+                this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? [] : returnobj.Paramlist.$values;
                 this.EbObject.DSColumns.$values = returnobj.DsColumns.$values;
                 commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -177,13 +186,13 @@
             $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "' class='tablecolumns'></ul></li>");
             $.each(columnCollection.$values, function (j, obj) {
                 type = this.getType(obj.Type); icon = this.getIcon(obj.Type);
-                $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${icon}'></i> ${obj.name}</li>`);
+                $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><span><i class='fa ${icon}'></i> ${obj.name}</span></li>`);
             }.bind(this));
         }.bind(this));
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.IsCustomColumn) {
                 $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
-                    class='columns textval calcfield' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+                    class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
             }
         }.bind(this));
         $('#data-table-list').killTree();
@@ -191,25 +200,86 @@
         $('#calcFields').killTree();
         $('#calcFields').treed();
         this.SetContextmenu4CalcField();
-
+        this.removeOldColumnsfromCollection();
         this.SetColumnRef();
         this.initializeDragula();
         this.ColumnDropped();
         if (!this.isNew) {
             this.RowgroupColumnDropped();
+            this.OrderbyColumnDropped();
             this.CreateButtons();
         }
     }
 
+    removeOldColumnsfromCollection() {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            if (obj.IsTree) {
+                this.RemoveOldColumnFromTreeColumn(obj);
+            }
+            if (obj.LinkRefId !== null) {
+                if (parseInt(obj.LinkRefId.split("-")[2]) !== EbObjectTypes.WebForm) {
+                    this.RemoveOldColumnFromFormLink(obj);
+                }
+            }
+        }.bind(this));
+    }
+
+    RemoveOldColumnFromTreeColumn(treecol) {
+        $.each(treecol.GroupFormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupFormId.$values = treecol.GroupFormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.GroupFormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupFormParameters.$values = treecol.GroupFormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ItemFormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ItemFormId.$values = treecol.ItemFormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ItemFormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ItemFormParameters.$values = treecol.ItemFormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.GroupingColumn.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.GroupingColumn.$values = treecol.GroupingColumn.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+        $.each(treecol.ParentColumn.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                treecol.ParentColumn.$values = treecol.ParentColumn.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+    }
+
+    RemoveOldColumnFromFormLink(FormCol) {
+        $.each(FormCol.FormId.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                FormCol.FormId.$values = FormCol.FormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+        });
+        $.each(FormCol.FormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                FormCol.FormParameters.$values = FormCol.FormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+        });
+    }
+
     initializeDragula() {
         if (this.drake === null) {
-            this.drake = new dragula([document.getElementById("columns-list-body"), document.getElementById("calcfields-childul")], {
+            this.drake = new dragula([document.getElementById("columns-list-body"), document.getElementById("columns-list-orderby"), document.getElementById("calcfields-childul")], {
                 accepts: this.acceptDrop.bind(this),
                 copy: this.copyfunction.bind(this)
             });
         }
         else {
             this.drake.containers.push(document.getElementById("columns-list-body"));
+            this.drake.containers.push(document.getElementById("columns-list-orderby"));
             this.drake.containers.push(document.getElementById("calcfields-childul"));
         }
         for (var i = 0; i < $(".tablecolumns").length; i++) {
@@ -246,58 +316,99 @@
             else
                 return true;
         }
+        if ($(target).attr("id") === "columns-list-orderby" && $(source).hasClass("tablecolumns")) {
+            let key = $(el).attr("eb-name");
+            let obj = $.grep(this.EbObject.OrderBy.$values, function (obj) { return obj.name === key; });//n Or N
+            if (obj.length === 0)
+                return true;
+            else
+                return false;
+        }
         if ($(target).attr("id") === "columns-list-body" && $(source).attr("id") === "columns-list-body") {
+            return true;
+        }
+        if ($(target).attr("id") === "columns-list-orderby" && $(source).attr("id") === "columns-list-orderby") {
             return true;
         }
         return false;
     }
 
     copyfunction(el, source) {
-        return $(source).attr("id") !== "columns-list-body";
+        if ($(source).attr("id") === "columns-list-orderby")
+            return false;
+        else if ($(source).attr("id") === "columns-list-body")
+            return false;
+        else
+            return true;
     }
 
     columnsDrop(el, target, source, sibling) {
         if ($(target).attr("id") === "rowgroup_body") {
+            let name = $(el).attr("eb-name");
+            $(el).find("span").wrap(`<div id="${name}_elemsrowgroupCont" class="columnelemsCont"></div>`);
             this.RowgroupColumnDrop(el);
-            $(el).children(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
+            $(el).find(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
         }
         else if ($(target).attr("id") === "columns-list-body" && $(source).attr("id") === "columns-list-body") {
-            this.ReplaceObjects(el, target, source, sibling);
+            //this.ReplaceObjects(el, target, source, sibling);
         }
         else if ($(target).attr("id") === "columns-list-body") {
-            this.ColumnDropRelated(el);
             let name = $(el).attr("eb-name");
+            $(el).attr("eb-keyname", name);
+            $(el).find("span").wrap(`<div id="${name}_elemsCont" class="columnelemsCont"><div id="${name}_spanCont" class="columnspanCont"></div></div>`);
+            $(el).find(`#${name}_spanCont`).after(`<input class="columntitle" type="text" id="${name}_columntitle"/>`);
+            this.ColumnDropRelated(el);
             let index = this.EbObject.Columns.$values.findIndex(function (obj) { return obj.name === name; }.bind(this));
             this.EbObject.Columns.$values[index].bVisible = true;
             $(el).off("click").on("click", this.elementOnFocus.bind(this));
-            $(el).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
+            $(el).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
+            $(`#${name }_columntitle`).val(this.EbObject.Columns.$values[index].sTitle);
+            $(".columntitle").off("change").on("change", this.ColumnTitleChanged.bind(this));
+        }
+        else if ($(target).attr("id") === "columns-list-orderby" && $(source).attr("id") === "columns-list-orderby") {
+            //this.ReplaceObjects(el, target, source, sibling);
+        }
+        else if ($(target).attr("id") === "columns-list-orderby") {
+            let name = $(el).attr("eb-name");
+            $(el).attr("eb-keyname", name + "orderby");
+            $(el).find("span").wrap(`<div id="${name}_elemsorderbyCont" class="columnelemsCont"></div>`);
+            $(el).find("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`);
+            this.OrderbyColumnDropRelated(el);
+            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
+            this.EbObject.OrderBy.$values.push(obj);
+            $(el).off("click").on("click", this.elementOnFocus.bind(this));
+            $(el).find(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
+            $(".orderbycheckbox").off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
         }
     }
 
     elementOnFocus(e) {
-        let key = $(e.target).closest("li").attr("eb-name");
+        $("#page-outer-cont").find(".columnelemsCont").removeClass("focused");
+        let key = $(e.target).closest("li").attr("eb-keyname");
         var obj = this.objCollection[key];
         var type = $(e.target).closest("li").attr('eb-type');
         this.propGrid.setObject(obj, AllMetas[type]);
+        $(e.target).closest(".columnelemsCont").addClass("focused");
         //$("#columns-list").focusout();
     }
 
     AddNewTableHeader() {
-        this.tableHeaderCounter++;
-        if (this.tableHeaderCounter === 1) {
+        //this.tableHeaderCounter++;
+        if (this.tableHeaderCounter === 0) {
+            this.tableHeaderCounter++;
             $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
             $("#table_header1 .tool_item_head").after(`<div class="tool_item_headerbody"></div>`);
         }
-        else {
-            $("#table_header1 .fa-trash").remove();
-            $("#table_header" + (this.tableHeaderCounter - 1)).after(`<div id="table_header${this.tableHeaderCounter}" class="dv-divs tableheader"  data-tableheaderCount="${this.tableHeaderCounter}">
-                <div class="tool_item_head">
-                    <i class="fa fa-caret-down"></i> <label>Table Header${this.tableHeaderCounter}</label>
-                    <i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>
-                </div>
-                <div class="tool_item_headerbody"></div>
-            </div>`);
-        }
+        //else {
+        //    $("#table_header1 .fa-trash").remove();
+        //    $("#table_header" + (this.tableHeaderCounter - 1)).after(`<div id="table_header${this.tableHeaderCounter}" class="dv-divs tableheader"  data-tableheaderCount="${this.tableHeaderCounter}">
+        //        <div class="tool_item_head">
+        //            <i class="fa fa-caret-down"></i> <label>Table Header${this.tableHeaderCounter}</label>
+        //            <i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>
+        //        </div>
+        //        <div class="tool_item_headerbody"></div>
+        //    </div>`);
+        //}
         $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
     }
 
@@ -308,25 +419,46 @@
             $(e.target).closest(".fa-trash").remove();
             this.tableHeaderCounter--;
         }
-        else {
-            $(e.target).closest(".tableheader").remove();
-            this.tableHeaderCounter--;
-            if (this.tableHeaderCounter === 1) {
-                $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
-                $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
-            }
-        }
+        //else {
+        //    $(e.target).closest(".tableheader").remove();
+        //    this.tableHeaderCounter--;
+        //    if (this.tableHeaderCounter === 1) {
+        //        $("#table_header1 .tool_item_head").append(`<i class="fa fa-trash" id="deleteTableHeader${this.tableHeaderCounter}"></i>`);
+        //        $(`#deleteTableHeader${this.tableHeaderCounter}`).off("click").on("click", this.deleteTableHeader.bind(this));
+        //    }
+        //}
     }
 
     ColumnDropped() {
+        $("#columns-list-body").empty();
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.bVisible) {
-                let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+                let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
                 this.ColumnDropRelated(element);
                 $("#columns-list-body").append(element);
                 $(element).off("click").on("click", this.elementOnFocus.bind(this));
-                $(element).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
+                $(element).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
+                $(`#${obj.name}_columntitle`).val(obj.sTitle);
+                $(".columntitle").off("change").on("change", this.ColumnTitleChanged.bind(this));
             }
+        }.bind(this));
+    }
+
+    OrderbyColumnDropped() {
+        $("#columns-list-orderby").empty();
+        $.each(this.EbObject.OrderBy.$values, function (i, obj) {
+            let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}"  eb-keyname="${obj.name}orderby" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsorderbyCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div></li>`);
+            this.OrderbyColumnDropRelated(element);
+            $("#columns-list-orderby").append(element);
+            $(element).find("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`); 
+
+            if (obj.Direction === parseInt(EbEnums.OrderByDirection.DESC))
+                $(element).find(".orderbycheckbox").prop("checked", true);
+            else
+                $(element).find(".orderbycheckbox").prop("checked", false);
+            $(element).off("click").on("click", this.elementOnFocus.bind(this));
+            $(element).find(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
+            $(".orderbycheckbox").off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
         }.bind(this));
     }
 
@@ -398,16 +530,28 @@
         this.objCollection[name] = obj;
         this.col.attr("id", obj.EbSid).attr("tabindex", "1");
         this.propGrid.setObject(obj, AllMetas[this.Objtype]);
-        this.AlldropElements(this.col);
+        this.AllColumndropElements(this.col);
+    }
+
+    OrderbyColumnDropRelated(el) {
+        this.col = $(el);
+        let name = this.col.attr('eb-name');
+        let keyname = this.col.attr('eb-keyname');
+        let obj = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; })[0];
+        this.objCollection[keyname] = obj;
+        this.col.attr("id", obj.EbSid).attr("tabindex", "1");
+        this.Objtype = this.col.attr('eb-type');
+        this.propGrid.setObject(obj, AllMetas[this.Objtype]);
+        this.AllOtherColumndropElements(this.col);
     }
 
     RowgroupColumnDrop(el) {
         this.col = $(el);
         this.Objtype = this.col.attr('eb-type');
         let name = this.col.attr('eb-name');
-        let obj = new EbObjects[this.Objtype](name);
+        let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; })[0];
         this.CurrentRowgroup.RowGrouping.$values.push(obj);
-        this.AlldropElements(this.col);
+        this.AllOtherColumndropElements(this.col);
     }
 
     RowgroupDropRelated(type, Rowobj) {
@@ -416,22 +560,107 @@
         this.CurrentRowgroupkey = name;
         this.objCollection[name] = Rowobj;
         this.CurrentRowgroup = Rowobj;
-        //this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);
+
+        //this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);elemsCont
     }
 
-    AlldropElements(el) {
+    AllColumndropElements(el) {
+        let name = $(el).attr("eb-name");
         this.col = el;
-        this.col.addClass("colTile");
-        this.col.append(`<button class="close"> <i class="fa fa-close"></i> </button>`);
+        this.col.addClass("colTile1");
+        this.col.find(`#${name}_columntitle`).after(`<button class="close close1"> <i class="fa fa-close"></i> </button>`);
+    }
+
+    AllOtherColumndropElements(el) {
+        let name = $(el).attr("eb-name");
+        this.col = el;
+        this.col.addClass("colTile1");
+        this.col.find(`.columnelemsCont`).append(`<button class="close"> <i class="fa fa-close"></i> </button>`);
     }
 
     RemoveColumn(e) {
-        let element = $(e.target).closest("li");
+        let element;
+        if (e.target)
+            element = $(e.target).closest("li");
+        else
+            element = e;
         let key = element.attr("eb-name");
         let index = this.EbObject.Columns.$values.findIndex(function (obj) { return obj.name === key; }.bind(this));
         delete this.objCollection[key];
         this.EbObject.Columns.$values[index].bVisible = false;
+        $("#page-outer-cont").find(".focused").removeClass("focused");
+        if (element.next().length === 1) {
+            element.next().find(".columnelemsCont").addClass("focused");
+        }
+        else {
+            element.prev().find(".columnelemsCont").addClass("focused");
+        }
         element.remove();
+    }
+
+    RemoveOrderbyColumn(e) {
+        let element;
+        if (e.target)
+            element = $(e.target).closest("li");
+        else
+            element = e;
+        let key = element.attr("eb-name");
+        this.EbObject.OrderBy.$values = this.EbObject.OrderBy.$values.filter(function (obj) { return obj.name !== key; }.bind(this));
+        $("#page-outer-cont").find(".focused").removeClass("focused");
+        if (element.next().length === 1) {
+            element.next().find(".columnelemsCont").addClass("focused");
+        }
+        else {
+            element.prev().find(".columnelemsCont").addClass("focused");
+        }
+        element.remove();
+        key = element.attr("eb-keyname");
+        delete this.objCollection[key];
+    }
+
+    OrderbyCheckboxChanged(e) {
+        let name = $(e.target).closest("li").attr("eb-name");
+        let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
+        if ($(e.target).is(":checked"))
+            obj.Direction = parseInt(EbEnums.OrderByDirection.DESC);
+        else
+            obj.Direction = parseInt(EbEnums.OrderByDirection.ASC);
+    }
+
+    ColumnTitleChanged(e) {
+        let name = $(e.target).closest("li").attr("eb-name");
+        let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
+        obj.sTitle = $(e.target).val();
+        var type = $(e.target).closest("li").attr('eb-type');
+        this.propGrid.setObject(obj, AllMetas[type]);
+    }
+
+    ColumnKeyMove(e) {
+        let curElement = $("#page-outer-cont").find(".focused").parent("li");
+        if (curElement.length === 1) {
+            if (e.which === 39 || e.which === 40) {
+                let nextElement = $(curElement).next();
+                if (nextElement.length === 1) {
+                    $(curElement).find(".columnelemsCont").removeClass("focused");
+                    $(nextElement).find(".columnelemsCont").addClass("focused");
+                }
+            }
+            else if (e.which === 37 || e.which === 38) {
+                let prevElement = $(curElement).prev();
+                if (prevElement.length === 1) {
+                    $(curElement).find(".columnelemsCont").removeClass("focused");
+                    $(prevElement).find(".columnelemsCont").addClass("focused");
+                }
+            }
+            else if (e.which === 46) {
+                if (curElement.parent("#columns-list-body").length === 1) {
+                    this.RemoveColumn(curElement);
+                }
+                else if (curElement.parent("#columns-list-orderby").length === 1) {
+                    this.RemoveOrderbyColumn(curElement);
+                }
+            }
+        }
     }
 
     AddNewRowGroup(e) {
@@ -450,6 +679,7 @@
         obj.DisplayName = obj.Name;
         this.RowgroupDropRelated(type, obj);
         this.RwogroupCounter++;
+        this.EbObject.RowGroupCollection.$values.push(obj);
     }
 
     arrangeRowGroupHeaders() {
@@ -471,7 +701,7 @@
         this.removeNewOption();
         $("#Rowgroup_cont #rowgroup_body").empty();
         clickedIndex = typeof (clickedIndex) !== "undefined" ? clickedIndex : $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).index();
-        let option = $(e.target).children("option").eq(clickedIndex);
+        let option = $(e.target).find("option").eq(clickedIndex);
         this.CurrentRowgroupkey = $(option).attr("value");
         let obj = this.objCollection[this.CurrentRowgroupkey];
         this.CurrentRowgroup = obj;
@@ -492,10 +722,10 @@
 
     drawRowgroupColumn(objOuter) {
         $.each(objOuter.RowGrouping.$values, function (i, obj) {
-            let element = $(`<li eb-type='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
-            this.AlldropElements(element);
+            let element = $(`<li eb-type='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsrowgroupCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div></li>`);
+            this.AllOtherColumndropElements(element);
             $("#rowgroup_body").append(element);
-            $(element).children(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
+            $(element).find(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
         }.bind(this));
     }
 
@@ -514,7 +744,7 @@
         $("#saveRowGroup").off("click").on("click", this.SaveRowgroup.bind(this));
         $(".rowgrouptype_select").selectpicker();
         //this.MakeCollapsedDiv();
-        
+
     }
 
     MakeCollapsedDiv() {
@@ -669,7 +899,7 @@
         obj.bVisible = true;
         obj.data = this.EbObject.Columns.$values.length;
         $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" 
-            class='columns textval calcfield' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+            class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
         this.addCalcFieldToColumnlist(obj);
         $('#calcFields').killTree();
         $('#calcFields').treed();
@@ -678,20 +908,24 @@
 
     addCalcFieldToColumnlist(obj) {
         this.EbObject.Columns.$values.push(obj);
-        let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</li>`);
+        obj.sTitle = obj.name;
+        let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
         this.ColumnDropRelated(element);
         $("#columns-list-body").append(element);
         $(element).off("click").on("click", this.elementOnFocus.bind(this));
-        $(element).children(".close").off("click").on("click", this.RemoveColumn.bind(this));
+        $(element).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
+        $(`#${obj.name}_columntitle`).val(obj.sTitle);
+        $(".columntitle").off("change").on("change", this.ColumnTitleChanged.bind(this));
     }
 
     BeforeSave() {
-        this.ReArrangeObjects();
+        this.ReArrangeColumnObjects();
+        this.ReArrangeOrderbyObjects();
         this.RemoveColumnRef();
         return true;
     }
 
-    ReArrangeObjects() {
+    ReArrangeColumnObjects() {
         let elemnts = $("#columns-list-body li");
         let visibleobjects = [];
         $.each(elemnts, function (i, item) {
@@ -703,6 +937,16 @@
         let nonvisibleobjcts = this.EbObject.Columns.$values.filter(function (obj) { return obj.bVisible !== true; });
         this.EbObject.NotVisibleColumns.$values = nonvisibleobjcts;
         this.EbObject.Columns.$values = visibleobjects.concat(nonvisibleobjcts);
+    }
+
+    ReArrangeOrderbyObjects() {
+        this.EbObject.OrderBy.$values = [];
+        let elemnts = $("#columns-list-orderby li");
+        $.each(elemnts, function (i, item) {
+            let name = $(item).attr("eb-name");
+            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; });
+            this.EbObject.OrderBy.$values.push(obj[0]);
+        }.bind(this));
     }
 
     ReplaceObjects(el, target, source, sibling) {

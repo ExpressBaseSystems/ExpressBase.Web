@@ -247,7 +247,7 @@ var EbBasicDataTable = function (Option) {
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
-        o.dom = this.dom ||((this.EbObject.IsPaging ? "ip" : "i") + "<'col-md-12 noPadding display_none'>rt");
+        o.dom = this.dom ||((this.EbObject.IsPaging ? "ip" : "") + "<'col-md-12 noPadding display_none'>rt");
         o.paging = this.EbObject.IsPaging;
         o.lengthChange = this.EbObject.IsPaging;
         o.select = true;

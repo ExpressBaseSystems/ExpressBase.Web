@@ -320,15 +320,6 @@ namespace ExpressBase.Web.Controllers
 			return temp.RowAffected;
 		}
 
-		public int ConvertAnonymousUserToUser(int itemid, string name, string email, string phone, string remarks)
-		{
-			if (!HasPemissionToSecurity())
-				return 0;
-			ConvertAnonymousUserResponse temp = this.ServiceClient.Post<ConvertAnonymousUserResponse>(new ConvertAnonymousUserRequest { Id = itemid, FullName = name, EmailID = email, PhoneNumber = phone, Remarks = remarks });
-			return temp.status;
-		}
-
-
         //----------------MANAGE USERGROUPS START----------------------------
         //[HttpGet]
         //public IActionResult ManageUserGroups()

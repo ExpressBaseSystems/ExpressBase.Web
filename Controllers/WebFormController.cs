@@ -30,13 +30,14 @@ namespace ExpressBase.Web.Controllers
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
-
+            ViewBag.IsPartial = _mode > 10;
+            _mode = _mode > 0 ? _mode % 10 : _mode;
             if(_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
                 if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
-                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), -1);////////////////////////current location
+                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
                     if (wfd.MultipleTables.Count == 0)
                     {
                         ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
@@ -115,7 +116,16 @@ namespace ExpressBase.Web.Controllers
             //}
             //else
             //    _CurrentLoc = CurrentLoc;
-            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(new InsertDataFromWebformRequest { RefId = RefId, FormData = Values, RowId = RowId, CurrentLoc = CurrentLoc, UserObj = this.LoggedInUser });
+            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                new InsertDataFromWebformRequest
+                {
+                    RefId = RefId,
+                    FormData = Values,
+                    RowId = RowId,
+                    CurrentLoc = CurrentLoc,
+                    UserObj = this.LoggedInUser,
+                    SolutionObj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid))
+                });
             return JsonConvert.SerializeObject(Resp);
             //return 0;
         }
@@ -136,23 +146,23 @@ namespace ExpressBase.Web.Controllers
             return Resp.RowAffected;
         }
 
-        public string GetAuditTrail(string refid, int rowid, int currentloc = -1)
+        public string GetAuditTrail(string refid, int rowid, int currentloc)
         {
-            throw new FormException("Exception: AuditTrail not implemented");
-            //try
-            //{
-            //    if (this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
-            //    {
-            //        GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid, UserObj = this.LoggedInUser });
-            //        return Resp.Json;
-            //    }
-            //    throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
-            //    return string.Empty;
-            //}            
+            //throw new FormException("Exception: AuditTrail not implemented");
+            try
+            {
+                if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
+                {
+                    GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+                    return Resp.Json;
+                }
+                throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
+                return string.Empty;
+            }
         }
 
         private bool HasPermission(string RefId, string ForWhat, int LocId)
@@ -275,6 +285,12 @@ namespace ExpressBase.Web.Controllers
         //    }
         //    return MLPair;
         //}
+
+        public string GetFormControlsFlat( string refId) {
+            string SCtrls = string.Empty;
+            SCtrls = EbSerializers.Json_Serialize(this.ServiceClient.Post<GetCtrlsFlatResponse>(new GetCtrlsFlatRequest() { RefId = refId }).Controls);
+            return SCtrls;
+        }
 
     }
 }

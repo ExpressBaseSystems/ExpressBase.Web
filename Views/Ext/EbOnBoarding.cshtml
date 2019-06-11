@@ -5,50 +5,96 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
+<link rel="stylesheet" href="~/css/EbOnBoarding/Ebsitepage.css">
 <script src="~/js/EbOnBoarding/EbOnBoarding.js" type="text/javascript"></script>
-<script src="~/js/validator.js" type="text/javascript"></script>
+<script src="~/js/EbOnBoarding/Ebsitepagejs.js" type="text/javascript"></script>
+@*<script src="~/js/validator.js" type="text/javascript"></script>*@
 <div class="row tAddAcc height-100">
     <div class="row_eblog_t"><img src="~/images/EB_Logo-png.png" /></div>
     <section class="card">
         <div class="card--content mr-l-20" id="prof-info">
             <div class="loader_top" id="loader_profile"></div>
-            <div class="col-md-8 card--form">
+            <div id="firstcrd" class="col-md-8 card--form">
                 <div class="products-head">
                     <h4>Profile Setup</h4>
                 </div>
                 <div class="card--content-body">
-                    <form class="form-horizontal" id="prof-submit" method="post" data-toggle="validator">
+                    <form class="form-horizontal" id="prof-submit" method="post">
                         <br />
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Email/Username</label>
                                 <div class="input-group">
                                     <span class="input-group-addon" id="basic-addon1"><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
-                                    <input class="form-control" type="text" value="@ViewBag.useremail" name="Email" id="email" readonly>
+                                    <input class="form-control" type="text" value="@ViewBag.useremail" style="background-color:#f5f5f5" name="Email" id="email" readonly>
                                 </div>
                             </div>
-                            <div class="form-group required">
+                            <div class="eb_required_group required">
                                 <label>Name</label>
-                                <input class="form-control" type="text" name="Name" id="name" required>
+                                <input class="form-control txthighlight" type="text" name="Name" id="name">
+                                <p id="namelbl" style="color:red; visibility :hidden"> Enter a name</p>
                             </div>
-                            <div class="form-group">
+                            <div class="eb_required_group required">
                                 <label>Company</label>
-                                <input class="form-control" type="text" name="Company" id="company" required>
+                                <input class="form-control txthighlight" type="text" name="Company" id="company">
+                                <p id="companylbl" style="color:red; visibility : hidden"> Enter a company</p>
                             </div>
                             <input type="hidden" name="Country" id="country" required>
-                            <div class="form-group required">
+                            <div class="eb_required_group required">
                                 <div class="pd-l-0 col-md-6">
                                     <label>Password</label>
                                     <div class="input-group">
                                         <span class="input-group-addon" id="basic-addon1"><i class="fa fa-key" aria-hidden="true"></i></span>
-                                        <input class="form-control" data-minlength="8" type="password" name="Password" id="inputPassword" required>
+                                        <input class="form-control txthighlight" data-minlength="8" type="password" name="Password" id="inputPassword">
+                                        <span toggle="#inputPassword" style=" padding-right: 13px;" id="psvisible" class="fa fa-fw fa-eye fa-eye-slash field-icon toggle-password "></span>
+                                        <span toggle="#inputPassword" style="padding-right: 13px;" hidden id="pshide" class="fa fa-fw fa-eye  field-icon toggle-password "></span>
                                     </div>
-                                    <div class="help-block">Minimum of 8 characters</div>
+
+                                    @*<div class="inline-block">
+                                            <i class="fa fa-info-circle" data-toggle="tooltip" style="font-size:15px;color:dodgerblue"></i>
+                                            <span class="inline-block help-block">Minimum of 8 characters</span>
+                                        </div>
+                                        <span class="inline" style="margin-top:3px;display:inline-block" id="psdinfo">
+                                            <span> <i id="psdinfo1" class="fa fa-info-circle " style="color:dodgerblue;display:inline-block"></i></span>&nbsp&nbsp&nbsp
+                                            <span class="help-block inline" style="display:inline-block;"><p id="passlbl"> Minimum of 8 characters </p></span>
+                                        </span>
+                                    *@
+
+                                    <div style="margin-top:1px;margin-bottom:2px; display:inline-block " id="psdinfo" class="inline_css">
+                                        <span> <i id="psdinfo1" class="fa fa-info-circle" style="color:dodgerblue;display:inline-block"> </i>  </span>
+                                        <span style="display:inline-block"> <p id="passlbl" style="color:cornflowerblue;margin-bottom:0px" class="p_hover">Enter a strong password</p></span>
+                                    </div>
+                                    <div id="rcorners1" style="position:absolute; visibility:hidden">
+                                        <div style="margin-top=0px;margin-bottom:0px; display:inline-block ">
+                                            <span> <i id="passcheck_1" class="fa fa-times" style="color:#cf4f4f;font-size:11px;display:inline-block"> </i>  </span>
+                                            <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least eight characters.</p></span>
+                                        </div>
+                                        <div style="margin-top=0px;margin-bottom:0px; display:inline-block ">
+                                            <span> <i id="passcheck_2" class="fa fa-times" style="color:#cf4f4f;font-size:11px;display:inline-block"> </i>  </span>
+                                            <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one uppercase character.</p></span>
+                                        </div>
+                                        <div style="margin-top=0px;margin-bottom:0px; display:inline-block ">
+                                            <span> <i id="passcheck_3" class="fa fa-times" style="color:#cf4f4f;font-size:11px;display:inline-block"> </i>  </span>
+                                            <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one lowercase character.</p></span>
+                                        </div>
+                                        <div style="margin-top=0px;margin-bottom:0px; display:inline-block ">
+                                            <span> <i id="passcheck_4" class="fa fa-times" style="color:#cf4f4f;font-size:11px;display:inline-block"> </i>  </span>
+                                            <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one number.</p></span>
+                                        </div>
+                                        <div style="margin-top=0px;margin-bottom:0px; display:inline-block ">
+                                            <span> <i id="passcheck_5" class="fa fa-times" style="color:#cf4f4f;font-size:11px;display:inline-block"> </i>  </span>
+                                            <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one special character</p></span>
+                                        </div>
+
+                                    </div>
+
                                 </div>
                                 <div class="pd-r-0 col-md-6">
                                     <label>Repeat Password</label>
-                                    <input class="form-control" type="password" name="Repeat-password" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Whoops, these don't match" required>
-                                    <div class="help-block with-errors"></div>
+                                    <input class="form-control txthighlight" type="password" name="Repeat-password" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Password donot match">
+                                    <div class="help-block with-errors">
+                                        <p id="repeat_passwordlbl" style="color:red;margin-bottom: 0px; visibility :hidden"> Password Didn't match</p>
+                                    </div>
                                 </div>
                                 <input type="submit" id="prof-form-sub" style="display:none;" />
                             </div>
@@ -58,7 +104,8 @@
                 <div class="card--content-footer">
                     <div class="form-inline">
                         <a id="prof-info-skip" class="ebbtn pull-right ebbtn eb_btngreen eb_btn_md prof-info-skip">Next <span class="fa fa-chevron-right" aria-hidden="true"></span></a>
-                        <button id="save-profile" onclick="$('#prof-form-sub').click()" type="submit" class="ebbtn eb_btngreen eb_btn_md pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                        <button id="save-profile" onclick="$('#prof-form-sub').click()" type="submit" class="submit-validate ebbtn eb_btngreen eb_btn_md pull-right">Next <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+
                     </div>
                 </div>
             </div>
@@ -81,30 +128,37 @@
                 </div>
             </div>
         </div>
-        <div class="card--content mr-l-10 sol-info" id="basic-info">
+
+
+        <div class="card--content mr-l-20 sol-info" id="basic-info">
             <div class="loader_top" id="loader_product-info"></div>
             <div class="col-md-8 card--form">
                 <div class="products-head">
                     <h4>Solution Info</h4>
                 </div>
-                <div class="card--content-body">
+                <div class="card--content-body ">
                     <form class="subscript-submit" method="post" id="sol-form-submit">
-                        <label>Solution URL</label>
-                        <div class="client-id-sec">
-                            <input type="text" id="ebsid" name="SolnId" class="form-control input-clientId" required />
-                            <div class="clientId-auto">.expressbase.com</div>
+                        <div class="form-group required">
+                            <label>Solution URL</label>
+                            <div class="client-id-sec ">
+                                <input type="text" id="ebsid" name="SolnId" style="background-color:#f5f5f5" class="form-control txthighlight input-clientId" readonly />
+                                <div class="clientId-auto">.expressbase.com</div>
+                                <p id="slnid" style="color:red; visibility :hidden; margin:0 0 0 0 "> Enter a Solution URL</p>
+                            </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group required">
                             <label>Solution Name</label>
-                            <input type="text" id="solutionname" name="Sname" class="form-control" required />
+                            <input type="text" id="solutionname" name="Sname" class="form-control txthighlight" />
+                            <p id="slnnam" style="color:red; visibility :hidden;margin:0 0 0 0 "> Enter a Solution Name</p>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group ">
                             <label>Description</label>
-                            <textarea class="form-control" id="Desc" name="Desc"></textarea>
+                            <textarea class="form-control txthighlight" id="Desc" name="Desc" style="max-height: 169px; min-height:40px"></textarea>
+                            <p id="descrip" style="color:red; visibility :hidden;margin:0 0 0 0 "> Enter Description</p>
                         </div>
                         <input type="submit" id="sol-form-sub" style="display:none;" />
                     </form>
-                    <div class="form-group">
+                    <div class="form-group ">
                         <div class="col-md-4 pd-0">
                             <label>Upload Logo</label>
                             <button id="log-upload-btn" class="btn log-upload-b">Upload Logo <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
@@ -116,9 +170,12 @@
                 </div>
                 <div class="card--content-footer">
                     <div class="form-inline">
-                        <a id="save-subscrip" onclick="$('#sol-form-sub').click();" class="ebbtn eb_btngreen eb_btn_md pull-right">Next <i class="fa fa-chevron-right"></i></a>
-                        <button id="prof-to-prev" class="ebbtn eb_btnblue eb_btn_md mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
-                        <a id="app-next" class="ebbtn pull-right ebbtn eb_btngreen eb_btn_md" style="display:none;">Next <span class="fa fa-chevron-right"></span></a>
+                        @*<a id="save-subscrip" onclick="$('#sol-form-sub').click();" class="ebbtn eb_btngreen eb_btn_md pull-right">Next <i class="fa fa-chevron-right"></i></a>*@
+                        <a id="save-subscrip" class="ebbtn eb_btngreen eb_btn_md pull-right">Next <i class="fa fa-chevron-right"></i></a>
+                        @*<button id="prof-to-prev" class="ebbtn eb_btnblue eb_btn_md mr-10"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>*@
+                        @*<a id="app-next" class="ebbtn pull-right ebbtn eb_btngreen eb_btn_md" style="display:none;">Next <span class="fa fa-chevron-right"></span></a>*@
+
+
                     </div>
                 </div>
             </div>
@@ -141,67 +198,54 @@
                 </div>
             </div>
         </div>
-        <div class="card--content mr-l-10 app-info" id="app-info">
+
+
+
+
+
+
+        <div class="card--content mr-l-20 app-info" id="app-info">
             <div class="loader_top" id="loader_app_info"></div>
             <div class="col-md-8 card--form">
                 <div class="products-head">
-                    <h4><span class="sname_fAppcreate" id="solutionName-app"></span><span class="slash">/</span>Create Your First Application</h4>
+                    @*<h4><span class="sname_fAppcreate" id="solutionName-app"></span><span class="slash"></span>Just One More Step</h4>*@
+                    <h4>Just One More Step</h4>
                 </div>
                 <div class="card--content-body" id="app-container">
-                    <form class="app-form" action="../Tenant/CreateApplication" method="post" id="app-form">
-                        <label>Application Type</label>
-                        <div class="col-md-12 pd-0 apptypes-cont">
-                            <div class="col-md-4 apps-wrapper">
-                                <div class="apps-wrapper-fchiled appselected" id="app_web" type="1" tabindex="1">
-                                    <span class="circ_shadow">
-                                        <img class="apptype" src="~/images/web.png" />
-                                    </span>
-                                    <div class="app-type-name">Web</div>
+                    <form class="form-horizontal" id="dbdeployform" method="post">
+                        <br />
+                        <div class="col-md-12">
+                            <div class="form-group">
+
+                                <div>
+
+                                    <ul CLASS="ulradio">
+                                        <h5>Do you want to deploy databse?</h5>
+                                        <li class="liradio " id="radio1">
+                                            <input type="radio" id="s-option" value="true" class="inptradio" name="selector" checked>
+                                            <label class="lblradio " for="s-option">Yes,Deploy Database </label>
+
+                                            <div class="check checkradio"><div></div></div>
+                                        </li>
+
+                                        <li class="liradio " id="radio2">
+                                            <input type="radio" id="t-option" value="false" class="inptradio" name="selector">
+                                            <label class="lblradio" for="t-option">NO, Use Your Existing Database </label>
+
+                                            <div class="check checkradio"><div></div></div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="col-md-4 apps-wrapper">
-                                <div class="apps-wrapper-fchiled" id="app_mob" type="2" tabindex="1">
-                                    <span class="circ_shadow">
-                                        <img class="apptype" src="~/images/svg/web.svg" />
-                                    </span>
-                                    <div class="app-type-name">Mobile</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 apps-wrapper">
-                                <div class="apps-wrapper-fchiled" id="app_bot" type="3" tabindex="1">
-                                    <span class="circ_shadow">
-                                        <img class="apptype" src="~/images/svg/botapp.svg" />
-                                    </span>
-                                    <div class="app-type-name">Bot</div>
-                                </div>
-                            </div>
-                            <input type="hidden" name="AppType" value="1" id="apptype" />
+                            <input type="submit" id="dbdeploy-form-sub" style="display:none;" />
+
                         </div>
-                        <div class="form-group">
-                            <label>Application Name</label>
-                            <input type="text" class="form-control" name="AppName" id="appName" />
-                        </div>
-                        <div class="form-group">
-                            <label>Description</label>
-                            <textarea class="form-control" id="DescApp" name="DescApp"></textarea>
-                        </div>
-                        <div class="form-group appicon_box">
-                            <label>Icon</label>
-                            <div class="input-group iconpicker-container">
-                                <input type="text" class="form-control" name="AppIcon" value="fa-home" />
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default appicon_btn" id="AppIcon"></button>
-                                </span>
-                            </div>
-                        </div>
-                        <input type="hidden" id="sid_on_appcreation" name="Sid" value="" />
-                        <input type="submit" id="app-form-sub" style="display:none;" />
                     </form>
+
                 </div>
                 <div class="card--content-footer">
                     <div class="form-inline">
-                        <button id="save-application" type="submit" onclick="$('#app-form-sub').click();" class="ebbtn eb_btn_md eb_btngreen pull-right">Finish</button>
-                        <button id="prod-prev" class="ebbtn eb_btn_md eb_btnblue"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
+                        <button id="save-application" type="submit" onclick="$('#app-form-sub').click();" data-toggle="modal" data-target="#myModal" class="ebbtn eb_btn_md eb_btngreen pull-right">Finish</button>
                     </div>
                 </div>
             </div>
@@ -224,13 +268,137 @@
                 </div>
             </div>
         </div>
+
+
+
+
+
+
+
+
+        @*<div class="card--content mr-l-10 app-info" id="app-info">
+                <div class="loader_top" id="loader_app_info"></div>
+                <div class="col-md-8 card--form">
+                    <div class="products-head">
+                        <h4><span class="sname_fAppcreate" id="solutionName-app"></span><span class="slash">/</span>Create Your First Application</h4>
+                    </div>
+                    <div class="card--content-body" id="app-container">
+                        <form class="app-form" action="../Tenant/CreateApplication" method="post" id="app-form">
+                            <label>Application Type</label>
+                            <div class="col-md-12 pd-0 apptypes-cont">
+                                <div class="col-md-4 apps-wrapper">
+                                    <div class="apps-wrapper-fchiled appselected" id="app_web" type="1" tabindex="1">
+                                        <span class="circ_shadow">
+                                            <img class="apptype" src="~/images/web.png" />
+                                        </span>
+                                        <div class="app-type-name">Web</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 apps-wrapper">
+                                    <div class="apps-wrapper-fchiled" id="app_mob" type="2" tabindex="1">
+                                        <span class="circ_shadow">
+                                            <img class="apptype" src="~/images/svg/web.svg" />
+                                        </span>
+                                        <div class="app-type-name">Mobile</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 apps-wrapper">
+                                    <div class="apps-wrapper-fchiled" id="app_bot" type="3" tabindex="1">
+                                        <span class="circ_shadow">
+                                            <img class="apptype" src="~/images/svg/botapp.svg" />
+                                        </span>
+                                        <div class="app-type-name">Bot</div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="AppType" value="1" id="apptype" />
+                            </div>
+                            <div class="form-group">
+                                <label>Application Name</label>
+                                <input type="text" class="form-control" name="AppName" id="appName" />
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea class="form-control" id="DescApp" name="DescApp"></textarea>
+                            </div>
+                            <div class="form-group appicon_box">
+                                <label>Icon</label>
+                                <div class="input-group iconpicker-container">
+                                    <input type="text" class="form-control" name="AppIcon" value="fa-home" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default appicon_btn" id="AppIcon"></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="hidden" id="sid_on_appcreation" name="Sid" value="" />
+                            <input type="submit" id="app-form-sub" style="display:none;" />
+                        </form>
+                    </div>
+                    <div class="card--content-footer">
+                        <div class="form-inline">
+                            <button id="save-application" type="submit" onclick="$('#app-form-sub').click();" class="ebbtn eb_btn_md eb_btngreen pull-right">Finish</button>
+                            <button id="prod-prev" class="ebbtn eb_btn_md eb_btnblue"><i class="fa fa-chevron-left" aria-hidden="true"></i> Prev</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 desc-section">
+                    <div class="steps">
+                        <a class="step-no">
+                            1
+                        </a>
+                        <a class="step-no">
+                            2
+                        </a>
+                        <a class="step-no step-no-blue">
+                            3
+                        </a>
+                    </div>
+                    <div class="small-desc-last flex-center">
+                        <img class="small-desc-img" src="~/images/svg/product.svg" />
+                        <h4>Create Application</h4>
+                        <p class="text-center">Web, Mobile, Bot</p>
+                    </div>
+                </div>
+            </div>*@
         <div class="none"></div>
     </section>
 </div>
+<!-- Modal -->
+<div class="modal fade center" id="myModal" role="dialog" style="visibility:visible">
+    <div class="modal-content">
+
+        <div class="modal-body" style="visibility:visible">
+
+            <div id="txtsol" style="visibility:visible" class="sol_db_info"></div>
+            <br />
+            <div id="txtdb" style="visibility:visible" class="sol_db_info"></div>
+
+            <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-default" data-dismiss="modal" id="btn1" style="visibility:hidden"></button>
+
+</div>
+
+
+
+
+
+
+
+
+
 <div class="eb-cropie" id="cropsection"></div>
 <script>
     $(document).ready(function () {
+        //disable cut,copy,paste
+        $('#inputPassword,#inputPasswordConfirm').bind('cut copy paste', function (e) {
+            e.preventDefault();
+        });
         var boarding = new EbOnBoarding();
+        var psd = new PasswordValidation();
     });
     $("#AppIcon").iconpicker({ placement: 'top', iconset: 'fontawesome', icon: 'fa-home' }).on('change', function (e) { $("input[name='AppIcon']").val(e.icon); });
 </script>
+
+

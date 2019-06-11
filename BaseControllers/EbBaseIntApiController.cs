@@ -50,12 +50,12 @@ namespace ExpressBase.Web.BaseControllers
             if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
             {
                 controller.ViewBag.IsValid = false;
-                controller.ViewBag.Message = "Header empty";
+                controller.ViewBag.Message = "Authentication token not present in request header";
             }
             else if (!IsTokensValid(sRToken, sBToken, hostParts[0]))
             {
                 controller.ViewBag.IsValid = false;
-                controller.ViewBag.Message = "Invalid Token";
+                controller.ViewBag.Message = "Authentication failed";
             }
             else
             {
@@ -72,11 +72,11 @@ namespace ExpressBase.Web.BaseControllers
                     this.ServiceClient.RefreshToken = sRToken;
                     this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
 
-                    if (this.MqClient != null)
+                    if (this.FileClient != null)
                     {
-                        this.MqClient.BearerToken = sBToken;
-                        this.MqClient.RefreshToken = sRToken;
-                        this.MqClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
+                        this.FileClient.BearerToken = sBToken;
+                        this.FileClient.RefreshToken = sRToken;
+                        this.FileClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
                     }
                 }
                 catch(System.ArgumentNullException ane)

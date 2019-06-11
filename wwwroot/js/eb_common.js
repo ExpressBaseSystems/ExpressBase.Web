@@ -350,15 +350,16 @@ function RecurFlatControls(src_obj, dest_coll) {
 
 function getValsFromForm(formObj) {
     let fltr_collection = [];
-    let flag = 0;
+    let flag = 1;
     $.each(getFlatCtrlObjs(formObj), function (i, obj) {
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
-        if (obj.ObjType === "PowerSelect")
-            flag++;
+        //if (obj.ObjType === "PowerSelect")
+        //    flag++;
     });
     if (flag > 0) {
+        console.log(111);
         var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
-        if(temp.length === 0)
+        if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
     }
 
@@ -430,50 +431,23 @@ function getSingleColumn(obj) {
 //        _z = val;
 //    }
 //});
-var invoiceObj = function(){
-    this.imei = "";
-    this.route = "";
-    this.salesman = "";
-    this.xid = "";
-    this.trndate = "";
-    this.trntype = "";
-    this.acmaster1_id = 100;
-    this.discper = 1.1;
-    this.discamt = 100;
-    this.cash = "";
-    this.grossamt = 100;
-    this.netamt = 1000;
-    this.forms_id = 34;
-    this.uid = "12";
-    this.route_id = "13";
-    this.sys_location_id = "1";
-    this.today = "";
-    this.appversion = "";
-    this.appsubmit_ts = "";
-    this.lpo = "";
-    this.vatamt = 50;
-    this.TotalQty = 30;
-    this.TotalFree = 200;
-    this.items = [];
-}
 
 function Test() {
-    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1MzY5MTcwMCwiZXhwIjoxNTUzNjkxNzkwLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.OKVOtYy_f1m8Ws85uXraJ5kgsQDtRx7bfsMPQKZ7q1yGMQ5hsKCH_yj0pQ9nCF2MQExDqSfN2RkaXJDIkpviRtqsSmche0i6J3oDEGEgdWoO3GdFN1JQfVMFsTT1IzOR2zVkQ-ji2Nz2CsskXbZUA4xkMqrYcpSrhbTrf5vDhfI`
-    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTM2ODkwMzYsImV4cCI6MTU1Mzc3NTQzNn0.BLXWOA4csdWr2MEOmVzAqQHLirLKiX2a3NfuXlELv7fwSyoFJHCdz_XZQTTqoJ54V6EfposEjlD29ZDaKX7M16V-_eXi9oEiEfAM_XDzNgohqI06qBbFmA2TAYovKj0R0JLn3iN_83t2RO9YSUeN4_pnMFKwq0Kfew6znY51rvs`;
+    var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1OTEwNzQ5NCwiZXhwIjoxNTU5MTA3NTg0LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.aD8kZxYN8ZGmoAA2EyxVzxfAPMyZXmg1NSiNzHaG6_I1frKVGqrFmJZHt0dPERabvx-mM-N5wtXuwRyJ1y8nZRLqvyyazaR4DLJlxRvievs14qLpAe7z6X_gAkR_-6KruEA6HP_-rAn53ImaIMs9fUnRb37K9djjU-caNCdYpDk`
+    var r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTkxMDcyNTIsImV4cCI6MTU1OTE5MzY1Mn0.C4yc6D_M4pnjh1xbroqmmgzZHE8r3kdTP_EBne2HiM7HCVkCDtcHpYEdJIicopHeEFORtcdmvnIKFKtuSgmTHIhlSRiTh3dIpyq4c4AnsR1BJnEPSAXhy8eOjrniogEdG6zjLNwDiS_rpC5248oizzgkUWGw9hd2E4RPwCS-oh8`;
     $.ajax({
-        url: "https://ebdbllz23nkqd620180220120030.eb-test.xyz/api/authenticate",
+        url: "/api/api_get_followup_by_lead/1.0.0/json",
         type: "POST",
         cache: false,
         beforeSend: function (xhr) {
-            //xhr.setRequestHeader("bToken", b);
-            //xhr.setRequestHeader("rToken", r);
+            xhr.setRequestHeader("bToken", b);
+            xhr.setRequestHeader("rToken", r);
         },
         data: {
-            "username": "binivarghese@gmail.com",
-            "password":"123123123"
+            "lead_id": 1,
         },
         success: function (result) {
-
+            console.log(result);
         }.bind(this)
     });
 }

@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Controllers
 
         public TenantController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
-        [EbBreadCrumbFilter()]
+        [EbBreadCrumbFilter("Solutions")]
         [HttpGet("MySolutions")]
         public IActionResult TenantDashboard()
         {
@@ -45,13 +45,29 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        //[EbBreadCrumbFilter("MySolutions/Sid")]
+        //[HttpGet("MySolutions/{Sid}")]
+        //public IActionResult SolutionDashBoard(string Sid)
+        //{
+        //    GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });
+        //    ViewBag.Connections = resp.EBSolutionConnections;
+        //    ViewBag.SolutionInfo = resp.Data;
+        //    ViewBag.cid = Sid;
+        //    ViewBag.Domain = this.HttpContext.Request.Host;
+        //    ViewBag.rToken = Request.Cookies["rToken"];
+        //    ViewBag.bToken = Request.Cookies["bToken"];
+        //    return View();
+        //}
+
         [EbBreadCrumbFilter("MySolutions/Sid")]
         [HttpGet("MySolutions/{Sid}")]
-        public IActionResult SolutionDashBoard(string Sid)
+        public IActionResult SolutionManager(string Sid)
         {
-            GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });
-            ViewBag.Connections = resp.EBSolutionConnections;
-            ViewBag.SolutionInfo = resp.Data;
+            GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = Sid });
+            //ViewBag.intergrationconfig = resp.IntegrationsConfig;
+            //ViewBag.integrations = resp.Integrations;
+            //ViewBag.SolutionInfo = resp.SolutionInfo;
+            ViewBag.Connections = resp;
             ViewBag.cid = Sid;
             ViewBag.Domain = this.HttpContext.Request.Host;
             ViewBag.rToken = Request.Cookies["rToken"];
@@ -60,18 +76,21 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void EbCreateSolution(int i)
+        public CreateSolutionResponse EbCreateSolution(int i)
         {
             var req = this.HttpContext.Request.Form;
-            string DbName = req["SolnId"];
+            //string DbName = req["SolnId"];
             var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
             {
                 SolutionName = req["Sname"],
                 SolnUrl = req["SolnId"],
-                Description = req["Desc"]
+                Description = req["Desc"],
+                DeployDB = Convert.ToBoolean(req["DeployDB"])
+
             });
             if (res.Status > 0)
                 TempData[Msg] = "New Solution Created.";
+            return res;
         }
 
         [HttpPost]
@@ -100,7 +119,7 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("MySolutions/NewSolution", new string[] { "/MySolutions" })]
         public IActionResult CreateSolution()
         {
-            
+
             return View();
         }
 

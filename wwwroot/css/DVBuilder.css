@@ -2,12 +2,43 @@
     height: 300px;
 }
 
-#orderby-list {
-    height: 200px;
+#columns-list .tool_item_body {
+    display: flex;
+    flex-direction: row;
 }
 
-.page-outer-cont{
-    margin-left:260px !important; 
+#columns-list .tool_item_head {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 0px!important;
+}
+
+.tool_item_head_columns {
+    padding: 2px 0px;
+}
+
+.tool_item_head_orderby {
+    float: right;
+    width: 25%;
+    text-align: center;
+    border-left: 1px solid #ccc;
+    padding: 2px 0px;
+}
+
+#columns-list-body {
+    height: inherit;
+    width: 75%;
+    overflow-y:auto;
+}
+
+#columns-list-orderby {
+    width: 25%;
+    border: 1px solid #ccc;
+    padding: 0 5;
+}
+
+.page-outer-cont {
+    margin-left: 260px !important;
 }
 .table-out-cont {
     display: flex;
@@ -41,21 +72,65 @@
     background: white;
 }
 .dv-divs .tool_item_body {
-    height: calc( 100% - 23px );
+    height: calc( 100% - 15px );
 }
-.dv-divs .colTile {
-    height: max-content;
-    list-style-type: none;
-    float:left;
+.dv-divs .focused {
+    background-color: #306395 !important;
+    color:white;
 }
 
-.dv-divs .colTile .close {
+#columns-list-orderby .colTile1 {
+    width: 100%;
+    margin-left:0px !important;
+}
+
+.dv-divs .colTile1 {
+    position: relative;
+    padding: 4px 4.5px;
+    height: max-content;
+    list-style-type: none;
+    float: left;
+    user-select: none;
+    transition-duration: 0.3s;
+    border-radius: 0px !important;
+    padding: 5px;
+}
+
+.dv-divs .colTile1 .close {
     font-size: 16px;
-    margin-top: -1px;
     color: #4a4a4a;
     padding: 1px;
-    margin-left: 10px;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
+
+.dv-divs .colTile1 .close1 {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.dv-divs .colTile1 input {
+    color: black;
+    margin-top: 0px;
+}
+
+.dv-divs .colTile1 .spancheck {
+    display: flex;
+    margin-right: 17px;
+    float: right;
+    align-items: center;
+}
+.dv-divs .colTile1 .spantext {
+    margin-left:2px;
+}
+.dv-divs .colTile1 .columnelemsCont {
+    background-color: #c8d4ef;
+    position:relative;
+    padding:4px;
+}
+
 .rowgroup_select button, .rowgrouptype_select button {
     padding: 0px 12px;
     border-radius: 1px;

@@ -159,7 +159,7 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
-    this.setValues = function (StrValues) {
+    this.setValues = function (StrValues, callBFn) {
         this.clearValues();
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
@@ -176,7 +176,7 @@ const EbSelect = function (ctrl, options) {
             this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
             if (this.setvaluesColl.length > 0) {
-                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this);
+                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this, callBFn);
                 this.InitDT();
                 this.V_showDD();
             }
@@ -198,7 +198,7 @@ const EbSelect = function (ctrl, options) {
 
     };
 
-    this.initComplete4SetVal = function () {
+    this.initComplete4SetVal = function (callBFn) {
         if (this.setvaluesColl) {
             if (this.ComboObj.MultiSelect) {
                 $.each(this.setvaluesColl, function (i, val) {
@@ -208,6 +208,8 @@ const EbSelect = function (ctrl, options) {
             else
                 $(this.DTSelector + ` tbody tr[role="row"]`).trigger("dblclick");
         }
+        if (callBFn)
+            callBFn();
     };
 
 

@@ -37,6 +37,7 @@
         $('#datetimepicker').val("");
     };
     this.setUsersNGroups = function () {
+        $('.user').prop('checked', false);
         arr_u = (this.currentO.Task.JobArgs.ToUserIds === null) ? "" : this.currentO.Task.JobArgs.ToUserIds.split(',');
         if (arr_u !== "") {
             for (i = 0; i < arr_u.length; i++) {
@@ -44,10 +45,11 @@
             }
         }
 
+        $('.usergrp').prop('checked', false);
         arr_ug = (window.Schedule[0].Task.JobArgs.ToUserGroupIds === null) ? "" : window.Schedule[0].Task.JobArgs.ToUserGroupIds.split(',');
         if (arr_ug !== "") {
             for (i = 0; i < arr_ug.length; i++) {
-                $(".user:checkbox[value=" + arr_ug[i] + "]").prop("checked", "true");
+                $(".usergrp:checkbox[value=" + arr_ug[i] + "]").prop("checked", "true");
             }
         }
     };

@@ -1,4 +1,33 @@
-﻿function beforeSendXhr(xhr) {
+﻿console.eb_log = function (msg, color = "rgb(19, 0, 78)", bgcolor) {
+    console.log(`%c${msg}`, `color:${color};
+            padding:1px 2px;
+            border-radius:2px;
+            text-shadow: 1px 1px 1px #eef;`);
+};
+
+console.eb_error = function (msg, color = "rgb(222, 0, 0)", bgcolor) {
+    console.log(`%c${msg}`, `color:${color};
+            padding:1px 2px;
+            border-radius:2px;
+            text-shadow: 1px 1px 1px #eef;`);
+};
+
+console.eb_info = function (msg, color = "#0060de", bgcolor) {
+    console.log(`%c${msg}`, `color:${color};
+            padding:1px 2px;
+            border-radius:2px;
+            text-shadow: 1px 1px 1px #eef;`);
+};
+
+console.eb_warn = function (msg, color = "rgb(222, 112, 0)", bgcolor) {
+    console.log(`%c${msg}`, `color:${color};
+            padding:1px 2px;
+            border-radius:2px;
+            text-shadow: 1px 1px 1px #eef;`);
+};
+
+
+function beforeSendXhr(xhr) {
     var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
     var tok = b ? b.pop() : '';
     if (isJwtTokExpired(tok)) {

@@ -819,5 +819,42 @@ namespace ExpressBase.Web.Controllers
             Console.WriteLine("Webhook Response  : " + json);
             return json;
         }
+
+        //[HttpGet("wiki/view/{id}")]
+        //public IActionResult GetArticleById(string id)
+        //{
+        //    GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
+        //    {
+        //        Wiki = new Wiki()
+        //        {
+        //            Id = Convert.ToInt32(id)
+        //        }
+        //    });
+
+        //    ViewBag.Wiki = resp.Wiki;
+
+        //    return View();
+        //}
+
+        //[HttpGet]
+        //public IActionResult GetWikiList()
+        //{
+        //    GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
+        //    ViewBag.WikiList = resp.WikiList;
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public object GetWiki(string wiki_id)
+        //{
+        //    GetWikiResponse resp = this.ServiceClient.Get(new GetWikiRequest()
+        //    {
+        //        Wiki = new Wiki()
+        //        {
+        //            Id = Convert.ToInt32(wiki_id)
+        //        }
+        //    });
+        //    return resp.Wiki;
+        //}
     }
 }

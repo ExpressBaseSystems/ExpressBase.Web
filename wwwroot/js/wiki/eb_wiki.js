@@ -9,11 +9,85 @@ let addwiki = function () {
 
     };
 
-    this.pri = function (e) {
+    this.show_home = function () {
+        $('#html').hide();
+        $('.front_page_wiki').show();
+    };
+
+    this.printval = function (e) {
         let id = e.target.getAttribute('val');
         let txt = 'text';
         this.insertAtCaret(txt, id);
     }
+
+    this.fetchwikilist = function (e) {
+        let id = e.target.getAttribute('id');
+       
+        $.ajax({
+            type: 'POST',
+            url: "/PublicWiki/GetWiki",
+            data: {
+                wiki_id: id   
+            },
+            success: function (ob) {
+                $('#html').show();
+                $('.edit').attr('href', '../wiki/add/' + ob.id);
+                $('.edit').attr('id', ob.id);
+                $('#html').html(ob.html);
+                //$('.edit').css('visibility', 'visible'); 
+                $('.front_page_wiki').hide();
+            }
+        });
+    }
+
+    this.fetchwikisearch = function (e) {
+        let id = e.target.getAttribute('val');
+        $.ajax({
+            type: 'POST',
+            url: "/PublicWiki/GetWiki",
+            data: {
+                wiki_id: id   
+            },
+            success: function (ob) {
+                $('#html').show();
+                $('.edit').attr('href', '../wiki/add/' + ob.id);
+                $('.edit').attr('id', ob.id);
+                $('#html').html(ob.html);
+                //$('.edit').css('visibility', 'visible'); 
+                $('.front_page_wiki').hide();
+            }
+        });
+    }
+
+    this.search_wiki = function () {
+        let key = $('#search_wiki').val();
+        if (key.length == 0) {
+            $(".modal").css("display", "none");
+        }
+        $.ajax({
+            type: 'POST',
+            url: "/PublicWiki/GetWikiBySearch",
+            data: {
+                search_wiki: key   
+            },
+            success: function (ob) { 
+
+                if (!ob.length && key.length !=0 ) {
+                    $("#search_id").empty();
+                    $(".modal").css("display", "block");
+                    $("#search_id").append("<div style='height:40px;'> <h1>Result not Found</h1> </div>");
+                }
+                else
+                $("#search_id").empty();
+                for (let i = 0; i < ob.length; i++) {
+                    $(".modal").css("display", "block");
+                    $("#search_id").append("<a style='text-decoration: none;' href='/publicwiki/view/" + ob[i].id +  "'>" + "<div class='ex2' >" + ob[i].html + " </div></a>");
+                   // $("#search_id").append("<a href='/publicwiki/view/" + ob[i].id + "'>More</a>");
+                    $('#'+ob[i].id).attr('title', ob[i].category);
+                };  
+            }
+        });
+      }
 
 
     this.insertAtCaret = function (areaId, text) {
@@ -89,11 +163,26 @@ let addwiki = function () {
         return node;
     }
 
+
+    this.add_tag = function (e) {
+        let tag = $('#list_tag').val();
+        alert(tag);
+        $("#view-tags").append("<label>" + tag + "</label>")
+    }
+
     this.init = function () {
 
-        $(".props").on("click", this.pri.bind(this));
+        $(".props").on("click", this.printval.bind(this));
+        $(".wikilist").on("click", this.fetchwikilist.bind(this));
+        $(".wikisearch").on("click", this.fetchwikisearch.bind(this));
         $("#text").on("keyup", this.printresult.bind(this));
+        $("#home").on("click", this.show_home.bind(this));
+        $("#search_wiki").on("keyup", this.search_wiki.bind(this));
+        $("#search_wiki").on("click", this.search_wiki.bind(this));
+        $("#add_tag").on("click", this.add_tag.bind(this));
+
     };
 
     this.init();
 }
+

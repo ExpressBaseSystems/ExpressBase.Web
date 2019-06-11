@@ -1,0 +1,106 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<head>
+    <title>Stripe Plans</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        .div-body-main {
+            background-color: white;
+            margin: 50px 100px 50px 100px;
+            padding: 30px 0px 30px 0px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .div-body-sub-upper {
+            margin: 20px auto 10px auto;
+            padding: 0px 0px 10px 0px;
+        }
+
+        .div-body-content-main {
+            margin: 0px 50px 0px 50px;
+            padding: 10px 0px 20px 70px;
+        }
+
+        .div-body-content {
+            background-color: white;
+            margin: 0px 100px 0px 0px;
+            padding: 10px 0px 10px 0px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .plan-id {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: seagreen;
+            font-size: larger;
+        }
+
+        .plan-amt {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: darkslategrey;
+            font-size: small;
+        }
+
+        .card-style {
+            margin: 10px;
+        }
+
+        .plan-period {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: darkslategrey;
+            font-size: small;
+        }
+
+        .title-style {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: seagreen;
+            font-size: xx-large;
+        }
+
+        .btn-style {
+            padding-left: 40px;
+            padding-right: 40px;
+            font-size:small;
+        }
+    </style>
+</head>
+<body>
+    <div class="div-body-main">
+        <div class="div-body-sub-upper">
+            <div>
+                <p class="title-style"> PLANS </p>
+            </div>
+        </div>
+        <div class="div-body-content-main">
+            @{
+                for (int i = 0; i < ViewBag.Count; i++)
+                {
+                    int x = (ViewBag.Plans.Plans.Plans[i].Amount / 100);
+                    int v = (x / 20) + 5;
+                    <div class="card text-center card-style" style="width: 15rem;display:inline-block;">
+                        <div class="card-body">
+                            <h5 class="plan-id">@ViewBag.Plans.Plans.Plans[i].Id</h5>
+                            <p class="plan-amt">$@(ViewBag.Plans.Plans.Plans[i].Amount / 100) @ViewBag.Plans.Plans.Plans[i].Currency.ToUpper() for @v Users</p>
+                            <p class="plan-period">For @ViewBag.Plans.Plans.Plans[i].Interval_count @ViewBag.Plans.Plans.Plans[i].Interval</p>
+                            <a href="/Stripe/Payment2?id=@ViewBag.Plans.Plans.Plans[i].Id" class="btn btn-primary btn-style" style="align-content:center;">Buy</a>
+                        </div>
+                    </div>
+                    ///Stripe/Index?id=@ViewBag.Plans.Plans.Plans[i].Id
+                    x = 0;
+                }
+            }
+        </div>
+    </div>
+</body>
+

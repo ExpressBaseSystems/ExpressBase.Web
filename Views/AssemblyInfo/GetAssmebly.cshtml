@@ -5,15 +5,23 @@
 
 
     @{
-        foreach (string v in @ViewBag.Versions)
+        try
         {
-            string[] p = v.Split("-");
-            if (p != null && p.Length > 1)
+            foreach (string v in @ViewBag.Versions)
             {
-                <tr>
-                    <td>@p[0]</td>
-                    <td>@p[1]</td>
-                </tr>}
+                string[] p = v.Split("-");
+                if (p != null && p.Length > 1)
+                {
+                    <tr>
+                        <td>@p[0]</td>
+                        <td>@p[1]</td>
+                    </tr>
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message + e.StackTrace);
         }
     }
 </table>

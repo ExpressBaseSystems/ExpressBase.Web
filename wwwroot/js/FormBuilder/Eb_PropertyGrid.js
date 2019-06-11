@@ -368,15 +368,30 @@
         }.bind(this));
     };
 
+    this.HideGroup = function (groupName) {
+        let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
+        let props = $groupRows.filter(function (item) {
+            return item.getAttribute("name").slice(-2) === groupName;
+        });
+
+        $.each(props, function (i, prop) {
+            this.HideProperty(prop);
+        });
+    };
+
     //makes a property row hidden
     this.HideProperty = function (prop) {
         if (this.$hiddenProps[prop])
             return;
         let $Tr = $("#" + this.wraperId + " [name=" + prop + "Tr]");
         let isExpanded = $Tr.attr("is-showprop") === 'true';
-        $Tr.hide()
+        $Tr.hide();
         $Tr.attr("is-showprop", false);
         this.$hiddenProps[prop] = { "$Tr": $Tr };
+
+        let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
+        if ($groupRows.length === 0)
+            $("#" + this.wraperId + " [group-h=" + groupName + "]").hide(300);
     };
 
     //makes a property row visible which hidden by 'HideProperty()'

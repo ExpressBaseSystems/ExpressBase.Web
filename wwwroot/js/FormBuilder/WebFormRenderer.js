@@ -124,10 +124,14 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.watchers = function () {
+    this.SetWatchers = function () {
         Object.defineProperty(this.formObject, "__mode", {
             set: function (value) {
                 this.$form.attr("mode", value);
+
+            }.bind(this),
+            get: function () {
+                return this.$form.attr("mode");
             }.bind(this)
         });
     };
@@ -136,8 +140,8 @@ const WebFormRender = function (option) {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
+        this.SetWatchers();
         this.formObject.__mode = "new";// added a watcher to update form attribute
-        this.watchers();
 
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();

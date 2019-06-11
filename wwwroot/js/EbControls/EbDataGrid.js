@@ -420,12 +420,13 @@
                 try {
                     let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                     inpCtrl.__onChangeFn = onChangeFn;
+                    console.eb_log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
                     onChangeFn();
                 }
                 catch (e) {
-                    console.log("eb error :");
-                    console.log(e);
-                    alert("error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
+                    console.eb_log("eb error :");
+                    console.eb_log(e);
+                    alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
                 }
             }
         }.bind(this));
@@ -718,9 +719,19 @@
         this.updateRowByRowId(rowId, rowData);
     };
 
+    this.updateRowBySlno = function (slno, rowData) {
+        let rowId = $(`#${this.TableId}>tbody>tr>td.row-no-td[idx=${slno}]`).parent().attr("rowid");
+        this.updateRowByRowId(rowId, rowData);
+    };
+
     this.updateRowByRowId = function (rowId, rowData) {
 
         let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+        if ($tr.length === 0) {
+            console.log(`eb error :    No row with rowId '${rowId}' exist`);
+            return;
+        }
+
         $.each(Object.keys(rowData), function (i, key) {
             let obj = getObjByval(this.AllRowCtrls[rowId], "Name", key);
             if (obj) {
@@ -810,6 +821,7 @@
 
         this.ctrl.updateRowByRowId = this.updateRowByRowId.bind(this);
         this.ctrl.updateRowByRowIndex = this.updateRowByRowIndex.bind(this);
+        this.ctrl.updateRowBySlno = this.updateRowBySlno.bind(this);
 
         this.ctrl.disableRow = this.disableRow.bind(this);
         this.ctrl.enableRow = this.enableRow.bind(this);

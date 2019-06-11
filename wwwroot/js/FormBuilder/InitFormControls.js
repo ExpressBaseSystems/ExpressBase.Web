@@ -404,6 +404,30 @@
         $("#iFrameFormModal").modal("show");
     };
 
+    this.SysLocation = function (ctrl) {
+        if (_rowId === 0) {
+            setTimeout(function () {
+                if (ctrl.DisplayMember === 1) {
+                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);
+                }
+                else {
+                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.ShortName);
+                }
+            }, 500);
+        }        
+    };
+    this.SysCreatedBy = function (ctrl) {
+        if (ctrl.DisplayMember === 1) {
+            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
+        }
+        else {
+            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        }
+    };
+    this.SysCreatedAt = function (ctrl) {
+        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
+    };
+
     this.Numeric = function (ctrl) {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);

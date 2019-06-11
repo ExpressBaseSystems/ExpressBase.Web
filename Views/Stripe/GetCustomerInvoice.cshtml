@@ -1,0 +1,247 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<head>
+    <title>Customer Stripe Invoice</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        .div-body-main {
+            background-color: white;
+            margin: 100px 400px 50px 400px;
+            padding: 30px 0px 30px 0px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .div-body-sub-upper {
+            background-color: ghostwhite;
+            margin: 30px auto 30px auto;
+            padding: 10px 0px 50px 0px;
+            border-bottom: 1px solid #ccc;
+            border-top: 1px solid #ccc;
+        }
+
+        .div-title {
+            margin: 30px 50px 30px 30px;
+            padding: 10px 0px 60px 0px;
+        }
+
+        .div-payment-details {
+            margin: 30px 50px 30px 30px;
+            padding: 10px 0px 60px 0px;
+        }
+
+        .div-body-sub-lower {
+            margin: 30px auto 30px auto;
+        }
+
+        .div-payment-details-heading {
+            margin: 10px auto 10px auto;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .div-payment-details-heading-1 {
+            margin: 0px 100px 0px 50px;
+        }
+
+        .div-payment-details-heading-2 {
+            margin: 0px 100px 0px 10px;
+        }
+
+        .div-payment-details-heading-3 {
+            margin: 0px 50px 0px 10px;
+        }
+
+        .div-payment-details-heading-4 {
+            margin: 0px 50px 0px 10px;
+        }
+
+        .div-payment-details-heading-5 {
+            margin: 0px 50px 0px 10px;
+        }
+
+        .div-payment-details-body {
+            margin: 50px auto 10px auto;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .div-payment-details-body-main {
+            margin: 5px auto 10px auto;
+            display: flex;
+        }
+
+        .div-payment-details-body-1 {
+            margin: 0px 0px 0px 40px;
+        }
+
+        .div-payment-details-body-2 {
+            margin: 0px 50px 0px 35px;
+        }
+
+        .div-payment-details-body-3 {
+            margin: 0px 50px 0px 35px;
+        }
+
+        .div-payment-details-body-4 {
+            margin: 0px 50px 0px 25px;
+        }
+
+        .div-payment-details-body-5 {
+            margin: 0px 50px 0px 30px;
+        }
+
+        .div-coupon {
+            margin: 30px auto 10px auto;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .div-coupon-1 {
+            margin: 0px 10px 0px 215px;
+        }
+
+        .div-coupon-2 {
+            margin: 0px 50px 0px 62px;
+        }
+
+        .div-total {
+            margin: 30px auto 10px auto;
+            display: flex;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .div-total-1 {
+            margin: 0px 15px 0px 315px;
+        }
+
+        .div-total-2 {
+            margin: 0px 50px 0px 55px;
+        }
+
+        .title-style {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: seagreen;
+        }
+
+        .content-heading {
+            font-family: 'Lucida Console';
+            color: black;
+        }
+
+        .payment-content {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: dimgrey;
+            font-size: small;
+        }
+
+        .payment-details-style {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: darkslategrey;
+            font-size: large;
+        }
+
+        .payment-total-content {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: darkslategray;
+            font-size: small;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="div-body-main">
+        <div class="div-body-sub-upper">
+            <div>
+                <p class="title-style"> INVOICES </p>
+            </div>
+            <div>
+                @{ 
+                    int x = 0;
+
+                    for (int i = 0; i < ViewBag.Count; i++)
+                    {
+                        x = x + ViewBag.StripeInvoice.Invoices.List[i].Total;
+                    }
+                }
+                <p class="payment-details-style"> $@x @ViewBag.StripeInvoice.Invoices.List[0].Currency.ToUpper() on @ViewBag.Month @ViewBag.StripeInvoice.Invoices.List[0].Date.Day,@ViewBag.StripeInvoice.Invoices.List[0].Date.Year </p>
+            </div>
+        </div>
+        <div class="div-body-sub-lower">
+            <div class="div-payment-details-heading">
+                <div class="div-payment-details-heading-1">
+                    <p class="content-heading">DESCRIPTION</p>
+                </div>
+                <div class="div-payment-details-heading-2">
+                    <p class="content-heading">PERIOD</p>
+                </div>
+                <div class="div-payment-details-heading-3">
+                    <p class="content-heading">QTY</p>
+                </div>
+                <div class="div-payment-details-heading-4">
+                    <p class="content-heading">PRICE</p>
+                </div>
+                <div class="div-payment-details-heading-5">
+                    <p class="content-heading">TOTAL</p>
+                </div>
+            </div>
+
+            <div class="div-payment-details-body">
+                @{
+                    x = 0;
+
+                    for (int i = 0; i < ViewBag.Count; i++)
+                    {
+                <div class="div-payment-details-body-main">
+                    <div class="div-payment-details-body-1">
+                        <p class="payment-content">@ViewBag.StripeInvoice.Invoices.List[i].PlanId</p>
+                    </div>
+                    <div class="div-payment-details-body-2">
+                        <p class="payment-content">@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.Day @(((string[])ViewData["MonthStart"])[i]) - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Day @(((string[])ViewData["MonthEnd"])[i]),@ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Year </p>
+                    </div>
+                    <div class="div-payment-details-body-3">
+                        <p class="payment-content">@ViewBag.StripeInvoice.Invoices.List[i].Quantity</p>
+                    </div>
+                    <div class="div-payment-details-body-4">
+                        <p class="payment-content">$@ViewBag.StripeInvoice.Invoices.List[i].Amount</p>
+                    </div>
+                    <div class="div-payment-details-body-5">
+                        <p class="payment-content">$@ViewBag.StripeInvoice.Invoices.List[i].Amount</p>
+                    </div>
+                </div>
+                        x = x + ViewBag.StripeInvoice.Invoices.List[i].Total;
+                    }
+                }
+
+            </div>
+            <div class="div-coupon">
+                <div class="div-coupon-1">
+                    <p class="payment-content">@ViewBag.StripeInvoice.Invoices.List[0].CouponId (@ViewBag.StripeInvoice.Invoices.List[0].PercentOff%)</p>
+                </div>
+                <div class="div-coupon-2">
+                    <p class="payment-content">-$@((x * ViewBag.StripeInvoice.Invoices.List[0].PercentOff) / 100)</p>
+                </div>
+            </div>
+
+            <div class="div-total">
+                <div class="div-total-1">
+                    <p class="payment-total-content">Total Amount</p>
+                </div>
+                <div class="div-total-2">
+                    <p class="payment-total-content">$@x </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>

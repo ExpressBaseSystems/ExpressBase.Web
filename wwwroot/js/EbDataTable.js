@@ -89,6 +89,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.treeColumn = null;
     this.treeData = [];
     this.tableName = null;
+    this.moveToPid = null;
+    this.movefromId = null;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -812,24 +814,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
 
         if (tempArray.length === 0) {
-            if (this.EbObject.OrderBy.$values.length > 0) {
+            $.each(this.orderColl, function (i, obj) {
+                tempArray.push(obj);
+            });
+            if (tempArray.length === 0) {
                 $.each(this.EbObject.OrderBy.$values, function (i, obj) {
                     if (tempArray.filter(e => e.Column === obj.name).length === 0)
                         tempArray.push(new order_obj(obj.name, obj.Direction));
                 });
             }
-
-            $.each(this.orderColl, function (i, obj) {
-                var index = tempArray.findIndex(x => x.Column === obj.Column);
-                if (index === -1)
-                    tempArray.push(obj);
-                else {
-                    tempArray.splice(index, 1);
-                    obj.Direction = (obj.Direction === 0) ? 1 : 0;
-                    tempArray.push(obj);
-                }
-
-            });
         }
 
         return tempArray;
@@ -2398,106 +2391,169 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormNewGroup = function (key, opt, event) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.GroupFormLink; }.bind(this));
+        this.dvformMode = temp[0].FormMode;
+
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../webform/index?refid=" + this.GroupFormLink;
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
+        let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
-        _form.appendChild(input);
+        if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
+        }
+        else {
+            var _form = document.createElement("form");
+            let url = "../webform/index?refid=" + this.GroupFormLink;
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_mode";
-        input.value = 2;
-        _form.appendChild(input);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = filterparams;
+            _form.appendChild(input);
 
-        document.body.appendChild(_form);
-        _form.submit();
-        document.body.removeChild(_form);
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = this.dvformMode;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            _form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
     };
 
     this.FormNewItem = function (key, opt, event) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.ItemFormLink; }.bind(this));
+        this.dvformMode = temp[0].FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../webform/index?refid=" + this.ItemFormLink;
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
+        let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
+        if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
+        }
+        else {
+            let url = "../webform/index?refid=" + this.ItemFormLink;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
-        _form.appendChild(input);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = filterparams;
+            _form.appendChild(input);
 
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_mode";
-        input.value = 2;
-        _form.appendChild(input);
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = this.dvformMode;
+            _form.appendChild(input);
 
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            _form.appendChild(input);
 
-        document.body.appendChild(_form);
-        _form.submit();
-        document.body.removeChild(_form);
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
     };
 
     this.FormEditGroup = function (key, opt, event) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.GroupFormLink; }.bind(this));
+        this.dvformMode = temp[0].FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../webform/index?refid=" + this.GroupFormLink;
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
+        let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
+        if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
+        }
+        else {
+            let url = "../webform/index?refid=" + this.GroupFormLink;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
-        _form.appendChild(input);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = filterparams;
+            _form.appendChild(input);
 
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_mode";
-        input.value = 1;
-        _form.appendChild(input);
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = this.dvformMode;
+            _form.appendChild(input);
 
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            _form.appendChild(input);
 
-        document.body.appendChild(_form);
-        _form.submit();
-        document.body.removeChild(_form);
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
     };
 
     this.FormEditItem = function (key, opt, event) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.ItemFormLink; }.bind(this));
+        this.dvformMode = temp[0].FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
-        let url = "../webform/index?refid=" + this.ItemFormLink;
-        var _form = document.createElement("form");
-        _form.setAttribute("method", "post");
-        _form.setAttribute("action", url);
-        _form.setAttribute("target", "_blank");
+        let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
+        if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
+        }
+        else {
+            let url = "../webform/index?refid=" + this.ItemFormLink;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
 
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_params";
-        input.value = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
-        _form.appendChild(input);
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_params";
+            input.value = filterparams;
+            _form.appendChild(input);
 
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = "_mode";
-        input.value = 1;
-        _form.appendChild(input);
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_mode";
+            input.value = this.dvformMode;
+            _form.appendChild(input);
 
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "_locId";
+            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            _form.appendChild(input);
 
-        document.body.appendChild(_form);
-        _form.submit();
-        document.body.removeChild(_form);
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
     };
 
     this.formatToParameters = function (cols) {
@@ -2519,7 +2575,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.collapseTreeGroup = function (e) {
-        $("#eb_common_loader").EbLoader("show");
         let el = (e.target) ? $(e.target) : $(e);
         if (!(el.is("i"))) {
             el = $(el).closest("i");
@@ -2527,19 +2582,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         let curRow = $(el).parents().closest("[role=row]");
         var level = parseInt($(curRow).attr("data-lvl"));
         var isShow = ($(el).hasClass("fa-minus-square-o")) ? false : true;
-        //let array = $("[data-level=" + level + "]").toArray();
-        //let curIndex = array.findIndex(function (obj) { return obj === $(el)[0]; });
-        //let toRow = $(array[curIndex + 1]).hasClass("itemform") ? $(array[curIndex + 1]).closest("[role=row]").prev() : $(array[curIndex + 1]).closest("[role=row]");
-        //let rows = (toRow) ? curRow.nextUntil($(toRow)) : curRow.nextAll();
-        let rows = curRow.nextUntil("[data-lvl=" + level + "]");
-        let selector = "";
-        if (level !== 0) {
-            for (var i = level; i >= 0; i--) {
-                selector += "i[data-level=" + i + "],";
+        let count = this.RowCount;
+        let rows = {};
+        for (var i = level; i >= 0; i--) {
+            let temp = curRow.nextUntil("[data-lvl=" + i + "]");
+            if (temp.length < count) {
+                count = temp.length;
+                rows = temp;
             }
-            selector = selector.substr(0, selector.length - 1);
-            rows = rows.toArray().filter(el => !rows.children().find(selector).closest("tr").toArray().includes(el));
-            rows = $(rows);
         }
         if (isShow) {
             rows.show();
@@ -2550,59 +2600,52 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             rows.hide();
             el.removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
         }
-        $("#eb_common_loader").EbLoader("hide");
     }.bind(this);
 
     this.AppendTreeModal = function () {
         $("#treemodal").remove();
-        let modal = `<div class="modal" tabindex="-1" role="dialog" id="treemodal">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">Modal title</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <div id="modal-body-cont">
-                            Move From <label id="movefrom"></label> To 
-                            <div class="dropdown" style="display: inline;">
-                                <button class="btn btn-default dropdown-toggle treemodalul" type="button" data-toggle="dropdown">Select Group....
-                                <span class="caret"></span></button>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>`;
-        $("body").prepend(modal);
+        let modal1 =`<div class="modal fade" id="treemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="treemodal-container">
+            <h4 class="treemodal-header">Move <span id="itemorgroup"></span></h4>
+            <div class="tree_item_cont">
+                <label>From </label>
+                <span id="movefrom"></span>
+            </div>
+            <div class="tree_item_cont">
+                <label>To</label>
+                <button class="btn treemodalul">Select Group
+                <span class="caret"></span></button>
+            </div>
+            <div class="pull-right">
+                <button class="btn" id="treemodal_submit">Move</button>
+                <button class="btn" id="treemodal_cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>`;
+
+        $("body").prepend(modal1);
     };
 
     this.MoveGroupOrItem = function (key, opt, event) {
         this.AppendTreeModal();
+        if (opt.selector === ".itemform")
+            $("#itemorgroup").text("Item");
+        else
+            $("#itemorgroup").text("Group");
         let rowindex = this.Api.row(opt.$trigger.parent().closest("[role=row]")).index();
         this.movefromtext = this.unformatedData[rowindex][this.treeColumn.data];
         $("#movefrom").text(this.movefromtext);
         this.IdColumnIndex = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === "id"; })[0].data;
         this.movefromId = this.unformatedData[rowindex][this.IdColumnIndex];
-        this.moveToId = "";
-        //this.createTreeItems();
         this.Items = {};
         this.createTreeItems___(this.treeData, this.Items);
         this.Items = this.Items.items;
-        $.contextMenu('destroy', '.treemodalul');
-        $.contextMenu({
-            selector: '.treemodalul',
-            className: 'contextmenu-custom__highlight',
-            items: this.Items,
-            trigger: "left",
-            autoHide: true,
-            callback: this.MoveDDClick.bind(this)
-        });
-        this.clickCounter = 0;
+        this.InitTreemodalContextmenu();
         $("#treemodal").modal("show");
-        $(".contextmenu-custom__highlight .context-menu-item").off("click").on("click", this.MoveDDClick.bind(this));
+        $("#treemodal_submit").off("click").on("click", this.MoveOKClick.bind(this));
+        $("#treemodal_cancel").off("click").on("click", this.MoveCancelClick.bind(this));
     };
 
     this.createTreeItems___ = function (initems, outitems) {
@@ -2618,6 +2661,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }.bind(this, initems, outitems));
+    };
+
+    this.InitTreemodalContextmenu = function () {
+        $.contextMenu('destroy', '.treemodalul');
+        $.contextMenu({
+            selector: '.treemodalul',
+            callback: this.MoveDDClick.bind(this),
+            className: 'contextmenu-custom__highlight',
+            items: this.Items,
+            trigger: "left",
+            autoHide: true,
+            events: {
+                show: function (options) {
+                    this.clickCounter = 0;
+                    return true;
+                }.bind(this)
+            }
+        });
+        this.clickCounter = 0;
+        $(".contextmenu-custom__highlight .context-menu-submenu").off("click").on("click", this.MoveDDClick.bind(this));
     };
 
     this.getClickedItem = function (key) {
@@ -2648,13 +2711,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.MoveDDClick = function (key, options) {
         if (this.clickCounter === 0) {
-            this.clickCounter++;
             if (options === undefined)
                 key = $(key.currentTarget).children("span").text();
-            $("#treemodal .btn:first-child").text(key);
-            $("#treemodal .btn:first-child").val(key);
+            $("#treemodal .treemodalul").text(key).append('<span class="caret"></span></button>');
             this.getClickedItem(key);
             $(".contextmenu-custom__highlight").hide();
+            $(".treemodalul").removeClass("context-menu-active");
+            $("#context-menu-layer").remove();
+            this.clickCounter++;
+        }
+    };
+
+    this.MoveOKClick = function () {
+        if (this.tableName !== null && this.moveToPid !== null && this.movefromId !== null) {
             let sql = `UPDATE ${this.tableName} SET ${this.treeColumn.ParentColumn.$values[0].name}= ${this.moveToPid}
                         WHERE id=${this.movefromId} `;
             $.ajax({
@@ -2664,6 +2733,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 success: this.UpdateSuccess.bind(this)
             });
         }
+        else {
+            alert("Select One Group.....");
+        }
+    };
+
+    this.MoveCancelClick = function () {
+        this.clickCounter = 0;
+        $("#treemodal").modal("hide");
     };
 
     this.UpdateSuccess = function () {
@@ -3196,6 +3273,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.inline = true;
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
+        else if ($(e.target).closest("a").attr("data-popup") !== undefined) {
+            cData = $(e.target).closest("a").attr("data-data");
+            this.popup = true;
+            colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
+        }
         else {
             cData = $(e.target).text();
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
@@ -3242,6 +3324,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 this.OpenInlineDv(rows, e, idx, colindex);
             }
+        }
+        else if (this.popup) {
+            $("#iFrameFormPopupModal").modal("show");
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $("#iFrameFormPopup").attr("src", url);
         }
         else {
             if (this.login === "uc")

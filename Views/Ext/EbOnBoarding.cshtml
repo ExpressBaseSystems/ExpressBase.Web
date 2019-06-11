@@ -47,7 +47,7 @@
                                         <span class="input-group-addon" id="basic-addon1"><i class="fa fa-key" aria-hidden="true"></i></span>
                                         <input class="form-control txthighlight" data-minlength="8" type="password" name="Password" id="inputPassword">
                                         <span toggle="#inputPassword" style=" padding-right: 13px;" id="psvisible" class="fa fa-fw fa-eye fa-eye-slash field-icon toggle-password "></span>
-                                        <span toggle="#inputPassword" style="padding-right: 13px;" id="pshide" hidden class="fa fa-fw fa-eye  field-icon toggle-password "></span>
+                                        <span toggle="#inputPassword" style="padding-right: 13px;" hidden id="pshide" class="fa fa-fw fa-eye  field-icon toggle-password "></span>
                                     </div>
 
                                     @*<div class="inline-block">
@@ -141,7 +141,7 @@
                         <div class="form-group required">
                             <label>Solution URL</label>
                             <div class="client-id-sec ">
-                                <input type="text" id="ebsid" name="SolnId" class="form-control txthighlight input-clientId" />
+                                <input type="text" id="ebsid" name="SolnId" style="background-color:#f5f5f5" class="form-control txthighlight input-clientId" readonly />
                                 <div class="clientId-auto">.expressbase.com</div>
                                 <p id="slnid" style="color:red; visibility :hidden; margin:0 0 0 0 "> Enter a Solution URL</p>
                             </div>
@@ -391,7 +391,12 @@
 <div class="eb-cropie" id="cropsection"></div>
 <script>
     $(document).ready(function () {
+        //disable cut,copy,paste
+        $('#inputPassword,#inputPasswordConfirm').bind('cut copy paste', function (e) {
+            e.preventDefault();
+        });
         var boarding = new EbOnBoarding();
+        var psd = new PasswordValidation();
     });
     $("#AppIcon").iconpicker({ placement: 'top', iconset: 'fontawesome', icon: 'fa-home' }).on('change', function (e) { $("input[name='AppIcon']").val(e.icon); });
 </script>

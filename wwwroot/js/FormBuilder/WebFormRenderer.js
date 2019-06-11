@@ -3,13 +3,16 @@
 * to Render WebForm
 * EXPRESSbase Systems Pvt. Ltd , Jith Job
 */
+
 const WebFormRender = function (option) {
     this.FormObj = option.formObj;
+    this.$form = $(`#${this.FormObj.EbSid}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
     this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
     this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
+    this.$closeBtn = $('#' + option.headerBtns['Close']);
     this.Env = option.env;
     this.Cid = option.cid;
     this.initControls = new InitControls(this);
@@ -77,7 +80,7 @@ const WebFormRender = function (option) {
 
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj });
         }.bind(this));
     };
 
@@ -93,8 +96,6 @@ const WebFormRender = function (option) {
     };
 
     this.initNCs = function () {
-
-
         let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
         $.each(allFlatControls, function (k, Obj) {
             this.updateCtrlUI(Obj);
@@ -123,11 +124,21 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.watchers = function () {
+        Object.defineProperty(this.formObject, "__mode", {
+            set: function (value) {
+                this.$form.attr("mode", value);
+            }.bind(this)
+        });
+    };
+
     this.initWebFormCtrls = function () {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
-        this.formObject.__mode = "new";
+        this.formObject.__mode = "new";// added a watcher to update form attribute
+        this.watchers();
+
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
         this.initDGs();
@@ -142,7 +153,14 @@ const WebFormRender = function (option) {
     };
 
     this.bindOnChange = function (control) {
-        control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
+        try {
+            control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
+        }
+        catch (e) {
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
+        }
     };
 
     this.bindValidators = function (control) {
@@ -693,26 +711,27 @@ const WebFormRender = function (option) {
 
     this.GetAuditTrail = function () {
         let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+        $("#AuditHistoryModal .modal-title").text("Audit Trail - " + this.FormObj.DisplayName);
         $("#AuditHistoryModal").modal("show");
         $("#divAuditTrail").children().remove();
-        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
+        $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
             url: "../WebForm/GetAuditTrail",
             data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: currentLoc },
             error: function () {
                 $("#divAuditTrail").children().remove();
-                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something unexpected occured </div>`);
+                $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something unexpected occured </div>`);
             },
             success: function (result) {
                 if (result === "{}") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 50%; font-size: 20px; color: #ccc; "> Nothing to Display </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center; position: relative; top: 45%; font-size: 20px; color: #aaa; "> Nothing to Display </div>`);
                     return;
                 }
                 else if (result === "") {
                     $("#divAuditTrail").children().remove();
-                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 50%; font-size: 20px; color: #ccc; "> Something went wrong </div>`);
+                    $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%; font-size: 20px; color: #aaa; "> Something went wrong </div>`);
                     return;
                 }
                 this.drawAuditTrailTest(result);
@@ -819,7 +838,7 @@ const WebFormRender = function (option) {
 
         });
     };
-    
+
     this.showLoader = function () {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
@@ -848,7 +867,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
+        this.headerObj.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
@@ -856,14 +875,9 @@ const WebFormRender = function (option) {
                 $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
                 $("#Eb_com_menu").remove();
             }
-            if (reqstMode === "New Mode") {
-                this.headerObj.showElement(this.filterHeaderBtns(["webformsave"], currentLoc, reqstMode));
-            }
-            this.headerObj.setName(_formObj.DisplayName);
-            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-            $('title').text(_formObj.DisplayName + `(${reqstMode})`);
-            return;
+            this.headerObj.showElement(["webformclose"]);
         }
+
         this.mode = reqstMode;//
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
@@ -884,14 +898,18 @@ const WebFormRender = function (option) {
         this.headerObj.setName(_formObj.DisplayName);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
         $('title').text(this.FormObj.DisplayName + `(${reqstMode})`);
+
+        if (this.isPartial === "True") {
+            this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);
+        }
     };
 
     this.filterHeaderBtns = function (btns, loc, mode) {
         let r = [];
         // ["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
-        // ["New", "View", "Edit", "Delete", "Cancel", "Print", "AuditTrail"]
+        // ["New", "View", "Edit", "Delete", "Cancel", "AuditTrail"]
         for (let i = 0; i < btns.length; i++) {
-            if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')            
+            if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
                 r.push(btns[i]);
             else if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
                 r.push(btns[i]);
@@ -918,6 +936,7 @@ const WebFormRender = function (option) {
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
+        this.$closeBtn.on("click", function () { window.parent.closeModal(); });
         $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
@@ -930,9 +949,11 @@ const WebFormRender = function (option) {
             this.SwitchToViewMode();
 
             setTimeout(function () {
-                if (store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString() !== _formData.MultipleTables[_formData.MasterTable][0].LocId.toString()) {
-                    EbDialog("show",{
-                        Message: "Location Switching...",
+                let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
+                let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
+                if (ol !== nl) {
+                    EbDialog("show", {
+                        Message: "Switching from " + getObjByval(loc__.Locations, "LocId", ol).LongName + " to " + getObjByval(loc__.Locations, "LocId", nl).LongName,
                         Buttons: {
                             "Ok": {
                                 Background: "green",
@@ -945,31 +966,30 @@ const WebFormRender = function (option) {
                             this.setHeader(this.mode);
                         }.bind(this)
                     });
-                }  
-
-                loc__.Listener.ChangeLocation = function (o) {
-                    if (this.rowId > 0) {
-                        EbDialog("show", {
-                            Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                            Buttons: {
-                                "Ok": {
-                                    Background: "green",
-                                    Align: "right",
-                                    FontColor: "white;"
-                                }
-                            },
-                            CallBack: function (name) {
-                                window.location = window.location.href;
-                            }.bind(this)
-                        });
-                    }
-                }.bind(this);
-
+                }
             }.bind(this), 500);
 
         }
+        setTimeout(function () {
+            loc__.Listener.ChangeLocation = function (o) {
+                if (this.rowId > 0) {
+                    EbDialog("show", {
+                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            reloadFormPage();
+                        }.bind(this)
+                    });
+                }
+            }.bind(this);
+        }.bind(this), 500);
 
-       
     };
 
     this.init();

@@ -27,6 +27,7 @@ body {
     --blackpipe: -webkit-linear-gradient(top, #4c4c4c 3%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 46%,#000000 53%,#111111 64%,#2b2b2b 82%,#1c1c1c 94%,#131313 100%);
     --blum: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.86, #369), color-stop(0.72, rgb(73,125,189)));
 }
+
 .ebbtn {
     border: 0;
     border-radius: 3px;
@@ -42,32 +43,38 @@ body {
     font-weight: 400;
     background: #fff;
     color: #0d2366;
-    text-decoration:none;
-    cursor:pointer;
+    text-decoration: none;
+    cursor: pointer;
 }
+
     .ebbtn:hover {
         -webkit-transform: translateY(-2px) scale(1.01);
         -ms-transform: translateY(-2px) scale(1.01);
         transform: translateY(-2px) scale(1.01);
         box-shadow: 0 5px 16px 1px rgba(0,0,0,0.13), 0 1px 4px 0 rgba(0,0,0,0.09);
         text-decoration: none;
-        color:inherit;
+        color: inherit;
     }
+
 .eb_btnblue {
     background: #528ff0;
     color: #fff;
 }
+
 .eb_btngreen {
     background: #47af08;
     color: #fff;
 }
+
 .eb_btn-sm {
     padding: 5px 10px;
     font-size: 12px;
 }
+
 .eb_btn_md {
     padding: 6px 12px;
 }
+
 .eb_btnwhite {
     background: white;
     color: #528ff0;
@@ -78,8 +85,9 @@ body {
     background: #f37e1a;
     color: #fff;
 }
-.btn_s_fr{
-    margin-left:10px;
+
+.btn_s_fr {
+    margin-left: 10px;
 }
 
 .eb_btnplain {
@@ -88,16 +96,20 @@ body {
     box-shadow: none;
     background: transparent;
 }
+
     .eb_btnplain:hover {
         box-shadow: none;
         color: #d49011;
     }
+
 .cb {
     color: #1497cc;
 }
+
 .cg {
     color: #47af08;
 }
+
 .mb {
     padding-bottom: 5em;
 }
@@ -130,11 +142,13 @@ body {
     color: #828181;
     font-family: Montserrat;
 }
+
 .ellipsis-text {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
+
 .nopadding {
     padding: 0;
 }
@@ -291,20 +305,6 @@ body {
     position: relative;
 }
 /***end*****/
-/*forgetpassword msgBox*/
-.message-box-indexpage {
-    background-color: #31d031;
-    position: fixed;
-    width: 100%;
-    text-align: center;
-    z-index: 1200;
-    color: white;
-    padding: 15px;
-    font-size: 16px;
-    font-family: Montserrat;
-    font-weight: 400;
-    display: none;
-}
 /***********************************
 Navigation bar
 ************************************/
@@ -869,11 +869,13 @@ Navigation bar
 .drp_down:focus:before, drp_down:not(.active_Link):hover:focus {
     display: none !important;
 }
+
 .drp_down:hover + .drp_container {
     display: block !important;
 }
-.drp_container:hover{
-    display:block !important;
+
+.drp_container:hover {
+    display: block !important;
 }
 /*
     Dragula style BEGIN  https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css
@@ -911,6 +913,7 @@ Navigation bar
     height: 100vh;
     background-color: white;
 }
+
     .error_cont .error_wrapper {
         width: 600px;
         margin: 90px auto;
@@ -918,13 +921,16 @@ Navigation bar
         font-family: Montserrat;
         color: #737272;
     }
+
     .error_cont .errorcode_img {
         padding: 0 50px;
     }
+
         .error_cont .errorcode_img img {
             width: 100%;
             height: auto;
         }
+
     .error_cont .backto_home {
         margin: 0 auto;
         width: 260px;

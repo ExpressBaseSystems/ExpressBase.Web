@@ -96,6 +96,7 @@ const EbSelect = function (ctrl, options) {
         try {
             $('#' + this.name + 'Wraper [class=open-indicator]').hide();
             this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
+            this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
             $('#' + this.name + 'Wraper  [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
             $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
@@ -159,7 +160,7 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
-    this.setValues = function (StrValues) {
+    this.setValues = function (StrValues, callBFn) {
         this.clearValues();
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
@@ -168,7 +169,7 @@ const EbSelect = function (ctrl, options) {
             //$.each(this.setvaluesColl, function (i, val) {
             this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
-            this.datatable.Api.ajax.reload(this.initComplete4SetVal.bind(this));
+            this.datatable.Api.ajax.reload(this.initComplete4SetVal.bind(this, callBFn, StrValues));
         }
         else {
             this.filterArray = [];
@@ -176,7 +177,7 @@ const EbSelect = function (ctrl, options) {
             this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
             if (this.setvaluesColl.length > 0) {
-                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this);
+                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this, callBFn, StrValues);
                 this.InitDT();
                 this.V_showDD();
             }
@@ -198,16 +199,31 @@ const EbSelect = function (ctrl, options) {
 
     };
 
-    this.initComplete4SetVal = function () {
+    this.initComplete4SetVal = function (callBFn, StrValues) {
         if (this.setvaluesColl) {
             if (this.ComboObj.MultiSelect) {
                 $.each(this.setvaluesColl, function (i, val) {
-                    $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`).click();
+                    let $row = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
+                    if ($row.length === 0) {
+                        console.eb_warn(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`,"rgb(222, 112, 0)");
+                        this.$inp.val(StrValues).trigger("change");
+                    }
+                    else
+                        $row.click();
                 }.bind(this));
             }
-            else
-                $(this.DTSelector + ` tbody tr[role="row"]`).trigger("dblclick");
+            else {
+                let $row = $(this.DTSelector + ` tbody tr[role="row"]`);
+                if ($row.length === 0) {//
+                    console.log(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`);
+                    this.$inp.eb_warn(StrValues).trigger("change");
+                }
+                else
+                    $row.trigger("dblclick");
+            }
         }
+        if (callBFn)
+            callBFn();
     };
 
 
@@ -541,7 +557,7 @@ const EbSelect = function (ctrl, options) {
             $.each(this.dmNames, this.trimDmValues.bind(this));
         }
 
-        $("#" + this.ComboObj.EbSid_CtxId).attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
+        this.$inp.attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
         this.getSelectedRow();
 
         if (VMs.length === 0)
@@ -560,7 +576,7 @@ const EbSelect = function (ctrl, options) {
         }.bind(this), 10);
 
         this.setColumnvals();
-        $("#" + this.ComboObj.EbSid_CtxId).val(this.Vobj.valueMembers).trigger("change");
+        this.$inp.val(this.Vobj.valueMembers).trigger("change");
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);

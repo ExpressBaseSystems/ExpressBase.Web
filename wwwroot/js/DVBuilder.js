@@ -90,32 +90,7 @@
         $("#obj_icons").prepend(`<a class='btn' id="oldbuilder" href='../Eb_Object/index?objid=${objid}&objtype=16&buildermode=false'><i class="fa fa-external-link" aria-hidden="true"></i></a>`);
 
         commonO.saveOrCommitSuccess = this.rendertable.bind(this);
-        //commonO.PreviewObject = function () {
-        //    $("#preview_wrapper").empty();
-        //    commonO.Save();
-        //};
-
-        //commonO.saveOrCommitSuccess = function (res) {
-        //   this.renderTable();
-        //}.bind(this);
     }
-
-    //renderTable() {
-    //    $.ajax({
-    //        url: `../DV/dv?refid=${this.EbObject.RefId}`,
-    //        type: "POST",
-    //        cache: false,
-    //        success: function (result) {
-    //            $("#preview_wrapper").html(result);
-    //            $("#btnGo").off("click").on("click", this.render.bind(this));
-    //            if ($("#btnGo").length <= 0) {
-    //                $("#sub_windows_sidediv_dv").hide();
-    //                $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
-    //                $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}`);
-    //            }
-    //        }.bind(this)
-    //    });
-    //}
 
     EventBind() {
         $("#NewTableHeader").off("click").on("click", this.AddNewTableHeader.bind(this));
@@ -585,6 +560,7 @@
         this.CurrentRowgroupkey = name;
         this.objCollection[name] = Rowobj;
         this.CurrentRowgroup = Rowobj;
+
         //this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);elemsCont
     }
 
@@ -703,6 +679,7 @@
         obj.DisplayName = obj.Name;
         this.RowgroupDropRelated(type, obj);
         this.RwogroupCounter++;
+        this.EbObject.RowGroupCollection.$values.push(obj);
     }
 
     arrangeRowGroupHeaders() {

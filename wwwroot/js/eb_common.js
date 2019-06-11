@@ -1,4 +1,33 @@
-﻿function beforeSendXhr(xhr) {
+﻿console.eb_log = function (msg, color = "rgb(19, 0, 78)", bgcolor) {
+    console.log(`%c${msg}`, `color:${color};
+            padding:1px 2px;
+            border-radius:2px;
+            text-shadow: 1px 1px 1px #eef;`);
+};
+
+console.eb_error = function (msg, color = "rgb(222, 0, 0)", bgcolor) {
+    console.log(`%c${msg}`, `color:${color};
+            padding:1px 2px;
+            border-radius:2px;
+            text-shadow: 1px 1px 1px #eef;`);
+};
+
+console.eb_info = function (msg, color = "#0060de", bgcolor) {
+    console.log(`%c${msg}`, `color:${color};
+            padding:1px 2px;
+            border-radius:2px;
+            text-shadow: 1px 1px 1px #eef;`);
+};
+
+console.eb_warn = function (msg, color = "rgb(222, 112, 0)", bgcolor) {
+    console.log(`%c${msg}`, `color:${color};
+            padding:1px 2px;
+            border-radius:2px;
+            text-shadow: 1px 1px 1px #eef;`);
+};
+
+
+function beforeSendXhr(xhr) {
     var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
     var tok = b ? b.pop() : '';
     if (isJwtTokExpired(tok)) {
@@ -350,13 +379,14 @@ function RecurFlatControls(src_obj, dest_coll) {
 
 function getValsFromForm(formObj) {
     let fltr_collection = [];
-    let flag = 0;
+    let flag = 1;
     $.each(getFlatCtrlObjs(formObj), function (i, obj) {
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
-        if (obj.ObjType === "PowerSelect")
-            flag++;
+        //if (obj.ObjType === "PowerSelect")
+        //    flag++;
     });
     if (flag > 0) {
+        console.log(111);
         var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
@@ -430,32 +460,6 @@ function getSingleColumn(obj) {
 //        _z = val;
 //    }
 //});
-var invoiceObj = function () {
-    this.imei = "";
-    this.route = "";
-    this.salesman = "";
-    this.xid = "";
-    this.trndate = "";
-    this.trntype = "";
-    this.acmaster1_id = 100;
-    this.discper = 1.1;
-    this.discamt = 100;
-    this.cash = "";
-    this.grossamt = 100;
-    this.netamt = 1000;
-    this.forms_id = 34;
-    this.uid = "12";
-    this.route_id = "13";
-    this.sys_location_id = "1";
-    this.today = "";
-    this.appversion = "";
-    this.appsubmit_ts = "";
-    this.lpo = "";
-    this.vatamt = 50;
-    this.TotalQty = 30;
-    this.TotalFree = 200;
-    this.items = [];
-}
 
 function Test() {
     var b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1OTEwNzQ5NCwiZXhwIjoxNTU5MTA3NTg0LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.aD8kZxYN8ZGmoAA2EyxVzxfAPMyZXmg1NSiNzHaG6_I1frKVGqrFmJZHt0dPERabvx-mM-N5wtXuwRyJ1y8nZRLqvyyazaR4DLJlxRvievs14qLpAe7z6X_gAkR_-6KruEA6HP_-rAn53ImaIMs9fUnRb37K9djjU-caNCdYpDk`

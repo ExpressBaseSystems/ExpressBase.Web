@@ -33,15 +33,7 @@ namespace ExpressBase.Web.Controllers
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
 
-        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc)
-            : base(_client, _redis, _cxtacc) { }
-
-        [HttpGet]
-        public IActionResult ResetPassword()
-        {
-
-            return View();
-        }
+        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc) : base(_client, _redis, _cxtacc) { }
 
         [HttpPost]
         [EnableCors("AllowSpecificOrigin")]
@@ -59,34 +51,77 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+
+        public IActionResult EmailVerifyStructure()
+        {
+
+            return View();
+        }
+
         [HttpGet("ForgotPassword")]
         public IActionResult ForgotPassword()
         {
             ViewBag.message = TempData["Message"];
             return View();
-
         }
 
         [HttpPost]
-        public IActionResult ForgotPassword(int i)
+        public int ForgotPassword(string email)
         {
-            string email = this.HttpContext.Request.Form["Email"];
-            UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
-            if (!result.isUniq)
+            try
             {
-                this.ServiceClient.Post(new ResetPasswordMqRequest()
+                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+                if (result.Unique || !result.HasPassword)
                 {
-                    Refid = "expressbase-expressbase-15-26-26",
-                    Email = email
-                });
-
-                TempData["Message"] = string.Format("we've sent a password reset link to {0}", email);
-                return RedirectToAction(RoutingConstants.INDEX);
+                    return 0;
+                }
+                else
+                {
+                    string resetcode = Guid.NewGuid().ToString();
+                    HostString pgurl = this.HttpContext.Request.Host;
+                    PathString pgpath = this.HttpContext.Request.Path;
+                    ForgotPasswordResponse res = this.ServiceClient.Post<ForgotPasswordResponse>(new ForgotPasswordRequest
+                    {
+                        Email = email,
+                        Resetcode = resetcode,
+                        PagePath = pgpath.ToString(),
+                        PageUrl = pgurl.ToString()
+                    });
+                    return 1;
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+                return 0;
+            }
+        }
+
+        [HttpGet("resetpassword")]
+        public IActionResult ResetPassword(string rep)
+        {
+            ViewBag.rep = rep;
+            return View();
+        }
+
+        [HttpPost]
+        public int ResetPassword(string emcde, string psw)
+        {
+            byte[] base64Encoded = System.Convert.FromBase64String(emcde);
+            string resetcd = System.Text.Encoding.UTF8.GetString(base64Encoded);
+            string[] resetcode = resetcd.Split(new Char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var sts = this.ServiceClient.Post<ResetPasswordResponse>(new ResetPasswordRequest
+            {
+                Resetcode = resetcode[1],
+                Email = resetcode[0],
+                Password = psw
+            });
+            if (sts.VerifyStatus == true)
+            { return 1; }
             else
             {
-                TempData["Message"] = string.Format("{0} invalid!", email);
-                return RedirectToAction("ForgotPassword");
+                return 0;
             }
         }
 
@@ -205,18 +240,20 @@ namespace ExpressBase.Web.Controllers
                 string reqEmail = this.HttpContext.Request.Form[TokenConstants.EMAIL];
                 TempData[RequestEmail] = reqEmail;
                 UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
-                if (result.isUniq)
+                if (result.Unique)
                 {
-                    var res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
+                    RegisterResponse res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
 
                     if (Convert.ToInt32(res.UserId) >= 0)
                         return RedirectToAction("EbOnBoarding", new { Email = reqEmail }); // convert get to post
                 }
                 else
                 {
-                    return RedirectToAction("TenantSignIn", new { Email = reqEmail });
+                    if (result.HasPassword)
+                        return RedirectToAction("TenantSignIn", new { Email = reqEmail });
+                    else
+                        return RedirectToAction("EbOnBoarding", new { Email = reqEmail });
                 }
-
             }
             catch (WebServiceException e)
             {
@@ -235,9 +272,13 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public void ProfileSetup(int i)
+        public string ProfileSetup(int i)
         {
             var req = this.HttpContext.Request.Form;
+            string activationcode = Guid.NewGuid().ToString();
+            var pgurl = this.HttpContext.Request.Host;
+            var pgpath = this.HttpContext.Request.Path;
+
             var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
             {
                 Op = "updatetenant",
@@ -246,7 +287,10 @@ namespace ExpressBase.Web.Controllers
                 Password = req["Password"],
                 Country = req["Country"],
                 Token = ViewBag.token,
-                Email = req["Email"]
+                Email = req["Email"],
+                ActivationCode = activationcode,
+                PageUrl = pgurl.ToString(),
+                PagePath = pgpath.ToString()
             });
             if (res.id >= 0)
             {
@@ -266,6 +310,29 @@ namespace ExpressBase.Web.Controllers
                     this.ServiceClient.BearerToken = authResponse.BearerToken;
                     this.ServiceClient.RefreshToken = authResponse.RefreshToken;
                 }
+            }
+            return res.Sol_id_autogen;
+        }
+
+        [HttpGet("em")]
+        public IActionResult EmailVerify(string emv)
+        {
+            var base64Encoded = System.Convert.FromBase64String(emv);
+            var emailcd = System.Text.Encoding.UTF8.GetString(base64Encoded);
+            string[] emcode = emailcd.Split(new Char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
+
+
+
+            var sts = this.ServiceClient.Post<EmailverifyResponse>(new EmailverifyRequest
+            {
+                ActvCode = emcode[1],
+                Id = emcode[0]
+            });
+            if (sts.VerifyStatus == true)
+            { return View(); }
+            else
+            {
+                return Redirect("/StatusCode/401");
             }
         }
 

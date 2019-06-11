@@ -38,7 +38,7 @@
             settings.CallBack(n);
             hideMsg();
         });
-        $("#eb_dlogBox_container ._cls").on("click", function () { hideMsg(); });
+        $("#eb_dlogBox_container ._cls").on("click", function () { settings.CallBack(); hideMsg(); });
     }
 
     function showMsg() {

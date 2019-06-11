@@ -300,7 +300,7 @@
 
 .pow-center {
     position: relative;
-    z-index: 1 !important;
+    z-index: 2 !important;
 }
 
 [isrendermode="False"] .DDdiv {
@@ -345,22 +345,20 @@
 .DDdiv {
     width: 100%;
     position: absolute;
-    top: 1;
+    top: 1px;
     left: 0;
     z-index: 1000;
     float: left;
+    overflow: hidden;
     min-width: 160px;
     font-size: 14px;
     text-align: left;
     list-style: none;
     background-color: #fff;
-    -webkit-background-clip: padding-box;
     background-clip: padding-box;
-    border: 1px solid #ccc;
-    border: 1px solid rgba(0,0,0,.15);
-    border-radius: 4px;
-    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
-    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    border-top: none;
+    border-radius: 0 0 2px 2px;
+    box-shadow: 0 6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41);
 }
 
     .DDdiv .dataTable {
@@ -394,6 +392,13 @@
     width: calc( 100% + 1px ) !important;
 }
 
+.ctrl-wraper .div.dataTables_wrapper .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
+    height: auto !important;
+    padding: 3px 0px !important;
+    border: none !important;
+    border-right: solid 1px #ddd !important;
+}
+
 .v-select.searchable .dropdown-toggle {
     border: none;
 }
@@ -407,7 +412,7 @@
     border: none !important;
     border-radius: 2px !important;
     padding: 0.01em .45em 0.15em 0.45em !important;
-    margin: 2px 1px 2px 3px !important;
+    margin: 2px 0px 1px 3px !important;
     font-size: 12px;
     padding-right: 18px !important;
 }

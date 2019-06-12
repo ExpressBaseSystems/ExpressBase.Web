@@ -1059,9 +1059,28 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     font-size: 11px;
 }
 
+.btn-select {
+    position: relative;
+    display: inline-block;
+}
 
+.btn-select .bootstrap-select .dropdown-toggle .filter-option-inner {
+    display: none !important;
+}
+
+    .btn-select .savebtn {
+        position: absolute;
+        left: 0;
+        z-index: 2;
+        background-color: transparent;
+        border: none;
+        padding: 2px 8PX 4px 8PX;
+    }
+
+    .btn-select .bootstrap-select.dropdown {
+        width: 50px !important;
+    }
 /*animations*/
-
 /* Safari 4.0 - 8.0 */
 @-webkit-keyframes dim_border {
     from {

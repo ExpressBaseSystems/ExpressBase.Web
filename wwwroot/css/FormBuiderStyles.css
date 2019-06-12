@@ -1080,6 +1080,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     .btn-select .bootstrap-select.dropdown {
         width: 50px !important;
     }
+
+    .btn-select .dropdown-menu > li > a {
+        padding: 3px 10px !important;
+        font-size: 11.5px !important;
+    }
+
+    .btn-select .dropdown-menu{
+        border-radius:2px !important;
+    }
 /*animations*/
 /* Safari 4.0 - 8.0 */
 @-webkit-keyframes dim_border {

@@ -745,7 +745,7 @@
             $.each(data[ObjName], function (i, obj) {
                 if (obj.versionNumber) {
                     let $verTile = $('<div class="colTile" style="display:none" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                        + '<i class="fa fa-check pull-right" style="display:none; color:rgb(1, 189, 1); font-size: 18px;" aria-hidden="true"></i></div>');
+                        + '<i class="fa fa-check pull-right vercheck" aria-hidden="true"></i></div>');
                     $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verTile.show(100));
                 }
             }.bind(this));

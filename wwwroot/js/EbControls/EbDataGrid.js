@@ -63,14 +63,14 @@
     };
 
     this.SwitchToEditMode = function () {
-        $(`#${this.TableId} tbody [is-editing=true]`).remove();
+        this.rowSLCounter = this.rowSLCounter - $(`#${this.TableId} tbody [is-editing=true]`).remove().length;
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "edit");
         this.mode_s = "edit";
         this.tryAddRow();
     };
 
     this.SwitchToViewMode = function () {
-        $(`#${this.TableId} tbody [is-editing=true]`).remove();
+        $(`#${this.TableId} tbody [is-editing=true]`).remove();        
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "view");
         this.mode_s = "view";
     };

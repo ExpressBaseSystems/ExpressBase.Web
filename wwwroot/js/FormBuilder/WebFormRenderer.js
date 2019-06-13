@@ -959,7 +959,7 @@ const WebFormRender = function (option) {
     this.getAfterSaveActionFn = function (mode) {
         if (mode === "new")
             return this.newAfterSave;
-        else if (mode === "continue")
+        else if (mode === "edit")
             return this.continueAfterSave;
         else if (mode === "view")
             return this.viewAfterSave;

@@ -18,8 +18,11 @@ namespace ExpressBase.Web.Controllers
     {
         public DbClientController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
+        [Microsoft.AspNetCore.Mvc.Route("/dbclient")]
         public IActionResult DbClient()
         {
+            if(ViewBag.wc == RoutingConstants.UC)
+                return Redirect("/StatusCode/401");
             GetDbTablesResponse res = this.ServiceClient.Get(new GetDbTablesRequest { });
             ViewBag.Tables = res.Tables;
             ViewBag.DB_Name = res.DB_Name;

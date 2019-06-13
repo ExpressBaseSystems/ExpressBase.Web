@@ -65,6 +65,7 @@ var EbOnBoarding = function (context) {
                 },
                 data: $(e.target).serializeArray()
             }).done(function (data) {
+                $("#ebsid").val(data);
                 $("#loader_profile").EbLoader("hide");
                 EbMessage("show", { Message: "Profile Saved" });
                 $("#save-profile").hide();
@@ -439,6 +440,7 @@ var PasswordValidation = function () {
 
     this.Psdinfofn = function () {
         $("#rcorners1").css("visibility", "visible");
+
     }
     this.hidePasswordInfo = function () {
         $("#rcorners1").css("visibility", "hidden");
@@ -546,6 +548,7 @@ var PasswordValidation = function () {
     };
 
     this.cutcopypaste = function (e) {
+
         e.preventDefault();
     }
     this.Showpsdfn = function (e) {
@@ -563,7 +566,7 @@ var PasswordValidation = function () {
     }.bind(this);
 
     this.Pswresetfn = function () {
-
+        $(".commonLoader").EbLoader("show");
         let sts = this.password_auto_validation();
         psdcode = $("#elink").val();
         if (sts == true) {
@@ -573,8 +576,13 @@ var PasswordValidation = function () {
                 cache: false,
                 type: "POST",
                 success: function (status) {
+                    $(".commonLoader").EbLoader("hide");
                     if (status == 1) {
-                        location.href = "../Ext/TenantSignin";
+                        EbMessage("show", { Message: "Please Login using New password" });
+                        setTimeout(function () {
+                            location.href = "../Ext/TenantSignin";
+                        }, 4000);
+
                     }
                     if (status == 0) {
                         location.href = "../StatusCode/401";

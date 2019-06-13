@@ -1,26 +1,237 @@
 ﻿@{
-    Layout = "~/Views/Shared/LayoutInner.cshtml";
-    Html.RenderPartial("ExtPageHeader");
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    //Html.RenderPartial("ExtPageHeader");
 }
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 
 <script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
 <script>
-        $(document).ready(function () {
-            new addwiki();
-        });
-</script>
-<link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
-<div class="">
-    @{
-    <ul>
-        @foreach (Wiki wiki in ViewBag.WikiList)
-        {
-            string link = "/wiki/view/" + wiki.Id;
-            <li > <a href="@link"> @wiki.Title </a></li>
+    $(document).ready(function () {
+        new addwiki();
+    });
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("search_wiki");
+        var span = document.getElementsByClassName("close")[0];
+        btn.onchange = function () {
+            var btn = document.getElementById("search_wiki");
+            var n = str.length;
+            if (n == 0) {
+                modal.style.display = "none";
+            }
+
         }
 
-    </ul>
     }
+</script>
+<script type="text/javascript">
 
+    $(function () {
+
+        // When click li that contains ul child tag.
+        $('li:has(ul)').click(function (event) {
+
+            if (this == event.target) {
+
+                var children = $(this).children();
+
+                var visible = !children.is(':hidden');
+
+                if (visible) {
+                    children.hide();
+                } else {
+                    children.show();
+                }
+            }
+
+        }).hover(function () {
+            $(this).css('cursor', 'pointer');
+        });
+
+    });
+</script>
+
+<link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+<style type="text/css">
+
+    .ul {
+        list-style-type: none;
+    }
+</style>
+
+
+<nav class="navbar" style=" border-bottom:double;border-bottom-color:black">
+    <div class="container-fluid">
+        <div class=" row ">
+            <div class="col-sm-3 navbar-default">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">ExpressBase</a>
+                </div>
+            </div>
+            <div class="col-sm-9 ">
+                <div class="navbar-header wiki-align">
+                    <input type="text" class="search-button" placeholder="Search.." id="search_wiki" />
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class=" row ">
+        <div class="col-sm-3 navbar-default style-4" style="height:550px;overflow:auto;">
+            <ul class="ul">
+                <li>
+
+                </li>
+            </ul>
+            <ul class="ul">
+                <li id="home" class="fa fa-home ic">
+                    <a href="#"> Home </a>
+                </li>
+            </ul>
+
+
+
+            <div id="wiki_list_id" show>
+                <ul class="ul">
+                    <li class="fa fa-bar-chart ic">
+
+                        Forms &nbsp;&nbsp;&nbsp;&nbsp;
+                        @{
+                            <ul class="ul">
+                                @foreach (Wiki wiki in ViewBag.WikiList)
+                                {
+                                    int link = wiki.Id;
+                                    if (wiki.Category == "Form")
+                                    {
+
+                                        <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
+                                    }
+                                }
+
+                            </ul>
+                        }
+
+                    </li>
+
+                    <li class="fa fa-bar-chart ic">
+                        Visualization
+                        @{
+                            <ul class="ul">
+                                @foreach (Wiki wiki in ViewBag.WikiList)
+                                {
+                                    int link = wiki.Id;
+                                    if (wiki.Category == "Visualization")
+                                    {
+
+                                        <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
+                                    }
+                                }
+
+                            </ul>
+                        }
+
+                    </li>
+
+                    <li class="fa fa-bar-chart ic">
+                        Documents
+                        @{
+                            <ul class="ul">
+                                @foreach (Wiki wiki in ViewBag.WikiList)
+                                {
+                                    int link = wiki.Id;
+                                    if (wiki.Category == "Documents")
+                                    {
+
+                                        <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
+                                    }
+                                }
+
+                            </ul>
+                        }
+
+                    </li>
+                    <li class="fa fa-bar-chart ic">
+                        Reporting
+                        @{
+                            <ul class="ul">
+                                @foreach (Wiki wiki in ViewBag.WikiList)
+                                {
+                                    int link = wiki.Id;
+                                    if (wiki.Category == "Reporting")
+                                    {
+
+                                        <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
+                                    }
+                                }
+
+                            </ul>
+                        }
+
+                    </li>
+                    <li class="fa fa-bar-chart ic">
+                        Chatbots
+                        @{
+                            <ul class="ul">
+                                @foreach (Wiki wiki in ViewBag.WikiList)
+                                {
+                                    int link = wiki.Id;
+                                    if (wiki.Category == "Chatbots")
+                                    {
+
+                                        <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
+                                    }
+                                }
+
+                            </ul>
+                        }
+
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-9 ">
+
+            <div id="myModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="close"></span>
+                    <p id="search_id">Some text in the Modal..</p>
+                </div>
+
+            </div>
+
+
+            <script>
+
+
+            </script>
+
+            @*<div class="nav-item">
+                    <div style="position:fixed;height:200px;overflow:auto;background-color:white" class="col-sm-10">
+
+                </div>*@
+            @*<a class="edit" style="visibility:hidden" id="edit_show" >
+                    edit
+                </a>*@
+            <div id="html" style="height:550px;overflow:auto;" hidden class="container-fluid wiki-align style-4"> </div>
+            <div class="front_page_wiki wiki-align" show>
+                <h1>Documentation</h1>
+                <p> Welcome to ExpressBase! Get familiar with the ExpressBase products and explore their features: </p>
+                <p></p>
+
+            </div>
+
+        </div>
+    </div>
 </div>
+
+
+

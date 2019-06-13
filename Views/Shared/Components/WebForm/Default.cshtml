@@ -226,6 +226,20 @@
 </div>
 `);
 
+    $("body").prepend(`
+<div class="modal fade" id="iFramePdfModal" role="dialog">
+    <div class="modal-dialog" style="width: 80%; margin: 4% auto;">
+        <div class="modal-content" style="border-radius: 0; border: none;"> 
+            <div class="modal-body" style="height: 80vh; padding: 0px;">
+                <div>
+                    <iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+
     window.closeModal = function (func) {// receives call from iFrame
         //func();
         $('#iFrameFormModal').modal('hide');
@@ -235,21 +249,55 @@
         $("#iFrameFormOverlay").show();
     });
     $("#iFrameForm").on('load', function (evt) {
-        console.log(evt.target);
         if ($(evt.target).attr("src") !== undefined)
             $("#iFrameFormOverlay").hide();
     });
+
+    $("#webformprint").on('click', function () {
+        $("#iFramePdf").attr("src", "../WebForm/GetPdfReport");
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    });
+    $("#iFramePdf").on('load', function (evt) {
+        try {
+            if ($(evt.target).attr("src") !== undefined) {
+                if (document.getElementById("iFramePdf").contentWindow.document.embeds.length === 1) {
+                    document.getElementById("iFramePdf").focus();
+                    document.getElementById("iFramePdf").contentWindow.print();
+                }
+                else {
+                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                }
+                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+            }
+        }
+        catch (e) {
+            $("#eb_common_loader").EbLoader("hide");
+            EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+        }
+    });
+
     function reloadFormPage() {
         window.location.href = window.location.origin + window.location.pathname + "?refid=@Html.Raw(ViewBag.formRefId)&_locId=" + store.get("Eb_Loc-" + ebcontext.user.CId + ebcontext.user.UserId);
     }
 
     let header = new EbHeader();
-    header.insertButton(`<button id="webformdelete" class='btn' title='Delete'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
-    header.insertButton(`<button id="webformcancel" class='btn' title='Cancel'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
-    header.insertButton('<button id="webformnew" class="btn" onclick="reloadFormPage();" title="New form"><i class="fa fa-plus" aria-hidden="true"></i></button>');
-    header.insertButton(`<button id="webformedit" class='btn' title='Edit'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
-    header.insertButton('<button id="webformsave" class="btn" title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>');
-    header.insertButton('<button id="webformaudittrail" class="btn" title="Audit Trail"><i class="fa fa-history" aria-hidden="true"></i></button>')
+    header.insertButton(`<button id="webformclose" class='btn' title='Close' style='display: none;'><i class="fa fa-times" aria-hidden="true"></i></button>`);
+    header.insertButton(`<button id="webformdelete" class='btn' title='Delete' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
+    header.insertButton(`<button id="webformcancel" class='btn' title='Cancel' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
+    header.insertButton(`<button id="webformnew" class="btn" onclick="reloadFormPage();" title="New form"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
+    header.insertButton(`<button id="webformedit" class='btn' title='Edit' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
+    header.insertButton(`<div id="webformsave-selbtn"  style='display: none;' class="btn-select">
+                            <button id="webformsave" class="savebtn" title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>                        
+                            <select class="selectpicker">
+                              <option data-token="new" data-icon="fa-save"> & New</option>
+                              <option data-token="edit" data-icon="fa-save"> & Continue</option>
+                              <option data-token="view" data-icon="fa-save"> & View</option>
+                              <option data-token="close" data-icon="fa-save"> & Close</option>
+                            </select>
+                        </div>
+
+`);
+    header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`)
     
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
@@ -269,7 +317,7 @@
 
     const renderer = new WebFormRender({
         formObj: _formObj,
-        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail"},
+        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose"},
         formRefId: _formRefId,
         mode: _mode,
         rowId: _rowId,

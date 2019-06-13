@@ -209,7 +209,7 @@ body {
 .tdash-box-body {
     padding: 0 12px;
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
 }
 
 .solutionhead {

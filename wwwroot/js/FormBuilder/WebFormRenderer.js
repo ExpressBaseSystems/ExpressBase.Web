@@ -3,13 +3,16 @@
 * to Render WebForm
 * EXPRESSbase Systems Pvt. Ltd , Jith Job
 */
+
 const WebFormRender = function (option) {
     this.FormObj = option.formObj;
+    this.$form = $(`#${this.FormObj.EbSid}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
     this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
     this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
+    this.$closeBtn = $('#' + option.headerBtns['Close']);
     this.Env = option.env;
     this.Cid = option.cid;
     this.initControls = new InitControls(this);
@@ -121,11 +124,25 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.SetWatchers = function () {
+        Object.defineProperty(this.formObject, "__mode", {
+            set: function (value) {
+                this.$form.attr("mode", value);
+
+            }.bind(this),
+            get: function () {
+                return this.$form.attr("mode");
+            }.bind(this)
+        });
+    };
+
     this.initWebFormCtrls = function () {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
-        this.formObject.__mode = "new";
+        this.SetWatchers();
+        this.formObject.__mode = "new";// added a watcher to update form attribute
+
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
         this.initDGs();
@@ -144,7 +161,9 @@ const WebFormRender = function (option) {
             control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
         }
         catch (e) {
-            alert("error in 'On Change function' of : " + control.Name);
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
         }
     };
 
@@ -409,7 +428,7 @@ const WebFormRender = function (option) {
         return JSON.stringify(WebformData);
     };
 
-    this.ajaxsuccess = function (_respObj) {
+    this.saveSuccess = function (_respObj) {// need cleanup
         this.hideLoader();
         let respObj = JSON.parse(_respObj);
         let locName = loc__.CurrentLocObj.LongName;
@@ -445,6 +464,7 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
             }
         }
+        this.afterSaveAction();
         //window.parent.closeModal();
     };
 
@@ -498,7 +518,7 @@ const WebFormRender = function (option) {
                 //beforeSend: function (xhr) {
                 //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
                 //}.bind(this),
-                success: this.ajaxsuccess.bind(this)
+                success: this.saveSuccess.bind(this)
             });
         }.bind(this), 2);
 
@@ -823,7 +843,7 @@ const WebFormRender = function (option) {
 
         });
     };
-    
+
     this.showLoader = function () {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
@@ -852,7 +872,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
@@ -860,21 +880,16 @@ const WebFormRender = function (option) {
                 $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
                 $("#Eb_com_menu").remove();
             }
-            if (reqstMode === "New Mode") {
-                this.headerObj.showElement(this.filterHeaderBtns(["webformsave"], currentLoc, reqstMode));
-            }
-            this.headerObj.setName(_formObj.DisplayName);
-            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-            $('title').text(_formObj.DisplayName + `(${reqstMode})`);
-            return;
+            this.headerObj.showElement(["webformclose"]);
         }
+
         this.mode = reqstMode;//
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave", "webformaudittrail"], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
         }
         else if (reqstMode === "New Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformsave"], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"], currentLoc, reqstMode));
@@ -888,16 +903,20 @@ const WebFormRender = function (option) {
         this.headerObj.setName(_formObj.DisplayName);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
         $('title').text(this.FormObj.DisplayName + `(${reqstMode})`);
+
+        if (this.isPartial === "True") {
+            this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);
+        }
     };
 
     this.filterHeaderBtns = function (btns, loc, mode) {
         let r = [];
-        // ["webformsave", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
-        // ["New", "View", "Edit", "Delete", "Cancel", "Print", "AuditTrail"]
+        // ["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
+        // ["New", "View", "Edit", "Delete", "Cancel", "AuditTrail"]
         for (let i = 0; i < btns.length; i++) {
-            if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')            
+            if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
                 r.push(btns[i]);
-            else if (btns[i] === "webformsave" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
+            else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
                 r.push(btns[i]);
             else if (btns[i] === "webformedit" && this.formPermissions[loc].indexOf('Edit') > -1)
                 r.push(btns[i]);
@@ -913,18 +932,59 @@ const WebFormRender = function (option) {
         return r;
     };
 
+    this.newAfterSave = function () {
+        this.showLoader();
+        reloadFormPage();
+    }.bind(this);
+
+    this.continueAfterSave = function () {
+        this.SwitchToEditMode();
+    }.bind(this);
+
+    this.viewAfterSave = function () {
+        this.SwitchToViewMode();
+    }.bind(this);
+
+    this.closeAfterSave = function () {
+        this.showLoader();
+        document.location.href = "/";
+    }.bind(this);
+
+    this.saveSelectChange = function () {
+        this.saveForm();
+        let val = $(".btn-select .selectpicker").find("option:selected").attr("data-token");
+        this.afterSaveAction = this.getAfterSaveActionFn(val);
+    }.bind(this);
+
+    this.getAfterSaveActionFn = function (mode) {
+        if (mode === "new")
+            return this.newAfterSave;
+        else if (mode === "edit")
+            return this.continueAfterSave;
+        else if (mode === "view")
+            return this.viewAfterSave;
+        else if (mode === "close")
+            return this.closeAfterSave;
+    };
+
     this.init = function () {
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
+        $(".btn-select").on("click", ".dropdown-menu li", this.saveSelectChange);
+        $(".btn-select .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
+        this.$closeBtn.on("click", function () { window.parent.closeModal(); });
         $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
+
+        this.afterSaveAction = this.getAfterSaveActionFn(getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase());
 
         if (this.Mode.isNew && this.EditModeFormData)
             this.setEditModeCtrls();
@@ -937,7 +997,7 @@ const WebFormRender = function (option) {
                 let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
                 let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
                 if (ol !== nl) {
-                    EbDialog("show",{
+                    EbDialog("show", {
                         Message: "Switching from " + getObjByval(loc__.Locations, "LocId", ol).LongName + " to " + getObjByval(loc__.Locations, "LocId", nl).LongName,
                         Buttons: {
                             "Ok": {
@@ -951,29 +1011,30 @@ const WebFormRender = function (option) {
                             this.setHeader(this.mode);
                         }.bind(this)
                     });
-                }  
-
-                loc__.Listener.ChangeLocation = function (o) {
-                    if (this.rowId > 0) {
-                        EbDialog("show", {
-                            Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                            Buttons: {
-                                "Ok": {
-                                    Background: "green",
-                                    Align: "right",
-                                    FontColor: "white;"
-                                }
-                            },
-                            CallBack: function (name) {
-                                reloadFormPage();
-                            }.bind(this)
-                        });
-                    }
-                }.bind(this);
+                }
             }.bind(this), 500);
 
         }
-       
+        setTimeout(function () {
+            loc__.Listener.ChangeLocation = function (o) {
+                if (this.rowId > 0) {
+                    EbDialog("show", {
+                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            reloadFormPage();
+                        }.bind(this)
+                    });
+                }
+            }.bind(this);
+        }.bind(this), 500);
+
     };
 
     this.init();

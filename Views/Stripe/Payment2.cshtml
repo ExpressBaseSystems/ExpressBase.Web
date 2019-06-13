@@ -1,0 +1,286 @@
+﻿@*@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}*@
+<head>
+    <title>Customer Creation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+    <script type="text/javascript">
+        function calculateAmt() {
+            var users = document.getElementById('usr').value;
+            var tot;
+            if (users <= 5) {
+                tot = 0;
+            }
+            else {
+                var tot = (users - 5) * 20;
+            }
+            document.getElementById('total').innerHTML = tot;
+            document.getElementById('tot').value = tot;
+        }
+        $(document).ready(function () {
+            var variable = "id";
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                    document.getElementById('plan').value = pair[1];
+                }
+            }
+        });
+
+
+    </script>
+</head>
+
+<form id="payment-form" action="/Stripe/Payment2" method="post">
+    <div class="form-style">
+        <div class="form-row">
+            <input type="hidden" id="plan" name="plan" />
+            <label for="card-element" class="label-font">
+                Credit or debit card
+            </label>
+            <div id="card-element">
+                <!-- A Stripe Element will be inserted here. -->
+            </div>
+            <input type="hidden" id="token" name="token">
+            <!-- Used to display form errors. -->
+            <div id="card-errors" role="alert"></div>
+        </div>
+        <br />
+        <div class="form-row">
+            <label class="label-font">
+                Name
+            </label>
+            <div>
+                <input type="text" id="name" class="text-input" name="name" />
+            </div>
+        </div>
+        <br />
+
+        <div>
+
+        </div>
+
+        <div class="form-row" style="display:inline-block;">
+            <label class="label-font">
+                Address Line 1
+            </label>
+
+            <div>
+                <input type="text" id="add1" class="text-input-sub" name="add1" />
+            </div>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="form-row" style="display:inline-block;">
+            <label class="label-font">
+                Address Line 2
+            </label>
+            <div>
+                <input type="text" id="add2" class="text-input-sub" name="add2" />
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="form-row" style="display:inline-block;">
+            <label class="label-font">
+                City
+            </label>
+            <div>
+                <input type="text" id="city" class="text-input-sub" name="city" />
+            </div>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="form-row" style="display:inline-block;">
+            <label class="label-font">
+                State
+            </label>
+            <div>
+                <input type="text" id="state" class="text-input-sub" name="state" />
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="form-row" style="display:inline-block;">
+            <label class="label-font">
+                Country
+            </label>
+            <div>
+                <input type="text" id="country" class="text-input-sub" name="country" />
+            </div>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="form-row" style="display:inline-block;">
+            <label class="label-font">
+                Email Id
+            </label>
+            <div>
+                <input type="email" id="emailid" class="text-input-sub" name="emailid" />
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="form-row">
+            <button class="button-style" id="pay" name="pay">Pay</button>
+        </div>
+    </div>
+</form>
+<style>
+    .StripeElement {
+        box-sizing: border-box;
+        height: 40px;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: white;
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+    }
+
+    .StripeElement--focus {
+        box-shadow: 0 1px 3px 0 #cfd7df;
+    }
+
+    .StripeElement--invalid {
+        border-color: #fa755a;
+    }
+
+    .StripeElement--webkit-autofill {
+        background-color: #fefde5 !important;
+    }
+
+    .form-style {
+        background-color: whitesmoke;
+        margin: 50px 400px 50px 400px;
+        padding-top: 50px;
+        padding-right: 50px;
+        padding-bottom: 50px;
+        padding-left: 80px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+
+    .label-font {
+        font-family: Helvetica Neue, Helvetica, sans-serif;
+        margin-bottom: 3px;
+        padding-bottom: 10px;
+    }
+
+    .button-style {
+        border-radius: 8px;
+        padding: 12px 28px;
+        font-size: 15px;
+        font-family: Helvetica Neue, Helvetica, sans-serif;
+        color: white;
+        background-color: #008CBA;
+        border-color: #008CBA;
+        width: 570px;
+    }
+
+    .text-input {
+        font-size: 15px;
+        font-family: Helvetica Neue, Helvetica, sans-serif;
+        color: black;
+        box-sizing: border-box;
+        height: 40px;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: white;
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+        width: 570px;
+        padding-top: 4px;
+    }
+
+    .text-input-sub {
+        font-size: 15px;
+        font-family: Helvetica Neue, Helvetica, sans-serif;
+        color: #aab7c4;
+        box-sizing: border-box;
+        height: 40px;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: white;
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+        padding-top: 4px;
+        width: 262px;
+    }
+
+
+    .div-style {
+        display: inline-block;
+    }
+</style>
+<script>
+    var stripe = Stripe('pk_test_CGH1Rf9K7oGeINYguJ1Y8NnC00F31HG9JW');
+
+    // Create an instance of Elements.
+    var elements = stripe.elements();
+
+    // Custom styling can be passed to options when creating an Element.
+    // (Note that this demo uses a wider set of styles than the guide below.)
+    var style = {
+        base: {
+            color: '#32325d',
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+                color: '#aab7c4'
+            }
+        },
+        invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a'
+        }
+    };
+
+    // Create an instance of the card Element.
+    var card = elements.create('card', { style: style });
+
+    // Add an instance of the card Element into the `card-element` <div>.
+    card.mount('#card-element');
+
+    // Handle real-time validation errors from the card Element.
+    card.addEventListener('change', function (event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Handle form submission.
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        stripe.createToken(card).then(function (result) {
+            if (result.error) {
+                // Inform the user if there was an error.
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                let dt = new Date(result.token.created * 1000);
+                result.token.created = dt.getUTCFullYear() + "-" + (dt.getUTCMonth() + 1) + "-" + dt.getUTCDate() + " " + dt.getUTCHours() + ":" + dt.getUTCMinutes() + ":" + dt.getUTCSeconds();
+
+                document.getElementById('token').value = JSON.stringify(result.token);
+                form.submit();
+            }
+        });
+    });
+
+
+
+</script>

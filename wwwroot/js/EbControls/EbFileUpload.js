@@ -529,7 +529,7 @@ class EbFileUpload extends EbFupStaticData {
             url = "../StaticFile/UploadLocAsync";
 
         for (let k = 0; k < this.Files.length; k++) {
-            let formData = new FormData(this.Files[k]);
+            let formData = new FormData();
             formData.append("File", this.Files[k]);
             formData.append("SolnId", this.Options.SolutionId || "");
 
@@ -553,7 +553,7 @@ class EbFileUpload extends EbFupStaticData {
     comUpload() {
         for (let k = 0; k < this.Files.length; k++) {
             let thumb = null;
-            let formData = new FormData(this.Files[k]);
+            let formData = new FormData();
             formData.append("File", this.Files[k]);
             formData.append("Tags", this.getTag(this.Files[k]));
             formData.append("Category", this.readCategory(this.Files[k]));

@@ -66,8 +66,11 @@ namespace ExpressBase.Web.Controllers
             string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
             List<Param> param = (returnValue == null) ? null : JsonConvert.DeserializeObject<List<Param>>(returnValue);
             Render(refid, param);
-             // visualizations logic to be implemented
-            return Pdf;
+            // visualizations logic to be implemented
+            if ((Pdf as FileStreamResult).FileStream.Length > 0)
+                return Pdf;
+            else
+                return Redirect("/StatusCode/500");
         }
         public IActionResult RenderforBot(string refid)
         {

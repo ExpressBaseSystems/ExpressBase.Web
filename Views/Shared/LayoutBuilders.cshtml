@@ -108,13 +108,13 @@
     <script src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>@*jith*@
     <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version=@bApnd></script>@*jith*@
     <script type="text/javascript" src="~/js/Eb_ObjectCommon.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/EbQuickMenu/Menu.js" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/EbCropper.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/EbParams.Mange.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/EbDialogBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="~/js/Eb_CommonHeader.js" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbQuickMenu/eb-quickmenu.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
 
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
@@ -143,7 +143,8 @@
     <script>
     window.ebcontext= {
         sid: "@ViewBag.cid",
-        user: JSON.parse('@Html.Raw(ViewBag.UserObject)')
+        user: JSON.parse('@Html.Raw(ViewBag.UserObject)'),
+        menu: {}
     }
     </script>
 </head>
@@ -181,8 +182,11 @@
 </body>
 </html>
 <script>
-    var menu = new menujs('@ViewBag.wc','@ViewBag.cid','@ViewBag.UId');//init menu
-    $("#layout_div").data("menu", menu);
+    window.ebcontext.menu = new EbMenu({
+        Console: '@ViewBag.wc',
+        Sid: '@ViewBag.cid',
+        Uid: '@ViewBag.UId'
+    });
     $('.Eb_Image').Lazy();
 </script>
 

@@ -89,9 +89,7 @@
                 radioContainer.attr("ischecked", true);
                 this.CurrentLoc = radioContainer.attr("LocId");
                 this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
-                this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
                 this.uncheckOthers($(e.target).closest(".locationwrapper"));
-                this.Listener.ChangeLocation(this.CurrentLocObj);
             }
             else {
                 this.uncheckOthers($(e.target).closest(".locationwrapper"));
@@ -99,7 +97,6 @@
         }
         catch (err) {
             console.log(err);
-            this.Listener.ChangeLocation(null);
         }
     };
 
@@ -116,6 +113,8 @@
         store.clearAll();
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
         this.showSwitcher();
+        this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+        this.Listener.ChangeLocation(this.CurrentLocObj);
     };
 
     this.showSwitcher = function (e) {

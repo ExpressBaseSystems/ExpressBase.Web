@@ -600,7 +600,7 @@
     this.getOSElist = function () {
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
-        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]) {
+        if (!this.OSEList) {
             $.LoadingOverlay("show");
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",
@@ -610,7 +610,7 @@
             });
         }
         else
-            this.biuldObjList(this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]);
+            this.biuldObjList(this.OSEList);
     }.bind(this);
 
     this.biuldObjList = function (data) {
@@ -626,6 +626,7 @@
         }.bind(this));
         //this.PGobj.OSElist[ObjType] = data;
         this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType] = data;
+        this.OSEList = this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType];
         if ($(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").length === 0) {
             $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(`
                 <div  class='input-group' style='width: 50%;'>
@@ -777,7 +778,7 @@
         e.stopPropagation();
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
-        this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType] = null;
+        this.OSEList = null;
         this.getOSElist();
     };
 
@@ -1098,6 +1099,6 @@
 
         $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="fs_' + this.PGobj.wraperId + '"> </div>');
         $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="mls_' + this.PGobj.wraperId + '"> </div>');
-    }
+    };
     this.Init();
 };

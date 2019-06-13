@@ -25,6 +25,27 @@
         $("#" + this.whichModal + " [name='" + input + "']").val($(obj).text());
     }
 
+    this.IntegrationSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/Integrate",
+            data: postData,
+            beforeSend: function () {
+                $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            $("#Integration_loder").EbLoader("hide");
+            if (data) {
+                EbMessage("show", { Message: "Integreation Changed Successfully" });
+                $("#All_IntreationList").modal("toggle");
+            }
+            else
+                EbMessage("show", { Message: "Integreation Change Failed", Background: "red" });
+        }.bind(this));
+    };
+
     this.dbconnectionsubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -72,8 +93,7 @@
             }
         }).done(function (data) {
             $("#email_loader").EbLoader("hide");
-            this.appendEmailConnection(JSON.parse(data));
-            $("#EmailConnectionEdit").modal("toggle");
+            $("#EmailconnectionEdit").modal("toggle");
         }.bind(this));
     };
 
@@ -125,8 +145,6 @@
             }
         }).done(function (data) {
             $("#cloudnary_loader").EbLoader("hide");
-            var d = JSON.parse(data.CloudinaryConnection.Account);
-            this.appendCloudnaryConnection(d);
             $("#cldnry_conEdit").modal("toggle");
         }.bind(this));
     };
@@ -398,7 +416,7 @@
         temp = temp[DatabaseName];
         var button = $(e.currentTarget)
         var INt_conf_id = $(button).attr("datawhater")
-        $('#mongointegrationedit').trigger('click');
+        $('#filesDbConnectEdit').modal('toggle');
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 //$('#dbvendorInput').val(temp[obj].DatabaseVendor);
@@ -452,7 +470,7 @@
                 $('#EmailInputPassword').val(temp1["Password"]);
                 $('#EmailInputSMTP').val(temp1["Host"]);
                 $('#EmailInputPort').val(temp1["Port"]);
-                $('#SMTPInputIntConfId').val(temp1["Id"]);
+                //$('#SMTPInputIntConfId').val(temp1["Id"]);
                 $('#IsSSL').val(temp1["IsSSL"]);
             }
         }
@@ -530,12 +548,16 @@
         var html = [];
         $('#All_IntreationList').modal('toggle');
         let which = $(e.target).closest(".Inter_modal_list").attr("data-type");
+        let pref = $(e.target).closest(".Inter_modal_list").attr("pref");
+        let Id = $(e.target).closest(".Inter_modal_list").attr("IntConfId");
         var temp = this.Connections.IntegrationsConfig;
         $(`#All_Intreation_header h3`).empty().append(which);
         $(`#All_Intreation_bodyflex`).empty();
+        html.push(`<input name="Preference" type="text" style="display:none" value="${pref}" />
+                        <input name="Id" type="text" style="display:none" value="${Id}" />
+                            <input name="Type" type="text" style="display:none" value="${which}" />`);
         switch (which) {
             case "EbOBJECTS":
-                html.push(`<div class="list-group">`);
                 var EbOBJECTS = [
                     "PGSQL",
                     "MSSQL",
@@ -545,14 +567,11 @@
                 for (let j = 0; j < EbOBJECTS.length; j++)
                     if (temp[EbOBJECTS[j]] !== undefined) {
                         for (let i = 0, n = temp[EbOBJECTS[j]].length; i < n; i++) {
-                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[EbOBJECTS[j]][i].NickName}</a>`);
+                            html.push(`<input type="radio" name="ConfId" value="${temp[EbOBJECTS[j]][i].Id}" class="modalintegre-list-a">${temp[EbOBJECTS[j]][i].NickName}<br>`);
                         }
-                    }    
-                html.push(`</div>`);
-                $('#All_Intreation_bodyflex').append(html.join(""));
+                    }  
                 break;
             case "EbDATA":
-                html.push(`<div class="list-group">`);
                 var EbDATA = [
                     "PGSQL",
                     "MSSQL",
@@ -562,14 +581,11 @@
                 for (let j = 0; j < EbDATA.length; j++)
                     if (temp[EbDATA[j]] !== undefined) {
                         for (let i = 0, n = temp[EbDATA[j]].length; i < n; i++) {
-                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[EbDATA[j]][i].NickName}</a>`);
+                            html.push(`<input type="radio" name="ConfId" value="${temp[EbDATA[j]][i].Id}" class="modalintegre-list-a">${temp[EbDATA[j]][i].NickName}<br>`);
                         }
                     }    
-                html.push(`</div>`);
-                $('#All_Intreation_bodyflex').append(html.join(""));
                 break;
             case "EbFILES":
-                html.push(`<div class="list-group">`);
                 var EbFILES = [
                     "PGSQL",
                     "MSSQL",
@@ -580,14 +596,11 @@
                 for (let j = 0; j < EbFILES.length; j++)
                     if (temp[EbFILES[j]] !== undefined) {
                         for (let i = 0, n = temp[EbFILES[j]].length; i < n; i++) {
-                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[EbFILES[j]][i].NickName}</a>`);
+                            html.push(`<input type="radio" name="ConfId" value="${temp[EbFILES[j]][i].Id}" class="modalintegre-list-a">${temp[EbFILES[j]][i].NickName}<br>`);
                         }
                     }
-                html.push(`</div>`);
-                $('#All_Intreation_bodyflex').append(html.join(""));
                 break;
             case "EbLOGS":
-                html.push(`<div class="list-group">`);
                 var EbLOGS = [
                     "PGSQL",
                     "MSSQL",
@@ -598,28 +611,22 @@
                 for (let j = 0; j < EbLOGS.length; j++)
                     if (temp[EbLOGS[j]] !== undefined) {
                         for (let i = 0, n = temp[EbLOGS[j]].length; i < n; i++) {
-                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[EbLOGS[j]][i].NickName}</a>`);
+                            html.push(`<input type="radio" name="ConfId" value="${temp[EbLOGS[j]][i].Id}" class="modalintegre-list-a">${temp[EbLOGS[j]][i].NickName}<br>`);
                         }
                     }
-                html.push(`</div>`);
-                $('#All_Intreation_bodyflex').append(html.join(""));
                 break;
             case "SMTP":
-                html.push(`<div class="list-group">`);
                 var SMTP = [
                     "SMTP"
                 ];
                 for (let j = 0; j < SMTP.length; j++)
                     if (temp[SMTP[j]] !== undefined) {
                         for (let i = 0, n = temp[SMTP[j]].length; i < n; i++) {
-                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[SMTP[j]][i].NickName}</a>`);
+                            html.push(`<input type="radio" name="ConfId" value="${temp[SMTP[j]][i].Id}" class="modalintegre-list-a">${temp[SMTP[j]][i].NickName}<br>`);
                         }
                     }
-                html.push(`</div>`);
-                $('#All_Intreation_bodyflex').append(html.join(""));
                 break;
             case "SMS":
-                html.push(`<div class="list-group">`);
                 var SMS = [
                     "ExpertTexting",
                     "Twilio"
@@ -627,30 +634,26 @@
                 for (let j = 0; j < SMS.length; j++)
                     if (temp[SMS[j]] !== undefined) {
                         for (let i = 0, n = temp[SMS[j]].length; i < n; i++) {
-                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[SMS[j]][i].NickName}</a>`);
+                            html.push(`<input type="radio" name="ConfId" value="${temp[SMS[j]][i].Id}" class="modalintegre-list-a">${temp[SMS[j]][i].NickName}<br>`);
                         }
                     }
-                html.push(`</div>`);
-                $('#All_Intreation_bodyflex').append(html.join(""));
                 break;
             case "Cloudinary":
-                html.push(`<div class="list-group">`);
                 var Cloudinary = [
                     "Cloudinary"
                 ];
                 for (let j = 0; j < Cloudinary.length; j++)
                     if (temp[Cloudinary[j]] !== undefined) {
                         for (let i = 0, n = temp[Cloudinary[j]].length; i < n; i++) {
-                            html.push(`<a href="#" class=" list-group-item modalintegre-list-a">${temp[Cloudinary[j]][i].NickName}</a>`);
+                            html.push(`<input type="radio" name="ConfId" value="${temp[Cloudinary[j]][i].Id}" class="modalintegre-list-a">${temp[Cloudinary[j]][i].NickName}<br>`);
                         }
                     }
-                html.push(`</div>`);
-                $('#All_Intreation_bodyflex').append(html.join(""));
-                break;
                 break;
             default:
                 text = "I have never heard of that fruit...";
         }
+
+        $('#All_Intreation_bodyflex').append(html.join(""));
     }.bind(this);
 
     this.AllInterationConfigDisp = function (e) {
@@ -733,6 +736,7 @@
     };
 
     this.init = function () {
+        $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#emailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
@@ -777,7 +781,7 @@
         $("#All_IntreationConfig").on("click", ".MSSQLedit", this.PostgreinteConfEditr.bind(this));
         $("#All_IntreationConfig").on("click", ".ORACLEedit", this.PostgreinteConfEditr.bind(this));
         //$(".oracleintegrationedit").on("click", this.DbinteConfEditr.bind(this));
-        $("#All_IntreationConfig").on("click", ".MongoDbedit", this.MongointeConfEditr.bind(this));
+        $("#All_IntreationConfig").on("click", ".MongoDBedit", this.MongointeConfEditr.bind(this));
         $("#All_IntreationConfig").on("click", ".Cloudinaryedit", this.ColudinaryinteConfEditr.bind(this));
         $("#All_IntreationConfig").on("click", ".SMTPedit", this.SmtpinteConfEditr.bind(this));
         $("#All_IntreationConfig").on("click", ".Twilioedit", this.twiliointeConfEditr.bind(this));

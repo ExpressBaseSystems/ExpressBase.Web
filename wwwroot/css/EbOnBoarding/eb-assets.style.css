@@ -278,9 +278,8 @@
 }
 
 .modalintegre-list-a {
-    height: 34px;
-    width: 200px;
-    padding: 6px !important;
+    margin: 7px !important;
+    font-size: medium;
 }
 
 .editpannel {

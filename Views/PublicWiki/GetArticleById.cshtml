@@ -1,21 +1,46 @@
 ﻿@{
-    Layout = "~/Views/Shared/LayoutInner.cshtml";
-    Html.RenderPartial("ExtPageHeader");
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    //Html.RenderPartial("ExtPageHeader");
 }
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 
 <script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
 <script>
-        $(document).ready(function () {
-            new addwiki();
-        });
+    $(document).ready(function () {
+        new addwiki();
+    });
 </script>
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+
+
+<nav class="navbar" style=" border-bottom:double;border-bottom-color:black">
+    <div class="container-fluid">
+        <div class=" row ">
+            <div class="col-sm-3 navbar-default">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">ExpressBase</a>
+                </div>
+            </div>
+            <div class="col-sm-9 ">
+                <div class="navbar-header wiki-align">
+                    <input type="text" class="search-button" placeholder="Search.." id="search_wiki" />
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 <div class="">
-   @{
-       Wiki wiki = ViewBag.Wiki;
-       <h1>@wiki.Title</h1>
-       <h3>@wiki.Category</h3>
-       <p>@Html.Raw(wiki.HTML)</p>
-    }
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                @{
+                    Wiki wiki = ViewBag.Wiki;
+                    
+                    @Html.Raw(wiki.HTML)
+                }
+            </div>
+        </div>
+    </div>
+
 </div>

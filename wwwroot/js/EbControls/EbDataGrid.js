@@ -63,14 +63,14 @@
     };
 
     this.SwitchToEditMode = function () {
-        $(`#${this.TableId} tbody [is-editing=true]`).remove();
+        this.rowSLCounter = this.rowSLCounter - $(`#${this.TableId} tbody [is-editing=true]`).remove().length;
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "edit");
         this.mode_s = "edit";
         this.tryAddRow();
     };
 
     this.SwitchToViewMode = function () {
-        $(`#${this.TableId} tbody [is-editing=true]`).remove();
+        $(`#${this.TableId} tbody [is-editing=true]`).remove();        
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "view");
         this.mode_s = "view";
     };
@@ -419,12 +419,14 @@
             if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
                 try {
                     let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                    inpCtrl.__onChangeFn = onChangeFn;
+                    console.eb_log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
                     onChangeFn();
                 }
                 catch (e) {
-                    console.log("eb error :");
-                    console.log(e);
-                    alert("error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
+                    console.eb_log("eb error :");
+                    console.eb_log(e);
+                    alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
                 }
             }
         }.bind(this));
@@ -648,14 +650,20 @@
     this.AddRowWithData = function (_rowdata) {
         let addedRowObj = this.addRow({ isAddBeforeLast: true });
         let $addedRow = addedRowObj[0];
-        let addedRow = addedRowObj[1];
+        let addedRowCols = addedRowObj[1];
         let callBFn = function () {
             setTimeout(function () {
-                let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRow[0].__rowid}] td:last`)[0];
+                let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRowCols[0].__rowid}] td:last`)[0];
+                {// experimental code
+                    $.each(addedRowCols, function (i, col) {
+                        if (col.__onChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '')
+                            col.__onChangeFn();
+                    }.bind(this));
+                }
                 this.checkRow_click({ target: td }, false);
             }.bind(this), 1);
         }.bind(this);
-        $.each(addedRow, function (i, col) {
+        $.each(addedRowCols, function (i, col) {
             let data = _rowdata[col.Name];
             if (data !== null) {
                 if (col.ObjType === "PowerSelect")
@@ -711,9 +719,19 @@
         this.updateRowByRowId(rowId, rowData);
     };
 
+    this.updateRowBySlno = function (slno, rowData) {
+        let rowId = $(`#${this.TableId}>tbody>tr>td.row-no-td[idx=${slno}]`).parent().attr("rowid");
+        this.updateRowByRowId(rowId, rowData);
+    };
+
     this.updateRowByRowId = function (rowId, rowData) {
 
         let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+        if ($tr.length === 0) {
+            console.log(`eb error :    No row with rowId '${rowId}' exist`);
+            return;
+        }
+
         $.each(Object.keys(rowData), function (i, key) {
             let obj = getObjByval(this.AllRowCtrls[rowId], "Name", key);
             if (obj) {
@@ -756,6 +774,19 @@
         }.bind(this));
     };
 
+    this.defineRowCount = function () {
+        this.ctrl.RowCount = 0;
+        Object.defineProperty(this.ctrl, "RowCount", {
+            get: function () {
+                return $(`#${this.TableId}>tbody>tr`).length;
+            }.bind(this),
+            set: function (value) {
+                if (value !== this.ctrl.RowCount)
+                    alert(`you have no right to  modify '${this.ctrl.Name}.RowCount'`);
+            }.bind(this)
+        });
+    };
+
 
     this.init = function () {
         this.ctrl.currentRow = [];
@@ -782,18 +813,22 @@
             this.initAgg();
             $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).show();
         }
+        if (!this.ctrl.IsShowSerialNumber)
+            $(`#${this.ctrl.EbSid}Wraper`).attr("hideslno", "true");
 
         this.ctrl.addRow = this.AddRowWithData.bind(this);
         this.ctrl.clear = this.clearDG.bind(this);
 
         this.ctrl.updateRowByRowId = this.updateRowByRowId.bind(this);
         this.ctrl.updateRowByRowIndex = this.updateRowByRowIndex.bind(this);
+        this.ctrl.updateRowBySlno = this.updateRowBySlno.bind(this);
 
         this.ctrl.disableRow = this.disableRow.bind(this);
         this.ctrl.enableRow = this.enableRow.bind(this);
 
         this.ctrl.showRow = this.showRow.bind(this);
         this.ctrl.hideRow = this.hideRow.bind(this);
+        this.defineRowCount();
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

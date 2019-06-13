@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<head>
+    <title>Customer Upcoming Stripe Invoice</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        .form-style {
+            background-color: white;
+            margin: 50px 400px 50px 400px;
+            padding-top: 50px;
+            padding-right: 50px;
+            padding-bottom: 50px;
+            padding-left: 80px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .div-row {
+            color: darkslategrey;
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            font-size: medium;
+            display: inline-block;
+        }
+
+        .div-input {
+            margin-top: 10px;
+        }
+
+        .span-style {
+            margin-left: 50px;
+        }
+
+        .text-input {
+            font-size: 15px;
+            box-sizing: border-box;
+            height: 40px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background-color: white;
+            box-shadow: 0 1px 3px 0 #e6ebf1;
+            -webkit-transition: box-shadow 150ms ease;
+            transition: box-shadow 150ms ease;
+            padding-top: 4px;
+            width: 262px;
+        }
+
+        .submit-button {
+            border-radius: 8px;
+            padding: 12px 0px;
+            font-size: 15px;
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            color: white;
+            background-color: #008CBA;
+            width: 570px;
+            margin-top: 20px;
+        }
+
+            .submit-button:hover {
+                box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+            }
+    </style>
+
+    <script type="text/javascript">
+        function calculateAmt() {
+            var users = document.getElementById('users').value;
+            var tot;
+            if (users <= 5) {
+                tot = 0;
+            }
+            else {
+                var tot = (users - 5) * 20;
+            }
+            document.getElementById('tot').value = tot;
+            tot = "$" + tot;
+            document.getElementById('total').innerHTML = tot;
+
+        }
+    </script>
+
+</head>
+<body>
+    <div class="form-style">
+        <form action="/Stripe/UpdateCustomerSubscription" method="post">
+            <div class="div-row">
+                <label>Number of Users</label>
+                <div class="div-input">
+                    <input type="number" id="users" name="users" class="text-input" onchange="calculateAmt()" onkeyup="calculateAmt()" value="5" min="5" />
+                </div>
+            </div>
+            <div class="div-row">
+                <span id="total" class="span-style"></span> (Free for 5 Users)
+                <input type="hidden" id="tot" name="tot" />
+            </div>
+            <div>
+                <input type="submit" name="sub_update" id="sub_update" value="Upgrade" class="submit-button" />
+            </div>
+        </form>
+    </div>
+</body>

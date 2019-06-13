@@ -229,11 +229,12 @@
     position: absolute;
     left: 11.5px;
     top: -0.5px;
-    color: green;
+    color: #019a01;
     height: 24px;
     width: 24px;
     padding-top: 2px;
     border-radius: 100%;
+    font-size: 13px;
 }
 
 .edit-row:hover {
@@ -327,7 +328,7 @@
 }
 
 [coltype='DGNumericColumn'] {
-    direction: rtl;
+    text-align: right;
 }
 
 tr[agg='true'] [coltype='DGNumericColumn'] span {
@@ -581,13 +582,20 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px solid #e3e3e3;*/
 }
 
+.ctrl-cover[hideslno=true] .slno, .ctrl-cover[hideslno=true] .row-no-td {
+    display: none;
+}
+
 .ctrl-cover .dropdown-toggle {
-    padding: 0px 12px;
     border-radius: 1px;
     font-size: 13px;
     height: 24px;
     background-color: white;
     box-shadow: none !important;
+}
+
+[ctype=SimpleSelect] .ctrl-cover .dropdown-toggle, [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle {
+    padding: 0 12px 0 5px
 }
 
 .ctrl-cover > div > div > div.bs-searchbox > input {
@@ -664,16 +672,22 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .eb-ctrl-label {
+    position: relative;
     font-size: 11.5px;
     font-weight: bold;
     padding: 1px;
     padding: 2px 0px;
     display: inline-block;
     margin: 1px 0;
+    z-index: -1;
 }
 
 [isrendermode="True"] [eb-hidden="True"] {
     display: none;
+}
+
+[singleselect="true"] .selected-tag {
+    width: calc(100% - 6px);
 }
 
 .helpText {
@@ -1000,6 +1014,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         padding: 3px 7px !important;
     }
 
+[eb-form="true"][mode="view"] .v-select .selected-tag > .close {
+    display: none;
+}
+
+[eb-form="true"][mode="view"] .v-select .selected-tag {
+    padding: 0.01em .45em 0.15em 0.45em !important;
+}
+
 .webform-cont ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -1037,9 +1059,37 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     font-size: 11px;
 }
 
+.btn-select {
+    position: relative;
+    display: inline-block;
+}
 
+.btn-select .bootstrap-select .dropdown-toggle .filter-option-inner {
+    display: none !important;
+}
+
+    .btn-select .savebtn {
+        position: absolute;
+        left: 0;
+        z-index: 2;
+        background-color: transparent;
+        border: none;
+        padding: 2px 8PX 4px 8PX;
+    }
+
+    .btn-select .bootstrap-select.dropdown {
+        width: 50px !important;
+    }
+
+    .btn-select .dropdown-menu > li > a {
+        padding: 3px 10px !important;
+        font-size: 11.5px !important;
+    }
+
+    .btn-select .dropdown-menu{
+        border-radius:2px !important;
+    }
 /*animations*/
-
 /* Safari 4.0 - 8.0 */
 @-webkit-keyframes dim_border {
     from {

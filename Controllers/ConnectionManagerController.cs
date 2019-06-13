@@ -589,41 +589,42 @@ namespace ExpressBase.Web.Controllers
 
 
         //-------------------------------------------------------------Integrations-----------------
-        // [HttpPost]
+        [HttpPost]
         public string AddDB()
         {
-            //var req = this.HttpContext.Request.Form;
+            var req = this.HttpContext.Request.Form;
             EbDbConfig con = new EbDbConfig();
-            DatabaseVendors vendor = 0;/*Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString());*/
+            DatabaseVendors vendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString());
 
 
             if (vendor == DatabaseVendors.PGSQL)
             {
                 con = new PostgresConfig()
                 {
-                    //DatabaseName = req["databaseName"],
-                    //Server = req["server"],
-                    //Port = Convert.ToInt32(req["port"]),
-                    //UserName = req["userName"],
-                    //Password = req["password"],
-                    //ReadWriteUserName = req["readWriteUserName"],
-                    //ReadWritePassword = req["readWritePassword"],
-                    //ReadOnlyUserName = req["readOnlyUserName"],
-                    //ReadOnlyPassword = req["readOnlyPassword"],
-                    //Timeout = Convert.ToInt32(req["timeout"]),
-                    //IsSSL = (req["IsSSL"] == "on") ? true : false
-                    //NickName=req["nickname"]
-                    DatabaseName = "ebdbvmqh4i6coh20180427060153",
-                    Server = "35.200.147.143",
-                    Port = 5432,
-                    UserName = "postgres",
-                    Password = "m04P0N4t95p53bx5",
-                    ReadWriteUserName = null,
-                    ReadWritePassword = null,
-                    ReadOnlyUserName = null,
-                    ReadOnlyPassword = null,
-                    Timeout = 500,
-                    NickName = "ebdbvmqh4i6coh20180427060153_Initial"
+                    DatabaseName = req["databaseName"],
+                    Server = req["server"],
+                    Port = Convert.ToInt32(req["port"]),
+                    UserName = req["userName"],
+                    Password = req["password"],
+                    ReadWriteUserName = req["readWriteUserName"],
+                    ReadWritePassword = req["readWritePassword"],
+                    ReadOnlyUserName = req["readOnlyUserName"],
+                    ReadOnlyPassword = req["readOnlyPassword"],
+                    Timeout = Convert.ToInt32(req["timeout"]),
+                    IsSSL = (req["IsSSL"] == "on") ? true : false,
+                    NickName = req["nickname"],
+                    Id = Convert.ToInt32(req["Id"])
+                    //DatabaseName = "ebdbvmqh4i6coh20180427060153",
+                    //Server = "35.200.147.143",
+                    //Port = 5432,
+                    //UserName = "postgres",
+                    //Password = "m04P0N4t95p53bx5",
+                    //ReadWriteUserName = null,
+                    //ReadWritePassword = null,
+                    //ReadOnlyUserName = null,
+                    //ReadOnlyPassword = null,
+                    //Timeout = 500,
+                    //NickName = "ebdbvmqh4i6coh20180427060153_Initial"
                 };
             }
             if (vendor == DatabaseVendors.ORACLE)
@@ -648,18 +649,19 @@ namespace ExpressBase.Web.Controllers
             {
                 con = new MySqlConfig()
                 {
-                    //DatabaseName = req["databaseName"],
-                    //Server = req["server"],
-                    //Port = Convert.ToInt32(req["port"]),
-                    //UserName = req["userName"],
-                    //Password = req["password"],
-                    //ReadWriteUserName = req["readWriteUserName"],
-                    //ReadWritePassword = req["readWritePassword"],
-                    //ReadOnlyUserName = req["readOnlyUserName"],
-                    //ReadOnlyPassword = req["readOnlyPassword"],
-                    //Timeout = Convert.ToInt32(req["timeout"]),
-                    //IsSSL = (req["IsSSL"] == "on") ? true : false,
-                    //NickName = req["nickname"]
+                    DatabaseName = req["databaseName"],
+                    Server = req["server"],
+                    Port = Convert.ToInt32(req["port"]),
+                    UserName = req["userName"],
+                    Password = req["password"],
+                    ReadWriteUserName = req["readWriteUserName"],
+                    ReadWritePassword = req["readWritePassword"],
+                    ReadOnlyUserName = req["readOnlyUserName"],
+                    ReadOnlyPassword = req["readOnlyPassword"],
+                    Timeout = Convert.ToInt32(req["timeout"]),
+                    IsSSL = (req["IsSSL"] == "on") ? true : false,
+                    NickName = req["nickname"],
+                    Id = Convert.ToInt32(req["Id"])
                 };
             }
 
@@ -667,32 +669,33 @@ namespace ExpressBase.Web.Controllers
             {
                 DbConfig = con,
                 // IsNew = false,
-                SolutionId = ""///*req["SolutionId"]*/
+                SolnId = req["SolutionId"]
             });
             return JsonConvert.SerializeObject(con);
         }
 
-        public string IntegrateTwilio()
+        [HttpPost]
+        public string AddTwilio()
         {
             AddTwilioResponse res = new AddTwilioResponse();
             try
             {
-                //    var req = this.HttpContext.Request.Form;
+                  var req = this.HttpContext.Request.Form;
+                //EbTwilioConfig twilioCon = new EbTwilioConfig
+                //{
+                //    UserName = "Test",
+                //    From = "test",
+                //    Password = "testpw",
+                //    NickName = "nick",
+                //};
                 EbTwilioConfig twilioCon = new EbTwilioConfig
                 {
-                    UserName = "Test",
-                    From = "test",
-                    Password = "testpw",
-                    NickName = "nick",
+                    UserName = req["UserName"],
+                    From = req["From"],
+                    Password = req["Password"],
+                    NickName = req["nickname"]
                 };
-                // EbTwilioConfig twilioCon = new EbTwilioConfig
-                //{
-                //    UserName = req["UserName"],
-                //    From = req["From"],
-                //    Password = req["Password"],
-                //    NickName = req["nickname"]
-                //};
-                res = this.ServiceClient.Post<AddTwilioResponse>(new AddTwilioRequest { Config = twilioCon/*, IsNew = true, SolutionId = req["SolutionId"]*/ });
+                res = this.ServiceClient.Post<AddTwilioResponse>(new AddTwilioRequest { Config = twilioCon, /*IsNew = true,*/ SolnId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(twilioCon);
             }
             catch (Exception e)
@@ -703,30 +706,30 @@ namespace ExpressBase.Web.Controllers
         }
 
 
-        public string IntegrateExpertTexting()
+        public string AddExpertTexting()
         {
             AddETResponse res = new AddETResponse();
             try
             {
-                //   var req = this.HttpContext.Request.Form;
-                EbExpertTextingConfig con = new EbExpertTextingConfig
-                {
-                    UserName = "Test",
-                    From = "test",
-                    Password = "testpw",
-                    NickName = "nick",
-                    Id = 0
-                };
+                var req = this.HttpContext.Request.Form;
                 //EbExpertTextingConfig con = new EbExpertTextingConfig
                 //{
-                //    UserName = req["UserName"],
-                //    From = req["From"],
-                //    Password = req["Password"],
-                //    ApiKey = req["ApiKey"],
-                //    Id = Convert.ToInt32(req["Id"]),
-                //    NickName = req["nickname"]
+                //    UserName = "Test",
+                //    From = "test",
+                //    Password = "testpw",
+                //    NickName = "nick",
+                //    Id = 0
                 //};
-                res = this.ServiceClient.Post<AddETResponse>(new AddETRequest { Config = con/*, IsNew = true, SolutionId = req["SolutionId"]*/ });
+                EbExpertTextingConfig con = new EbExpertTextingConfig
+                {
+                    UserName = req["UserName"],
+                    From = req["From"],
+                    Password = req["Password"],
+                    ApiKey = req["ApiKey"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    NickName = req["nickname"]
+                };
+                res = this.ServiceClient.Post<AddETResponse>(new AddETRequest { Config = con,/* IsNew = true,*/  SolnId = req["SolutionId"]});
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)
@@ -736,31 +739,31 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public string IntegrateMongo()
+        public string AddMongo()
         {
             AddMongoResponse res = new AddMongoResponse();
-            // var req = this.HttpContext.Request.Form;
+            var req = this.HttpContext.Request.Form;
             try
             {
-                EbMongoConfig con = new EbMongoConfig
-                {
-                    UserName = "Test",
-                    Password = "testpw",
-                    Host = "test",
-                    Port = 0,
-                    Id = 0,
-                    NickName = "nick"
-                };
                 //EbMongoConfig con = new EbMongoConfig
                 //{
-                //    UserName = req["UserName"],
-                //    Password = req["Password"],
-                //    Host = req["server"],
-                //    Port = Convert.ToInt32(req["port"]),
-                //    Id = Convert.ToInt32(req["Id"]),
-                //    NickName = req["nickname"]
-                //};  
-                res = this.ServiceClient.Post<AddMongoResponse>(new AddMongoRequest { Config = con/*, IsNew = true, SolutionId = req["SolutionId"]*/ });
+                //    UserName = "Test",
+                //    Password = "testpw",
+                //    Host = "test",
+                //    Port = 0,
+                //    Id = 0,
+                //    NickName = "nick"
+                //};
+                EbMongoConfig con = new EbMongoConfig
+                {
+                    UserName = req["UserName"],
+                    Password = req["Password"],
+                    Host = req["server"],
+                    Port = Convert.ToInt32(req["port"]),
+                    Id = Convert.ToInt32(req["Id"]),
+                    NickName = req["nickname"]
+                };
+                res = this.ServiceClient.Post<AddMongoResponse>(new AddMongoRequest { Config = con/*, IsNew = true*/, SolnId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)
@@ -769,35 +772,36 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-        public string IntegrateSMTP()
+        public string AddSMTP()
         {
             AddSmtpResponse res = new AddSmtpResponse();
-            //    var req = this.HttpContext.Request.Form;
+            var req = this.HttpContext.Request.Form;
             try
             {
-                EbSmtpConfig con = new EbSmtpConfig
-                {
-                    EmailAddress = "sddsd",
-                    EnableSsl = true,
-                    ProviderName = SmtpProviders.Gmail,
-                    Password = "testpw",
-                    Host = "test",
-                    Port = 0,
-                    Id = 0,
-                    NickName = "nick"
-                };
                 //EbSmtpConfig con = new EbSmtpConfig
                 //{
-                //    ProviderName = (SmtpProviders)Convert.ToInt32(req["Emailvendor"]),
-                //    NickName = req["NickName"],
-                //    Host = req["SMTP"],
-                //    Port = Convert.ToInt32(req["Port"]),
-                //    EmailAddress = req["Email"],
-                //    Password = req["Password"],
-                //    EnableSsl = Convert.ToBoolean(req["IsSSL"]),
-                //    Id = Convert.ToInt32(req["Id"])
+                //    EmailAddress = "sddsd",
+                //    EnableSsl = true,
+                //    ProviderName = SmtpProviders.Gmail,
+                //    Password = "testpw",
+                //    Host = "test",
+                //    Port = 0,
+                //    Id = 0,
+                //    NickName = "nick"
                 //};
-                res = this.ServiceClient.Post<AddSmtpResponse>(new AddSmtpRequest { Config = con/*, IsNew = true, SolutionId = req["SolutionId"]*/ });
+                EbSmtpConfig con = new EbSmtpConfig
+                {
+                    // ProviderName = (SmtpProviders)Convert.ToInt32(req["Emailvendor"]),
+                    NickName = req["NickName"],
+                    Host = req["SMTP"],
+                    Port = Convert.ToInt32(req["Port"]),
+                    EmailAddress = req["Email"],
+                    Password = req["Password"],
+                    EnableSsl = Convert.ToBoolean(req["IsSSL"]),
+                    Id = Convert.ToInt32(req["Id"])
+                };
+                con.ProviderName = (SmtpProviders)Enum.Parse(typeof(SmtpProviders), req["Emailvendor"]);
+                res = this.ServiceClient.Post<AddSmtpResponse>(new AddSmtpRequest { Config = con, /*IsNew = true,*/ SolnId = req["SolnId"] });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)
@@ -806,7 +810,7 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-        public string IntegrateCloudinary()
+        public string AddCloudinary()
         {
             AddCloudinaryResponse res = new AddCloudinaryResponse();
             var req = this.HttpContext.Request.Form;
@@ -816,10 +820,12 @@ namespace ExpressBase.Web.Controllers
                 {
                     Cloud = req["Cloud"],
                     ApiKey = req["ApiKey"],
-                    ApiSecret = req["ApiSecret"]
+                    ApiSecret = req["ApiSecret"],
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"])
                 };
 
-                res = this.ServiceClient.Post<AddCloudinaryResponse>(new AddCloudinaryRequest { Config = con/*, IsNew = true, SolutionId = req["SolutionId"]*/ });
+                res = this.ServiceClient.Post<AddCloudinaryResponse>(new AddCloudinaryRequest { Config = con/*, IsNew = true*/ , SolnId = req["SolutionId"]});
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)
@@ -829,20 +835,57 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public void GetIntegrationConfigs()
-        {
-            GetIntegrationConfigsResponse res = this.ServiceClient.Get<GetIntegrationConfigsResponse>(new GetIntegrationConfigsRequest { });
-        }
+        //[HttpGet("SolutionManager/{Sid}")]
+        //public IActionResult GetIntegrationConfigs(string Sid)
+        //{
+        //    GetSolutioInfoResponse Solresp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });
+        //    ViewBag.Connections = Solresp.EBSolutionConnections;
+        //    ViewBag.SolutionInfo = Solresp.Data;
 
-        public void Integrate()
+        //    GetIntegrationConfigsResponse res = this.ServiceClient.Get<GetIntegrationConfigsResponse>(new GetIntegrationConfigsRequest { });
+
+        //    //ViewBag.cid = Sid;
+        //    //ViewBag.Domain = this.HttpContext.Request.Host;
+        //    //ViewBag.rToken = Request.Cookies["rToken"];
+        //    //ViewBag.bToken = Request.Cookies["bToken"];
+        //    return View();
+        //}
+
+        //[HttpGet("SolutionManager/{Sid}")]
+        //public IActionResult SolutionManager(string Sid)
+        //{
+        //    // GetSolutioInfoResponse resp = this.ServiceClient.Get<GetSolutioInfoResponse>(new GetSolutioInfoRequest { IsolutionId = Sid });
+        //    GetIntegrationConfigsResponse Solresp = this.ServiceClient.Get<GetIntegrationConfigsResponse>(new GetSolutionIntegrationRequest { IsolutionId = Sid });
+        //    ViewBag.Connections = Solresp.EBSolutionConnections;
+        //    ViewBag.SolutionInfo = Solresp.Data;
+        //    ViewBag.cid = Sid;
+        //    ViewBag.Domain = this.HttpContext.Request.Host;
+        //    ViewBag.rToken = Request.Cookies["rToken"];
+        //    ViewBag.bToken = Request.Cookies["bToken"];
+        //    return View();
+        //}
+
+        public string Integrate()
         {
-            EbIntegration _obj = new EbIntegration
+            EbIntegrationResponse res = new EbIntegrationResponse();
+            var req = this.HttpContext.Request.Form;
+            try
             {
-                ConfigId = 1,
-                Preference = ConPreferences.PRIMARY,
-                Type = EbConnections.EbDATA
-            };
-            EbIntegrationResponse res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = _obj });
+                EbIntegration _obj = new EbIntegration
+                {
+                    Id = Convert.ToInt32(req["Id"]),
+                    ConfigId = Convert.ToInt32(req["ConfId"]),
+                    Preference =  Enum.Parse<ConPreferences>(req["Preference"].ToString()),
+                    Type = Enum.Parse<EbConnections>(req["Type"].ToString())
+                };
+                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = _obj, SolnId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(res);
+            }
+            catch(Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
         }
 
         public void ConnectionsHelper()

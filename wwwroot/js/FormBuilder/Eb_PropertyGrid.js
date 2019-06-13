@@ -388,7 +388,7 @@
         $Tr.hide();
         $Tr.attr("is-showprop", false);
         this.$hiddenProps[prop] = { "$Tr": $Tr };
-
+        let groupName = $Tr.attr("group");
         let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
         if ($groupRows.length === 0)
             $("#" + this.wraperId + " [group-h=" + groupName + "]").hide(300);

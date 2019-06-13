@@ -420,12 +420,12 @@
                 try {
                     let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                     inpCtrl.__onChangeFn = onChangeFn;
-                    console.log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
+                    console.eb_log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
                     onChangeFn();
                 }
                 catch (e) {
-                    console.log("eb error :");
-                    console.log(e);
+                    console.eb_log("eb error :");
+                    console.eb_log(e);
                     alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
                 }
             }

@@ -248,7 +248,17 @@
     header.insertButton(`<button id="webformcancel" class='btn' title='Cancel' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformnew" class="btn" onclick="reloadFormPage();" title="New form"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformedit" class='btn' title='Edit' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
-    header.insertButton(`<button id="webformsave" class="btn" title="Save form" style='display: none;'><i class="fa fa-save" aria-hidden="true"></i></button>`);
+    header.insertButton(`<div id="webformsave-selbtn"  style='display: none;' class="btn-select">
+                            <button id="webformsave" class="savebtn" title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>                        
+                            <select class="selectpicker">
+                              <option data-token="new" data-icon="fa-save"> & New</option>
+                              <option data-token="continue" data-icon="fa-save">& Continue</option>
+                              <option data-token="view" data-icon="fa-save"> & View</option>
+                              <option data-token="close" data-icon="fa-save"> & Close</option>
+                            </select>
+                        </div>
+
+`);
     header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`)
     
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";

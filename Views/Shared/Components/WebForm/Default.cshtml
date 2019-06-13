@@ -226,6 +226,20 @@
 </div>
 `);
 
+    $("body").prepend(`
+<div class="modal fade" id="iFramePdfModal" role="dialog">
+    <div class="modal-dialog" style="width: 80%; margin: 4% auto;">
+        <div class="modal-content" style="border-radius: 0; border: none;"> 
+            <div class="modal-body" style="height: 80vh; padding: 0px;">
+                <div>
+                    <iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+
     window.closeModal = function (func) {// receives call from iFrame
         //func();
         $('#iFrameFormModal').modal('hide');
@@ -238,6 +252,30 @@
         if ($(evt.target).attr("src") !== undefined)
             $("#iFrameFormOverlay").hide();
     });
+
+    $("#webformprint").on('click', function () {
+        $("#iFramePdf").attr("src", "../WebForm/GetPdfReport");
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    });
+    $("#iFramePdf").on('load', function (evt) {
+        try {
+            if ($(evt.target).attr("src") !== undefined) {
+                if (document.getElementById("iFramePdf").contentWindow.document.embeds.length === 1) {
+                    document.getElementById("iFramePdf").focus();
+                    document.getElementById("iFramePdf").contentWindow.print();
+                }
+                else {
+                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
+                }
+                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+            }
+        }
+        catch (e) {
+            $("#eb_common_loader").EbLoader("hide");
+            EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+        }
+    });
+
     function reloadFormPage() {
         window.location.href = window.location.origin + window.location.pathname + "?refid=@Html.Raw(ViewBag.formRefId)&_locId=" + store.get("Eb_Loc-" + ebcontext.user.CId + ebcontext.user.UserId);
     }

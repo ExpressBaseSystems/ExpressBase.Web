@@ -798,7 +798,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.CurrentRowGroup !== null) {
             if (this.CurrentRowGroup.RowGrouping.$values.length > 0) {
                 for (let i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
-                    tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 0));
+                    tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, this.CurrentRowGroup.RowGrouping.$values[i].Direction));
             }
             if (this.orderColl.length > 0) {
                 $.each(this.orderColl, function (i, obj) {
@@ -808,30 +808,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 if (this.CurrentRowGroup.OrderBy.$values.length > 0) {
                     for (let i = 0; i < this.CurrentRowGroup.OrderBy.$values.length; i++)
-                        tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 0));
+                        tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, this.CurrentRowGroup.OrderBy.$values[i].Direction));
                 }
             }
         }
 
         if (tempArray.length === 0) {
-            if (this.EbObject.OrderBy.$values.length > 0) {
+            $.each(this.orderColl, function (i, obj) {
+                tempArray.push(obj);
+            });
+            if (tempArray.length === 0) {
                 $.each(this.EbObject.OrderBy.$values, function (i, obj) {
                     if (tempArray.filter(e => e.Column === obj.name).length === 0)
                         tempArray.push(new order_obj(obj.name, obj.Direction));
                 });
             }
-
-            $.each(this.orderColl, function (i, obj) {
-                var index = tempArray.findIndex(x => x.Column === obj.Column);
-                if (index === -1)
-                    tempArray.push(obj);
-                else {
-                    tempArray.splice(index, 1);
-                    obj.Direction = (obj.Direction === 0) ? 1 : 0;
-                    tempArray.push(obj);
-                }
-
-            });
         }
 
         return tempArray;
@@ -2260,6 +2251,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $('[data-toggle="tooltip"]').tooltip({
             placement: 'bottom'
         });
+        $('.columntooltip').popover({
+            trigger: 'hover',
+            placement:'right'
+        });
+        $('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
 
         $("[data-coltyp=date]").datepicker({
             dateFormat: datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
@@ -2400,12 +2396,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormNewGroup = function (key, opt, event) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.GroupFormLink; }.bind(this));
+        this.dvformMode = temp[0].FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=2&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2424,7 +2422,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = 2;
+            input.value = this.dvformMode;
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -2440,11 +2438,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormNewItem = function (key, opt, event) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.ItemFormLink; }.bind(this));
+        this.dvformMode = temp[0].FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=2&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2463,7 +2463,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = 2;
+            input.value = this.dvformMode;
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -2479,11 +2479,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormEditGroup = function (key, opt, event) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.GroupFormLink; }.bind(this));
+        this.dvformMode = temp[0].FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=1&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2502,7 +2504,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = 1;
+            input.value = this.dvformMode ;
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -2518,11 +2520,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormEditItem = function (key, opt, event) {
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.ItemFormLink; }.bind(this));
+        this.dvformMode = temp[0].FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=1&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2541,7 +2545,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = 1;
+            input.value = this.dvformMode;
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -3521,6 +3525,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         let chartapi = eb_chart(chartobj.DataSourceRefId, null, null, chartobj, null, this.tabNum, this.ssurl, this.login, counter, this.MainData, btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), this.cellData, this.propGrid);
     };
 
+    this.openColumnTooltip = function (e, i) {
+        $(e.currentTarget).siblings(".popover").find(".popover-content").text(atob($(e.currentTarget).attr("data-content")));
+        $(e.currentTarget).siblings(".popover").find(".arrow").remove();
+    };
+
     this.collapseFilter = function () {
         this.filterBox.toggle();
         if (this.filterBox.css("display") == "none") {
@@ -3529,7 +3538,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             $("#btnCollapse" + this.tableId).children().remove();
-            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
+            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>");
         }
     };
 

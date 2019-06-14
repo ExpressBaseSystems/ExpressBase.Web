@@ -660,7 +660,7 @@
         this.CurProp = null;
         //this.CurEditor = null;
         this.$hiddenProps = {};
-        this.OSElist = {};
+        //this.OSElist = {};
         this.uniqueProps = [];
         this.requiredProps = [];
         this.innerHTML = '<table class="table-hover pg-table">';
@@ -876,6 +876,8 @@
         }
         this.Metas = metas;
         this.PropsObj = props;
+        if (!this.PropsObj.__OSElist)
+            this.PropsObj.__OSElist = {};
         this.CurObj = this.PropsObj;
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         this.ImgSlctrs = {};

@@ -140,25 +140,21 @@
                     </div>
                     <div id="primary_table_cont">
                         <div id="columns-list" class="dv-divs" tabindex="1">
-                            <div class="tool_item_head">
-                                <div class="tool_item_head_columns">Columns</div>
+                            <div class="tool_item_head" data-toggle="collapse" data-target="#columns-list_inner">
+                                <div class="tool_item_head_columns"><i class="fa fa-caret-down" style="margin:1px 6px;"></i>Columns</div>
                                 <div class="tool_item_head_orderby">Orderby</div>
                             </div>
-                            <div class="tool_item_body">
-                                <div id="columns-list-body"></div>
+                            <div class="tool_item_body collapse in resized" id="columns-list_inner">
+                                <div id="columns-list-body" ></div>
                                 <div id="columns-list-orderby"></div>
                             </div>
                         </div>
                         <div id="Rowgroup_cont" class="dv-divs">
-                            <div class="tool_item_head">
-                                <i class="fa fa-caret-down"></i> RowGroup
+                            <div class="tool_item_head" data-toggle="collapse" data-target="#Rowgroup_Inner_cont">
+                                <i class="fa fa-caret-down"></i> RowGroups
                                 <i class="fa fa-plus" id="NewRowGroup"></i>
                             </div>
-                        </div>
-                        <div id="Rowgroup_Footer_cont" class="dv-divs">
-                            <div class="tool_item_head">
-                                <i class="fa fa-caret-down"></i> RowGroup Footer
-                                <i class="fa fa-plus" id="NewRowGroupFooter"></i>
+                            <div id="Rowgroup_Inner_cont" class="dv-divs accordion collapse in resized">
                             </div>
                         </div>
                     </div>
@@ -215,6 +211,28 @@
             </div>
             <div class="form-group">
                 <button class="btn pull-right" id="calcF_submit">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>`);
+    $("body").prepend(`<div class="modal fade" id="RowgroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="summarry-editor-container">
+            <div class="close_md" data-dismiss="modal"><i class="fa fa-close"></i></div>
+            <h4 style="text-align:center;">RowGroup</h4>
+            <div class="form-group">
+                <label>RowGroup Name</label>
+                <input type="text" id="rowgroup_name" name="name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>RowGroup Type</label>
+                <div>
+                    <input type="radio" name="rowgroup" value="SingleLevelRowGroup"> Single Level
+                    <input type="radio" name="rowgroup" value="MultipleLevelRowGroup" style="margin-left:30px;"> Multi Level
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn pull-right" id="Rowgroup_submit">Ok</button>
             </div>
         </div>
     </div>

@@ -137,8 +137,17 @@
     this.appendObjects = function (_obj, isfav) {
         let set_fav = "";
         if (this.login == "uc" && !isfav) {
-            let isfav = (_obj.Favourite) ? "favourited" : "btn-setfav";
-            set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
+            let isfav = "";
+            let tooltip = "";
+            if (_obj.Favourite) {
+                isfav = "favourited";
+                tooltip = "Remove from Favourites.";
+            }
+            else {
+                isfav = "btn-setfav";
+                tooltip = "Add to Favourites.";
+            }
+            set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
         }
         $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item" klink="true">
                                                         <a href='${this.decideUrl(_obj)}'>
@@ -276,8 +285,17 @@
     this.appendObjByCategory = function (_obj, isfav) {
         let set_fav = "";
         if (this.login == "uc" && !isfav) {
-            let isfav = (_obj.Favourite) ? "favourited" : "btn-setfav";
-            set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
+            let isfav = "";
+            let tooltip = "";
+            if (_obj.Favourite) {
+                isfav = "favourited";
+                tooltip = "Remove from Favourites.";
+            }
+            else {
+                isfav = "btn-setfav";
+                tooltip = "Add to Favourites.";
+            }
+            set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
         }
         if ($(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).length <= 0) {
             $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item-categorised" id="ctypeContaner${_obj.EbObjectType}">
@@ -298,6 +316,7 @@
     };
 
     this.listKeyControl = function (e) {
+        e.preventDefault();
         $(".active_link").removeClass("active_link");
         if ($(".EbQuickMoverlaySideWRpr").find(":focus").length <= 0) {
             $(".AppContainer").find(`[klink='true']`).eq(0).attr("tabindex", "1").focus();

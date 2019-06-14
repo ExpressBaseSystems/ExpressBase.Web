@@ -12,11 +12,15 @@
     border-bottom: 1px solid #ccc;
     padding: 15px 15px;
 }
+.EbQuickMoverlaySideWRpr .securityContainer .inner_li {
+    border-style: none;
+    padding: 10px 10px;
+}
 
-    .EbQuickMoverlaySideWRpr .inner_li:hover, .inner_li:focus, .inner_li:hover .apibox {
-        color: #ffffff !important;
-        background-color: #508bf9 !important;
-    }
+.EbQuickMoverlaySideWRpr .inner_li:hover, .inner_li:focus, .inner_li:hover .apibox {
+    color: #ffffff !important;
+    background-color: #508bf9 !important;
+}
 
 .EbQuickMoverlaySideWRpr .c_btn {
     background-color: transparent;
@@ -213,13 +217,13 @@
     .EbQuickMoverlaySideWRpr .ebmSearchBox {
         display: flex;
         align-items: center;
-        /*flex-grow: 1;*/
-        /*max-width: 320px;*/
+        flex-grow: 1;
+        max-width: 330px;
     }
 
     .EbQuickMoverlaySideWRpr .securityContainer {
         display: none;
-        width: 300px;
+        width: 250px;
         height: 100%;
         background-color: white;
         border-left: 1px solid #ccc;

@@ -92,7 +92,7 @@
 
     .EbQuickMoverlaySideWRpr .InnerBlock {
         display: flex;
-        /*flex-grow: 1;*/
+        flex-grow: 1;
     }
 
     .EbQuickMoverlaySideWRpr .AppContainer {
@@ -123,6 +123,7 @@
         display: none;
         background: white;
         overflow-y: auto;
+        border-left: 1px solid #ccc;
     }
 
     .EbQuickMoverlaySideWRpr .objListContainer {
@@ -220,6 +221,7 @@
         width: 300px;
         height: 100%;
         background-color: white;
+        border-left: 1px solid #ccc;
     }
 
         .EbQuickMoverlaySideWRpr .securityContainer .securityContainer-inner {

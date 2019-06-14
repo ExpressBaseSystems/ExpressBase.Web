@@ -151,6 +151,7 @@
             .EbQuickMoverlaySideWRpr .objListContainer .obj-item a {
                 text-decoration: none;
                 color: inherit;
+                width: 100%;
             }
 
             .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover, .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover .obj-icon {

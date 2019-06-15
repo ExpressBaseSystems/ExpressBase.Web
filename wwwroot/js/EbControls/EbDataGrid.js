@@ -773,7 +773,7 @@
         $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`).show(200);
     };
 
-    this.showRows(rowIds) = function () {
+    this.showRows = function (rowIds) {
         arguments.each(function (i, rowId) {
             this.showRow(rowId);
         }.bind(this));

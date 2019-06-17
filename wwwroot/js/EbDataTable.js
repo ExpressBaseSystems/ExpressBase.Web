@@ -798,7 +798,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.CurrentRowGroup !== null) {
             if (this.CurrentRowGroup.RowGrouping.$values.length > 0) {
                 for (let i = 0; i < this.CurrentRowGroup.RowGrouping.$values.length; i++)
-                    tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, 0));
+                    tempArray.push(new order_obj(this.CurrentRowGroup.RowGrouping.$values[i].name, this.CurrentRowGroup.RowGrouping.$values[i].Direction));
             }
             if (this.orderColl.length > 0) {
                 $.each(this.orderColl, function (i, obj) {
@@ -808,7 +808,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else {
                 if (this.CurrentRowGroup.OrderBy.$values.length > 0) {
                     for (let i = 0; i < this.CurrentRowGroup.OrderBy.$values.length; i++)
-                        tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, 0));
+                        tempArray.push(new order_obj(this.CurrentRowGroup.OrderBy.$values[i].name, this.CurrentRowGroup.OrderBy.$values[i].Direction));
                 }
             }
         }
@@ -2251,6 +2251,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $('[data-toggle="tooltip"]').tooltip({
             placement: 'bottom'
         });
+        $('.columntooltip').popover({
+            trigger: 'hover',
+            placement:'right'
+        });
+        $('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
 
         $("[data-coltyp=date]").datepicker({
             dateFormat: datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
@@ -2393,7 +2398,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.FormNewGroup = function (key, opt, event) {
         var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.GroupFormLink; }.bind(this));
         this.dvformMode = temp[0].FormMode;
-
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
@@ -2500,7 +2504,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = this.dvformMode;
+            input.value = this.dvformMode ;
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -3521,6 +3525,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         let chartapi = eb_chart(chartobj.DataSourceRefId, null, null, chartobj, null, this.tabNum, this.ssurl, this.login, counter, this.MainData, btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), this.cellData, this.propGrid);
     };
 
+    this.openColumnTooltip = function (e, i) {
+        $(e.currentTarget).siblings(".popover").find(".popover-content").text(atob($(e.currentTarget).attr("data-content")));
+        $(e.currentTarget).siblings(".popover").find(".arrow").remove();
+    };
+
     this.collapseFilter = function () {
         this.filterBox.toggle();
         if (this.filterBox.css("display") == "none") {
@@ -3529,7 +3538,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             $("#btnCollapse" + this.tableId).children().remove();
-            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>")
+            $("#btnCollapse" + this.tableId).append("<i class='fa fa-chevron-up' aria-hidden='true'></i>");
         }
     };
 

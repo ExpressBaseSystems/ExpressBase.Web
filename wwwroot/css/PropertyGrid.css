@@ -300,10 +300,11 @@
 
 .colTile {
     position: relative;
-    padding: 4px 4.5px;
+    padding: 4px 6px 4px 8px;
     background-color: #c8d4ef;
     margin: 3px 1px;
     border-radius: 25px;
+    min-height: 26px;
     font-size: 13px;
     cursor: move;
     color: #111;
@@ -344,13 +345,24 @@
     color: #222;
 }
 
+.colTile .vercheck {
+    display: none;
+    color: #acb9bb;
+    font-size: 14px;
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 2px;
+    margin-right: -2px;
+}
+
+
 .colTile[is-selected=true] {
-    background-color: #aebbbd;
+    background-color: #acb9bb;
     outline: none;
     color: #222;
 }
 
-.Otile-active {
+.Otile-active:focus {
     background-color: #aebbbd;
     color: #222;
 }

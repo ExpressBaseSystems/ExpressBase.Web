@@ -1,10 +1,12 @@
-﻿#columns-list {
-    height: 300px;
-}
-
+﻿
 #columns-list .tool_item_body {
     display: flex;
     flex-direction: row;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    height: 250px;
+    width: 100% !important;
+    float: none;
 }
 
 #columns-list .tool_item_head {
@@ -33,8 +35,9 @@
 
 #columns-list-orderby {
     width: 25%;
-    border: 1px solid #ccc;
-    padding: 0 5;
+    border-left: 1px solid #ccc;
+    height: inherit;
+    overflow-y: auto;
 }
 
 .page-outer-cont {
@@ -72,7 +75,7 @@
     background: white;
 }
 .dv-divs .tool_item_body {
-    height: calc( 100% - 15px );
+    height: calc( 100% - 11px );
 }
 .dv-divs .focused {
     background-color: #306395 !important;
@@ -126,9 +129,30 @@
     margin-left:2px;
 }
 .dv-divs .colTile1 .columnelemsCont {
-    background-color: #c8d4ef;
-    position:relative;
-    padding:4px;
+    background-color: #94b8dc;
+    position: relative;
+    padding: 4px;
+    border-radius: 7px;
+    box-shadow: var(--eb-shadow);
+}
+
+.rowgroup_header {
+    display: flex;
+    padding: 2px;
+    box-shadow: var(--eb-shadow);
+    border-radius: 2px;
+    margin: 4px 6px;
+    cursor:pointer;
+    border:1px solid #ccc;
+}
+
+.rowgroup_header :not(.headeritems) {
+    cursor:pointer;
+}
+
+.Rowgroup_innerCont {
+    padding: 4px;
+    margin-top: 10px;
 }
 
 .rowgroup_select button, .rowgrouptype_select button {
@@ -142,5 +166,64 @@
     margin-left: 4px !important;
     margin-bottom: 1px;
 }
+.rowgroup_collapse_button {
+    margin-right: 8px;
+}
+.rowgroup_name {
+    border: none;
+    border-bottom: 1px solid #cccccc;
+    font-size: 13px;
+}
 
+.rowgroup_Outer_ColumnCont {
+    height: 175px;
+    display: flex;
+    flex-direction: column;
+    padding:0px;
+}
+.rowgroup_Inner_HeaderColumnCont {
+    border-radius: 4px;
+    margin-right: 5px;
+    height: inherit;
+    border: 1px solid #cccccc;
+}
+.rowgroup_Inner_FooterColumnCont {
+    border-radius: 4px;
+    margin-right: 5px;
+    height: inherit;
+    border: 1px solid #cccccc;
+    margin-top: 15px;
+}
+.rowgroup_OrderbyCont {
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    height:175px;
+    padding:0px;
+}
+.rowgroup_OrderbyCont .colTile1 {
+    width:100%;
+}
+
+.rowgroup_Outer_ColumnCont #Rowgroup_1_Footer_columns {
+    margin-top: 15px;
+}
+.rowgroup_controlfit{
+    width: max-content;
+    padding: 0 10px;
+    transform: translateY(-11px);
+    background: #fff;
+    font-size: 13px;
+    margin-left: 10px;
+}
+
+#Rowgroup_Inner_cont{
+    border:none;
+    height:250px;
+    overflow-y:auto;
+}
+
+.disabledItems {
+    pointer-events: none;
+    opacity: 0.4;
+}
 

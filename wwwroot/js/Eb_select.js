@@ -98,7 +98,7 @@ const EbSelect = function (ctrl, options) {
             this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
             this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
-            $('#' + this.name + 'Wraper  [class=input-group-addon]').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
+            $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
             $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
             $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
@@ -108,6 +108,10 @@ const EbSelect = function (ctrl, options) {
 
             //set id for searchBox
             $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
+
+
+            if (!this.ComboObj.MultiSelect)
+                $('#' + this.name + 'Wraper').attr("singleselect","true");
 
 
             //styles
@@ -601,9 +605,9 @@ const EbSelect = function (ctrl, options) {
             this.V_hideDD();
         else {
             searchVal = this.getMaxLenVal();
-            if (searchVal === "" || this.ComboObj.MinSeachLength > searchVal.length)
-                return;
-            else
+            //if (searchVal === "" || this.ComboObj.MinSeachLength > searchVal.length)
+            //    return;
+            //else
                 this.V_showDD();
         }
 

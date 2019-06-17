@@ -304,6 +304,7 @@
     background-color: #c8d4ef;
     margin: 3px 1px;
     border-radius: 25px;
+    min-height: 26px;
     font-size: 13px;
     cursor: move;
     color: #111;

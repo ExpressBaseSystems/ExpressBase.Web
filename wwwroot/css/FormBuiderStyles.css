@@ -1100,7 +1100,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         }
 
     .btn-select .bootstrap-select.dropdown {
-        width: 55px !important;
+        width: 60px !important;
     }
 
     .btn-select .dropdown-menu > li > a, .btn-select .caret {

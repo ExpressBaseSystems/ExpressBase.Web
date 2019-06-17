@@ -2,6 +2,7 @@
     list-style: none;
     padding: 0;
 }
+
 .EbQuickMoverlaySideWRpr .inner_li {
     border-radius: 0 !important;
     border: none;
@@ -11,6 +12,11 @@
     border-bottom: 1px solid #ccc;
     padding: 15px 15px;
 }
+.EbQuickMoverlaySideWRpr .securityContainer .inner_li {
+    border-style: none;
+    padding: 10px 10px;
+}
+
 .EbQuickMoverlaySideWRpr .inner_li:hover, .inner_li:focus, .inner_li:hover .apibox {
     color: #ffffff !important;
     background-color: #508bf9 !important;
@@ -21,13 +27,11 @@
     color: black;
     padding: 5px 12px 0px 12px;
     font-size: 18px;
-    margin: 0 2px;
 }
+
 .EbQuickMoverlaySideWRpr .closebtn {
-    position: absolute;
-    right: -45px;
-    color: white;
 }
+
     .EbQuickMoverlaySideWRpr .closebtn:focus, Eb_quick_menu .closebtn:active {
         outline: none;
     }
@@ -46,12 +50,18 @@
 .EbQuickMoverlaySideWRpr .quick_menu_load {
     bottom: 0;
 }
+
 .EbQuickMoverlaySideWRpr .ObjType-item {
     margin-bottom: 5px;
     padding: 8px 10px;
     cursor: pointer;
 }
-    .EbQuickMoverlaySideWRpr .ObjType-item:hover {
+
+    .EbQuickMoverlaySideWRpr .ObjType-item i {
+        color: #508bf9;
+    }
+
+    .EbQuickMoverlaySideWRpr .ObjType-item:hover, .EbQuickMoverlaySideWRpr .ObjType-item:hover i {
         background: #508bf9;
         color: white;
     }
@@ -74,7 +84,9 @@
     z-index: 9;
     display: none;
     background: white;
+    font-family: open sans;
 }
+
     .EbQuickMoverlaySideWRpr .EbQuickMoverlaySideWRpr-inner {
         display: flex;
         flex-flow: column nowrap;
@@ -88,26 +100,26 @@
     }
 
     .EbQuickMoverlaySideWRpr .AppContainer {
-        width: 300px;
+        width: 350px;
         height: 100%;
-        border-right: 1px solid #ccc;
         background: white;
         display: flex;
         flex-flow: column;
     }
 
-        .EbQuickMoverlaySideWRpr .header {
-            padding: 5px 0;
-            background: #ececec;
-            border-bottom: 1px solid #ccc;
-            display: flex;
-            flex-flow: row;
-            position: relative;
-        }
-        .EbQuickMoverlaySideWRpr .AppContainer .body {
-           height:100%;
-           overflow-y:auto;
-        }
+    .EbQuickMoverlaySideWRpr .header {
+        padding: 5px 0;
+        background: #ececec;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        flex-flow: row;
+        position: relative;
+    }
+
+    .EbQuickMoverlaySideWRpr .AppContainer .body {
+        height: 100%;
+        overflow-y: auto;
+    }
 
     .EbQuickMoverlaySideWRpr .ObjectTypeContainer {
         width: 250px;
@@ -115,6 +127,7 @@
         display: none;
         background: white;
         overflow-y: auto;
+        border-left: 1px solid #ccc;
     }
 
     .EbQuickMoverlaySideWRpr .objListContainer {
@@ -123,10 +136,12 @@
         min-width: 250px;
         border-left: 1px solid #ccc;
     }
+
         .EbQuickMoverlaySideWRpr .objListContainer .obj-item {
             display: flex;
             align-items: center;
         }
+
             .EbQuickMoverlaySideWRpr .objListContainer .obj-item a {
                 padding: 8px 20px 8px 5px;
                 cursor: pointer;
@@ -137,28 +152,34 @@
                 color: #508bf9;
             }
 
-        .EbQuickMoverlaySideWRpr .objListContainer .obj-item a{
-            text-decoration:none;
-            color:inherit;
-        }
-            .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover, .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover .obj-icon {
-                background: #cee5f5;
-                color: #403f3f;
+            .EbQuickMoverlaySideWRpr .objListContainer .obj-item a {
+                text-decoration: none;
+                color: inherit;
+                width: 100%;
             }
+
+            .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover, .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover .obj-icon {
+                background: #508bf9;
+                color: #f5f3f3;
+            }
+
                 .EbQuickMoverlaySideWRpr .objListContainer .obj-item:hover .btn-setfav {
-                    display:block;
+                    display: block;
                 }
-.EbQuickMoverlaySideWRpr .objListContainer .ebm-objlist {
-    overflow-y: auto;
-    height: 100%;
-    padding-bottom: 20px;
-}
+
+        .EbQuickMoverlaySideWRpr .objListContainer .ebm-objlist {
+            overflow-y: auto;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+
     .EbQuickMoverlaySideWRpr .newObjectContainer {
         background: white;
         width: 250px;
         display: none;
         flex-flow: column nowrap;
     }
+
         .EbQuickMoverlaySideWRpr .newObjectContainer .newObjectContainer-inner {
             height: 100%;
             overflow-y: auto;
@@ -166,6 +187,7 @@
             flex-flow: row wrap;
             border-top: 1px solid #ccc;
         }
+
         .EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob {
             text-align: center;
             padding: 5px 5px;
@@ -178,57 +200,127 @@
             align-items: center;
             text-decoration: none;
         }
+
             .EbQuickMoverlaySideWRpr .newObjectContainer .ebm_newob:hover, .newObjectContainer .ebm_newob:hover .ebm-newob-icon, .newObjectContainer .ebm_newob:hover .ebm-newob-text {
                 background: #508bf9;
                 color: white;
             }
+
         .EbQuickMoverlaySideWRpr .newObjectContainer .ebm-newob-icon {
             font-size: 20px;
         }
+
         .EbQuickMoverlaySideWRpr .newObjectContainer .ebm-newob-text {
             color: #5a5858;
         }
-.EbQuickMoverlaySideWRpr .ebmSearchBox {
-    
-}
-.EbQuickMoverlaySideWRpr .securityContainer {
-    display:none;
-    width:300px;
-    height:100%;
-    background-color:white;
-}
-    .EbQuickMoverlaySideWRpr .securityContainer .securityContainer-inner {
-        height: 100%;
-        width:100%;
+
+    .EbQuickMoverlaySideWRpr .ebmSearchBox {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        max-width: 330px;
     }
+
+    .EbQuickMoverlaySideWRpr .securityContainer {
+        display: none;
+        width: 250px;
+        height: 100%;
+        background-color: white;
+        border-left: 1px solid #ccc;
+    }
+
+        .EbQuickMoverlaySideWRpr .securityContainer .securityContainer-inner {
+            height: 100%;
+            width: 100%;
+        }
+
     .EbQuickMoverlaySideWRpr .backbtn {
         color: #428bca;
         padding: 2px 0 2px 14px;
         font-size: 15px;
         cursor: pointer;
     }
+
         .EbQuickMoverlaySideWRpr .backbtn:hover {
             background: #eaf5ff;
             font-weight: 500;
         }
-.EbQuickMoverlaySideWRpr .active_link {
-    background-color: #508bf9;
-    color:white;
-}
-    .EbQuickMoverlaySideWRpr .active_link .apibox {
+
+    .EbQuickMoverlaySideWRpr .active_link {
+        background-color: #508bf9;
         color: white;
     }
-    .EbQuickMoverlaySideWRpr .active_link::before {
-        font-family: FontAwesome;
-        content: "\f178";
-        float:right;
-    }
+
+        .EbQuickMoverlaySideWRpr .active_link .apibox {
+            color: white;
+        }
+
+        .EbQuickMoverlaySideWRpr .active_link::before {
+            font-family: FontAwesome;
+            content: "\f178";
+            float: right;
+        }
+
     .EbQuickMoverlaySideWRpr .btn-setfav {
         margin-left: auto;
-        color: #d23535;
-        display: none; 
+        color: #d0c7c7;
         margin-right: 10px;
-        border: 1px solid #ccc;
         border-radius: 3px;
         background: white;
+        border-style: none;
+    }
+
+    .EbQuickMoverlaySideWRpr .favourited {
+        color: #f35353;
+        margin-left: auto;
+        margin-right: 10px;
+        border-radius: 3px;
+        background-color:transparent;
+        border-style: none;
+        cursor:default;
+    }
+
+    .EbQuickMoverlaySideWRpr .ebmSearchBox:before {
+        content: "\f002";
+        font-family: FontAwesome;
+        position: absolute;
+        margin-left: 10px;
+    }
+    .EbQuickMoverlaySideWRpr .obj-item-categorised {
+        
+    }
+        .EbQuickMoverlaySideWRpr .obj-item-categorised .head {
+            padding: 5px 10px;
+            color: #2c69da;
+            font-weight: 500;
+        }
+            .EbQuickMoverlaySideWRpr .obj-item-categorised .head i {
+                color: #508bf9;
+                width: 20px;
+            }
+        .EbQuickMoverlaySideWRpr .obj-item-categorised .body {
+            
+        }
+            .EbQuickMoverlaySideWRpr .obj-item-categorised .body .obj-item {
+                padding-left: 30px;
+            }
+        .EbQuickMoverlaySideWRpr .obj-item-categorised .head .category_objCount {
+            margin-left: 5px;
+        }
+    .EbQuickMoverlaySideWRpr [klink='true']:focus {
+        background-color: #508bf9;
+        color: white;
+        outline:none;
+    }
+        .EbQuickMoverlaySideWRpr [klink='true']:focus a {
+            color: white;
+        }
+        .EbQuickMoverlaySideWRpr [klink='true']:focus i {
+            color: white;
+        }
+    .EbQuickMoverlaySideWRpr .objListContainer [klink='true']:focus i {
+        color: #d0c7c7;
+    }
+    .EbQuickMoverlaySideWRpr .objListContainer [klink='true']:focus .favourited {
+        color: #f35353;
     }

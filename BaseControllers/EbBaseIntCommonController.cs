@@ -170,7 +170,7 @@ namespace ExpressBase.Web.BaseControllers
 
                 if (s_obj == null)
                 {
-                    this.ServiceClient.Post(new UpdateSolutionRequest() { SolnId = contrlr.ViewBag.cid, DbName = contrlr.ViewBag.cid });
+                    this.ServiceClient.Post(new UpdateSolutionRequest() { SolnId = contrlr.ViewBag.cid});
                     s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", contrlr.ViewBag.cid));
                 }
                 if (this.LoggedInUser.LocationIds.Contains(-1))

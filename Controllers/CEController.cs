@@ -175,7 +175,7 @@ namespace ExpressBase.Web.Controllers
             JsonServiceClient sscli = ServiceClient;
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
             DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
-            if (columnresp.Columns == null || columnresp.Columns.Count == 0)
+            if ((columnresp.Columns == null || columnresp.Columns.Count == 0) && columnresp.ResponseStatus != null)
             {
                 res.Message = columnresp.ResponseStatus.Message;
                 res.Data = null;

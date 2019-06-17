@@ -34,6 +34,15 @@ namespace ExpressBase.Web.Controllers
             
         }
 
+        [HttpGet("/apitest")]
+        public IActionResult Test()
+        {
+            this.ServiceClient.BearerToken = "HxSLXUHuM5X_pZDW_0_SvbpupByEIlCw";
+            ServiceClient.Get(new ApiTestReq());
+
+            return Redirect("/statuscode/404"); ;
+        }
+
 
         //[HttpGet("wiki/add/{}")]
         //public IActionResult EditWiki(string id)

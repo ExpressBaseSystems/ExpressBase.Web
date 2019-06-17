@@ -9,10 +9,10 @@
 <div class="side-menu-container">
     <ul class="menuwrapper_ul_outer">
         <li>
-            <ul class="outer sub-menuObj collapse in" id="dropdown2">
+            <ul class="outer sub-menuObj collapse in" list-wraper="true">
                 @if (ViewBag.wc.Equals("dc"))
                 {
-                    <li trigger="menu" Appid="0">
+                    <li trigger="menu" Appid="0" klink='true'>
                         <a href="#" class="list-group-item inner_li Obj_link for_brd">
                             <div class="apibox"><i class="fa fa-thumb-tack fa-rotate-90"></i></div> Common
                         </a>
@@ -20,7 +20,7 @@
                 }
                 @if (ViewBag.wc.Equals("uc"))
                 {
-                    <li trigger="favourites">
+                    <li trigger="favourites" klink='true'>
                         <a href="#" class="list-group-item inner_li Obj_link for_brd">
                             <div class="apibox"><i class="fa fa-heart"></i></div> Favourites
                         </a>
@@ -28,12 +28,12 @@
                 }
                 @if (ViewBag.wc.Equals("uc") && ViewBag.Role.Contains("SolutionOwner"))
                 {
-                    <li trigger="security">
+                    <li trigger="security" klink='true'>
                         <a href="#" class="list-group-item inner_li Obj_link for_brd">
                             <div class="apibox"><i class="fa fa-lock"></i></div> Security
                         </a>
                     </li>
-                    <li>
+                    <li klink='true'>
                         <a href="@Url.Action("EbLocations","TenantUser")" class="list-group-item inner_li Obj_link for_brd">
                             <div class="apibox"><i class="fa fa-code-fork fa-rotate-180"></i></div> Locations
                         </a>

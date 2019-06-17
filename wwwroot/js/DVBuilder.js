@@ -384,10 +384,14 @@ class DvBuilder {
             let name = $(el).attr("eb-name");
             $(el).attr("eb-keyname", this.CurrentRowgroup.Name);
             $(el).find("span").wrap(`<div id="${this.CurrentRowgroup.Name}_${name}_elemsrowgrouporderbyCont" class="columnelemsCont"></div>`);
-            $(el).find("span").after(`<span class="spancheck"><input type="checkbox" class="rowgrouporderbycheckbox"/><span class="spantext">Desc</span></span>`);
+            $(el).find("span").after(`<span class="spancheck"><input id="${this.CurrentRowgroup.Name}_${name}_rowgroupOrderbyCheckbox" type="checkbox" class="rowgrouporderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
             this.RowgroupOrderbyColumnDrop(el);
             $(el).find(".close").off("click").on("click", this.RemoveRowGroupOrderbyColumn.bind(this));
-            $(".rowgrouporderbycheckbox").off("change").on("change", this.RowgroupOrderbyCheckboxChanged.bind(this));
+            $(`#${this.CurrentRowgroup.Name}_${name}_rowgroupOrderbyCheckbox`).bootstrapToggle({
+                on: 'Asc',
+                off: 'Desc'
+            });
+            $(`#${this.CurrentRowgroup.Name}_${name}_rowgroupOrderbyCheckbox`).off("change").on("change", this.RowgroupOrderbyCheckboxChanged.bind(this));
         }
         else if ($(target).attr("id") === "columns-list-body" && $(source).attr("id") === "columns-list-body") {
             //this.ReplaceObjects(el, target, source, sibling);
@@ -412,13 +416,17 @@ class DvBuilder {
             let name = $(el).attr("eb-name");
             $(el).attr("eb-keyname", name + "orderby");
             $(el).find("span").wrap(`<div id="${name}_elemsorderbyCont" class="columnelemsCont"></div>`);
-            $(el).find("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`);
+            $(el).find("span").after(`<span class="spancheck"><input id="${obj.name}_orderbyCheckbox" type="checkbox" class="orderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
             this.OrderbyColumnDropRelated(el);
             let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
             this.EbObject.OrderBy.$values.push(obj);
             $(el).off("click").on("click", this.elementOnFocus.bind(this));
             $(el).find(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
-            $(".orderbycheckbox").off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
+            $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle({
+                on: 'Asc',
+                off: 'Desc'
+            });
+            $(`#${obj.name}_orderbyCheckbox`).off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
         }
     }
 
@@ -490,15 +498,20 @@ class DvBuilder {
             let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}"  eb-keyname="${obj.name}orderby" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsorderbyCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div></li>`);
             this.OrderbyColumnDropRelated(element);
             $("#columns-list-orderby").append(element);
-            $(element).find("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`);
+            $(element).find("span").after(`<span class="spancheck"><input id="${obj.name}_orderbyCheckbox" type="checkbox" class="orderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
 
-            if (obj.Direction === parseInt(EbEnums.OrderByDirection.DESC))
-                $(element).find(".orderbycheckbox").prop("checked", true);
+            $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle({
+                on: 'Asc',
+                off: 'Desc'
+            });
+            $(`#${obj.name}_orderbyCheckbox`).off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
+            
+            if (obj.Direction === parseInt(EbEnums.OrderByDirection.ASC))
+                $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle("on");
             else
-                $(element).find(".orderbycheckbox").prop("checked", false);
+                $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle("off");
             $(element).off("click").on("click", this.elementOnFocus.bind(this));
             $(element).find(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
-            $(".orderbycheckbox").off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
         }.bind(this));
     }
 
@@ -612,9 +625,9 @@ class DvBuilder {
         let name = $(e.target).closest("li").attr("eb-name");
         let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
         if ($(e.target).is(":checked"))
-            obj.Direction = parseInt(EbEnums.OrderByDirection.DESC);
-        else
             obj.Direction = parseInt(EbEnums.OrderByDirection.ASC);
+        else
+            obj.Direction = parseInt(EbEnums.OrderByDirection.DESC);
     }
 
     RowgroupOrderbyCheckboxChanged(e) {
@@ -623,9 +636,9 @@ class DvBuilder {
         if (obj.length === 0)
             obj = this.CurrentRowgroup.RowGrouping.$values.filter(function (obj) { return obj.name === name; }.bind(this));
         if ($(e.target).is(":checked"))
-            obj[0].Direction = parseInt(EbEnums.OrderByDirection.DESC);
-        else
             obj[0].Direction = parseInt(EbEnums.OrderByDirection.ASC);
+        else
+            obj[0].Direction = parseInt(EbEnums.OrderByDirection.DESC);
     }
 
     ColumnTitleChanged(e) {
@@ -828,6 +841,7 @@ class DvBuilder {
             this.AllOtherColumndropElements(element);
             $(`#Rowgroup_${this.RwogroupCounter}_Header_columns`).append(element);
             $(element).find(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
+            obj.sTitle = (obj.sTitle === "") ? obj.name : obj.sTitle;
             $(`#${objOuter.Name}_${obj.name}_rowgroupcolumntitle`).val(obj.sTitle);
             $(".rowgroupcolumntitle").off("change").on("change", this.RowgroupColumnTitleChanged.bind(this));
             this.ColumnAppendToRowgroupOrderByDiv(objOuter,obj, true);
@@ -848,16 +862,21 @@ class DvBuilder {
 
         $(`#Rowgroup_${this.RwogroupCounter}_OrderbyCont`).append(element);
         this.AllOtherColumndropElements(element);
-        $(element).find("span").after(`<span class="spancheck"><input type="checkbox" class="rowgrouporderbycheckbox"/><span class="spantext">Desc</span></span>`);
+        $(element).find("span").after(`<span class="spancheck"><input id="${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox" type="checkbox" class="rowgrouporderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
 
-        if (obj.Direction === parseInt(EbEnums.OrderByDirection.DESC))
-            $(element).find(".rowgrouporderbycheckbox").prop("checked", true);
+        $(`#${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox`).bootstrapToggle({
+            on: 'Asc',
+            off: 'Desc'
+        });
+        $(`#${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox`).off("change").on("change", this.RowgroupOrderbyCheckboxChanged.bind(this));
+        if (obj.Direction === parseInt(EbEnums.OrderByDirection.ASC))
+            $(`#${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox`).bootstrapToggle("on");
         else
-            $(element).find(".rowgrouporderbycheckbox").prop("checked", false);
+            $(`#${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox`).bootstrapToggle("off");
         $(element).find(".close").off("click").on("click", this.RemoveRowGroupOrderbyColumn.bind(this));
-        $(".rowgrouporderbycheckbox").off("change").on("change", this.RowgroupOrderbyCheckboxChanged.bind(this));
         if (rowgrouped)
             $(`#${objOuter.Name}_${obj.name}_elemsrowgrouporderbyCont`).children().not(".spancheck").addClass("disabledItems");
+        
     }
 
     deleteRowgroup(e) {

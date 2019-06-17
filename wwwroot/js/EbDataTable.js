@@ -411,8 +411,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             else
                 this.stickBtn.hide();
         }
+        this.check4Customcolumn();
         this.CheckforTree();
         this.addSerialAndCheckboxColumns();
+        this.ModifyColumnObject();
         this.treeCols = [];
         //hard coding
         this.orderColl = [];
@@ -458,13 +460,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
     };
 
-
     this.check4Customcolumn = function () {
         var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.IsCustomColumn; });
         if (temp.length === 0)
             this.isCustomColumnExist = false;
-        else
+        else {
             this.isCustomColumnExist = true;
+            temp.map(function (x) {
+                x.orderable = false;
+                return x;
+            });
+        }
     };
 
     this.CheckforTree = function () {
@@ -483,6 +489,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.EbObject.IsPaging = !this.IsTree;
     };
 
+    this.ModifyColumnObject = function () {
+        if (this.IsTree) {
+            this.EbObject.Columns.$values.map(function (x) {
+                x.orderable = false;
+                return x;
+            });
+        }
+    };
 
     this.InitializeColumns = function () {
         $.each(this.EbObject.Columns.$values, function (i, col) {
@@ -1195,7 +1209,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.filterDisplay();
         this.arrangeWindowHeight();
-        this.createFilterRowHeader();
+        if(!this.IsTree)
+            this.createFilterRowHeader();
         this.createFooter();
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
         $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
@@ -2396,14 +2411,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormNewGroup = function (key, opt, event) {
-        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.GroupFormLink; }.bind(this));
-        this.dvformMode = temp[0].FormMode;
+        this.dvformMode = this.treeColumn.FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2438,13 +2452,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormNewItem = function (key, opt, event) {
-        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.ItemFormLink; }.bind(this));
-        this.dvformMode = temp[0].FormMode;
+        this.dvformMode = this.treeColumn.FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2479,13 +2492,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormEditGroup = function (key, opt, event) {
-        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.GroupFormLink; }.bind(this));
-        this.dvformMode = temp[0].FormMode;
+        this.dvformMode = this.treeColumn.FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2520,13 +2532,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormEditItem = function (key, opt, event) {
-        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.ItemFormLink; }.bind(this));
-        this.dvformMode = temp[0].FormMode;
+        this.dvformMode = this.treeColumn.FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2634,13 +2645,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.MoveGroupOrItem = function (key, opt, event) {
         this.AppendTreeModal();
-        if (opt.selector === ".itemform")
-            $("#itemorgroup").text("Item");
-        else
-            $("#itemorgroup").text("Group");
         let rowindex = this.Api.row(opt.$trigger.parent().closest("[role=row]")).index();
         this.movefromtext = this.unformatedData[rowindex][this.treeColumn.data];
-        $("#movefrom").text(this.movefromtext);
+        if (opt.selector === ".itemform")
+            $("#itemorgroup").text("Item : " + this.movefromtext);
+        else
+            $("#itemorgroup").text("Group : " + this.movefromtext);
         this.IdColumnIndex = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === "id"; })[0].data;
         this.movefromId = this.unformatedData[rowindex][this.IdColumnIndex];
         this.Items = {};
@@ -2663,6 +2673,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     _out.items[this.ulid] = { "name": this.ulid, "data-pid": item.item[this.IdColumnIndex] };
                     this.createTreeItems___(item.children, _out.items[this.ulid]);
                 }
+            }
+            else {
+                $("#movefrom").text(outitems.name);
             }
         }.bind(this, initems, outitems));
     };
@@ -2861,6 +2874,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.GetFiltersFromSettingsTbl_inner = function (i, col) {
         var _ls = "";
+
         if (col.bVisible === true) {
             var span = "<span hidden>" + col.name + "</span>";
             //var span = "";
@@ -2878,8 +2892,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (col.name === "serial") {
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:black'></i></a>");
             }
+            else if (col.IsCustomColumn) {
+                _ls += span;
+            }
             else {
-                if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+                if (col.Type === parseInt(gettypefromString("Int32")) || col.Type === parseInt(gettypefromString("Decimal")) || col.Type === parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric"))) {
                     if (parseInt(EbEnums.ControlType.Text) === col.filterControl)
                         _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                     else if (parseInt(EbEnums.ControlType.Date) === col.filterControl)
@@ -2887,7 +2904,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     else
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                 }
-                else if (col.Type == parseInt(gettypefromString("String"))) {
+                else if (col.Type === parseInt(gettypefromString("String"))) {
                     //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
                     if (parseInt(EbEnums.ControlType.Numeric) === col.filterControl)
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
@@ -2898,7 +2915,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     //else
                     //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
                 }
-                else if (col.Type == parseInt(gettypefromString("DateTime")) || col.Type == parseInt(gettypefromString("Date"))) {
+                else if (col.Type === parseInt(gettypefromString("DateTime")) || col.Type === parseInt(gettypefromString("Date"))) {
                     if (parseInt(EbEnums.ControlType.Numeric) === col.filterControl)
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                     else if (parseInt(EbEnums.ControlType.Text) === col.filterControl)
@@ -2906,7 +2923,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     else
                         _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                 }
-                else if (col.Type == parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
+                else if (col.Type === parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
                     _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
                 else
                     _ls += (span);

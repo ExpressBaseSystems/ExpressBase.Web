@@ -88,7 +88,7 @@ namespace ExpressBase.Web.Components
                 foreach (KeyValuePair<int, AppObject> obj in resultlist.AppList)
                 {
                     if (resultlist.Data.ContainsKey(obj.Key))
-                        sb.Append(@"<li trigger='menu' Appid='" + obj.Key + "'><a class='list-group-item inner_li Obj_link for_brd'> <div class='apibox'><i class='fa " + resultlist.AppList[obj.Key].AppIcon + "'></i></div>" + resultlist.AppList[obj.Key].AppName + "</a></li>");
+                        sb.Append(@"<li trigger='menu' Appid='" + obj.Key + "' klink='true'><a class='list-group-item inner_li Obj_link for_brd'> <div class='apibox'><i class='fa " + resultlist.AppList[obj.Key].AppIcon + "'></i></div>" + resultlist.AppList[obj.Key].AppName + "</a></li>");
                 }
                 ViewBag.Object = resultlist;
                 ViewBag.menu = sb.ToString();
@@ -109,7 +109,7 @@ namespace ExpressBase.Web.Components
             StringBuilder sb = new StringBuilder();
             foreach (var obj in resultlist.AppList)
             {
-                sb.Append(@"<li trigger='menu' Appid='" + obj.Key + "'><a class='list-group-item inner_li Obj_link for_brd'><div class='apibox'><i class='fa " + resultlist.AppList[obj.Key].AppIcon + "'></i></div>" + resultlist.AppList[obj.Key].AppName + " </a></li>");
+                sb.Append(@"<li trigger='menu' Appid='" + obj.Key + "' klink='true'><a class='list-group-item inner_li Obj_link for_brd'><div class='apibox'><i class='fa " + resultlist.AppList[obj.Key].AppIcon + "'></i></div>" + resultlist.AppList[obj.Key].AppName + " </a></li>");
             }
             Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)

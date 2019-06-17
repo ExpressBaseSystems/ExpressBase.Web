@@ -523,7 +523,7 @@
 
     this.checkRow_click = function (e, isAddRow = true) {
         $td = $(e.target).closest("td");
-        $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
+        $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']:last`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
         let $tr = $td.closest("tr");
         $tr.attr("mode", "false");
         let rowid = $tr.attr("rowid");
@@ -708,7 +708,6 @@
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
-        //this.AllRowCtrls = {};
         this.resetBuffers();
         if (!this.ctrl.IsDisable)
             this.addRow();
@@ -763,8 +762,20 @@
         $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`).hide(200);
     };
 
+    this.hideRows = function (rowIds) {
+        arguments.each(function (i, rowId) {
+            this.hideRow(rowId);
+        }.bind(this));
+    };
+
     this.showRow = function (rowId) {
         $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`).show(200);
+    };
+
+    this.showRows = function (rowIds) {
+        arguments.each(function (i, rowId) {
+            this.showRow(rowId);
+        }.bind(this));
     };
 
     this.setCurRow = function (rowId) {

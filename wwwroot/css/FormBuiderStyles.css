@@ -1062,11 +1062,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .btn-select {
     position: relative;
     display: inline-block;
+    padding: 0 !important;
 }
 
-.btn-select .bootstrap-select .dropdown-toggle .filter-option-inner {
-    display: none !important;
-}
+    .btn-select .bootstrap-select .dropdown-toggle .filter-option-inner {
+        display: none !important;
+    }
+
 
     .btn-select .savebtn {
         position: absolute;
@@ -1074,20 +1076,47 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         z-index: 2;
         background-color: transparent;
         border: none;
+        top: 0;
         padding: 2px 8PX 4px 8PX;
+        border-radius: 4px 0 0 4px !important;
     }
 
+        .btn-select .savebtn:hover {
+            background-color: #e4e4e4 !important;
+            outline: none !important;
+            border-radius: 4px 0 0 4px !important;
+            border: none;
+        }
+
+    .btn-select .dropdown-toggle {
+        padding: 15px !important;
+        border-radius: 4px !important;
+    }
+
+        .btn-select .dropdown-toggle:hover {
+            background-color: #e4e4e4 !important;
+            outline: none !important;
+            border-radius: 4px !important;
+        }
+
     .btn-select .bootstrap-select.dropdown {
-        width: 50px !important;
+        width: 60px !important;
+    }
+
+    .btn-select .dropdown-menu > li > a, .btn-select .caret {
+        color: #336699;
+    }
+
+    .btn-select .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+        color: #fff;
     }
 
     .btn-select .dropdown-menu > li > a {
-        padding: 3px 10px !important;
-        font-size: 11.5px !important;
+        padding: 5px 14px !important;
     }
 
-    .btn-select .dropdown-menu{
-        border-radius:2px !important;
+    .btn-select .dropdown-menu {
+        border-radius: 2px !important;
     }
 /*animations*/
 /* Safari 4.0 - 8.0 */

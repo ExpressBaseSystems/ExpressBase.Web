@@ -708,7 +708,6 @@
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
-        //this.AllRowCtrls = {};
         this.resetBuffers();
         if (!this.ctrl.IsDisable)
             this.addRow();

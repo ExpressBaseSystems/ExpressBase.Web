@@ -42,6 +42,12 @@ namespace ExpressBase.Web2.Controllers
             return this.ServiceClient.Post<AddFavouriteResponse>(new AddFavouriteRequest { ObjId = objid }).Status;
         }
 
+        [HttpPost]
+        public bool RemoveFavourite(int objid)
+        {
+            return this.ServiceClient.Post<RemoveFavouriteResponse>(new RemoveFavouriteRequest { ObjId = objid }).Status;
+        }
+
         public IActionResult Logout()
         {
             ViewBag.Fname = null;

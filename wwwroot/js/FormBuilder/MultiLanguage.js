@@ -47,7 +47,7 @@
                         <div class="row" style="margin-top:20px">
                             <div class="col-md-5">
                                 <div class="input-group ">
-                                    <input id="txtsearch_${this.ContID}" value ="${this.initKey || ""}"title="Type to Search" type="text" data-value="" data-id="" data-object="" class="form-control" placeholder="Search">
+                                    <input id="txtsearch_${this.ContID}" value ="${this.initKey || ""}"title="Type to Search" type="text" data-value="" data-id="" data-object="" class="form-control" placeholder="Search" autocomplete="off">
                                     <span class="input-group-btn">
                                         <button id="btnsearch_${this.ContID}" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
                                     </span>
@@ -251,6 +251,10 @@
         if (item.length > 0) {
             this.drawLanguageAndValues(item[0]);
             this.txtsearch.focus();
+        }
+        else {
+            this.txtsearch.attr("data-value", "");
+            this.lblsearchkeyresult.show();
         }
     };
 

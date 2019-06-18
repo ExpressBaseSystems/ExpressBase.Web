@@ -70,7 +70,7 @@
     };
 
     this.SwitchToViewMode = function () {
-        $(`#${this.TableId} tbody [is-editing=true]`).remove();        
+        $(`#${this.TableId} tbody [is-editing=true]`).remove();
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "view");
         this.mode_s = "view";
     };
@@ -346,6 +346,7 @@
         $tr.show(300);
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
+        this.updateAggCols(rowid);
         return [$tr, this.initRowCtrls(rowid)];
 
     }.bind(this);
@@ -568,11 +569,11 @@
         let sum = 0;
         $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
             let val;
-            let typing_inp = event.target;
-            //let Iter_Inp = $(span).closest("td").find("[ui-inp]")[0];
 
-            if (typing_inp === Iter_Inp)
+            if (event && event.target === Iter_Inp) {
+                let typing_inp = event.target;
                 val = parseFloat(typing_inp.value);
+            }
             else
                 val = parseFloat($(Iter_Inp).val());
 

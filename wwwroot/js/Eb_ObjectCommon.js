@@ -151,8 +151,8 @@
 
         var words = this.ver_Refid.split("-");
         window.history.pushState("data", "Title", 'Index?objid=' + words[3] + '&objtype=' + words[2]);
-        menu.resultObj = null;//reload menu by amal on 27/04/2018
-        menu.init();//reload menu by amal on 27/04/2018
+        ebcontext.menu.resultObj = null;//reload menu by amal updated on 18/06/2019
+        ebcontext.menu.start();//reload menu by amal updated on 18/06/2019
 
 
         if (this.target !== "#preview_tab")

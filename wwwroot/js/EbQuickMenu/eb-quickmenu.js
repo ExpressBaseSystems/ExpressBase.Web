@@ -405,5 +405,10 @@
         }
     }
 
+    this.refresh = function () {
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login);
+    };
+
     this.start();
 }

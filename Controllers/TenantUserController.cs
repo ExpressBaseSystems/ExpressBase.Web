@@ -33,12 +33,19 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult getSidebarMenu(int LocId)
         {
-            if (ViewBag.wc == "tc")
-                return View("_SidebarMenu");
-            else if (ViewBag.wc == "dc")
-                return ViewComponent("SidebarmenuDev", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc });
-            else
-                return ViewComponent("_SidebarmenuTUser", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc, locid = LocId });
+            return ViewComponent("EbQuickMenu", new { solnid = ViewBag.cid, email = ViewBag.email, console = ViewBag.wc, locid = LocId });
+        }
+
+        [HttpPost]
+        public bool AddFavourite(int objid)
+        {
+            return this.ServiceClient.Post<AddFavouriteResponse>(new AddFavouriteRequest { ObjId = objid }).Status;
+        }
+
+        [HttpPost]
+        public bool RemoveFavourite(int objid)
+        {
+            return this.ServiceClient.Post<RemoveFavouriteResponse>(new RemoveFavouriteRequest { ObjId = objid }).Status;
         }
 
         public IActionResult Logout()

@@ -5,7 +5,7 @@
             Message: "nothing to display",
             FontColor: "#fff",
             AutoHide: true,
-            Delay:4000
+            Delay: 8000
         }, options);       
 
         function onHide() {

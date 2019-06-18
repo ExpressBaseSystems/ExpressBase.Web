@@ -168,20 +168,25 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public string GetColumnsCollection(string ds_refid, List<Param> parameter)
+        public EbQueryResponse GetColumnsCollection(string ds_refid, List<Param> parameter)
         {
+            EbQueryResponse res = new EbQueryResponse();
             RedisClient redis = Redis;
             JsonServiceClient sscli = ServiceClient;
             var token = Request.Cookies[string.Format("T_{0}", ViewBag.cid)];
             DataSourceColumnsResponse columnresp = sscli.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = ds_refid.ToString(), Params = parameter });
-            if (columnresp.Columns == null || columnresp.Columns.Count == 0)
+            if ((columnresp.Columns == null || columnresp.Columns.Count == 0) && columnresp.ResponseStatus != null)
             {
-                return null;
+                res.Message = columnresp.ResponseStatus.Message;
+                res.Data = null;
+                return res;
             }
             else
             {
                 DSController dSController = new DSController(sscli, redis);
-                return EbSerializers.Json_Serialize(dSController.GetDVColumnCollection(columnresp.Columns));
+                res.Data = EbSerializers.Json_Serialize(dSController.GetDVColumnCollection(columnresp.Columns));
+                res.Message = null;
+                return res;
             }
         }
 
@@ -225,7 +230,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public SqlFuncDataTable ExecSqlFunction(string fname,string _params)
+        public SqlFuncDataTable ExecSqlFunction(string fname, string _params)
         {
             SqlFuncDataTable _table = new SqlFuncDataTable();
             EbDataTable _data = this.ServiceClient.Post<SqlFuncTestResponse>(new SqlFuncTestRequest
@@ -237,7 +242,7 @@ namespace ExpressBase.Web.Controllers
             DVColumnCollection _columns = new DVColumnCollection();
             foreach (EbDataColumn column in _data.Columns)
             {
-                _columns.Add(new DVBaseColumn {Data= column.ColumnIndex,sTitle = column.ColumnName,Name = column.ColumnName,bVisible = true});
+                _columns.Add(new DVBaseColumn { Data = column.ColumnIndex, sTitle = column.ColumnName, Name = column.ColumnName, bVisible = true });
             }
             _table.Colums = _columns;
             _table.Rows = _data.Rows;
@@ -251,7 +256,7 @@ namespace ExpressBase.Web.Controllers
             qry = Base64Decode(qry);
             EbDataTable _data = this.ServiceClient.Post<DatawriterResponse>(new DatawriterRequest
             {
-                Sql= qry,
+                Sql = qry,
                 Parameters = JsonConvert.DeserializeObject<List<Param>>(_params)
             }).Data;
 
@@ -276,5 +281,12 @@ namespace ExpressBase.Web.Controllers
             var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
+    }
+
+    public class EbQueryResponse
+    {
+        public string Message { get; set; }
+
+        public string Data { get; set; }
     }
 }

@@ -1,4 +1,14 @@
-﻿class DvBuilder {
+﻿(function ($) {
+    $.each(['show', 'hide'], function (i, ev) {
+        var el = $.fn[ev];
+        $.fn[ev] = function () {
+            this.trigger(ev);
+            return el.apply(this, arguments);
+        };
+    });
+})(jQuery);
+
+class DvBuilder {
     constructor(option) {
         this.type = option.ObjType || null;
         this.EbObject = option.dvObj || null;
@@ -98,6 +108,13 @@
         $("#columns-list").off("focusin").on("focusin", this.ColumnDivFocused.bind(this));
         $(".add_calcfield").on("click", this.newCalcFieldSum.bind(this));
         document.onkeydown = this.ColumnKeyMove.bind(this);
+        $("#Rowgroup_submit").off("click").on("click", this.ShowRowgroupDiv.bind(this));
+        $(".resized").resizable({
+            animate: true,
+            animateDuration: "fast",
+            animateEasing: "easeOutBounce",
+            handles: "n,s"
+        });
     }
 
     PropertyChanged(obj, pname) {
@@ -301,10 +318,19 @@
             else
                 return true;
         }
-        if ($(target).attr("id") === "rowgroup_body" && $(source).hasClass("tablecolumns")) {
+        if ($(target).hasClass("rowgroup_Inner_HeaderColumnCont") && $(source).hasClass("tablecolumns")) {
             let key = $(el).attr("eb-name");
             let obj = $.grep(this.CurrentRowgroup.RowGrouping.$values, function (obj) { return obj.name === key; });//n Or N
             if (obj.length === 0)
+                return true;
+            else
+                return false;
+        }
+        if ($(target).hasClass("rowgroup_OrderbyCont") && $(source).hasClass("tablecolumns")) {
+            let key = $(el).attr("eb-name");
+            let obj = $.grep(this.CurrentRowgroup.OrderBy.$values, function (obj) { return obj.name === key; });//n Or N
+            let obj1 = $.grep(this.CurrentRowgroup.RowGrouping.$values, function (obj) { return obj.name === key; });//n Or N
+            if (obj.length === 0 && obj1.length === 0 && this.CurrentRowgroup.RowGrouping.$values.length >0)
                 return true;
             else
                 return false;
@@ -343,11 +369,29 @@
     }
 
     columnsDrop(el, target, source, sibling) {
-        if ($(target).attr("id") === "rowgroup_body") {
+        if ($(target).hasClass("rowgroup_Inner_HeaderColumnCont")) {
             let name = $(el).attr("eb-name");
-            $(el).find("span").wrap(`<div id="${name}_elemsrowgroupCont" class="columnelemsCont"></div>`);
+            $(el).attr("eb-keyname", this.CurrentRowgroup.Name);
+            $(el).find("span").wrap(`<div id="${this.CurrentRowgroup.Name}_${name}_elemsrowgroupCont" class="columnelemsCont"><div id="${this.CurrentRowgroup.Name}_${name}_spanrowgroupCont" class="columnspanCont"></div></div>`);
+            $(el).find(`#${this.CurrentRowgroup.Name}_${name}_spanrowgroupCont`).after(`<input class="rowgroupcolumntitle" type="text" id="${this.CurrentRowgroup.Name}_${name}_rowgroupcolumntitle"/>`);
             this.RowgroupColumnDrop(el);
             $(el).find(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
+            let index = this.EbObject.Columns.$values.findIndex(function (obj) { return obj.name === name; }.bind(this));
+            $(`#${this.CurrentRowgroup.Name}_${name}_rowgroupcolumntitle`).val(this.EbObject.Columns.$values[index].sTitle);
+            $(".rowgroupcolumntitle").off("change").on("change", this.RowgroupColumnTitleChanged.bind(this));
+        }
+        else if ($(target).hasClass("rowgroup_OrderbyCont")) {
+            let name = $(el).attr("eb-name");
+            $(el).attr("eb-keyname", this.CurrentRowgroup.Name);
+            $(el).find("span").wrap(`<div id="${this.CurrentRowgroup.Name}_${name}_elemsrowgrouporderbyCont" class="columnelemsCont"></div>`);
+            $(el).find("span").after(`<span class="spancheck"><input id="${this.CurrentRowgroup.Name}_${name}_rowgroupOrderbyCheckbox" type="checkbox" class="rowgrouporderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
+            this.RowgroupOrderbyColumnDrop(el);
+            $(el).find(".close").off("click").on("click", this.RemoveRowGroupOrderbyColumn.bind(this));
+            $(`#${this.CurrentRowgroup.Name}_${name}_rowgroupOrderbyCheckbox`).bootstrapToggle({
+                on: 'Asc',
+                off: 'Desc'
+            });
+            $(`#${this.CurrentRowgroup.Name}_${name}_rowgroupOrderbyCheckbox`).off("change").on("change", this.RowgroupOrderbyCheckboxChanged.bind(this));
         }
         else if ($(target).attr("id") === "columns-list-body" && $(source).attr("id") === "columns-list-body") {
             //this.ReplaceObjects(el, target, source, sibling);
@@ -362,7 +406,7 @@
             this.EbObject.Columns.$values[index].bVisible = true;
             $(el).off("click").on("click", this.elementOnFocus.bind(this));
             $(el).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
-            $(`#${name }_columntitle`).val(this.EbObject.Columns.$values[index].sTitle);
+            $(`#${name}_columntitle`).val(this.EbObject.Columns.$values[index].sTitle);
             $(".columntitle").off("change").on("change", this.ColumnTitleChanged.bind(this));
         }
         else if ($(target).attr("id") === "columns-list-orderby" && $(source).attr("id") === "columns-list-orderby") {
@@ -372,13 +416,17 @@
             let name = $(el).attr("eb-name");
             $(el).attr("eb-keyname", name + "orderby");
             $(el).find("span").wrap(`<div id="${name}_elemsorderbyCont" class="columnelemsCont"></div>`);
-            $(el).find("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`);
+            $(el).find("span").after(`<span class="spancheck"><input id="${obj.name}_orderbyCheckbox" type="checkbox" class="orderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
             this.OrderbyColumnDropRelated(el);
             let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
             this.EbObject.OrderBy.$values.push(obj);
             $(el).off("click").on("click", this.elementOnFocus.bind(this));
             $(el).find(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
-            $(".orderbycheckbox").off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
+            $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle({
+                on: 'Asc',
+                off: 'Desc'
+            });
+            $(`#${obj.name}_orderbyCheckbox`).off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
         }
     }
 
@@ -450,74 +498,29 @@
             let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}"  eb-keyname="${obj.name}orderby" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsorderbyCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div></li>`);
             this.OrderbyColumnDropRelated(element);
             $("#columns-list-orderby").append(element);
-            $(element).find("span").after(`<span class="spancheck"><input type="checkbox" class="orderbycheckbox"/><span class="spantext">Desc</span></span>`); 
+            $(element).find("span").after(`<span class="spancheck"><input id="${obj.name}_orderbyCheckbox" type="checkbox" class="orderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
 
-            if (obj.Direction === parseInt(EbEnums.OrderByDirection.DESC))
-                $(element).find(".orderbycheckbox").prop("checked", true);
+            $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle({
+                on: 'Asc',
+                off: 'Desc'
+            });
+            $(`#${obj.name}_orderbyCheckbox`).off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
+            
+            if (obj.Direction === parseInt(EbEnums.OrderByDirection.ASC))
+                $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle("on");
             else
-                $(element).find(".orderbycheckbox").prop("checked", false);
+                $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle("off");
             $(element).off("click").on("click", this.elementOnFocus.bind(this));
             $(element).find(".close").off("click").on("click", this.RemoveOrderbyColumn.bind(this));
-            $(".orderbycheckbox").off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
         }.bind(this));
     }
 
     RowgroupColumnDropped() {
         $.each(this.EbObject.RowGroupCollection.$values, function (i, objOuter) {
-            this.RwogroupCounter++;
-            $("#Rowgroup_cont #rowgroup_body").empty();
-            if (i === 0) {
-                this.MakeDiv4Rowgroup();
-            }
-            let options = `<option value=${objOuter.Name}>${objOuter.DisplayName}</option>`;
-            let type = this.getRowgrouptype(objOuter);
-            this.RowgroupDropRelated(type, objOuter);
+            this.ShowRowgroupDiv(objOuter);
             this.drawRowgroupColumn(objOuter);
-            $(".rowgroup_select").append(options);
+            this.drawRowgroupOrderByColumn(objOuter);
         }.bind(this));
-
-        $(".rowgroup_select").selectpicker();
-        $('.rowgroup_select').on('changed.bs.select', this.RowgroupChanged.bind(this));
-        $('.rowgroup_select option').eq(1).trigger("change");
-    }
-
-    getRowgrouptype(objOuter) {
-        if (objOuter.$type.indexOf("MultipleLevelRowGroup") > -1) {
-            return "MultipleLevelRowGroup";
-        }
-        else {
-            return "SingleLevelRowGroup";
-        }
-    }
-
-    getType(type) {
-        if (type === 16) {
-            return "DVStringColumn";
-        }
-        else if (type === 7 || type === 8 || type === 10 || type === 11 || type === 12 || type === 21) {
-            return "DVNumericColumn";
-        }
-        else if (type === 3) {
-            return "DVbooleanColumn";
-        }
-        else if (type === 5 || type === 6 || type === 17 || type === 26) {
-            return "DVDateTimeColumn";
-        }
-    }
-
-    getIcon(type) {
-        if (type === 16) {
-            return this.EbParams.Icons["String"];
-        }
-        else if (type === 7 || type === 8 || type === 10 || type === 11 || type === 12 || type === 21) {
-            return this.EbParams.Icons["Numeric"];
-        }
-        else if (type === 3) {
-            return this.EbParams.Icons["Bool"];
-        }
-        else if (type === 5 || type === 6 || type === 17 || type === 26) {
-            return this.EbParams.Icons["DateTime"];
-        }
     }
 
     ColumnDropRelated(el) {
@@ -552,16 +555,16 @@
         let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; })[0];
         this.CurrentRowgroup.RowGrouping.$values.push(obj);
         this.AllOtherColumndropElements(this.col);
+        this.ColumnAppendToRowgroupOrderByDiv(this.CurrentRowgroup, obj, true);
     }
 
-    RowgroupDropRelated(type, Rowobj) {
-        this.Objtype = type;
-        let name = Rowobj.Name;
-        this.CurrentRowgroupkey = name;
-        this.objCollection[name] = Rowobj;
-        this.CurrentRowgroup = Rowobj;
-
-        //this.propGrid.setObject(Rowobj, AllMetas[this.Objtype]);elemsCont
+    RowgroupOrderbyColumnDrop(el) {
+        this.col = $(el);
+        this.Objtype = this.col.attr('eb-type');
+        let name = this.col.attr('eb-name');
+        let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; })[0];
+        this.CurrentRowgroup.OrderBy.$values.push(obj);
+        this.AllOtherColumndropElements(this.col);
     }
 
     AllColumndropElements(el) {
@@ -622,9 +625,20 @@
         let name = $(e.target).closest("li").attr("eb-name");
         let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
         if ($(e.target).is(":checked"))
-            obj.Direction = parseInt(EbEnums.OrderByDirection.DESC);
-        else
             obj.Direction = parseInt(EbEnums.OrderByDirection.ASC);
+        else
+            obj.Direction = parseInt(EbEnums.OrderByDirection.DESC);
+    }
+
+    RowgroupOrderbyCheckboxChanged(e) {
+        let name = $(e.target).closest("li").attr("eb-name");
+        let obj = this.CurrentRowgroup.OrderBy.$values.filter(function (obj) { return obj.name === name; }.bind(this));
+        if (obj.length === 0)
+            obj = this.CurrentRowgroup.RowGrouping.$values.filter(function (obj) { return obj.name === name; }.bind(this));
+        if ($(e.target).is(":checked"))
+            obj[0].Direction = parseInt(EbEnums.OrderByDirection.ASC);
+        else
+            obj[0].Direction = parseInt(EbEnums.OrderByDirection.DESC);
     }
 
     ColumnTitleChanged(e) {
@@ -632,6 +646,15 @@
         let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
         obj.sTitle = $(e.target).val();
         var type = $(e.target).closest("li").attr('eb-type');
+        this.propGrid.setObject(obj, AllMetas[type]);
+    }
+
+    RowgroupColumnTitleChanged(e) {
+        let name = $(e.target).closest("li").attr("eb-name");
+        let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
+        obj.sTitle = $(e.target).val();
+        var type = $(e.target).closest("li").attr('eb-type');
+        $(`#${name}_columntitle`).val(obj.sTitle);
         this.propGrid.setObject(obj, AllMetas[type]);
     }
 
@@ -664,30 +687,131 @@
     }
 
     AddNewRowGroup(e) {
-        $(e.target).hide();
-        this.arrangeRowGroupHeaders();
-        if (this.RwogroupCounter === 0) {
-            this.MakeDiv4Rowgroup();
-            $(".rowgroup_select").selectpicker();
-            $('.rowgroup_select').on('changed.bs.select', this.RowgroupChanged.bind(this));
+        e.stopPropagation();
+        if (this.EbObject.Columns.$values.length > 0) {
+            $("#RowgroupModal").modal("show");
+            $("#rowgroup_name").val("");
         }
-        else {
-            if (this.CurrentRowgroup.RowGrouping.$values.length === 0) { return false; }
-        }
-        let type = $("select[class='rowgrouptype_select']").val();
-        let obj = new EbObjects[type](type + this.RwogroupCounter);
-        obj.DisplayName = obj.Name;
-        this.RowgroupDropRelated(type, obj);
-        this.RwogroupCounter++;
-        this.EbObject.RowGroupCollection.$values.push(obj);
+        else
+            alert("Pls select Data reader");
     }
 
-    arrangeRowGroupHeaders() {
-        $("#Rowgroup_cont #rowgroup_body").empty();
-        $("#rowgroup_disname").val("");
-        $('select.rowgroup_select').append(`<option value='newrowgroup'>--newrowgroup--</option>`);
-        $(".rowgroup_select").val("newrowgroup");
-        $(".rowgroup_select").selectpicker("refresh");
+    ShowRowgroupDiv(objouter) {
+        $(`#Rowgroup_${this.RwogroupCounter}_innerCont`).hide();
+        if (objouter.Name)
+            this.GetRowGroupObject(objouter);
+        else
+            this.CreateRowGroupObject();
+        if (this.RwogroupCounter > 0) {
+            let div = `<div id="Rowgroup_${this.RwogroupCounter}_Outercont" class="rowgroup_outercont">
+                                    <div id="Rowgroup_${this.RwogroupCounter}_Header" class="rowgroup_header" >
+                                        <div id="Rowgroup_${this.RwogroupCounter}_Collapse"class="rowgroup_collapse_button headeritems"><i class="fa fa-caret-down"></i></div>
+                                        <input type="text" id="Rowgroup_${this.RwogroupCounter}_displayname" placeholder="Display Name Here..." class="rowgroup_name headeritems" value="Untitled.....">
+                                        <select class='rowgrouptype_select headeritems' id="Rowgroup_${this.RwogroupCounter}_typeselect" tabindex="1">
+                                            <option value='SingleLevelRowGroup'>Single Level</option>
+                                            <option value='MultipleLevelRowGroup'>Multi Level</option>
+                                        </select>
+                                        <i class="fa fa-trash headeritems" id="DeleteRowGroup_${this.RwogroupCounter}" tabindex="1"></i>
+                                    </div>
+                                    <div id="Rowgroup_${this.RwogroupCounter}_innerCont" class="col-md-12 Rowgroup_innerCont" data-key="${this.CurrentRowgroup.Name}">
+                                        <div id="Rowgroup_${this.RwogroupCounter}_ColumnCont" class="col-md-9 rowgroup_Outer_ColumnCont">
+                                            <div id="Rowgroup_${this.RwogroupCounter}_Header_columns" class="rowgroup_Inner_HeaderColumnCont">
+                                                <div id="Rowgroup_${this.RwogroupCounter}_Header_columns_header" class="rowgroup_controlfit">Rowgroup Columns</div>
+                                            </div>
+                                            <div id="Rowgroup_${this.RwogroupCounter}_Footer_columns" class="rowgroup_Inner_FooterColumnCont">
+                                                <div id="Rowgroup_${this.RwogroupCounter}_Footer_columns_header" class="rowgroup_controlfit">Rowgroup Footer Columns</div>
+                                            </div>
+                                        </div>
+                                        <div id="Rowgroup_${this.RwogroupCounter}_OrderbyCont" class="col-md-3 rowgroup_OrderbyCont">
+                                            <div id="Rowgroup_${this.RwogroupCounter}_Orderby_header" class="rowgroup_controlfit">Rowgroup Orderby</div>
+                                        </div>
+                                    </div>
+                                </div>`;
+            $("#Rowgroup_Inner_cont").append(div);
+
+            this.drake.containers.push(document.getElementById(`Rowgroup_${this.RwogroupCounter}_Header_columns`));
+            //this.drake.containers.push(document.getElementById(`Rowgroup_${this.RwogroupCounter}_Footer_columns`));
+            this.drake.containers.push(document.getElementById(`Rowgroup_${this.RwogroupCounter}_OrderbyCont`));
+
+            $(`#Rowgroup_${this.RwogroupCounter}_displayname`).val(this.CurrentRowgroup.DisplayName);
+            let type = this.getRowgrouptype(this.CurrentRowgroup);
+            $(`#Rowgroup_${this.RwogroupCounter}_typeselect`).selectpicker();
+            $(`#Rowgroup_${this.RwogroupCounter}_typeselect`).on('changed.bs.select', this.RowgroupObjectChanged.bind(this));
+            $(`#Rowgroup_${this.RwogroupCounter}_typeselect`).val(type);
+            $(`#Rowgroup_${this.RwogroupCounter}_typeselect option[value=${type}]`).trigger("change");
+            $("#RowgroupModal").modal("hide");
+            $(`#Rowgroup_${this.RwogroupCounter}_innerCont`).on('show', this.ShowRowgroup.bind(this));
+            $(`#Rowgroup_${this.RwogroupCounter}_innerCont`).on('hide', this.HideRowgroup.bind(this));
+            $(`#DeleteRowGroup_${this.RwogroupCounter}`).off("click").on("click", this.deleteRowgroup.bind(this));
+            $(`#Rowgroup_${this.RwogroupCounter}_displayname`).off("change").on("change", this.RowgroupDispalyNameChanged.bind(this));
+            $(`#Rowgroup_${this.RwogroupCounter}_displayname,.rowgrouptype_select ,#DeleteRowGroup_${this.RwogroupCounter}`).off("click").on("click", function (e) {
+                //e.stopPropagation();
+            });
+            $(`#Rowgroup_${this.RwogroupCounter}_Header`).off("click").on("click", this.ShowOrHideRowgroup.bind(this));
+            $(`#Rowgroup_${this.RwogroupCounter}_Header`).trigger("click");
+        }
+    }
+
+    CreateRowGroupObject() {
+        let name = $("#rowgroup_name").val();
+        let type = $('input[name=rowgroup]:checked').val();
+        if (type) {
+            this.RwogroupCounter++;
+            let obj = new EbObjects[type](type + this.RwogroupCounter);
+            if (name)
+                obj.DisplayName = name;
+            else
+                obj.DisplayName = obj.Name;
+            this.CurrentRowgroup = obj;
+            this.objCollection[obj.Name] = this.CurrentRowgroup;
+            this.EbObject.RowGroupCollection.$values.push(this.CurrentRowgroup);
+        }
+    }
+
+    GetRowGroupObject(Rowobj) {
+        this.RwogroupCounter++;
+        this.Objtype = this.getRowgrouptype(Rowobj);
+        let name = Rowobj.Name;
+        this.CurrentRowgroupkey = name;
+        this.objCollection[name] = Rowobj;
+        this.CurrentRowgroup = Rowobj;
+    }
+
+    RowgroupObjectChanged(e, clickedIndex) {
+        let type = this.getRowgrouptype(this.CurrentRowgroup);
+        clickedIndex = typeof (clickedIndex) !== "undefined" ? clickedIndex : $(`#Rowgroup_${this.RwogroupCounter}_typeselect option[value=${type}]`).index();
+        let option = $(e.target).find("option").eq(clickedIndex);
+        type = $(option).attr("value");
+        let obj = new EbObjects[type](type + this.RwogroupCounter);
+        this.CurrentRowgroup.$type = obj.$type;
+    }
+
+    ShowOrHideRowgroup(e) {
+        let elem = $(document.activeElement);
+        if (elem.is("input") || elem.is("button") || elem.is("i")) {
+            if (elem.is("i"))
+                this.deleteRowgroup(e);
+            else
+                $(e.target).siblings(".Rowgroup_innerCont").show();
+        }
+        else {
+            if ($(e.target).siblings(".Rowgroup_innerCont").is(':visible'))
+                $(e.target).siblings(".Rowgroup_innerCont").hide();
+            else
+                $(e.target).siblings(".Rowgroup_innerCont").show();
+        }
+    }
+
+    ShowRowgroup(e) {
+        $(".Rowgroup_innerCont").not(e.target).hide();
+        $(e.target).siblings().closest(".rowgroup_header").children().removeClass("disabledItems");
+        let key = $(e.target).attr("data-key");
+        this.CurrentRowgroup = this.objCollection[key];
+    }
+
+    HideRowgroup(e) {
+        if (!$(e.target).siblings().closest(".rowgroup_header").children().hasClass("disabledItems"))
+            $(e.target).siblings().closest(".rowgroup_header").children().addClass("disabledItems");
     }
 
     RemoveRowGroupColumn(e) {
@@ -695,167 +819,74 @@
         let key = element.attr("eb-name");
         this.CurrentRowgroup.RowGrouping.$values = this.CurrentRowgroup.RowGrouping.$values.filter((item) => item.name !== key);
         element.remove();
+        $(`#${this.CurrentRowgroup.Name}_${key}_elemsrowgrouporderbyCont`).parents().closest("li").remove();
     }
 
-    RowgroupChanged(e, clickedIndex, isSelected, previousValue) {
-        this.removeNewOption();
-        $("#Rowgroup_cont #rowgroup_body").empty();
-        clickedIndex = typeof (clickedIndex) !== "undefined" ? clickedIndex : $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).index();
-        let option = $(e.target).find("option").eq(clickedIndex);
-        this.CurrentRowgroupkey = $(option).attr("value");
-        let obj = this.objCollection[this.CurrentRowgroupkey];
-        this.CurrentRowgroup = obj;
-        //this.propGrid.setObject(obj, AllMetas[this.Objtype]);
-        this.drawRowgroupColumn(obj);
-        this.RowgroupChangedRelated();
-    }
-
-    RowgroupChangedRelated() {
-        $("#rowgroup_disname").val(this.CurrentRowgroup.DisplayName);
-        $(".rowgroup_select").val(this.CurrentRowgroup.Name);
-        $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).text(this.CurrentRowgroup.DisplayName);
-        $(".rowgroup_select").selectpicker('refresh');
-        let type = this.getRowgrouptype(this.CurrentRowgroup);
-        $(".rowgrouptype_select").val(type);
-        $(".rowgrouptype_select option[value=" + type + "]").trigger("change");
+    RemoveRowGroupOrderbyColumn(e) {
+        let element = $(e.target).closest("li");
+        let key = element.attr("eb-name");
+        this.CurrentRowgroup.OrderBy.$values = this.CurrentRowgroup.OrderBy.$values.filter((item) => item.name !== key);
+        element.remove();
     }
 
     drawRowgroupColumn(objOuter) {
         $.each(objOuter.RowGrouping.$values, function (i, obj) {
-            let element = $(`<li eb-type='${obj.Type}'  eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsrowgroupCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div></li>`);
+            let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${objOuter.Name}" class='columns textval' style='font-size: 13px;'>
+                <div id="${objOuter.Name}_${obj.name}_elemsrowgroupCont" class="columnelemsCont">
+                    <div id="${objOuter.Name}_${obj.name}_spanrowgroupCont" class="columnspanCont">
+                        <span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span>
+                    </div>
+                    <input class="rowgroupcolumntitle" type="text" id="${objOuter.Name}_${obj.name}_rowgroupcolumntitle"/>
+                </div></li>`);
             this.AllOtherColumndropElements(element);
-            $("#rowgroup_body").append(element);
+            $(`#Rowgroup_${this.RwogroupCounter}_Header_columns`).append(element);
             $(element).find(".close").off("click").on("click", this.RemoveRowGroupColumn.bind(this));
+            obj.sTitle = (obj.sTitle === "") ? obj.name : obj.sTitle;
+            $(`#${objOuter.Name}_${obj.name}_rowgroupcolumntitle`).val(obj.sTitle);
+            $(".rowgroupcolumntitle").off("change").on("change", this.RowgroupColumnTitleChanged.bind(this));
+            this.ColumnAppendToRowgroupOrderByDiv(objOuter,obj, true);
         }.bind(this));
     }
 
-    MakeDiv4Rowgroup() {
-        $("#Rowgroup_cont").css("height", "100px");
-        $("#Rowgroup_cont .tool_item_head").after(`<div class="tool_item_body accordion" id="rowgroup_body"></div>`);
-        let elements = `<input type="text" id="rowgroup_disname" placeholder="Display Name Here...">
-            <select class='rowgrouptype_select'>
-                <option value='SingleLevelRowGroup'>SingleLevelRowGroup</option>
-                <option value='MultipleLevelRowGroup'>MultipleLevelRowGroup</option>
-            </select><i class="fa fa-save" id="saveRowGroup"></i><i class="fa fa-trash" id="deleteRowGroup"></i>`;
-        $("#Rowgroup_cont .tool_item_head").append(elements);
-        this.drake.containers.push(document.getElementById("rowgroup_body"));
-        $("#Rowgroup_cont .tool_item_head").append(`<select class='rowgroup_select' title="Choose one of the following..."></select>`);
-        $("#deleteRowGroup").off("click").on("click", this.deleteRowgroup.bind(this));
-        $("#saveRowGroup").off("click").on("click", this.SaveRowgroup.bind(this));
-        $(".rowgrouptype_select").selectpicker();
-        //this.MakeCollapsedDiv();
-
+    drawRowgroupOrderByColumn(objOuter) {
+        $.each(objOuter.OrderBy.$values, function (i, obj) {
+            this.ColumnAppendToRowgroupOrderByDiv(objOuter,obj, false);
+        }.bind(this));
     }
 
-    MakeCollapsedDiv() {
-        let div = `<div class="card">
-            <div class="card-header" id="rowgroup${this.RwogroupCounter}cardheader">
-              <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#rowgroup${this.RwogroupCounter}body" aria-expanded="true" aria-controls="collapseOne">
-                  Rowgroup${this.RwogroupCounter}
-                </button>
-              </h5>
-            </div>
-            <div id="rowgroup${this.RwogroupCounter}body" class="collapse show" aria-labelledby="rowgroup${this.RwogroupCounter}header" data-parent="#accordion">
-              <div class="card-body">
-                <div id="card-body${this.RwogroupCounter}header">
-                    <input type="text" id="rowgroup_disname${this.RwogroupCounter}" placeholder="Display Name Here..." >
-                    <select class='rowgrouptype_select' id="rowgrouptype_select${this.RwogroupCounter}">
-                        <option value='SingleLevelRowGroup'>SingleLevelRowGroup</option>
-                        <option value='MultipleLevelRowGroup'>MultipleLevelRowGroup</option>
-                        </select>
-                    <i class="fa fa-save" id="saveRowGroup${this.RwogroupCounter}"></i><i class="fa fa-trash" id="deleteRowGroup${this.RwogroupCounter}"></i>
-                </div>
-                <div id="card-body${this.RwogroupCounter}body"></div>
-                </div>
-            </div>
-          </div>`;
-        $("#rowgroup_body").append(div);
-        if (this.drake !== null)
-            this.drake.containers.push(document.getElementById(`card-body${this.RwogroupCounter}body`));
-        else {
-            this.drake = new dragula([document.getElementById(`card-body${this.RwogroupCounter}body`)], {
-                accepts: this.acceptDrop.bind(this),
-                copy: this.copyfunction.bind(this)
-            });
-        }
-        $("#deleteRowGroup" + this.RwogroupCounter).off("click").on("click", this.deleteRowgroup.bind(this));
-        $("#saveRowGroup" + this.RwogroupCounter).off("click").on("click", this.SaveRowgroup.bind(this));
-        $("#rowgrouptype_select" + this.RwogroupCounter).selectpicker();
+    ColumnAppendToRowgroupOrderByDiv(objOuter, obj, rowgrouped) {
+        let element = $(`<li eb-type='${obj.Type}' eb-name="${obj.name}" eb-keyname="${objOuter.Name}" class='columns textval' style='font-size: 13px;'>
+            <div id="${objOuter.Name}_${obj.name}_elemsrowgrouporderbyCont" class="columnelemsCont">
+                <span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span>
+            </div></li>`);
+
+        $(`#Rowgroup_${this.RwogroupCounter}_OrderbyCont`).append(element);
+        this.AllOtherColumndropElements(element);
+        $(element).find("span").after(`<span class="spancheck"><input id="${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox" type="checkbox" class="rowgrouporderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
+
+        $(`#${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox`).bootstrapToggle({
+            on: 'Asc',
+            off: 'Desc'
+        });
+        $(`#${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox`).off("change").on("change", this.RowgroupOrderbyCheckboxChanged.bind(this));
+        if (obj.Direction === parseInt(EbEnums.OrderByDirection.ASC))
+            $(`#${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox`).bootstrapToggle("on");
+        else
+            $(`#${objOuter.Name}_${obj.name}_rowgroupOrderbyCheckox`).bootstrapToggle("off");
+        $(element).find(".close").off("click").on("click", this.RemoveRowGroupOrderbyColumn.bind(this));
+        if (rowgrouped)
+            $(`#${objOuter.Name}_${obj.name}_elemsrowgrouporderbyCont`).children().not(".spancheck").addClass("disabledItems");
+        
     }
 
-    deleteRowgroup() {
-        this.removeNewOption();
-        let obj = $.grep(this.EbObject.RowGroupCollection.$values, function (obj, i) { return obj.Name === this.CurrentRowgroup.Name; }.bind(this));
-        let objectExist = false;
-        if (obj.length !== 0) {
-            this.EbObject.RowGroupCollection.$values = this.EbObject.RowGroupCollection.$values.filter((item) => item.Name !== this.CurrentRowgroupkey);
-            $("select[class='rowgroup_select'] option[value='" + this.CurrentRowgroupkey + "']").remove();
-            $(".rowgroup_select").selectpicker('refresh');
-            this.RwogroupCounter--;
-            objectExist = true;
-        }
-        if (this.objCollection.hasOwnProperty(this.CurrentRowgroupkey)) {
-            delete this.objCollection[this.CurrentRowgroupkey];
-            if (!objectExist)
-                this.RwogroupCounter--;
-        }
-        if ($('.rowgroup_select option').length > 1) {
-            $('.rowgroup_select option').eq(1).trigger("change");
-        }
-        if ($('.rowgroup_select option').length === 1) {
-            $("#Rowgroup_cont").css("height", "25px");
-            $("#Rowgroup_cont .tool_item_head input").remove();
-            $("#deleteRowGroup").remove();
-            $("#saveRowGroup").remove();
-            $(".rowgroup_select").remove();
-            $(".rowgrouptype_select").remove();
-            $("#rowgroup_body").remove();
-            this.CurrentRowgroup = {};
-            this.RwogroupCounter = 0;
-        }
-        $("#NewRowGroup").show();
+    deleteRowgroup(e) {
+        delete this.objCollection[this.CurrentRowgroup.Name];
+        this.EbObject.RowGroupCollection.$values = this.EbObject.RowGroupCollection.$values.filter((item) => item.Name !== this.CurrentRowgroup.Name);
+        $(e.target).parents().closest(".rowgroup_outercont").remove();
     }
 
-    SaveRowgroup() {
-        this.removeNewOption();
-        if (!jQuery.isEmptyObject(this.CurrentRowgroup)) {
-            let index = this.EbObject.RowGroupCollection.$values.findIndex(function (obj) { return obj.Name === this.CurrentRowgroup.Name; }.bind(this));
-            let disname = $("#rowgroup_disname").val().trim() !== "" ? $("#rowgroup_disname").val().trim() : this.CurrentRowgroup.Name;
-            this.CurrentRowgroup.DisplayName = disname;
-            if (index === -1 && this.CurrentRowgroup.RowGrouping.$values.length > 0) {
-                this.EbObject.RowGroupCollection.$values.push(this.CurrentRowgroup);
-                let options = `<option value=${this.CurrentRowgroup.Name}>${this.CurrentRowgroup.DisplayName}</option>`;
-                $("select[class='rowgroup_select']").append(options);
-                $("#NewRowGroup").show();
-                $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).trigger("change");
-
-            }
-            else if (index !== -1 && this.CurrentRowgroup.RowGrouping.$values.length > 0) {
-                this.EbObject.RowGroupCollection.$values[index] = this.CurrentRowgroup;
-                $("#NewRowGroup").show();
-                $(`.rowgroup_select option[value='${this.CurrentRowgroup.Name}']`).trigger("change");
-            }
-            else
-                return false;
-        }
-    }
-
-    removeNewOption() {
-        $("select[class='rowgroup_select'] option[value='newrowgroup']").remove();
-        $(".rowgroup_select").selectpicker('refresh');
-        $("#NewRowGroup").show();
-    }
-
-    check4EmptyRowgroupObject() {
-        let Outerobj = $.grep(Object.values(this.objCollection), function (obj) { return obj.$type.indexOf("MultipleLevelRowGroup") !== -1 || obj.$type.indexOf("SingleLevelRowGroup") !== -1; });
-        if (Outerobj.length > 0) {
-            let obj = $.grep(Outerobj, function (obj) { return obj.RowGrouping.$values.length === 0; });
-            if (obj.length > 0)
-                return obj;
-            else
-                return false;
-        }
+    RowgroupDispalyNameChanged(e) {
+        this.CurrentRowgroup.DisplayName = $(e.target).val();
     }
 
     newCalcFieldSum = function () {
@@ -983,5 +1014,44 @@
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             obj.ColumnsRef = null;
         }.bind(this));
+    }
+
+    getRowgrouptype(objOuter) {
+        if (objOuter.$type.indexOf("MultipleLevelRowGroup") > -1) {
+            return "MultipleLevelRowGroup";
+        }
+        else {
+            return "SingleLevelRowGroup";
+        }
+    }
+
+    getType(type) {
+        if (type === 16) {
+            return "DVStringColumn";
+        }
+        else if (type === 7 || type === 8 || type === 10 || type === 11 || type === 12 || type === 21) {
+            return "DVNumericColumn";
+        }
+        else if (type === 3) {
+            return "DVbooleanColumn";
+        }
+        else if (type === 5 || type === 6 || type === 17 || type === 26) {
+            return "DVDateTimeColumn";
+        }
+    }
+
+    getIcon(type) {
+        if (type === 16) {
+            return this.EbParams.Icons["String"];
+        }
+        else if (type === 7 || type === 8 || type === 10 || type === 11 || type === 12 || type === 21) {
+            return this.EbParams.Icons["Numeric"];
+        }
+        else if (type === 3) {
+            return this.EbParams.Icons["Bool"];
+        }
+        else if (type === 5 || type === 6 || type === 17 || type === 26) {
+            return this.EbParams.Icons["DateTime"];
+        }
     }
 }

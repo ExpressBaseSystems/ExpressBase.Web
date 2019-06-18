@@ -125,9 +125,6 @@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#Integrations" role="tab">Connection Manager</a>
                 </li>
-                @*<li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">My Inegrations</a>
-                    </li>*@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#team" role="tab">Team</a>
                 </li>
@@ -265,15 +262,16 @@
                                                     {
                                                         @if (temp[i].Preference == "1")
                                                         {
-                                                            <div class="input-group integra-divider">
-                                                                <span class="input-group-addon">Primary  </span>
-                                                                <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbOBJECTS" pref="1" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
+                                                    <div class="input-group integra-divider">
+                                                        <span class="input-group-addon">Primary  </span>
+                                                       @* <input type="hidden" class="Inputclear" id="IntConfId" IntConfId="@temp[i].Id" value="@temp[i].Id" />*@
+                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
+                                                        <div class="input-group-btn">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbOBJECTS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                         }
                                                     }
                                                 </div>
@@ -285,7 +283,7 @@
                                                         <span class="input-group-addon">Primary  </span>
                                                         <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
                                                         <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbOBJECTS" pref="1" type="submit">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbOBJECTS" IntConfId="0" pref="PRIMARY" type="submit">
                                                                 <i class="fa fa-cog" aria-hidden="true"></i> Change
                                                             </button>
                                                         </div>
@@ -304,15 +302,16 @@
                                                     {
                                                         @if (temp[i].Preference == "1")
                                                         {
-                                                            <div class="input-group integra-divider">
-                                                                <span class="input-group-addon">Primary  </span>
-                                                                <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbDATA" pref="1" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
+                                                    <div class="input-group integra-divider">
+                                                        <span class="input-group-addon">Primary  </span>
+                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
+                                                        <input id="EbDATA-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
+                                                        <div class="input-group-btn">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbDATA" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                         }
                                                     }
                                                 </div>
@@ -322,9 +321,9 @@
                                                 <div class=" integra-p-s-divider">
                                                     <div class="input-group integra-divider">
                                                         <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
+                                                        <input id="EbDATA-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
                                                         <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbDATA" pref="1" type="submit">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbDATA" IntConfId="0" pref="PRIMARY" type="submit">
                                                                 <i class="fa fa-cog" aria-hidden="true"></i> Change
                                                             </button>
                                                         </div>
@@ -346,15 +345,16 @@
                                                     {
                                                         @if (temp[i].Preference == "1")
                                                         {
-                                                            <div class="input-group integra-divider">
-                                                                <span class="input-group-addon">Primary  </span>
-                                                                <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbLOGS" pref="1" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
+                                                    <div class="input-group integra-divider">
+                                                        <span class="input-group-addon">Primary  </span>
+                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
+                                                        <input id="EbLOGS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
+                                                        <div class="input-group-btn">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbLOGS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                         }
                                                     }
                                                 </div>
@@ -364,9 +364,9 @@
                                                 <div class=" integra-p-s-divider">
                                                     <div class="input-group integra-divider">
                                                         <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
+                                                        <input id="EbLOGS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
                                                         <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbLOGS" pref="1" type="submit">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbLOGS" IntConfId="0" pref="PRIMARY" type="submit">
                                                                 <i class="fa fa-cog" aria-hidden="true"></i> Change
                                                             </button>
                                                         </div>
@@ -385,23 +385,24 @@
                                                     {
                                                         @if (temp[i].Preference == "1")
                                                         {
-                                                            <div class="input-group integra-divider">
-                                                                <span class="input-group-addon">Primary  </span>
-                                                                <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" pref="1" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
+                                                    <div class="input-group integra-divider">
+                                                        <span class="input-group-addon">Primary  </span>
+                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
+                                                        <input id="SMTP-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
+                                                        <div class="input-group-btn">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                         }
                                                         else if (temp[i].Preferance == "2")
                                                         {
                                                             <div class="input-group  integra-divider">
                                                                 <span class="input-group-addon">Secondary</span>
-                                                                <input id="EbOBJECTS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
+                                                                <input id="SMTP-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
                                                                 <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" pref="2" type="submit">
+                                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="@temp[i].ConfId" pref="FALLBACK" type="submit">
                                                                         <i class="fa fa-cog" aria-hidden="true"></i> Change
                                                                     </button>
                                                                 </div>
@@ -412,22 +413,24 @@
                                             }
                                             else
                                             {
-                                                <div class="input-group integra-divider">
-                                                    <span class="input-group-addon">Primary  </span>
-                                                    <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                    <div class="input-group-btn">
-                                                        <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" pref="1" type="submit">
-                                                            <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                        </button>
+                                                <div class=" integra-p-s-divider">
+                                                    <div class="input-group integra-divider">
+                                                        <span class="input-group-addon">Primary  </span>
+                                                        <input id="SMTP-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
+                                                        <div class="input-group-btn">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="0" pref="PRIMARY" type="submit">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="input-group  integra-divider">
-                                                    <span class="input-group-addon">Secondary</span>
-                                                    <input id="EbOBJECTS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                    <div class="input-group-btn">
-                                                        <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" pref="2" type="submit">
-                                                            <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                        </button>
+                                                    <div class="input-group  integra-divider">
+                                                        <span class="input-group-addon">Secondary</span>
+                                                        <input id="SMTP-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
+                                                        <div class="input-group-btn">
+                                                            <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="0" pref="FALLBACK" type="submit">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             }
@@ -443,23 +446,24 @@
                                                     {
                                                         @if (temp[i].Preference == "1")
                                                         {
-                                                            <div class="input-group integra-divider">
-                                                                <span class="input-group-addon">Primary  </span>
-                                                                <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" pref="1" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
+                                                    <div class="input-group integra-divider">
+                                                        <span class="input-group-addon">Primary  </span>
+                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
+                                                        <input id="SMS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
+                                                        <div class="input-group-btn">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                         }
                                                         else if (temp[i].Preferance == "2")
                                                         {
                                                             <div class="input-group  integra-divider">
                                                                 <span class="input-group-addon">Secondary</span>
-                                                                <input id="EbOBJECTS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
+                                                                <input id="SMS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
                                                                 <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" pref="2" type="submit">
+                                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="@temp[i].ConfId" pref="FALLBACK" type="submit">
                                                                         <i class="fa fa-cog" aria-hidden="true"></i> Change
                                                                     </button>
                                                                 </div>
@@ -473,18 +477,18 @@
                                                 <div class=" integra-p-s-divider">
                                                     <div class="input-group integra-divider">
                                                         <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
+                                                        <input id="SMS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
                                                         <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" pref="1" type="submit">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="0" pref="PRIMARY" type="submit">
                                                                 <i class="fa fa-cog" aria-hidden="true"></i> Change
                                                             </button>
                                                         </div>
                                                     </div>
                                                     <div class="input-group  integra-divider">
                                                         <span class="input-group-addon">Secondary</span>
-                                                        <input id="EbOBJECTS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
+                                                        <input id="SMS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
                                                         <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" pref="2" type="submit">
+                                                            <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="0" pref="FALLBACK" type="submit">
                                                                 <i class="fa fa-cog" aria-hidden="true"></i> Change
                                                             </button>
                                                         </div>
@@ -503,15 +507,16 @@
                                                     {
                                                         @if (temp[i].Preference == "1")
                                                         {
-                                                            <div class="input-group integra-divider">
-                                                                <span class="input-group-addon">Primary  </span>
-                                                                <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="Cloudinary" pref="1" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
+                                                    <div class="input-group integra-divider">
+                                                        <span class="input-group-addon">Primary  </span>
+                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
+                                                        <input id="Cloudinary-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
+                                                        <div class="input-group-btn">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="Cloudinary" IntConfId="@temp[i].ConfId" pref="1" type="submit">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                         }
 
                                                     }
@@ -522,9 +527,9 @@
                                                 <div class=" integra-p-s-divider">
                                                     <div class="input-group integra-divider">
                                                         <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
+                                                        <input id="Cloudinary-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
                                                         <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="Cloudinary" pref="1" type="submit">
+                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="Cloudinary" IntConfId="0" pref="1" type="submit">
                                                                 <i class="fa fa-cog" aria-hidden="true"></i> Change
                                                             </button>
                                                         </div>
@@ -667,18 +672,21 @@
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
-            <div id="All_Intreation_header" class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h3 class="modal-title"></h3>
-            </div>
-            <div class="modal-body">
-                <div id="All_Intreation_bodyflex" class="display-flex">
+            <form action="" method="post" id="IntegrationSubmit" data-toggle="validator">
+                <div id="All_Intreation_header" class="modal-header">
+                    <div id="Integration_loder" class="dbConnection_loder"></div>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                    <h3 class="modal-title"></h3>
                 </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
+                <div class="modal-body">
+                    <div id="All_Intreation_bodyflex">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" >Save</button>
+                </div>
+            </form>
         </div>
 
     </div>
@@ -798,7 +806,7 @@
                                 <div class="help-block with-errors"></div>
                             </div>
                         </div>
-                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="0" />
+                        <input type="hidden" class="Inputclear IntConfId" id="IntConfId" name="Id" value="0" />
                         <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
                     </div>
                 </div>

@@ -75,9 +75,10 @@
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     }
     <script>
+
     window.ebcontext= {
         sid: "@ViewBag.cid",
-        user: JSON.parse('@Html.Raw(ViewBag.UserObject)'),
+        user: ("@ViewBag.UserObject"!="")?JSON.parse('@Html.Raw(ViewBag.UserObject)'):null,
         menu: {}
     }
     </script>

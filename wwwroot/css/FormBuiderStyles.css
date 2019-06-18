@@ -463,7 +463,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12), 0 0 14px 0 rgba(0, 0, 0, 0.17);
     height: 100%;
     background-color: white;
-    width: 400px;
+    width: 380px;
 }
 
 .eb-chatBox-dev > .Eb-ctrlContainer {

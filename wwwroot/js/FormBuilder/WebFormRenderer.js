@@ -1034,7 +1034,6 @@ const WebFormRender = function (option) {
                 }
             }.bind(this);
         }.bind(this), 500);
-
     };
 
     this.init();

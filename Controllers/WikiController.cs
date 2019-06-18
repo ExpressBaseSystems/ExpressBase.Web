@@ -16,6 +16,7 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("wiki/add/{id}")]
         public IActionResult AddWiki(int id)
+
         {
             ViewBag.id = id;
             if (id > 0)
@@ -25,8 +26,15 @@ namespace ExpressBase.Web.Controllers
                         Id = Convert.ToInt32(id)
                 });
 
-                ViewBag.Wiki = resp.Wiki;
-                return View();
+                if(resp == null)
+                {
+                   return Redirect("0");
+                }
+                else
+                {
+                    ViewBag.Wiki = resp.Wiki;
+                    return View();
+                }       
             }
             else {
                 ViewBag.Wiki = new Wiki() { Id = 0 };
@@ -77,7 +85,7 @@ namespace ExpressBase.Web.Controllers
                         Id = id
                     }
                 });
-
+                
                 return Redirect(string.Format("/publicwiki/view/{0}", resp.Wiki.Id));
             }
             else
@@ -94,7 +102,6 @@ namespace ExpressBase.Web.Controllers
                     }
                  
                 });
-
                 return Redirect(string.Format("/publicwiki/view/{0}", resp.Wiki.Id));
             }
         }

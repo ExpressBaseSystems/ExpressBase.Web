@@ -600,7 +600,7 @@
     this.getOSElist = function () {
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
-        if (!this.OSEList) {
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]) {
             $.LoadingOverlay("show");
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",

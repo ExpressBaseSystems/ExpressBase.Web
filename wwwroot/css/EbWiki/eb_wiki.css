@@ -5,22 +5,6 @@
     height: 575px;
 }
 
-.left {
-    padding-top: 50px;
-    padding-left: 30px;
-    width: 50%;
-    background-color: lightblue;
-    overflow: auto;
-}
-
-.right {
-    width: 50%;
-    PADDING-TOP: 30PX;
-   
-}
-
-
-
 .left_view {
     padding-top: 0px;
     padding-left: 6px;
@@ -52,10 +36,31 @@ div.ex3 {
 }
 
 div.ex2 {
-    width: 100%;
-    height: 90px;
+    width: 80%;
+    height: 82px;
     overflow: hidden;
 }
+
+div.ex2 center {
+    text-align: left;
+}
+
+div.ex2 h1 {
+    font-size: 20px;
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    text-align: left;
+}
+
+div.ex2 p {
+    color: black;
+    font-size: 13px;
+    padding: 0px;
+    margin-bottom: 0px;
+    line-height: 20px;
+}
+
 
 .header {
     background-color: lightgrey;
@@ -105,80 +110,67 @@ div.ex2 {
     border: 1px solid transparent;
 }
 
-.search-button {
-    width: 677px;
-    height: 45px;
-    position: relative;
-    z-index: 999999;
-    font-family: monospace;
-    font-size: 20px;
-    color: cornflowerblue;
-    position: absolute;
-    padding: 0;
-    border: none;
-    outline:none;
-    //border-bottom:5px;
-}
-.modal .modal-content center {
-    text-align: left;
-}
-.modal .modal-content h1 {
-    font-size: 20px;
-    padding: 0px;
-    margin-bottom: 0px;
-    margin-top: 5px;
-    text-align: left;
-}
-.modal .modal-content p {
-    color:black;
-    font-size: 13px;
-    padding: 0px;
-    margin-bottom: 0px;
-    margin-top: 5px;
-}
-
-/* The Modal (background) */
-.modal {
-    display: none;
+.input-group {
+    width: 301px;
+    height: 31px;
     position: fixed;
-    z-index: 1;
-    padding-top: 42px;
-    padding-left: 162px;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-    overflow: scroll;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
+    margin-left: 62px;
+}
+.input-group input{
+    height: 35px;
+    box-shadow: none;
+    border-right: 0;
+    border-color: #508cf9;
 }
 
-/* Modal Content */
-.modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 8px;
-    padding-top: 0px;
-    width: 57%;
-    border-radius: 0px;
+
+.navbar1 {
+    background-color: #508bf9;
+    border-color: #508bf9;
+    color: #FFF;
+    height: 550px;
+    overflow: auto;
+    padding-left: 0px;
+    padding-top: 20px;
+    margin-top: 10px;
+    -webkit-box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
+    -moz-box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
+    box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
+    border-radius: 0px 5px 5px 0px;
+    -moz-border-radius: 0px 5px 5px 0px;
+    -webkit-border-radius: 0px 5px 5px 0px;
+    border: 0px solid #000000;
+}
+.navbar1 a {
+        color: #FFF;
+}
+.navbar1 .row {
+    padding-left: 10px;
+}
+.navbar1 h5 {
+    font-size: 16px;
+    line-height: 5px;
+    font-family: Montserrat;
+    text-shadow: inherit;
 }
 
-button {
+
+.props {
     width: 56px;
     height: 40px;
-    align-content:center;
+    align-content: center;
 }
-button:hover {
+.props:hover {
     background-color:  #8AB6F7
 }
-button:active {
+.props:active {
     background-color: cornflowerblue;
 }
-.render iframe {
-    width : 470px;
-    height: 315px; 
+iframe {
+    width: 470px;
+    height: 315px;
 }
-.render img {
+.img {
     width : 470px;
     height: 315px; 
 }
@@ -194,6 +186,119 @@ button:active {
 }
 
 .style-4::-webkit-scrollbar-thumb {
-    background-color: #8AB6F7;
+    background-color: #557aff;
+}
+.code{
 }
 
+
+h1 {
+    font-size: 40px;
+    line-height: 40px;
+    font-family: Montserrat;
+    color: #042b88;
+    font-weight: 400;
+    font-family: Montserrat;
+}
+
+h2 {
+    font-size: 30px;
+    line-height: 40px;
+    font-family: Montserrat;
+    color: #042b88;
+    font-weight: 400;
+}
+
+h3 {
+    font-size: 20px;
+    font-family: Montserrat;
+    color: #042b88;
+    font-weight: 400;
+}
+
+h4 {
+    font-size: 18px;
+    line-height: 40px;
+    font-family: Montserrat;
+    color: #3b415e;
+    font-weight: 400;
+}
+
+/* Won't be used here */
+
+
+
+h6 {
+    font-size: 12px;
+    line-height: 20px;
+    font-family: Montserrat;
+    color: cornflowerblue;
+    text-shadow: inherit;
+}
+
+.p {
+    width: 100%;
+    font-size: 15px;
+    line-height: 3.2rem;
+    /* color: white; */
+    font-family: Montserrat;
+    font-weight: 400;
+    color: #4e566d;
+}
+ul li {
+    font-family: sans-serif;
+    color: #3b415e;
+    font-weight: 400;
+    font-size: 34px;
+    text-decoration: wavy;
+    font-size: 18px;
+    color: #3b415e;
+    list-style-type: none;
+}
+a {
+    font-size: 18px;
+     font-family: sans-serif;
+    font-size: 14px;
+    color: #4e566d;
+    line-height: 26px;
+}
+
+a:focus, a:hover {
+    -webkit-transition-property: font-size; /* Safari */
+  -webkit-transition-duration: .2s; /* Safari */
+  -webkit-transition-delay: .1s;
+   transition-timing-function: linear;
+    font-size:14px;
+    color: blue;
+    text-decoration: none;
+}
+.animation{
+   -webkit-transition-property: font-size; /* Safari */
+  -webkit-transition-duration: .2s; /* Safari */
+  -webkit-transition-delay: .1s;
+   transition-timing-function: linear;
+    font-size:19px;
+    color: #23527c;
+    text-decoration: none;
+  }
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #cd9557;
+    opacity: .7;
+    z-index: 1;
+}
+
+.trihuddiv {
+    position: fixed;
+    width: 2%;
+    /* height: 100%; */
+    clip-path: polygon(0 0,100% 0,100% -14%,0% 92%);
+    background: #fff;
+    height: 670px;
+    top: 0px;
+}

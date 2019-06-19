@@ -12,6 +12,7 @@ class DvBuilder {
     constructor(option) {
         this.type = option.ObjType || null;
         this.EbObject = option.dvObj || null;
+        this.OldEbObject = null;
         this.tabNum = option.TabNum || null;
         this.ssurl = option.ServiceUrl || null;
         this.wc = option.Wc;
@@ -119,6 +120,7 @@ class DvBuilder {
 
     PropertyChanged(obj, pname) {
         if (pname === "DataSourceRefId") {
+            this.OldEbObject = this.EbObject;
             this.check4Customcolumn();
             if (this.isCustomColumnExist) {
                 EbDialog("show", {
@@ -178,6 +180,7 @@ class DvBuilder {
                 this.EbObject.ColumnsCollection.$values = returnobj.ColumnsCollection.$values;
                 this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? [] : returnobj.Paramlist.$values;
                 this.EbObject.DSColumns.$values = returnobj.DsColumns.$values;
+                //this.checkOldAndNewColumns();
                 commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
                 $("#get-col-loader").hide();
@@ -190,6 +193,8 @@ class DvBuilder {
             }.bind(this)
         });
     }
+
+    
 
     SetColumnRef() {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
@@ -217,7 +222,7 @@ class DvBuilder {
         $('#calcFields').killTree();
         $('#calcFields').treed();
         this.SetContextmenu4CalcField();
-        this.removeOldColumnsfromCollection();
+        this.RemoveOldColumnsfromCollection();
         this.SetColumnRef();
         this.initializeDragula();
         this.ColumnDropped();
@@ -228,7 +233,7 @@ class DvBuilder {
         }
     }
 
-    removeOldColumnsfromCollection() {
+    RemoveOldColumnsfromCollection() {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.IsTree) {
                 this.RemoveOldColumnFromTreeColumn(obj);
@@ -416,7 +421,7 @@ class DvBuilder {
             let name = $(el).attr("eb-name");
             $(el).attr("eb-keyname", name + "orderby");
             $(el).find("span").wrap(`<div id="${name}_elemsorderbyCont" class="columnelemsCont"></div>`);
-            $(el).find("span").after(`<span class="spancheck"><input id="${obj.name}_orderbyCheckbox" type="checkbox" class="orderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
+            $(el).find("span").after(`<span class="spancheck"><input id="${name}_orderbyCheckbox" type="checkbox" class="orderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
             this.OrderbyColumnDropRelated(el);
             let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; }.bind(this))[0];
             this.EbObject.OrderBy.$values.push(obj);
@@ -516,6 +521,7 @@ class DvBuilder {
     }
 
     RowgroupColumnDropped() {
+        $("#Rowgroup_Inner_cont .rowgroup_outercont").remove();
         $.each(this.EbObject.RowGroupCollection.$values, function (i, objOuter) {
             this.ShowRowgroupDiv(objOuter);
             this.drawRowgroupColumn(objOuter);

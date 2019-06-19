@@ -77,7 +77,7 @@
             let tapBtns = $ctrl.find("ul.nav-tabs a");
             $.each(ctrlObj.Controls.$values, function (i, pane) {
                 $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
-                $(tapBtns[0]).attr("href", "#" + pane.EbSid).text(pane.EbSid).closest("li").attr("li-of", pane.EbSid);
+                $(tapBtns[0]).attr("href", "#" + pane.EbSid).text(pane.Name).closest("li").attr("li-of", pane.EbSid);
             });
             this.makeTabsDropable();
         }
@@ -85,7 +85,7 @@
             let el = $("#" + this.formId + " .group-box")[0];
             this.makeGBDropable(el);
         }
-    }
+    };
 
     this.makeGBDropable = function (el) {
         if (this.drake) {
@@ -417,7 +417,7 @@
         let id = SelectedCtrl.EbSid;
         let $ctrl = $("#cont_" + id);
         let $tabMenu = $(`<li li-of="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}">${addedObj.Name}</a></li>`);
-        let $tabPane = $(`<div id="${addedObj.EbSid}" ebsid="${addedObj.EbSid}" class="tab-pane fade  ebcont-ctrl"></div>`);
+        let $tabPane = $(`<div id="${addedObj.EbSid}" ctype="${addedObj.ObjType}" ebsid="${addedObj.EbSid}" class="tab-pane fade  ebcont-ctrl"></div>`);
         $ctrl.closestInner(".nav-tabs").append($tabMenu);
         $ctrl.closestInner(".tab-content").append($tabPane);
         this.drake.containers.push($tabPane[0]);
@@ -440,6 +440,7 @@
         }
         else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls") {
             //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
+            addedObj.Name = addedObj.Name.substr(-5);//furthure shorten name 
             this.addTabPane(this.SelectedCtrl, prop, val, addedObj);
         }
     }.bind(this);

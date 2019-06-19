@@ -91,6 +91,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.tableName = null;
     this.moveToPid = null;
     this.movefromId = null;
+    this.columnCount = null;
 
     var split = new splitWindow("parent-div0", "contBox");
 
@@ -110,7 +111,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dir: "left",
                 label: "Parameters",
                 //btnTop: 42,
-                style: { top: "112px" }
+                style: { top: "82px" }
             });
         }
     };
@@ -156,14 +157,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.filterHtml = text;
         if (this.login === "uc") {
             this.stickBtn = new EbStickButton({
-                $wraper: $(".dv-body"),
+                $wraper: this.FDCont,
                 $extCont: this.FDCont,
                 $scope: $("#" + focusedId),
                 icon: "fa-filter",
                 dir: "left",
                 label: "Parameters",
                 //btnTop: 42,
-                style: { position: "absolute", top: "46px" }
+                style: { top: "44px" }
             });
         }
         $("#obj_icons").empty();
@@ -334,7 +335,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
-                    $extCont: $(".ppcont")
+                    $extCont: $(".ppcont"),
+                    style: { top: "80px" }
                 }, this.PGobj);
 
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
@@ -355,7 +357,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
-                    $extCont: $(".ppcont")
+                    $extCont: $(".ppcont"),
+                    style: { top: "80px" }
                 }, this.PGobj);
 
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
@@ -416,6 +419,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.addSerialAndCheckboxColumns();
         this.ModifyColumnObject();
         this.treeCols = [];
+        this.getColumnCount();
         //hard coding
         this.orderColl = [];
         let rowG_coll = this.EbObject.RowGroupCollection.$values;
@@ -424,7 +428,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (CurR_RowG === null) {
 
                 $.each(rowG_coll, function (i, obj) {
-                    if (obj.RowGrouping.$values.length > 0) {
+                    if (obj.RowGrouping.$values.length > 0) { 
                         this.CurrentRowGroup = JSON.parse(JSON.stringify(obj));
                         this.visibilityCheck();
                         return false;
@@ -486,7 +490,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
         }
-        this.EbObject.IsPaging = !this.IsTree;
+        if (this.IsTree)
+            this.EbObject.IsPaging = false;
     };
 
     this.ModifyColumnObject = function () {
@@ -496,6 +501,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 return x;
             });
         }
+    };
+
+    this.getColumnCount = function () {
+        this.columnCount = this.rowgroupCols.length + this.extraCol.length;
+        var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.bVisible; });
+        this.columnCount += temp.length;
     };
 
     this.InitializeColumns = function () {
@@ -906,8 +917,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.linkDV; }.bind(this));
             this.dvformMode = temp[0].FormMode;
             if (temp[0].FormMode === 1) {
-                var col = temp[0].FormId.$values[0];
-                filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
+                var col = temp[0].FormId.$values;
+                $.each(col, function (i, col) {
+                    filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
+                }.bind(this));
             }
             else if (temp[0].FormMode === 2) {
                 var cols = temp[0].FormParameters.$values;
@@ -1018,7 +1031,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
         }
-        this.Tags = new EbTags({ "displayFilterDialogArr": filterdialog, "displayColumnSearchArr": columnFilter, "id": "#filterDisplay_" + this.tableId + "", "remove": this.closeTag });
+        this.Tags = new EbTags({ "displayFilterDialogArr": filterdialog, "displayColumnSearchArr": columnFilter, "id": "#filterdisplayrowtd_" + this.tableId + "", "remove": this.closeTag });
         //this.Tags = new EbTags({ "displayFilterDialogArr": $controls, "displayColumnSearchArr": this.columnSearch, "id": "#filter_Display", "remove": this.closeTag });
     };
 
@@ -1207,11 +1220,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");            
         }
 
-        this.filterDisplay();
-        this.arrangeWindowHeight();
         if(!this.IsTree)
             this.createFilterRowHeader();
+        this.filterDisplay();
         this.createFooter();
+        this.arrangeWindowHeight();
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
         $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
         $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
@@ -1514,9 +1527,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.arrangeWindowHeight = function () {
-        var filterId = "#filterDisplay_" + this.tableId;
+        var filterId = "#filterdisplayrowtd_" + this.tableId;
         if (this.login === "uc") {
-            if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader)
+            if (this.IsTree) {
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 27px)", "important");
+            }
+            else if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader)
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 60px)", "important");
             else {
                 if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging && this.EbObject.AllowMultilineHeader) {//multilineonly
@@ -1558,15 +1574,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 }
             }
             else {
-                if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
-                    $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 75px)", "important");
+                if (this.IsTree)
+                    $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 7px)", "important");
+                else if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
+                    $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 42px)", "important");
                 else {
                     if ($(filterId).children().length === 0)
-                        $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 102px)", "important");
+                        $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 68px)", "important");
                     else if (!this.ebSettings.IsPaging)
-                        $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 100px)", "important");
+                        $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 65px)", "important");
                     else
-                        $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 125px)", "important");
+                        $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 93px)", "important");
                 }
             }
         }
@@ -2123,8 +2141,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     "<div class='input-group-btn dropup'>" +
                     "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
                     " <ul class='dropdown-menu'>" +
-                    "  <li><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + ">&sum;</a></li>" +
-                    "  <li><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}>x&#772;</a></li>" +
+                    "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + "> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
+                    "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
                     " </ul>" +
                     " </div>" +
                     " <input type='text' class='form-control' id='" + footer_txt + "' disabled style='z-index:" + zidx.toString() + ";" + style + "'>" +
@@ -2217,6 +2235,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 for (var j = 0; j < this.eb_filter_controls_4sb.length; j++)
                     $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
             }
+            sc_h_tbl.find("thead .addedbyeb").before($("<tr role='row' id='filterdisplayrow_" + this.tableId + "' class='filterdisplayrow'><td id='filterdisplayrowtd_" + this.tableId + "' colspan=" + this.columnCount + " style='padding: 2px!important;'></td></tr>"));
         }
 
         // $('#' + tableid + '_wrapper table thead tr[class=addedbyeb]').hide();
@@ -2952,12 +2971,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             "<div class='input-group-btn'>" +
             " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> " + op + " </button>" +
             " <ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
-            "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
-            " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
-            " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
-            " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><=</a></li>" +
-            " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">>=</a></li>" +
-            "<li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
+            " <li class='filterli'><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> = </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Equal to</span></li>" +
+            " <li class='filterli'><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> < </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Less than</span></li>" +
+            " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> > </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Greater than</span></li>" +
+            " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> <= </a><span class='filtertext eb_fsel" + this.tableId + "'> Less than or Equal</span></li>" +
+            " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> >= </a><span class='filtertext eb_fsel" + this.tableId + "'> Greater than or Equal</span></li>" +
+            "<li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> B </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Between</span></li>" +
             " </ul>" +
             " </div>" +
             " <input type='number' data-toggle='tooltip' class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
@@ -2983,12 +3002,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             "<div class='input-group-btn'>" +
             " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'> " + op + " </button>" +
             "<ul class='dropdown-menu'>" +//  style='z-index:" + zidx.toString() + "'
-            " <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
-            " <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><</a></li>" +
-            " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">></a></li>" +
-            " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "><=</a></li>" +
-            " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">>=</a></li>" +
-            " <li ><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">B</a></li>" +
+            " <li class='filterli'><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> = </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Equal to</span></li>" +
+            " <li class='filterli'><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> < </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Less than</span></li>" +
+            " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> > </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Greater than</span></li>" +
+            " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> <= </a><span class='filtertext eb_fsel" + this.tableId + "'> Less than or Equal</span></li>" +
+            " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> >= </a><span class='filtertext eb_fsel" + this.tableId + "'> Greater than or Equal</span></li>" +
+            " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> B </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Between</span></li>" +
             " </ul>" +
             " </div>" +
             " <input type='text' placeholder='" + datePattern + "' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
@@ -3016,10 +3035,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + header_select + "'>" + op + "</button>" +
             " <ul class='dropdown-menu'>" +
 
-            "   <li ><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">x*</a></li>" +
-            "  <li><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x</a></li>" +
-            "  <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">*x*</a></li>" +
-            " <li><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + ">=</a></li>" +
+            "   <li class='filterli'><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> x* </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 5px;'> Starts with</span></li>" +
+            "  <li class='filterli'><a href ='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> *x </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 5px;'> Ends with</span></li>" +
+            "  <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> *x* </a><span class='filtertext eb_fsel" + this.tableId + "' > Contains</span></li>" +
+            " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> = </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 9px;'> Exact match</span></li>" +
             " </ul>" +
             " </div>" +
             " <input type='text' data-toggle='tooltip'  class='form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
@@ -3063,17 +3082,18 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.setLiValue = function (e) {
-        var selText = $(e.target).text();
-        var table = $(e.target).attr('data-table');
+        let elemnt = ($(e.target).is("a")) ? $(e.target) : $(e.target).siblings("a");
+        var selText = $(elemnt).text();
+        var table = $(elemnt).attr('data-table');
         var flag = false;
-        var colum = $(e.target).attr('data-colum');
-        var ctype = $(e.target).parents('.input-group').find("input").attr('data-coltyp');
+        var colum = $(elemnt).attr('data-colum');
+        var ctype = $(elemnt).parents('.input-group').find("input").attr('data-coltyp');
         var dateclas = (ctype === "date") ? "no-spin" : "";
-        $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
+        $(elemnt).parents('.input-group-btn').find('.dropdown-toggle').html(selText);
         if (selText.trim() === 'B') {
-            if ($(e.target).parents('.input-group').find("input").length == 1) {
+            if ($(elemnt).parents('.input-group').find("input").length == 1) {
                 if (ctype === "date") {
-                    $(e.target).parents('.input-group').append("<input type='text' placeholder='" + datePattern + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='" + datePattern + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
                         dateFormat: datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
                         beforeShow: function (elem, obj) {
@@ -3093,8 +3113,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }
         else if (selText.trim() !== 'B') {
-            if ($(e.target).parents('.input-group').find("input").length == 2) {
-                $(e.target).parents('.input-group').find("input").eq(1).remove();
+            if ($(elemnt).parents('.input-group').find("input").length == 2) {
+                $(elemnt).parents('.input-group').find("input").eq(1).remove();
                 $("#" + this.tableId + "_" + colum + "_hdr_txt1").removeClass("between-inp");
             }
         }
@@ -3208,11 +3228,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.fselect_func = function (e) {
-        var selValue = $(e.target).text().trim();
-        $(e.target).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
-        var table = $(e.target).attr('data-table');
-        var colum = $(e.target).attr('data-column');
-        var decip = $(e.target).attr('data-decip');
+        let element = ($(e.target).is("a")) ? $(e.target) : $(e.target).siblings("a");
+        var selValue = $(element).text().trim();
+        $(element).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
+        var table = $(element).attr('data-table');
+        var colum = $(element).attr('data-column');
+        var decip = $(element).attr('data-decip');
         var col = this.Api.column(colum + ':name');
         var ftrtxt;
         var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; });
@@ -3952,7 +3973,7 @@ var EbTags = function (settings) {
             this.id.append(`<div class="tagstyle op">AND</div>`);
 
         $.each(this.displayColumnSearchArr, function (i, search) {
-            filter = search.name + " " + returnOperator(search.operator);
+            filter = search.name + " " + returnOperator(search.operator.trim());
             filter += " " + search.value;
             this.id.append(`<div class="tagstyle" data-col="${search.name}" data-val="${search.value}">${filter} <i class="fa fa-close"></i></div>`);
             if (search.logicOp !== "")

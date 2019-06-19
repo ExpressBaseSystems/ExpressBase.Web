@@ -594,3 +594,10 @@ table.dataTable tr.group td {
 .popover-content{
     color:black !important;
 }
+
+.footerli, .filterli {
+    display: flex;
+}
+.filterdisplayrow td{
+    border-bottom:1px solid #ddd !important;
+}

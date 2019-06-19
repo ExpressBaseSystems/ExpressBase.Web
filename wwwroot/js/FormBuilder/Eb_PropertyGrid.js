@@ -24,6 +24,7 @@
     this.nameChanged = function (e) { };
     this.Close = function (e) { };
     this.IsReadonly = false;
+    this.style = options.style || {};
 
     // refresh and get object with new values from PG
     this.getvaluesFromPG = function () {
@@ -584,7 +585,8 @@
                 $wraper: this.$wraper,
                 $extCont: this.$extCont,
                 label: "Properties",
-                $scope: this.$scope
+                $scope: this.$scope,
+                style: this.style
             });
             this.$wraper.addClass("outer-pg");
             if (this.Isdraggable) {

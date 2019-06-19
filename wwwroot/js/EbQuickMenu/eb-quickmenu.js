@@ -281,30 +281,22 @@
             },
         }).done(function (result) {
             if (result) {
-                let index = 0;
-                let obj = null;
-                $.each(this.resultObj.Data[appid].Types[otype].Objects,function (i,ob) {
+                $.each(this.resultObj.Favourites,function (i,ob) {
                     if (ob.Id === objid) {
-                        index = i;
-                        obj = this.resultObj.Data[appid].Types[otype].Objects[i];
-                        this.resultObj.Favourites.splice(index, 1);
-                        obj.Favourite = false;
-                        return this.refreshFav();
+                        let obj = this.resultObj.Data[appid].Types[otype].Objects.filter(_ob => _ob.Id === objid);
+                        this.resultObj.Favourites.splice(i, 1);
+                        obj[0].Favourite = false;
+                        if ($(e.target).closest(".obj-item").hasClass("fav")) {
+                            let len = this.resultObj.Favourites.filter(item => item.EbObjectType === obj[0].EbObjectType).length;
+                            $(e.target).closest(".obj-item-categorised").find(".category_objCount").text(`(${len})`)
+                        }
+                        $(e.target).closest(".obj-item").remove();
+                        return false;
                     }
                 }.bind(this));
             }
         }.bind(this));
     };
-
-    this.refreshFav = function () {
-        $("#ebm-objectcontainer").hide();
-        $("#ebm-objectcontainer .ebm-objlist").empty();
-        $("#ebm-objectcontainer").show('slide', { direction: 'left' });
-        for (let i = 0; i < this.resultObj.Favourites.length; i++) {
-            this.appendObjByCategory(this.resultObj.Favourites[i], true);
-        }
-        
-    }
 
     this.showfavourites = function (e) {
         this.active($(e.target));
@@ -322,7 +314,7 @@
     };
 
     this.appendObjByCategory = function (_obj, isfav) {
-        let set_fav = "";
+        let set_fav,fav = "";
         if (this.login == "uc" && !isfav) {
             let isfav = "";
             let tooltip = "";
@@ -337,6 +329,7 @@
             set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
         }
         else if (this.login == "uc" && isfav) {
+            fav = "fav";
             isfav = "favourited";
             tooltip = "Remove from Favourites.";
             set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
@@ -344,12 +337,12 @@
 
         if ($(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).length <= 0) {
             $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item-categorised" id="ctypeContaner${_obj.EbObjectType}">
-                                                            <div class="head"><i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i> ${_obj.EbType}<span class="category_objCount"></span></div>
+                                                            <div class="head"><i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i> ${this.objTypes[_obj.EbObjectType].Name}s<span class="category_objCount"></span></div>
                                                             <div class="body" id="categoryType${_obj.EbObjectType}"></div>
                                                         </div>`);
         }
 
-        $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item" klink="true">
+        $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item ${fav}" klink="true">
                                                         <a href='${this.decideUrl(_obj)}'>
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>

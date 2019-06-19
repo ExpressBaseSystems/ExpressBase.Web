@@ -477,7 +477,7 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.drake.on("cloned", this.onClonedFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
-        this.$form.click();
+        this.$form.focus();
         if (this.isEditMode) {
             this.makeTdsDropable_Resizable();
             this.makeTabsDropable();

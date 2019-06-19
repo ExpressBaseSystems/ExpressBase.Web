@@ -178,6 +178,7 @@
         width: 250px;
         display: none;
         flex-flow: column nowrap;
+        border-left: 1px solid #ccc;
     }
 
         .EbQuickMoverlaySideWRpr .newObjectContainer .newObjectContainer-inner {

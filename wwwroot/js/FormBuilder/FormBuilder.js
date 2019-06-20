@@ -144,6 +144,7 @@
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
+        this.rootContainerObj = new EbObjects["Eb" + this.rootContainerObj.ObjType](this.rootContainerObj.EbSid, this.rootContainerObj);
         // convert json to ebobjects
         Proc(editModeObj, this.rootContainerObj);
         $(".Eb-ctrlContainer").each(function (i, el) {

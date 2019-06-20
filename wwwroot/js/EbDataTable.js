@@ -1162,7 +1162,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                             filter_obj_arr.push(new filter_obj(colum, "=", val1, "boolean"));
                     }
                     else {
-                        oper = $('#' + table + '_' + colum + '_hdr_sel').text();
+                        oper = $('#' + table + '_' + colum + '_hdr_sel').text().trim();
                         if (api.columns(i).visible()[0]) {
                             if (oper !== '' && $(textid).val() !== '') {
                                 if (oper === 'B') {

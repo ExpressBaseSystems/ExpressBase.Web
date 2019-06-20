@@ -202,8 +202,7 @@ class DvBuilder {
                     });
                 }
                 else {
-                    this.RemoveOldColumnsAndSetNewColumns();
-                    this.drawDsColTree();
+                    this.Columnconfirmation("Yes");
                 }
             }.bind(this)
         });

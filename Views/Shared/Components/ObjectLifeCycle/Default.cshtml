@@ -16,11 +16,12 @@
     $("#obj_icons").hide();
 
     $(document).ready(function () {
-        $('.selectpicker').selectpicker({
-            size: 4
-        });
-        $('.selectpicker').selectpicker('refresh');
+            $('.selectpicker').selectpicker({
+                size: 4
+            });
+            $('.selectpicker').selectpicker('refresh');
         $.each(@Html.Raw(dvobj), function (i, obj) {
+            
             $('#timeline@(ViewBag.tabNum)').append("<li class='timeline-item' id= 'stat" + i + "_" + @(ViewBag.tabNum) + "' > " +
                 "<div class='timeline-badge' id='timeline-badge" + i + "_" + @(ViewBag.tabNum) + "'><i class='glyphicon glyphicon-check'></i></div>" +
                 "<div class='timeline-panel' style='min-height: 92px;'> " +
@@ -31,17 +32,17 @@
                         "<div class='timeline-body' id='timeline-body" + i + "_" + @(ViewBag.tabNum) + "'> " +
                             "<p class='timeline-body-clickmore'>" + obj.ChangeLog + "</p>" +
                         "</div>" +
-                      "<a class='primary pull-right more' style='position:absolute; bottom: 0; right: 0;' id='more" + i + "_" + @(ViewBag.tabNum) + "'>more</a>" +
-                   "</div>" + 
+                        "<a class='primary pull-right more' style='position:absolute; bottom: 0; right: 0;' id='more" + i + "_" + @(ViewBag.tabNum) + "'>more</a>" +
+                    "</div>" + 
                 "<div class='col-md-2'>" +
-                        "<img class='img-circle img-thumbnail prof_dp pull-right' src= '../static/dp/dp_" + obj.CommitUId + "_micro.jpg" + "'/>" +
+                        "<img class='img-circle img-thumbnail prof_dp pull-right' src= '../images/dp/" + obj.CommitUId + ".png" + "'/>" +
                         "<small class='col-md-2' style='display:inline;font-weight:700;' > " + obj.CommitUname + "</small></p >" +
                 "</div> " +
                 "<div class='timeline-time' style='display:inline'>" +
-                 "<p style='backgroung-color:lightgrey'><small class='text-muted' style='font-size: 11px;'><i class='glyphicon glyphicon-time'></i>" + obj.CommitTs + "</small>" +
+                    "<p style='backgroung-color:lightgrey'><small class='text-muted' style='font-size: 11px;'><i class='glyphicon glyphicon-time'></i>" + obj.CommitTs + "</small>" +
                 "</div> " +  
             "</div> " +
-          "</li>");
+            "</li>");
 
             if (obj.Status === "Test")
                 classname = "info";
@@ -55,7 +56,13 @@
                 classname = "warning";
             if (obj.Status === "Obsolete")
                 classname = "danger";
+
             $('#timeline-badge' + i + "_" + @(ViewBag.tabNum)).addClass(classname);
+
+            if($('#timeline-body' + i + "_" + @(ViewBag.tabNum) + ' p').text().length <45)
+            {
+    $('#more' + i + "_" + @(ViewBag.tabNum)).hide();
+            }
 
             $('#stat' + i + "_" + @(ViewBag.tabNum) + ' .more').on('click', function () {
                 var p_element = $('#timeline-body' + i + "_" + @(ViewBag.tabNum) + ' p');
@@ -67,6 +74,7 @@
                     more.text('more')
             });
         });
+
     });
     $('#st_chnglog@(ViewBag.tabNum)').on("focusout", function () {
           var _chlog = $('#StatChlog@(ViewBag.tabNum)').val();
@@ -109,10 +117,8 @@
 
     .w100 {
         width: 100%;
-        color: #fff;
-        font-size: 12px;
+        font-size: 14px;
         padding: 5px;
-        margin: 15px 0px;
         border-radius: 2px;
         text-align: center;
         border: none;
@@ -317,10 +323,10 @@
             <li class='timeline-item' id='stat@(tabNum)'>
                 <div class='col-md-offset-3 col-md-6 change_stat_box'>
                     <div class='timeline-heading'>
-                        <input type="text" readonly class="btn-@(classname) w100" id="w100" value="Current Status : @(cur_stat)" />
+                        <span class="w100 col-md-12 btn-primary"> Current Status : @(cur_stat) </span>
                         <div id="st_dd@(tabNum)" class="form-group">
                             <select class='selectpicker btn form-control' id='status_drpdwn@(tabNum)'>
-                                <option value='Select Status'>Select Status</option>
+                                <option value='Select Status'>Change Status</option>
                                 @{
                                     if (cur_stat == "Dev")
                                     {

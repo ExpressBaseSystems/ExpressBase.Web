@@ -322,8 +322,15 @@
         $("#ebm-objectcontainer .ebm-objlist").empty();
         if (!$("#ebm-objectcontainer").is(":visible"))
             $("#ebm-objectcontainer").show('slide', { direction: 'left' });
-        for (let i = 0; i < this.resultObj.Favourites.length; i++) {
-            this.appendObjByCategory(this.resultObj.Favourites[i], true);
+        if (this.resultObj.Favourites.length > 0) {
+            for (let i = 0; i < this.resultObj.Favourites.length; i++) {
+                this.appendObjByCategory(this.resultObj.Favourites[i], true);
+            }
+        }
+        else {
+            $("#ebm-objectcontainer .ebm-objlist").append(`<div class='not_found text-center'>
+                                                                Favorites empty.
+                                                            </div>`)
         }
     };
 

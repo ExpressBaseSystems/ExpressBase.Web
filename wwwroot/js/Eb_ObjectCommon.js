@@ -125,6 +125,7 @@
                         this.AfterCommit();
                 }
             }
+            this.Current_obj.RefId = this.ver_Refid;
             this.ObjCollection[target].EbObject = this.Current_obj;
             this.ObjCollection[target].Refid = this.ver_Refid;
             $(`#versionNav [href='${target}']`).attr("data-verNum", this.Current_obj.VersionNumber);//edits by amal

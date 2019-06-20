@@ -178,6 +178,7 @@
         width: 250px;
         display: none;
         flex-flow: column nowrap;
+        border-left: 1px solid #ccc;
     }
 
         .EbQuickMoverlaySideWRpr .newObjectContainer .newObjectContainer-inner {
@@ -247,6 +248,10 @@
         }
 
     .EbQuickMoverlaySideWRpr .active_link {
+        background-color: #508bf9;
+        color: white;
+    }
+    .EbQuickMoverlaySideWRpr .active_link i{
         background-color: #508bf9;
         color: white;
     }

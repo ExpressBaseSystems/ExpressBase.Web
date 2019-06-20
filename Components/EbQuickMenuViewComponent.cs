@@ -64,19 +64,7 @@ namespace ExpressBase.Web.Components
         {
             var resultlist = new SidebarUserResponse();
             this.UserObject = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, solnid, email, console));
-            Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
-
-            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
-            {
-                _dict.Add(objectType.IntCode, new EbObjectTypeWrap
-                {
-                    Name = objectType.Name,
-                    IntCode = objectType.IntCode,
-                    BMW = objectType.BMW,
-                    IsUserFacing = objectType.IsUserFacing,
-                    Icon = objectType.Icon
-                });
-            }
+            Dictionary<int, EbObjectTypeWrap> _dict = this.GetObjectType();
 
             if (ValidateLocId(locid) || this.UserObject.Roles.Contains("SolutionOwner"))
             {
@@ -111,22 +99,27 @@ namespace ExpressBase.Web.Components
             {
                 sb.Append(@"<li trigger='menu' Appid='" + obj.Key + "' klink='true'><a class='list-group-item inner_li Obj_link for_brd'><div class='apibox'><i class='fa " + resultlist.AppList[obj.Key].AppIcon + "'></i></div>" + resultlist.AppList[obj.Key].AppName + " </a></li>");
             }
+            Dictionary<int, EbObjectTypeWrap> _dict = this.GetObjectType();
+            ViewBag.Types = JsonConvert.SerializeObject(_dict);
+            ViewBag.menu = sb.ToString();
+            ViewBag.Object = resultlist;
+        }
+
+        private Dictionary<int, EbObjectTypeWrap> GetObjectType()
+        {
             Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
             {
                 _dict.Add(objectType.IntCode, new EbObjectTypeWrap
                 {
-                    Name = objectType.Name,
+                    Name = objectType.Alias,
                     IntCode = objectType.IntCode,
                     BMW = objectType.BMW,
                     IsUserFacing = objectType.IsUserFacing,
                     Icon = objectType.Icon
                 });
             }
-
-            ViewBag.Types = JsonConvert.SerializeObject(_dict);
-            ViewBag.menu = sb.ToString();
-            ViewBag.Object = resultlist;
+            return _dict;
         }
     }
 }

@@ -20,8 +20,21 @@
         $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
         $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $("body").off("click").on("click", ".backbtn", this.closeSingle.bind(this));
-        $("#ebm-objectcontainer").off("click").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
-        $(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
+        $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
+        $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+        //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
+        $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
+    };
+
+    this.reset = function () {
+        $("#ebm-overlayfade").hide();
+        $("#ebquickmsideoverlay").hide();
+        $("#ebquickmsideoverlay #appList").empty();
+        $("#ebm-objtcontainer").hide();
+        $("#ebm-objtcontainer .objtypes").empty();
+        $("#ebm-objectcontainer").hide();
+        $("#ebm-objectcontainer .ebm-objlist").empty();
+        $("#ebm-security").hide();
     };
 
     this.toggleNewW = function (e) {
@@ -39,9 +52,12 @@
         if (!$("#ebquickmsideoverlay").is(":visible")) {
             $("#ebm-overlayfade").show();
             $("#ebquickmsideoverlay").show('slide', { direction: 'left' }, function () {
-                if (this.attempt <= 0) {
+                if (this.attempt <= 0 && this.login == "dc") {
                     this.LoadApps();
                     this.attempt = 1;
+                }
+                else {
+                    this.LoadApps();
                 }
             }.bind(this));
         }
@@ -267,6 +283,35 @@
         }.bind(this));
     };
 
+    this.removeFavorite = function (e) {
+        let objid = parseInt($(e.target).closest("button").attr("objid"));
+        let appid = parseInt($(e.target).closest("button").attr("appid"));
+        let otype = parseInt($(e.target).closest("button").attr("otype"));
+        $.ajax({
+            url: "../TenantUser/RemoveFavourite",
+            type: "POST",
+            data: {
+                objid: objid
+            },
+        }).done(function (result) {
+            if (result) {
+                $.each(this.resultObj.Favourites,function (i,ob) {
+                    if (ob.Id === objid) {
+                        let obj = this.resultObj.Data[appid].Types[otype].Objects.filter(_ob => _ob.Id === objid);
+                        this.resultObj.Favourites.splice(i, 1);
+                        obj[0].Favourite = false;
+                        if ($(e.target).closest(".obj-item").hasClass("fav")) {
+                            let len = this.resultObj.Favourites.filter(item => item.EbObjectType === obj[0].EbObjectType).length;
+                            $(e.target).closest(".obj-item-categorised").find(".category_objCount").text(`(${len})`)
+                        }
+                        $(e.target).closest(".obj-item").remove();
+                        return false;
+                    }
+                }.bind(this));
+            }
+        }.bind(this));
+    };
+
     this.showfavourites = function (e) {
         this.active($(e.target));
         {
@@ -284,6 +329,7 @@
 
     this.appendObjByCategory = function (_obj, isfav) {
         let set_fav = "";
+        let fav = "";
         if (this.login == "uc" && !isfav) {
             let isfav = "";
             let tooltip = "";
@@ -297,14 +343,21 @@
             }
             set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
         }
+        else if (this.login == "uc" && isfav) {
+            fav = "fav";
+            isfav = "favourited";
+            tooltip = "Remove from Favourites.";
+            set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
+        }
+
         if ($(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).length <= 0) {
             $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item-categorised" id="ctypeContaner${_obj.EbObjectType}">
-                                                            <div class="head"><i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i> ${_obj.EbType}<span class="category_objCount"></span></div>
+                                                            <div class="head"><i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i> ${this.objTypes[_obj.EbObjectType].Name}s<span class="category_objCount"></span></div>
                                                             <div class="body" id="categoryType${_obj.EbObjectType}"></div>
                                                         </div>`);
         }
 
-        $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item" klink="true">
+        $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item ${fav}" klink="true">
                                                         <a href='${this.decideUrl(_obj)}'>
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
@@ -317,7 +370,7 @@
 
     this.listKeyControl = function (e) {
         e.preventDefault();
-        $(".active_link").removeClass("active_link");
+       //$(".active_link").removeClass("active_link");
         if ($(".EbQuickMoverlaySideWRpr").find(":focus").length <= 0) {
             $(".AppContainer").find(`[klink='true']`).eq(0).attr("tabindex", "1").focus();
         }
@@ -343,12 +396,12 @@
                     $(domArray[filter[0] - 1]).attr("tabindex", "1").focus();
                 }
             }
-            else if (e.which == 13) {
+            else if (e.which == 13 ) {
                 if ($current.find("a").length > 0) {
-                    $current.find("a").click();
+                    $current.find("a")[0].click();
                 }
                 else {
-                    $current.click();
+                    $current[0].click();
                 }
             }
             else if (e.which === 39) {
@@ -359,6 +412,11 @@
             }
         }
     }
+
+    this.refresh = function () {
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login);
+    };
 
     this.start();
 }

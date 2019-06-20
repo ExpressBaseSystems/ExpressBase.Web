@@ -43,7 +43,8 @@ var DvContainerObj = function (settings) {
         id: "pp_inner",
         wc: "uc",
         cid: this.cid,
-        $extCont: $(".ppcont")
+        $extCont: $(".ppcont"),
+        style: { top: "100px" }
     });
 
     //this.stickBtn = new EbStickButton({

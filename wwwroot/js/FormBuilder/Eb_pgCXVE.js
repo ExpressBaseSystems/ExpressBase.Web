@@ -600,7 +600,7 @@
     this.getOSElist = function () {
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
-        if (!this.OSEList) {
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]) {
             $.LoadingOverlay("show");
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",
@@ -648,7 +648,7 @@
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
         let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp];//--
-        let objName = this.getOBjNameByval(data, CurRefId);
+        let objName = this.getOBjNameByval(data, CurRefId).replace(/ /g, "_");
         if (CurRefId) {
             let $objTile = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile[name=" + objName + "]");
             if ($objTile.length > 0)

@@ -758,7 +758,7 @@
         $('#dbConnectionEdit').on('show.bs.modal', function (event) {
             var DatabaseName = $('.EditorModalcaller').attr('data-name');
             this.AllInputClear();
-            $("#IntConfId").val("0")
+            $(".IntConfId").val("0")
             $("#dbvendorInput").val(DatabaseName)
         }.bind(this));
 

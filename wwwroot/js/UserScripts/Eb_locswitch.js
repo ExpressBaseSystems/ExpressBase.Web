@@ -15,6 +15,7 @@
 
     this.Tid = options.Tid || null;
     this.Uid = options.Uid || null;
+    this.PrevLocation = null;
 
     this.Locations = JSON.parse(options.Location) || [];
     this.EbHeader = new EbHeader();
@@ -34,10 +35,11 @@
         //        this.showSwitcher();
         //}.bind(this));
         this.CurrentLoc = this.getCurrent();
+        this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         this.drawLocs();
-        this.setDeafault();
+        this.setDefault();
         $(TriggerId).off("click").on("click", this.showSwitcher.bind(this));
         $(LocTile).off("click").on("click", this.selectLoc.bind(this));
         $(SetLoc).off("click").on("click", this.setLocation.bind(this));
@@ -59,7 +61,7 @@
         $(container + " .locs_bdy").append(`<div class="loc-item">
                                     <div class="loc-item-inner" LocId="${obj.LocId}" title="${obj.LongName}">
                                         <div class="loc-item-imgsec">
-                                            <img src="images/your-logo.png" />
+                                            <img src="../images/your-logo.png" />
                                         </div>
                                         <div class="loc-item-content">
                                             ${obj.LongName}
@@ -69,7 +71,7 @@
                                 </div>`);
     };
 
-    this.setDeafault = function () {
+    this.setDefault = function () {
         $(".loc_switchModal_box").find(`div[LocId='${this.CurrentLoc}']`).addClass("active-loc");
         store.clearAll();
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
@@ -82,11 +84,8 @@
                 $(".active-loc").removeClass("active-loc");
                 locContainer.addClass("active-loc");
             }
-            let locid = locContainer.attr("LocId");
-            if (this.CurrentLoc !== locid) {
-                this.CurrentLoc = locid;
-                this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
-            }
+            this.CurrentLoc = locContainer.attr("LocId");
+            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         }
         catch (err) {
             console.log(err);
@@ -99,7 +98,10 @@
         this.showSwitcher();
         ebcontext.menu.reset();
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
-        this.Listener.ChangeLocation(this.CurrentLocObj);
+        if (this.PrevLocation !== this.CurrentLoc) {
+            this.Listener.ChangeLocation(this.CurrentLocObj);
+            this.PrevLocation = this.CurrentLoc;
+        }
     };
 
     this.showSwitcher = function (e) {
@@ -116,6 +118,7 @@
         try {
             let locContainer = $(container + " .locs_bdy").find(`div[Locid='${id}']`);
             this.CurrentLoc = locContainer.attr("LocId");
+            this.PrevLocation = this.CurrentLoc;
             this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
             if ($.isEmptyObject(this.CurrentLocObj) || this.CurrentLocObj === undefined)
                 throw "no such location";
@@ -149,7 +152,7 @@
                 this.appendLoc(this.Locations[i]);
         }
         $(LocTile).off("click").on("click", this.selectLoc.bind(this));
-        this.setDeafault();
+        this.setDefault();
     };
 
     this.trigger();

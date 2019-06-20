@@ -98,12 +98,13 @@
                         <div class="loc_switchModal_box">
                             <div class="locs_head">
                                 <h4>Switch Location</h4>
+                                <div class="loc_searchInput w-100">
+                                    <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
+                                </div>
                             </div>
-                            <div class="locs_bdy">
-
-                            </div>
+                            <div class="locs_bdy"></div>
                             <div class="locs_foot">
-                                <button class="ebbtn eb_btn-sm eb_btngreen pull-right" id="setLocSub">Switch</button>
+                                <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
                             </div>
                             <div class="no_loc_config">No Locations.</div>
                         </div>
@@ -131,7 +132,7 @@
             Current:@ViewBag.CurrentLocation
         });
         //loc__.Listener.ChangeLocation = function (o) {
-        //    console.log(o);
+        //    console.error(o);
         //}
     </script>
 }

@@ -422,7 +422,7 @@
         var apps = $("#apps").val();
         if (apps === "")
             apps = "0";
-        var changeLog = $('#obj_changelog').val();
+        var changeLog = $('#obj_changelog').text();
         var getNav = this.target; /*$("#versionNav li.active a").attr("href");*/
         if (this.isBeforSaveImplemets(getNav)) {
             if (this.ObjCollection[getNav].BeforeSave())

@@ -7,7 +7,7 @@
     $('#ver_his').show();
     $("#obj_icons").hide();
 </script>
-<div>
+<div class="diff-container">
     <div class=''>
         <div class='col-md-12 '>
             <div class='verlist input-group col-md-3 col-md-offset-3' style='display:inline-block'>
@@ -16,17 +16,21 @@
             <div class='verlist input-group col-md-3' style='display:inline-block'>
                 <select id='selected_Ver_2_@(ViewBag.TabNum)' name='selected_Ver_2' class='form-control selected_Ver selectpicker show-tick' data-live-search='true'></select>
             </div>
-            <div class="compare_inner pull-right" id='compare_inner@(ViewBag.TabNum)' style='display:inline-block'>
-                <i class="fa fa-chevron-circle-right fa-2x"></i>
+            <div class="compare_inner btn btn-primary btn-sm" id='compare_inner@(ViewBag.TabNum)' >Compare
             </div>
-
-            <div> <i class='fa fa-circle-o-notch fa-spin fa-1x fa-fw fd-loader' id='loader_fd@(ViewBag.TabNum)'></i></div>
         </div>
 
     </div>
     <div id='compare_result@(ViewBag.TabNum)'></div>
 </div>
 <style>
+    .diff-container{
+        margin-top:55px;
+    }
+    .compare_inner {
+        margin-bottom: 25px;
+    }
+    
     /*differ styles*/
 
     #diffBar {
@@ -172,13 +176,5 @@
         border-radius: 50%;
         padding: 4px;
         cursor: pointer;
-    }
-
-    .fd-loader {
-        position: absolute;
-        color: dodgerblue;
-        display: inline-block;
-        top: 6px;
-        height: 100%;
     }
 </style>

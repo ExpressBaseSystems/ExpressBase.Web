@@ -600,6 +600,7 @@
                 this.$fitCornerBtn.insertAfter(this.$wraper.find(".pgpin"));
                 this.$fitCornerBtn.on("click", function () {
                     this.$extCont.attr("style", "");
+                    this.$extCont.attr("dragging","false");
                     this.$fitCornerBtn.hide();
                 }.bind(this));
             }
@@ -622,6 +623,7 @@
     };
 
     this.pgDragStop = function () {
+        this.$extCont.attr("dragging", "true");
         if (parseInt(this.$extCont.css("top").trim("px")) <= 37)
             this.$extCont.css("top", "37px");
         if (parseInt(this.$extCont.css("top").trim("px")) >= window.innerHeight)

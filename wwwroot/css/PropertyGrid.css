@@ -33,6 +33,15 @@
     /*min-width: 250px;*/
 }
 
+[dragging=true] .propgrid-table-cont {
+    background-color: rgba(255, 255, 255, 0.67);
+}
+
+[dragging=true] .outer-pg > .pgHead {
+    background: none;
+    background-color: rgba(3, 38, 74, 0.73);
+}
+
 .pg-wraper {
     display: flex;
     flex-flow: column;
@@ -146,6 +155,7 @@
 
 .pgHead {
     /*background-color: rgba(0, 0, 0, 0.28);*/
+    background-color: rgba(3, 1, 45, 0.53);
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));
     color: #fff;
     padding: 2%;
@@ -157,6 +167,11 @@
     font-weight: bold;
     border-radius: 1px 1px 0px 0px;
 }
+
+[dragging=true] .pgHead {
+    border-radius: 3px 3px 0px 0px;
+}
+
 /*.controls-dd-cont {
     border-bottom: var(--sild1pxDDD);
 }*/
@@ -571,6 +586,7 @@
     table-layout: fixed;
     height: 100%;
 }
+
 .inner-pg .controls-dd-cont .bootstrap-select .dropdown-toggle {
     color: #444;
     padding: 4px 12px;

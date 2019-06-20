@@ -30,6 +30,8 @@ class DvBuilder {
         this.calcfieldCounter = 0;
         this.isCustomColumnExist = false;
         this.isPreview = false;
+        this.MisMatchedColumns = [];
+        this.returnobj = null;
 
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
@@ -118,9 +120,9 @@ class DvBuilder {
         });
     }
 
-    PropertyChanged(obj, pname) {
+    PropertyChanged(obj, pname, newval, oldval) {
         if (pname === "DataSourceRefId") {
-            this.OldEbObject = this.EbObject;
+            this.OldDataSourceRefid = oldval;
             this.check4Customcolumn();
             if (this.isCustomColumnExist) {
                 EbDialog("show", {
@@ -169,77 +171,208 @@ class DvBuilder {
         var isCustom = (typeof (value) !== "undefined") ? ((value === "Yes") ? true : false) : true;
         this.RemoveColumnRef();
         $("#get-col-loader").show();
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             url: "../DV/GetColumns",
             type: "POST",
             cache: false,
             data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: isCustom },
             success: function (result) {
-                let returnobj = JSON.parse(result);
-                this.EbObject.Columns.$values = returnobj.Columns.$values;
-                this.EbObject.ColumnsCollection.$values = returnobj.ColumnsCollection.$values;
-                this.EbObject.ParamsList.$values = (returnobj.Paramlist === null) ? [] : returnobj.Paramlist.$values;
-                this.EbObject.DSColumns.$values = returnobj.DsColumns.$values;
-                //this.checkOldAndNewColumns();
-                commonO.Current_obj = this.EbObject;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-                $("#get-col-loader").hide();
-                $("#data-table-list ul[id='dataSource']").empty();
-                this.drawDsColTree();
-                //if (result.paramsList) {
-                //    $("#ds_parameter_list ul[id='ds_parameters']").empty();
-                //    this.drawDsParmsTree(result.paramsList);
-                //}
+                this.MisMatchedColumns = [];
+                this.returnobj = JSON.parse(result);
+                this.checkOldAndNewColumns();
+                this.RemoveDuplicateMismatchedColumns();
+                if (this.MisMatchedColumns.length > 0) {
+                    let temparray = this.MisMatchedColumns.map(function (ob) { return ob.name; });
+                    EbDialog("show", {
+                        Message: temparray.join(", ")+" are not present in new data reader. It will be Removed.. Do u want to Continue ? ",
+                        Buttons: {
+                            "Yes": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            },
+                            "No": {
+                                Background: "red",
+                                Align: "left",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: this.Columnconfirmation.bind(this)
+                    });
+                }
+                else {
+                    this.RemoveOldColumnsAndSetNewColumns();
+                    this.drawDsColTree();
+                }
             }.bind(this)
         });
     }
 
-    
+    checkOldAndNewColumns() {
+        this.check4OriginalColumn();
+        this.check4OrderbyColumns();
+        this.check4RowgroupColumns();
+        this.check4FormRelatedColumns();
+    }
 
-    SetColumnRef() {
+    check4OriginalColumn() {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
-            obj.ColumnsRef = this.EbObject.Columns;
+            let temp = this.returnobj.ColumnOrginal.$values.filter((item) => item.name === obj.name && item.Type === obj.Type);
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
         }.bind(this));
     }
 
-    drawDsColTree() {
-        var type, icon = "";
-        $.each(this.EbObject.ColumnsCollection.$values, function (i, columnCollection) {
-            $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "' class='tablecolumns'></ul></li>");
-            $.each(columnCollection.$values, function (j, obj) {
-                type = this.getType(obj.Type); icon = this.getIcon(obj.Type);
-                $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><span><i class='fa ${icon}'></i> ${obj.name}</span></li>`);
+    check4OrderbyColumns() {
+        $.each(this.EbObject.OrderBy.$values, function (i, obj) {
+            let temp = this.returnobj.ColumnOrginal.$values.filter((item) => item.name === obj.name && item.Type === obj.Type);
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+    }
+
+    check4RowgroupColumns() {
+        $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+            $.each(obj.RowGrouping.$values, function (j, col) {
+                let temp = this.returnobj.ColumnOrginal.$values.filter((item) => item.name === col.name && item.Type === col.Type);
+                if (temp.length === 0)
+                    this.MisMatchedColumns.push(col);
+            }.bind(this));
+            $.each(obj.OrderBy.$values, function (j, col) {
+                let temp = this.returnobj.ColumnOrginal.$values.filter((item) => item.name === col.name && item.Type === col.Type);
+                if (temp.length === 0)
+                    this.MisMatchedColumns.push(col);
             }.bind(this));
         }.bind(this));
+    }
+
+    check4FormRelatedColumns() {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
-            if (obj.IsCustomColumn) {
-                $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
-                    class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+            if (obj.IsTree) {
+                this.check4ColumnFromTreeColumn(obj);
+            }
+            if (obj.LinkRefId !== null) {
+                if (parseInt(obj.LinkRefId.split("-")[2]) === EbObjectTypes.WebForm) {
+                    this.check4ColumnFromWebFormLink(obj);
+                }
             }
         }.bind(this));
-        $('#data-table-list').killTree();
-        $('#data-table-list').treed();
-        $('#calcFields').killTree();
-        $('#calcFields').treed();
-        this.SetContextmenu4CalcField();
-        this.RemoveOldColumnsfromCollection();
-        this.SetColumnRef();
-        this.initializeDragula();
-        this.ColumnDropped();
-        if (!this.isNew) {
-            this.RowgroupColumnDropped();
-            this.OrderbyColumnDropped();
-            this.CreateButtons();
+    }
+
+    check4ColumnFromTreeColumn(treecol) {
+        $.each(treecol.GroupFormId.$values, function (i, obj) {
+            let temp = $.grep(this.returnobj.ColumnOrginal.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+        $.each(treecol.GroupFormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.returnobj.ColumnOrginal.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+        $.each(treecol.ItemFormId.$values, function (i, obj) {
+            let temp = $.grep(this.returnobj.ColumnOrginal.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+        $.each(treecol.ItemFormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.returnobj.ColumnOrginal.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+        $.each(treecol.GroupingColumn.$values, function (i, obj) {
+            let temp = $.grep(this.returnobj.ColumnOrginal.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+        $.each(treecol.ParentColumn.$values, function (i, obj) {
+            let temp = $.grep(this.returnobj.ColumnOrginal.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+    }
+
+    check4ColumnFromWebFormLink(FormCol) {
+        $.each(FormCol.FormId.$values, function (i, obj) {
+            let temp = $.grep(this.returnobj.ColumnOrginal.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+        $.each(FormCol.FormParameters.$values, function (i, obj) {
+            let temp = $.grep(this.returnobj.ColumnOrginal.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                this.MisMatchedColumns.push(obj);
+        }.bind(this));
+    }
+
+    Columnconfirmation(flag) {
+        if (flag === "Yes") {
+            this.RemoveOldColumnsAndSetNewColumns();
+            this.RemoveOldColumnsFromDependentObjects();
+            this.drawDsColTree();
+            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        }
+        else {
+            this.EbObject.DataSourceRefId = this.OldDataSourceRefid;
+            commonO.Current_obj = this.EbObject;
+            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            $("#get-col-loader").hide();
+            $("#eb_common_loader").EbLoader("hide");
         }
     }
 
-    RemoveOldColumnsfromCollection() {
+    RemoveOldColumnsAndSetNewColumns() {
+        this.EbObject.Columns.$values = this.returnobj.Columns.$values;
+        this.EbObject.ColumnsCollection.$values = this.returnobj.ColumnsCollection.$values;
+        this.EbObject.ParamsList.$values = (this.returnobj.Paramlist === null) ? [] : this.returnobj.Paramlist.$values;
+        this.EbObject.DSColumns.$values = this.returnobj.DsColumns.$values;
+        commonO.Current_obj = this.EbObject;
+        $("#get-col-loader").hide();
+        $("#eb_common_loader").EbLoader("hide");
+        $("#data-table-list ul[id='dataSource']").empty();
+        //if (result.paramsList) {
+        //    $("#ds_parameter_list ul[id='ds_parameters']").empty();
+        //    this.drawDsParmsTree(result.paramsList);
+        //}
+    }
+
+    RemoveOldColumnsFromDependentObjects() {
+        this.RemoveFromOrderbyObject();
+        this.RemoveFromRowgroupObject();
+        this.RemoveFromFormRelatedObjects();
+    }
+
+    RemoveFromOrderbyObject() {
+        $.each(this.EbObject.OrderBy.$values, function (i, obj) {
+            let temp = this.EbObject.Columns.$values.filter((item) => item.name === obj.name && item.Type === obj.Type);
+            if (temp.length === 0)
+                this.EbObject.OrderBy.$values = this.EbObject.OrderBy.$values.filter(function (ob) { return ob.name !== obj.name; });
+        }.bind(this));
+    }
+
+    RemoveFromRowgroupObject() {
+        $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+            $.each(obj.RowGrouping.$values, function (j, col) {
+                let temp = this.EbObject.Columns.$values.filter((item) => item.name === col.name && item.Type === col.Type);
+                if (temp.length === 0)
+                    this.EbObject.RowGroupCollection.$values[i].RowGrouping.$values = obj.RowGrouping.$values.filter(function (ob) { return ob.name !== col.name; });
+            }.bind(this));
+            $.each(obj.OrderBy.$values, function (j, col) {
+                let temp = this.returnobj.ColumnOrginal.$values.filter((item) => item.name === col.name && item.Type === col.Type);
+                if (temp.length === 0)
+                    this.EbObject.RowGroupCollection.$values[i].OrderBy.$values = obj.OrderBy.$values.filter(function (ob) { return ob.name !== col.name; });
+            }.bind(this));
+        }.bind(this));
+    }
+
+    RemoveFromFormRelatedObjects() {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.IsTree) {
                 this.RemoveOldColumnFromTreeColumn(obj);
             }
             if (obj.LinkRefId !== null) {
-                if (parseInt(obj.LinkRefId.split("-")[2]) !== EbObjectTypes.WebForm) {
+                if (parseInt(obj.LinkRefId.split("-")[2]) === EbObjectTypes.WebForm) {
                     this.RemoveOldColumnFromFormLink(obj);
                 }
             }
@@ -284,12 +417,58 @@ class DvBuilder {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 FormCol.FormId.$values = FormCol.FormId.$values.filter(function (ob) { return ob.name !== obj.name; });
-        });
+        }.bind(this));
         $.each(FormCol.FormParameters.$values, function (i, obj) {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 FormCol.FormParameters.$values = FormCol.FormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
-        });
+        }.bind(this));
+    }
+
+    RemoveDuplicateMismatchedColumns() {
+        this.MisMatchedColumns = this.MisMatchedColumns.filter((thing, index, self) =>
+            index === self.findIndex((t) => (
+                t.name === thing.name 
+            ))
+        )
+
+        this.MisMatchedColumns = this.MisMatchedColumns.filter((item) => !item.IsCustomColumn);
+    }
+
+    SetColumnRef() {
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            obj.ColumnsRef = this.EbObject.Columns;
+        }.bind(this));
+    }
+
+    drawDsColTree() {
+        var type, icon = "";
+        $.each(this.EbObject.ColumnsCollection.$values, function (i, columnCollection) {
+            $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "' class='tablecolumns'></ul></li>");
+            $.each(columnCollection.$values, function (j, obj) {
+                type = this.getType(obj.Type); icon = this.getIcon(obj.Type);
+                $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><span><i class='fa ${icon}'></i> ${obj.name}</span></li>`);
+            }.bind(this));
+        }.bind(this));
+        $.each(this.EbObject.Columns.$values, function (i, obj) {
+            if (obj.IsCustomColumn) {
+                $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
+                    class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+            }
+        }.bind(this));
+        $('#data-table-list').killTree();
+        $('#data-table-list').treed();
+        $('#calcFields').killTree();
+        $('#calcFields').treed();
+        this.SetContextmenu4CalcField();
+        this.SetColumnRef();
+        this.initializeDragula();
+        this.ColumnDropped();
+        this.RowgroupColumnDropped();
+        this.OrderbyColumnDropped();
+        if (!this.isNew) {
+            this.CreateButtons();
+        }
     }
 
     initializeDragula() {
@@ -335,7 +514,7 @@ class DvBuilder {
             let key = $(el).attr("eb-name");
             let obj = $.grep(this.CurrentRowgroup.OrderBy.$values, function (obj) { return obj.name === key; });//n Or N
             let obj1 = $.grep(this.CurrentRowgroup.RowGrouping.$values, function (obj) { return obj.name === key; });//n Or N
-            if (obj.length === 0 && obj1.length === 0 && this.CurrentRowgroup.RowGrouping.$values.length >0)
+            if (obj.length === 0 && obj1.length === 0 && this.CurrentRowgroup.RowGrouping.$values.length > 0)
                 return true;
             else
                 return false;
@@ -510,7 +689,7 @@ class DvBuilder {
                 off: 'Desc'
             });
             $(`#${obj.name}_orderbyCheckbox`).off("change").on("change", this.OrderbyCheckboxChanged.bind(this));
-            
+
             if (obj.Direction === parseInt(EbEnums.OrderByDirection.ASC))
                 $(`#${obj.name}_orderbyCheckbox`).bootstrapToggle("on");
             else
@@ -850,13 +1029,13 @@ class DvBuilder {
             obj.sTitle = (obj.sTitle === "") ? obj.name : obj.sTitle;
             $(`#${objOuter.Name}_${obj.name}_rowgroupcolumntitle`).val(obj.sTitle);
             $(".rowgroupcolumntitle").off("change").on("change", this.RowgroupColumnTitleChanged.bind(this));
-            this.ColumnAppendToRowgroupOrderByDiv(objOuter,obj, true);
+            this.ColumnAppendToRowgroupOrderByDiv(objOuter, obj, true);
         }.bind(this));
     }
 
     drawRowgroupOrderByColumn(objOuter) {
         $.each(objOuter.OrderBy.$values, function (i, obj) {
-            this.ColumnAppendToRowgroupOrderByDiv(objOuter,obj, false);
+            this.ColumnAppendToRowgroupOrderByDiv(objOuter, obj, false);
         }.bind(this));
     }
 
@@ -882,7 +1061,7 @@ class DvBuilder {
         $(element).find(".close").off("click").on("click", this.RemoveRowGroupOrderbyColumn.bind(this));
         if (rowgrouped)
             $(`#${objOuter.Name}_${obj.name}_elemsrowgrouporderbyCont`).children().not(".spancheck").addClass("disabledItems");
-        
+
     }
 
     deleteRowgroup(e) {
@@ -1019,6 +1198,8 @@ class DvBuilder {
     RemoveColumnRef() {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             obj.ColumnsRef = null;
+            obj.__OSElist = null;
+            obj.__oldValues = null;
         }.bind(this));
     }
 

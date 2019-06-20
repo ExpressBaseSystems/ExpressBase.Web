@@ -648,7 +648,7 @@
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
         let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp];//--
-        let objName = this.getOBjNameByval(data, CurRefId)
+        let objName = this.getOBjNameByval(data, CurRefId);
         if (objName !== null)
             objName = objName.replace(/ /g, "_");
         if (CurRefId) {

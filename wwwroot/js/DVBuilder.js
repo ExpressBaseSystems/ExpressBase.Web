@@ -348,6 +348,8 @@ class DvBuilder {
             let temp = this.EbObject.Columns.$values.filter((item) => item.name === obj.name && item.Type === obj.Type);
             if (temp.length === 0)
                 this.EbObject.OrderBy.$values = this.EbObject.OrderBy.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
     }
 
@@ -357,11 +359,15 @@ class DvBuilder {
                 let temp = this.EbObject.Columns.$values.filter((item) => item.name === col.name && item.Type === col.Type);
                 if (temp.length === 0)
                     this.EbObject.RowGroupCollection.$values[i].RowGrouping.$values = obj.RowGrouping.$values.filter(function (ob) { return ob.name !== col.name; });
+                else
+                    col.data = temp[0].data;
             }.bind(this));
             $.each(obj.OrderBy.$values, function (j, col) {
                 let temp = this.returnobj.ColumnOrginal.$values.filter((item) => item.name === col.name && item.Type === col.Type);
                 if (temp.length === 0)
                     this.EbObject.RowGroupCollection.$values[i].OrderBy.$values = obj.OrderBy.$values.filter(function (ob) { return ob.name !== col.name; });
+                else
+                    col.data = temp[0].data;
             }.bind(this));
         }.bind(this));
     }
@@ -384,31 +390,43 @@ class DvBuilder {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 treecol.GroupFormId.$values = treecol.GroupFormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
         $.each(treecol.GroupFormParameters.$values, function (i, obj) {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 treecol.GroupFormParameters.$values = treecol.GroupFormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
         $.each(treecol.ItemFormId.$values, function (i, obj) {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 treecol.ItemFormId.$values = treecol.ItemFormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
         $.each(treecol.ItemFormParameters.$values, function (i, obj) {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 treecol.ItemFormParameters.$values = treecol.ItemFormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
         $.each(treecol.GroupingColumn.$values, function (i, obj) {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 treecol.GroupingColumn.$values = treecol.GroupingColumn.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
         $.each(treecol.ParentColumn.$values, function (i, obj) {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 treecol.ParentColumn.$values = treecol.ParentColumn.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
     }
 
@@ -417,11 +435,15 @@ class DvBuilder {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 FormCol.FormId.$values = FormCol.FormId.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
         $.each(FormCol.FormParameters.$values, function (i, obj) {
             let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
             if (temp.length === 0)
                 FormCol.FormParameters.$values = FormCol.FormParameters.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
         }.bind(this));
     }
 

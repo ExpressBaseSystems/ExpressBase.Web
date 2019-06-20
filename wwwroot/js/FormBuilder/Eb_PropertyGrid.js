@@ -470,7 +470,9 @@
 
     //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) { ////////// need optimization
+        let oldVal = this.PropsObj.__oldValues[this.CurProp];
         this.getvaluesFromPG();
+        this.PropsObj.__oldValues = $.extend({}, this.PropsObj);
         let subTypeOf = null;
         if (e) {
             let $e = $(e.target);
@@ -500,7 +502,8 @@
         if (this.CurProp === 'DataSourceId') {
             this.PGHelper.dataSourceInit();
         }
-        this.PropertyChanged(this.PropsObj, this.CurProp);
+        let newVal = this.PropsObj[this.CurProp];
+        this.PropertyChanged(this.PropsObj, this.CurProp, newVal, oldVal);
     };
 
     ////Add a control name to Control DD
@@ -878,6 +881,7 @@
         }
         this.Metas = metas;
         this.PropsObj = props;
+        this.setOldValues();
         if (!this.PropsObj.__OSElist)
             this.PropsObj.__OSElist = {};
         this.CurObj = this.PropsObj;
@@ -888,6 +892,11 @@
         $("#" + this.wraperId + " .propgrid-helpbox").show();
         //console.log("default test :" + JSON.stringify(props));
         setObjectCallBack();
+    };
+
+    this.setOldValues = function () {
+        this.PropsObj.__oldValues = {};
+        this.PropsObj.__oldValues = $.extend({}, this.PropsObj);
     };
 
     // makes PG readonly

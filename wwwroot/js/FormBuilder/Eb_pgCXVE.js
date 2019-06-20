@@ -649,6 +649,8 @@
         }
         let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp];//--
         let objName = this.getOBjNameByval(data, CurRefId);
+        if (objName !== null)
+            objName = objName.replace(/ /g, "_");
         if (CurRefId) {
             let $objTile = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile[name=" + objName + "]");
             if ($objTile.length > 0)

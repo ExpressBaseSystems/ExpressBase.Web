@@ -66,7 +66,7 @@ namespace ExpressBase.Web.Components
             this.UserObject = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, solnid, email, console));
             Dictionary<int, EbObjectTypeWrap> _dict = this.GetObjectType();
 
-            if (ValidateLocId(locid) || this.UserObject.Roles.Contains("SolutionOwner"))
+            if (ValidateLocId(locid) || this.UserObject.Roles.Contains("SolutionOwner") || this.UserObject.Roles.Contains("SolutionAdmin"))
             {
                 var Ids = String.Join(",", GetAccessIds(locid));
 

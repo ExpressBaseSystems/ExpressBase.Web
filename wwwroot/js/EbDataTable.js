@@ -2430,13 +2430,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormNewGroup = function (key, opt, event) {
-        this.dvformMode = this.treeColumn.FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2455,7 +2454,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = this.dvformMode;
+            input.value = "2";
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -2471,12 +2470,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormNewItem = function (key, opt, event) {
-        this.dvformMode = this.treeColumn.FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2495,7 +2493,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = this.dvformMode;
+            input.value = "2";
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -2511,12 +2509,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormEditGroup = function (key, opt, event) {
-        this.dvformMode = this.treeColumn.FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=11&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2535,7 +2532,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = this.dvformMode ;
+            input.value = "1";
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -2551,12 +2548,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.FormEditItem = function (key, opt, event) {
-        this.dvformMode = this.treeColumn.FormMode;
         this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=11&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2575,7 +2571,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_mode";
-            input.value = this.dvformMode;
+            input.value = "1";
             _form.appendChild(input);
 
             input = document.createElement('input');

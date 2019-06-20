@@ -22,8 +22,19 @@
         $("body").off("click").on("click", ".backbtn", this.closeSingle.bind(this));
         $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
         $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
-        $(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
+        //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
         $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
+    };
+
+    this.reset = function () {
+        $("#ebm-overlayfade").hide();
+        $("#ebquickmsideoverlay").hide();
+        $("#ebquickmsideoverlay #appList").empty();
+        $("#ebm-objtcontainer").hide();
+        $("#ebm-objtcontainer .objtypes").empty();
+        $("#ebm-objectcontainer").hide();
+        $("#ebm-objectcontainer .ebm-objlist").empty();
+        $("#ebm-security").hide();
     };
 
     this.toggleNewW = function (e) {
@@ -41,9 +52,12 @@
         if (!$("#ebquickmsideoverlay").is(":visible")) {
             $("#ebm-overlayfade").show();
             $("#ebquickmsideoverlay").show('slide', { direction: 'left' }, function () {
-                if (this.attempt <= 0) {
+                if (this.attempt <= 0 && this.login == "dc") {
                     this.LoadApps();
                     this.attempt = 1;
+                }
+                else {
+                    this.LoadApps();
                 }
             }.bind(this));
         }
@@ -308,13 +322,21 @@
         $("#ebm-objectcontainer .ebm-objlist").empty();
         if (!$("#ebm-objectcontainer").is(":visible"))
             $("#ebm-objectcontainer").show('slide', { direction: 'left' });
-        for (let i = 0; i < this.resultObj.Favourites.length; i++) {
-            this.appendObjByCategory(this.resultObj.Favourites[i], true);
+        if (this.resultObj.Favourites.length > 0) {
+            for (let i = 0; i < this.resultObj.Favourites.length; i++) {
+                this.appendObjByCategory(this.resultObj.Favourites[i], true);
+            }
+        }
+        else {
+            $("#ebm-objectcontainer .ebm-objlist").append(`<div class='not_found text-center'>
+                                                                Favorites empty.
+                                                            </div>`)
         }
     };
 
     this.appendObjByCategory = function (_obj, isfav) {
-        let set_fav,fav = "";
+        let set_fav = "";
+        let fav = "";
         if (this.login == "uc" && !isfav) {
             let isfav = "";
             let tooltip = "";

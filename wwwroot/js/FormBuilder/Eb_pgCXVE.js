@@ -747,7 +747,7 @@
             $.each(data[ObjName], function (i, obj) {
                 if (obj.versionNumber) {
                     let $verTile = $('<div class="colTile" style="display:none" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                        + '<i class="fa fa-check pull-right vercheck" aria-hidden="true"></i></div>');
+                        + '<i class="fa fa-check-circle pull-right vercheck" aria-hidden="true"></i></div>');
                     $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verTile.show(100));
                 }
             }.bind(this));
@@ -760,10 +760,10 @@
         let $e = $(event.target).closest(".colTile");
 
         if ($e.attr("is-selected") === "false") {
-            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check-circle").hide();
             let refId = $e.attr("data-refid");
             this.PGobj.PropsObj[this.PGobj.CurProp] = refId;
-            $e.attr("is-selected", true).find(".fa-check").show();
+            $e.attr("is-selected", true).find(".fa-check-circle").show();
             let ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
             $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);/////
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(ObjName + ", " + $e.attr("ver-no"));
@@ -771,7 +771,7 @@
             this.OSECurVobj = getObjByval(this.OSE_curTypeObj[ObjName], "versionNumber", $e.attr("ver-no"));
         }
         else {
-            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check-circle").hide();
             this.PGobj.PropsObj[this.PGobj.CurProp] = "";
         }
     };
@@ -939,8 +939,11 @@
         }
         let obj = null;
         let type = $e.attr("eb-type");
-        $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
-        $e.css("background-color", "#b1bfc1").css("color", "#222");
+        //$("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
+        //$e.css("background-color", "#b1bfc1").css("color", "#222");
+
+        $("#" + this.PGobj.wraperId + " .CE-body .colTile").attr("is-selected", "false");
+        $e.attr("is-selected", "true");
         if (this.editor === 7) {
             obj = getObjByval(selectedCols, "EbSid", $e.attr("ebsid"));
             if (!obj)

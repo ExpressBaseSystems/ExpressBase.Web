@@ -541,7 +541,6 @@
     .pgCXEditor-Cont .btn[name="CXE_OK"]:hover {
         background-color: rgba(0, 0, 0, 0.7);
         color: white;
-        border-radius: 1px !important;
     }
 
 .pgCXEditor-Cont .modal-body {

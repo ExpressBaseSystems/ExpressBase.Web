@@ -843,7 +843,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 $("#layout_div").prepend(`
                 <script src= 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js' ></script>
                 <script async defer
-                    src='https://maps.googleapis.com/maps/api/js?key=${googlekey}'>
+                    src='https://maps.googleapis.com/maps/api/js?key=${googlekey}&callback=initMap'>
                 </script>`);
             }
             else {

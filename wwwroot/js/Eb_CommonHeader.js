@@ -17,13 +17,13 @@
 
     this.hideElement = function (collectionofIds) {
         collectionofIds.forEach(function (item, i) {
-            _btnContainer.children("#" + item).hide();
+            _btnContainer.find("#" + item).hide();
         }.bind(this));
     };
 
     this.showElement = function (collectionofIds) {
         collectionofIds.forEach(function (item, i) {
-            _btnContainer.children("#" + item).show();
+            _btnContainer.find("#" + item).show();
         }.bind(this));
     };
 

@@ -127,10 +127,12 @@
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-            let fun = new Function("form", "User", atob(ctrl.OnChange));
-            $input.MonthPicker({
-                OnAfterChooseMonth: fun.bind(this, formObject, userObject)
-            });
+            if (ctrl.OnChange) {
+                let fun = new Function("form", "User", atob(ctrl.OnChange));
+                $input.MonthPicker({
+                    OnAfterChooseMonth: fun.bind(this, formObject, userObject)
+                });
+            }
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
@@ -402,6 +404,30 @@
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
         $("#iFrameForm").attr("src", url);
         $("#iFrameFormModal").modal("show");
+    };
+
+    this.SysLocation = function (ctrl) {
+        if (_rowId === 0) {
+            setTimeout(function () {
+                if (ctrl.DisplayMember === 1) {
+                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);
+                }
+                else {
+                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.ShortName);
+                }
+            }, 500);
+        }        
+    };
+    this.SysCreatedBy = function (ctrl) {
+        if (ctrl.DisplayMember === 1) {
+            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
+        }
+        else {
+            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        }
+    };
+    this.SysCreatedAt = function (ctrl) {
+        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
     };
 
     this.Numeric = function (ctrl) {

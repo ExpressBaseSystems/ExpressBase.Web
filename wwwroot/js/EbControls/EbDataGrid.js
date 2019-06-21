@@ -63,7 +63,7 @@
     };
 
     this.SwitchToEditMode = function () {
-        $(`#${this.TableId} tbody [is-editing=true]`).remove();
+        this.rowSLCounter = this.rowSLCounter - $(`#${this.TableId} tbody [is-editing=true]`).remove().length;
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "edit");
         this.mode_s = "edit";
         this.tryAddRow();
@@ -346,6 +346,7 @@
         $tr.show(300);
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
+        this.updateAggCols(rowid);
         return [$tr, this.initRowCtrls(rowid)];
 
     }.bind(this);
@@ -420,12 +421,12 @@
                 try {
                     let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                     inpCtrl.__onChangeFn = onChangeFn;
-                    console.log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
+                    console.eb_log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
                     onChangeFn();
                 }
                 catch (e) {
-                    console.log("eb error :");
-                    console.log(e);
+                    console.eb_log("eb error :");
+                    console.eb_log(e);
                     alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
                 }
             }
@@ -523,7 +524,7 @@
 
     this.checkRow_click = function (e, isAddRow = true) {
         $td = $(e.target).closest("td");
-        $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
+        $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']:last`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
         let $tr = $td.closest("tr");
         $tr.attr("mode", "false");
         let rowid = $tr.attr("rowid");
@@ -568,11 +569,11 @@
         let sum = 0;
         $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
             let val;
-            let typing_inp = event.target;
-            //let Iter_Inp = $(span).closest("td").find("[ui-inp]")[0];
 
-            if (typing_inp === Iter_Inp)
+            if (event && event.target === Iter_Inp) {
+                let typing_inp = event.target;
                 val = parseFloat(typing_inp.value);
+            }
             else
                 val = parseFloat($(Iter_Inp).val());
 
@@ -708,7 +709,6 @@
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
-        //this.AllRowCtrls = {};
         this.resetBuffers();
         if (!this.ctrl.IsDisable)
             this.addRow();
@@ -763,8 +763,20 @@
         $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`).hide(200);
     };
 
+    this.hideRows = function (rowIds) {
+        arguments.each(function (i, rowId) {
+            this.hideRow(rowId);
+        }.bind(this));
+    };
+
     this.showRow = function (rowId) {
         $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`).show(200);
+    };
+
+    this.showRows = function (rowIds) {
+        arguments.each(function (i, rowId) {
+            this.showRow(rowId);
+        }.bind(this));
     };
 
     this.setCurRow = function (rowId) {
@@ -828,6 +840,7 @@
 
         this.ctrl.showRow = this.showRow.bind(this);
         this.ctrl.hideRow = this.hideRow.bind(this);
+        this.ctrl.hideRows = this.hideRows.bind(this);
         this.defineRowCount();
 
         this.$table.on("click", ".check-row", this.checkRow_click);

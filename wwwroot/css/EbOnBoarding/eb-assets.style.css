@@ -278,9 +278,8 @@
 }
 
 .modalintegre-list-a {
-    height: 34px;
-    width: 200px;
-    padding: 6px !important;
+    margin: 7px !important;
+    font-size: medium;
 }
 
 .editpannel {
@@ -400,12 +399,12 @@
 .loc_switchModal_box {
     background: white;
     box-shadow: var(--eb-shadow);
-    min-width: 600px;
-    min-height: 300px;
+    min-width: 60%;
     display: flex;
     flex-direction: column;
-    max-height: 434px;
-    border-radius:6px;
+    font-family: open sans;
+    border-radius: 6px;
+    max-width: 60%;
 }
 .loc_switchModal_outer{
     width:100%;
@@ -413,42 +412,90 @@
     display:flex;
     justify-content:center;align-items:center;
 }
-.md-radio_wrapr {
-    width: 34px;
-    float: left;
-    color: #4d86d6;
-    -webkit-transition: all .5s;
-    transition: all .5s;
-}
-.locationwrapper {
-    border-bottom: 1px solid #eee;
-    padding: 5px 0;
-}
-    .locationwrapper:last-child {
-        border-bottom: none;
-    }
-    .locationwrapper:hover {
-        background: #fafafa;
-        cursor: pointer;
-    }
-    .locationwrapper .loc_info {
-        flex-direction: column;
-        line-height: 2em;
-    }
-.md-radio_wrapr .checked {
-    display: none;
-}
 .loc_switchModal_box .locs_head {
-    padding: 10px;
-    border-bottom: 1px solid #CCC;
+    padding: 10px 20px;
+    background: #ececec;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom: 1px solid #e2e0e0;
 }
+/*new loc window styles*/
+    .loc_switchModal_box .locs_head .loc_searchInput {
+     display: flex;
+        align-items: center;
+    }
+    .loc_switchModal_box .locs_head .loc_searchInput:before {
+        content: "\f002";
+        font-family: FontAwesome;
+        position: absolute;
+        margin-left: 10px;
+    }
+.loc_switchModal_box .locs_head .loc_searchInput input{
+    height: 40px;
+    padding-left: 35px;
+}
+.loc-item {
+    padding: 5px;
+    width:33.3%;
+    float:left;
+}
+.loc-item-inner {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    display: flex;
+}
+    .loc-item-inner:hover {
+        background: #508bf9;
+        color: white;
+        cursor:pointer;
+    }
+        .loc-item-inner:hover .subtitle {
+            color:white;
+        }
+.loc-item-imgsec {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+}
+    .loc-item-imgsec img {
+        height: 30px;
+        border-radius: 4px;
+    }
+.loc-item-content {
+    line-height: 1.8em;
+    flex: 1;
+    padding: 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right:10px;
+}
+.loc-switchbtn {
+    background: #508bf9;
+    color: white;
+}
+.subtitle {
+    font-size: 13px;
+    color: #7d7b7b;
+}
+.active-loc {
+    background-color: #508bf9;
+    color:white;
+}
+    .active-loc .subtitle{
+        color:white;
+    }
 .loc_switchModal_box .locs_bdy {
     overflow: auto;
-    padding: 5px 10px;
+    padding: 15px 15px 5px 15px;
+    max-height: 50vh;
+    overflow-y: auto;
+    min-height: 50vh;
 }
 .loc_switchModal_box .locs_foot {
     padding: 10px 20px 10px 10px;
-    border-top: 1px solid #ccc;
 }
 .loc_switchModal_fade {
     display:none;
@@ -566,3 +613,215 @@ pd-10{
 .as_search_in input:focus{
 outline:none;
 }
+
+/*dashboras sidebar*/
+.menuwrapper_ul_outer {
+    padding-left: 0;
+    list-style: none;
+}
+
+    .menuwrapper_ul_outer .outer_li {
+        border-radius: 0 !important;
+        border: none !important;
+        font-weight: 400;
+        color: #4d4a4e !important;
+        background-color: transparent;
+        font-weight: 600;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+/*dashboras sidebar end*/
+/*for app dashboard*/
+.appdash_obj_container .obType_wrapper_head {
+    padding: 5px;
+    float: left;
+    width: 100%;
+    background-color: white;
+    border-radius: 6px;
+}
+
+    .appdash_obj_container .obType_wrapper_head .btn {
+        padding: 0;
+        margin-right: 5px;
+    }
+
+.appdash_obj_container .collapse_headBG {
+    background-color: #ffffff;
+    color: #191717;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
+}
+
+    .appdash_obj_container .collapse_headBG .btn {
+        color: #262729 !important;
+    }
+
+.appdash_obj_container .brd {
+    border: 1px solid #cccaca;
+    padding: 0;
+}
+
+.appdash_obj_container .btn_container {
+    display: inline-block;
+}
+
+.appdash_obj_container .drp_menuitems {
+    padding: 5px;
+}
+.drp_menuitems{
+    padding:5px 0;
+}
+.appdash_obj_container .objContainer_f_app {
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.appdash_obj_container .objContainer2 {
+    width: 100%;
+    float: left;
+    box-shadow: var(--eb-shadow);
+    border-radius: 2px;
+}
+
+.appdash_obj_container .obtype_container {
+    width: 100%;
+    float: left;
+    padding: 5px;
+    background-color: white;
+}
+
+.appdash_obj_container .label_container {
+    width: 100%;
+}
+
+    .appdash_obj_container .label_container span {
+        background-color: #eaeaea;
+        color: #369;
+    }
+
+.appdash_obj_container .objitems h4 {
+    margin: 3px 0 2px;
+    color: black;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 15px;
+}
+
+.appdash_obj_container .objitems p {
+    margin: 0;
+    height: 17px;
+    font-size: 11px;
+    text-overflow: ellipsis;
+}
+
+.appdash_obj_container .objitems {
+    padding: 9px 9px;
+}
+
+    .appdash_obj_container .objitems .object_container {
+        width: 100%;
+        height: 100%;
+        float: left;
+        background-color: white;
+        padding: 6px;
+        border-radius: 2px;
+        border: 1px solid #e8e6e6;
+    }
+
+.appdash_obj_container .objContainer2 {
+    width: 100%;
+    float: left;
+    box-shadow: none;
+}
+
+.appdash_obj_container .obj_count, .Eb_quick_menu .obj_count {
+    margin-left: 0.4em;
+}
+
+.shrtcurt_info {
+    position: absolute;
+    width: 100%;
+    color: white;
+}
+
+.appdash_obj_container .objContainer2 .obType_wrapper_head {
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    border-radius: 2px;
+    border: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+}
+
+.appdash_obj_container .btn_container {
+    margin-left: auto;
+}
+
+.appdash_obj_container .collapse_headBG {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.appdash_obj_container .objContainer2 .btn_container .form-control {
+    height: 28px !important;
+}
+
+.appdash_obj_container .objitems .object_container {
+    width: 100%;
+    height: 100%;
+    float: left;
+    background-color: #f2f2f2;
+    padding: 6px;
+    border-radius: 2px;
+    border: 1px solid #e8e6e6;
+}
+
+    .appdash_obj_container .objitems .object_container:hover {
+        background-color: #f3f8ff;
+    }
+
+/*marker for export*/
+.ExportMark {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    border-radius: 0;
+    margin: 0;
+    display: none;
+}
+
+.appdash_obj_container .objitems .object_container:hover .ExportMark {
+    display: block;
+}
+
+.appdash_obj_container .objitems .object_container .ExportMark:checked {
+    display: block;
+}
+
+.appdash_obj_container .raw {
+    width: 100%;
+    float: left;
+    padding-bottom: 10px;
+    padding-right: 5px;
+}
+
+.obtypeic {
+    width: 25px;
+    font-size: 15px;
+}
+
+.bg-gradient-9 {
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…IgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
+    background: -moz-linear-gradient(-65deg, #008fe2 0, #00b29c 100%);
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #008fe2), color-stop(100%, #00b29c));
+    background: -webkit-linear-gradient(-65deg, #008fe2 0, #00b29c 100%);
+    background: -o-linear-gradient(-65deg, #008fe2 0, #00b29c 100%);
+    background: -ms-linear-gradient(-65deg, #008fe2 0, #00b29c 100%);
+    background: linear-gradient(154deg, #008fe2 0, #00b29c 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#008fe2', endColorstr='#00b29c', GradientType=1);
+}
+/*export button end*/

@@ -24,6 +24,7 @@ using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
+using ExpressBase.Common.LocationNSolution;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -36,6 +37,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult Index(string objid, int objtype, bool buildermode = true)
         {
+            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             dynamic dsobj = null;
             Context2Js _c2js = new Context2Js();
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -43,6 +45,17 @@ namespace ExpressBase.Web.Controllers
             EbObjectType type = (EbObjectType)(objtype);
             HttpContext.Items["ObjectType"] = type;
             ViewBag.mode = buildermode;
+
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            if (soln.PricingTier == PricingTiers.FREE)
+            {
+                ViewBag.IsFreeUser = true;
+            }
+            else
+            {
+                ViewBag.IsFreeUser = false; 
+            }
+
             if (objid != "null")
             {
                 ViewBag.Obj_id = objid;
@@ -362,7 +375,7 @@ namespace ExpressBase.Web.Controllers
                     _response.Message = res.Message;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _response.Message = e.Message;
             }

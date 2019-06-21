@@ -8,108 +8,103 @@ using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
     public class WikiController : EbBaseIntCommonController
     {
         public WikiController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
-        [HttpGet("wiki/add")]
-        public IActionResult AddWiki()
+        [HttpGet("wiki/add/{id}")]
+        public IActionResult AddWiki(int id)
+
         {
-            return View();
+            ViewBag.id = id;
+            if (id > 0)
+            {
+                GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
+                {       
+                        Id = Convert.ToInt32(id)
+                });
+
+                if(resp == null)
+                {
+                   return Redirect("0");
+                }
+                else
+                {
+                    ViewBag.Wiki = resp.Wiki;
+                    return View();
+                }       
+            }
+            else {
+                ViewBag.Wiki = new Wiki() { Id = 0 };
+                return View(); }
+            
         }
 
-        //[HttpPost]
-        //public IActionResult Index(object obj)
+        [HttpGet("/apitest")]
+        public IActionResult Test()
+        {
+            this.ServiceClient.BearerToken = "HxSLXUHuM5X_pZDW_0_SvbpupByEIlCw";
+            ServiceClient.Get(new ApiTestReq());
+
+            return Redirect("/statuscode/404"); ;
+        }
+
+
+        //[HttpGet("wiki/add/{}")]
+        //public IActionResult EditWiki(string id)
         //{
-        //    StoreTitle();
-        //    return View("Add_Wiki");
+        //    GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
+        //    {
+        //        Wiki = new Wiki()
+        //        {
+        //            Id = Convert.ToInt32(id)
+        //        }
+        //    });
+
+        //    ViewBag.Wiki = resp.Wiki;
+        //    return View();
         //}
 
         [HttpPost("wiki/save")]
         public IActionResult SaveWiki(object obj)
         {
-            PersistWikiResponse resp = this.ServiceClient.Post(new PersistWikiRequest
+            int id = Convert.ToInt32( Request.Form["id"]);
+            if (id > 0)
             {
-                Wiki = new Wiki
+                UpdateWikiResponse resp = this.ServiceClient.Post(new UpdateWikiRequest
                 {
-                    Category = Request.Form["subtitle"],
-                    Title = Request.Form["title"],
-                    HTML = Request.Form["content"]
-                }
-            });
-
-            return Redirect(string.Format("/wiki/view/{0}", resp.Wiki.Id));
-        }
-
-        //public IActionResult View_Wiki()
-        //{
-        //    ViewBag.contentlist = GetContent();
-        //    return View();
-        //}
-
-        //public void StoreTitle()
-        //{
-        //    this.ServiceClient.Post(new PersistWikiRequest
-        //    {
-        //        Title = Request.Form["title"],
-        //        Subtitle = Request.Form["subtitle"],
-        //        Content = Request.Form["content"]
-        //    });
-
-        //}
-        //public GetTitleResponse GetTitle()
-        //{
-        //    GetTitleResponse str = this.ServiceClient.Post<GetTitleResponse>(new GetTitleRequest());
-        //    return str;
-        //}
-        //public void StoreContent()
-        //{
-
-        //}
-
-
-
-        //public GetContentResponse GetContent()
-        //{
-        //    GetContentResponse str1 = this.ServiceClient.Post<GetContentResponse>(new GetContentRequest());
-        //    return str1;
-        //}
-
-    }
-
-    public class PublicWikiController : EbBaseExtController
-    {
-        public PublicWikiController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis)
-        {
-        }
-
-        [HttpGet("wiki/view/{id}")]
-        public IActionResult GetArticleById(string id)
-        {
-            GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
+                    Wiki = new Wiki
+                    {
+                        Category = Request.Form["category"],
+                        Title = Request.Form["title"],
+                        HTML = Request.Form["content"],
+                        CreatedBy = ViewBag.UId,
+                        Tags = Request.Form["tagbox"],
+                        Id = id
+                    }
+                });
+                
+                return Redirect(string.Format("/publicwiki/view/{0}", resp.Wiki.Id));
+            }
+            else
             {
-                Wiki = new Wiki()
+                 PersistWikiResponse resp = this.ServiceClient.Post(new PersistWikiRequest
                 {
-                    Id = Convert.ToInt32(id)
-                }
-            });
-
-            ViewBag.Wiki = resp.Wiki;
-
-            return View();
+                    Wiki = new Wiki
+                    {
+                        Category = Request.Form["category"],
+                        Title = Request.Form["title"],
+                        HTML = Request.Form["content"],
+                        CreatedBy = ViewBag.UId,
+                        Tags = Request.Form["tagbox"]
+                    }
+                 
+                });
+                return Redirect(string.Format("/publicwiki/view/{0}", resp.Wiki.Id));
+            }
         }
-
-        [HttpGet("wiki/view/list")]
-        public IActionResult GetWikiList()
-        {
-            GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
-            ViewBag.WikiList = resp.WikiList;
-            return View();
-        }
-    }
+            
+   }
 }

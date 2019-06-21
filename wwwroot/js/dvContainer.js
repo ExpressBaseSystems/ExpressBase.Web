@@ -36,6 +36,7 @@ var DvContainerObj = function (settings) {
     this.clickDot = false;
     this.cellData = null;
     this.isExistReport = false;
+    this.googlekey = settings.googlekey
     //this.PGobj = new Eb_PropertyGrid("pp_inner", "uc");
 
 
@@ -43,7 +44,8 @@ var DvContainerObj = function (settings) {
         id: "pp_inner",
         wc: "uc",
         cid: this.cid,
-        $extCont: $(".ppcont")
+        $extCont: $(".ppcont"),
+        style: { top: "100px" }
     });
 
     //this.stickBtn = new EbStickButton({
@@ -109,6 +111,7 @@ var DvContainerObj = function (settings) {
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
             this.dvcol[focusedId] = new eb_chart(
+                googlekey = this.googlekey,
                 refid = this.dvRefid,
                 ver_num = this.ver_num,
                 type = this.type,

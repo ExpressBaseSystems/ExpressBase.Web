@@ -111,7 +111,7 @@ var informaion = function (nam, val) {
     this.name = nam;
     this.value = val;
 }
-var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData, PGobj, TenantId, UserId) {
+var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData, PGobj, TenantId, UserId) {
     this.propGrid = PGobj || null;
     this.EbObject = null;
     this.data = null;
@@ -841,9 +841,9 @@ var eb_chart = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl,
             showRoute = this.EbObject.ShowRoute;
             if (!this.isMyScriptLoaded("https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js")) {
                 $("#layout_div").prepend(`
-                <script src= "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js" ></script>
+                <script src= 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js' ></script>
                 <script async defer
-                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqvPOq5Nuc2pML40vzYaKOA67THK-5UOs&callback=initMap">
+                    src='https://maps.googleapis.com/maps/api/js?key=${googlekey}'>
                 </script>`);
             }
             else {

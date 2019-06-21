@@ -32,14 +32,32 @@
                             <div class="eb_required_group required">
                                 <label>Name</label>
                                 <input class="form-control txthighlight" type="text" name="Name" id="name">
-                                <p id="namelbl" style="color:red; visibility :hidden"> Enter a name</p>
+                                <p id="namelbl" style="color:red; visibility :hidden"> Enter a valid name</p>
                             </div>
                             <div class="eb_required_group required">
-                                <label>Company</label>
-                                <input class="form-control txthighlight" type="text" name="Company" id="company">
-                                <p id="companylbl" style="color:red; visibility : hidden"> Enter a company</p>
+                                <div class="pd-r-0 col-md-6" style="padding:0px 15px 0px 0px;">
+                                    <label>You are?</label>
+                                    <div>
+                                        <select>
+                                            <option value="" disabled selected>Choose your option</option>
+                                            <option value="1">Developer</option>
+                                            <option value="2">Business</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="pd-r-0 col-md-6">
+                                    <label>Country</label>
+                                    <div>
+                                        <select>
+                                            <option value="" disabled selected>Choose your option</option>
+                                            <option value="1">Developer</option>
+                                            <option value="2">Business</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="Country" id="country" required>
                             </div>
-                            <input type="hidden" name="Country" id="country" required>
                             <div class="eb_required_group required">
                                 <div class="pd-l-0 col-md-6">
                                     <label>Password</label>
@@ -149,7 +167,7 @@
                         <div class="form-group required">
                             <label>Solution Name</label>
                             <input type="text" id="solutionname" name="Sname" class="form-control txthighlight" />
-                            <p id="slnnam" style="color:red; visibility :hidden;margin:0 0 0 0 "> Enter a Solution Name</p>
+                            <p id="slnnam" style="color:red; visibility :hidden;margin:0 0 0 0 "> Enter a valid Solution Name</p>
                         </div>
                         <div class="form-group ">
                             <label>Description</label>

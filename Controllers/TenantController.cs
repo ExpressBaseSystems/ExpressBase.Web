@@ -75,23 +75,28 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        public CreateSolutionResponse EbCreateSolution(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            //string DbName = req["SolnId"];
-            var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
-            {
-                SolutionName = req["Sname"],
-                SolnUrl = req["SolnId"],
-                Description = req["Desc"],
-                DeployDB = Convert.ToBoolean(req["DeployDB"])
 
-            });
-            if (res.Status > 0)
-                TempData[Msg] = "New Solution Created.";
-            return res;
-        }
+        //this function has moved to ext controller
+        //[HttpPost]
+        //public CreateSolutionResponse EbCreateSolution(int i)
+        //{
+        //    var req = this.HttpContext.Request.Form;
+        //    //string DbName = req["SolnId"];
+        //    var res = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
+        //    {
+        //        SolutionName = req["Sname"],
+        //        SolnUrl = req["SolnId"],
+        //        Description = req["Desc"],
+        //        DeployDB = Convert.ToBoolean(req["DeployDB"])
+
+        //    });
+        //    if (res.Status > 0)
+        //        TempData[Msg] = "New Solution Created.";
+        //    return res;
+        //}
+
+
+
 
         [HttpPost]
         public IActionResult CreateApplication(int i)

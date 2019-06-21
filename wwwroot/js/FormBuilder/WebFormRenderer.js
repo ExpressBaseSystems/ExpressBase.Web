@@ -66,6 +66,19 @@ const WebFormRender = function (option) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
         this.setFormObjectMode();
+
+        this.formObject.updateDependentControls = function (curCtrl) {
+            $.each(curCtrl.DependedValExp.$values, function (i, ctrl) {
+                let form = this.formObject;
+                let depCtrl = eval(ctrl);
+                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                if (valExpFnStr) {
+                    depCtrl.setValue(new Function("form", "user", `event`, valExpFnStr).bind(ctrl, this.formObject, this.userObject)());
+                }
+
+            }.bind(this));
+        }.bind(this);
+
         return this.formObject;
     };
 
@@ -89,7 +102,7 @@ const WebFormRender = function (option) {
             this.bindRequired(Obj);
         if (Obj.Unique)
             this.bindUniqueCheck(Obj);
-        if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "" )|| Obj.DependedValExp.$values.length > 0)
             this.bindOnChange(Obj);
         if (Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
@@ -158,7 +171,10 @@ const WebFormRender = function (option) {
 
     this.bindOnChange = function (control) {
         try {
-            control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
+            let FnString = `console.log('${control.__path || control.Name}');` + atob(control.OnChangeFn.Code) + ` ; form.updateDependentControls(${control.__path}, form)`;
+            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.formObject, this.userObject);
+            control.__onChangeFn = onChangeFn;
+            control.bindOnChange(onChangeFn);
         }
         catch (e) {
             console.eb_log("eb error :");

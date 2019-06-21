@@ -540,6 +540,7 @@ const WebFormRender = function (option) {
 
     };
 
+    //functions to be executed before save in frontend
     this.BeforeSave = function () {
         if (!this.FormObj.BeforeSaveRoutines)
             return;

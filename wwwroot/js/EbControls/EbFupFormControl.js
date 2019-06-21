@@ -122,7 +122,7 @@
 
     pullFile() {
         this.FileList = this.Options.Files;
-        if ('Files' in this.Options && this.Options.Files.length>0)
+        if ('Files' in this.Options && this.Options.Files.length > 0)
             this.renderFiles();
     }
 
@@ -131,7 +131,7 @@
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
 
-            if (this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
+            if (this.FileList[i].Meta === null || this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
                 $portdef.append(this.thumbNprevHtml(this.FileList[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
             }
@@ -251,9 +251,9 @@
             }
             let reader = new FileReader();
             reader.onload = (function (file) {
-                    return function (e) {
-                        (this.validate(file)) ? this.drawThumbNail(e, file) : null;
-                    }.bind(this);
+                return function (e) {
+                    (this.validate(file)) ? this.drawThumbNail(e, file) : null;
+                }.bind(this);
 
             }.bind(this))(files[i]);
 
@@ -384,7 +384,7 @@
     }
 
     upload(e) {
-            this.comUpload();
+        this.comUpload();
     };
 
     comUpload() {

@@ -77,7 +77,7 @@
 .dv-divs .tool_item_body {
     height: calc( 100% - 11px );
 }
-.dv-divs .focused {
+.dv-divs .focusedColumn {
     background-color: #306395 !important;
     color:white;
 }

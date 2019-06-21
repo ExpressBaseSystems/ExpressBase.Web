@@ -45,6 +45,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult dv(string refid, string rowData, string filterValues, int tabNum)
         {
+
+            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
 

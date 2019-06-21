@@ -158,9 +158,16 @@
     }
 
     thumbNprevHtml(o) {
+        let src = null;
+        if (o.FileCategory === 0) {
+            src = `/files/${o.FileRefId}.jpg`;
+        }
+        else if (o.FileCategory === 1) {
+            src = `/images/small/${o.FileRefId}.jpg`;
+        }
         return (`<div class="eb_uplGal_thumbO trggrFprev" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                 <div class="eb_uplGal_thumbO_img">
-                    <img src="${this.SpinImage}" data-src="/images/small/${o.FileRefId}.jpg" class="EbFupThumbLzy" style="display: block;">
+                    <img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;">
                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                 </div>

@@ -122,7 +122,7 @@
 
     pullFile() {
         this.FileList = this.Options.Files;
-        if ('Files' in this.Options && this.Options.Files.length>0)
+        if ('Files' in this.Options && this.Options.Files.length > 0)
             this.renderFiles();
     }
 
@@ -131,7 +131,7 @@
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
 
-            if (this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
+            if (this.FileList[i].Meta === null || this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
                 $portdef.append(this.thumbNprevHtml(this.FileList[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
             }
@@ -158,9 +158,16 @@
     }
 
     thumbNprevHtml(o) {
+        let src = null;
+        if (o.FileCategory === 0) {
+            src = `/files/${o.FileRefId}.jpg`;
+        }
+        else if (o.FileCategory === 1) {
+            src = `/images/small/${o.FileRefId}.jpg`;
+        }
         return (`<div class="eb_uplGal_thumbO trggrFprev" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                 <div class="eb_uplGal_thumbO_img">
-                    <img src="${this.SpinImage}" data-src="/images/small/${o.FileRefId}.jpg" class="EbFupThumbLzy" style="display: block;">
+                    <img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;">
                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                 </div>
@@ -251,9 +258,9 @@
             }
             let reader = new FileReader();
             reader.onload = (function (file) {
-                    return function (e) {
-                        (this.validate(file)) ? this.drawThumbNail(e, file) : null;
-                    }.bind(this);
+                return function (e) {
+                    (this.validate(file)) ? this.drawThumbNail(e, file) : null;
+                }.bind(this);
 
             }.bind(this))(files[i]);
 
@@ -384,7 +391,7 @@
     }
 
     upload(e) {
-            this.comUpload();
+        this.comUpload();
     };
 
     comUpload() {

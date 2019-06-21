@@ -1,4 +1,7 @@
-﻿<head>
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<head>
     <title>Customer Creation</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,239 +13,380 @@
             var tot;
             if (users <= 5) {
                 tot = 0;
+                document.getElementById('continue-button').disabled = true;
+                document.getElementById('continue-button').style.cursor = "not-allowed";
             }
             else {
-                var tot = (users - 5) * 20;
+                var tot = users * 5;
+                document.getElementById('continue-button').disabled = false;
+                document.getElementById('continue-button').style.cursor = "pointer";
             }
-            document.getElementById('total').innerHTML = tot;
+            var tott = "$" + tot;
+            var tcontent = "(" + users + " users * $5/month)";
+            var button = "Subscribe ( $" + tot + " / month)";
+            document.getElementById('total-content').innerHTML = tcontent;
+            document.getElementById('total').innerHTML = tott;
             document.getElementById('tot').value = tot;
+            document.getElementById('usrno').value = users;
+            document.getElementById("div-total").style.display = "flex";
+            document.getElementById('pay').innerHTML = button;
         }
-        function enablefield() {
-            document.getElementById('name').disabled = false;
-            document.getElementById('add1').disabled = false;
-            document.getElementById('add2').disabled = false;
-            document.getElementById('city').disabled = false;
-            document.getElementById('state').disabled = false;
-            document.getElementById('country').disabled = false;
-            document.getElementById('emailid').disabled = false;
-            document.getElementById('card-element').disabled = false;
-            document.getElementById('pay').disabled = false;
-            //document.getElementById('name').focus();
+
+        function showpayment() {
+            var users = document.getElementById('usr').value;
+            if (users <= 5) {
+
+            }
+            else {
+                document.getElementById("users-form").style.display = "block";
+                document.getElementById("payment-form").style.display = "block";
+                document.getElementById("subscription-req").style.display = "none";
+                document.getElementById("div-continue-button").style.display = "none";
+                document.getElementById("div-usr").style.display = "none";
+            }
+            
+
         }
+
+        function showusr() {
+            document.getElementById("subscription-req").style.display = "none";
+            document.getElementById("users-form").style.display = "block";
+            document.getElementById("payment-form").style.display = "none";
+            calculateAmt();
+        }
+
     </script>
+    <style>
+
+        .StripeElement {
+            height: 40px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background-color: white;
+            outline: none;
+        }
+
+        .StripeElement--focus {
+            /*box-shadow: 0 1px 3px 0 #cfd7df;*/
+        }
+
+        .StripeElement--invalid {
+            /*border-color: #fa755a;*/
+        }
+
+        .StripeElement--webkit-autofill {
+            /*background-color: #fefde5 !important;*/
+        }
+
+        .form-style {
+            font-weight: 100;
+            background-color: white;
+            margin: 100px 500px 10px 500px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .form-style-sub {
+            font-weight: 100;
+            background-color: white;
+            margin: 20px 500px 10px 500px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .heading {
+            font-family: 'Lucida Console';
+            text-align: center;
+            color: darkblue;
+        }
+
+        .div-box {
+            border-radius: 4px;
+            border: 1px solid #e8e8fb;
+            display: none;
+        }
+
+        .upgrade-content {
+            padding: 10px 15px 10px 15px;
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            text-align: justify;
+            font-size: small;
+            color: darkslategrey;
+        }
+
+        .form-style-padding {
+            padding: 15px 0px 15px 0px;
+        }
+
+        .form-style-padding-total {
+            padding: 10px 0px 10px 0px;
+        }
+
+        .card-padding {
+            padding: 5px 0px 5px 0px;
+        }
+
+        .div-seperate {
+            margin: 20px 500px 10px 500px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .div-input {
+            font-weight: 100;
+            display: flex;
+            padding: 0px 10px 0px 10px;
+        }
+
+        .div-input-border {
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .label-font {
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            padding: 10px 10px 10px 10px;
+            text-align-last: right;
+            width: 90px;
+            height: 20.800px;
+            font-weight: 100;
+        }
+
+
+        .label-font-sub {
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            padding: 10px 10px 10px 10px;
+            text-align-last: right;
+            width: 150px;
+            height: 20.800px;
+            font-weight: 100;
+        }
+
+        .label-total {
+            font-weight: 100;
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            padding: 20px 5px 0px 0px;
+        }
+
+        .label-total-main-title {
+            width: 50%;
+            text-align: right;
+            font-size: large;
+        }
+
+        .label-total-main {
+            width: 70%;
+            text-align: right;
+            font-size: large;
+        }
+
+        .label-total-content {
+            padding-top: 22px;
+            text-align: left;
+            font-size: small;
+            width: 90%;
+        }
+
+        .button-style {
+            display: block;
+            background: #666ee8;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+            border-radius: 4px;
+            border: 0;
+            font-weight: 700;
+            width: 100%;
+            height: 40px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .text-input {
+            font-size: 15px;
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            color: black;
+            height: 40px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background-color: white;
+            width: 570px;
+            padding-top: 4px;
+            flex: 1;
+            padding: 0 15px;
+            background: transparent;
+            font-weight: 400;
+            outline: none;
+            cursor: text;
+        }
+
+        ::placeholder {
+            color: darkgrey;
+        }
+
+        .text-input-sub {
+            font-size: 15px;
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            color: black;
+            height: 40px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background-color: white;
+            width: 50%;
+            padding-top: 4px;
+            flex: 1;
+            padding: 0 15px;
+            background: transparent;
+            font-weight: 400;
+            outline: none;
+            cursor: text;
+        }
+
+        .text-select {
+            font-size: 15px;
+            font-family: Helvetica Neue, Helvetica, sans-serif;
+            color: black;
+            height: 40px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background-color: white;
+            padding-top: 4px;
+            flex: 1;
+            padding: 0 15px;
+            background: transparent;
+            font-weight: 400;
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .div-style {
+            display: inline-block;
+        }
+    </style>
+
 </head>
-
-<form id="payment-form" action="/Stripe/Index" method="post">
-    <div class="form-style">
-        <div class="form-row" style="display:inline-block;">
-            <label class="label-font">
-                Number of Users
-            </label>
-            <div>
-                <input type="number" id="usr" class="text-input-sub" name="usr" onchange="calculateAmt()" onkeyup="calculateAmt()" value="5" min="5" />
+<body>
+    @{
+        bool x = true;
+        if (x)
+        {
+            <div id="subscription-req">
+                <div class="form-style form-style-padding">
+                    <div class="heading">
+                        <h2>UPGRADE</h2>
+                    </div>
+                    <div class="upgrade-content">
+                        You are currently using Free Plan (Free for first 5 users). You can upgrade your plan for having more users, cost $5 for each.
+                    </div>
+                </div>
+                <div class="div-seperate">
+                    <button class="button-style" onclick="showusr()">Upgrade</button>
+                </div>
             </div>
-        </div>
-        <div class="form-row" style="display:inline-block;">
-            <label class="label-font">
-                Total Amount :
-            </label>
-            <span id="total"></span>$ (Free for 5 Users)
-            <input type="hidden" id="tot" name="tot" />
-        </div>
-        <br />
-        <br />
-        <div class="form-row">
-            <button class="button-style" onclick="enablefield()">Continue</button>
-        </div>
-        <br />
-        <br />
-        <div class="form-row">
-            <label for="card-element" class="label-font">
-                Credit or debit card
-            </label>
-            <div id="card-element" style="pointer-events:none;">
-                <!-- A Stripe Element will be inserted here. -->
+
+            <div id="users-form" style="display:none;">
+                <div class="form-style form-style-padding">
+                    <div class="div-input" id="div-usr">
+                        <label class="label-font-sub">Number of Users</label>
+                        <input type="number" class="text-input" name="usr" id="usr" placeholder="5" min="5" onchange="calculateAmt()" onkeyup="calculateAmt()" required />
+                    </div>
+                    <div id="div-total" class="div-input" style="display:none; ">
+                        <label class="label-total label-total-main-title">Total</label>
+                        <label class="label-total label-total-content" id="total-content" name="total-content"></label>
+                        <label class="label-total label-total-main" name="total" id="total"></label>
+                        <label class="label-total label-total-content">/month</label>
+                    </div>
+                </div>
+                <div class="div-seperate" id="div-continue-button">
+                    <button class="button-style" id="continue-button" onclick="showpayment()">Proceed to Payment</button>
+                </div>
+                <form id="payment-form" action="/Stripe/Index" method="post" autocomplete="off" style="display: none;" >
+                    <div class="form-style-sub form-style-padding">
+                        <input type="hidden" id="tot" name="tot" />
+                        <input type="hidden" id="usrno" name="usrno" />
+                        <div class="div-input div-input-border">
+                            <label class="label-font">Name</label>
+                            <input type="text" class="text-input" name="name" id="name" placeholder="Jenny Rosen" required />
+                        </div>
+                        <div class="div-input div-input-border">
+                            <label class="label-font">Email</label>
+                            <input type="email" class="text-input" name="emailid" id="emailid" placeholder="jenny@example.com" required />
+                        </div>
+                        <div class="div-input div-input-border">
+                            <label class="label-font">Address</label>
+                            <input type="text" class="text-input" name="add1" id="add1" placeholder="185 Berry Street Suite 550" />
+                        </div>
+                        <div class="div-input div-input-border">
+                            <label class="label-font">City</label>
+                            <input type="text" class="text-input" name="city" id="city" placeholder="San Francisco" />
+                        </div>
+                        <div class="div-input div-input-border">
+                            <label class="label-font">State</label>
+                            <input type="text" class="text-input-sub" name="state" id="state" placeholder="CA" />
+                            <label class="label-font">Zip</label>
+                            <input type="text" class="text-input-sub" name="zip" id="zip" placeholder="94107" />
+                        </div>
+                        <div class="div-input">
+                            <label class="label-font">Country</label>
+                            <div>
+                                <select name="country" class="text-select">
+                                    <option value="AU">Australia</option>
+                                    <option value="AT">Austria</option>
+                                    <option value="BE">Belgium</option>
+                                    <option value="BR">Brazil</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="CN">China</option>
+                                    <option value="DK">Denmark</option>
+                                    <option value="FI">Finland</option>
+                                    <option value="FR">France</option>
+                                    <option value="DE">Germany</option>
+                                    <option value="HK">Hong Kong</option>
+                                    <option value="IN">India</option>
+                                    <option value="IE">Ireland</option>
+                                    <option value="IT">Italy</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="LU">Luxembourg</option>
+                                    <option value="MX">Mexico</option>
+                                    <option value="NL">Netherlands</option>
+                                    <option value="NZ">New Zealand</option>
+                                    <option value="NO">Norway</option>
+                                    <option value="PT">Portugal</option>
+                                    <option value="SG">Singapore</option>
+                                    <option value="ES">Spain</option>
+                                    <option value="SE">Sweden</option>
+                                    <option value="CH">Switzerland</option>
+                                    <option value="GB">United Kingdom</option>
+                                    <option value="US" selected="selected">United States</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div-seperate form-style card-padding">
+                        <div class="form-row div-input">
+                            <label for="card-element" class="label-font col-md-1">
+                                Card
+                            </label>
+                            <div id="card-element" class="col-md-11">
+                                <!-- A Stripe Element will be inserted here. -->
+                            </div>
+                            <input type="hidden" id="token" name="token">
+                            <!-- Used to display form errors. -->
+                            <div id="card-errors" role="alert"></div>
+                        </div>
+                    </div>
+                    <div class="div-seperate">
+                        <button class="button-style" id="pay" name="pay">Subscribe</button>
+                    </div>
+                </form>
             </div>
-            <input type="hidden" id="token" name="token">
-            <!-- Used to display form errors. -->
-            <div id="card-errors" role="alert"></div>
-        </div>
-        <br />
-        <div class="form-row">
-            <label class="label-font">
-                Name
-            </label>
-            <div>
-                <input type="text" id="name" class="text-input" name="name" disabled />
-            </div>
-        </div>
-        <br />
+        }
+        else
+        {
 
-        @*<div style="display:inline-block">
-                <p style="display:inline-block">sssj</p>
-                <p style="display:inline-block"> jajaj</p>
-            </div>*@
-
-        <div>
-
-        </div>
-
-        <div class="form-row" style="display:inline-block;">
-            <label class="label-font">
-                Address Line 1
-            </label>
-
-            <div>
-                <input type="text" id="add1" class="text-input-sub" name="add1" disabled />
-            </div>
-        </div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="form-row" style="display:inline-block;">
-            <label class="label-font">
-                Address Line 2
-            </label>
-            <div>
-                <input type="text" id="add2" class="text-input-sub" name="add2" disabled />
-            </div>
-        </div>
-        <br />
-        <br />
-        <div class="form-row" style="display:inline-block;">
-            <label class="label-font">
-                City
-            </label>
-            <div>
-                <input type="text" id="city" class="text-input-sub" name="city" disabled />
-            </div>
-        </div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="form-row" style="display:inline-block;">
-            <label class="label-font">
-                State
-            </label>
-            <div>
-                <input type="text" id="state" class="text-input-sub" name="state" disabled />
-            </div>
-        </div>
-        <br />
-        <br />
-        <div class="form-row" style="display:inline-block;">
-            <label class="label-font">
-                Country
-            </label>
-            <div>
-                <input type="text" id="country" class="text-input-sub" name="country" disabled />
-            </div>
-        </div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="form-row" style="display:inline-block;">
-            <label class="label-font">
-                Email Id
-            </label>
-            <div>
-                <input type="email" id="emailid" class="text-input-sub" name="emailid" disabled />
-            </div>
-        </div>
-        <br />
-        <br />
-        <div class="form-row">
-            <button class="button-style" id="pay" name="pay" disabled>Pay</button>
-        </div>
-    </div>
-</form>
-<style>
-    .StripeElement {
-        box-sizing: border-box;
-        height: 40px;
-        padding: 10px 12px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        background-color: white;
-        box-shadow: 0 1px 3px 0 #e6ebf1;
-        -webkit-transition: box-shadow 150ms ease;
-        transition: box-shadow 150ms ease;
+        }
     }
+</body>
 
-    .StripeElement--focus {
-        box-shadow: 0 1px 3px 0 #cfd7df;
-    }
-
-    .StripeElement--invalid {
-        border-color: #fa755a;
-    }
-
-    .StripeElement--webkit-autofill {
-        background-color: #fefde5 !important;
-    }
-
-    .form-style {
-        background-color: whitesmoke;
-        margin: 50px 400px 50px 400px;
-        padding-top: 50px;
-        padding-right: 50px;
-        padding-bottom: 50px;
-        padding-left: 80px;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    }
-
-
-    .label-font {
-        font-family: Helvetica Neue, Helvetica, sans-serif;
-        margin-bottom: 3px;
-        padding-bottom: 10px;
-    }
-
-    .button-style {
-        border-radius: 8px;
-        padding: 12px 28px;
-        font-size: 15px;
-        font-family: Helvetica Neue, Helvetica, sans-serif;
-        color: white;
-        background-color: #008CBA;
-        border-color: #008CBA;
-        width: 570px;
-    }
-
-    .text-input {
-        font-size: 15px;
-        font-family: Helvetica Neue, Helvetica, sans-serif;
-        color: black;
-        box-sizing: border-box;
-        height: 40px;
-        padding: 10px 12px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        background-color: white;
-        box-shadow: 0 1px 3px 0 #e6ebf1;
-        -webkit-transition: box-shadow 150ms ease;
-        transition: box-shadow 150ms ease;
-        width: 570px;
-        padding-top: 4px;
-    }
-
-    .text-input-sub {
-        font-size: 15px;
-        font-family: Helvetica Neue, Helvetica, sans-serif;
-        color: #aab7c4;
-        box-sizing: border-box;
-        height: 40px;
-        padding: 10px 12px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        background-color: white;
-        box-shadow: 0 1px 3px 0 #e6ebf1;
-        -webkit-transition: box-shadow 150ms ease;
-        transition: box-shadow 150ms ease;
-        padding-top: 4px;
-        width: 262px;
-    }
-
-
-    .div-style {
-        display: inline-block;
-    }
-</style>
 <script>
     var stripe = Stripe('pk_test_CGH1Rf9K7oGeINYguJ1Y8NnC00F31HG9JW');
 

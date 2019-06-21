@@ -243,12 +243,31 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         }
     };
 
+    this.AllowedDbTypes = {
+        BooleanOriginal: {
+            Alias: "Boolean",
+            IntCode: EbDbType["BooleanOriginal"],
+        },
+        Date: null,
+        DateTime: null,
+        Decimal: null,
+        Double: null,
+        Int16: null,
+        Int32:null,
+        Json: null,
+        String: null,
+    }
+
     this.setDbType = function () {
         let d = [];
         for (let k in EbDbType) {
-            d.push(`<option value="${EbDbType[k]}">${k}</option>`);
+            if (k in this.AllowedDbTypes) {
+                let name = (this.AllowedDbTypes[k] !== null) ? this.AllowedDbTypes[k].Alias : k;
+                let val = (this.AllowedDbTypes[k] !== null) ? this.AllowedDbTypes[k].IntCode : EbDbType[k];
+                d.push(`<option value="${val}">${name}</option>`);
+            }
         }
-        return d.join(",");
+        return d.join("");
     };
 
     this.setValues = function () {

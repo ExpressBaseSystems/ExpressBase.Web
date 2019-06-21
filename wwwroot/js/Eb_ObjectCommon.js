@@ -125,6 +125,7 @@
                         this.AfterCommit();
                 }
             }
+            this.Current_obj.RefId = this.ver_Refid;
             this.ObjCollection[target].EbObject = this.Current_obj;
             this.ObjCollection[target].Refid = this.ver_Refid;
             $(`#versionNav [href='${target}']`).attr("data-verNum", this.Current_obj.VersionNumber);//edits by amal
@@ -151,8 +152,8 @@
 
         var words = this.ver_Refid.split("-");
         window.history.pushState("data", "Title", 'Index?objid=' + words[3] + '&objtype=' + words[2]);
-        menu.resultObj = null;//reload menu by amal on 27/04/2018
-        menu.init();//reload menu by amal on 27/04/2018
+        ebcontext.menu.resultObj = null;//reload menu by amal updated on 18/06/2019
+        ebcontext.menu.start();//reload menu by amal updated on 18/06/2019
 
 
         if (this.target !== "#preview_tab")
@@ -422,7 +423,7 @@
         var apps = $("#apps").val();
         if (apps === "")
             apps = "0";
-        var changeLog = $('#obj_changelog').val();
+        var changeLog = $('#obj_changelog').text();
         var getNav = this.target; /*$("#versionNav li.active a").attr("href");*/
         if (this.isBeforSaveImplemets(getNav)) {
             if (this.ObjCollection[getNav].BeforeSave())

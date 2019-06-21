@@ -552,6 +552,9 @@
 
     this.initOSE = function () {
         this.curEditorLabel = "Object Selector";
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
+            this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
+
         let OSEbody = `<div pg-editor-type="${this.editor}" class="OSE-body">
             <table class="table table-bordered editTbl">
             <tbody>
@@ -580,7 +583,7 @@
             console.error("meta.options null for " + this.PGobj.CurProp + " Check C# Decoration");
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").empty().append(options).selectpicker('refresh');
         $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").selectpicker().on('change', this.getOSElist.bind(this));
-        let CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").attr("refid");
+        let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp];//--
         if (CurRefId) {
             let ObjType = CurRefId.split("-")[2];
             let ObjName = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker [obj-type=" + ObjType + "]").text();
@@ -597,7 +600,7 @@
     this.getOSElist = function () {
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
-        if (!this.PGobj.OSElist[ObjType]) {
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]) {
             $.LoadingOverlay("show");
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",
@@ -607,7 +610,7 @@
             });
         }
         else
-            this.biuldObjList(this.PGobj.OSElist[ObjType]);
+            this.biuldObjList(this.OSEList);
     }.bind(this);
 
     this.biuldObjList = function (data) {
@@ -621,7 +624,9 @@
                     + '<i class="fa fa-chevron-circle-right pull-right ColT-right-arrow" aria-hidden="true"></i></div>');
             ObjType = val[0].refId.split("-")[2];
         }.bind(this));
-        this.PGobj.OSElist[ObjType] = data;
+        //this.PGobj.OSElist[ObjType] = data;
+        this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType] = data;
+        this.OSEList = this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType];
         if ($(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").length === 0) {
             $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(`
                 <div  class='input-group' style='width: 50%;'>
@@ -642,11 +647,14 @@
             let $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
             $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
         }
-        let CurRefId = $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").attr("refid");
+        let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp];//--
         let objName = this.getOBjNameByval(data, CurRefId);
+        if (objName !== null)
+            objName = objName.replace(/ /g, "_");
         if (CurRefId) {
-            if ($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").length > 0)
-                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile:contains(" + objName + ")").focus()[0].click();
+            let $objTile = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile[name=" + objName + "]");
+            if ($objTile.length > 0)
+                $objTile.focus()[0].click();
             else
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
         }
@@ -739,7 +747,7 @@
             $.each(data[ObjName], function (i, obj) {
                 if (obj.versionNumber) {
                     let $verTile = $('<div class="colTile" style="display:none" is-selected="false" tabindex="1" ver-no="' + obj.versionNumber + '" data-refid="' + obj.refId + '">' + obj.versionNumber
-                        + '<i class="fa fa-check pull-right" style="display:none; color:rgb(1, 189, 1); font-size: 18px;" aria-hidden="true"></i></div>');
+                        + '<i class="fa fa-check-circle pull-right vercheck" aria-hidden="true"></i></div>');
                     $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verTile.show(100));
                 }
             }.bind(this));
@@ -752,10 +760,10 @@
         let $e = $(event.target).closest(".colTile");
 
         if ($e.attr("is-selected") === "false") {
-            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check-circle").hide();
             let refId = $e.attr("data-refid");
             this.PGobj.PropsObj[this.PGobj.CurProp] = refId;
-            $e.attr("is-selected", true).find(".fa-check").show();
+            $e.attr("is-selected", true).find(".fa-check-circle").show();
             let ObjName = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont [is-selected=true]").attr("name");
             $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);/////
             $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(ObjName + ", " + $e.attr("ver-no"));
@@ -763,7 +771,7 @@
             this.OSECurVobj = getObjByval(this.OSE_curTypeObj[ObjName], "versionNumber", $e.attr("ver-no"));
         }
         else {
-            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check").hide();
+            $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont .colTile").attr("is-selected", false).find(".fa-check-circle").hide();
             this.PGobj.PropsObj[this.PGobj.CurProp] = "";
         }
     };
@@ -772,7 +780,7 @@
         e.stopPropagation();
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
-        this.PGobj.OSElist[ObjType] = null;
+        this.OSEList = null;
         this.getOSElist();
     };
 
@@ -931,8 +939,11 @@
         }
         let obj = null;
         let type = $e.attr("eb-type");
-        $("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
-        $e.css("background-color", "#b1bfc1").css("color", "#222");
+        //$("#" + this.PGobj.wraperId + " .CE-body .colTile").removeAttr("style");
+        //$e.css("background-color", "#b1bfc1").css("color", "#222");
+
+        $("#" + this.PGobj.wraperId + " .CE-body .colTile").attr("is-selected", "false");
+        $e.attr("is-selected", "true");
         if (this.editor === 7) {
             obj = getObjByval(selectedCols, "EbSid", $e.attr("ebsid"));
             if (!obj)
@@ -1093,6 +1104,6 @@
 
         $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="fs_' + this.PGobj.wraperId + '"> </div>');
         $(this.PGobj.$wraper).append('<div id="mb_' + this.PGobj.wraperId + '"> </div><div id="mls_' + this.PGobj.wraperId + '"> </div>');
-    }
+    };
     this.Init();
 };

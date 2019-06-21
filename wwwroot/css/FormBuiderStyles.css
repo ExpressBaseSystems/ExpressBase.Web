@@ -462,8 +462,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*box-shadow: var(--eb-shadow);*/
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12), 0 0 14px 0 rgba(0, 0, 0, 0.17);
     height: 100%;
-    background-color: white;
-    width: 400px;
+    background-color: transparent;
+    width: 380px;
+    /*overflow: hidden;*/
+    border-radius: 4px 4px 0 0;
 }
 
 .eb-chatBox-dev > .Eb-ctrlContainer {
@@ -1059,9 +1061,66 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     font-size: 11px;
 }
 
+.btn-select {
+    position: relative;
+    display: inline-block;
+    padding: 0 !important;
+}
 
+    .btn-select .bootstrap-select .dropdown-toggle .filter-option-inner {
+        display: none !important;
+    }
+
+
+    .btn-select .savebtn {
+        position: absolute;
+        left: 0;
+        z-index: 2;
+        background-color: transparent;
+        border: none;
+        top: 0;
+        padding: 2px 8PX 4px 8PX;
+        border-radius: 4px 0 0 4px !important;
+    }
+
+        .btn-select .savebtn:hover {
+            background-color: #e4e4e4 !important;
+            outline: none !important;
+            border-radius: 4px 0 0 4px !important;
+            border: none;
+        }
+
+    .btn-select .dropdown-toggle {
+        padding: 15px !important;
+        border-radius: 4px !important;
+    }
+
+        .btn-select .dropdown-toggle:hover {
+            background-color: #e4e4e4 !important;
+            outline: none !important;
+            border-radius: 4px !important;
+        }
+
+    .btn-select .bootstrap-select.dropdown {
+        width: 60px !important;
+    }
+
+    .btn-select .dropdown-menu > li > a, .btn-select .caret {
+        color: #336699;
+    }
+
+    .btn-select .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+        color: #fff;
+    }
+
+    .btn-select .dropdown-menu > li > a {
+        padding: 5px 14px !important;
+    }
+
+    .btn-select .dropdown-menu {
+        border-radius: 2px !important;
+    }
 /*animations*/
-
 /* Safari 4.0 - 8.0 */
 @-webkit-keyframes dim_border {
     from {

@@ -41,16 +41,16 @@
                     icon = "fa-lock";
                 }
             }
-            @if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
+            @if (ViewBag.IsNew =="false" && (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter))
             {
                 <li class="">
                     <a data-toggle="tab" class="cetab" id="ProfilerHome" href="#builderDashB">
-                        <i class="fa fa-home" aria-hidden="true"></i> Home
+                        <i class="fa fa-home" aria-hidden="true"></i> performance
                     </a>
                 </li>
             }
             <li class="active"><a data-toggle="tab" class="cetab" tnum="0" href="#vernav0" data-verNum="@ViewBag.VersionNumber"><i class='fa @(icon)' aria-hidden='true'></i> v @ViewBag.VersionNumber</a></li>
-            @if (ViewBag.ObjType == (int)EbObjectTypes.Report || ViewBag.ObjType == (int)EbObjectTypes.TableVisualization)
+            @if (ViewBag.ObjType == (int)EbObjectTypes.Report)
             {
                 <li class="">
                     <a data-toggle="tab" class="cetab" id="preview_tab_btn" href="#preview_tab">
@@ -138,7 +138,7 @@
                 }
             }
         </div>
-        @if (ViewBag.ObjType == (int)EbObjectTypes.Report || ViewBag.ObjType == (int)EbObjectTypes.TableVisualization)
+        @if (ViewBag.ObjType == (int)EbObjectTypes.Report)
         {
             <div class="tab-pane preview_tab" id="preview_tab">
                 <div class="container-fluid" id="preview_wrapper">

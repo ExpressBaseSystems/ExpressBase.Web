@@ -127,10 +127,12 @@
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-            let fun = new Function("form", "User", atob(ctrl.OnChange));
-            $input.MonthPicker({
-                OnAfterChooseMonth: fun.bind(this, formObject, userObject)
-            });
+            if (ctrl.OnChange) {
+                let fun = new Function("form", "User", atob(ctrl.OnChange));
+                $input.MonthPicker({
+                    OnAfterChooseMonth: fun.bind(this, formObject, userObject)
+                });
+            }
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";

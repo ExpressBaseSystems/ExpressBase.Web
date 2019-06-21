@@ -587,3 +587,17 @@ table.dataTable tr.group td {
 #treemodal .pull-right {
     margin-right: 20px;
 }
+
+.columntooltip:hover{
+    text-decoration:underline;
+}
+.popover-content{
+    color:black !important;
+}
+
+.footerli, .filterli {
+    display: flex;
+}
+.filterdisplayrow td{
+    border-bottom:1px solid #ddd !important;
+}

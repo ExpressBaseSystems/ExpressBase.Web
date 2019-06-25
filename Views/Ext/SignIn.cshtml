@@ -1,11 +1,11 @@
 ﻿@{
-    //Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
-@{
+@*@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
     Html.RenderPartial("ExtPageHeader");
-}
+}*@
 
 
 
@@ -54,7 +54,7 @@
                 <div class="col-md-6 col-lg-6" style=" padding-left: 0px;">
                     <label>Country</label>
                     <div class="icon_input">
-                      
+
                         <select class="selectpicker countrypicker custom-select  custom-select-lg selinp txthighlight" id="country" data-live-search="true" data-flag="true"></select>
                         <i class="fa fa-globe fa-lg fa-fw" aria-hidden="true"></i>
                     </div>
@@ -112,19 +112,35 @@
                 </div>
 
             </div>
-            <div class="col-md-7 " style="margin-bottom:50px;padding-left: 0px;">
+            <div class="col-md-7 " style="padding-left: 0px;">
                 <button id="save-profile" class="submit-validate lg_button  ">Create account </button>
             </div>
-            <footer class="col-md-11 col-md-offset-2">
+            <div class="col-sm-12 col-md-12 col-lg-12 ">
+                <hr class="hr-text" data-content="OR">
+            </div>
+          
+
+            @*****social media sign in*****@
+            <div class="col-sm-12 col-md-12 col-lg-12 " style="text-align:center; margin-bottom :1.2em">
+                <div id="social">
+                    <a class="facebookBtn smGlobalBtn"  id="fblogin"></a>
+                    <a class="twitterBtn smGlobalBtn" id="twitterlogin"></a>
+                    <a class="linkedinBtn smGlobalBtn" id="linkedinlogin"></a>
+                    <a class="gmailBtn smGlobalBtn"id="googlelogin"></a>
+                    <a class="githubBtn smGlobalBtn"id="githublogin"></a>
+                </div>
+            </div>
+
+
+            @********terms and policy**********@
+            <div class="col-sm-12 col-md-12 col-lg-12 " style="text-align:center">
                 <span>
                     By proceeding, you agree to our
                     <a rel="Terms of Service" target="" href="#">Terms of Service</a>
                     and
                     <a rel="Privacy Policy" href="#">Privacy Policy</a>
                 </span>
-            </footer>
-
-
+            </div>
         </div>
 
 

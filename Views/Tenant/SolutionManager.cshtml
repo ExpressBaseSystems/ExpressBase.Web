@@ -32,6 +32,17 @@
     //{
     //    filedefault = (EbConnections.FilesDbConnection.IsDefault)? "(Default)" : "";
     //}
+
+    Dictionary<string, string> Image_url = new Dictionary<string, string>();
+    Image_url.Add("PGSQL", "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:45px' />");
+    Image_url.Add("MSSQL", "<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 50px;' />");
+    Image_url.Add("MYSQL", "<img class='img-responsive' src='../images/mysql.png' align='middle' style='height:35px' />");
+    Image_url.Add("ORACLE", "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 50px;' />");
+    Image_url.Add("MongoDB", "<img class='img-responsive' src='../images/MongodB.png' align='middle' style='height:40px' />");
+    Image_url.Add("Cloudinary", "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />");
+    Image_url.Add("ExpertTexting", "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />");
+    Image_url.Add("Twilio", "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />");
+    Image_url.Add("SMTP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
 }
 <script>
     var cm = new EbHeader().setName("Solution Configuration");
@@ -43,14 +54,14 @@
         margin-left: 24px;
         margin-top: 23px;
     }*/
-    .POSTGRESVendorImage {
+    /*.POSTGRESVendorImage {
         margin-left: 43px;
     }
 
     .EmailVendorImage {
         margin-left: 50px;
         margin-top: 4px;
-    }
+    }*/
 </style>
 <div class="row s-dash-container">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
@@ -147,17 +158,17 @@
                 <div class="tab-pane" id="Integrations" role="tabpanel">
                     <div class="col-md-12 pd-0">
                         <ul class="nav nav-tabs chormer-effect" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">Integrations</a>
+                            <li class="nav-item active">
+                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">New Integrations</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">My Inegrations</a>
+                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">All Integrations</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="Integration" role="tabpanel">
                                 <div class="eb_connection_wrapper flex-container">
-                                    <div class="connection_wrap_outer DisplayAllModal" id="Postgres" data-whatever="PGSQL">
+                                    <div class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" id="Postgres" data-whatever="PGSQL">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="DbConnection_config">
                                                 <div class="db_vendorimg ">
@@ -166,7 +177,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mysql" class="connection_wrap_outer DisplayAllModal" data-whatever="MYSQL">
+                                    <div id="mysql" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MYSQL">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="DbConnection_config">
                                                 <div class="db_vendorimg">
@@ -175,7 +186,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="oracle" class="connection_wrap_outer DisplayAllModal" data-whatever="ORACLE">
+                                    <div id="oracle" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="ORACLE">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="DbConnection_config">
                                                 <div class="db_vendorimg">
@@ -184,7 +195,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mssql" class="connection_wrap_outer DisplayAllModal" data-whatever="MSSQL">
+                                    <div id="mssql" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MSSQL">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="DbConnection_config">
                                                 <div class="db_vendorimg">
@@ -193,7 +204,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mongo" class="connection_wrap_outer DisplayAllModal" data-whatever="MongoDB">
+                                    <div id="mongo" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#filesDbConnectEdit" data-whatever="MongoDB">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="FilesConnection_config">
                                                 <div class="db_vendorimg">
@@ -202,7 +213,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="cloudinary" class="connection_wrap_outer DisplayAllModal" data-whatever="Cloudinary">
+                                    <div id="cloudinary" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#cldnry_conEdit" data-whatever="Cloudinary">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="FilesConnection_config">
                                                 <div class="db_vendorimg">
@@ -211,7 +222,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="SMTP" class="connection_wrap_outer DisplayAllModal" data-whatever="SMTP">
+                                    <div id="SMTP" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#EmailconnectionEdit" data-whatever="SMTP">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="EmailConnection_config">
                                                 <div class="db_vendorimg ">
@@ -220,7 +231,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="twilio" class="connection_wrap_outer DisplayAllModal" data-whatever="Twilio">
+                                    <div id="twilio" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#TwilioConnectionEdit" data-whatever="Twilio">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="TwilioConnection_config">
                                                 <div class="db_vendorimg">
@@ -229,7 +240,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="expert" class="connection_wrap_outer DisplayAllModal" data-whatever="ExpertTexting">
+                                    <div id="expert" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#ExpertTextingConnectionEdit" data-whatever="ExpertTexting">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100" id="ExpertTextingConnection_config">
                                                 <div class="db_vendorimg">
@@ -241,302 +252,256 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="MyIntegrations" role="tabpanel">
-                                <div class="eb_connection_wrapper flex-container">
-                                    <div class="tab">
-                                        <button class="tablinks VerticalTabContent" datatype="Object" id="defaultOpen">Object</button>
-                                        <button class="tablinks VerticalTabContent" datatype="Data">Data</button>
-                                        <button class="tablinks VerticalTabContent" datatype="File">File</button>
-                                        <button class="tablinks VerticalTabContent" datatype="Logs">Logs</button>
-                                        <button class="tablinks VerticalTabContent" datatype="SMTP">SMTP</button>
-                                        <button class="tablinks VerticalTabContent" datatype="SMS">SMS</button>
-                                        <button class="tablinks VerticalTabContent" datatype="Cloudinary">Cloudinary</button>
-                                    </div>
+                                <div class="flex-container">
+                                    <div class="panel-group" id="ALL">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title myintegration-collapse-title">
+                                                    <a data-toggle="collapse" data-parent="#MyIntegrations" href="#All">
+                                                        All
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="All" class="panel-collapse collapse in">
+                                                <div class="panel-body">
+                                                    @{
+                                                        foreach (KeyValuePair<string, List<EbIntegrationConfData>> Conf_type in ViewBag.Connections.IntegrationsConfig)
+                                                        {
+                                                            List<EbIntegrationConfData> Row0 = Conf_type.Value;
+                                                            foreach (EbIntegrationConfData row0 in Row0)
+                                                            {
+                                                                <div class="inteConfContainer @string.Concat(row0.Type, "edit")" data-whatever="@row0.Type" datawhater="@row0.Id">
 
-                                    <div id="Object_Call" class="tabcontent">
-                                        <h3>Objects</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("EbOBJECTS"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["EbOBJECTS"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                       @* <input type="hidden" class="Inputclear" id="IntConfId" IntConfId="@temp[i].Id" value="@temp[i].Id" />*@
-                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbOBJECTS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbOBJECTS" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="Data_Call" class="tabcontent">
-                                        <h3>Data</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("EbDATA"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["EbDATA"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="EbDATA-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbDATA" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbDATA-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbDATA" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="File_Call" class="tabcontent">
-                                        <h3>File</h3>
-                                    </div>
-                                    <div id="Logs_Call" class="tabcontent">
-                                        <h3>Logs</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("EbLOGS"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["EbLOGS"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="EbLOGS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbLOGS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbLOGS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbLOGS" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="SMTP_Call" class="tabcontent">
-                                        <h3>SMTP</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("SMTP"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["SMTP"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="SMTP-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                        else if (temp[i].Preferance == "2")
-                                                        {
-                                                            <div class="input-group  integra-divider">
-                                                                <span class="input-group-addon">Secondary</span>
-                                                                <input id="SMTP-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="@temp[i].ConfId" pref="FALLBACK" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
+                                                                    <div id="nm" class="inteConfContainer_Image ">
+                                                                        @Html.Raw(Image_url[row0.Type])
+                                                                    </div>
+                                                                    <div id="nm" class="inteConfContainer_NN" data-toggle="tooltip" data-placement="top" title="@row0.CreatedOn">
+                                                                        <span>@row0.NickName</span>
+                                                                    </div>
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
+                                                            }
                                                         }
                                                     }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="SMTP-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="input-group  integra-divider">
-                                                        <span class="input-group-addon">Secondary</span>
-                                                        <input id="SMTP-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="0" pref="FALLBACK" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
+                                                    <div>
                                                     </div>
                                                 </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="SMS_Call" class="tabcontent">
-                                        <h3>SMS</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("SMS"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["SMS"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#MyIntegrations" href="#EbDATA">
+                                                        EbDATA
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="EbDATA" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    @{
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("EbDATA"))
                                                         {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="SMS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                        else if (temp[i].Preferance == "2")
-                                                        {
-                                                            <div class="input-group  integra-divider">
-                                                                <span class="input-group-addon">Secondary</span>
-                                                                <input id="SMS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="@temp[i].ConfId" pref="FALLBACK" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="SMS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="input-group  integra-divider">
-                                                        <span class="input-group-addon">Secondary</span>
-                                                        <input id="SMS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="0" pref="FALLBACK" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="Cloudinary_Call" class="tabcontent">
-                                        <h3>Cloudinary</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("Cloudinary"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["Cloudinary"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="Cloudinary-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="Cloudinary" IntConfId="@temp[i].ConfId" pref="1" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
+                                                            List<EbIntegrationData> Row = ViewBag.Connections.Integrations["EbDATA"];
+                                                            foreach (EbIntegrationData row in Row)
+                                                            {
+                                                                <div class="integrationContainer @string.Concat(row.Type, "edit")" data-whatever="@row.Type" datawhater="@row.Id">
 
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row.NickName</span>
+                                                                        <span class="PF_span">PRIMARY</span>
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_caret-down">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
                                                     }
                                                 </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="Cloudinary-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="Cloudinary" IntConfId="0" pref="1" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#MyIntegrations" href="#EbFILES">
+                                                        EbFILES
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="EbFILES" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    @{
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("EbFILES"))
+                                                        {
+                                                            List<EbIntegrationData> Row2 = ViewBag.Connections.Integrations["EbFILES"];
+                                                            foreach (EbIntegrationData row2 in Row2)
+                                                            {
+                                                                <div class="integrationContainer hover-mover @string.Concat(row2.Type, "edit")" data-whatever="@row2.Type" datawhater="@row2.Id">
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row2.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row2.NickName</span>
+                                                                        @{
+                                                                            if (row2.Preference == "1")
+                                                                            {
+                                                                                <span  class="PF_span">PRIMARY</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span  class="PF_span">Fallback</span>
+                                                                            }
+                                                                        }
+                                                                    </div>
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
                                                 </div>
-                                            }
-                                        }
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#MyIntegrations" href="#SMTP_call">
+                                                        Email
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="SMTP_call" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    @{
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("SMTP"))
+                                                        {
+                                                            List<EbIntegrationData> Row1 = ViewBag.Connections.Integrations["SMTP"];
+                                                            foreach (EbIntegrationData row1 in Row1)
+                                                            {
+                                                                <div class="integrationContainer hover-mover @string.Concat(row1.Type, "edit") @row1.Preference" data-whatever="@row1.Type" datawhater="@row1.ConfId" dataConffId="@row1.Id">
+
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row1.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row1.NickName</span>
+                                                                        @{
+                                                                            if (row1.Preference == "1")
+                                                                            {
+                                                                                <span  class="PF_span">PRIMARY</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span  class="PF_span">Fallback</span>
+                                                                            }
+                                                                        }
+                                                                    </div>
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#MyIntegrations" href="#Cloudinary">
+                                                        Cloudinary
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="Cloudinary" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    @{
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("Cloudinary"))
+                                                        {
+                                                            List<EbIntegrationData> Row3 = ViewBag.Connections.Integrations["Cloudinary"];
+                                                            foreach (EbIntegrationData row3 in Row3)
+                                                            {
+                                                                <div class="integrationContainer hover-mover @string.Concat(row3.Type, "edit")" data-whatever="@row3.Type" datawhater="@row3.Id">
+
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row3.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row3.NickName</span>
+                                                                        @{
+                                                                            if (row3.Preference == "1")
+                                                                            {
+                                                                                <span  class="PF_span">PRIMARY</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span  class="PF_span">Fallback</span>
+                                                                            }
+                                                                        }
+                                                                    </div>
+
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#MyIntegrations" href="#SMS">
+                                                        Message
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="SMS" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    @{
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("SMS"))
+                                                        {
+                                                            List<EbIntegrationData> Row4 = ViewBag.Connections.Integrations["SMS"];
+                                                            foreach (EbIntegrationData row4 in Row4)
+                                                            {
+                                                                <div class="integrationContainer hover-mover @string.Concat(row4.Type, "edit") @row4.Preference" data-whatever="@row4.Type" datawhater="@row4.ConfId" dataConffId="@row4.Id">
+
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row4.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row4.NickName</span>
+                                                                        @{
+                                                                            if (row4.Preference == "1")
+                                                                            {
+                                                                                <span  class="PF_span">PRIMARY</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span  class="PF_span">Fallback</span>
+                                                                            }
+                                                                        }
+                                                                    </div>
+
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -684,7 +649,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" >Save</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>

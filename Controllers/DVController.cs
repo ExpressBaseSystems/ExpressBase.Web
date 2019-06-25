@@ -45,6 +45,8 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult dv(string refid, string rowData, string filterValues, int tabNum)
         {
+
+            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
 
@@ -94,8 +96,9 @@ namespace ExpressBase.Web.Controllers
             ReturnColumns returnobj = new ReturnColumns();
             try
             {
-                DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
-                if (columnresp == null || columnresp.Columns.Count == 0)
+                DataSourceColumnsResponse columnresp = new DataSourceColumnsResponse();
+                columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", dvobj.DataSourceRefId));
+                if (columnresp == null || columnresp.Columns == null || columnresp.Columns.Count == 0)
                 {
                     Console.WriteLine("Column Object in Redis is null or count 0");
                     columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceDataSetColumnsRequest { RefId = dvobj.DataSourceRefId, SolnId = ViewBag.cid, Params = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() : null });
@@ -135,6 +138,7 @@ namespace ExpressBase.Web.Controllers
                     Columns.Add(_col);
                     indx = column.ColumnIndex;
                 }
+                returnobj.ColumnOrginal = new DVColumnCollection(Columns);
                 //dvobj.Columns.Add(new DVNumericColumn { Data = ++indx, Name = "RATE_GRAFT", sTitle = "RATE+GRAFT", Type = EbDbTypes.Int32, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right",Formula = "T0.RATE+T0.GRAFT" });
                 if (dvobj.Columns == null || dvobj.Columns.Count == 0)
                     returnobj.Columns = Columns;
@@ -370,6 +374,8 @@ namespace ExpressBase.Web.Controllers
         public List<Param> Paramlist { get; set; }
 
         public DVColumnCollection DsColumns { get; set; }
+
+        public DVColumnCollection ColumnOrginal { get; set; }
     }
 }
 

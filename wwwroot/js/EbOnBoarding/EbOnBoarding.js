@@ -22,35 +22,30 @@ var EbOnBoarding = function (context) {
         $('#description').text($(e.target).val());
     };
 
-    this.LogoImageUpload = function () {
-        let d = new EbFileUpload({
-            Type: "image",
-            Toggle: "#log-upload-btn",
-            TenantId: "@ViewBag.cid",
-            SolutionId: "@ViewBag.SolnId",
-            Container: "onboarding_logo",
-            Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.xyz',
-            EnableTag: false,
-            EnableCrop: true,
-            Context: "logo",//if single and crop
-            ResizeViewPort: false //if single and crop
-        });
+    //this.LogoImageUpload = function () {
+    //    let d = new EbFileUpload({
+    //        Type: "image",
+    //        Toggle: "#log-upload-btn",
+    //        TenantId: "@ViewBag.cid",
+    //        SolutionId: "@ViewBag.SolnId",
+    //        Container: "onboarding_logo",
+    //        Multiple: false,
+    //        ServerEventUrl: 'https://se.eb-test.xyz',
+    //        EnableTag: false,
+    //        EnableCrop: true,
+    //        Context: "logo",//if single and crop
+    //        ResizeViewPort: false //if single and crop
+    //    });
 
-        d.uploadSuccess = function (fileid) {
-            EbMessage("show", { Message: "Upload done" });
-        }
-        d.windowClose = function () {
-            //EbMessage("show", { Message: "window closed", Background: "red" });
-        }
-    };
-
-    //this.validateProfileInfo = function () {
-    //    if ($("[name='Name']").val() !== "" && $("[name='Company']").val() !== "" && $("[name='Password']").val() !== "")
-    //        return true;
-    //    else
-    //        return false;
+    //    d.uploadSuccess = function (fileid) {
+    //        EbMessage("show", { Message: "Upload done" });
+    //    }
+    //    d.windowClose = function () {
+    //        //EbMessage("show", { Message: "window closed", Background: "red" });
+    //    }
     //};
+
+ 
 
     this.submitProfile = function (e) {
         e.preventDefault();
@@ -61,20 +56,40 @@ var EbOnBoarding = function (context) {
                 type: 'POST',
                 url: "../Ext/ProfileSetup",
                 beforeSend: function () {
-                    $("#loader_profile").EbLoader("show");
+                    $(".commonLoader").EbLoader("show");
                 },
-                data: $(e.target).serializeArray()
-            }).done(function (data) {
-                $("#ebsid").val(data);
-                $("#loader_profile").EbLoader("hide");
-                EbMessage("show", { Message: "Profile Saved" });
-                $("#save-profile").hide();
-                $("#basic-info").show();
-                $("#prof-info").hide();
-                $("#product-info").hide();
-                this.scrollProfToLeft();
+                data: {
+                    email: $("#email").val(),
+                    name: $("#name").val(),
+                    country: $("#country option:selected").text(),
+                    account: $("input[name='account_typ']:checked").val(),
+                    password: $("#inputPassword").val()
+
+                }
+            }).done(function (streturn) {
+                $(".commonLoader").EbLoader("hide");
+                if(streturn==0)
+                {
+                    location.href = "/MySolutions";
+                 }
+                if(streturn==1)
+                    {
+                     EbMessage("show", { Message: "Email already exist",Background: "red" });
+            // setTimeout(function () {
+             //             location.href = "../TenantController/TenantDashboard";
+             //           }, 2000);
+ 
+                        }
+
+                if(streturn==2)
+                    {
+                     EbMessage("show", { Message: "Cannot create solutions",Background: "red" });
+                        }
+
+
             }.bind(this));
         }
+  
     };
 
     this.scrollProfToLeft = function () {
@@ -83,60 +98,7 @@ var EbOnBoarding = function (context) {
         }, 500);
     };
 
-    //this.submitSolutionInfo = function (e) {
-    // e.preventDefault();
-    //let tem = 1;
-    //if ($("#ebsid").val() === "") {
-    //    $("#slnid").css("visibility", "visible");
-    //    tem = 0;
-    //}
-    //else {
-    //    $("#slnid").css("visibility", "hidden");
-    //}
-    //if ($("#solutionname").val() === "") {
-    //    $("#slnnam").css("visibility", "visible");
-    //    tem = 0;
-    //}
-    //else {
-    //    $("#slnnam").css("visibility", "hidden");
-    //}
-    ////if ($("#Desc").val() === "") {
-    ////    $("#descrip").css("visibility", "visible");
-    ////    tem = 0;
-    ////}
-    ////else {
-    ////    $("#descrip").css("visibility", "hidden");
-    ////    tem = 1;
 
-    ////}
-    //if (tem === 1) {
-    //    $.ajax({
-    //        type: 'POST',
-    //        url: "../Tenant/EbCreateSolution",
-    //        beforeSend: function () {
-    //            $("#loader_product-info").EbLoader("show");
-    //        },
-    //        data: {
-    //            Sname: $("[name='Sname']").val().trim(),
-    //            SolnId: $("[name='SolnId']").val().toLowerCase().trim(),
-    //            Desc: $("[name='Desc']").val().trim()
-    //        }
-    //    }).done(function (data) {
-    //        $("#loader_product-info").EbLoader("hide");
-    //        if (_context) {
-    //            window.location.replace("/MySolutions");
-    //        }
-    //        else {
-    //            EbMessage("show", { Message: "Solution Created" });
-    //            //$("#app-info").show();
-    //            $("#save-subscrip").hide();
-    //            //$("#app-next").show();
-    //            //this.scrollToLast();
-    //        }
-    //        }.bind(this));
-    //    }
-
-    //};
 
     this.scrollToProfSec = function () {
         $('.card').animate({
@@ -188,18 +150,24 @@ var EbOnBoarding = function (context) {
             $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
             sts = false;
         }
-        let com = $("#company").val();
-        if (com.length == 0) {
-            $("#companylbl").css("visibility", "visible");
-            $("#company").focus();
-            $('#company').removeClass('txthighlight').addClass('txthighlightred');
+
+        if ($("#country option:selected").val() == 0) {
+            $("#countrylbl").css("visibility", "visible");
+            $("#country").focus();
+            $('#country').removeClass('txthighlight').addClass('txthighlightred');
             sts = false;
         }
         else {
-            $("#companylbl").css("visibility", "hidden");
+            $('#country').removeClass('txthighlightred').addClass('txthighlight');
+            $("#countrylbl").css("visibility", "hidden");
+
         }
+        
+       
+
         let name = $("#name").val();
-        if (name.length == 0) {
+        let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
+        if ((name.length == 0) || (u.test(name)==false)){
             $("#namelbl").css("visibility", "visible");
             $("#namelbl").show();
             $("#name").focus();
@@ -210,13 +178,28 @@ var EbOnBoarding = function (context) {
             $("#namelbl").css("visibility", "hidden");
         }
 
+        let com = $("#email").val();
+       // var re = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if ((com.length == 0) || (re.test(com) == false) ) {
+            $("#emaillbl").css("visibility", "visible");
+            $("#email").focus();
+            $('#email').removeClass('txthighlight').addClass('txthighlightred');
+            sts = false;
+        }
+        else {
+            $("#emaillbl").css("visibility", "hidden");
+        }
+
         return sts;
     }
 
     this.Solutionobjfn = function (e) {
         e.preventDefault();
         let tem = 1;
-        if ($("#solutionname").val() === "") {
+        let t = new RegExp("[a-zA-Z0-9]"); 
+        if (($("#solutionname").val() === "") || (t.test($("#solutionname").val()) == false)) {
             $("#slnnam").css("visibility", "visible");
             tem = 0;
             $("#solutionname").focus();
@@ -324,6 +307,12 @@ var EbOnBoarding = function (context) {
 
             }.bind(this)
         })
+        if (st == 1) {
+            location.href = "../TenantController/SolutionManager";
+        }
+        else {
+            location.href = "../TenantController/SolutionManager";
+        }
     }
 
 
@@ -344,28 +333,28 @@ var EbOnBoarding = function (context) {
 
 
 
-    this.namevalidate = function () {
-        let name = $("#name").val();
-        if (name.length == 0) {
-            $("#namelbl").css("visibility", "visible");
-            $("#name").focus();
-        }
-        else {
-            $("#namelbl").css("visibility", "hidden");
-            $('#name').removeClass('txthighlightred').addClass('txthighlight');
-        }
-    }
+    //this.namevalidate = function () {
+    //    let name = $("#name").val();
+    //    if (name.length == 0) {
+    //        $("#namelbl").css("visibility", "visible");
+    //        $("#name").focus();
+    //    }
+    //    else {
+    //        $("#namelbl").css("visibility", "hidden");
+    //        $('#name').removeClass('txthighlightred').addClass('txthighlight');
+    //    }
+    //}
 
-    this.companyvalidate = function () {
-        let com = $('#company').val();
+    this.Emailvalidate = function () {
+        let com = $('#email').val();
         if (com.length == 0) {
-            $("#companylbl").css("visibility", "visible");
+            $("#emaillbl").css("visibility", "visible");
             sts = false;
-            $('#company').focus();
+            $('#email').focus();
         }
         else {
-            $("#companylbl").css("visibility", "hidden");
-            $('#company').removeClass('txthighlightred').addClass('txthighlight');
+            $("#emaillbl").css("visibility", "hidden");
+            $('#email').removeClass('txthighlightred').addClass('txthighlight');
         }
     }
 
@@ -394,17 +383,91 @@ var EbOnBoarding = function (context) {
         }
     }
 
+   
+    this.Countryselect = function () {
+        if ($("#country option:selected").val() == 0) {
+            $("#countrylbl").css("visibility", "visible");
+            $("#country").focus();
+            $('#country').removeClass('txthighlight').addClass('txthighlightred');
+            sts = false;
+        }
+        else {
+            $('#country').removeClass('txthighlightred').addClass('txthighlight');
+            $("#countrylbl").css("visibility", "hidden");
 
+        }
+    }
 
+    this.Fbloginfn = function () {
+        $.ajax({
+            url: "/Ext/FbLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+               location.href = "/MySolutions";
+            }
+        });
+    }
+
+    this.Githubloginfn = function () {
+        $.ajax({
+            url: "/Ext/GithubLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+                location.href = "/MySolutions";
+            }
+        });
+    }
+    this.Gmailloginfn = function () {
+        $.ajax({
+            url: "/Ext/GmailLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+                location.href = "/MySolutions";
+            }
+        });
+    }
+    this.Twitterloginfn = function () {
+        $.ajax({
+            url: "/Ext/TwitterLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+                location.href = "/MySolutions";
+            }
+        });
+    }
+    this.Linkedinloginfn = function () {
+        $.ajax({
+            url: "/Ext/LinkedinLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+                location.href = "/MySolutions";
+            }
+        });
+    }
 
 
 
     this.init = function () {
-        this.LogoImageUpload();
+        //this.LogoImageUpload();
         $('#solutionname').on("change", this.getSolutionName.bind(this));
         $('#cid').on("change", this.getClientId.bind(this));
         $("#Desc").on("change", this.getDesc.bind(this));
-        $("#prof-submit").on("submit", this.submitProfile.bind(this));
+        $("#save-profile").on("click", this.submitProfile.bind(this));
         //$("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));
         $("#prof-info-skip,#prod-prev").on('click', this.scrollProfToLeft.bind(this));
         //$("#prof-to-prev").on('click', this.scrollToProfSec.bind(this));
@@ -417,14 +480,27 @@ var EbOnBoarding = function (context) {
         $("#save-application").off("click").on("click", this.Savesolutionfn.bind(this));
         $("#radio1").on("click", this.selradiofirstfn.bind(this));
         $("#radio2").on("click", this.selradiosecfn.bind(this));
-        $("#name").on("keyup", this.namevalidate.bind(this));
-        $("#company").on("keyup", this.companyvalidate.bind(this));
+       // $("#name").on("keyup", this.namevalidate.bind(this));
+        $("#email").on("keyup", this.Emailvalidate.bind(this));
         $("#ebsid").on("keyup", this.solutionurlcheck.bind(this));
         $("#solutionname").on("keyup", this.solutioncheck.bind(this));
+        $("#country").on("click", this.Countryselect.bind(this));
+        $("#fblogin").on("click", this.Fbloginfn.bind(this));
+        $("#githubBtn").on("click", this.Githubloginfn.bind(this));
+        $("#gmailBtn").on("click", this.Gmailloginfn.bind(this));
+        $("#twitterBtn").on("click", this.Twitterloginfn.bind(this));
+        $("#linkedinBtn").on("click", this.Linkedinloginfn.bind(this));
 
     };
     this.init();
 };
+
+
+//*************************************************** 
+
+//password filed validation for forgot password and signup page
+
+//**************************************************
 
 
 var PasswordValidation = function () {
@@ -433,6 +509,8 @@ var PasswordValidation = function () {
         $("#psdinfo1").on("mouseout", this.hidePasswordInfo.bind(this));
         $("#inputPassword").on("keyup", this.password_auto_validation.bind(this));
         $("#inputPassword").on('bind', this.cutcopypaste.bind(this));
+        $("#inputPassword").on('focusout', this.hidePasswordInfo1.bind(this))
+        $("#inputPassword").on('focus', this.Psdinfofn.bind(this))
         $("#inputPasswordConfirm").on("keyup", this.repeatpasswordcheck.bind(this));
         $(".toggle-password").on("click", this.Showpsdfn.bind(this));
         $("#btnpswreset").on("click", this.Pswresetfn.bind(this));
@@ -443,6 +521,9 @@ var PasswordValidation = function () {
 
     }
     this.hidePasswordInfo = function () {
+        $("#rcorners1").css("visibility", "hidden");
+    }
+    this.hidePasswordInfo1 = function () {
         $("#rcorners1").css("visibility", "hidden");
     }
     this.repeatpasswordcheck = function () {
@@ -543,8 +624,12 @@ var PasswordValidation = function () {
                 st = false;
             }
         }
-
+        $("#rcorners1").css("visibility", "visible");
+        if (st == true) {
+            $("#rcorners1").css("visibility", "hidden");
+        }
         return st;
+
     };
 
     this.cutcopypaste = function (e) {

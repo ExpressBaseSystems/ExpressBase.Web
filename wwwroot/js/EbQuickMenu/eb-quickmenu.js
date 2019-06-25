@@ -20,7 +20,21 @@
         $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
         $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
         $("body").off("click").on("click", ".backbtn", this.closeSingle.bind(this));
-        $("#ebm-objectcontainer").off("click").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
+        $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
+        $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+        //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
+        $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
+    };
+
+    this.reset = function () {
+        $("#ebm-overlayfade").hide();
+        $("#ebquickmsideoverlay").hide();
+        $("#ebquickmsideoverlay #appList").empty();
+        $("#ebm-objtcontainer").hide();
+        $("#ebm-objtcontainer .objtypes").empty();
+        $("#ebm-objectcontainer").hide();
+        $("#ebm-objectcontainer .ebm-objlist").empty();
+        $("#ebm-security").hide();
     };
 
     this.toggleNewW = function (e) {
@@ -38,9 +52,12 @@
         if (!$("#ebquickmsideoverlay").is(":visible")) {
             $("#ebm-overlayfade").show();
             $("#ebquickmsideoverlay").show('slide', { direction: 'left' }, function () {
-                if (this.attempt <= 0){
+                if (this.attempt <= 0 && this.login == "dc") {
                     this.LoadApps();
                     this.attempt = 1;
+                }
+                else {
+                    this.LoadApps();
                 }
             }.bind(this));
         }
@@ -105,9 +122,9 @@
             for (var otype in this.resultObj.Data[appid].Types) {
                 if (eval(otype) !== -1) {
                     var _obj = this.resultObj.Data[appid].Types[otype].Objects;
-                    $("#ebm-objtcontainer .objtypes").append(`<div class="ObjType-item" appid="${appid}" obType="${otype}">
+                    $("#ebm-objtcontainer .objtypes").append(`<div class="ObjType-item" appid="${appid}" obType="${otype}" klink="true">
                                                         <span><i class="fa ${this.objTypes[otype].Icon} obtypeic"></i></span>
-                                                        ${this.objTypes[otype].Name}<span class="obj_count">(${_obj.length})</span>
+                                                        ${this.objTypes[otype].Name}s<span class="obj_count">(${_obj.length})</span>
                                                     </div>`);
                 }
             }
@@ -129,16 +146,26 @@
                 $("#ebm-objectcontainer").show('slide', { direction: 'left' });
         }
         for (let i = 0; i < _objArray.length; i++) {
-            this.appendObjects(_objArray[i],false);
+            this.appendObjects(_objArray[i], false);
         }
     };
 
-    this.appendObjects = function (_obj,isfav) {
+    this.appendObjects = function (_obj, isfav) {
         let set_fav = "";
-        if (this.login == "uc" && !isfav)
-            set_fav = `<button appid="${_obj.AppId}" otype="${ _obj.EbObjectType}" objid="${_obj.Id}" class="btn-setfav"><i class="fa fa-heart"></i></button>`;
-
-        $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item">
+        if (this.login == "uc" && !isfav) {
+            let isfav = "";
+            let tooltip = "";
+            if (_obj.Favourite) {
+                isfav = "favourited";
+                tooltip = "Remove from Favourites.";
+            }
+            else {
+                isfav = "btn-setfav";
+                tooltip = "Add to Favourites.";
+            }
+            set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
+        }
+        $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item" klink="true">
                                                         <a href='${this.decideUrl(_obj)}'>
                                                             <span class="obj-icon">
                                                                 <i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i>
@@ -166,10 +193,10 @@
     };
 
     this.refreshMenu = function () {
-        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", "");
-        store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login, "");
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login);
         $("#ebm-objectcontainer").hide();
-        $("#ebm-objtcontainer").hide(); 
+        $("#ebm-objtcontainer").hide();
         $("#ebm-security").hide();
         $("#ebm-newobject").hide();
         this.LoadApps();
@@ -191,21 +218,24 @@
     };
 
     this.searchFAllObjects = function (e) {
+        $(".active_link").removeClass("active_link");
+        let min = (this.login === "uc") ? 1 : 3;
         {
             $("#ebm-objtcontainer").hide();
             $("#ebm-newobject").hide();
             $("#ebm-security").hide();
         }
         let f = false;
-        $("#ebm-objectcontainer").show('slide', { direction: 'left' });
+        if (!$("#ebm-objectcontainer").is(":visible"))
+            $("#ebm-objectcontainer").show('slide', { direction: 'left' });
         $("#ebm-objectcontainer .ebm-objlist").empty();
         var srch = $(e.target).val().toLowerCase();
-        if (srch !== "" && srch.length >= 3) {
+        if (srch !== "" && srch.length >= min) {
             $.each(this.resultObj.Data, function (i, Types) {
                 $.each(Types.Types, function (i, _obj) {
                     _obj.Objects.forEach(function (obItem) {
                         if (obItem.DisplayName.toLowerCase().indexOf(srch) !== -1) {
-                            this.appendObjects(obItem,false);
+                            this.appendObjByCategory(obItem, false);
                             f = true;
                         }
                     }.bind(this));
@@ -215,16 +245,17 @@
             if (!f)
                 $("#ebm-objectcontainer .ebm-objlist").append("<div class='not_found text-center'>No match found.</div>");
         }
-        else if (srch.length > 0) {
-            $("#ebm-objectcontainer .ebm-objlist").append("<div class='not_found text-center'>No match found.</div>");
+        else if (srch.length < min) {
+            $("#ebm-objectcontainer .ebm-objlist").append(`<div class='not_found text-center'>Type ${min - srch.length} more letter(s). </div>`);
         }
         else {
-            $("#ebm-objectcontainer").hide();
+            $("#ebm-objectcontainer").show();
         }
     }
 
     this.closeSingle = function (e) {
-        $(e.target).closest("[slider='true']").hide('slide', { direction: 'left' });
+        $(e.target).closest("[slider='true']").next().hide();
+        $(e.target).closest("[slider='true']").hide();
     };
 
     this.active = function ($el) {
@@ -246,6 +277,37 @@
             if (result) {
                 var obj = this.resultObj.Data[appid].Types[otype].Objects.filter(ob => ob.Id === objid);
                 this.resultObj.Favourites.push(obj[0]);
+                $(e.target).closest("button").addClass("favourited");
+                obj[0].Favourite = true;
+            }
+        }.bind(this));
+    };
+
+    this.removeFavorite = function (e) {
+        let objid = parseInt($(e.target).closest("button").attr("objid"));
+        let appid = parseInt($(e.target).closest("button").attr("appid"));
+        let otype = parseInt($(e.target).closest("button").attr("otype"));
+        $.ajax({
+            url: "../TenantUser/RemoveFavourite",
+            type: "POST",
+            data: {
+                objid: objid
+            },
+        }).done(function (result) {
+            if (result) {
+                $.each(this.resultObj.Favourites,function (i,ob) {
+                    if (ob.Id === objid) {
+                        let obj = this.resultObj.Data[appid].Types[otype].Objects.filter(_ob => _ob.Id === objid);
+                        this.resultObj.Favourites.splice(i, 1);
+                        obj[0].Favourite = false;
+                        if ($(e.target).closest(".obj-item").hasClass("fav")) {
+                            let len = this.resultObj.Favourites.filter(item => item.EbObjectType === obj[0].EbObjectType).length;
+                            $(e.target).closest(".obj-item-categorised").find(".category_objCount").text(`(${len})`)
+                        }
+                        $(e.target).closest(".obj-item").remove();
+                        return false;
+                    }
+                }.bind(this));
             }
         }.bind(this));
     };
@@ -260,9 +322,107 @@
         $("#ebm-objectcontainer .ebm-objlist").empty();
         if (!$("#ebm-objectcontainer").is(":visible"))
             $("#ebm-objectcontainer").show('slide', { direction: 'left' });
-        for (let i = 0; i < this.resultObj.Favourites.length; i++) {
-            this.appendObjects(this.resultObj.Favourites[i],true);
+        if (this.resultObj.Favourites.length > 0) {
+            for (let i = 0; i < this.resultObj.Favourites.length; i++) {
+                this.appendObjByCategory(this.resultObj.Favourites[i], true);
+            }
         }
+        else {
+            $("#ebm-objectcontainer .ebm-objlist").append(`<div class='not_found text-center'>
+                                                                Favorites empty.
+                                                            </div>`)
+        }
+    };
+
+    this.appendObjByCategory = function (_obj, isfav) {
+        let set_fav = "";
+        let fav = "";
+        if (this.login == "uc" && !isfav) {
+            let isfav = "";
+            let tooltip = "";
+            if (_obj.Favourite) {
+                isfav = "favourited";
+                tooltip = "Remove from Favourites.";
+            }
+            else {
+                isfav = "btn-setfav";
+                tooltip = "Add to Favourites.";
+            }
+            set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
+        }
+        else if (this.login == "uc" && isfav) {
+            fav = "fav";
+            isfav = "favourited";
+            tooltip = "Remove from Favourites.";
+            set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
+        }
+
+        if ($(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).length <= 0) {
+            $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item-categorised" id="ctypeContaner${_obj.EbObjectType}">
+                                                            <div class="head"><i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i> ${this.objTypes[_obj.EbObjectType].Name}s<span class="category_objCount"></span></div>
+                                                            <div class="body" id="categoryType${_obj.EbObjectType}"></div>
+                                                        </div>`);
+        }
+
+        $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item ${fav}" klink="true">
+                                                        <a href='${this.decideUrl(_obj)}'>
+                                                            ${_obj.DisplayName || 'Untitled'}
+                                                        </a>
+                                                        ${set_fav}
+                                                  </div>`);
+
+        let len = $(`#ebm-objectcontainer #ctypeContaner${_obj.EbObjectType}`).find(".obj-item").length;
+        $(`#ebm-objectcontainer #ctypeContaner${_obj.EbObjectType} .category_objCount`).text("(" + len + ")");
+    };
+
+    this.listKeyControl = function (e) {
+        e.preventDefault();
+       //$(".active_link").removeClass("active_link");
+        if ($(".EbQuickMoverlaySideWRpr").find(":focus").length <= 0) {
+            $(".AppContainer").find(`[klink='true']`).eq(0).attr("tabindex", "1").focus();
+        }
+        else {
+            let $current = $(".EbQuickMoverlaySideWRpr").find(":focus");
+            if (e.which === 40) {
+                if ($current.nextAll('[klink="true"]:visible').length > 0) {
+                    $current.nextAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
+                }
+                else {
+                    let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
+                    let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
+                    $(domArray[filter[0] + 1]).attr("tabindex", "1").focus();
+                }
+            }
+            else if (e.which === 38) {
+                if ($current.prev('[klink="true"]:visible').length > 0) {
+                    $current.prevAll('[klink="true"]:visible').eq(0).attr("tabindex", "1").focus();
+                }
+                else {
+                    let domArray = $current.closest(`[slider='true']`).find('[klink="true"]:visible').toArray();
+                    let filter = $.map(domArray, function (val, i) { if ($(val).is($current)) return i; });
+                    $(domArray[filter[0] - 1]).attr("tabindex", "1").focus();
+                }
+            }
+            else if (e.which == 13 ) {
+                if ($current.find("a").length > 0) {
+                    $current.find("a")[0].click();
+                }
+                else {
+                    $current[0].click();
+                }
+            }
+            else if (e.which === 39) {
+                $current.closest("[slider='true']").nextAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
+            }
+            else if (e.which === 37) {
+                $current.closest("[slider='true']").prevAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
+            }
+        }
+    }
+
+    this.refresh = function () {
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login);
     };
 
     this.start();

@@ -16,8 +16,7 @@
 
 .sub-windows {
     height: calc(100vh - 100px) !important;
-    /*width: inherit !important;*/
-    padding: 0px 17px;
+    padding: 0px 30px;
     user-select:none !important;
     position:relative;
 }
@@ -148,7 +147,8 @@
 .splitdiv_parent {
     white-space: nowrap;
     overflow-x: hidden !important;
-    overflow-y: hidden !important
+    overflow-y: hidden !important;
+    height:inherit;
 }
 
 .slick-prev {
@@ -252,8 +252,9 @@
 }
 
 .dv-body2 {
-    height: calc( 100% - 20px );
+    /*height: calc( 100% - 20px );*/
     padding: 0 1px;
+    height:100%;
 }
 
 .dv-body1 {

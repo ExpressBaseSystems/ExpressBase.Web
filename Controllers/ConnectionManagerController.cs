@@ -681,7 +681,7 @@ namespace ExpressBase.Web.Controllers
             AddTwilioResponse res = new AddTwilioResponse();
             try
             {
-                  var req = this.HttpContext.Request.Form;
+                var req = this.HttpContext.Request.Form;
                 //EbTwilioConfig twilioCon = new EbTwilioConfig
                 //{
                 //    UserName = "Test",
@@ -730,7 +730,7 @@ namespace ExpressBase.Web.Controllers
                     Id = Convert.ToInt32(req["Id"]),
                     NickName = req["nickname"]
                 };
-                res = this.ServiceClient.Post<AddETResponse>(new AddETRequest { Config = con,/* IsNew = true,*/  SolnId = req["SolutionId"]});
+                res = this.ServiceClient.Post<AddETResponse>(new AddETRequest { Config = con,/* IsNew = true,*/  SolnId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)
@@ -826,7 +826,7 @@ namespace ExpressBase.Web.Controllers
                     Id = Convert.ToInt32(req["Id"])
                 };
 
-                res = this.ServiceClient.Post<AddCloudinaryResponse>(new AddCloudinaryRequest { Config = con/*, IsNew = true*/ , SolnId = req["SolutionId"]});
+                res = this.ServiceClient.Post<AddCloudinaryResponse>(new AddCloudinaryRequest { Config = con/*, IsNew = true*/ , SolnId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(con);
             }
             catch (Exception e)
@@ -876,15 +876,15 @@ namespace ExpressBase.Web.Controllers
                 {
                     Id = Convert.ToInt32(req["Id"]),
                     ConfigId = Convert.ToInt32(req["ConfId"]),
-                    Preference =  Enum.Parse<ConPreferences>(req["Preference"].ToString()),
+                    Preference = Enum.Parse<ConPreferences>(req["Preference"].ToString()),
                     Type = Enum.Parse<EbConnections>(req["Type"].ToString())
                 };
                 res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = _obj, SolnId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(res);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                res.ResponseStatus.Message = e.Message;
+                res.ResponseStatus = new ResponseStatus { Message = e.Message };
                 return JsonConvert.SerializeObject(res);
             }
         }

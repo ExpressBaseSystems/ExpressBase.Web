@@ -372,7 +372,8 @@
     .DDdiv td [type=checkbox] {
         min-height: inherit !important;
         padding: 0 !important;
-        margin: 0 !important;
+        margin-top: 0 !important;
+        margin-left: 11px;
     }
 
     .DDdiv tr {

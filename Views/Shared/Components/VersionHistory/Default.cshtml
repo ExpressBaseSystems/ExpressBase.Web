@@ -1,35 +1,34 @@
 ﻿
 @{
     @using Newtonsoft.Json
-    var versionObj = JsonConvert.SerializeObject(ViewBag.versions);
 }
-   <style>
-       .view_code {
-           background: #5bc0de;
-           color: white;
-           border: none;
-       }
-       .ViewCode_btn {
+<style>
+    .view_code {
+        color: white;
+        border: none;
+    }
+    /*.ViewCode_btn {
            width: 29px;
            height: 32px;
-           background: #5dddd3;
-           border-radius: 50%;
            padding: 4px;
            cursor: pointer;
-       }
-       .prof_dp {
-           width: 40px;
-           margin-right: 15px;
-       }
-       .version_table {
-           background-color : white;
-       }
-       .table_container {
-           padding-right: 10px;
-           padding-left: 10px;          
-       }
-   </style> 
-<div class="table_container">
+       }*/
+    .prof_dp {
+        width: 40px;
+        margin-right: 15px;
+    }
+
+    .version_table {
+        background-color: white;
+    }
+
+    .table_container {
+        margin-top: 55px;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+</style>
+<div class="table_container container">
     <table class='table table-hover table-responsive table-bordered version_table' id='versions_@(ViewBag.tabNum)'>
         <thead class='verthead_@(ViewBag.tabNum)'>
             <tr>
@@ -49,14 +48,15 @@
                         <td>@obj.ChangeLog</td>
                         <td>
                             <div class="col-md-2">
-                                <img src="../static/dp/dp_@(obj.CommitUId)_micro.jpg" class="img-thumbnail img-circle prof_dp" />
+                                
+                                <img src="../images/dp/@(obj.CommitUId).png" class="img-thumbnail img-circle prof_dp" />
                             </div>
                             <div class="col-md-7">
                                 <span class="col-md-12">@obj.CommitUname</span>
                                 <span class="col-md-12">@obj.CommitTs</span>
                             </div>
-                            <div class="view_code ViewCode_btn pull-right" id='view_code_@(ViewBag.tabNum)_@(i)' value='View' data-id="@obj.RefId" data-verNum="@obj.VersionNumber" data-changeLog="@obj.ChangeLog" data-commitUname="@obj.CommitUname" data-commitTs="@obj.CommitTs">
-                                <i class="fa fa-chevron-circle-right fa-2x" id="commit"></i>
+                            <div class="view_code ViewCode_btn pull-right btn-primary btn btn-sm" id='view_code_@(ViewBag.tabNum)_@(i)' value='View' data-id="@obj.RefId" data-verNum="@obj.VersionNumber" data-changeLog="@obj.ChangeLog" data-commitUname="@obj.CommitUname" data-commitTs="@obj.CommitTs">
+                                open
                             </div>
                         </td>
                     </tr>

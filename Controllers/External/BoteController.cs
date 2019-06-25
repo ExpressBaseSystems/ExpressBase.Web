@@ -104,6 +104,16 @@ namespace ExpressBase.Web.Controllers
             return File(FileContent.ToUtf8Bytes(), "text/javascript");
         }
 
+
+        [HttpGet("/apitest")]
+        public IActionResult Test()
+        {
+            this.ServiceClient.BearerToken = "HxSLXUHuM5X_pZDW_0_SvbpupByEIlCw";
+            ServiceClient.Get(new ApiTestReq());
+
+            return Redirect("/statuscode/404"); ;
+        }
+
         [HttpPost]
         public async Task<string> UploadImageOrginal(string base64, string filename, string refreshToken, string bearerToken)
         {

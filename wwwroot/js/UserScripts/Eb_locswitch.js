@@ -3,7 +3,7 @@
     const SetUrl = "/TenantUser/UpdateLocation";
     const LocModId = "#loc_switchModal";
     const TriggerId = "#switch_loc";
-    const LocTile = ".locationwrapper";
+    const LocTile = ".loc-item-inner";
     const SetLoc = "#setLocSub";
     const container = ".loc_switchModal_outer";
     const EmptyLocs = ".no_loc_config";
@@ -15,6 +15,7 @@
 
     this.Tid = options.Tid || null;
     this.Uid = options.Uid || null;
+    this.PrevLocation = null;
 
     this.Locations = JSON.parse(options.Location) || [];
     this.EbHeader = new EbHeader();
@@ -34,37 +35,21 @@
         //        this.showSwitcher();
         //}.bind(this));
         this.CurrentLoc = this.getCurrent();
+        this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         this.drawLocs();
-        this.setDeafault();
+        this.setDefault();
         $(TriggerId).off("click").on("click", this.showSwitcher.bind(this));
         $(LocTile).off("click").on("click", this.selectLoc.bind(this));
         $(SetLoc).off("click").on("click", this.setLocation.bind(this));
+        $("#loc-search").off("keyup").on("keyup", this.searchLoc.bind(this));
     };
 
     this.drawLocs = function () {
         if (this.Locations.length > 0) {
             for (let i = 0; i < this.Locations.length; i++) {
-                $(container + " .locs_bdy").append(`<div class="locationwrapper display-flex">
-                                    <div class="col-md-2 flex-center">
-                                        <div class="md-radio_wrapr" ischecked="false" LocId="${this.Locations[i].LocId}">
-                                            <i class="material-icons checked">
-                                                radio_button_checked
-                                            </i>
-                                            <i class="material-icons unchecked">
-                                                radio_button_unchecked
-                                            </i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 flex-center">
-                                        <img src="/images/your_company_logo.png" style="max-height:40px;width;auto"/>
-                                    </div>
-                                    <div class="col-md-6 loc_info display-flex">
-                                        <h5 class="mr-0">${this.Locations[i].LongName}</h5>
-                                        <p class="mr-0">${this.Locations[i].ShortName}</p>
-                                    </div>
-                                </div>`);
+                this.appendLoc(this.Locations[i]);
             }
         }
         else {
@@ -72,49 +57,51 @@
         }
     };
 
-    this.setDeafault = function () {
-        $(".locationwrapper").find(`div[LocId='${this.CurrentLoc}']`).find(".checked").show();
-        $(".locationwrapper").find(`div[LocId='${this.CurrentLoc}']`).find(".unchecked").hide();
-        //this.uncheckOthers($(".locationwrapper"));
+    this.appendLoc = function (obj) {
+        $(container + " .locs_bdy").append(`<div class="loc-item">
+                                    <div class="loc-item-inner" LocId="${obj.LocId}" title="${obj.LongName}">
+                                        <div class="loc-item-imgsec">
+                                            <img src="../images/your-logo.png" />
+                                        </div>
+                                        <div class="loc-item-content">
+                                            ${obj.LongName}
+                                            <div class="subtitle">${obj.ShortName}</div>
+                                        </div>
+                                    </div>
+                                </div>`);
+    };
+
+    this.setDefault = function () {
+        $(".loc_switchModal_box").find(`div[LocId='${this.CurrentLoc}']`).addClass("active-loc");
         store.clearAll();
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
     };
 
     this.selectLoc = function (e) {
-        let radioContainer = $(e.target).closest(".locationwrapper").find(".md-radio_wrapr");
+        let locContainer = $(e.target).closest(".loc-item-inner");
         try {
-            if (!eval(radioContainer.attr("ischecked"))) {
-                radioContainer.find(".checked").show();
-                radioContainer.find(".unchecked").hide();
-                radioContainer.attr("ischecked", true);
-                this.CurrentLoc = radioContainer.attr("LocId");
-                this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
-                this.uncheckOthers($(e.target).closest(".locationwrapper"));
+            {
+                $(".active-loc").removeClass("active-loc");
+                locContainer.addClass("active-loc");
             }
-            else {
-                this.uncheckOthers($(e.target).closest(".locationwrapper"));
-            }
+            this.CurrentLoc = locContainer.attr("LocId");
+            this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         }
         catch (err) {
             console.log(err);
         }
     };
 
-    this.uncheckOthers = function ($t) {
-        $t.siblings().each(function (k, o) {
-            let wrap = $(o).find(".md-radio_wrapr");
-            wrap.find(".checked").hide();
-            wrap.find(".unchecked").show();
-            wrap.attr("ischecked", false);
-        });
-    };
-
     this.setLocation = function (e) {
         store.clearAll();
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
         this.showSwitcher();
+        ebcontext.menu.reset();
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
-        this.Listener.ChangeLocation(this.CurrentLocObj);
+        if (this.PrevLocation !== this.CurrentLoc) {
+            this.Listener.ChangeLocation(this.CurrentLocObj);
+            this.PrevLocation = this.CurrentLoc;
+        }
     };
 
     this.showSwitcher = function (e) {
@@ -129,21 +116,23 @@
 
     this.SwitchLocation = function (id) {
         try {
-            let radioContainer = $(container + " .locs_bdy").find(`div[Locid='${id}']`);
-            this.CurrentLoc = radioContainer.attr("LocId");
+            let locContainer = $(container + " .locs_bdy").find(`div[Locid='${id}']`);
+            this.CurrentLoc = locContainer.attr("LocId");
+            this.PrevLocation = this.CurrentLoc;
             this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
             if ($.isEmptyObject(this.CurrentLocObj) || this.CurrentLocObj === undefined)
                 throw "no such location";
             else {
-                radioContainer.find(".checked").show();
-                radioContainer.find(".unchecked").hide();
-                radioContainer.attr("ischecked", true);
+                {
+                    $(".active-loc").removeClass("active-loc");
+                    locContainer.addClass("active-loc");
+                }
                 this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
-                this.uncheckOthers(radioContainer.closest(".locationwrapper"));
                 store.clearAll();
                 store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
+                ebcontext.menu.reset();
                 return true;
-            }        
+            }
         }
         catch (error) {
             console.log(error);
@@ -154,6 +143,17 @@
     this.clearSwitchedLoc = function () {
         store.remove("Eb_Loc-" + this.Tid + this.Uid);
     }
+
+    this.searchLoc = function (e) {
+        let val = $(e.target).val().toLowerCase();
+        $(container + " .locs_bdy").empty();
+        for (let i = 0; i < this.Locations.length; i++) {
+            if (this.Locations[i].LongName.toLowerCase().indexOf(val) >= 0)
+                this.appendLoc(this.Locations[i]);
+        }
+        $(LocTile).off("click").on("click", this.selectLoc.bind(this));
+        this.setDefault();
+    };
 
     this.trigger();
 };

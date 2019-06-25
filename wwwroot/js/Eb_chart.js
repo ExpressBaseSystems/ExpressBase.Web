@@ -334,16 +334,15 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         if (Pname == "Charttype") {
             this.prevObj = this.EbObject;
             if (obj.Charttype == 1) {
-                let obj = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
-                this.EbObject.$type = obj.$type;
+                this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
                 this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
             }
             else {
-                let obj = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
-                this.EbObject.$type = obj.$type;
+                this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 this.type = "bar";
             }
+            this.EbObject.Charttype = obj.Charttype;
             this.rearrangeObjects();
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
@@ -1387,6 +1386,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.EbObject.Xaxis = this.prevObj.Xaxis;
         this.EbObject.Yaxis = this.prevObj.Yaxis;
         this.EbObject.Pippedfrom = this.prevObj.Pippedfrom;
+        this.EbObject.DisplayName = this.prevObj.DisplayName;
     }
 
     this.toolTipCallback = function (item, data) {

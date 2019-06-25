@@ -334,7 +334,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         if (Pname == "Charttype") {
             this.prevObj = this.EbObject;
             if (obj.Charttype == 1) {
-                this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
+                let obj = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
+                this.EbObject.$type = obj.$type;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
             }
             else {
@@ -1408,7 +1409,7 @@ function initMap() {
     var directionsDisplay = new google.maps.DirectionsRenderer();
     var mid = Math.floor(Xlabel.length / 2);
     var map = new google.maps.Map(document.getElementById('map' + TableId), {
-        zoom: zoomlevel,
+        zoom: zoomlevel || 5,
         center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
         gestureHandling: 'greedy'
         // mapTypeId: google.maps.MapTypeId.ROADMAP

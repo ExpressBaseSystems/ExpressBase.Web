@@ -70,10 +70,7 @@ var EbOnBoarding = function (context) {
                 $(".commonLoader").EbLoader("hide");
                 if(streturn==0)
                 {
-                EbMessage("show", { Message: "Profile Saved" });
-                 setTimeout(function () {
-                          location.href = "/MySolutions";
-                     }, 2000);
+                    location.href = "/MySolutions";
                  }
                 if(streturn==1)
                     {
@@ -401,6 +398,68 @@ var EbOnBoarding = function (context) {
         }
     }
 
+    this.Fbloginfn = function () {
+        $.ajax({
+            url: "/Ext/FbLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+               location.href = "/MySolutions";
+            }
+        });
+    }
+
+    this.Githubloginfn = function () {
+        $.ajax({
+            url: "/Ext/GithubLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+                location.href = "/MySolutions";
+            }
+        });
+    }
+    this.Gmailloginfn = function () {
+        $.ajax({
+            url: "/Ext/GmailLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+                location.href = "/MySolutions";
+            }
+        });
+    }
+    this.Twitterloginfn = function () {
+        $.ajax({
+            url: "/Ext/TwitterLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+                location.href = "/MySolutions";
+            }
+        });
+    }
+    this.Linkedinloginfn = function () {
+        $.ajax({
+            url: "/Ext/LinkedinLogin",
+            cache: false,
+            type: "POST",
+            success: function (status) {
+                $(".commonLoader").EbLoader("hide");
+
+                location.href = "/MySolutions";
+            }
+        });
+    }
+
 
 
     this.init = function () {
@@ -426,6 +485,11 @@ var EbOnBoarding = function (context) {
         $("#ebsid").on("keyup", this.solutionurlcheck.bind(this));
         $("#solutionname").on("keyup", this.solutioncheck.bind(this));
         $("#country").on("click", this.Countryselect.bind(this));
+        $("#fblogin").on("click", this.Fbloginfn.bind(this));
+        $("#githubBtn").on("click", this.Githubloginfn.bind(this));
+        $("#gmailBtn").on("click", this.Gmailloginfn.bind(this));
+        $("#twitterBtn").on("click", this.Twitterloginfn.bind(this));
+        $("#linkedinBtn").on("click", this.Linkedinloginfn.bind(this));
 
     };
     this.init();

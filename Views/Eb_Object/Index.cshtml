@@ -41,11 +41,11 @@
                     icon = "fa-lock";
                 }
             }
-            @if (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter)
+            @if (ViewBag.IsNew =="false" && (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter))
             {
                 <li class="">
                     <a data-toggle="tab" class="cetab" id="ProfilerHome" href="#builderDashB">
-                        <i class="fa fa-home" aria-hidden="true"></i> Home
+                        <i class="fa fa-home" aria-hidden="true"></i> performance
                     </a>
                 </li>
             }
@@ -92,7 +92,7 @@
                 else if (ViewBag.ObjType == (int)EbObjectTypes.ChartVisualization)
                 {
                     object o = null;
-                    @await Component.InvokeAsync("DVChart", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, counter = 0, data = o })
+                    @await Component.InvokeAsync("DVChart", new { googlekey = ViewBag.al_arz_map_key, dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, counter = 0, data = o })
 
                 }
                 else if (ViewBag.ObjType == (int)EbObjectTypes.Report)

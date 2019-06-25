@@ -462,8 +462,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*box-shadow: var(--eb-shadow);*/
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12), 0 0 14px 0 rgba(0, 0, 0, 0.17);
     height: 100%;
-    background-color: white;
-    width: 400px;
+    background-color: transparent;
+    width: 380px;
+    /*overflow: hidden;*/
+    border-radius: 4px 4px 0 0;
 }
 
 .eb-chatBox-dev > .Eb-ctrlContainer {
@@ -586,7 +588,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
-.ctrl-cover .dropdown-toggle {
+.ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
     border-radius: 1px;
     font-size: 13px;
     height: 24px;
@@ -701,7 +703,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         width: 100%;*/
 }
 
-.form-buider-form .Eb-ctrlContainer table td {
+.form-buider-form[isrendermode="False"] .Eb-ctrlContainer table > tbody > tr > .form-render-table-Td {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/

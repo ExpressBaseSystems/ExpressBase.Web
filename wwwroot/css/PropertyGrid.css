@@ -33,6 +33,15 @@
     /*min-width: 250px;*/
 }
 
+[dragging=true] .propgrid-table-cont {
+    background-color: rgba(255, 255, 255, 0.67);
+}
+
+[dragging=true] .outer-pg > .pgHead {
+    background: none;
+    background-color: rgba(3, 38, 74, 0.73);
+}
+
 .pg-wraper {
     display: flex;
     flex-flow: column;
@@ -145,8 +154,9 @@
 
 
 .pgHead {
-    /*background-color: rgba(0, 0, 0, 0.28);*/
-    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));
+    background-color: rgba(3, 1, 45, 0.53);
+    background-color: rgb(71, 97, 123);
+    /*background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));*/
     color: #fff;
     padding: 2%;
     font-weight: bold;
@@ -157,6 +167,11 @@
     font-weight: bold;
     border-radius: 1px 1px 0px 0px;
 }
+
+[dragging=true] .pgHead {
+    border-radius: 3px 3px 0px 0px;
+}
+
 /*.controls-dd-cont {
     border-bottom: var(--sild1pxDDD);
 }*/
@@ -287,6 +302,7 @@
 .CE-controls-head, .inner-PG-Cont .pgHead {
     padding: 8px;
     font-weight: bold;
+    font-size: 12px;
     color: black;
     background-color: #ddd;
     background-image: none;
@@ -301,14 +317,18 @@
 .colTile {
     position: relative;
     padding: 4px 6px 4px 8px;
-    background-color: #c8d4ef;
+    padding: 5px 6px 5px 8px;
+    background-color: rgba(232, 232, 232, 0.24);
     margin: 3px 1px;
-    border-radius: 25px;
+    border-radius: 30px;
     min-height: 26px;
-    font-size: 13px;
+    font-size: 11.6px;
     cursor: move;
+    border: solid 1px #d4d4d4;
     color: #111;
     user-select: none;
+    font-family: sans-serif;
+    letter-spacing: 0.5px;
     transition-duration: 0.3s;
 }
 
@@ -333,45 +353,60 @@
     cursor: inherit;
 }
 
+.colTile > .fa {
+    color: #707070 !important;
+}
+
+.colTile:hover .ColT-right-arrow {
+    opacity: 0.5;
+}
+
+
 .colTile:hover {
-    background-color: var(--colorDDD);
+    background-color: #eee;
     outline: none;
     color: #000;
 }
 
 .colTile:focus, .OSE-verTile-Cont .colTile:focus {
-    background-color: #94bccc;
     outline: none;
-    color: #222;
+    border: solid 1px rgb(121, 121, 121);
+    color: #000;
+    background-color: white;
+}
+
+.OSE-verTile-Cont .colTile:focus {
+    font-weight: bold;
 }
 
 .colTile .vercheck {
     display: none;
-    color: #acb9bb;
-    font-size: 14px;
+    font-size: 20px;
     background: #ffffff;
     border-radius: 50%;
-    padding: 2px;
-    margin-right: -2px;
+    margin-top: -2px;
+    margin-right: -1px;
 }
 
 
 .colTile[is-selected=true] {
-    background-color: #acb9bb;
+    padding: 4px 5px 4px 7px;
     outline: none;
-    color: #222;
+    border: solid 2px rgb(121, 121, 121) !important;
 }
 
-.Otile-active:focus {
-    background-color: #aebbbd;
-    color: #222;
+.Otile-active:focus, .colTile[is-selected=true] {
+    background-color: white;
+    color: #000;
 }
 
 .ColT-right-arrow {
     visibility: hidden;
-    font-size: 19px;
+    font-size: 20px;
     color: white;
     transition-duration: 0.1s;
+    margin-top: -1px;
+    margin-right: -1px;
 }
 
 .colTile .ColT-right-arrow {
@@ -390,13 +425,14 @@
 .propgrid-helpbox {
     display: none;
     vertical-align: bottom;
-    height: 50px;
+    min-height: 50px;
     border-bottom: solid 1px whitesmoke;
     color: #333;
     overflow-y: auto;
     font-size: 10px;
     padding: 3px;
     background-color: rgba(204, 204, 204, 0.8);
+    margin-bottom: 36px;
 }
 
 .property-grid-cont .bs-searchbox .form-control {
@@ -509,9 +545,11 @@
 }
 
 .pgCXEditor-Cont .btn[name="CXE_OK"] {
-    border-radius: 0px !important;
-    border: none;
-    padding: 6px 14px;
+    border-radius: 19px !important;
+    border: solid 1px #797979;
+    padding: 6px 15px 6px 12px;
+    background-color: white;
+    color: #444;
     font-weight: bold;
     transition-duration: 0.2s;
 }
@@ -519,7 +557,6 @@
     .pgCXEditor-Cont .btn[name="CXE_OK"]:hover {
         background-color: rgba(0, 0, 0, 0.7);
         color: white;
-        border-radius: 1px !important;
     }
 
 .pgCXEditor-Cont .modal-body {
@@ -549,6 +586,12 @@
 .editTbl {
     table-layout: fixed;
     height: 100%;
+}
+
+.inner-pg .controls-dd-cont .bootstrap-select .dropdown-toggle {
+    color: #444;
+    padding: 4px 12px;
+    font-size: 13px;
 }
 
 .CEctrlsCont, .OSEctrlsCont, .OSE-verTile-Cont, .CE-all-ctrlsCont, .CE-mapper-ctrlsCont {
@@ -616,7 +659,7 @@
 
 .CE-add {
     display: inline-block;
-    padding: 5px 10px;
+    padding: 5px 12px 5px 10px;
     margin-bottom: 0;
     font-size: 14px;
     font-weight: 400;
@@ -627,6 +670,7 @@
     background-color: transparent;
     border: 1px solid transparent;
     border-left: none !important;
+    border-radius: 0 25px 25px 0;
     margin-left: -4px;
 }
 
@@ -635,8 +679,8 @@
     }
 
     .CE-add:focus {
-        outline: none;
-        /*border: solid 1px #cdcdcd;*/
+        outline: none !important;
+        box-shadow: 0 0 1px 1px #a8c1d2;
     }
 
 .propgrid-table-cont .bootstrap-select > select {
@@ -651,7 +695,7 @@
     font-size: 13px;
     box-shadow: none;
     border: none;
-    border-radius: 0;
+    border-radius: 25px 0 0 25px;
     border-right: solid 1PX #e5e5e5;
 }
 
@@ -659,11 +703,17 @@
         background-color: #e5e5e5;
     }
 
+    .sub-controls-DD-cont .btn-group > .btn:first-child:focus {
+        outline: none !important;
+        box-shadow: 0 0 1px 1px #a8c1d2;
+    }
+
 .sub-controls-DD-cont {
     position: relative;
     z-index: 0;
     background-color: white;
     border: var(--sild1pxDDD);
+    border-radius: 25px;
 }
 
 .icon-cont {
@@ -758,6 +808,7 @@
     margin-top: -1px;
     color: #000;
     padding: 1px;
+    margin-right: -1.5px;
 }
 
 .propgrid-table-cont .pg-table tr:focus {
@@ -841,13 +892,26 @@
 
 .searchinp {
     float: left;
-    width: calc(100% + 25px);
-    padding: 3px;
-    border: solid 1px #dddddd;
+    width: 50%;
+    font-family: sans-serif;
+    font-size: 13px;
+    padding: 4px;
+    border: solid 1px #9a9898;
+    border-radius: 0 15px 15px 0;
+    border-left: 0;
 }
 
+    .searchinp:focus {
+        outline: none;
+        box-shadow: 0 0 2px 0 #00bcff;
+        border: solid 1px #797979;
+    }
+
 .modal-footer-body .input-group-addon {
-    border-radius: 0;
+    border-radius: 15px 0 0 15px;
+    padding: 3px 6px 3px 8px;
+    border: solid 1px #989898;
+    BORDER-RIGHT: 0;
 }
 
 

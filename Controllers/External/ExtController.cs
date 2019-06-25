@@ -20,6 +20,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,6 +54,12 @@ namespace ExpressBase.Web.Controllers
 
 
         public IActionResult EmailVerifyStructure()
+        {
+
+            return View();
+        }
+
+        public IActionResult SignIn()
         {
 
             return View();
@@ -107,20 +114,29 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public int ResetPassword(string emcde, string psw)
         {
-            byte[] base64Encoded = System.Convert.FromBase64String(emcde);
-            string resetcd = System.Text.Encoding.UTF8.GetString(base64Encoded);
-            string[] resetcode = resetcd.Split(new Char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
+            try
+            {
+                byte[] base64Encoded = System.Convert.FromBase64String(emcde);
+                string resetcd = System.Text.Encoding.UTF8.GetString(base64Encoded);
+                string[] resetcode = resetcd.Split(new Char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
 
-            var sts = this.ServiceClient.Post<ResetPasswordResponse>(new ResetPasswordRequest
+                var sts = this.ServiceClient.Post<ResetPasswordResponse>(new ResetPasswordRequest
+                {
+                    Resetcode = resetcode[1],
+                    Email = resetcode[0],
+                    Password = psw
+                });
+                if (sts.VerifyStatus == true)
+                { return 1; }
+                else
+                {
+                    return 0;
+                }
+
+            }
+            catch (Exception e)
             {
-                Resetcode = resetcode[1],
-                Email = resetcode[0],
-                Password = psw
-            });
-            if (sts.VerifyStatus == true)
-            { return 1; }
-            else
-            {
+                Console.WriteLine("Exception: " + e.Message + e.StackTrace);
                 return 0;
             }
         }
@@ -181,6 +197,31 @@ namespace ExpressBase.Web.Controllers
             ViewBag.reDirectUrl = (reDir != null) ? reDir : null;
             return View();
         }
+        public void FbLogin()
+        {
+          
+
+
+        }
+
+        public void GithubLogin()
+        {
+
+        }
+        public void GmailLogin()
+        {
+
+        }
+        public void TwitterLogin()
+        {
+
+        }
+        public void LinkedinLogin()
+        {
+
+        }
+
+
 
         //[HttpPost]
         //public IActionResult StripeResponse()
@@ -272,47 +313,77 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public string ProfileSetup(int i)
+        public int ProfileSetup(string email, string name, string country, string account, string password)
         {
-            var req = this.HttpContext.Request.Form;
-            string activationcode = Guid.NewGuid().ToString();
-            var pgurl = this.HttpContext.Request.Host;
-            var pgpath = this.HttpContext.Request.Path;
+            //streturn= 0 when everythong is fine streturn=1 when email exist in database/table streturn2= not set
+            int streturn = 0;
+            UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+            if (result.Unique)
+            {
+                    string activationcode = Guid.NewGuid().ToString();
+                    var pgurl = this.HttpContext.Request.Host;
+                    var pgpath = this.HttpContext.Request.Path;
 
-            var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
-            {
-                Op = "updatetenant",
-                Name = req["Name"],
-                Company = req["Company"],
-                Password = req["Password"],
-                Country = req["Country"],
-                Token = ViewBag.token,
-                Email = req["Email"],
-                ActivationCode = activationcode,
-                PageUrl = pgurl.ToString(),
-                PagePath = pgpath.ToString()
-            });
-            if (res.id >= 0)
-            {
-                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
-                {
-                    provider = CredentialsAuthProvider.Name,
-                    UserName = req["Email"],
-                    Password = (req["Password"] + req["Email"]).ToMD5Hash(),
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
-                    //UseTokenCookie = true
-                });
-                if (authResponse != null)
-                {
-                    CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                    this.ServiceClient.BearerToken = authResponse.BearerToken;
-                    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-                }
+                    var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
+                    {
+                        Op = "updatetenant",
+                        Name = name,
+                        Password = password,
+                        Country = country,
+                        Token = ViewBag.token,
+                        Email = email,
+                        Account_type = account,
+                        ActivationCode = activationcode,
+                        PageUrl = pgurl.ToString(),
+                        PagePath = pgpath.ToString(),
+                        DisplayName = CoreConstants.EXPRESSBASE
+                    });
+                    if (res.id >= 0)
+                    {
+                        MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                        {
+                            provider = CredentialsAuthProvider.Name,
+                            UserName = email,
+                            Password = (password + email).ToMD5Hash(),
+                            Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
+                            //UseTokenCookie = true
+                        });
+                        if (authResponse != null)
+                        {
+                            CookieOptions options = new CookieOptions();
+                            Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                            Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                            this.ServiceClient.BearerToken = authResponse.BearerToken;
+                            this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+                        }
+
+                        var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
+                        {
+                            DeployDB = true
+
+                        });
+                    if (tmp.ErrDbMessage != null || tmp.ErrSolMessage != null)
+                    {
+                        streturn = 2;
+                    }
+
+                    }
+              
             }
-            return res.Sol_id_autogen;
+            else
+            {
+                //streturn = 1 when email exist in database / table s
+             streturn = 1;
+            }
+
+
+            return streturn;
         }
+
+
+
+
+
 
         [HttpGet("em")]
         public IActionResult EmailVerify(string emv)

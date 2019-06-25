@@ -337,8 +337,9 @@
 }
 
 .searchable [type="search"] {
-    width: 90px !important;
-    min-width: 100%;
+    /*width: 90px !important;*/
+    /*min-width: 100%;*/
+    min-width: 15px;
     z-index: 0;
 }
 
@@ -372,7 +373,8 @@
     .DDdiv td [type=checkbox] {
         min-height: inherit !important;
         padding: 0 !important;
-        margin: 0 !important;
+        margin-top: 0 !important;
+        margin-left: 11px;
     }
 
     .DDdiv tr {
@@ -399,8 +401,9 @@
     border-right: solid 1px #ddd !important;
 }
 
-.v-select.searchable .dropdown-toggle {
+.v-select.searchable > .dropdown-toggle {
     border: none;
+    background-color: white;
 }
 
 .v-select .selected-tag, .tdtxt .selected-tag {

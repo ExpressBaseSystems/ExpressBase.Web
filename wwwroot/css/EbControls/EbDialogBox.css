@@ -26,6 +26,7 @@
         padding: 5px 0 20px 0;
         font-size: 16px;
         line-height: 2em;
+        word-break: break-all;
     }
     .eb_dlogBox_container .cnfrmBox-btnc {
         width:100%;

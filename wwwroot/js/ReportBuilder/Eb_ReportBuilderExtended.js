@@ -141,9 +141,10 @@
         return SubsecHArr;
     }
 
+    this.ControlCollection = ["ReportHeaders", "ReportFooters", "PageHeaders", "PageFooters", "Detail"];
     this.emptyControlCollection = function (rptObj) {
         for (var objPropIndex in rptObj) {
-            if (typeof rptObj[objPropIndex] === "object" && objPropIndex !== "ReportObjects" && objPropIndex !== "$Control" && objPropIndex !== "Margin" && objPropIndex !== "DataSourceRefId")
+            if (this.ControlCollection.indexOf(objPropIndex) >= 0)
                 this.emptyCConESec(rptObj[objPropIndex]);
             else if (objPropIndex === "ReportObjects")
                 rptObj[objPropIndex].$values.length = 0

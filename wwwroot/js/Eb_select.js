@@ -96,6 +96,7 @@ const EbSelect = function (ctrl, options) {
         try {
             $('#' + this.name + 'Wraper [class=open-indicator]').hide();
             this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
+            this.$searchBoxes.keyup(this.searchboxKeyup);
             this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
             $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
@@ -111,7 +112,7 @@ const EbSelect = function (ctrl, options) {
 
 
             if (!this.ComboObj.MultiSelect)
-                $('#' + this.name + 'Wraper').attr("singleselect","true");
+                $('#' + this.name + 'Wraper').attr("singleselect", "true");
 
 
             //styles
@@ -123,6 +124,16 @@ const EbSelect = function (ctrl, options) {
             console.error(err.message);
         }
     };
+
+    this.searchboxKeyup = function (e) {
+        let $e = $(event.target);
+        if (this.valueMembers.length === 0)
+            $e.css("width", "100%");
+        else {
+            let count = $e.val().length;
+            $e.css("width", (count * 7.2 + 12) + "px");
+        }
+    }.bind(this);
 
     this.getColumn = function (colName) { return this.columnVals[colName]; }.bind(this);
 
@@ -209,7 +220,7 @@ const EbSelect = function (ctrl, options) {
                 $.each(this.setvaluesColl, function (i, val) {
                     let $row = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
                     if ($row.length === 0) {
-                        console.eb_warn(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`,"rgb(222, 112, 0)");
+                        console.eb_warn(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`, "rgb(222, 112, 0)");
                         this.$inp.val(StrValues).trigger("change");
                     }
                     else
@@ -308,7 +319,7 @@ const EbSelect = function (ctrl, options) {
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
         o.columnSearch = this.filterArray;
-        o.headerDisplay = (this.ComboObj.Columns.$values.length > 2) ? true : false;
+        o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rt";
 
         o.keys = true;
@@ -608,7 +619,7 @@ const EbSelect = function (ctrl, options) {
             //if (searchVal === "" || this.ComboObj.MinSeachLength > searchVal.length)
             //    return;
             //else
-                this.V_showDD();
+            this.V_showDD();
         }
 
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },500);
@@ -686,14 +697,16 @@ const EbSelect = function (ctrl, options) {
 
     this.ApplyRowFocusStyle = function ($tr) {
         $tr.find('.focus').removeClass('focus');
-        $tr.addClass('selected');
-        $tr.find('td').css("border-color", "transparent");
+        setTimeout(function () {
+            $tr.addClass('selected');
+        },10);
     };
 
     this.RemoveRowFocusStyle = function ($tr) {
-        $tr = $(this.DTSelector + " tr.selected");/////////
-        $tr.find('td').css("border-color", "#ddd");
-        $tr.removeClass('selected');
+        $tr = $tr || $(this.DTSelector + " tr.selected");
+        if ($tr.length === 0)
+            return;
+        //$tr.removeClass('selected');
     };
 
     this.tagCloseBtnHand = function (e) {
@@ -738,7 +751,7 @@ const EbSelect = function (ctrl, options) {
         let container = $('#' + this.name + 'DDdiv');
         let container1 = $('#' + this.name + 'Container');
         let _name = this.ComboObj.EbSid_CtxId;
-        if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
+        if (this.Vobj.DDstate === true && (!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
                 if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched

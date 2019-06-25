@@ -22,8 +22,19 @@
         $("body").off("click").on("click", ".backbtn", this.closeSingle.bind(this));
         $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
         $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
-        $(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
+        //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
         $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
+    };
+
+    this.reset = function () {
+        $("#ebm-overlayfade").hide();
+        $("#ebquickmsideoverlay").hide();
+        $("#ebquickmsideoverlay #appList").empty();
+        $("#ebm-objtcontainer").hide();
+        $("#ebm-objtcontainer .objtypes").empty();
+        $("#ebm-objectcontainer").hide();
+        $("#ebm-objectcontainer .ebm-objlist").empty();
+        $("#ebm-security").hide();
     };
 
     this.toggleNewW = function (e) {
@@ -41,9 +52,12 @@
         if (!$("#ebquickmsideoverlay").is(":visible")) {
             $("#ebm-overlayfade").show();
             $("#ebquickmsideoverlay").show('slide', { direction: 'left' }, function () {
-                if (this.attempt <= 0) {
+                if (this.attempt <= 0 && this.login == "dc") {
                     this.LoadApps();
                     this.attempt = 1;
+                }
+                else {
+                    this.LoadApps();
                 }
             }.bind(this));
         }
@@ -281,30 +295,22 @@
             },
         }).done(function (result) {
             if (result) {
-                let index = 0;
-                let obj = null;
-                $.each(this.resultObj.Data[appid].Types[otype].Objects,function (i,ob) {
+                $.each(this.resultObj.Favourites,function (i,ob) {
                     if (ob.Id === objid) {
-                        index = i;
-                        obj = this.resultObj.Data[appid].Types[otype].Objects[i];
-                        this.resultObj.Favourites.splice(index, 1);
-                        obj.Favourite = false;
-                        return this.refreshFav();
+                        let obj = this.resultObj.Data[appid].Types[otype].Objects.filter(_ob => _ob.Id === objid);
+                        this.resultObj.Favourites.splice(i, 1);
+                        obj[0].Favourite = false;
+                        if ($(e.target).closest(".obj-item").hasClass("fav")) {
+                            let len = this.resultObj.Favourites.filter(item => item.EbObjectType === obj[0].EbObjectType).length;
+                            $(e.target).closest(".obj-item-categorised").find(".category_objCount").text(`(${len})`)
+                        }
+                        $(e.target).closest(".obj-item").remove();
+                        return false;
                     }
                 }.bind(this));
             }
         }.bind(this));
     };
-
-    this.refreshFav = function () {
-        $("#ebm-objectcontainer").hide();
-        $("#ebm-objectcontainer .ebm-objlist").empty();
-        $("#ebm-objectcontainer").show('slide', { direction: 'left' });
-        for (let i = 0; i < this.resultObj.Favourites.length; i++) {
-            this.appendObjByCategory(this.resultObj.Favourites[i], true);
-        }
-        
-    }
 
     this.showfavourites = function (e) {
         this.active($(e.target));
@@ -316,13 +322,21 @@
         $("#ebm-objectcontainer .ebm-objlist").empty();
         if (!$("#ebm-objectcontainer").is(":visible"))
             $("#ebm-objectcontainer").show('slide', { direction: 'left' });
-        for (let i = 0; i < this.resultObj.Favourites.length; i++) {
-            this.appendObjByCategory(this.resultObj.Favourites[i], true);
+        if (this.resultObj.Favourites.length > 0) {
+            for (let i = 0; i < this.resultObj.Favourites.length; i++) {
+                this.appendObjByCategory(this.resultObj.Favourites[i], true);
+            }
+        }
+        else {
+            $("#ebm-objectcontainer .ebm-objlist").append(`<div class='not_found text-center'>
+                                                                Favorites empty.
+                                                            </div>`)
         }
     };
 
     this.appendObjByCategory = function (_obj, isfav) {
         let set_fav = "";
+        let fav = "";
         if (this.login == "uc" && !isfav) {
             let isfav = "";
             let tooltip = "";
@@ -337,6 +351,7 @@
             set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
         }
         else if (this.login == "uc" && isfav) {
+            fav = "fav";
             isfav = "favourited";
             tooltip = "Remove from Favourites.";
             set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
@@ -344,12 +359,12 @@
 
         if ($(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).length <= 0) {
             $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item-categorised" id="ctypeContaner${_obj.EbObjectType}">
-                                                            <div class="head"><i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i> ${_obj.EbType}<span class="category_objCount"></span></div>
+                                                            <div class="head"><i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i> ${this.objTypes[_obj.EbObjectType].Name}s<span class="category_objCount"></span></div>
                                                             <div class="body" id="categoryType${_obj.EbObjectType}"></div>
                                                         </div>`);
         }
 
-        $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item" klink="true">
+        $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item ${fav}" klink="true">
                                                         <a href='${this.decideUrl(_obj)}'>
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
@@ -404,6 +419,11 @@
             }
         }
     }
+
+    this.refresh = function () {
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");
+        store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login);
+    };
 
     this.start();
 }

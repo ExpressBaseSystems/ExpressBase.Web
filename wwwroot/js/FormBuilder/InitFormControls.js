@@ -239,20 +239,26 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            this.Bot.userLoc.lat = position.coords.latitude;
-            this.Bot.userLoc.long = position.coords.longitude;
+        ebcontext.userLoc = { lat: 37.754404 ,long: -122.447086};
+        if (_rowId === undefined || _rowId === 0) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                ebcontext.userLoc.lat = position.coords.latitude;
+                ebcontext.userLoc.long = position.coords.longitude;
+                this.InitMap4inpG(ctrl);
+            }.bind(this));
+        }
+        else {
             this.InitMap4inpG(ctrl);
-        }.bind(this));
+        }        
     };
 
     this.InitMap4inpG = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
-        var name = ctrl.Name;
+        var name = ctrl.EbSid;
         $input.locationpicker({
             location: {
-                latitude: this.Bot.userLoc.lat,
-                longitude: this.Bot.userLoc.long
+                latitude: ebcontext.userLoc.lat,
+                longitude: ebcontext.userLoc.long
             },
             radius: 5,
             zoom: 18,
@@ -267,7 +273,7 @@
                 componentRestrictions: { country: 'fr' }
             }
         });
-        $(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
+        //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
     };
 
@@ -408,7 +414,7 @@
     };
 
     this.SysLocation = function (ctrl) {
-        if (_rowId === 0) {
+        if (_rowId === undefined || _rowId === 0) {
             setTimeout(function () {
                 if (ctrl.DisplayMember === 1) {
                     $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);

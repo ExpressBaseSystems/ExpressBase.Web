@@ -686,14 +686,16 @@ const EbSelect = function (ctrl, options) {
 
     this.ApplyRowFocusStyle = function ($tr) {
         $tr.find('.focus').removeClass('focus');
-        $tr.addClass('selected');
-        $tr.find('td').css("border-color", "transparent");
+        setTimeout(function () {
+            $tr.addClass('selected');
+        },10);
     };
 
     this.RemoveRowFocusStyle = function ($tr) {
-        $tr = $(this.DTSelector + " tr.selected");/////////
-        $tr.find('td').css("border-color", "#ddd");
-        $tr.removeClass('selected');
+        $tr = $tr || $(this.DTSelector + " tr.selected");
+        if ($tr.length === 0)
+            return;
+        //$tr.removeClass('selected');
     };
 
     this.tagCloseBtnHand = function (e) {
@@ -738,7 +740,7 @@ const EbSelect = function (ctrl, options) {
         let container = $('#' + this.name + 'DDdiv');
         let container1 = $('#' + this.name + 'Container');
         let _name = this.ComboObj.EbSid_CtxId;
-        if ((!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
+        if (this.Vobj.DDstate === true && (!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
             if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
                 if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched

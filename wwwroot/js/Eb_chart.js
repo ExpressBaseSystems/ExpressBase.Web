@@ -338,11 +338,11 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
             }
             else {
-                let obj = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
-                this.EbObject.$type = obj.$type;
+                this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 this.type = "bar";
             }
+            this.EbObject.Charttype = obj.Charttype;
             this.rearrangeObjects();
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
@@ -1386,6 +1386,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.EbObject.Xaxis = this.prevObj.Xaxis;
         this.EbObject.Yaxis = this.prevObj.Yaxis;
         this.EbObject.Pippedfrom = this.prevObj.Pippedfrom;
+        this.EbObject.DisplayName = this.prevObj.DisplayName;
     }
 
     this.toolTipCallback = function (item, data) {
@@ -1408,7 +1409,7 @@ function initMap() {
     var directionsDisplay = new google.maps.DirectionsRenderer();
     var mid = Math.floor(Xlabel.length / 2);
     var map = new google.maps.Map(document.getElementById('map' + TableId), {
-        zoom: zoomlevel,
+        zoom: zoomlevel || 5,
         center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
         gestureHandling: 'greedy'
         // mapTypeId: google.maps.MapTypeId.ROADMAP

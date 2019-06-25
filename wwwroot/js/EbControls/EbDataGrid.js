@@ -840,6 +840,7 @@
 
         this.ctrl.showRow = this.showRow.bind(this);
         this.ctrl.hideRow = this.hideRow.bind(this);
+        this.ctrl.hideRows = this.hideRows.bind(this);
         this.defineRowCount();
 
         this.$table.on("click", ".check-row", this.checkRow_click);

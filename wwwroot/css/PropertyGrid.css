@@ -425,13 +425,14 @@
 .propgrid-helpbox {
     display: none;
     vertical-align: bottom;
-    height: 50px;
+    min-height: 50px;
     border-bottom: solid 1px whitesmoke;
     color: #333;
     overflow-y: auto;
     font-size: 10px;
     padding: 3px;
     background-color: rgba(204, 204, 204, 0.8);
+    margin-bottom: 36px;
 }
 
 .property-grid-cont .bs-searchbox .form-control {

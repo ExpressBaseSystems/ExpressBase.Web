@@ -37,6 +37,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult Index(string objid, int objtype, bool buildermode = true)
         {
+            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             dynamic dsobj = null;
             Context2Js _c2js = new Context2Js();
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);

@@ -143,7 +143,15 @@
     };
 
     this.InitEditModeCtrls = function (editModeObj) {
-        this.rootContainerObj = editModeObj;
+        let ObjCopy = { ...editModeObj };
+        let newObj = new EbObjects["Eb" + editModeObj.ObjType](editModeObj.EbSid, editModeObj);
+        this.rootContainerObj = newObj;
+        this.rootContainerObj.Name = ObjCopy.Name;
+        this.rootContainerObj.EbSid_CtxId = ObjCopy.EbSid_CtxId;
+
+        commonO.Current_obj = this.rootContainerObj;
+        this.EbObject = this.rootContainerObj;
+
         // convert json to ebobjects
         Proc(editModeObj, this.rootContainerObj);
         $(".Eb-ctrlContainer").each(function (i, el) {

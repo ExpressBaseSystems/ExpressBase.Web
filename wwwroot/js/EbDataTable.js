@@ -335,8 +335,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
-                    $extCont: $(".ppcont"),
-                    style: { top: "80px" }
+                    $extCont: $(".ppcont")
                 }, this.PGobj);
 
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
@@ -3365,7 +3364,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else if (this.popup) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {

@@ -96,6 +96,7 @@ const EbSelect = function (ctrl, options) {
         try {
             $('#' + this.name + 'Wraper [class=open-indicator]').hide();
             this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
+            this.$searchBoxes.keyup(this.searchboxKeyup);
             this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
             $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
@@ -123,6 +124,16 @@ const EbSelect = function (ctrl, options) {
             console.error(err.message);
         }
     };
+
+    this.searchboxKeyup = function (e) {
+        let $e = $(event.target);
+        if (this.valueMembers.length === 0)
+            $e.css("width", "100%");
+        else {
+            let count = $e.val().length;
+            $e.css("width", (count * 7.2 + 12) + "px");
+        }
+    }.bind(this);
 
     this.getColumn = function (colName) { return this.columnVals[colName]; }.bind(this);
 

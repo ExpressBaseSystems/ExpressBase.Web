@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
+using System.Collections.Generic;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -882,6 +883,87 @@ namespace ExpressBase.Web.Controllers
                 return JsonConvert.SerializeObject(res);
             }
             catch(Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
+        }
+
+        public string IntegrateConfDelete()
+        {
+            EbIntegrationConfDeleteResponse res = new EbIntegrationConfDeleteResponse();
+            var req = this.HttpContext.Request.Form;
+            try
+            {
+                EbIntegrationConf _obj = new EbIntegrationConf
+                {
+                    Id = Convert.ToInt32(req["Id"])
+                };
+                res = this.ServiceClient.Post<EbIntegrationConfDeleteResponse>(new EbIntergationConfDeleteRequest { IntegrationConfdelete = _obj, SolnId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(res);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
+        }
+
+        public string IntegrateDelete()
+        {
+            EbIntegrationDeleteResponse res = new EbIntegrationDeleteResponse();
+            var req = this.HttpContext.Request.Form;
+            try
+            {
+                EbIntegration _obj = new EbIntegration
+                {
+                    Id = Convert.ToInt32(req["Id"])
+                };
+                res = this.ServiceClient.Post<EbIntegrationDeleteResponse>(new EbIntergationDeleteRequest { Integrationdelete = _obj, SolnId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(res);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
+        }
+
+        public string IntegrationSwitch(string preferancetype, string sid)
+        {
+            var req = JsonConvert.DeserializeObject<List<EbIntegration>>(preferancetype);
+            var SolnId = ViewBag.cid;
+            EbIntegrationSwitchResponse res = new EbIntegrationSwitchResponse();
+           
+            try
+            {
+                res = this.ServiceClient.Post<EbIntegrationSwitchResponse>(new EbIntergationSwitchRequest { Integrations = req, SolnId = sid });
+                return JsonConvert.SerializeObject(res);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
+        }
+
+        public string PrimaryDelete(string preferancetype, string sid, string deleteId)
+        {
+            var req = JsonConvert.DeserializeObject<EbIntegration>(preferancetype);
+            var SolnId = ViewBag.cid;
+            EbIntegrationResponse res = new EbIntegrationResponse();
+
+            try
+            {
+                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = req, SolnId = sid });
+                EbIntegration _obj = new EbIntegration
+                {
+                    Id = Convert.ToInt32(deleteId)
+                };
+                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntergationDeleteRequest { Integrationdelete = _obj, SolnId = sid });
+                return JsonConvert.SerializeObject(res);
+            }
+            catch (Exception e)
             {
                 res.ResponseStatus.Message = e.Message;
                 return JsonConvert.SerializeObject(res);

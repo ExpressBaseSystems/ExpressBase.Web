@@ -584,11 +584,11 @@ const EbSelect = function (ctrl, options) {
             this.$searchBoxes.hide();
         else
             this.$searchBoxes.show();
-        setTimeout(function () {// to adjust search-block
-            let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
-            $(".search-block .input-group").css("height", maxHeight + "px");
-            $('#' + this.name + 'Wraper [type=search]').val("");
-        }.bind(this), 10);
+        //setTimeout(function () {// to adjust search-block
+        //    let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
+        //    $(".search-block .input-group").css("height", maxHeight + "px");
+        //    $('#' + this.name + 'Wraper [type=search]').val("");
+        //}.bind(this), 10);
 
         this.setColumnvals();
         this.$inp.val(this.Vobj.valueMembers).trigger("change");

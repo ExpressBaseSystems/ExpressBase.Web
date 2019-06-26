@@ -675,8 +675,9 @@ const EbSelect = function (ctrl, options) {
 
     this.RaiseErrIf = function () {
         if (this.Vobj.valueMembers.length !== this.Vobj.displayMembers[this.dmNames[0]].length) {
-            alert('valueMember and displayMembers length miss match found !!!!');
-            console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
+            //alert('valueMember and displayMembers length miss match found !!!!');
+            //console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
+            console.eb_warn('valueMember and displayMembers length miss match found !!!!');
             console.log('valueMembers=' + this.Vobj.valueMember);
             console.log('displayMember[0] = ' + this.Vobj.displayMember[this.dmNames[0]]);
         }

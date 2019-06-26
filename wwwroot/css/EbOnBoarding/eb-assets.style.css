@@ -165,6 +165,55 @@
     padding: 5px;
     width: 16.6666666667%;
 }
+
+    .connection_wrap_outer {
+        position: relative;
+        /*width: 50%;*/
+    }
+
+    .image-vender {
+        display: block;
+        width: 100%;
+        height: auto;
+        margin:auto;
+    }
+
+    .image-add {
+        position: absolute;
+        /* top: 79px; */
+        bottom: 0;
+        /* left: 136px; */
+        right: 0;
+        /* height: 100%; */
+        /* width: 100%; */
+        opacity: 0;
+        transition: .5s ease;
+        /* background-color: white; */
+        margin-right: 15%;
+        margin-bottom: 14%;
+    }
+
+    .connection_wrap_outer:hover .image-add {
+        opacity: 1;
+    }
+    .connection_wrap_outer:hover .image-vender {
+        opacity: .5;
+    }
+
+    .fa-plus-circle {
+        color: black;
+        font-size: 37px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+
+
 .connection_wrap {
     /*margin: 5px;*/
     height: 129px;
@@ -177,7 +226,9 @@
 }
     .connection_wrap .connection_wrap_header {
         padding: 10px 41px;
-        display: flex;
+        /*display: flex;*/
+        margin: auto;
+        margin-bottom: 13%;
     }
     .connection_wrap_footer {
         padding: 8px 99px;

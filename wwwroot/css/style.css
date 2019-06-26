@@ -177,24 +177,36 @@ body {
 .login_spiner {
     display: none;
 }
-
 .eb_login {
     height: 100vh;
     max-height: 100vh;
-    background-color: #f9f9f9;
+    background: linear-gradient(to right,#eef9fe,#edf7ff);
+    font-family: Montserrat;
+    background: #508bf9;
+    background-image: linear-gradient(to right bottom, #508bf9, #4177e2, #3264cc, #2151b6, #0a3fa0);
 }
-
-.inputEmail {
-    border-top-right-radius: 4px !important;
-    border-bottom-right-radius: 4px !important;
+.ebtext-lg {
+    height: 45px;
+    padding-left: 40px;
 }
-
-.btm_pdng {
-    font-size: 13px;
-    color: #898a8a;
-    padding-bottom: 1.5em;
+.log-username, .log-pw {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: #508bf9;
 }
-
+    .log-username:before {
+        font-family: FontAwesome;
+        content: "\f007";
+        position: absolute;
+        margin-left: 15px;
+    }
+    .log-pw:before {
+        font-family: FontAwesome;
+        content: "\f084";
+        position: absolute;
+        margin-left: 15px;
+    }
 .mb-25 {
     margin-bottom: 25px;
 }
@@ -202,50 +214,108 @@ body {
 .eb_login .container {
     height: inherit;
 }
-
+.eb_login .header {
+    position: fixed;
+    width: 100%;
+    padding: 10px 45px 10px 10px;
+    z-index: 10;
+}
+.callActionBtn {
+    background: transparent;
+    border: 1px solid #508bf9;
+    padding: 6px 12px;
+    border-radius: 4px;
+    color: #508bf9;
+    font-weight: 500;
+    margin-left: 15px;
+}
 .login_container {
-    max-width: 400px;
-    width: 100% !important;
+    background-color: white;
+    overflow: hidden;
+    font-family: Montserrat;
+    font-weight: 300;
+    position: relative;
+    height: 100%;
+    border-left: 1px solid #dbf1fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login_container_usr {
+    max-width: 450px;
     background-color: white;
     margin: 0 auto;
     border-radius: 4px;
     overflow: hidden;
     font-family: Montserrat;
     font-weight: 300;
-    margin-top: 10%;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     position: relative;
 }
-
-    .login_container form {
-        padding: 30px;
+    .login_container label, .login_container_usr label {
+        font-weight: 500;
     }
-
-    .login_container h1 {
-        font-size: 1.8em;
-        margin-bottom: 10px;
-        font-weight: 300;
-        margin-top: 10px;
+    .login_container .fpNdRemMe, .login_container_usr .fpNdRemMe {
+        display: flex;
+        justify-content: space-between;
     }
-
-    .login_container a {
-        text-decoration: none;
-        color: #666;
-        text-align: center;
-        display: inline-block;
+    .login_container .rememberMe, .login_container_usr .rememberMe {
+        display: flex;
+        align-items: center;
     }
-
-    .login_container .signin-btn {
-        width: 100%;
-        background-color: #31d031;
-        color: white;
-    }
-
-.login-sec-image {
+        .login_container .rememberMe [type='checkbox'], .login_container_usr .rememberMe [type='checkbox'] {
+            margin: 0 5px 0 0;
+            width: 15px;
+            height: 15px;
+        }
+.login_container form, .login_container_usr form{
+    padding: 30px;
     width: 100%;
-    padding-top: 10px;
-    padding-bottom: 15px;
+    max-width: 700px;
 }
+
+.login_container h1, .login_container_usr h1{
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.login_container a, .login_container_usr a{
+    text-decoration: none;
+    color: #666;
+    text-align: center;
+    display: inline-block;
+}
+
+.login_container .signin-btn, .login_container_usr .signin-btn {
+    background-color: #508bf9;
+    color: white;
+    height: 45px;
+    padding: 6px 30px;
+}
+    .login_container .signin-btn:hover, .login_container_usr .signin-btn:hover {
+        background: #3579f7;
+    }
+    .login_container .btn.disabled, .login_container_us .btn.disabled {
+        cursor: pointer;
+        pointer-events: none;
+        filter: unset;
+        -webkit-box-shadow: inherit;
+        box-shadow: inherit;
+        opacity: unset;
+    }
+.login_container .log-eblogo {
+    position: absolute;
+    top: 7px;
+    height: 40px;
+    left: 35px;
+}
+    .login-sec-image {
+        width: 100%;
+        padding-top: 10px;
+        padding-bottom: 15px;
+    }
 
     .login-sec-image img {
         height: 70px;
@@ -255,14 +325,17 @@ body {
 .w-100 {
     width: 100%;
 }
-
 /*tenant logoin page*/
 .lg_content {
+    padding-left: 50px;
+    max-width: 800px;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-end;
 }
 
 .h100andflex {
     height: 100%;
-    padding-top: 65px;
     display: flex;
     align-items: center;
 }
@@ -275,7 +348,7 @@ body {
 
 .info_sec_log_container {
     position: relative;
-    color: #777474;
+    color: white;
     font-family: Montserrat;
     line-height: 2.5em;
 }
@@ -294,13 +367,11 @@ body {
     width: 93%;
     position: relative;
     left: 0;
-    margin-top: -100px;
+    margin-top: -80px;
 }
-
     .lg_img img {
         width: 100%;
     }
-
 .prelative {
     position: relative;
 }
@@ -439,6 +510,18 @@ Navigation bar
 
     .ext-pageheader .drp_container::after {
         display: none;
+    }
+    .login_container form, .login_container_usr form{
+        padding:0 !important;
+    }
+    .login_container .log-eblogo {
+        left: 0;
+    }
+    .eb_login{
+        background:white;
+    }
+    .login_container_usr{
+        box-shadow:none;
     }
 }
 

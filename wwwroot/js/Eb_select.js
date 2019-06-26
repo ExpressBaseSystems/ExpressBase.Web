@@ -231,8 +231,8 @@ const EbSelect = function (ctrl, options) {
             else {
                 let $row = $(this.DTSelector + ` tbody tr[role="row"]`);
                 if ($row.length === 0) {//
-                    console.log(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`);
-                    this.$inp.eb_warn(StrValues).trigger("change");
+                    console.log(`>> eb message : none available value '${StrValues}' set for  powerSelect '${this.ComboObj.Name}'`);
+                    this.$inp.val(StrValues).trigger("change");
                 }
                 else
                     $row.trigger("dblclick");
@@ -675,8 +675,9 @@ const EbSelect = function (ctrl, options) {
 
     this.RaiseErrIf = function () {
         if (this.Vobj.valueMembers.length !== this.Vobj.displayMembers[this.dmNames[0]].length) {
-            alert('valueMember and displayMembers length miss match found !!!!');
-            console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
+            //alert('valueMember and displayMembers length miss match found !!!!');
+            //console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
+            console.eb_warn('valueMember and displayMembers length miss match found !!!!');
             console.log('valueMembers=' + this.Vobj.valueMember);
             console.log('displayMember[0] = ' + this.Vobj.displayMember[this.dmNames[0]]);
         }

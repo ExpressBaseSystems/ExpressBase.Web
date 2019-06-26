@@ -461,7 +461,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*border: 1px solid #ccc;*/
     /*box-shadow: var(--eb-shadow);*/
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12), 0 0 14px 0 rgba(0, 0, 0, 0.17);
-    height: 100%;
+    height: calc(100% - 40px);
     background-color: transparent;
     width: 380px;
     /*overflow: hidden;*/
@@ -684,7 +684,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     z-index: -1;
 }
 
-[isrendermode="True"] [eb-hidden="True"] {
+[isrendermode="true"] [eb-hidden="True"] {
     display: none;
 }
 
@@ -703,7 +703,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         width: 100%;*/
 }
 
-.form-buider-form[isrendermode="False"] .Eb-ctrlContainer table > tbody > tr > .form-render-table-Td {
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer table > tbody > tr > .form-render-table-Td {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/

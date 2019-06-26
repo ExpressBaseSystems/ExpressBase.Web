@@ -845,7 +845,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             if ($("#map" + this.tableId).children().length === 0)
-                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:inherit;width:100%;'></div>");
+                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:100%;width:100%;'></div>");
             Xlabel = this.XLabel;
             Ylabel = this.YLabel;
             showRoute = this.EbObject.ShowRoute;

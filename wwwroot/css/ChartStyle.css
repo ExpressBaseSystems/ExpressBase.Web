@@ -5,13 +5,13 @@
 
 .tag-wraper {
     border: solid 1px #eee;
-    /*height:48%;*/
+    height: inherit;
     width: 100%;
 }
 
 .tag-scroll {
     overflow-y: auto;
-    height: calc(100% - 30px);
+    height: inherit;
 }
 
 .tag-wraper:nth-child(2) {
@@ -69,4 +69,10 @@
 
 #obj_icons .btn{
     padding:1px!important;
+}
+
+.canvasstyle {
+    height: calc(100% - 67px);
+    box-shadow: var(--eb-shadow);
+    margin-top: 10px;
 }

@@ -384,7 +384,7 @@
                                                             List<EbIntegrationData> Row1 = ViewBag.Connections.Integrations["SMTP"];
                                                             foreach (EbIntegrationData row1 in Row1)
                                                             {
-                                                                <div class="integrationContainer hover-mover @string.Concat(row1.Type, "edit") @row1.Preference" data-whatever="@row1.Type" datawhater="@row1.ConfId" dataConffId="@row1.Id">
+                                                                <div class="integrationContainer hover-mover @string.Concat(row1.Type, "edit") @row1.Preference" data-whatever="@row1.Type" datawhater="@row1.Id" dataConffId="@row1.ConfId">
 
                                                                     <div class="integrationContainer_Image">
                                                                         @Html.Raw(Image_url[row1.Ctype])
@@ -473,7 +473,7 @@
                                                             List<EbIntegrationData> Row4 = ViewBag.Connections.Integrations["SMS"];
                                                             foreach (EbIntegrationData row4 in Row4)
                                                             {
-                                                                <div class="integrationContainer hover-mover @string.Concat(row4.Type, "edit") @row4.Preference" data-whatever="@row4.Type" datawhater="@row4.ConfId" dataConffId="@row4.Id">
+                                                                <div class="integrationContainer hover-mover @string.Concat(row4.Type, "edit") @row4.Preference" data-whatever="@row4.Type" datawhater="@row4.Id" dataConffId="@row4.ConfId">
 
                                                                     <div class="integrationContainer_Image">
                                                                         @Html.Raw(Image_url[row4.Ctype])

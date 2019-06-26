@@ -275,10 +275,12 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         }
         $(subDivId).focus();
 
-        if (this.type === "googlemap")
-            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-        else
+        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        else {
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+            this.type = "googlemap";
+        }
         this.PcFlag = false;
     }.bind(this);
 
@@ -335,14 +337,16 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.prevObj = this.EbObject;
             if (obj.Charttype == 1) {
                 this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
+                commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
             }
             else {
-                let obj = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
-                this.EbObject.$type = obj.$type;
+                this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
+                commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 this.type = "bar";
             }
+            this.EbObject.Charttype = obj.Charttype;
             this.rearrangeObjects();
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
@@ -507,7 +511,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 </div>
                 </div> 
                 <input type='color' id='fontSel' style='display:none;'>
-                <div id='canvasDiv${this.tableId}' style='height:100%;padding-bottom:10px;'><canvas id='myChart${this.tableId}'></canvas></div> 
+                <div id='canvasDiv${this.tableId}' class="canvasstyle" ><canvas id='myChart${this.tableId}'></canvas></div> 
                 </div> 
                 </div>`);
     };
@@ -579,8 +583,10 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["bar"]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
 
-        if (this.login == "uc") {
+        if (this.login === "uc") {
             dvcontainerObj.modifyNavigation();
+            if (this.EbObject.Charttype === 1)
+                $(`#btnColumnCollapse${this.tableId}`).hide();
         }
         //$("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
         this.bindEvents();
@@ -839,7 +845,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             if ($("#map" + this.tableId).children().length === 0)
-                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:inherit;width:100%;'></div>");
+                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:100%;width:100%;'></div>");
             Xlabel = this.XLabel;
             Ylabel = this.YLabel;
             showRoute = this.EbObject.ShowRoute;
@@ -1161,7 +1167,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         if ($("#columnsDisplay" + this.tableId).css("display") === "none") {
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
             $("#canvasDiv" + this.tableId).css("height", "100%");
-            //$("#myChart" + this.tableId).css("height", "inherit");
         }
         else {
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
@@ -1386,6 +1391,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.EbObject.Xaxis = this.prevObj.Xaxis;
         this.EbObject.Yaxis = this.prevObj.Yaxis;
         this.EbObject.Pippedfrom = this.prevObj.Pippedfrom;
+        this.EbObject.DisplayName = this.prevObj.DisplayName;
     }
 
     this.toolTipCallback = function (item, data) {
@@ -1408,7 +1414,7 @@ function initMap() {
     var directionsDisplay = new google.maps.DirectionsRenderer();
     var mid = Math.floor(Xlabel.length / 2);
     var map = new google.maps.Map(document.getElementById('map' + TableId), {
-        zoom: zoomlevel,
+        zoom: zoomlevel || 5,
         center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
         gestureHandling: 'greedy'
         // mapTypeId: google.maps.MapTypeId.ROADMAP

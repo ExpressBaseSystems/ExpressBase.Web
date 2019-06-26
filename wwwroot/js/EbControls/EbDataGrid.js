@@ -764,9 +764,9 @@
     };
 
     this.hideRows = function (rowIds) {
-        arguments.each(function (i, rowId) {
-            this.hideRow(rowId);
-        }.bind(this));
+        for (let i = 0; i < arguments.length; i++) {
+            this.hideRow(arguments[i]);
+        }
     };
 
     this.showRow = function (rowId) {

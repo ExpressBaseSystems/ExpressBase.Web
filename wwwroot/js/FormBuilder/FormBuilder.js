@@ -9,6 +9,7 @@
     this.rootContainerObj = null;
     this.builderType = options.builderType;
     this.$propGrid = $("#" + options.PGId);
+    this.BeforeSave = function () { this.PGobj.getvaluesFromPG(); return true; }.bind(this);
 
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
 

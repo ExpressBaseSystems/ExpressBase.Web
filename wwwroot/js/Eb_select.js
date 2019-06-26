@@ -96,6 +96,7 @@ const EbSelect = function (ctrl, options) {
         try {
             $('#' + this.name + 'Wraper [class=open-indicator]').hide();
             this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
+            this.$searchBoxes.keyup(this.searchboxKeyup);
             this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
             $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
@@ -124,10 +125,21 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
+    this.searchboxKeyup = function (e) {
+        let $e = $(event.target);
+        if (this.valueMembers.length === 0)
+            $e.css("width", "100%");
+        else {
+            let count = $e.val().length;
+            $e.css("width", (count * 7.2 + 12) + "px");
+        }
+    }.bind(this);
+
     this.getColumn = function (colName) { return this.columnVals[colName]; }.bind(this);
 
     this.searchBoxFocus = function () {
         this.IsSearchBoxFocused = true;
+        this.RemoveRowFocusStyle();
     }.bind(this);
 
     //delayed search on combo searchbox
@@ -219,8 +231,8 @@ const EbSelect = function (ctrl, options) {
             else {
                 let $row = $(this.DTSelector + ` tbody tr[role="row"]`);
                 if ($row.length === 0) {//
-                    console.log(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`);
-                    this.$inp.eb_warn(StrValues).trigger("change");
+                    console.log(`>> eb message : none available value '${StrValues}' set for  powerSelect '${this.ComboObj.Name}'`);
+                    this.$inp.val(StrValues).trigger("change");
                 }
                 else
                     $row.trigger("dblclick");
@@ -573,11 +585,11 @@ const EbSelect = function (ctrl, options) {
             this.$searchBoxes.hide();
         else
             this.$searchBoxes.show();
-        setTimeout(function () {// to adjust search-block
-            let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
-            $(".search-block .input-group").css("height", maxHeight + "px");
-            $('#' + this.name + 'Wraper [type=search]').val("");
-        }.bind(this), 10);
+        //setTimeout(function () {// to adjust search-block
+        //    let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
+        //    $(".search-block .input-group").css("height", maxHeight + "px");
+        //    $('#' + this.name + 'Wraper [type=search]').val("");
+        //}.bind(this), 10);
 
         this.setColumnvals();
         this.$inp.val(this.Vobj.valueMembers).trigger("change");
@@ -638,7 +650,7 @@ const EbSelect = function (ctrl, options) {
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
                 this.datatable.Api.cell($cell).focus();
                 this.ApplyRowFocusStyle($cell.closest("tr"));
-            }.bind(this), 10);
+            }.bind(this), 1);
         }
 
         this.V_updateCk();

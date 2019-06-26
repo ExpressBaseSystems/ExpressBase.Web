@@ -39,6 +39,8 @@
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
             $("#Integration_loder").EbLoader("hide");
             if (data) {
                 EbMessage("show", { Message: "Integreation Changed Successfully" });
@@ -834,23 +836,22 @@
 
                                 this.IntegrationSubmit();
                             }
-                            else if (key == "EbDATA" || key == "Cloudinary") {
-                                if (temp == null) {
+                            //else if (key == "EbDATA" || key == "Cloudinary") {
+                            //    if (temp == null) {
+                            //        this.IntegrationSubmit();
+                            //    }
+                            //    else {
+                            //        EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
+                            //    }
+                            //}
+                            else if (key == "SMS" || key == "SMTP") {
+                                if (temp.length == 1)
+                                {
+                                    postData.Preference = "FALLBACK";
                                     this.IntegrationSubmit();
                                 }
                                 else {
                                     EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
-                                }
-                            }
-                            else if (key == "SMS" || key == "SMTP") {
-                                if (temp !== undefined) {
-                                    if (temp.count != 2) {
-                                        for (var i = 0, n = temp.length; i < n; i++) {
-                                            if (temp[i].Preference == "1") {
-                                                postData.Preference = "FALLBACK";
-                                            }
-                                        }
-                                    }
                                 }
                             }
                             else if (key == "EbFILES") {
@@ -869,58 +870,58 @@
                 };
 
                 if ($trigger.hasClass('PGSQLedit')) {
-                    options.items.EbDATA = { name: "Set as EbData" },
-                        options.items.EbFILES = { name: "Set as EbFiles" },
-                        options.items.Delete = { name: "Delete" },
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('MYSQLedit')) {
-                    options.items.EbDATA = { name: "Set as EbData" },
-                        options.items.EbFILES = { name: "Set as EbFiles" },
-                        options.items.Delete = { name: "Delete" },
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('MSSQLedit')) {
-                    options.items.EbDATA = { name: "Set as EbData" },
-                        options.items.EbFILES = { name: "Set as EbDiles" },
-                        options.items.Delete = { name: "Delete" },
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('ORACLEedit')) {
-                    options.items.EbDATA = { name: "Set as EbData" },
-                        options.items.EbFILES = { name: "Set as EbDiles" },
-                        options.items.Delete = { name: "Delete" },
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('MongoDBedit')) {
-                    options.items.EbDATA = { name: "Set as EbData" },
-                        options.items.EbFILES = { name: "Set as EbDiles" },
-                        options.items.Delete = { name: "Delete" },
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
                         //options.items.EbLOGS = { name: "Set as EbLogs" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('Twilioedit')) {
                     options.items.SMS = { name: "Set as SMS" },
-                        options.items.Delete = { name: "Delete" },
+                        options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('ExpertTextingedit')) {
                     options.items.SMS = { name: "Set as SMS" },
-                        options.items.Delete = { name: "Delete" },
+                        options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('SMTPedit')) {
                     options.items.SMTP = { name: "Set as SMTP" },
-                        options.items.Delete = { name: "Delete" },
+                        options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('Cloudinaryedit')) {
                     options.items.Cloudinary = { name: "Set as Cloudinary" },
-                        options.items.Delete = { name: "Delete" },
+                        options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
                 return options;

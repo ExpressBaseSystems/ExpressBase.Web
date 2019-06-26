@@ -467,3 +467,150 @@ input {
    
     margin-bottom:20px;
 }
+
+
+/*************line seperation form social meadia login****************/
+
+
+.hr-text {
+    line-height: 1em;
+    position: relative;
+    outline: 0;
+    border: 0;
+    color: black;
+    text-align: center;
+    height: 1.5em;
+    opacity: .5;
+}
+    .hr-text:before {
+        content: '';
+        /*// use the linear-gradient for the fading effect // use a solid background color for a solid bar*/ 
+        background: linear-gradient(to right, transparent, #818078, transparent);
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 1px;
+    }
+
+.hr-text:after {
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    color: black;
+    padding: 0 .5em;
+    line-height: 1.5em;
+    /*// this is really the only tricky part, you need to specify the  background color of the container element...*/
+    color: #818078;
+    background-color: #fcfcfa;
+}
+
+
+
+
+
+
+
+  /******social media sign in******/
+
+.smGlobalBtn { /* global button class */
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border: 2px solid #ddd; /* add border to the buttons */
+    box-shadow: 0 3px 3px #999;
+    padding: 0px;
+    text-decoration: none !important;
+    text-align: center;
+    color: #fff;
+    font-size: 25px;
+    font-weight: normal;
+    line-height: 2em;
+    border-radius: 27px;
+    -moz-border-radius: 27px;
+    -webkit-border-radius: 27px;
+}
+
+/* facebook button class*/
+.facebookBtn {
+    background: #4060A5;
+}
+
+    .facebookBtn:before { /* use :before to add the relevant icons */
+        font-family: "FontAwesome";
+        content: "\f09a"; /* add facebook icon */
+    }
+
+    .facebookBtn:hover {
+        color: #4060A5;
+        background: #fff;
+        border-color: #4060A5; /* change the border color on mouse hover */
+    }
+
+/* twitter button class*/
+.twitterBtn {
+    background: #00ABE3;
+}
+
+    .twitterBtn:before {
+        font-family: "FontAwesome";
+        content: "\f099"; /* add twitter icon */
+    }
+
+    .twitterBtn:hover {
+        color: #00ABE3;
+        background: #fff;
+        border-color: #00ABE3;
+    }
+
+
+/* linkedin button class*/
+.linkedinBtn {
+    background: #0094BC;
+}
+
+    .linkedinBtn:before {
+        font-family: "FontAwesome";
+        content: "\f0e1"; /* add linkedin icon */
+    }
+
+    .linkedinBtn:hover {
+        color: #0094BC;
+        background: #fff;
+        border-color: #0094BC;
+    }
+
+/* pinterest button class*/
+.gmailBtn {
+    background: #cb2027;
+}
+
+.gmailBtn:before {
+    font-family: "FontAwesome";
+    content: "\f1a0"; /* add pinterest icon */
+}
+
+.gmailBtn:hover {
+    color: #cb2027;
+    background: #fff;
+    border-color: #cb2027;
+}
+
+/* github button class*/
+.githubBtn {
+    background: #201f1f;
+}
+
+    .githubBtn:before {
+        font-family: "FontAwesome";
+        content: "\f09b"; /* add pinterest icon */
+    }
+
+    .githubBtn:hover {
+        color: #201f1f;
+        background: #fff;
+        border-color: #201f1f;
+    }
+

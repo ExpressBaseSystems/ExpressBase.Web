@@ -124,11 +124,12 @@
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
+            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-            if (ctrl.OnChange) {
-                let fun = new Function("form", "User", atob(ctrl.OnChange));
+            if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code) {
+                let fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
                 $input.MonthPicker({
                     OnAfterChooseMonth: fun.bind(this, formObject, userObject)
                 });

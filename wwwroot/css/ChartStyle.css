@@ -66,3 +66,7 @@
     padding-right: 12px;
     font-size: 20px;
 }
+
+#obj_icons .btn{
+    padding:1px!important;
+}

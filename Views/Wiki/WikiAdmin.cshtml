@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    //Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+<script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
+<script>
+    $(document).ready(function () {
+        new addwiki();
+    });
+</script>
+
+
+<link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+<style type="text/css">
+</style>
+
+
+<div class="container" style="padding-top:25px;padding-left:20px; padding-right:0px; position:fixed">
+
+    <div class=" row ">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="row edit_wiki">
+                    <div class="col-lg-12">
+                        <h1> Wiki Admin page</h1>
+                    </div>
+                </div>
+                <div class="row wiki_admin_border" style="margin-bottom:5px">
+                    <div class="col-sm-1" style="">
+                        <a class="wikies_list" data-val="Draft">Drafts</a>
+                    </div>
+                    <div class="col-sm-1" style="">
+                        <a class="wikies_list" data-val="Publish">Published</a>
+                    </div>
+                    <div class="col-sm-1" style="">
+                        <a class="wikies_list" data-val="Unpublish">UnPublished</a>
+                    </div>
+                    <div class="col-sm-1" style="">
+                        <a class="wikies_list" data-val="PublicView">PublicView</a>
+                    </div>
+                </div>
+                <div class="row draft" show>
+                    <div class="col-sm-12 public" id="public" style="overflow:auto;height:500px;">
+                    </div>
+
+</div>
+</div></div></div></div>

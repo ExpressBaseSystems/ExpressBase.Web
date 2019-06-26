@@ -396,9 +396,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .dgtbl .ctrl-cover {
-    border: none;
+    /*border: none;
     border-right: 1px solid rgba(34,36,38,.15);
-    border-bottom: none;
+    border-bottom: none;*/
 }
 
 .Dg_body > .dgtbl > tbody > tr[is-editing=true] {
@@ -588,7 +588,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
-.ctrl-cover .dropdown-toggle {
+.ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
     border-radius: 1px;
     font-size: 13px;
     height: 24px;

@@ -124,7 +124,6 @@
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
-            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
@@ -134,6 +133,7 @@
                     OnAfterChooseMonth: fun.bind(this, formObject, userObject)
                 });
             }
+            ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";

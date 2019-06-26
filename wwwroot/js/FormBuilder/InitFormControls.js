@@ -217,13 +217,13 @@
 
     this.setCurrentDate = function (ctrl, $input) {
         if (ctrl.EbDateType === 5) { //Date
-            $input.val(userObject.Preference.ShortDate);
+            $input.val(ebcontext.user.Preference.ShortDate);
         }
         else if (ctrl.EbDateType === 17) { //Time
-            $input.val(userObject.Preference.ShortTime);
+            $input.val(ebcontext.user.Preference.ShortTime);
         }
         else {
-            $input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
+            $input.val(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime);
         }
     };
 

@@ -472,6 +472,8 @@
             return true;
         else if (this.ObjCollection[getNav].EbObject.$type.indexOf("TableVisualization") !== -1)
             return true;
+        else if (this.ObjCollection[getNav].EbObject.$type.indexOf("WebForm") !== -1)
+            return true;
         else
             return false;
     };

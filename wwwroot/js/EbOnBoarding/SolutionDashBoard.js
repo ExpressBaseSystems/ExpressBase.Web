@@ -39,6 +39,8 @@
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
             $("#Integration_loder").EbLoader("hide");
             if (data) {
                 EbMessage("show", { Message: "Integreation Changed Successfully" });
@@ -792,7 +794,8 @@
             selector: '.inteConfContainer',
             trigger: 'left',
             build: function ($trigger) {
-                var options = {
+                var options =
+                {
                     callback: function (key, options) {
                         var temp = this.Connections.Integrations[key];
                         var id = $(options.$trigger).attr("datawhater");
@@ -806,8 +809,142 @@
                             }
                         }
                         else if (key == "Delete") {
+                            EbDialog("show",
+                                {
+                                    Message: "The Data will be permanently deleted ",
+                                    Buttons: {
+                                        "Confirm": {
+                                            Background: "green",
+                                            Align: "right",
+                                            FontColor: "white;"
+                                        },
+                                        "Cancel": {
+                                            Background: "red",
+                                            Align: "left",
+                                            FontColor: "white;"
+                                        }
+                                    },
+                                    CallBack: function (name) {
+                                        if (name == "Confirm")
+                                            this.IntergrationConfigDelete(posData = { "Id": id });
+                                    }.bind(this)
+                                });
+                        }
+                        else {
+                            postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfId": id }
+                            if (temp == undefined) {
+
+                                this.IntegrationSubmit();
+                            }
+                            //else if (key == "EbDATA" || key == "Cloudinary") {
+                            //    if (temp == null) {
+                            //        this.IntegrationSubmit();
+                            //    }
+                            //    else {
+                            //        EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
+                            //    }
+                            //}
+                            else if (key == "SMS" || key == "SMTP") {
+                                if (temp.length == 1)
+                                {
+                                    postData.Preference = "FALLBACK";
+                                    this.IntegrationSubmit();
+                                }
+                                else {
+                                    EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
+                                }
+                            }
+                            else if (key == "EbFILES") {
+                                if (temp.length > 0) {
+                                    postData.Preference = "OTHER";
+                                }
+                                this.IntegrationSubmit();
+                            }
+                            else {
+                                EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
+                            }
+
+                        }
+                    }.bind(this),
+                    items: {}
+                };
+
+                if ($trigger.hasClass('PGSQLedit')) {
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
+                        //options.items.EbLOGS = { name: "Set as EbLogs" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('MYSQLedit')) {
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
+                        //options.items.EbLOGS = { name: "Set as EbLogs" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('MSSQLedit')) {
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
+                        //options.items.EbLOGS = { name: "Set as EbLogs" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('ORACLEedit')) {
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
+                        //options.items.EbLOGS = { name: "Set as EbLogs" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('MongoDBedit')) {
+                    options.items.EbDATA = { name: "Configure as Data Store" },
+                        options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
+                        //options.items.EbLOGS = { name: "Set as EbLogs" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('Twilioedit')) {
+                    options.items.SMS = { name: "Set as SMS" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('ExpertTextingedit')) {
+                    options.items.SMS = { name: "Set as SMS" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('SMTPedit')) {
+                    options.items.SMTP = { name: "Set as SMTP" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('Cloudinaryedit')) {
+                    options.items.Cloudinary = { name: "Set as Cloudinary" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                return options;
+            }.bind(this)
+        });
+        $('.context-menu-one').on('click', function (e) {
+            console.log('clicked', this);
+        })
+
+        $.contextMenu({
+            selector: '.integrationContainer',
+            trigger: 'left',
+            build: function ($trigger) {
+                var options = {
+                    callback: function (key, options) {
+
+                        var dt = $(options.$trigger).attr("data-whatever");
+                        var temp = this.Connections.Integrations[dt];
+                        var id = $(options.$trigger).attr("datawhater");
+                        var confid = $(options.$trigger).attr("dataConffId");
+                        if (key == "Remove") {
                             EbDialog("show", {
-                                Message: "The Data will be permanently deleted ",
+                                Message: "The Data will be removed ",
                                 Buttons: {
                                     "Confirm": {
                                         Background: "green",
@@ -821,282 +958,155 @@
                                     }
                                 },
                                 CallBack: function (name) {
-                                    if (name == "Confirm")
-                                        this.IntergrationConfigDelete(posData = { "Id": id });
+                                    if (name == "Confirm") {
+                                        this.IntergrationDelete(posData = { "Id": id });
+                                    }
+
+                                }.bind(this)
+                            });
+                        } else if (key == "PRIMARY") {
+                            preferancetype = [];
+                            for (var i = 0, n = temp.length; i < n; i++) {
+                                if (temp[i].Preference == "2") {
+                                    postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: id, Type: dt, ConfigId: confid };
+                                }
+                                else {
+                                    postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
+                                }
+                                preferancetype.push(postData)
+                            }
+                            this.PreferencesChange();
+                        } else if (key == "FALLBACK") {
+                            preferancetype = [];
+                            for (var i = 0, n = temp.length; i < n; i++) {
+                                if (temp[i].Preference == "1") {
+                                    postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: id, Type: dt, ConfigId: confid };
+                                }
+                                else {
+                                    postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
+                                }
+                                preferancetype.push(postData)
+                            }
+                            this.PreferencesChange();
+                        } else if (key == "RemoveP") {
+                            EbDialog("show", {
+                                Message: "The Fallback will be set as PRIMARY !!! ",
+                                Buttons: {
+                                    "Confirm": {
+                                        Background: "green",
+                                        Align: "right",
+                                        FontColor: "white;"
+                                    },
+                                    "Cancel": {
+                                        Background: "red",
+                                        Align: "left",
+                                        FontColor: "white;"
+                                    }
+                                },
+                                CallBack: function (name) {
+                                    if (name == "Confirm") {
+                                        for (var i = 0, n = temp.length; i < n; i++) {
+                                            if (temp[i].Preference == "2") {
+                                                postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
+                                            }
+                                            else {
+                                                Deleteid = id;
+                                            }
+                                        }
+                                    }
+                                    this.PrimaryChange();
                                 }.bind(this)
                             });
                         }
-                        else {
-                            postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfId": id }
-                            if (key == "EbDATA" || key == "Cloudinary") {
-                                if (temp == null) {
-                                    this.IntegrationSubmit();
-                                } else {
-                                    EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
-                                }
-                            } else if (key == "SMS" || key == "SMTP") {
-                                if (temp !== undefined) {
-                                    if (temp.count != 2) {
-                                        for (var i = 0, n = temp.length; i < n; i++) {
-                                            if (temp[i].Preference == "1") {
-                                                postData.Preference = "FALLBACK";
-                                                this.IntegrationSubmit();
-                                                break;
-                                            }
-                                        }
-
-                                    }
-                                } else if (temp == undefined) {
-
-                                    this.IntegrationSubmit();
-                                }                              
-                                else {
-                                EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
-                            }
-                        }
-                    }
-                }.bind(this),
+                    }.bind(this),
                     items: {}
-            };
+                };
 
-            if($trigger.hasClass('PGSQLedit')) {
-            options.items.EbDATA = { name: "Set as EbData" },
-                options.items.EbFILES = { name: "Set as EbFiles" },
-                options.items.Delete = { name: "Delete" },
-                //options.items.EbLOGS = { name: "Set as EbLogs" },
-                options.items.Edit = { name: "Edit" };
-        }
-                else if ($trigger.hasClass('MYSQLedit')) {
-    options.items.EbDATA = { name: "Set as EbData" },
-        options.items.EbFILES = { name: "Set as EbFiles" },
-        options.items.Delete = { name: "Delete" },
-        //options.items.EbLOGS = { name: "Set as EbLogs" },
-        options.items.Edit = { name: "Edit" };
-}
-else if ($trigger.hasClass('MSSQLedit')) {
-    options.items.EbDATA = { name: "Set as EbData" },
-        options.items.EbFILES = { name: "Set as EbDiles" },
-        options.items.Delete = { name: "Delete" },
-        //options.items.EbLOGS = { name: "Set as EbLogs" },
-        options.items.Edit = { name: "Edit" };
-}
-else if ($trigger.hasClass('ORACLEedit')) {
-    options.items.EbDATA = { name: "Set as EbData" },
-        options.items.EbFILES = { name: "Set as EbDiles" },
-        options.items.Delete = { name: "Delete" },
-        //options.items.EbLOGS = { name: "Set as EbLogs" },
-        options.items.Edit = { name: "Edit" };
-}
-else if ($trigger.hasClass('MongoDBedit')) {
-    options.items.EbDATA = { name: "Set as EbData" },
-        options.items.EbFILES = { name: "Set as EbDiles" },
-        options.items.Delete = { name: "Delete" },
-        //options.items.EbLOGS = { name: "Set as EbLogs" },
-        options.items.Edit = { name: "Edit" };
-}
-else if ($trigger.hasClass('Twilioedit')) {
-    options.items.SMS = { name: "Set as SMS" },
-        options.items.Delete = { name: "Delete" },
-        options.items.Edit = { name: "Edit" };
-}
-else if ($trigger.hasClass('ExpertTextingedit')) {
-    options.items.SMS = { name: "Set as SMS" },
-        options.items.Delete = { name: "Delete" },
-        options.items.Edit = { name: "Edit" };
-}
-else if ($trigger.hasClass('SMTPedit')) {
-    options.items.SMTP = { name: "Set as SMTP" },
-        options.items.Delete = { name: "Delete" },
-        options.items.Edit = { name: "Edit" };
-}
-else if ($trigger.hasClass('Cloudinaryedit')) {
-    options.items.Cloudinary = { name: "Set as Cloudinary" },
-        options.items.Delete = { name: "Delete" },
-        options.items.Edit = { name: "Edit" };
-}
-return options;
+                if ($trigger.hasClass('EbDATAedit')) {
+                    options.items.Remove = { name: "Remove" }
+                } else if ($trigger.hasClass('EbFILESedit')) {
+                    options.items.Remove = { name: "Remove" }
+                } else if ($trigger.hasClass('SMTPedit 1')) {
+                    options.items.RemoveP = { name: "Remove" },
+                        options.items.FALLBACK = { name: "Set as FALLBACK" }
+                } else if ($trigger.hasClass('SMTPedit 2')) {
+                    options.items.Remove = { name: "Remove" },
+                        options.items.PRIMARY = { name: "Set as PRIMARY" }
+                } else if ($trigger.hasClass('Cloudinaryedit')) {
+                    options.items.Remove = { name: "Remove" }
+                } else if ($trigger.hasClass('SMSedit 1')) {
+                    options.items.RemoveP = { name: "Remove" },
+                        options.items.FALLBACK = { name: "Set as FALLBACK" }
+                } else if ($trigger.hasClass('SMSedit 2')) {
+                    options.items.Remove = { name: "Remove" },
+                        options.items.PRIMARY = { name: "Set as PRIMARY" }
+                }
+
+                return options;
             }.bind(this)
         });
-$('.context-menu-one').on('click', function (e) {
-    console.log('clicked', this);
-})
-
-$.contextMenu({
-    selector: '.integrationContainer',
-    trigger: 'left',
-    build: function ($trigger) {
-        var options = {
-            callback: function (key, options) {
-
-                var dt = $(options.$trigger).attr("data-whatever");
-                var temp = this.Connections.Integrations[dt];
-                var id = $(options.$trigger).attr("datawhater");
-                var confid = $(options.$trigger).attr("dataConffId");
-                if (key == "Remove") {
-                    EbDialog("show", {
-                        Message: "The Data will be removed ",
-                        Buttons: {
-                            "Confirm": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            },
-                            "Cancel": {
-                                Background: "red",
-                                Align: "left",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            if (name == "Confirm") {
-                                this.IntergrationDelete(posData = { "Id": id });
-                            }
-
-                        }.bind(this)
-                    });
-                } else if (key == "PRIMARY") {
-                    preferancetype = [];
-                    for (var i = 0, n = temp.length; i < n; i++) {
-                        if (temp[i].Preference == "2") {
-                            postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: id, Type: dt, ConfigId: confid };
-                        }
-                        else {
-                            postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
-                        }
-                        preferancetype.push(postData)
-                    }
-                    this.PreferencesChange();
-                } else if (key == "FALLBACK") {
-                    preferancetype = [];
-                    for (var i = 0, n = temp.length; i < n; i++) {
-                        if (temp[i].Preference == "1") {
-                            postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: id, Type: dt, ConfigId: confid };
-                        }
-                        else {
-                            postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
-                        }
-                        preferancetype.push(postData)
-                    }
-                    this.PreferencesChange();
-                } else if (key == "RemoveP") {
-                    EbDialog("show", {
-                        Message: "The Fallback will be set as PRIMARY !!! ",
-                        Buttons: {
-                            "Confirm": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            },
-                            "Cancel": {
-                                Background: "red",
-                                Align: "left",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            if (name == "Confirm") {
-                                for (var i = 0, n = temp.length; i < n; i++) {
-                                    if (temp[i].Preference == "2") {
-                                        postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
-                                    }
-                                    else {
-                                        Deleteid = id;
-                                    }
-                                }
-                            }
-                            this.PrimaryChange();
-                        }.bind(this)
-                    });
-                }
-            }.bind(this),
-            items: {}
-        };
-
-        if ($trigger.hasClass('EbDATAedit')) {
-            options.items.Remove = { name: "Remove" }
-        } else if ($trigger.hasClass('EbFILESedit')) {
-            options.items.Remove = { name: "Remove" }
-        } else if ($trigger.hasClass('SMTPedit 1')) {
-            options.items.RemoveP = { name: "Remove" },
-                options.items.FALLBACK = { name: "Set as FALLBACK" }
-        } else if ($trigger.hasClass('SMTPedit 2')) {
-            options.items.Remove = { name: "Remove" },
-                options.items.PRIMARY = { name: "Set as PRIMARY" }
-        } else if ($trigger.hasClass('Cloudinaryedit')) {
-            options.items.Remove = { name: "Remove" }
-        } else if ($trigger.hasClass('SMSedit 1')) {
-            options.items.RemoveP = { name: "Remove" },
-                options.items.FALLBACK = { name: "Set as FALLBACK" }
-        } else if ($trigger.hasClass('SMSedit 2')) {
-            options.items.Remove = { name: "Remove" },
-                options.items.PRIMARY = { name: "Set as PRIMARY" }
-        }
-
-        return options;
-    }.bind(this)
-});
-$('.context-menu-one').on('click', function (e) {
-    console.log('clicked', this);
-})
+        $('.context-menu-one').on('click', function (e) {
+            console.log('clicked', this);
+        })
     };
 
-this.init = function () {
+    this.init = function () {
 
-    $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
-    $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
-    $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
-    $("#emailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
-    $("#TwilioConnectionSubmit").on("submit", this.twilioAccountSubmit.bind(this));
-    $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
-    $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
-    $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
-    $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
-    $(".testConnection").on("click", this.testConnection.bind(this));
-    $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
-    this.LogoImageUpload();
-    this.ContextMenu();
-    $("div #ShowPasswordd").on("click", this.ShowPassword.bind(this));
-    $(`#EmailconnectionEdit input[name="IsSSL"]`).on("change", function (e) {
-        if ($(e.target).is(":checked"))
-            $(e.target).val(true);
-        else
-            $(e.target).val(false);
-    });
-    $('.db-type-set').on("click", function (event) {
-        var DatabaseName = $(event.currentTarget).attr("data-whatever")
-        this.AllInputClear();
-        $(".IntConfId").val("0")
-        $("#dbvendorInput").val(DatabaseName)
-    }.bind(this));
+        $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
+        $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
+        $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
+        $("#emailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
+        $("#TwilioConnectionSubmit").on("submit", this.twilioAccountSubmit.bind(this));
+        $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
+        $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
+        $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
+        $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
+        $(".testConnection").on("click", this.testConnection.bind(this));
+        $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
+        this.LogoImageUpload();
+        this.ContextMenu();
+        $("div #ShowPasswordd").on("click", this.ShowPassword.bind(this));
+        $(`#EmailconnectionEdit input[name="IsSSL"]`).on("change", function (e) {
+            if ($(e.target).is(":checked"))
+                $(e.target).val(true);
+            else
+                $(e.target).val(false);
+        });
+        $('.db-type-set').on("click", function (event) {
+            var DatabaseName = $(event.currentTarget).attr("data-whatever")
+            this.AllInputClear();
+            $(".IntConfId").val("0")
+            $("#dbvendorInput").val(DatabaseName)
+        }.bind(this));
 
-    $('.input-clear ').on('show.bs.modal', function (event) {
-        this.AllInputClear();
-        $(".IntConfId").val("0")
-    }.bind(this));
+        $('.input-clear ').on('show.bs.modal', function (event) {
+            this.AllInputClear();
+            $(".IntConfId").val("0")
+        }.bind(this));
 
-    //  $('.DisplayAllModal').on('click', this.AllInterationConfigDisp.bind(this));
-    $('#All_IntreationConfig').on('click', ".EditorModalcaller", this.AllEditorOpen.bind(this));
-    $('.dbConnection').on("click", this.ONReset.bind(this));
-    $(".VerticalTabContent").on("click", this.VerticalTab.bind(this));
-    $("#MyIntegration").on("click", function (e) {
-        $('#defaultOpen').trigger('click');
-    }.bind(this));
+        //  $('.DisplayAllModal').on('click', this.AllInterationConfigDisp.bind(this));
+        $('#All_IntreationConfig').on('click', ".EditorModalcaller", this.AllEditorOpen.bind(this));
+        $('.dbConnection').on("click", this.ONReset.bind(this));
+        $(".VerticalTabContent").on("click", this.VerticalTab.bind(this));
+        $("#MyIntegration").on("click", function (e) {
+            $('#defaultOpen').trigger('click');
+        }.bind(this));
 
-    //$(".inteConfContainer").on("click", ".PGSQLedit", this.PostgreinteConfEditr.bind(this));
-    //$(".inteConfContainer").on("click", ".MYSQLedit", this.PostgreinteConfEditr.bind(this));
-    //$(".inteConfContainer").on("click", ".MSSQLedit", this.PostgreinteConfEditr.bind(this));
-    //$(".inteConfContainer").on("click", ".ORACLEedit", this.PostgreinteConfEditr.bind(this));
-    ////$(".oracleintegrationedit").on("click", this.DbinteConfEditr.bind(this));
-    //$(".inteConfContainer").on("click", ".MongoDBedit", this.MongointeConfEditr.bind(this));
-    //$(".inteConfContainer").on("click", ".Cloudinaryedit", this.ColudinaryinteConfEditr.bind(this));
-    //$(".inteConfContainer").on("click", ".SMTPedit", this.SmtpinteConfEditr.bind(this));
-    //$(".inteConfContainer").on("click", ".Twilioedit", this.twiliointeConfEditr.bind(this));
-    //$(".inteConfContainer").on("click", ".ExpertTextingedit", "", this.expertinteConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".PGSQLedit", this.PostgreinteConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".MYSQLedit", this.PostgreinteConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".MSSQLedit", this.PostgreinteConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".ORACLEedit", this.PostgreinteConfEditr.bind(this));
+        ////$(".oracleintegrationedit").on("click", this.DbinteConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".MongoDBedit", this.MongointeConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".Cloudinaryedit", this.ColudinaryinteConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".SMTPedit", this.SmtpinteConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".Twilioedit", this.twiliointeConfEditr.bind(this));
+        //$(".inteConfContainer").on("click", ".ExpertTextingedit", "", this.expertinteConfEditr.bind(this));
 
-    $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));
+        $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));
 
-    //$(".inteConfContainer").on("click", this.AllInputClear.bind(this));
-};
+        //$(".inteConfContainer").on("click", this.AllInputClear.bind(this));
+    };
 
-this.init();
+    this.init();
 };

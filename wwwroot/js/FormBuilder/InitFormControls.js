@@ -124,7 +124,6 @@
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.ShowDateAs_ === 1) {
-            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
@@ -134,6 +133,7 @@
                     OnAfterChooseMonth: fun.bind(this, formObject, userObject)
                 });
             }
+            ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
@@ -152,7 +152,7 @@
                     datepicker: true,
                     mask: true
                 });
-                $input.val(userObject.Preference.ShortDate);
+                //$input.val(userObject.Preference.ShortDate);
             }
             else if (ctrl.EbDateType === 17) { //Time
                 $input.datetimepicker({
@@ -162,7 +162,7 @@
                     timepicker: true,
                     datepicker: false
                 });
-                $input.val(userObject.Preference.ShortTime);
+                //$input.val(userObject.Preference.ShortTime);
             }
             else {
                 $input.datetimepicker({ //DateTime
@@ -172,8 +172,9 @@
                     timepicker: true,
                     datepicker: true
                 });
-                $input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
+                //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
+            this.setCurrentDate(ctrl, $input);
 
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
@@ -190,6 +191,8 @@
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
             if (ctrl.IsNullable) {
+                if (!($('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
+                    $input.val('');
                 $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
                 $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             }
@@ -201,13 +204,26 @@
         let $ctrl = $(event.target).closest("input[type='checkbox']");
         if ($ctrl.is(":checked")) {
             if ($ctrl.closest(".input-group").find("input[type='text']").val() === "")
-                $ctrl.closest(".input-group").find("input[type='text']").val(ebcontext.user.Preference.ShortDate);
+                //$ctrl.closest(".input-group").find("input[type='text']").val(ebcontext.user.Preference.ShortDate);
+                this.setCurrentDate(ctrl, $ctrl.closest(".input-group").find("input[type='text']"));
             $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false).next(".input-group-addon").css('pointer-events', 'auto');
             //ctrl.DoNotPersist = false;
         }
         else {
             $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             //ctrl.DoNotPersist = true;
+        }
+    };
+
+    this.setCurrentDate = function (ctrl, $input) {
+        if (ctrl.EbDateType === 5) { //Date
+            $input.val(ebcontext.user.Preference.ShortDate);
+        }
+        else if (ctrl.EbDateType === 17) { //Time
+            $input.val(ebcontext.user.Preference.ShortTime);
+        }
+        else {
+            $input.val(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime);
         }
     };
 
@@ -239,17 +255,13 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        ebcontext.userLoc = { lat: 37.754404 ,long: -122.447086};
+        ebcontext.userLoc = { lat: 0 ,long: 0};
         if (_rowId === undefined || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                ebcontext.userLoc.lat = position.coords.latitude;
-                ebcontext.userLoc.long = position.coords.longitude;
-                this.InitMap4inpG(ctrl);
+                $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
             }.bind(this));
         }
-        else {
-            this.InitMap4inpG(ctrl);
-        }        
+        this.InitMap4inpG(ctrl);
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -434,7 +446,8 @@
         }
     };
     this.SysCreatedAt = function (ctrl) {
-        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+        //$("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
     };
 
     this.Numeric = function (ctrl) {

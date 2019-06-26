@@ -139,6 +139,7 @@ const EbSelect = function (ctrl, options) {
 
     this.searchBoxFocus = function () {
         this.IsSearchBoxFocused = true;
+        this.RemoveRowFocusStyle();
     }.bind(this);
 
     //delayed search on combo searchbox
@@ -230,8 +231,8 @@ const EbSelect = function (ctrl, options) {
             else {
                 let $row = $(this.DTSelector + ` tbody tr[role="row"]`);
                 if ($row.length === 0) {//
-                    console.log(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`);
-                    this.$inp.eb_warn(StrValues).trigger("change");
+                    console.log(`>> eb message : none available value '${StrValues}' set for  powerSelect '${this.ComboObj.Name}'`);
+                    this.$inp.val(StrValues).trigger("change");
                 }
                 else
                     $row.trigger("dblclick");
@@ -584,11 +585,11 @@ const EbSelect = function (ctrl, options) {
             this.$searchBoxes.hide();
         else
             this.$searchBoxes.show();
-        setTimeout(function () {// to adjust search-block
-            let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
-            $(".search-block .input-group").css("height", maxHeight + "px");
-            $('#' + this.name + 'Wraper [type=search]').val("");
-        }.bind(this), 10);
+        //setTimeout(function () {// to adjust search-block
+        //    let maxHeight = Math.max.apply(null, $(".search-block .searchable").map(function () { return $(this).height(); }).get());
+        //    $(".search-block .input-group").css("height", maxHeight + "px");
+        //    $('#' + this.name + 'Wraper [type=search]').val("");
+        //}.bind(this), 10);
 
         this.setColumnvals();
         this.$inp.val(this.Vobj.valueMembers).trigger("change");
@@ -649,7 +650,7 @@ const EbSelect = function (ctrl, options) {
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
                 this.datatable.Api.cell($cell).focus();
                 this.ApplyRowFocusStyle($cell.closest("tr"));
-            }.bind(this), 10);
+            }.bind(this), 1);
         }
 
         this.V_updateCk();
@@ -674,8 +675,9 @@ const EbSelect = function (ctrl, options) {
 
     this.RaiseErrIf = function () {
         if (this.Vobj.valueMembers.length !== this.Vobj.displayMembers[this.dmNames[0]].length) {
-            alert('valueMember and displayMembers length miss match found !!!!');
-            console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
+            //alert('valueMember and displayMembers length miss match found !!!!');
+            //console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
+            console.eb_warn('valueMember and displayMembers length miss match found !!!!');
             console.log('valueMembers=' + this.Vobj.valueMember);
             console.log('displayMember[0] = ' + this.Vobj.displayMember[this.dmNames[0]]);
         }

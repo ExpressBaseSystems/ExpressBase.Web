@@ -507,7 +507,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 </div>
                 </div> 
                 <input type='color' id='fontSel' style='display:none;'>
-                <div id='canvasDiv${this.tableId}' style='height:100%;padding-bottom:10px;'><canvas id='myChart${this.tableId}'></canvas></div> 
+                <div id='canvasDiv${this.tableId}' class="canvasstyle" ><canvas id='myChart${this.tableId}'></canvas></div> 
                 </div> 
                 </div>`);
     };
@@ -579,8 +579,10 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["bar"]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
 
-        if (this.login == "uc") {
+        if (this.login === "uc") {
             dvcontainerObj.modifyNavigation();
+            if (this.EbObject.Charttype === 1)
+                $(`#btnColumnCollapse${this.tableId}`).hide();
         }
         //$("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
         this.bindEvents();
@@ -1161,7 +1163,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         if ($("#columnsDisplay" + this.tableId).css("display") === "none") {
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
             $("#canvasDiv" + this.tableId).css("height", "100%");
-            //$("#myChart" + this.tableId).css("height", "inherit");
         }
         else {
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-12").addClass("col-md-10");

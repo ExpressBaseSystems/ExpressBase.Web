@@ -275,10 +275,12 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         }
         $(subDivId).focus();
 
-        if (this.type === "googlemap")
-            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-        else
+        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        else {
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+            this.type = "googlemap";
+        }
         this.PcFlag = false;
     }.bind(this);
 
@@ -335,10 +337,12 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.prevObj = this.EbObject;
             if (obj.Charttype == 1) {
                 this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
+                commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
             }
             else {
                 this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
+                commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 this.type = "bar";
             }

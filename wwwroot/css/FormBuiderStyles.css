@@ -684,7 +684,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     z-index: -1;
 }
 
-[isrendermode="True"] [eb-hidden="True"] {
+[isrendermode="true"] [eb-hidden="True"] {
     display: none;
 }
 
@@ -703,7 +703,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         width: 100%;*/
 }
 
-.form-buider-form[isrendermode="False"] .Eb-ctrlContainer table > tbody > tr > .form-render-table-Td {
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer table > tbody > tr > .form-render-table-Td {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/

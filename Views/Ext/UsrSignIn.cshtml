@@ -1,80 +1,89 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    string console = ViewBag.WhichConsole == "dc" ? "Dev" : "User";
+    string logo = "/images/logo/" + ViewBag.SolutionId + ".png";
 }
-<script src="~/js/eb_common.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
 <script>
-    function onSubmit(token) {
-        document.getElementById("log_form").submit();
-        $(".loader_top").EbLoader("show");
-    }
-    @{
-        string console = ViewBag.WhichConsole == "dc" ? "Dev" : "User";
-
-        string logo = "/images/logo/" + ViewBag.SolutionId + ".png";
-    }
     $('title').text("@console"+" Login");
+    function recaptchaCallback(token) {
+        if (token) {
+            document.getElementById("log_form").submit();
+            $(".loader_top").EbLoader("show");
+        }
+    }
 </script>
 <section class="eb_login">
     <div class="container">
-        <div class="row">
-            <div class="login_container">
+        <div class="row" style="height:100%;display: flex;justify-content: center;align-items: center;">
+            <div class="col-md-5 col-lg-5 col-sm-12 col-xs-12 login_container_usr">
                 <div class="loader_top" id="loader_profile"></div>
-                <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
+                <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator" role="form">
                     <div class="login-sec-image text-center">
                         <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
                     </div>
                     <h1 class="text-center">Sign In as @console</h1><br>
                     <div class="form-group mb-25">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                            <input type="email" name="uname" class="form-control inputEmail" placeholder="Email" id="inputEmail" data-error="Email address is invalid." required><br />
+                        <label>Email</label>
+                        <div class="log-username">
+                            <input type="email" name="uname" class="form-control ebtext-lg" data-error="email address is invalid" placeholder="Email" required />
                         </div>
-                        <div class="help-block with-errors f12 text-right"></div>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="form-group mb-25">
+                        <label>Password</label>
+                        <div class="log-pw">
+                            <input type="password" id="pass" name="pass" class="form-control ebtext-lg" placeholder="Password" required />
+                        </div>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <input type="hidden" name="reDir" value="@ViewBag.reDirectUrl" />
+                    <div class="form-group mb-25">
+                        <div class="fpNdRemMe">
+                            <div class="rememberMe">
+                                <input type="checkbox" /> <span>Remember me</span>
+                            </div>
+                            <a href="/ForgotPassword">Forgot password?</a>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                            <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" autocomplete="off" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey=@ViewBag.ReCaptchaKey data-callback='onSubmit'>
-                            Sign In <i class="fa fa-spinner fa-spin login_spiner"></i>
+                        <button type="submit" id="logNow" class="btn signin-btn g-recaptcha w-100" data-sitekey=@ViewBag.ReCaptchaKey data-callback='recaptchaCallback'>
+                            Sign In
                         </button>
                     </div>
                     @*<div class="text-center">Or Sign In by</div>
-        <div style="padding-left: 34px;">
-            <div class="col-xs-2 col-sm-2">
-                <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
-                    <i class="fa fa-facebook"></i>
-                    <span class="hidden-xs"></span>
-                </a>
-            </div>
-            <div class="col-xs-2 col-sm-2">
-                <a href="#" class="btn btn-lg btn-block">
-                    <i class="fa fa-twitter text-info"></i>
-                    <span class="hidden-xs"></span>
-                </a>
-            </div>
-            <div class="col-xs-2 col-sm-2">
-                <a href="#" class="btn btn-lg btn-block">
-                    <i class="fa fa-google-plus text-danger"></i>
-                    <span class="hidden-xs"></span>
-                </a>
-            </div>
-            <div class="col-xs-2 col-sm-2">
-                <a href="#" class="btn btn-lg btn-block">
-                    <i class="fa fa-linkedin"></i>
-                    <span class="hidden-xs"></span>
-                </a>
-            </div>
-            <div class="col-xs-2 col-sm-2">
-                <a href="#" class="btn btn-lg btn-block">
-                    <i class="fa fa-github text-muted"></i>
-                    <span class="hidden-xs"></span>
-                </a>
-            </div>
-        </div>*@
+                        <div style="padding-left: 34px;">
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
+                                    <i class="fa fa-facebook"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-twitter text-info"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-google-plus text-danger"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-linkedin"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-github text-muted"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                        </div>*@
                 </form>
             </div>
         </div>
@@ -82,13 +91,11 @@
 </section>
 <script>
     $(document).ready(function () {
+        setTimeout(function () {
+            $('body').click();
+        }, 2000);
         $('.Eb_Image').Lazy();
-
         if ('@ViewBag.ErrorMsg')
             EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
-
-    $("#log_form").on("submit", function () {
-        $(".loader_top").EbLoader("show");
-     });
     });
 </script>

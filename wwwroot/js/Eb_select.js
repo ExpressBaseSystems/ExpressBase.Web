@@ -231,8 +231,8 @@ const EbSelect = function (ctrl, options) {
             else {
                 let $row = $(this.DTSelector + ` tbody tr[role="row"]`);
                 if ($row.length === 0) {//
-                    console.log(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`);
-                    this.$inp.eb_warn(StrValues).trigger("change");
+                    console.log(`>> eb message : none available value '${StrValues}' set for  powerSelect '${this.ComboObj.Name}'`);
+                    this.$inp.val(StrValues).trigger("change");
                 }
                 else
                     $row.trigger("dblclick");

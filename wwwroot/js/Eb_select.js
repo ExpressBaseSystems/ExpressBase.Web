@@ -139,6 +139,7 @@ const EbSelect = function (ctrl, options) {
 
     this.searchBoxFocus = function () {
         this.IsSearchBoxFocused = true;
+        this.RemoveRowFocusStyle();
     }.bind(this);
 
     //delayed search on combo searchbox
@@ -649,7 +650,7 @@ const EbSelect = function (ctrl, options) {
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
                 this.datatable.Api.cell($cell).focus();
                 this.ApplyRowFocusStyle($cell.closest("tr"));
-            }.bind(this), 10);
+            }.bind(this), 1);
         }
 
         this.V_updateCk();

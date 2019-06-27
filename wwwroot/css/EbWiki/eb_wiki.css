@@ -125,14 +125,14 @@ div.ex2 p {
 
 
 .navbar1 {
-    background-color: #508bf9;
+    background-color: #4077de;
     border-color: #508bf9;
     color: #FFF;
-    height: 550px;
+    height: 540px;
     overflow: auto;
     padding-left: 0px;
-    padding-top: 20px;
-    margin-top: 10px;
+    padding-top: 11px;
+    margin-top: 2px;
     -webkit-box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
     -moz-box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
     box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
@@ -447,9 +447,10 @@ a:focus, a:hover {
     margin: 0;
     padding: 0;
     width: 60%;
+    margin-left: 50px;
 }
 
-    .dragable_wiki_list li {
+   .dragable_wiki_list li {
         margin: 0 3px 3px 3px;
         padding: 0.4em;
         padding-left: 1.5em;
@@ -461,4 +462,20 @@ a:focus, a:hover {
 .dragable_wiki_list li span {
     position: center;
     margin-left: -1.3em;
+}
+#layout_div {
+    background-color: white;
+}
+
+.WikiMenu {
+    font-size: 25px;
+    line-height: 42px;
+    color: #2d2d2d;
+    font-weight: 400;
+    font-family: Montserrat;
+}
+.WikiList {
+    width: 364px;
+    margin-left: 50px;
+    border-bottom: solid 1px #4c4848;
 }

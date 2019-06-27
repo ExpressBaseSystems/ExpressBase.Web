@@ -134,7 +134,7 @@
                     <a class="nav-link" data-toggle="tab" href="#home" role="tab">General</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#Integrations" role="tab">Connection Manager</a>
+                    <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">Connection Manager</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#team" role="tab">Team</a>
@@ -159,92 +159,101 @@
                     <div class="col-md-12 pd-0">
                         <ul class="nav nav-tabs chormer-effect" role="tablist">
                             <li class="nav-item active">
-                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">New Integrations</a>
+                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">New Connections</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">All Integrations</a>
+                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">My Connections</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="Integration" role="tabpanel">
                                 <div class="eb_connection_wrapper flex-container">
-                                    <div class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" id="Postgres" data-whatever="PGSQL">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg ">
-                                                    <img class="img-responsive" src="~/images/POSTGRES.png" align="middle" style="width:75%" />
+                                    <div class="connection_wrap_outer   db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" id="Postgres" data-whatever="PGSQL">
+                                        <div class="connection_wrap w-100 ">
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/POSTGRES.png" align="middle" style="width:63%" />
+                                                <div class="image-add" >
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true" ></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mysql" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MYSQL">
+                                    <div id="mysql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MYSQL">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/mysql.png" align="middle" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/mysql.png" align="middle" style="width:70%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="oracle" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="ORACLE">
+                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="ORACLE">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/oracle.png" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/oracle.png" style="width:70%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mssql" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MSSQL">
+                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MSSQL">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/sqlserver.png" style="width:62%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mongo" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#filesDbConnectEdit" data-whatever="MongoDB">
+                                    <div id="mongo" class="connection_wrap_outer" data-toggle="modal" data-target="#filesDbConnectEdit" data-whatever="MongoDB">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="FilesConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/MongodB.png" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
+                                                <img class="img-responsive" src="~/images/MongodB.png" style="width:50%; margin:auto;" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="cloudinary" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#cldnry_conEdit" data-whatever="Cloudinary">
+                                    <div id="cloudinary" class="connection_wrap_outer" data-toggle="modal" data-target="#cldnry_conEdit" data-whatever="Cloudinary">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="FilesConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/cloudnary.png" style="width:75%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/cloudnary.png" style="width:75%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="SMTP" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#EmailconnectionEdit" data-whatever="SMTP">
+                                    <div id="SMTP" class="connection_wrap_outer" data-toggle="modal" data-target="#EmailconnectionEdit" data-whatever="SMTP">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="EmailConnection_config">
-                                                <div class="db_vendorimg ">
-                                                    <img class="img-responsive" src="~/images/svg/email.svg" style="width:47%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="EmailConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/svg/email.svg" style="width:47%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="twilio" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#TwilioConnectionEdit" data-whatever="Twilio">
+                                    <div id="twilio" class="connection_wrap_outer" data-toggle="modal" data-target="#TwilioConnectionEdit" data-whatever="Twilio">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="TwilioConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/twilio.png" style="width:95%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="TwilioConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/twilio.png" style="width:95%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="expert" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#ExpertTextingConnectionEdit" data-whatever="ExpertTexting">
+                                    <div id="expert" class="connection_wrap_outer" data-toggle="modal" data-target="#ExpertTextingConnectionEdit" data-whatever="ExpertTexting">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="ExpertTextingConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/expert texting.png" style="width:85%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="ExpertTextingConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/expert texting.png" style="width:85%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -294,7 +303,7 @@
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#MyIntegrations" href="#EbDATA">
-                                                        EbDATA
+                                                        Data Store
                                                     </a>
                                                 </h4>
                                             </div>
@@ -329,7 +338,7 @@
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#MyIntegrations" href="#EbFILES">
-                                                        EbFILES
+                                                        File Store
                                                     </a>
                                                 </h4>
                                             </div>

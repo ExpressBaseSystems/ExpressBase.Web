@@ -158,5 +158,17 @@ namespace ExpressBase.Web.Controllers
                 return resp;
            
         }
+
+        public JsonResult UpdateOrder (int[] myList)
+        {
+            
+                UpdateOrderResponse resp = this.ServiceClient.Post(new UpdateOrderRequest()
+                {
+                    Wiki_id = myList,
+                });
+               
+
+            return null;
+        }
     }
 }

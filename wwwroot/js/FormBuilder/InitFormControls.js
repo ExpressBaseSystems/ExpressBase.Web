@@ -255,17 +255,13 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        ebcontext.userLoc = { lat: 37.754404 ,long: -122.447086};
+        ebcontext.userLoc = { lat: 0 ,long: 0};
         if (_rowId === undefined || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                ebcontext.userLoc.lat = position.coords.latitude;
-                ebcontext.userLoc.long = position.coords.longitude;
-                this.InitMap4inpG(ctrl);
+                $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
             }.bind(this));
         }
-        else {
-            this.InitMap4inpG(ctrl);
-        }        
+        this.InitMap4inpG(ctrl);
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -450,7 +446,8 @@
         }
     };
     this.SysCreatedAt = function (ctrl) {
-        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+        //$("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
     };
 
     this.Numeric = function (ctrl) {

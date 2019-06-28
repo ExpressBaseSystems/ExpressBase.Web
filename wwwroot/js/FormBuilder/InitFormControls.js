@@ -255,17 +255,13 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        ebcontext.userLoc = { lat: 37.754404 ,long: -122.447086};
+        ebcontext.userLoc = { lat: 0 ,long: 0};
         if (_rowId === undefined || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                ebcontext.userLoc.lat = position.coords.latitude;
-                ebcontext.userLoc.long = position.coords.longitude;
-                this.InitMap4inpG(ctrl);
+                $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
             }.bind(this));
         }
-        else {
-            this.InitMap4inpG(ctrl);
-        }        
+        this.InitMap4inpG(ctrl);
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -429,28 +425,41 @@
         $("#iFrameFormModal").modal("show");
     };
 
-    this.SysLocation = function (ctrl) {
-        if (_rowId === undefined || _rowId === 0) {
-            setTimeout(function () {
-                if (ctrl.DisplayMember === 1) {
-                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);
-                }
-                else {
-                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.ShortName);
-                }
-            }, 500);
-        }        
+    this.SysLocation = function (ctrl) {//all sys controls init commented to avoid confusion with the default value in new mode
+        //if (_rowId === undefined || _rowId === 0) {
+        //    setTimeout(function () {
+        //        if (ctrl.DisplayMember === 1) {
+        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);
+        //        }
+        //        else if (ctrl.DisplayMember === 3) {
+        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LongName);
+        //        }
+        //        else {
+        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.ShortName);
+        //        }
+        //    }, 500);
+        //}        
     };
     this.SysCreatedBy = function (ctrl) {
-        if (ctrl.DisplayMember === 1) {
-            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
-        }
-        else {
-            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
-        }
+        //if (ctrl.DisplayMember === 1) {
+        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
+        //}
+        //else {
+        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        //}
+    };
+    this.SysModifiedBy = function (ctrl) {
+        //if (_rowId > 0) {
+        //    if (ctrl.DisplayMember === 1) {
+        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
+        //    }
+        //    else {
+        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        //    }
+        //}        
     };
     this.SysCreatedAt = function (ctrl) {
-        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
+        //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
 
     this.Numeric = function (ctrl) {

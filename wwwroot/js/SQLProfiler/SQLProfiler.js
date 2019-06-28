@@ -103,10 +103,17 @@
             },
             success: function (response) {
                 for (let i = 0; i < response.length; i++) {
-                    if (response[i][0].split(',').length > count)
+
+                    if (response[i][0] === null) continue;
+
+                    if (response[i][0].split(',').length > count)                    
                         count = response[i][0].split(',').length;
+                                            
                 }
                 for (let i = 0; i < response.length; i++) {
+
+                    if (response[i][0] === null) continue;
+
                     lables.push(response[i][1]);
                     var rows = response[i][0].split(',', count);
                     for (let j = 0; j < count; j++) {
@@ -203,7 +210,7 @@
     }.bind(this);
 
     this.onShowChart2 = function () {
-
+        $("#eb_common_loader").EbLoader("show");
         this.removeSelClass();
         $("#paramsalert").show().empty().append(`<canvas id="myChart2"></canvas>`);
         var ctx = document.getElementById("myChart2");
@@ -283,6 +290,7 @@
                 });
             }
         });
+        $("#eb_common_loader").EbLoader("hide");
     }.bind(this);
 
     this.init = function () {

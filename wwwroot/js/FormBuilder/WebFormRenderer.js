@@ -97,17 +97,6 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.bindFnsToctrls = function (Obj) {
-        if (Obj.Required)
-            this.bindRequired(Obj);
-        if (Obj.Unique)
-            this.bindUniqueCheck(Obj);
-        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "" )|| Obj.DependedValExp.$values.length > 0)
-            this.bindOnChange(Obj);
-        if (Obj.Validators.$values.length > 0)
-            this.bindValidators(Obj);
-    };
-
     this.initNCs = function () {
         let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
         $.each(allFlatControls, function (k, Obj) {
@@ -127,13 +116,9 @@ const WebFormRender = function (option) {
 
             this.initControls.init(Obj, opt);
 
-            this.bindFnsToctrls(Obj);
+            this.FRC.bindFnsToCtrl(Obj);
 
-            if (Obj.DefaultValue)
-                Obj.setValue(Obj.DefaultValue);
-
-            if (Obj.IsDisable)
-                Obj.disable();
+            this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 
@@ -165,86 +150,13 @@ const WebFormRender = function (option) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
-            this.bindOnChange(_DG);
+            this.FRC.bindOnChange(_DG);
         }.bind(this));
-    };
-
-    this.bindOnChange = function (control) {
-        try {
-            let FnString = `console.log('${control.__path || control.Name}');` + atob(control.OnChangeFn.Code) + ` ; form.updateDependentControls(${control.__path}, form)`;
-            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.formObject, this.userObject);
-            control.__onChangeFn = onChangeFn;
-            control.bindOnChange(onChangeFn);
-        }
-        catch (e) {
-            console.eb_log("eb error :");
-            console.eb_log(e);
-            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
-        }
-    };
-
-    this.bindValidators = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.FRC.isValidationsOK.bind(this.FRC, control));
-    };
-
-    this.bindRequired = function (control) {
-        if (control.ObjType === "SimpleSelect")
-            $("#cont_" + control.EbSid_CtxId + " .dropdown-toggle").on("blur", this.FRC.isRequiredOK.bind(this.FRC, control)).on("focus", this.FRC.removeInvalidStyle.bind(this, control));
-        else
-            $("#" + control.EbSid_CtxId).on("blur", this.FRC.isRequiredOK.bind(this.FRC, control)).on("focus", this.FRC.removeInvalidStyle.bind(this, control));
-    };
-
-    this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
-        ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 
     //this.unbindUniqueCheck = function (control) {
     //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
     //};
-
-    this.isSameValInUniqCtrl = function (ctrl) {
-        let val = ctrl.getValue();
-        return val === this.uniqCtrlsInitialVals[ctrl.EbSid];
-    };
-
-    this.checkUnique = function (ctrl) {/////////////// move
-        if (Object.entries(this.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl))// avoid check if edit mode and value is same as initial
-            return;
-        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)// avoid check if numeric and value is 0
-            return;
-
-        //let unique_flag = true;
-        let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        let val = ctrl.getValue();
-        if (isNaNOrEmpty(val))
-            return;
-        //this.hideLoader();
-        //this.showLoader();
-        hide_inp_loader($ctrl, this.$saveBtn);
-        show_inp_loader($ctrl, this.$saveBtn);
-        $.ajax({
-            type: "POST",
-            url: "../WebForm/DoUniqueCheck",
-            data: {
-                TableName: this.FormObj.TableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
-            },
-            success: function (isUnique) {
-                //this.hideLoader();
-                hide_inp_loader($ctrl, this.$saveBtn);
-                if (!isUnique) {
-                    //unique_flag = false;
-                    $ctrl.attr("uniq-ok", "false");
-                    this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
-                }
-                else {
-                    $ctrl.attr("uniq-ok", "true");
-                    this.FRC.removeInvalidStyle(ctrl);
-                }
-                //return unique_flag;
-            }.bind(this)
-        });
-    };
 
     this.getWebFormVals = function () {
         return getValsFromForm(this.FormObj);
@@ -546,7 +458,7 @@ const WebFormRender = function (option) {
             return;
         $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {
             if (!r.IsDisabled && r.Script.Lang === 0 && r.Script.Code !== "") {
-                new Function("form", "user", `event`, atob(r.Script.Code)).bind("this-placeholder", this.setFormObject(), this.userObject)();
+                new Function("form", "user", `event`, atob(r.Script.Code)).bind(this.formObject, this.setFormObject(), this.userObject)();
             }
         }.bind(this));
     };

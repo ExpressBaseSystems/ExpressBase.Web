@@ -134,7 +134,7 @@
                     <a class="nav-link" data-toggle="tab" href="#home" role="tab">General</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#Integrations" role="tab">Connection Manager</a>
+                    <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">Connection Manager</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#team" role="tab">Team</a>
@@ -159,92 +159,101 @@
                     <div class="col-md-12 pd-0">
                         <ul class="nav nav-tabs chormer-effect" role="tablist">
                             <li class="nav-item active">
-                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">New Integrations</a>
+                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">New Connections</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">All Integrations</a>
+                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">My Connections</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="Integration" role="tabpanel">
                                 <div class="eb_connection_wrapper flex-container">
-                                    <div class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" id="Postgres" data-whatever="PGSQL">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg ">
-                                                    <img class="img-responsive" src="~/images/POSTGRES.png" align="middle" style="width:75%" />
+                                    <div class="connection_wrap_outer   db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" id="Postgres" data-whatever="PGSQL">
+                                        <div class="connection_wrap w-100 ">
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/POSTGRES.png" align="middle" style="width:63%" />
+                                                <div class="image-add" >
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true" ></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mysql" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MYSQL">
+                                    <div id="mysql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MYSQL">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/mysql.png" align="middle" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/mysql.png" align="middle" style="width:70%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="oracle" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="ORACLE">
+                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="ORACLE">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/oracle.png" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/oracle.png" style="width:70%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mssql" class="connection_wrap_outer DisplayAllModal db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MSSQL">
+                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MSSQL">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/sqlserver.png" style="width:62%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mongo" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#filesDbConnectEdit" data-whatever="MongoDB">
+                                    <div id="mongo" class="connection_wrap_outer" data-toggle="modal" data-target="#filesDbConnectEdit" data-whatever="MongoDB">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="FilesConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/MongodB.png" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
+                                                <img class="img-responsive" src="~/images/MongodB.png" style="width:50%; margin:auto;" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="cloudinary" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#cldnry_conEdit" data-whatever="Cloudinary">
+                                    <div id="cloudinary" class="connection_wrap_outer" data-toggle="modal" data-target="#cldnry_conEdit" data-whatever="Cloudinary">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="FilesConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/cloudnary.png" style="width:75%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/cloudnary.png" style="width:75%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="SMTP" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#EmailconnectionEdit" data-whatever="SMTP">
+                                    <div id="SMTP" class="connection_wrap_outer" data-toggle="modal" data-target="#EmailconnectionEdit" data-whatever="SMTP">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="EmailConnection_config">
-                                                <div class="db_vendorimg ">
-                                                    <img class="img-responsive" src="~/images/svg/email.svg" style="width:47%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="EmailConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/svg/email.svg" style="width:47%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="twilio" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#TwilioConnectionEdit" data-whatever="Twilio">
+                                    <div id="twilio" class="connection_wrap_outer" data-toggle="modal" data-target="#TwilioConnectionEdit" data-whatever="Twilio">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="TwilioConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/twilio.png" style="width:95%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="TwilioConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/twilio.png" style="width:95%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="expert" class="connection_wrap_outer DisplayAllModal" data-toggle="modal" data-target="#ExpertTextingConnectionEdit" data-whatever="ExpertTexting">
+                                    <div id="expert" class="connection_wrap_outer" data-toggle="modal" data-target="#ExpertTextingConnectionEdit" data-whatever="ExpertTexting">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="ExpertTextingConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/expert texting.png" style="width:85%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="ExpertTextingConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/expert texting.png" style="width:85%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle fa-3" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -294,7 +303,7 @@
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#MyIntegrations" href="#EbDATA">
-                                                        EbDATA
+                                                        Data Store
                                                     </a>
                                                 </h4>
                                             </div>
@@ -329,7 +338,7 @@
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
                                                     <a data-toggle="collapse" data-parent="#MyIntegrations" href="#EbFILES">
-                                                        EbFILES
+                                                        File Store
                                                     </a>
                                                 </h4>
                                             </div>
@@ -513,97 +522,7 @@
 
                 </div>
                 <div class="tab-pane" id="billing" role="tabpanel">
-                    <div class="billing_wrap">
-                        <div class="head__">
-                            <h2 class="mr-t-0">Payment methods</h2>
-                            <p class="u-mb-5">
-                                Please enter your preferred payment method below. You can use a credit card or prepay through PayPal.
-                            </p>
-                            <div class="form-group">
-                                <label class="col-md-12 col-lg-12 pd-0">Total Users</label>
-                                <div class="col-md-3 col-sm-3 col-lg-3 pd-0">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                        </span>
-                                        <input type="number" class="form-control" id="no_user" placeholder="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="s-dash-workplace">
-                            <div class="s-dash-workplace-tabs">
-                                <ul class="nav nav-tabs" role="tablist">
-                                    @*
-                                        <li class="nav-item active">
-                                            <a class="nav-link" data-toggle="tab" href="#creditpayment_tab" role="tab">
-                                                Credit Card
-                                            </a>
-                                        </li>*@
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#paypalpayment_tab" role="tab"> PayPal</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    @*<div class="tab-pane active" id="creditpayment_tab" role="tabpanel">
-                                            <div class="credit_info_head">
-                                                <p class="col-md-10">
-                                                    Card will be charged monthly for number of users. All major credit cards accepted.
-                                                </p>
-                                                <button class="ebbtn eb_btnblue col-md-2" onclick="$('.credit_info').toggle('fast');">Add Card</button>
-                                            </div>
-                                            <div class="credit_info">
-                                                <form class="form-horizontal" method="post" action="/PayPal/CreditCardPayment">
-                                                    <div class="form-group">
-                                                        <label class="pay_label">Name On Card</label>
-                                                        <input type="text" class="form-control" name="CardHolder" placeholder="" value="Amal K dev">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="pay_label">Card Number</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" name="CardNumber" placeholder="" value="1234567887654321">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-md-8 pd-0">
-                                                            <label class="pay_label col-md-12 pd-0">Expiry</label>
-                                                            <div class="col-md-6 pd-l-0">
-                                                                <input type="text" class="form-control" name="ExpiryMonth" placeholder="MM" value="05">
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <input type="text" class="form-control" name="ExpiryYear" placeholder="YY" value="20">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <label class="pay_label">CVV</label>
-                                                            <input type="text" name="Cvv" class="form-control" value="613">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button type="submit" class="btn paypal_btn">Subscribe</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>*@
-                                    <div class="tab-pane active" id="paypalpayment_tab" role="tabpanel">
-                                        <p>
-                                            Subscribe using your paypal account.
-                                        </p>
-                                        <div class="col-md-12 col-lg-12 col-sm-12 pd-0">
-                                            <form action="/PayPal/PayPalPayment" method="post">
-                                                <input type="hidden" name="UserCount" id="user_countForm" />
-                                                <input type="hidden" value="@ViewBag.Connections.SolutionInfo.EsolutionId" name="Sid" />
-                                                <button type="submit" class="btn paypal_btn">PayPal</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @await Component.InvokeAsync("Stripe")
                 </div>
             </div>
         </div>

@@ -20,6 +20,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -196,6 +197,31 @@ namespace ExpressBase.Web.Controllers
             ViewBag.reDirectUrl = (reDir != null) ? reDir : null;
             return View();
         }
+        public void FbLogin()
+        {
+          
+
+
+        }
+
+        public void GithubLogin()
+        {
+
+        }
+        public void GmailLogin()
+        {
+
+        }
+        public void TwitterLogin()
+        {
+
+        }
+        public void LinkedinLogin()
+        {
+
+        }
+
+
 
         //[HttpPost]
         //public IActionResult StripeResponse()
@@ -286,7 +312,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-
+        [HttpPost]
         public int ProfileSetup(string email, string name, string country, string account, string password)
         {
             //streturn= 0 when everythong is fine streturn=1 when email exist in database/table streturn2= not set

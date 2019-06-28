@@ -427,7 +427,7 @@
                 catch (e) {
                     console.eb_log("eb error :");
                     console.eb_log(e);
-                    alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
+                    alert("  error in 'OnChange function' of : " + inpCtrl.Name + " - " + e.message);
                 }
             }
         }.bind(this));
@@ -719,14 +719,29 @@
         this.updateRowByRowId(rowId, rowData);
     };
 
+    this.getRowIdBySlno = function (slno) {
+        return $(`#${this.TableId}>tbody>tr>td.row-no-td[idx=${slno}]`).parent().attr("rowid");
+    };
+
+    this.get$RowByRowId = function (rowId) {
+        return $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+    };
+
     this.updateRowBySlno = function (slno, rowData) {
-        let rowId = $(`#${this.TableId}>tbody>tr>td.row-no-td[idx=${slno}]`).parent().attr("rowid");
+        let rowId = this.getRowIdBySlno(slno);
         this.updateRowByRowId(rowId, rowData);
     };
 
-    this.updateRowByRowId = function (rowId, rowData) {
+    this.getRowBySlno = function (slno) {
+        let rowId = this.getRowIdBySlno(slno);
+        if (rowId)
+            return this.AllRowCtrls[rowId];
+        else
+            console.eb_error(`Row with Serial number '${slno}' not found`);
+    };
 
-        let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+    this.updateRowByRowId = function (rowId, rowData) {
+        let $tr = this.get$RowByRowId(rowId);
         if ($tr.length === 0) {
             console.log(`eb error :    No row with rowId '${rowId}' exist`);
             return;
@@ -744,7 +759,7 @@
     };
 
     this.disableRow = function (rowId) {
-        let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+        let $tr = this.get$RowByRowId(rowId);
         $tr.find(".ctrlstd").attr("mode", "view").attr("title", "Row Disabled");
         $.each(this.AllRowCtrls[rowId], function (i, inpCtrl) {
             inpCtrl.disable();
@@ -752,7 +767,7 @@
     };
 
     this.enableRow = function (rowId) {
-        let $tr = $(`#${this.TableId}>tbody>tr[rowid=${rowId}]`);
+        let $tr = this.get$RowByRowId(rowId);
         $tr.find(".ctrlstd").removeAttr('mode').removeAttr('title');
         $.each(this.AllRowCtrls[rowId], function (i, inpCtrl) {
             inpCtrl.enable();
@@ -764,9 +779,9 @@
     };
 
     this.hideRows = function (rowIds) {
-        arguments.each(function (i, rowId) {
-            this.hideRow(rowId);
-        }.bind(this));
+        for (let i = 0; i < arguments.length; i++) {
+            this.hideRow(arguments[i]);
+        }
     };
 
     this.showRow = function (rowId) {
@@ -782,6 +797,8 @@
     this.setCurRow = function (rowId) {
         this.ctrl.currentRow = [];
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
+            if (!this.AllRowCtrls[rowId][inpctrl.__Col.Name])
+                this.AllRowCtrls[rowId][inpctrl.__Col.Name] = inpctrl;
             this.ctrl.currentRow[inpctrl.__Col.Name] = inpctrl;
         }.bind(this));
     };
@@ -799,6 +816,23 @@
         });
     };
 
+    this.addUtilityFnsForUDF = function () {
+        this.ctrl.addRow = this.AddRowWithData.bind(this);
+        this.ctrl.clear = this.clearDG.bind(this);
+
+        this.ctrl.updateRowByRowId = this.updateRowByRowId.bind(this);
+        this.ctrl.updateRowByRowIndex = this.updateRowByRowIndex.bind(this);
+        this.ctrl.updateRowBySlno = this.updateRowBySlno.bind(this);
+
+        this.ctrl.disableRow = this.disableRow.bind(this);
+        this.ctrl.enableRow = this.enableRow.bind(this);
+
+        this.ctrl.showRow = this.showRow.bind(this);//  + showRows
+        this.ctrl.hideRow = this.hideRow.bind(this);
+        this.ctrl.hideRows = this.hideRows.bind(this);
+
+        this.ctrl.getRowBySlno = this.getRowBySlno.bind(this);
+    };
 
     this.init = function () {
         this.ctrl.currentRow = [];
@@ -820,6 +854,7 @@
                 col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
         }.bind(this));
 
+        this.addUtilityFnsForUDF();
         this.tryAddRow();
         if (this.isAggragateInDG) {
             this.initAgg();
@@ -828,19 +863,6 @@
         if (!this.ctrl.IsShowSerialNumber)
             $(`#${this.ctrl.EbSid}Wraper`).attr("hideslno", "true");
 
-        this.ctrl.addRow = this.AddRowWithData.bind(this);
-        this.ctrl.clear = this.clearDG.bind(this);
-
-        this.ctrl.updateRowByRowId = this.updateRowByRowId.bind(this);
-        this.ctrl.updateRowByRowIndex = this.updateRowByRowIndex.bind(this);
-        this.ctrl.updateRowBySlno = this.updateRowBySlno.bind(this);
-
-        this.ctrl.disableRow = this.disableRow.bind(this);
-        this.ctrl.enableRow = this.enableRow.bind(this);
-
-        this.ctrl.showRow = this.showRow.bind(this);
-        this.ctrl.hideRow = this.hideRow.bind(this);
-        this.ctrl.hideRows = this.hideRows.bind(this);
         this.defineRowCount();
 
         this.$table.on("click", ".check-row", this.checkRow_click);

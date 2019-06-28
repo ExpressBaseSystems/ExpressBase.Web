@@ -106,7 +106,7 @@ var animateObj = function (duration) {
     };
 }
 
-var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [], TableId;
+var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [], TableId, zoomlevel;
 var informaion = function (nam, val) {
     this.name = nam;
     this.value = val;
@@ -189,7 +189,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
     this.call2FD = function () {
         this.relatedObjects = this.EbObject.DataSourceRefId;
-        $.LoadingOverlay("show");
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
@@ -241,7 +241,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 dir: "left",
                 label: "Parameters",
                 //btnTop: 42,
-                style: { position: "absolute", top: "46px" }
+                style: { position: "absolute", top: "41px" }
             });
         }
         if (typeof commonO !== "undefined")
@@ -259,7 +259,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 dvcontainerObj.dvcol[focusedId].stickBtn.hide();
             }
             $("#btnGo" + this.tabNum).trigger("click");
-            $.LoadingOverlay("hide");
+            $("#eb_common_loader").EbLoader("hide");
         }
         else {
             this.FD = true;
@@ -271,14 +271,16 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 this.FDCont.show();
                 this.FDCont.css("visibility", "visible");
             }
-            $.LoadingOverlay("hide");
+            $("#eb_common_loader").EbLoader("hide");
         }
         $(subDivId).focus();
 
-        if (this.type === "googlemap")
-            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-        else
+        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        else {
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+            this.type = "googlemap";
+        }
         this.PcFlag = false;
     }.bind(this);
 
@@ -293,7 +295,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
-                    $extCont: $(".ppcont")
+                    $extCont: $(".ppcont"),
+                    style: { top: "80px" }
                 });
 
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
@@ -334,18 +337,20 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.prevObj = this.EbObject;
             if (obj.Charttype == 1) {
                 this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
+                commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
             }
             else {
                 this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
+                commonO.Current_obj = this.EbObject;
                 this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
                 this.type = "bar";
             }
+            this.EbObject.Charttype = obj.Charttype;
             this.rearrangeObjects();
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             $("#map" + this.tableId).remove();
-            this.EbObject = this.EbObject;
 
             this.updateDragula("Changed");
 
@@ -419,7 +424,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                     this.filterValues = this.getFilterValues();
                 }
                 this.isSecondTime = false;
-                $.LoadingOverlay("show");
+                $("#eb_common_loader").EbLoader("show");
                 $.ajax({
                     type: 'POST',
                     url: "../DV/getdata",
@@ -506,7 +511,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 </div>
                 </div> 
                 <input type='color' id='fontSel' style='display:none;'>
-                <div id='canvasDiv${this.tableId}' style='height:100%;padding-bottom:10px;'><canvas id='myChart${this.tableId}'></canvas></div> 
+                <div id='canvasDiv${this.tableId}' class="canvasstyle" ><canvas id='myChart${this.tableId}'></canvas></div> 
                 </div> 
                 </div>`);
     };
@@ -578,8 +583,10 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["bar"]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
 
-        if (this.login == "uc") {
+        if (this.login === "uc") {
             dvcontainerObj.modifyNavigation();
+            if (this.EbObject.Charttype === 1)
+                $(`#btnColumnCollapse${this.tableId}`).hide();
         }
         //$("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
         this.bindEvents();
@@ -603,8 +610,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         $("#reset_zoom" + this.tableId).off("click").on("click", this.ResetZoom.bind(this));
         $("#graphDropdown_tab" + this.tableId + " .dropdown-menu a").off("click").on("click", this.setGraphType.bind(this));
         $("#btnColumnCollapse" + this.tableId).off("click").on("click", this.collapseGraph.bind(this));
-        $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
-        $("#btnTogglePPGrid" + this.tableId).off("click").on("click", this.togglePPGrid.bind(this));
         $("#switch" + this.tableId).off("click").on("click", this.SwitchToTable.bind(this));
     };
 
@@ -746,7 +751,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     }
 
     this.getDataSuccess = function (result) {
-        $.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
         //this.MainData = result.data; 
         if (this.login == "uc")
             dvcontainerObj.currentObj.data = result;
@@ -795,24 +800,30 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             }
 
             if (this.type === "googlemap") {
-                $.each(this.EbObject.MarkerLabel.$values, function (i, obj) {
-                    if (i === 0)
-                        ml.push(obj.data);
-                });
-
-                if (ml.length > 0) {
-                    $.each(this.data, function (i, value) {
-                        markLabel.push(value[ml[0]].charAt(0));
+                if (this.EbObject.MarkerLabel) {
+                    $.each(this.EbObject.MarkerLabel.$values, function (i, obj) {
+                        if (i === 0)
+                            ml.push(obj.data);
                     });
+
+                    if (ml.length > 0) {
+                        $.each(this.data, function (i, value) {
+                            markLabel.push(value[ml[0]].charAt(0));
+                        });
+                    }
                 }
                 Inform = [];
-                $.each(this.EbObject.InfoWindow.$values, function (i, obj) {
-                    info = [];
-                    $.each(this.data, function (k, value) {
-                        info.push(value[obj.data]);
-                    });
-                    Inform.push(new informaion(obj.name, info));
-                }.bind(this));
+                if (this.EbObject.InfoWindow) {
+                    $.each(this.EbObject.InfoWindow.$values, function (i, obj) {
+                        info = [];
+                        $.each(this.data, function (k, value) {
+                            info.push(value[obj.data]);
+                        });
+                        Inform.push(new informaion(obj.name, info));
+                    }.bind(this));
+                }
+                if (this.EbObject.Zoomlevel)
+                    zoomlevel = this.EbObject.Zoomlevel;
             }
 
         }
@@ -824,9 +835,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.drawGeneralGraph = function () {
-        $(".ppcont").hide();
         if (!this.bot) {
-            $.LoadingOverlay("show");
+            $("#eb_common_loader").EbLoader("show");
             this.getBarData();
         }
         if (this.type === "googlemap") {
@@ -835,7 +845,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $("#canvasDiv" + this.tableId).children("iframe").remove();
             $("#myChart" + this.tableId).remove();
             if ($("#map" + this.tableId).children().length === 0)
-                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:inherit;width:100%;'></div>");
+                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:100%;width:100%;'></div>");
             Xlabel = this.XLabel;
             Ylabel = this.YLabel;
             showRoute = this.EbObject.ShowRoute;
@@ -851,7 +861,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 initMap();
             }
 
-            $.LoadingOverlay("hide");
+            $("#eb_common_loader").EbLoader("hide");
             if (this.bot) {
                 $("#map" + this.tableId).css("height", "inherit");
                 $("#map" + this.tableId).css("margin-top", "10px");
@@ -935,7 +945,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
                 this.RemoveCanvasandCheckButton();
 
-            $.LoadingOverlay("hide");
+            $("#eb_common_loader").EbLoader("hide");
         }
 
     };
@@ -1037,7 +1047,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             options: this.goptions,
         });
         this.isSecondTime = true;
-        $.LoadingOverlay("hide");
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.ResetZoom = function () {
@@ -1157,7 +1167,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         if ($("#columnsDisplay" + this.tableId).css("display") === "none") {
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-10").addClass("col-md-12");
             $("#canvasDiv" + this.tableId).css("height", "100%");
-            //$("#myChart" + this.tableId).css("height", "inherit");
         }
         else {
             $("#canvasParentDiv" + this.tableId).removeClass("col-md-12").addClass("col-md-10");
@@ -1167,11 +1176,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
     this.toggleFilterdialog = function () {
         $("#" + this.ContextId).toggle();
-    };
-
-    this.togglePPGrid = function () {
-        $("#Relateddiv").hide();
-        $(".ppcont").toggle();
     };
 
     this.RemoveAndAddToColumns = function (e) {
@@ -1352,7 +1356,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                         this.EbObject.LegendColor.$values.push(new ChartColor(obj.name, randomColor()));
                     }.bind(this));
                 }
-                this.drawGeneralGraph();
+                if (this.data)
+                    this.drawGeneralGraph();
             }
 
         }
@@ -1386,6 +1391,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.EbObject.Xaxis = this.prevObj.Xaxis;
         this.EbObject.Yaxis = this.prevObj.Yaxis;
         this.EbObject.Pippedfrom = this.prevObj.Pippedfrom;
+        this.EbObject.DisplayName = this.prevObj.DisplayName;
     }
 
     this.toolTipCallback = function (item, data) {
@@ -1408,8 +1414,9 @@ function initMap() {
     var directionsDisplay = new google.maps.DirectionsRenderer();
     var mid = Math.floor(Xlabel.length / 2);
     var map = new google.maps.Map(document.getElementById('map' + TableId), {
-        zoom: 14,
+        zoom: zoomlevel || 5,
         center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
+        gestureHandling: 'greedy'
         // mapTypeId: google.maps.MapTypeId.ROADMAP
     });
     directionsDisplay.setMap(map);

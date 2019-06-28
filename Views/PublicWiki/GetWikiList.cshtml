@@ -40,9 +40,6 @@
 
 <div class="container-fluid">
     <div class=" row ">
-
-        
-
         <div class="col-sm-2 navbar1 style-4">
                        <div class="row" style="margin-top: 10px;">
                 <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
@@ -75,16 +72,16 @@
             <div class="row">
                 <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
                 <div class="col-sm-10">
-                    <h5 class="menu" val="Reporting"> Reports </h5>
+                    <h5 class="menu" val="Report"> Report </h5>
                 </div>
             </div>
 
-            <div id="Reporting" val="hide" show>
+            <div id="Report" val="hide" show>
                 <ul>
                     @foreach (Wiki wiki in ViewBag.WikiList)
                     {
                         int link = wiki.Id;
-                        if (wiki.Category == "Reporting")
+                        if (wiki.Category == "Report")
                         {
 
                             <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
@@ -188,6 +185,7 @@
 
         <div class="col-sm-10" style="padding-left: 0px;">
 
+          
             <div class="row" style="padding-top:10px;">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Search.." id="search_wiki" aria-describedby="basic-addon2">
@@ -195,23 +193,29 @@
                 </div>
 
                 @*<div class="nav-item">
-                    <div style="position:fixed;height:200px;overflow:auto;background-color:white" class="col-sm-10">
+            <div style="position:fixed;height:200px;overflow:auto;background-color:white" class="col-sm-10">
 
-                </div>*@
+        </div>*@
                 @*<a class="edit" style="visibility:hidden" id="edit_show" >
-                    edit
-                </a>*@
-                <div id="html" style="height:540px;overflow:auto;" hidden class="container-fluid wiki-align style-4">
+            edit
+        </a>*@
+                <div class="icon-bar">
+                    <a href="https://www.facebook.com/share.php?u=http://www.expressbase.com&title=ExpressBase" class="facebook" target="_blank"><i class="fa fa-facebook"></i></a>
+                    <a href="#" class="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+                    @*<a href="#" class="google" target="_blank"><i class="fa fa-google"></i></a>*@
+                    <a href="#" class="linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
+                    <a href="#" class="whatsapp" target="_blank"><i class="fa fa-whatsapp"></i></a>
+                </div>
+                <div id="wiki_data_div" style="height:501px;overflow:auto;" hidden class="container-fluid wiki-align style-4">
+
 
                 </div>
 
                 @*<div id="search_id" style="height:550px;overflow:auto;" hidden class="container-fluid wiki-align style-4"> </div>*@
 
-                <div class="front_page_wiki wiki-align style-4" show style="height:540px;overflow:auto;">
+                <div class="front_page_wiki wiki-align style-4" show style="height:501px;overflow:auto;">
                     <h1> <center>Documentation</center></h1>
                     <p> Welcome to ExpressBase! Get familiar with the ExpressBase products and explore their features: </p>
-
-
                 </div>
                 <p></p>
 

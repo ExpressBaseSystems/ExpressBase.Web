@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     @using Newtonsoft.Json;
     @using ExpressBase.Common;
     @using ExpressBase.Objects;
@@ -9,10 +10,17 @@
     //var dvobj = JsonConvert.SerializeObject(ViewBag.data);
     EbFilterDialog filterDialogObj = ViewBag.data.EbDataSource.FilterDialog;
 }
-
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
 @{
     if (ViewBag.data.EbDataSource.FilterDialogRefId != null && ViewBag.data.EbDataSource.FilterDialogRefId != "" && ViewBag.forWrap != "wrap")
-    {       
+    {
         @await Component.InvokeAsync("ParameterDiv", new { FilterDialogObj = filterDialogObj, _user = ViewBag.currentUser, _sol = ViewBag.solution, ParentRefid = ViewBag.dvRefId, wc = ViewBag.wc, curloc = ViewBag.curloc, submitId = ViewBag.submitId });
 
     }

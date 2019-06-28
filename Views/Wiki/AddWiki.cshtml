@@ -24,7 +24,7 @@
            
             <form action="/wiki/save" method="post">
                 <div class="row" style="padding-left:10px">
-                    <div class="col-sm-6">Title : <input type="text" name="title" id="title" value="@ViewBag.Wiki.Title" class="title1" style="height: 27px; width: 87%;" /></div>
+                    <div class="col-sm-6">Title <input type="text" name="title" id="title" value="@ViewBag.Wiki.Title" class="title1" style="height: 27px; width: 87%;" /></div>
                     <div class="col-sm-6">
                         <input type="hidden" name="id" value="@ViewBag.Id" />
 
@@ -42,41 +42,53 @@
 
                 </div>
                 <div class="row" style="padding-left:10px;padding-top:10px;">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6">
                         <input type="text" value="@ViewBag.Wiki.Tags" data-role="tagsinput" name="tagbox" class="form-control" placeholder="Add tags" />
+                        <input type="button" id="Render_page_open" value="open rendering page" hidden />
                     </div>
-                </div>
-
-                <div class="row" style="padding:10px;padding-top:20px;padding-right:30px">
-                    <div class="col-sm-1"> <input type="button" class="props" val="<b></b>"value="Bold" style="font-weight: bold;"/>   </div>
-                    <div class="col-sm-1"><i><input type="button" class="props" value="italic" val="<i></i>"> </i> </div>
-                    <div class="col-sm-1"><input type="button"class="props" value="U" val="<u></u>" style="text-decoration:underline;"></div>
-                    <div class="col-sm-1">  <input type="button" value="Center" class="props" val="<center></center>">  </div>
-                    <div class="col-sm-1"> <input type="button" value="H1" class="props" val="<h1></h1>"> </div>
-                    <div class="col-sm-1"> <input type="button" value="H2" class="props" val="<h2></h2>"> </div>
-                    <div class="col-sm-1">  <input type="button" value="H3" class="props" val="<h3></h3>"> </div>
-                    <div class="col-sm-1">  <input type="button" value="H4" class="props" val="<h4></h4>"></div>
-                    <div class="col-sm-1"> <input type="button"  value="p" class="props" val="<p></p>"></div>
-                    <div class="col-sm-1"><input type="button"  value="code" class="props" val="<textarea rows=auto cols=50 readonly></textarea>"> </div>
-                    <div class="col-sm-1">  <input type="button" value="YouTube" class="props fa fa-youtube-play" val="<iframe src=link />"></div>
-                    <div class="col-sm-1"> <input type="button" value="Image"  class="props fa fa-file-image-o" val="<img src=link>"></div>
-                
-                </div>
-
-                <div class="row" style="padding:10px">
-                    <div class="col-sm-12">
-                        <textarea rows="16" cols="87" class="readtext" id="text" name="content" style="width: 100%;height: 100%;"> @ViewBag.Wiki.HTML</textarea>
+                    <div class="col-sm-6">
+                       Status  
+                        <select name="status" class="title1" style="height: 25px; width: 77%;">
+                            <option>Draft</option>
+                            <option>Publish</option>
+                            <option>Unpublish</option>
+                        </select>
                     </div>
-                </div>
-                <div class="row" style="padding:10px">
-                    <div class="col-sm-12" style="align-content:center">
+                    <div class="col-sm-2">
+                        <input type="button" id="Render_page_open" value="open" hidden />
+                    </div>
+                    </div>
 
-                        <input type="submit" value="submit" name="submit" />
+                    <div class="row" style="padding:10px;padding-top:20px;padding-right:30px">
+                        <div class="col-sm-1"> <input type="button" class="props" val="<b></b>" value="Bold" style="font-weight: bold;" />   </div>
+                        <div class="col-sm-1"><i><input type="button" class="props" value="italic" val="<i></i>"> </i> </div>
+                        <div class="col-sm-1"><input type="button" class="props" value="U" val="<u></u>" style="text-decoration:underline;"></div>
+                        <div class="col-sm-1">  <input type="button" value="Center" class="props" val="<center></center>">  </div>
+                        <div class="col-sm-1"> <input type="button" value="H1" class="props" val="<h1></h1>"> </div>
+                        <div class="col-sm-1"> <input type="button" value="H2" class="props" val="<h2></h2>"> </div>
+                        <div class="col-sm-1">  <input type="button" value="H3" class="props" val="<h3></h3>"> </div>
+                        <div class="col-sm-1">  <input type="button" value="H4" class="props" val="<h4></h4>"></div>
+                        <div class="col-sm-1"> <input type="button" value="p" class="props" val="<p></p>"></div>
+                        <div class="col-sm-1"><input type="button" value="code" class="props" val="<textarea rows=auto cols=50 readonly></textarea>"> </div>
+                        <div class="col-sm-1">  <input type="button" value="YouTube" class="props fa fa-youtube-play" val="<iframe src=link />"></div>
+                        <div class="col-sm-1"> <input type="button" value="Image" class="props fa fa-file-image-o" val="<img src=link>"></div>
 
                     </div>
-                </div>
 
-            </form>
+                    <div class="row" style="padding:10px">
+                        <div class="col-sm-12">
+                            <textarea rows="16" cols="87" class="readtext" id="text" name="content" style="width: 100%;height: 100%;"> @ViewBag.Wiki.HTML</textarea>
+                        </div>
+                    </div>
+                    <div class="row" style="padding:10px">
+                        <div class="col-sm-12" style="align-content:center">
+
+                            <input type="submit" value="submit" name="submit" />
+
+                        </div>
+                    </div>
+
+</form>
 
         </div>
         

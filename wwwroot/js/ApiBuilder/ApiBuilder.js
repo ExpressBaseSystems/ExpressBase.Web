@@ -219,22 +219,12 @@ function EbApiBuild(config) {
             var ebtype = o[i].$type.split(",")[0].split(".").pop().substring(2);
             var id = ebtype + CtrlCounters[ebtype + "Counter"]++;
             var obj = new EbObjects["Eb" + ebtype](id);
-            //this.replaceProp(obj, o[i]);
             $.extend(obj, o[i]);
             $(`#${this.dropArea} #end_item`).before(obj.$Control.outerHTML());
             this.Procs[id] = obj;
             this.RefreshControl(this.Procs[id]);
-            //this.getComponent(obj.Refid, obj.EbSid);
         }
     };
-
-    this.replaceProp = function (source, destination) {
-        for (var objPropIndex in source) {
-            if (typeof source[objPropIndex] !== "object" && objPropIndex !== "$Control" && objPropIndex !== "EbSid") {
-                source[objPropIndex] = destination[objPropIndex];
-            }
-        }
-    }
 
     this.toggleReqWindow = function (name, resp) {
         $("#Json_reqOrRespWrp .reqLabel").text(` (${name}) `);

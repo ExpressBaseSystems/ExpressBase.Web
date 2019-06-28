@@ -263,15 +263,10 @@ namespace ExpressBase.Web.Controllers
         {
             ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>() };
             UploadAsyncResponse res = new UploadAsyncResponse();
-            EbFileCategory _FileType = EbFileCategory.File;
             var req = this.HttpContext.Request.Form;
             string fname = string.Empty;
             try
             {
-                if (req["FileType"] == "image")
-                {
-                    _FileType = EbFileCategory.Images;
-                }
                 UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
                 foreach (var formFile in req.Files)
@@ -291,7 +286,7 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.FileName = formFile.FileName.ToLower();
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
-                        uploadFileRequest.FileDetails.FileCategory = _FileType;
+                        uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
 
                         (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData

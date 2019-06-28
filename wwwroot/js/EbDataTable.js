@@ -335,8 +335,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
-                    $extCont: $(".ppcont"),
-                    style: { top: "80px" }
+                    $extCont: $(".ppcont")
                 }, this.PGobj);
 
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;

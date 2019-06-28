@@ -208,12 +208,12 @@ const EbSelect = function (ctrl, options) {
     this.clearValues = function () {
         $.each(this.Vobj.valueMembers, function (i, val) {
             $(this.DTSelector + ` [type=checkbox][value=${val}]`).prop("checked", false);
-        });
+        }.bind(this));
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
         $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
 
-    };
+    }.bind(this);
 
     this.initComplete4SetVal = function (callBFn, StrValues) {
         if (this.setvaluesColl) {

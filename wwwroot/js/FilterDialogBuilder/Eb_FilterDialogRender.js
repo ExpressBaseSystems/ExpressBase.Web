@@ -27,22 +27,27 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     this.init = function () {
         this.initFilterDialogCtrls();
         this.initFormObject2();
-        this.bindFuncsToDom();
-    };
 
+        //this.bindFuncsToDom();
+
+    };
     this.initFilterDialogCtrls = function () {
         $('.selectpicker').selectpicker();
         JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
-        $.each(this.FormObj.Controls.$values, function (k, cObj) {
+        $.each(this.FormObj.Controls.$values, function (k, Obj) {
             let opt = {};
-            if (cObj.ObjType === "PowerSelect")
+            if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getFormVals;
-            else if (cObj.ObjType === "Date") {
+            else if (Obj.ObjType === "Date") {
                 opt.formObject = this.formObject;
                 opt.userObject = userObj;
             }
 
-            this.initControls.init(cObj, opt);
+            this.initControls.init(Obj, opt);
+
+            this.FRC.bindFnsToCtrl(Obj);
+
+            this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 
@@ -85,42 +90,42 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         ctrlObj.setValue(val);
     };
 
-    this.bindFuncsToDom = function () {
-        this.onChangeExeFlag = false;
-        this.$submitBtn.on("click", this.submit);
-        $.each(this.FormObj.Controls.$values, function (k, cObj) {
-            //creating onChangeExeFuncs and binding to dom elements
-            if (cObj.OnChangeFn && cObj.OnChangeFn.Code && cObj.OnChangeFn.Code !== '') {
-                this.onChangeExeFuncs[cObj.Name] = new Function("form", "User", atob(cObj.OnChangeFn.Code));
-                if (cObj.ObjType === 'TextBox' || cObj.ObjType === 'Date') {
-                    this.onChangeExeFlag = true;
-                    $("body #" + cObj.EbSid_CtxId).on("change", this.ctrlValueChanged.bind(this, cObj.Name));
-                }
-                else if (cObj.ObjType === 'RadioGroup') {
-                    this.onChangeExeFlag = true;
-                    $("body").on("change", "input[name='" + cObj.EbSid_CtxId + "']", this.ctrlValueChanged.bind(this, cObj.Name));
-                }
-                else if (cObj.ObjType === 'UserLocation') {
-                    this.onChangeExeFlag = true;
-                    $("body").on("change", "#" + cObj.EbSid_CtxId, this.ctrlValueChanged.bind(this, cObj.Name));
-                    //$("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
-                }
-            }
-            else {
-                //if (cObj.ObjType === 'UserLocation') {
-                //    $("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
-                //}
-            }
-        }.bind(this));
+    //this.bindFuncsToDom = function () {
+    //    this.onChangeExeFlag = false;
+    //    this.$submitBtn.on("click", this.submit);
+    //    $.each(this.FormObj.Controls.$values, function (k, cObj) {
+    //        //creating onChangeExeFuncs and binding to dom elements
+    //        if (cObj.OnChangeFn && cObj.OnChangeFn.Code && cObj.OnChangeFn.Code !== '') {
+    //            this.onChangeExeFuncs[cObj.Name] = new Function("form", "User", atob(cObj.OnChangeFn.Code));
+    //            if (cObj.ObjType === 'TextBox' || cObj.ObjType === 'Date') {
+    //                this.onChangeExeFlag = true;
+    //                $("body #" + cObj.EbSid_CtxId).on("change", this.ctrlValueChanged.bind(this, cObj.Name));
+    //            }
+    //            else if (cObj.ObjType === 'RadioGroup') {
+    //                this.onChangeExeFlag = true;
+    //                $("body").on("change", "input[name='" + cObj.EbSid_CtxId + "']", this.ctrlValueChanged.bind(this, cObj.Name));
+    //            }
+    //            else if (cObj.ObjType === 'UserLocation') {
+    //                this.onChangeExeFlag = true;
+    //                $("body").on("change", "#" + cObj.EbSid_CtxId, this.ctrlValueChanged.bind(this, cObj.Name));
+    //                //$("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
+    //            }
+    //        }
+    //        else {
+    //            //if (cObj.ObjType === 'UserLocation') {
+    //            //    $("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
+    //            //}
+    //        }
+    //    }.bind(this));
 
-        //if (this.onChangeExeFlag)
-        this.initialLoad();
+    //    //if (this.onChangeExeFlag)
+    //    this.initialLoad();
 
-    };
+    //};
 
-    this.ctrlValueChanged = function (name) {
-        this.onChangeExeFuncs[name](this.formObject, userObj);
-    };
+    //this.ctrlValueChanged = function (name) {
+    //    this.onChangeExeFuncs[name](this.formObject, userObj);
+    //};
 
     this.initialLoad = function () {
         $.each(this.FormObj.Controls.$values, function (k, cObj) {

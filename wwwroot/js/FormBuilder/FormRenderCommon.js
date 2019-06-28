@@ -152,7 +152,7 @@
             this.removeInvalidStyle(ctrl);// reset EbMakeValid
             if (Validator.IsDisabled)
                 return true;// continue; from loop if current validation IsDisabled
-            let func = new Function("form", atob(Validator.JScode));
+            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
             this.updateFormValues();
             if (!func(this.FO.formValues)) {
                 //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");

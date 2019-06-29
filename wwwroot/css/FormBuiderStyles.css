@@ -689,6 +689,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 [singleselect="true"] .selected-tag {
+    width: 100%;
+}
+
+
+[singleselect="true"] .selected-tag {
     width: calc(100% - 6px);
 }
 

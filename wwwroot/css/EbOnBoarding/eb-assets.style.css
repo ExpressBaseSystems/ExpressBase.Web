@@ -110,9 +110,9 @@
 .tenant_sidebar {
     width: 100px;
 }
-.tenant_workpane {
+/*.tenant_workpane {
     width: calc(100% - 100px);
-}
+}*/
 .tenant_sidebar .t-container {
     padding-top: 0 !important;
 }

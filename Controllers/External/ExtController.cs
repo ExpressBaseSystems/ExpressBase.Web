@@ -52,16 +52,14 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-
         public IActionResult EmailVerifyStructure()
         {
-
             return View();
         }
 
-        public IActionResult SignIn()
+        [HttpGet("Platform/Board")]
+        public IActionResult SignUp()
         {
-
             return View();
         }
 
@@ -178,7 +176,7 @@ namespace ExpressBase.Web.Controllers
                 return Redirect("/StatusCode/404");
         }
 
-        public IActionResult TenantSignIn(string Email, string reDir)
+        public IActionResult TenantSignIn(string Email)
         {
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
@@ -194,13 +192,11 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.ErrorMsg = TempData["ErrorMessage"];
             ViewBag.Email = (Email != null) ? Email : null;
-            ViewBag.reDirectUrl = (reDir != null) ? reDir : null;
             return View();
         }
+
         public void FbLogin()
         {
-          
-
 
         }
 
@@ -220,8 +216,6 @@ namespace ExpressBase.Web.Controllers
         {
 
         }
-
-
 
         //[HttpPost]
         //public IActionResult StripeResponse()
@@ -303,15 +297,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult EbOnBoarding(string Email)
-        {
-            ViewBag.useremail = Email;
-            //var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
-            //ViewBag.iSid = ebids.Sid;
-            return View();
-        }
-
         [HttpPost]
         public int ProfileSetup(string email, string name, string country, string account, string password)
         {
@@ -368,22 +353,14 @@ namespace ExpressBase.Web.Controllers
                     }
 
                     }
-              
             }
             else
             {
-                //streturn = 1 when email exist in database / table s
+             //streturn = 1 when email exist in database / table s
              streturn = 1;
             }
-
-
             return streturn;
         }
-
-
-
-
-
 
         [HttpGet("em")]
         public IActionResult EmailVerify(string emv)
@@ -498,8 +475,6 @@ namespace ExpressBase.Web.Controllers
 
             return false;
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> TenantSignin(int i)

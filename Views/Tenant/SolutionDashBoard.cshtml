@@ -262,431 +262,347 @@ Layout = "~/Views/Shared/LayoutInner.cshtml";
 
                 </div>
                 <div class="tab-pane" id="billing" role="tabpanel">
-                    <div class="billing_wrap">
-                        <div class="head__">
-                            <h2 class="mr-t-0">Payment methods</h2>
-                            <p class="u-mb-5">
-                                Please enter your preferred payment method below. You can use a credit card or prepay through PayPal.
-                            </p>
-                            <div class="form-group">
-                                <label class="col-md-12 col-lg-12 pd-0">Total Users</label>
-                                <div class="col-md-3 col-sm-3 col-lg-3 pd-0">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                        </span>
-                                        <input type="number" class="form-control" id="no_user" placeholder="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="s-dash-workplace">
-                            <div class="s-dash-workplace-tabs">
-                                <ul class="nav nav-tabs" role="tablist">
-                                    @*<li class="nav-item active">
-                                            <a class="nav-link" data-toggle="tab" href="#creditpayment_tab" role="tab">
-                                                Credit Card
-                                            </a>
-                                        </li>*@
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#paypalpayment_tab" role="tab"> PayPal</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    @*<div class="tab-pane active" id="creditpayment_tab" role="tabpanel">
-                                            <div class="credit_info_head">
-                                                <p class="col-md-10">
-                                                    Card will be charged monthly for number of users. All major credit cards accepted.
-                                                </p>
-                                                <button class="ebbtn eb_btnblue col-md-2" onclick="$('.credit_info').toggle('fast');">Add Card</button>
-                                            </div>
-                                            <div class="credit_info">
-                                                <form class="form-horizontal" method="post" action="/PayPal/CreditCardPayment">
-                                                    <div class="form-group">
-                                                        <label class="pay_label">Name On Card</label>
-                                                        <input type="text" class="form-control" name="CardHolder" placeholder="" value="Amal K dev">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="pay_label">Card Number</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" name="CardNumber" placeholder="" value="1234567887654321">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-md-8 pd-0">
-                                                            <label class="pay_label col-md-12 pd-0">Expiry</label>
-                                                            <div class="col-md-6 pd-l-0">
-                                                                <input type="text" class="form-control" name="ExpiryMonth" placeholder="MM" value="05">
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <input type="text" class="form-control" name="ExpiryYear" placeholder="YY" value="20">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <label class="pay_label">CVV</label>
-                                                            <input type="text" name="Cvv" class="form-control" value="613">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button type="submit" class="btn paypal_btn">Subscribe</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>*@
-                                    <div class="tab-pane active" id="paypalpayment_tab" role="tabpanel">
-                                        <p>
-                                            Subscribe using your paypal account.
-                                        </p>
-                                        <div class="col-md-12 col-lg-12 col-sm-12 pd-0">
-                                            <form action="/PayPal/PayPalPayment" method="post">
-                                                <input type="hidden" name="UserCount" id="user_countForm" />
-                                                <input type="hidden" value="@ViewBag.SolutionInfo.EsolutionId" name="Sid" />
-                                                <button type="submit" class="btn paypal_btn">PayPal</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                    @await Component.InvokeAsync("Stripe")
+              </div>
+          </div>
+      </div>
+  </div>
 </div>
 <div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="margin-top:100px;">
-    <div class="modal-dialog">
-        <div class="modal-content" id="dbConnection_mask">
-            <form action="" method="post" id="dbConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">DataBase Connection</h4>
-                    <div id="dbConnection_loder" class="dbConnection_loder"></div>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Database</label>
-                                <select name="DatabaseVendor" class="form-control">
-                                    <option value="PGSQL">PGSQL</option>
-                                    <option value="MYSQL">MYSQL</option>
-                                    <option value="MSSQL">MSSQL</option>
-                                    <option value="ORACLE">ORACLE</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>DataBase Name</label>
-                                <input name="DatabaseName" type="text" class="form-control" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input name="NickName" type="text" class="form-control" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Enable SSL</label>
-                                <input name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;"/>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <label>User Name</label>
-                            <div class="col-md-12 pd-0">
-                                <table class="table table-bordered table-form">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:130px;"></th>
-                                            <th>User Name</th>
-                                            <th>Password</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Admin</td>
-                                            <td><input name="UserName" type="text" class="form-control" required /></td>
-                                            <td><input name="Password" type="password" class="form-control" required /></td>
-                                        </tr>
-                                        <tr class="advanced-tr" style="display:none">
-                                            <td>Read-Write User</td>
-                                            <td><input name="ReadWriteUserName" type="text" class="form-control" /></td>
-                                            <td><input name="ReadWritePassword" type="password" class="form-control" /></td>
-                                        </tr>
-                                        <tr class="advanced-tr" style="display:none">
-                                            <td>ReadOnly User</td>
-                                            <td><input name="ReadOnlyUserName" type="text" class="form-control" /></td>
-                                            <td><input name="ReadOnlyPassword" type="password" class="form-control" /></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="uname-advanced-sec form-inline">
-                                    <label style="margin-right:5px;">Advanced</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="UserNamesAdvanced">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Server Address</label>
-                                <input name="Server" type="text" class="form-control" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Port</label>
-                                <input name="Port" pattern="^[0-9]*$" type="text" class="form-control" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>TimeOut</label>
-                                <input name="Timeout" pattern="^[0-9]*$" type="text" class="form-control" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                        <input type="hidden" name="IsNew" />
-                        <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary saveConnection" style="display:none">Save</button>
-                    <a whichform="dbConnectionSubmit" url="DataDbTest" class="ebbtn eb_btnblue testConnection">Test Connection</a>
-                </div>
-            </form>
-        </div>
-    </div>
+  <div class="modal-dialog">
+      <div class="modal-content" id="dbConnection_mask">
+          <form action="" method="post" id="dbConnectionSubmit" data-toggle="validator">
+              <div class="modal-header relative">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">DataBase Connection</h4>
+                  <div id="dbConnection_loder" class="dbConnection_loder"></div>
+              </div>
+              <div class="modal-body">
+                  <div class="row">
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label>Database</label>
+                              <select name="DatabaseVendor" class="form-control">
+                                  <option value="PGSQL">PGSQL</option>
+                                  <option value="MYSQL">MYSQL</option>
+                                  <option value="MSSQL">MSSQL</option>
+                                  <option value="ORACLE">ORACLE</option>
+                              </select>
+                          </div>
+                          <div class="form-group">
+                              <label>DataBase Name</label>
+                              <input name="DatabaseName" type="text" class="form-control" required />
+                          </div>
+                          <div class="form-group">
+                              <label>Nick Name</label>
+                              <input name="NickName" type="text" class="form-control" required />
+                          </div>
+                          <div class="form-group">
+                              <label>Enable SSL</label>
+                              <input name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;"/>
+                          </div>
+                      </div>
+                      <div class="col-md-8">
+                          <label>User Name</label>
+                          <div class="col-md-12 pd-0">
+                              <table class="table table-bordered table-form">
+                                  <thead>
+                                      <tr>
+                                          <th style="width:130px;"></th>
+                                          <th>User Name</th>
+                                          <th>Password</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr>
+                                          <td>Admin</td>
+                                          <td><input name="UserName" type="text" class="form-control" required /></td>
+                                          <td><input name="Password" type="password" class="form-control" required /></td>
+                                      </tr>
+                                      <tr class="advanced-tr" style="display:none">
+                                          <td>Read-Write User</td>
+                                          <td><input name="ReadWriteUserName" type="text" class="form-control" /></td>
+                                          <td><input name="ReadWritePassword" type="password" class="form-control" /></td>
+                                      </tr>
+                                      <tr class="advanced-tr" style="display:none">
+                                          <td>ReadOnly User</td>
+                                          <td><input name="ReadOnlyUserName" type="text" class="form-control" /></td>
+                                          <td><input name="ReadOnlyPassword" type="password" class="form-control" /></td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                              <div class="uname-advanced-sec form-inline">
+                                  <label style="margin-right:5px;">Advanced</label>
+                                  <label class="switch">
+                                      <input type="checkbox" id="UserNamesAdvanced">
+                                      <span class="slider round"></span>
+                                  </label>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label>Server Address</label>
+                              <input name="Server" type="text" class="form-control" required />
+                              <div class="help-block with-errors"></div>
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label>Port</label>
+                              <input name="Port" pattern="^[0-9]*$" type="text" class="form-control" required />
+                              <div class="help-block with-errors"></div>
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label>TimeOut</label>
+                              <input name="Timeout" pattern="^[0-9]*$" type="text" class="form-control" required />
+                              <div class="help-block with-errors"></div>
+                          </div>
+                      </div>
+                      <input type="hidden" name="IsNew" />
+                      <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary saveConnection" style="display:none">Save</button>
+                  <a whichform="dbConnectionSubmit" url="DataDbTest" class="ebbtn eb_btnblue testConnection">Test Connection</a>
+              </div>
+          </form>
+      </div>
+  </div>
 </div>
 <div id="filesDbConnectEdit" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="" method="post" id="filesDbConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Files Db Connection</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Database Vendor</label>
-                        <select name="DatabaseVendor" class="form-control">
-                            <option value="MongoDB">MongoDB</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Connection String</label>
-                        <textarea name="ConnectionString" class="form-control" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>NickName</label>
-                        <input type="text" name="NickName" class="form-control" required />
-                    </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary saveConnection" style="display:none;">Save</button>
-                    <a whichform="filesDbConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>
-                </div>
-            </form>
-        </div>
-    </div>
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <form action="" method="post" id="filesDbConnectionSubmit" data-toggle="validator">
+              <div class="modal-header relative">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Files Db Connection</h4>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                      <label>Database Vendor</label>
+                      <select name="DatabaseVendor" class="form-control">
+                          <option value="MongoDB">MongoDB</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label>Connection String</label>
+                      <textarea name="ConnectionString" class="form-control" required></textarea>
+                  </div>
+                  <div class="form-group">
+                      <label>NickName</label>
+                      <input type="text" name="NickName" class="form-control" required />
+                  </div>
+                  <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary saveConnection" style="display:none;">Save</button>
+                  <a whichform="filesDbConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>
+              </div>
+          </form>
+      </div>
+  </div>
 </div>
 
 <div id="TwilioConnectionEdit" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content" id="twilio_mask">
-            <form id="TwilioConnectionSubmit" method="post" data-toggle="validator">
-                <div class="modal-header relative">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Twilio Accounts</h4>
-                    <div id="twilioConnection_loder" class="dbConnection_loder"></div>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input name="UserName" class="form-control" type="text" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input name="Password" class="form-control" type="text" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Sender Number</label>
-                        <input name="From" class="form-control" type="text" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Nick Name</label>
-                        <input name="NickName" class="form-control" type="text" required />
-                    </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
+  <div class="modal-dialog">
+      <div class="modal-content" id="twilio_mask">
+          <form id="TwilioConnectionSubmit" method="post" data-toggle="validator">
+              <div class="modal-header relative">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Twilio Accounts</h4>
+                  <div id="twilioConnection_loder" class="dbConnection_loder"></div>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                      <label>Username</label>
+                      <input name="UserName" class="form-control" type="text" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Password</label>
+                      <input name="Password" class="form-control" type="text" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Sender Number</label>
+                      <input name="From" class="form-control" type="text" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Nick Name</label>
+                      <input name="NickName" class="form-control" type="text" required />
+                  </div>
+                  <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+          </form>
+      </div>
+  </div>
 </div>
 
 <div id="ExpertTextingConnectionEdit" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content" id="expert_mask">
-            <form id="ExpertConnectionSubmit" method="post" data-toggle="validator">
-                <div class="modal-header relative">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Expert Accounts</h4>
-                    <div id="expertConnection_loder" class="dbConnection_loder"></div>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input name="UserName" class="form-control" type="text" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input name="Password" class="form-control" type="text" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Sender Number</label>
-                        <input name="From" class="form-control" type="text" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Nick Name</label>
-                        <input name="NickName" class="form-control" type="text" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Api Key</label>
-                        <input name="ApiKey" class="form-control" type="text" required />
-                    </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
+  <div class="modal-dialog">
+      <div class="modal-content" id="expert_mask">
+          <form id="ExpertConnectionSubmit" method="post" data-toggle="validator">
+              <div class="modal-header relative">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Expert Accounts</h4>
+                  <div id="expertConnection_loder" class="dbConnection_loder"></div>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                      <label>Username</label>
+                      <input name="UserName" class="form-control" type="text" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Password</label>
+                      <input name="Password" class="form-control" type="text" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Sender Number</label>
+                      <input name="From" class="form-control" type="text" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Nick Name</label>
+                      <input name="NickName" class="form-control" type="text" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Api Key</label>
+                      <input name="ApiKey" class="form-control" type="text" required />
+                  </div>
+                  <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+          </form>
+      </div>
+  </div>
 </div>
 
 <div id="cldnry_conEdit" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content" id="cloudnary_mask">
-            <form action="" method="post" id="CloudnaryConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Cloudnary Connection</h4>
-                    <div id="cloudnary_loader" class="dbConnection_loder"></div>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Cloud</label>
-                        <input type="text" name="Cloud" class="form-control" value="" required />
+  <div class="modal-dialog">
+      <div class="modal-content" id="cloudnary_mask">
+          <form action="" method="post" id="CloudnaryConnectionSubmit" data-toggle="validator">
+              <div class="modal-header relative">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Cloudnary Connection</h4>
+                  <div id="cloudnary_loader" class="dbConnection_loder"></div>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                      <label>Cloud</label>
+                      <input type="text" name="Cloud" class="form-control" value="" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Api Key</label>
+                      <input type="text" name="ApiKey" class="form-control" value="" required />
+                  </div>
+                  <div class="form-group">
+                      <label>Api Secret</label>
+                      <input type="text" name="ApiSecret" class="form-control" value="" required />
+                  </div>
+                  <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save</button>
+                @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
+/**/
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Api Key</label>
-                        <input type="text" name="ApiKey" class="form-control" value="" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Api Secret</label>
-                        <input type="text" name="ApiSecret" class="form-control" value="" required />
-                    </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
-<div id="ftp_connectionEdit" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content" id="ftp_mask">
-            <form action="" method="post" id="FtpConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">FTP Connection</h4>
-                    <div id="ftp_loader" class="dbConnection_loder"></div>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>User Name</label>
-                        <input type="text" name="Username" class="form-control" value="" required />
+<div id = "ftp_connectionEdit" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content" id="ftp_mask">
+                            <form action = "" method="post" id="FtpConnectionSubmit" data-toggle="validator">
+                                <div class="modal-header relative">
+                                    <button type = "button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">FTP Connection</h4>
+                                    <div id = "ftp_loader" class="dbConnection_loder"></div>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>User Name</label>
+                                        <input type = "text" name= "Username" class="form-control" value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type = "text" name="Password" class="form-control" value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Host</label>
+                                        <input type = "text" name="Host" class="form-control" value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>NickName</label>
+                                        <input type = "text" name="NickName" class="form-control" value="" required />
+                                    </div>
+                                    <input type = "hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type = "submit" class="btn btn-primary">Save</button>
+/**/
+                @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
+/**/
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="text" name="Password" class="form-control" value="" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Host</label>
-                        <input type="text" name="Host" class="form-control" value="" required />
-                    </div>
-                    <div class="form-group">
-                        <label>NickName</label>
-                        <input type="text" name="NickName" class="form-control" value="" required />
-                    </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
-<div id="EmailconnectionEdit" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content" id="email_mask">
-            <form action="" method="post" id="emailConnectionSubmit">
-                <div class="modal-header relative">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Email Connection</h4>
-                    <div id="email_loader" class="dbConnection_loder"></div>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Provider</label>
-                        <input type="text" name="Emailvendor" class="form-control" value="" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Host</label>
-                        <input type="text" name="SMTP" class="form-control" value="" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Port</label>
-                        <input type="text" name="Port" class="form-control" value="" required />
-                    </div>
-                    <div class="form-group">
-                        <label>EmailAddress</label>
-                        <input type="text" name="Email" class="form-control" value="" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="text" name="Password" class="form-control" value="" required />
-                    </div>
-                    <div class="form-group">
-                        <label style="margin-right:15px;margin-bottom:0;">Enable SSL</label>
-                        <input type="checkbox" name="IsSSL" value="false" />
-                    </div>
-                    <div class="form-group">
-                        <label>NickName</label>
-                        <input type="text" name="NickName" class="form-control" value="" required />
-                    </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
+<div id = "EmailconnectionEdit" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content" id="email_mask">
+                            <form action = "" method="post" id="emailConnectionSubmit">
+                                <div class="modal-header relative">
+                                    <button type = "button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Email Connection</h4>
+                                    <div id = "email_loader" class="dbConnection_loder"></div>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>Provider</label>
+                                        <input type = "text" name="Emailvendor" class="form-control" value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Host</label>
+                                        <input type = "text" name="SMTP" class="form-control" value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Port</label>
+                                        <input type = "text" name="Port" class="form-control" value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>EmailAddress</label>
+                                        <input type = "text" name="Email" class="form-control" value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type = "text" name="Password" class="form-control" value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style = "margin-right:15px;margin-bottom:0;" > Enable SSL</label>
+                                        <input type = "checkbox" name="IsSSL" value="false" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>NickName</label>
+                                        <input type = "text" name="NickName" class="form-control" value="" required />
+                                    </div>
+                                    <input type = "hidden" name="SolutionId" value="@ViewBag.SolutionInfo.EsolutionId" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type = "submit" class="btn btn-primary">Save</button>
+/**/
+                @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
+/**/
                 </div>
             </form>
         </div>

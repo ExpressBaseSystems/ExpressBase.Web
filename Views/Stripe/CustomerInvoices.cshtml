@@ -7,59 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
     <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="~/css/Stripe/cust_invoices.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>
-
-        .div-body-main {
-            background-color: white;
-            margin: 100px 0px 0px 150px;
-            padding-bottom: 10px;
-            /*padding: 10px 10px 10px 10px;*/
-            border-radius: 5px;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        }
-
-        .div-input {
-            font-weight: 100;
-            display: flex;
-            padding: 0px 10px 0px 10px;
-        }
-
-        .div-label {
-            padding: 20px 0px 40px 0px;
-            height: 40px;
-            text-align-last: center;
-            width: 100%;
-        }
-
-        .label-font {
-            font-family: Helvetica Neue, Helvetica, sans-serif;
-            text-align-last: center;
-            font-weight: 100;
-            color: lightslategray;
-        }
-
-        .div-payment-details-heading {
-            border-bottom: 1px solid #ccc;
-            text-align: center;
-        }
-
-
-        .div-payment-details-body {
-            border-bottom: 1px solid #ccc;
-        }
-
-        .div-payment-details-body-main {
-            display: flex;
-            font-family: 'Lucida Console';
-            text-align: center;
-            color: dimgrey;
-            font-size: small;
-            padding-top: 10px;
-        }
-    </style>
 </head>
 <body>
     <div id="user-det" class="div-body-main container">
@@ -70,9 +21,6 @@
             <div class="div-payment-details-heading-1 col-md-2 ">
                 <p class="content-heading">DATE</p>
             </div>
-            @*<div class="div-payment-details-heading-2 col-md-2">
-                <p class="content-heading">INVOICE</p>
-            </div>*@
             <div class="div-payment-details-heading-3 col-md-7">
                 <p class="content-heading">DESCRIPTION</p>
             </div>
@@ -92,17 +40,12 @@
                     <div class="div-payment-details-body-main row" style="border-bottom: 1px solid #ccc;background-color :#e5ebf2">
                         <div class="div-payment-details-body-1 col-md-2 ">
                             <p class="payment-content">
-                                @ViewBag.StripeUpcomingInvoice.Invoice.Date.Day @ViewBag.UpMonthEnd, @ViewBag.StripeUpcomingInvoice.Invoice.Date.Year
+                                @ViewBag.StripeUpcomingInvoice.Invoice.Date.ToString("dd MMM,yyyy")
                             </p>
                         </div>
-                        @*<div class="div-payment-details-body-2 col-md-2">
-                            <p class="payment-content">
-                                Upcoming Invoice
-                            </p>
-                        </div>*@
                         <div class="div-payment-details-body-3 col-md-7">
                             <p class="payment-content" style="text-align:left">
-                                (@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodStart.Day@ViewBag.UpMonthStart-@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodEnd.Day@ViewBag.UpMonthEnd,@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodEnd.Year)
+                                (@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodEnd.ToString("dd MMM,yyyy"))
                                 @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].Description
                             </p>
                         </div>
@@ -120,20 +63,14 @@
             @{
                 for (int i = 0; i < ViewBag.Count; i++)
                 {
-                    if (ViewBag.StripeInvoice.Invoices.List[0].Status)
+                    if (ViewBag.StripeInvoice.Invoices.List[i].Status)
                     {
                         <div class="div-payment-details-body-main row">
                             <div class="div-payment-details-body-1 col-md-2 ">
                                 <p class="payment-content">
-                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Day @(((string[])ViewData["MonthEnd"])[i]), @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Year
+                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy")
                                 </p>
                             </div>
-                            @*<div class="div-payment-details-body-2 col-md-2">
-                                <a href="@ViewBag.StripeInvoice.Invoices.List[i].Url" class="payment-content">
-                                    @ViewBag.StripeInvoice.Invoices.List[i].InvNumber
-                                    <span class="glyphicon">&#xe164;</span>
-                                </a>
-                            </div>*@
                             <div class="div-payment-details-body-3 col-md-7">
                                 <p class="payment-content" style="text-align:left">
                                     Amount Paid ( Invoice No.
@@ -157,14 +94,12 @@
                         <div class="div-payment-details-body-main row">
                             <div class="div-payment-details-body-1 col-md-2 ">
                                 <p class="payment-content">
-                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Day @(((string[])ViewData["MonthEnd"])[i]), @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Year
+                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy")
                                 </p>
                             </div>
-                            @*<div class="div-payment-details-body-2 col-md-2">
-                            </div>*@
                             <div class="div-payment-details-body-3 col-md-7">
                                 <p class="payment-content" style="text-align:left">
-                                    (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.Day@(((string[])ViewData["MonthStart"])[i])-@ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Day@(((string[])ViewData["MonthEnd"])[i]),@ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Year)
+                                    (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
                                     @ViewBag.StripeInvoice.Invoices.List[i].Description
                                 </p>
                             </div>
@@ -185,14 +120,12 @@
                         <div class="div-payment-details-body-main row">
                             <div class="div-payment-details-body-1 col-md-2 ">
                                 <p class="payment-content">
-                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Day @(((string[])ViewData["MonthEnd"])[i]), @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Year
+                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy")
                                 </p>
                             </div>
-                            @*<div class="div-payment-details-body-2 col-md-2">
-                            </div>*@
                             <div class="div-payment-details-body-3 col-md-7">
                                 <p class="payment-content" style="text-align:left">
-                                    (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.Day@(((string[])ViewData["MonthStart"])[i])-@ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Day@(((string[])ViewData["MonthEnd"])[i]),@ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.Year)
+                                    (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
                                     @ViewBag.StripeInvoice.Invoices.List[i].Description
                                 </p>
                             </div>
@@ -241,7 +174,7 @@
                 string creditbal = "";
                 if (bal < 0)
                 {
-                    creditbal = "-$" + bal;
+                    creditbal = "-$" + (-1 * bal);
                 }
                 else
                 {

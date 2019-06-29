@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 namespace ExpressBase.Web.Controllers
@@ -157,6 +158,18 @@ namespace ExpressBase.Web.Controllers
                 PublicViewResponse resp = this.ServiceClient.Get(new PublicViewRequest());
                 return resp;
            
+        }
+
+        public bool UpdateOrder (string myList)
+        {
+            
+                UpdateOrderResponse resp = this.ServiceClient.Post(new UpdateOrderRequest()
+                {
+                    Wiki_id = myList,
+                });
+               
+
+            return resp.ResponseStatus;
         }
     }
 }

@@ -1,0 +1,204 @@
+﻿.StripeElement {
+    height: 40px;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+    outline: none;
+}
+
+.StripeElement--focus {
+    /*box-shadow: 0 1px 3px 0 #cfd7df;*/
+}
+
+.StripeElement--invalid {
+    /*border-color: #fa755a;*/
+}
+
+.StripeElement--webkit-autofill {
+    /*background-color: #fefde5 !important;*/
+}
+
+.form-style {
+    font-weight: 100;
+    background-color: white;
+    margin: 100px 500px 10px 500px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.form-style-sub {
+    font-weight: 100;
+    background-color: white;
+    margin: 20px 500px 10px 500px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.heading {
+    font-family: 'Lucida Console';
+    text-align: center;
+    color: darkblue;
+}
+
+.div-box {
+    border-radius: 4px;
+    border: 1px solid #e8e8fb;
+    display: none;
+}
+
+.upgrade-content {
+    padding: 10px 15px 10px 15px;
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    text-align: justify;
+    font-size: small;
+    color: darkslategrey;
+}
+
+.form-style-padding {
+    padding: 15px 0px 15px 0px;
+}
+
+.form-style-padding-total {
+    padding: 10px 0px 10px 0px;
+}
+
+.card-padding {
+    padding: 5px 0px 5px 0px;
+}
+
+.div-seperate {
+    margin: 20px 500px 10px 500px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.div-input {
+    font-weight: 100;
+    display: flex;
+    padding: 0px 10px 0px 10px;
+}
+
+.div-input-border {
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.label-font {
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    padding: 10px 10px 10px 10px;
+    text-align-last: right;
+    width: 90px;
+    height: 20.800px;
+    font-weight: 100;
+}
+
+
+.label-font-sub {
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    padding: 10px 10px 10px 10px;
+    text-align-last: right;
+    width: 150px;
+    height: 20.800px;
+    font-weight: 100;
+}
+
+.label-total {
+    font-weight: 100;
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    padding: 20px 5px 0px 0px;
+}
+
+.label-total-main-title {
+    width: 50%;
+    text-align: right;
+    font-size: large;
+}
+
+.label-total-main {
+    width: 70%;
+    text-align: right;
+    font-size: large;
+}
+
+.label-total-content {
+    padding-top: 22px;
+    text-align: left;
+    font-size: small;
+    width: 90%;
+}
+
+.button-style {
+    display: block;
+    background: #666ee8;
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    border: 0;
+    font-weight: 700;
+    width: 100%;
+    height: 40px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.text-input {
+    font-size: 15px;
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    color: black;
+    height: 40px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+    width: 570px;
+    padding-top: 4px;
+    flex: 1;
+    padding: 0 15px;
+    background: transparent;
+    font-weight: 400;
+    outline: none;
+    cursor: text;
+}
+
+::placeholder {
+    color: darkgrey;
+}
+
+.text-input-sub {
+    font-size: 15px;
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    color: black;
+    height: 40px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+    width: 50%;
+    padding-top: 4px;
+    flex: 1;
+    padding: 0 15px;
+    background: transparent;
+    font-weight: 400;
+    outline: none;
+    cursor: text;
+}
+
+.text-select {
+    font-size: 15px;
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    color: black;
+    height: 40px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+    padding-top: 4px;
+    flex: 1;
+    padding: 0 15px;
+    background: transparent;
+    font-weight: 400;
+    outline: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.div-style {
+    display: inline-block;
+}

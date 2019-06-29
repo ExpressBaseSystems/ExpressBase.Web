@@ -1338,8 +1338,8 @@ var SolutionDashBoard = function (connections, sid ) {
         //$(".inteConfContainer").on("click", ".ExpertTextingedit", "", this.expertinteConfEditr.bind(this));
 
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));
-        $("#IntegrationsCall").trigger("click");
-        $("#MyIntegration").trigger("click");
+        //$("#IntegrationsCall").trigger("click");
+        //$("#MyIntegration").trigger("click");
         //$(".inteConfContainer").on("click", this.AllInputClear.bind(this));
     };
 

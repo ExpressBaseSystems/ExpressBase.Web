@@ -21,13 +21,13 @@
     //this.divFormHeading = $("#divFormHeading");
     this.txtName = $("#txtFullName");
     this.txtNickName = $("#txtNickName");
-    this.txtEmail = $("#txtEmail");
+    this.txtEmail = $(".txtEmail");
     this.spanEmail = $("#spanEmail");
     this.pwdPassword = $("#pwdPassword");
     this.pwdPasswordCon = $("#pwdPasswordCon");
     this.lblMessage = $("#lblMessage");
     this.txtDateOfBirth = $("#txtDateOfBirth");
-    this.txtAlternateEmail = $("#txtAlternateEmail");
+    this.txtAlternateEmail = $(".txtAlternateEmail");
     this.txtPhPrimary = $("#txtPhPrimary");
     this.txtPhSecondary = $("#txtPhSecondary");
     this.txtLandPhone = $("#txtLandPhone");
@@ -72,6 +72,7 @@
 
     this.init = function () {
 
+        
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
         this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/); }.bind(this));
@@ -681,19 +682,19 @@
 
     this.makeAsShowPwdField = function ($pwdField) {
         let id = $pwdField.attr("id");
-        $pwdField.after(`<span id="${id}_eop" class="glyphicon glyphicon-eye-open form-control-feedback" style="top: 0px; cursor: pointer; color: #555;" title="Click to show password"></span>`);
-        $pwdField.after(`<span id="${id}_ecl" class="glyphicon glyphicon-eye-close form-control-feedback" style="top: 0px; cursor: pointer; color: #555; display: none;"  title="Click to hide password"></span>`);
+        $pwdField.after(`<span id="${id}_eop" class="form-control-feedback" style="top: -3px; cursor: pointer; color: #555;" title="Click to show password"><i class="fa fa-eye" aria-hidden="true"></i></span>`);
+        $pwdField.after(`<span id="${id}_ecl" class="form-control-feedback" style="top: -3px; cursor: pointer; color: #555; display: none;"  title="Click to hide password"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>`);
         let $eop = $("#" + id + "_eop");
         let $ecl = $("#" + id + "_ecl");
         $eop.on("click", function (e) {
             $pwdField[0].type = "text";
-            $(e.target).hide();
-            $(e.target).prev().show();
+            $(e.target).closest('span').hide();
+            $(e.target).closest('span').prev().show();
         });
         $ecl.on("click", function (e) {
             $pwdField[0].type = "password";
-            $(e.target).hide();
-            $(e.target).next().show();
+            $(e.target).closest('span').hide();
+            $(e.target).closest('span').next().show();
         });
     };
     

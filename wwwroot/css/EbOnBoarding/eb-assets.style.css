@@ -200,17 +200,17 @@
         opacity: .5;
     }
 
-    .fa-plus-circle {
-        color: black;
-        font-size: 37px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-        text-align: center;
-    }
+.connection_wrap .fa-plus-circle {
+    color: black;
+    font-size: 37px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
 
 
 

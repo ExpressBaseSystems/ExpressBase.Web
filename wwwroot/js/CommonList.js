@@ -33,29 +33,29 @@
         this.AnonymUserModal.on('shown.bs.modal', this.initModal.bind(this));
         this.AnonymUserModal.on('hidden.bs.modal', this.finalizeModal.bind(this));
         this.btnUpdate.on('click', this.OnclickBtnUpdate.bind(this));
-    }
+    };
 
     this.setTable = function () {
         //metadata => refer CommonList.cshtml
         var tblcols = [];
         var tbldata = [];
-        tblcols.push({ data: null, title: "Serial No", className: "dataTableColumnStyle", width: '30px', searchable: false, orderable: false });
+        tblcols.push({ data: null, title: "Serial No", className: "dataTableColumnStyle text-center", width: '30px', searchable: false, orderable: false });
         if (this.metadata.indexOf("_profPic") !== -1)
             tblcols.push({ data: null, title: "", className: "dataTableColumnStyle text-center", width: '60px', render: this.tblProfPicRender, searchable: false, orderable: false });
         if (this.metadata.indexOf("_fbProfPic") !== -1) {
             tblcols.push({ data: null, title: "", className: "dataTableColumnStyle text-center", width: '60px', render: this.tblFbProfPicRender, searchable: false, orderable: false });
             tblcols.push({ data: parseInt(this.metadata[0]) + 1, title: this.metadata[parseInt(this.metadata[0]) + 1], visible: false });
         }
-            
+
 
         tblcols.push({ data: 1, title: this.metadata[1], visible: false });
 
         tblcols.push({ data: 2, title: this.metadata[2].replace("_", " "), className: "dataTableColumnStyle", width: '220px', render: this.tblNameColumnRender });
 
         for (var i = 3; i <= parseInt(this.metadata[0]); i++)
-            tblcols.push({ data: i, title: this.metadata[i].replace("_"," "), className: "dataTableColumnStyle", width: '150px' });
-        tblcols.push({ data: null, title: "View/Edit", className: "dataTableColumnStyle", width: '80px', className: "text-center", render: this.tblEditColumnRender, searchable: false, orderable: false });
-        
+            tblcols.push({ data: i, title: this.metadata[i].replace("_", " "), className: "dataTableColumnStyle", width: '150px' });
+        tblcols.push({ data: null, title: "View/Edit", className: "dataTableColumnStyle text-center", width: '80px', render: this.tblEditColumnRender, searchable: false, orderable: false });
+
         if (this.metadata.indexOf("_user") !== -1) {// to fill tbldata with appropriate data
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]] });
@@ -70,11 +70,11 @@
         }
 
         else if (this.metadata.indexOf("_anonymousUser") !== -1) {
-            tblcols.push({ data: null, title: "Add as User", className: "dataTableColumnStyle", width: '100px', className: "text-center", render: this.tblConvertColumnRender, searchable: false, orderable: false });
+            tblcols.push({ data: null, title: "Add as User", className: "dataTableColumnStyle text-center", width: '100px', render: this.tblConvertColumnRender, searchable: false, orderable: false });
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]] });
         }
-            
+
         var tbl = "#tblCommonList";
         this.table = $(tbl).DataTable({
             scrollY: "96%",
@@ -98,13 +98,13 @@
 
         $(".CL_Image").Lazy();
         this.setMenuBar();
-    }
+    };
 
     this.setMenuBar = function () {
-        var headHtml = `<div class="form-group has-feedback" style="display:inline-block;">
-                            <input type="text" class="form-control" id="txtSrchCmnList" placeholder="Search" style="height: 32px;" title="Search"/>
-                            <span id="spanSrchCmnList" class="glyphicon glyphicon-search form-control-feedback" style="top:0px;"></span>
-                            <span id="spanRemvCmnList" class="glyphicon glyphicon-remove form-control-feedback" style="top:0px; display:none;"></span>
+        var headHtml = `<div class="form-group has-feedback" style="display:inline-block; margin-right: 15px;">
+                            <input type="text" class="form-control" id="txtSrchCmnList" placeholder="Search" style="height: 32px; border: 1px solid #eee; width: 160px;" title="Search"/>
+                            <span id="spanSrchCmnList" class="form-control-feedback" style="top:0px; color: #888;"><i class="fa fa-search" aria-hidden="true"></i></span>
+                            <span id="spanRemvCmnList" class="form-control-feedback" style="top:0px; display:none; color: #888;"><i class="fa fa-times" aria-hidden="true"></i></span>
                         </div>`;
 
         if (this.metadata.indexOf("_user") !== -1) {
@@ -124,7 +124,7 @@
         else if (this.metadata.indexOf("_roles") !== -1) {
             headHtml += `<button class='btn' title='Create Role' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i> New Role </button>`;
         }
-        
+
         this.menuBarObj.insertButton(headHtml);
 
         $('#txtSrchCmnList').on('keyup', function (e) {
@@ -145,8 +145,8 @@
             this.table.search("").draw();
         }.bind(this));
 
-        
-    }
+
+    };
 
     this.onClickEdit = function (e) {
         var id = $(e.target).attr("data-id");
@@ -177,12 +177,12 @@
         }
         else if (this.metadata.indexOf("_userGroup") !== -1) {
             window.open("../Security/ManageUserGroups?itemid=" + id, "_blank");
-        } 
+        }
         else if (this.metadata.indexOf("_anonymousUser") !== -1) {
             this.itemid = id;
             this.AnonymUserModal.modal('show');
-        } 
-    }
+        }
+    };
 
     this.onClickConvert = function (e) {
         var _form = document.createElement("form");
@@ -203,8 +203,8 @@
         dict["EmailID"] = rowdata[3];
         dict["PhoneNumber"] = rowdata[4];
         dict["SocialID"] = rowdata[9];
-        
-        var input = document.createElement('input');
+
+        input = document.createElement('input');
         input.type = 'hidden';
         input.name = "AnonymousUserInfo";
         input.value = JSON.stringify(dict);
@@ -213,33 +213,33 @@
         document.body.appendChild(_form);
         _form.submit();
         document.body.removeChild(_form);
-    }
+    };
 
 
     this.tblNameColumnRender = function (data, type, row, meta) {
         return `<div class="editviewclass" style="cursor:pointer;" data-id=${row[1]}>${data}</div>`;
-    }
+    };
 
     this.tblConvertColumnRender = function (data, type, row, meta) {
         return `<i class="fa fa-user-plus fa-2x convertuserclass" aria-hidden="true" style="cursor:pointer;"></i>`;
-    }
+    };
 
     this.tblEditColumnRender = function (data, type, row, meta) {
         return `<i class="fa fa-pencil fa-2x editviewclass" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]}></i>`;
-    }
+    };
 
-    this.tblProfPicRender = function (data, type, row, meta) {        
+    this.tblProfPicRender = function (data, type, row, meta) {
         //return `<img class='img-thumbnail pull-right' src='../static/dp/dp_${data[1]}_micro.jpg' style = 'max-width: 80% !important;'/>`;
         if (data[4] === 'Female')
-            return `<img class='CL_Image img-thumbnail pull-right' src='../images/businesswoman.png' style = 'max-width: 80% !important;' onerror="this.src = '/images/imagenotfound.svg';" data-src="/images/dp/${data[1]}.png" />`;
-        return `<img class='CL_Image img-thumbnail pull-right' src='../images/businessman.png' style = 'max-width: 80% !important;' onerror="this.src = '/images/imagenotfound.svg';" data-src="/images/dp/${data[1]}.png" />`;
-    }
+            return `<img class='CL_Image img-thumbnail pull-right' src='../images/businesswoman.png' style = 'max-height: 40px; margin: 0 10%;' onerror="this.src = '/images/imagenotfound.svg';" data-src="/images/dp/${data[1]}.png" />`;
+        return `<img class='CL_Image img-thumbnail pull-right' src='../images/businessman.png' style = 'max-height: 40px; margin: 0 10%;' onerror="this.src = '/images/imagenotfound.svg';" data-src="/images/dp/${data[1]}.png" />`;
+    };
     this.tblFbProfPicRender = function (data, type, row, meta) {
         var id = data[9];
         if (id == "")//if fbid is not available then
             return `<img class='img-thumbnail' src='../images/businessman.png' />`//id = '12345678';//assinging a sample value to get a default user profpic from graph.fb
         return `<img class='img-thumbnail' src='http://graph.facebook.com/${id}/picture?type=square' />`;
-    }
+    };
 
     this.initModal = function () {
         this.modalBodyDiv.hide();
@@ -248,15 +248,15 @@
         $.ajax({
             type: "POST",
             url: "../Security/GetAnonymousUserInfo",
-            data: { userid : this.itemid },
+            data: { userid: this.itemid },
             success: this.getAnonymousUserInfoSuccess.bind(this)
         });
 
-    }
+    };
 
     this.finalizeModal = function () {
         this.modalBodyDiv.hide();
-    }
+    };
 
     this.getAnonymousUserInfoSuccess = function (data) {
         this.loader.hide();
@@ -279,7 +279,7 @@
         this.lblTotalVisits.text(this.userData.TotalVisits);
         this.lblLastUpdatedBy.text(this.userData.ModifiedBy);
         this.lblLastUpdatedAt.text(this.userData.ModifiedAt);
-    }
+    };
 
     this.OnclickBtnUpdate = function () {
         this.btnUpdate.attr("disabled", "true");
@@ -295,7 +295,7 @@
             },
             success: this.updateAnonymousUserInfoSuccess.bind(this)
         });
-    }
+    };
 
     this.updateAnonymousUserInfoSuccess = function (r) {
         if (r > 0)
@@ -304,7 +304,7 @@
             alert("Somthing went wrong!");
         this.AnonymUserModal.modal("hide");
         this.btnUpdate.prop("disabled", "false");
-    }
+    };
     
     this.init();
 }

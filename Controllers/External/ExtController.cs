@@ -52,16 +52,14 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-
         public IActionResult EmailVerifyStructure()
         {
-
             return View();
         }
 
-        public IActionResult SignIn()
+        [HttpGet("Platform/Board")]
+        public IActionResult SignUp()
         {
-
             return View();
         }
 
@@ -178,7 +176,7 @@ namespace ExpressBase.Web.Controllers
                 return Redirect("/StatusCode/404");
         }
 
-        public IActionResult TenantSignIn(string Email, string reDir)
+        public IActionResult TenantSignIn(string Email)
         {
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
@@ -194,57 +192,13 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             ViewBag.ErrorMsg = TempData["ErrorMessage"];
             ViewBag.Email = (Email != null) ? Email : null;
-            ViewBag.reDirectUrl = (reDir != null) ? reDir : null;
             return View();
         }
 
-        [HttpGet("social_oauth")]
-        public IActionResult SocialOath(string scosignup)
+        public void FbLogin()
         {
 
-            int streturn = 0;
-            SocialSignup Social = JsonConvert.DeserializeObject<SocialSignup>(scosignup);
-            if (Social.UniqueEmail)
-            {
-                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
-                {
-                    provider = CredentialsAuthProvider.Name,
-                    UserName = Social.Email,
-                    Password = Social.Pauto,
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
-                    //UseTokenCookie = true
-                });
-                if (authResponse != null)
-                {
-                    CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                    this.ServiceClient.BearerToken = authResponse.BearerToken;
-                    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-                }
-                
-                    var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
-                    {
-                        DeployDB = true
-
-                    });
-                    if (tmp.ErrDbMessage != null || tmp.ErrSolMessage != null)
-                    {
-                        streturn = 2;
-                    }
-
-                return Redirect("/Tenant/TenantDashboard");
-
-            }
-            else
-            {
-                return Redirect("http://myaccount.localhost:41500/");
-            }
-
-           
         }
-
-
 
         public void GithubLogin()
         {
@@ -262,8 +216,6 @@ namespace ExpressBase.Web.Controllers
         {
 
         }
-
-
 
         //[HttpPost]
         //public IActionResult StripeResponse()
@@ -345,15 +297,6 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult EbOnBoarding(string Email)
-        {
-            ViewBag.useremail = Email;
-            //var ebids = this.ServiceClient.Get<AutoGenSidResponse>(new AutoGenSidRequest());
-            //ViewBag.iSid = ebids.Sid;
-            return View();
-        }
-
         [HttpPost]
         public int ProfileSetup(string email, string name, string country, string account, string password)
         {
@@ -362,70 +305,62 @@ namespace ExpressBase.Web.Controllers
             UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
             if (result.Unique)
             {
-                string activationcode = Guid.NewGuid().ToString();
-                var pgurl = this.HttpContext.Request.Host;
-                var pgpath = this.HttpContext.Request.Path;
+                    string activationcode = Guid.NewGuid().ToString();
+                    var pgurl = this.HttpContext.Request.Host;
+                    var pgpath = this.HttpContext.Request.Path;
 
-                var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
-                {
-                    Op = "updatetenant",
-                    Name = name,
-                    Password = password,
-                    Country = country,
-                    Token = ViewBag.token,
-                    Email = email,
-                    Account_type = account,
-                    ActivationCode = activationcode,
-                    PageUrl = pgurl.ToString(),
-                    PagePath = pgpath.ToString(),
-                    DisplayName = CoreConstants.EXPRESSBASE
-                });
-                if (res.id >= 0)
-                {
-                    MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                    var res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
                     {
-                        provider = CredentialsAuthProvider.Name,
-                        UserName = email,
-                        Password = (password + email).ToMD5Hash(),
-                        Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
-                        //UseTokenCookie = true
+                        Op = "updatetenant",
+                        Name = name,
+                        Password = password,
+                        Country = country,
+                        Token = ViewBag.token,
+                        Email = email,
+                        Account_type = account,
+                        ActivationCode = activationcode,
+                        PageUrl = pgurl.ToString(),
+                        PagePath = pgpath.ToString(),
+                        DisplayName = CoreConstants.EXPRESSBASE
                     });
-                    if (authResponse != null)
+                    if (res.id >= 0)
                     {
-                        CookieOptions options = new CookieOptions();
-                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                        this.ServiceClient.BearerToken = authResponse.BearerToken;
-                        this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-                    }
+                        MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                        {
+                            provider = CredentialsAuthProvider.Name,
+                            UserName = email,
+                            Password = (password + email).ToMD5Hash(),
+                            Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
+                            //UseTokenCookie = true
+                        });
+                        if (authResponse != null)
+                        {
+                            CookieOptions options = new CookieOptions();
+                            Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                            Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                            this.ServiceClient.BearerToken = authResponse.BearerToken;
+                            this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+                        }
 
-                    var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
-                    {
-                        DeployDB = true
+                        var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
+                        {
+                            DeployDB = true
 
-                    });
+                        });
                     if (tmp.ErrDbMessage != null || tmp.ErrSolMessage != null)
                     {
                         streturn = 2;
                     }
 
-                }
-
+                    }
             }
             else
             {
-                //streturn = 1 when email exist in database / table s
-                streturn = 1;
+             //streturn = 1 when email exist in database / table s
+             streturn = 1;
             }
-
-
             return streturn;
         }
-
-
-
-
-
 
         [HttpGet("em")]
         public IActionResult EmailVerify(string emv)
@@ -540,8 +475,6 @@ namespace ExpressBase.Web.Controllers
 
             return false;
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> TenantSignin(int i)

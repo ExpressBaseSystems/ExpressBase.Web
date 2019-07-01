@@ -54,7 +54,7 @@ namespace ExpressBase.Web.Controllers
             Dictionary<string, object> xx = new Dictionary<string, object>();
             xx["AppName"] = "EXPRESSbase bot(Chatbot)";
             xx["DescApp"] = desc;
-            var ds = this.ServiceClient.Get(new CreateApplicationRequest { Description = desc, appid = appid });
+            var ds = this.ServiceClient.Get(new CreateApplicationRequest { Description = desc, AppId = appid });
         }         
     }
 }

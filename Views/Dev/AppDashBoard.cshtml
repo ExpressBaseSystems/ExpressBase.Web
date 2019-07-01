@@ -1,5 +1,6 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts
 @using ExpressBase.Common
+@using Microsoft.AspNetCore.Mvc;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
@@ -65,17 +66,18 @@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 s-dash-solution-desc">
             <div class="col-md-10 pd-0">
-                <h4 class="mr-0"><span class="@appinfo.Icon appicon_style"></span> @appinfo.Name </h4>
+                <h4 class="mr-0"><span class="fa @appinfo.Icon appicon_style"></span> @appinfo.Name </h4>
                 <p class="small mr-0">@appinfo.Description</p>
                 <p class="small mr-o"><img class="apptype_icon" src="@typeIcon" /><span>@apptype</span> Application</p>
             </div>
-            <div class="col-md-2 pd-0">
+            <div class="col-md-2 pd-0 tdasboard-btnwrpr">
                 <div class="btn-group pull-right">
-                    <button type="button" class="ebbtn eb_btngreen eb_btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="ebbtn eb_btnblue eb_btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         New Object <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" id="object_types_drd"></ul>
                 </div>
+                <a href='@Url.Action("CreateApplication", "Dev",new { Id = appinfo.Id,Type = appinfo.AppType})' class="ebbtn eb_btn-sm eb_btnplain pull-right" style="margin-right:10px;"><i class="fa fa-edit"></i></a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">

@@ -21,11 +21,10 @@ using ExpressBase.Security;
 using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.LocationNSolution;
-using ExpressBase.Web.Controllers;
 using System.Net.Mail;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace EbControllers
+namespace ExpressBase.Web.Controllers
 {
     public class RedisManagerController : EbBaseIntCommonController
     {

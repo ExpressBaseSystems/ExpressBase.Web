@@ -195,6 +195,45 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet("social_oauth")]
+        public IActionResult SocialOath(string scosignup)
+        {
+
+            int streturn = 0;
+            SocialSignup Social = JsonConvert.DeserializeObject<SocialSignup>(scosignup);
+            if (Social.UniqueEmail)
+            {
+                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = Social.Email,
+                    Password = Social.Pauto,
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
+                    //UseTokenCookie = true
+                });
+                if (authResponse != null)
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    this.ServiceClient.BearerToken = authResponse.BearerToken;
+                    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+                }
+
+                var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest { DeployDB = true });
+
+                if (tmp.ErrDbMessage != null || tmp.ErrSolMessage != null)
+                {
+                    streturn = 2;
+                }
+                return Redirect("/Tenant/TenantDashboard");
+            }
+            else
+            {
+                return Redirect("http://myaccount.localhost:41500/");
+            }
+        }
+
         public void FbLogin()
         {
 

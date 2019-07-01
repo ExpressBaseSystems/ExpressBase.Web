@@ -12,17 +12,33 @@ using ServiceStack.Redis;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Stripe;
+using ExpressBase.Common;
+using ExpressBase.Common.LocationNSolution;
 
 namespace StripeApp.Controllers
 {
-    enum Month { xyz, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec };
+    enum Month { Jan=1, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec };
     public class StripeController : EbBaseIntCommonController
     {
         public StripeController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
         public static int i = 0;
-        public StripeGateway gateway = new StripeGateway("");
         public IActionResult Index()
         {
+            ViewBag.pb_key = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STRIPE_PUBLISHABLE_KEY);
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            if(soln.PricingTier == 0)
+            {
+                ViewBag.Status = true;
+            }
+            else
+            {
+                ViewBag.Status = false;
+                CheckCustomerSubscribedResponse cust = this.ServiceClient.Post<CheckCustomerSubscribedResponse>(new CheckCustomerSubscribedRequest
+                {
+                });
+                ViewBag.Plan = cust.Plan;
+                ViewBag.Users = cust.Users;
+            }
             return View("Index");
         }
         
@@ -39,15 +55,6 @@ namespace StripeApp.Controllers
                 CustId = cust_id,
             });
             ViewBag.Count = stripeinvoice.Invoices.List.Count;
-            string[] MonthStart = new string[stripeinvoice.Invoices.List.Count];
-            string[] MonthEnd = new string[stripeinvoice.Invoices.List.Count];
-            for (int i = 0; i < stripeinvoice.Invoices.List.Count; i++)
-            {
-                MonthStart[i] = Enum.GetName(typeof(Month), stripeinvoice.Invoices.List[i].PeriodStart.Month);
-                MonthEnd[i] = Enum.GetName(typeof(Month), stripeinvoice.Invoices.List[i].PeriodEnd.Month);
-            }
-            ViewData["MonthStart"] = MonthStart;
-            ViewData["MonthEnd"] = MonthEnd;
             ViewBag.StripeInvoice = stripeinvoice;
             
             GetCustomerUpcomingInvoiceResponse stripeupcominginvoice = this.ServiceClient.Post<GetCustomerUpcomingInvoiceResponse>(new GetCustomerUpcomingInvoiceRequest
@@ -55,8 +62,6 @@ namespace StripeApp.Controllers
                 CustId = cust_id
             });
             ViewBag.UpCount = stripeupcominginvoice.Invoice.Data.Count;
-            ViewBag.UpMonthStart = Enum.GetName(typeof(Month), stripeupcominginvoice.Invoice.Data[0].PeriodStart.Month);
-            ViewBag.UpMonthEnd = Enum.GetName(typeof(Month), stripeupcominginvoice.Invoice.Data[0].PeriodEnd.Month);
             ViewBag.StripeUpcomingInvoice = stripeupcominginvoice;
           
             return View();
@@ -65,6 +70,57 @@ namespace StripeApp.Controllers
         public IActionResult Payment2()
         {
             return View("Payment2");
+        }
+
+        public IActionResult StripeHome()
+        {
+            ViewBag.pb_key = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STRIPE_PUBLISHABLE_KEY);
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            string cust_id ="";
+            if (soln.PricingTier == 0)
+            {
+                ViewBag.Status = true;
+                return View("Index");
+            }
+            else
+            {
+                ViewBag.Status = false;
+                //---------------------------Plan------------------------
+                CheckCustomerSubscribedResponse cust1 = this.ServiceClient.Post<CheckCustomerSubscribedResponse>(new CheckCustomerSubscribedRequest
+                {
+                });
+                ViewBag.Plan = cust1.Plan;
+                ViewBag.Users = cust1.Users;
+                cust_id = cust1.CustId;
+                //--------------------------Customer----------------------
+                GetCustomerResponse cust = this.ServiceClient.Post<GetCustomerResponse>(new GetCustomerRequest
+                {
+                    CustId = cust_id
+                });
+                ViewBag.Cust = cust;
+                //-------------------------Card-------------------------------
+                GetCardResponse resp = this.ServiceClient.Post<GetCardResponse>(new GetCardRequest
+                {
+                    CustId = cust_id
+                });
+                ViewBag.Card = resp;
+                
+                //---------------------------Invoice----------------------
+                GetCustomerInvoiceResponse stripeinvoice = this.ServiceClient.Post<GetCustomerInvoiceResponse>(new GetCustomerInvoiceRequest
+                {
+                    CustId = cust_id,
+                });
+                ViewBag.Count = stripeinvoice.Invoices.List.Count;
+                ViewBag.StripeInvoice = stripeinvoice;
+
+                GetCustomerUpcomingInvoiceResponse stripeupcominginvoice = this.ServiceClient.Post<GetCustomerUpcomingInvoiceResponse>(new GetCustomerUpcomingInvoiceRequest
+                {
+                    CustId = cust_id
+                });
+                ViewBag.UpCount = stripeupcominginvoice.Invoice.Data.Count;
+                ViewBag.StripeUpcomingInvoice = stripeupcominginvoice;
+            }
+            return View("StripeHome");
         }
 
         //public IActionResult Charge(string stripeEmail, string stripeToken)
@@ -95,9 +151,6 @@ namespace StripeApp.Controllers
             //string planId = "TEST-PLAN-02";
             string CouponId = "COUPON-2-15-3-2-15000";
             StripeToken Token = JsonConvert.DeserializeObject<StripeToken>(Request.Form["token"]);
-
-            //var json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
-            //var stripeEvent = EventUtility.ParseEvent(json);
             string custid = "";
             string planId = "";
             string invoiceid = "";
@@ -111,27 +164,16 @@ namespace StripeApp.Controllers
                 custid = CreateCustomer(Token.Id);
                 UpdateCard(custid, Token.Card.Id);
             }
-
-            //planId = CreatePlan();
             //planId = "plan_FH9R9kOAeqMdva";
             planId = "TestPlan-01";
 
             CreateCharge(custid);
 
             CreateSubscriptionResponse res = CreateSubscription(custid, planId,CouponId);
-
-            //////////CreateInvoice(custid);
-            //////////CreateCharge2(custid);
-            //return Redirect(res.Url);
-            return RedirectToAction("SubscribedView",res);
-        }
-
-        public ActionResult SubscribedView(CreateSubscriptionResponse res)
-        {
             ViewBag.SubscribeObjects = res;
-            return View();
+            return View("SubscribedView");
         }
-
+        
         public bool CheckCustomer(string tokenid)
         {
             CheckCustomerResponse res = this.ServiceClient.Post<CheckCustomerResponse>(new CheckCustomerRequest
@@ -173,7 +215,7 @@ namespace StripeApp.Controllers
             {
                 EmailId = Request.Form["emailid"],
                 TokenId = tokenid,
-                SolutionId = "" /*ViewBag.cid*/
+                /*SolnId = ""*/ /*ViewBag.cid*/
             });
             return res.CustomerId;
         }
@@ -201,6 +243,7 @@ namespace StripeApp.Controllers
 
         public CreateSubscriptionResponse CreateSubscription(string custid, string planid, string coupid)
         {
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             CreateSubscriptionResponse res = this.ServiceClient.Post<CreateSubscriptionResponse>(new CreateSubscriptionRequest
             {
                 Total = Int32.Parse(Request.Form["usrno"]),
@@ -247,21 +290,18 @@ namespace StripeApp.Controllers
 
         }
 
+       
         public IActionResult UpdateCustomerSubscription()
         {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult UpdateCustomerSubscription(object ob)
-        {
-            string planid = CreatePlan();
-            string custid = "cus_FCzs13hytyth1r";
-            this.ServiceClient.Post<UpgradeSubscriptionResponse>(new UpgradeSubscriptionRequest
+            string planId = "TestPlan-01";
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            UpgradeSubscriptionResponse res = this.ServiceClient.Post<UpgradeSubscriptionResponse>(new UpgradeSubscriptionRequest
             {
-                CustId = custid,
-                PlanId = planid
+                Total = Int32.Parse(Request.Form["usrno1"]),
+                PlanId = planId
             });
-            return View();
+            ViewBag.SubscribeObjects = res;
+            return View("SubscribedView");
         }
 
         public IActionResult ViewPlans(object ob)

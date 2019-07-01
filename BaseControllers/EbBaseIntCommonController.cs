@@ -125,7 +125,7 @@ namespace ExpressBase.Web.BaseControllers
 
                     controller.ViewBag.UserObject = JsonConvert.SerializeObject(this.LoggedInUser);
 
-                    if (controller.ViewBag.wc == TokenConstants.UC)
+                    if (controller.ViewBag.wc == TokenConstants.UC|| controller.ViewBag.wc == TokenConstants.TC)
                     {
                         ViewBag.Locations = GetAccessLoc(controller);
                         controller.ViewBag.CurrentLocation = this.LoggedInUser.Preference.DefaultLocation;

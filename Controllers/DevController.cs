@@ -324,11 +324,23 @@ namespace ExpressBase.Web.Controllers
 
         }
 
-        [EbBreadCrumbFilter("NewApplication")]
+        [EbBreadCrumbFilter("Application/","link")]
         [HttpGet]
-        public IActionResult CreateApplication()
+        public IActionResult CreateApplication(int Id, EbApplicationTypes Type)
         {
-
+            if (Id > 0)
+            {
+                ViewBag.Op = "Edit Application";
+                HttpContext.Items["link"] = "Edit";
+                GetApplicationResponse appData = this.ServiceClient.Get(new GetApplicationRequest { Id = Id });
+                ViewBag.AppInfo = appData.AppInfo;
+            }
+            else
+            {
+                ViewBag.Op = "New Application";
+                HttpContext.Items["link"] = "New";
+                ViewBag.AppInfo = new AppWrapper { Id=0,AppType = 1, Icon = "fa-home" };
+            }
             return View();
         }
 
@@ -336,23 +348,27 @@ namespace ExpressBase.Web.Controllers
         public IActionResult CreateApplication(int i)
         {
             var req = this.HttpContext.Request.Form;
-            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationDevRequest
+            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest
             {
+                AppId = Convert.ToInt32(req["Id"]),
                 AppName = req["AppName"],
                 AppType = Convert.ToInt32(req["AppType"]),
                 Description = req["DescApp"],
                 AppIcon = req["AppIcon"],
-                Sid = req["Sid"]
+                Sid = ViewBag.cid
             });
 
-            if (resultlist.id > 0)
+            if (resultlist.Id > 0)
             {
-                TempData[Msg] = "Application Created succesfully.";
-                return RedirectToAction("AppDashBoard", new RouteValueDictionary(new { Id = resultlist.id, Type = Convert.ToInt32(req["AppType"]) }));
+                return RedirectToAction("AppDashBoard", new RouteValueDictionary(new { Id = resultlist.Id,
+                    Type = Convert.ToInt32(req["AppType"])
+                }));
             }
             else
-                TempData[Msg] = "Application Creation failed.";
-            return View();
+            {
+                TempData[Msg] = "Unable to Save try again.";
+                return RedirectToAction("CreateApplication");
+            }
         }
 
         [HttpGet]
@@ -656,7 +672,7 @@ namespace ExpressBase.Web.Controllers
 
                 foreach (Param p in pr.Custom)
                 {
-                        d.Add(p.Name, p.ValueTo);
+                    d.Add(p.Name, p.ValueTo);
                 }
                 resp = this.ServiceClient.Get(new ApiRequest
                 {

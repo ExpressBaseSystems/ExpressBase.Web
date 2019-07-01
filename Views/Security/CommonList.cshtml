@@ -8,7 +8,7 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/CommonList.js" asp-append-version=@bApnd></script>
 
@@ -96,9 +96,9 @@
     </div>
 </div>
 
-<div class="center" style="padding: 3% 5% 1% 5%;height: 100vh;">
-    <section class="outer-section-createuser" style="height: 100%;">
-        <div id="divCommonList" style="padding:10px;  height: 100%;">
+<div class="center" style="margin-left: -15px; margin-right: -15px; height: 100vh;">
+    <section class="outer-section-commonlist">
+        <div id="divCommonList" style="height: 100%;">
             <table id="tblCommonList" class="table-striped"></table>
         </div>
     </section>

@@ -6,7 +6,6 @@
     z-index: 2;
 }
 .eb-signup_wrapper {
-    height: 100vh;
     background: #508bf9;
     font-family:Montserrat;
 }
@@ -26,7 +25,7 @@
         font-weight: 500;
     }
     .eb-signup_wrapper .leftpart {
-        height: 100vh;
+        height: 100%;
     }
 
     .eb-signup_wrapper .rightpart {
@@ -37,7 +36,6 @@
         padding: 50px 30px 0px 30px;
         position: relative;
         flex-flow: column;
-        overflow-y: auto;
     }
     .eb-signup_wrapper .sinpt {
         height:45px;
@@ -191,15 +189,18 @@
 }
 
 #rcorners1 {
-    border-radius: 4px; 
-    background-color: #f5f5f5;
+    display: none;
+    border-radius: 4px;
+    background-color: #ffffff;
     color: black;
-    float: left;
-    width: 17%;
-    height: 20%;
     box-shadow: 1px 1px 5px rgba(0,0,0,.5);
     line-height: 1.8;
     padding: 15px;
+    bottom: 0;
+    position: absolute;
+    z-index: 10;
+    left: -320px;
+    width: 320px;
 }
 
     #rcorners1:after {

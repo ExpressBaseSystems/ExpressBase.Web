@@ -217,15 +217,15 @@
 
 
     this.tblNameColumnRender = function (data, type, row, meta) {
-        return `<div class="editviewclass" style="cursor:pointer;" data-id=${row[1]}>${data}</div>`;
+        return `<div class="editviewclass" style="" data-id=${row[1]}>${data}</div>`;
     };
 
     this.tblConvertColumnRender = function (data, type, row, meta) {
-        return `<i class="fa fa-user-plus fa-2x convertuserclass" aria-hidden="true" style="cursor:pointer;"></i>`;
+        return `<i class="fa fa-user-plus convertuserclass" aria-hidden="true"></i>`;
     };
 
     this.tblEditColumnRender = function (data, type, row, meta) {
-        return `<i class="fa fa-pencil fa-2x editviewclass" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]}></i>`;
+        return `<i class="fa fa-pencil editviewclass" aria-hidden="true" data-id=${data[1]}></i>`;
     };
 
     this.tblProfPicRender = function (data, type, row, meta) {

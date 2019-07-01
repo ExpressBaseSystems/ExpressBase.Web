@@ -127,34 +127,34 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     //    this.onChangeExeFuncs[name](this.formObject, userObj);
     //};
 
-    this.initialLoad = function () {
-        $.each(this.FormObj.Controls.$values, function (k, cObj) {
-            if (cObj.ObjType === 'RadioGroup' && cObj.OnChangeFn && cObj.OnChangeFn.Code && cObj.OnChangeFn.Code !== '') {
-                if (cObj.DefaultValue !== "")
-                    $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
-                else
-                    $("body input[name='" + cObj.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
-            }
-            else if (cObj.ObjType === 'UserLocation') {
-                if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
-                    $('#' + cObj.EbSid_CtxId + "_checkbox").trigger('click');
-                }
-                else {
-                    $('#' + cObj.EbSid_CtxId + "_checkbox_div").hide();
-                    if (wc === "dc")
-                        $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-                    else if (wc === "uc") {
-                        if (cObj.LoadCurrentLocation)
-                            $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + curloc + ']').trigger('click');
-                        else
-                            $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-                    }
-                }
-            }
-        });
-        //if (this.FormObj.Width > 150)
-        //    this.$filterBox.parent().css("width", this.FormObj.Width + "px");
-    };
+    //this.initialLoad = function () {
+    //    $.each(this.FormObj.Controls.$values, function (k, cObj) {
+    //        if (cObj.ObjType === 'RadioGroup' && cObj.OnChangeFn && cObj.OnChangeFn.Code && cObj.OnChangeFn.Code !== '') {
+    //            if (cObj.DefaultValue !== "")
+    //                $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
+    //            else
+    //                $("body input[name='" + cObj.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
+    //        }
+    //        else if (cObj.ObjType === 'UserLocation') {
+    //            if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+    //                $('#' + cObj.EbSid_CtxId + "_checkbox").trigger('click');
+    //            }
+    //            else {
+    //                $('#' + cObj.EbSid_CtxId + "_checkbox_div").hide();
+    //                if (wc === "dc")
+    //                    $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+    //                else if (wc === "uc") {
+    //                    if (cObj.LoadCurrentLocation)
+    //                        $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + curloc + ']').trigger('click');
+    //                    else
+    //                        $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+    //                }
+    //            }
+    //        }
+    //    });
+    //    //if (this.FormObj.Width > 150)
+    //    //    this.$filterBox.parent().css("width", this.FormObj.Width + "px");
+    //};
 
     //this.UserLocationCheckboxChanged = function (cObj) {
     //    if ($(event.target).prop("checked")) {

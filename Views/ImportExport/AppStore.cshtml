@@ -90,7 +90,7 @@
 
                                 <div class="apPtiLe" style="z-index:1;width:25%;">
                                     <div class="apTileInner">
-                                        <a href="@Url.Action("AppDashBoard", "Dev", new { Id = _appList[i].Id, Type = _appList[i].AppType })" class="apTileInner-bdy">
+                                        <a @*href="@Url.Action("AppDashBoard", "Dev", new { Id = _appList[i].Id, Type = _appList[i].AppType })"*@ class="apTileInner-bdy">
                                             <div class="grpAppTile1 @grph"></div>
                                             <div class="col1">
                                                 <i class="fa @_appList[i].Icon"></i>

@@ -42,17 +42,32 @@
             control.setValue(control.DefaultValue);
         if (control.IsDisable)
             control.disable();
-        try {
-            let FnString = `console.log('${control.__path || control.Name}');` + atob(control.OnChangeFn.Code) + ` ; form.updateDependentControls(${control.__path}, form)`;
-            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
-            control.__onChangeFn = onChangeFn;
-            control.bindOnChange(onChangeFn);
+        if (control.OnChangeFn.Code.trim() !== "" && control.OnChangeFn.Code.trim() !== null) {
+            try {
+                let FnString = `console.log('${control.__path || control.Name}');` + atob(control.OnChangeFn.Code) + (control.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
+                let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+                control.__onChangeFn = onChangeFn;
+                control.bindOnChange(onChangeFn);
+            } catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
+            }
         }
-        catch (e) {
-            console.eb_log("eb error :");
-            console.eb_log(e);
-            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
-        }
+
+    };
+    this.setUpdateDependentControlsFn = function () {
+        this.FO.formObject.updateDependentControls = function (curCtrl) {
+            $.each(curCtrl.DependedValExp.$values, function (i, ctrl) {
+                let form = this.FO.formObject;
+                let depCtrl = eval(ctrl);
+                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                if (valExpFnStr) {
+                    depCtrl.setValue(new Function("form", "user", `event`, valExpFnStr).bind(ctrl, this.FO.formObject, this.FO.userObject)());
+                }
+
+            }.bind(this));
+        }.bind(this);
     };
 
     this.bindRequired = function (control) {
@@ -113,7 +128,7 @@
     this.AllRequired_valid_Check = function () {
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
-        $.each(this.FO.flatControls, function (i, control) {
+        $.each(this.FO.flatControlsWithDG, function (i, control) {
             let $ctrl = $("#" + control.EbSid_CtxId);
             if (!this.isRequiredOK(control) || !this.isValidationsOK(control)) {
                 required_valid_flag = false;
@@ -130,7 +145,7 @@
     //this.AllUnique_Check = function () {
     //    let unique_flag = true;
     //    let $notOk1stCtrl = null;
-    //    $.each(this.FO.flatControls, function (i, control) {
+    //    $.each(this.FO.flatControlsWithDG, function (i, control) {
     //        let $ctrl = $("#" + control.EbSid_CtxId);
     //        if (!this.FO.checkUnique(control)) {
     //            unique_flag = false;

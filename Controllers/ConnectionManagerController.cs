@@ -596,8 +596,8 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             EbDbConfig con = new EbDbConfig();
             DatabaseVendors vendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString());
-
-
+            string res;
+            AddDBResponse response = new AddDBResponse();
             if (vendor == DatabaseVendors.PGSQL)
             {
                 con = new PostgresConfig()
@@ -666,13 +666,14 @@ namespace ExpressBase.Web.Controllers
                 };
             }
 
-            this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
+            response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
             {
                 DbConfig = con,
                 // IsNew = false,
                 SolnId = req["SolutionId"]
             });
-            return JsonConvert.SerializeObject(con);
+            GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+            return JsonConvert.SerializeObject(resp);
         }
 
         [HttpPost]
@@ -697,7 +698,8 @@ namespace ExpressBase.Web.Controllers
                     NickName = req["nickname"]
                 };
                 res = this.ServiceClient.Post<AddTwilioResponse>(new AddTwilioRequest { Config = twilioCon, /*IsNew = true,*/ SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(twilioCon);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -731,7 +733,8 @@ namespace ExpressBase.Web.Controllers
                     NickName = req["nickname"]
                 };
                 res = this.ServiceClient.Post<AddETResponse>(new AddETRequest { Config = con,/* IsNew = true,*/  SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(con);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -765,7 +768,8 @@ namespace ExpressBase.Web.Controllers
                     NickName = req["nickname"]
                 };
                 res = this.ServiceClient.Post<AddMongoResponse>(new AddMongoRequest { Config = con/*, IsNew = true*/, SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(con);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -803,7 +807,8 @@ namespace ExpressBase.Web.Controllers
                 };
                 con.ProviderName = (SmtpProviders)Enum.Parse(typeof(SmtpProviders), req["Emailvendor"]);
                 res = this.ServiceClient.Post<AddSmtpResponse>(new AddSmtpRequest { Config = con, /*IsNew = true,*/ SolnId = req["SolnId"] });
-                return JsonConvert.SerializeObject(con);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -827,7 +832,8 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 res = this.ServiceClient.Post<AddCloudinaryResponse>(new AddCloudinaryRequest { Config = con/*, IsNew = true*/ , SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(con);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -880,7 +886,8 @@ namespace ExpressBase.Web.Controllers
                     Type = Enum.Parse<EbConnections>(req["Type"].ToString())
                 };
                 res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = _obj, SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(res);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -900,7 +907,8 @@ namespace ExpressBase.Web.Controllers
                     Id = Convert.ToInt32(req["Id"])
                 };
                 res = this.ServiceClient.Post<EbIntegrationConfDeleteResponse>(new EbIntergationConfDeleteRequest { IntegrationConfdelete = _obj, SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(res);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -909,7 +917,7 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public string IntegrateDelete()
+        public string IntegrateDelete(int Id, string sid)
         {
             EbIntegrationDeleteResponse res = new EbIntegrationDeleteResponse();
             var req = this.HttpContext.Request.Form;
@@ -917,10 +925,11 @@ namespace ExpressBase.Web.Controllers
             {
                 EbIntegration _obj = new EbIntegration
                 {
-                    Id = Convert.ToInt32(req["Id"])
+                    Id = Convert.ToInt32(req["Id[Id]"])
                 };
-                res = this.ServiceClient.Post<EbIntegrationDeleteResponse>(new EbIntergationDeleteRequest { Integrationdelete = _obj, SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(res);
+                res = this.ServiceClient.Post<EbIntegrationDeleteResponse>(new EbIntergationDeleteRequest { Integrationdelete = _obj, SolnId = sid });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -938,7 +947,8 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 res = this.ServiceClient.Post<EbIntegrationSwitchResponse>(new EbIntergationSwitchRequest { Integrations = req, SolnId = sid });
-                return JsonConvert.SerializeObject(res);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -949,19 +959,24 @@ namespace ExpressBase.Web.Controllers
 
         public string PrimaryDelete(string preferancetype, string sid, string deleteId)
         {
-            var req = JsonConvert.DeserializeObject<EbIntegration>(preferancetype);
+            
             var SolnId = ViewBag.cid;
             EbIntegrationResponse res = new EbIntegrationResponse();
 
             try
             {
-                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = req, SolnId = sid });
+                if (preferancetype != null)
+                {
+                    var req = JsonConvert.DeserializeObject<EbIntegration>(preferancetype);
+                    res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = req, SolnId = sid });
+                }
                 EbIntegration _obj = new EbIntegration
                 {
                     Id = Convert.ToInt32(deleteId)
                 };
                 res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntergationDeleteRequest { Integrationdelete = _obj, SolnId = sid });
-                return JsonConvert.SerializeObject(res);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {

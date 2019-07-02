@@ -61,23 +61,13 @@ const WebFormRender = function (option) {
     };
 
     this.setFormObject = function () {
-        let flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
-        $.each(flatControlsWithDG, function (i, ctrl) {
+        this.flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
+        $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
         this.setFormObjectMode();
-
-        this.formObject.updateDependentControls = function (curCtrl) {
-            $.each(curCtrl.DependedValExp.$values, function (i, ctrl) {
-                let form = this.formObject;
-                let depCtrl = eval(ctrl);
-                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                if (valExpFnStr) {
-                    depCtrl.setValue(new Function("form", "user", `event`, valExpFnStr).bind(ctrl, this.formObject, this.userObject)());
-                }
-
-            }.bind(this));
-        }.bind(this);
+        this.FRC.setUpdateDependentControlsFn();
+        
 
         return this.formObject;
     };
@@ -458,7 +448,7 @@ const WebFormRender = function (option) {
             return;
         $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {
             if (!r.IsDisabled && r.Script.Lang === 0 && r.Script.Code !== "") {
-                new Function("form", "user", `event`, atob(r.Script.Code)).bind("this-placeholder", this.setFormObject(), this.userObject)();
+                new Function("form", "user", `event`, atob(r.Script.Code)).bind(this.formObject, this.setFormObject(), this.userObject)();
             }
         }.bind(this));
     };

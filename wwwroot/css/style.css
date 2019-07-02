@@ -27,7 +27,25 @@ body {
     --blackpipe: -webkit-linear-gradient(top, #4c4c4c 3%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 46%,#000000 53%,#111111 64%,#2b2b2b 82%,#1c1c1c 94%,#131313 100%);
     --blum: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.86, #369), color-stop(0.72, rgb(73,125,189)));
 }
-
+body, html,.root {
+    height: 100%;
+    overflow: visible !important;
+    width:100%;
+}
+.flex-shrink-zero {
+    -webkit-flex-shrink: 0 !important;
+    flex-shrink: 0 !important;
+}
+.flex-grow-one {
+    -webkit-flex-grow: 1 !important;
+    flex-grow: 1!important;
+}
+.row-flex {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
 .ebbtn {
     border: 0;
     border-radius: 3px;
@@ -45,6 +63,7 @@ body {
     color: #0d2366;
     text-decoration: none;
     cursor: pointer;
+    border: 1px solid transparent;
 }
 
     .ebbtn:hover {
@@ -56,14 +75,13 @@ body {
         color: inherit;
     }
 
-.eb_btnblue {
-    background: #528ff0;
-    color: #fff;
+.eb_blue {
+    background: #508bf9;
+    color:white;
 }
 
 .eb_btngreen {
     background: #47af08;
-    color: #fff;
 }
 
 .eb_btn-sm {
@@ -72,7 +90,7 @@ body {
 }
 
 .eb_btn_md {
-    padding: 6px 12px;
+    padding: 10px 20px;
 }
 
 .eb_btnwhite {
@@ -80,11 +98,19 @@ body {
     color: #528ff0;
     border: 1px solid #528ff0;
 }
-
-.eb_btnorange {
-    background: #f37e1a;
+.eb_btnblue {
+    background: #508bf9;
     color: #fff;
 }
+    .eb_btnblue:hover {
+        background: #3876ea;
+        color: white;
+    }
+
+    .eb_btnorange {
+        background: #f37e1a;
+        color: #fff;
+    }
 
 .btn_s_fr {
     margin-left: 10px;
@@ -92,16 +118,14 @@ body {
 
 .eb_btnplain {
     font-weight: 600;
-    color: #717171;
+    color: #508bf9;
     box-shadow: none;
-    background: transparent;
+    background: white;
+    border: 1px solid #508bf9;
 }
-
     .eb_btnplain:hover {
-        box-shadow: none;
-        color: #d49011;
+        color: #306ee2;
     }
-
 .cb {
     color: #1497cc;
 }
@@ -178,8 +202,7 @@ body {
     display: none;
 }
 .eb_login {
-    height: 100vh;
-    max-height: 100vh;
+    height: 100%;
     background: linear-gradient(to right,#eef9fe,#edf7ff);
     font-family: Montserrat;
     background: #508bf9;
@@ -188,6 +211,9 @@ body {
 .ebtext-lg {
     height: 45px;
     padding-left: 40px;
+}
+.ebtext-lg-noic {
+    height: 45px;
 }
 .log-username, .log-pw {
     position: relative;
@@ -214,7 +240,7 @@ body {
 .eb_login .container {
     height: inherit;
 }
-.eb_login .header {
+.eb_login .header, .eb-signup_wrapper .header {
     position: fixed;
     width: 100%;
     padding: 10px 45px 10px 10px;
@@ -325,10 +351,13 @@ body {
 .w-100 {
     width: 100%;
 }
+.h-100{
+    height:100%;
+}
 /*tenant logoin page*/
 .lg_content {
     padding-left: 50px;
-    max-width: 800px;
+    /*max-width: 800px;*/
     display: flex;
     flex-flow: column;
     justify-content: flex-end;

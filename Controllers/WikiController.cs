@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 namespace ExpressBase.Web.Controllers
@@ -159,7 +160,7 @@ namespace ExpressBase.Web.Controllers
            
         }
 
-        public JsonResult UpdateOrder (int[] myList)
+        public bool UpdateOrder (string myList)
         {
             
                 UpdateOrderResponse resp = this.ServiceClient.Post(new UpdateOrderRequest()
@@ -168,7 +169,7 @@ namespace ExpressBase.Web.Controllers
                 });
                
 
-            return null;
+            return resp.ResponseStatus;
         }
     }
 }

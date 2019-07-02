@@ -95,36 +95,9 @@ namespace ExpressBase.Web.Controllers
         //    return res;
         //}
 
-
-
-
-        [HttpPost]
-        public IActionResult CreateApplication(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            string apptype = req["AppType"];
-            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest
-            {
-                AppName = req["AppName"],
-                AppType = Convert.ToInt32(req["AppType"]),
-                Description = req["DescApp"],
-                AppIcon = req["AppIcon"],
-                Sid = req["Sid"]
-            });
-
-            if (resultlist.id > 0)
-            {
-                TempData["SSO"] = "true";
-                TempData["apptype"] = apptype;
-                return RedirectToAction("TenantDashboard", "Tenant");
-            }
-            return View();
-        }
-
         [EbBreadCrumbFilter("MySolutions/NewSolution", new string[] { "/MySolutions" })]
         public IActionResult CreateSolution()
         {
-
             return View();
         }
 

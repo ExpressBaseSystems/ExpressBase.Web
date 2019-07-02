@@ -165,11 +165,11 @@
         ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
         $.each(ctrl.Validators.$values, function (i, Validator) {
             this.removeInvalidStyle(ctrl);// reset EbMakeValid
-            if (Validator.IsDisabled)
-                return true;// continue; from loop if current validation IsDisabled
+            if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
+                return true;
             let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
             this.updateFormValues();
-            if (!func(this.FO.formValues)) {
+            if (!func(this.FO.formValues, this.FO.userObject)) {
                 //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
                 this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
                 if (!Validator.IsWarningOnly) {

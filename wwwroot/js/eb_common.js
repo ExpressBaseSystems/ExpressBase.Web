@@ -181,11 +181,18 @@ function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type 
     if ($(`${contSel} .req-cont`).length !== 0)
         return;
     //var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
-    var $ctrlCont = $(`${contSel}  ${_ctrlCont}`);
+    let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
     $ctrlCont.after(`<div class="req-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
-    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", `0 0 3px 1px ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
+    $ctrlCont.css("box-shadow", `0 0 3px 1px ${shadowColor}`).siblings("[name=ctrlsend]").css('disabled', true);
     $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
 }
+
+function EbMakeValid(contSel, _ctrlCont) {
+    //setTimeout(function () {
+    $(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
+    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    //},400);
+};
 
 function sortByProp(arr, prop) {
 
@@ -197,15 +204,6 @@ function sortByProp(arr, prop) {
         return 0;
     });
     return arr;
-};
-
-
-
-function EbMakeValid(contSel, _ctrlCont) {
-    //setTimeout(function () {
-    $(`${contSel}  ${_ctrlCont}`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
-    $(`${contSel} .req-cont`).animate({ opacity: "0" }, 300).remove();
-    //},400);
 };
 
 

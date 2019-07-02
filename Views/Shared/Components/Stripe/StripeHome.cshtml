@@ -1,4 +1,5 @@
-﻿<head>
+﻿
+<head>
     <title>Stripe Home</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,11 +8,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/Stripe/cust_invoices.css">
     <link rel="stylesheet" href="~/css/Stripe/index.css">
+    <link rel="stylesheet" href="~/css/Stripe/subscribedview.css">
+    <script type="text/javascript" src="~/js/Stripe/index.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
         .div-main {
-            margin-top: 70px;
+            margin-top: 13px;
         }
 
         .div-body {
@@ -119,170 +122,285 @@
             background-color: #FFF;
             background-image: -webkit-gradient(linear, 40% 0%, 75% 84%, from(#666ee8), to(#666ee8), color-stop(.6,#8f95eb))
         }
+
+        .upgrade-content-sub {
+            margin-top: 27px;
+            padding: 10px 30px 10px 30px;
+            margin-bottom: 12px;
+        }
+
+        .modal-size {
+            height: 800px;
+        }
+
+        .modal-sub-upgrade {
+            height: 410px;
+        }
+
+        .modal-cust-size {
+            height: 550px;
+        }
     </style>
 </head>
 <body>
-    <div class="div-main container-fluid">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="div-body">
-                    <div class="div-heading row">
-                        <label class="stripe-headings">PLAN DETAILS</label>
+    @{
+        if (ViewBag.Status)
+        {
+            <div id="subscription-req">
+                <div class="form-style form-style-padding">
+                    <div class="heading">
+                        <h2>UPGRADE</h2>
                     </div>
-                    @{
-                        if (ViewBag.Status)
-                        {
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="upgrade-content" style="padding:10px 30px 10px 30px;">
-                                        You are currently using Free Plan (Free for first 5 users). You can upgrade your plan for having more users, cost $5 for each.
-                                    </div>
-                                </div>
+                    <div class="upgrade-content">
+                        You are currently using Free Plan (Free for first 5 users). You can upgrade your plan for having more users, cost $5 for each.
+                    </div>
+                </div>
+                <div class="div-seperate">
+                    <button class="button-style" onclick="showusr()">Upgrade</button>
+                </div>
+            </div>
+
+            <div id="users-form" style="display:none;">
+                <div class="form-style form-style-padding">
+                    <div class="div-input" id="div-usr">
+                        <label class="label-font-sub">Number of Users</label>
+                        <input type="number" class="text-input" name="usr" id="usr" placeholder="5" min="5" onchange="calculateAmt()" onkeyup="calculateAmt()" required />
+                    </div>
+                    <div id="div-total" class="div-input">
+                        <label class="label-total label-total-main-title">Total</label>
+                        <label class="label-total label-total-content" id="total-content" name="total-content"></label>
+                        <label class="label-total label-total-main" name="total" id="total"></label>
+                        <label class="label-total label-total-content">/month</label>
+                    </div>
+                </div>
+                <div class="div-seperate" id="div-continue-button">
+                    <button class="button-style" id="continue-button" onclick="showpayment()">Proceed to Payment</button>
+                </div>
+                <div id="payment-form" autocomplete="off" style="display: none;">
+                    <div class="form-style-sub form-style-padding">
+                        <input type="hidden" id="tot" name="tot" />
+                        <input type="hidden" id="usrno" name="usrno" />
+                        <div class="div-input div-input-border">
+                            <label class="label-font">Name</label>
+                            <input type="text" class="text-input" name="name" id="name" placeholder="Jenny Rosen" required />
+                        </div>
+                        <div class="div-input div-input-border">
+                            <label class="label-font">Email</label>
+                            <input type="email" class="text-input" name="emailid" id="emailid" placeholder="jenny@example.com" required />
+                        </div>
+                        <div class="div-input div-input-border">
+                            <label class="label-font">Address</label>
+                            <input type="text" class="text-input" name="add1" id="add1" placeholder="185 Berry Street Suite 550" />
+                        </div>
+                        <div class="div-input div-input-border">
+                            <label class="label-font">City</label>
+                            <input type="text" class="text-input" name="city" id="city" placeholder="San Francisco" />
+                        </div>
+                        <div class="div-input div-input-border">
+                            <label class="label-font">State</label>
+                            <input type="text" class="text-input-sub" name="state" id="state" placeholder="CA" />
+                            <label class="label-font">Zip</label>
+                            <input type="text" class="text-input-sub" name="zip" id="zip" placeholder="94107" />
+                        </div>
+                        <div class="div-input">
+                            <label class="label-font">Country</label>
+                            <div>
+                                <select name="country" class="text-select">
+                                    <option value="AU">Australia</option>
+                                    <option value="AT">Austria</option>
+                                    <option value="BE">Belgium</option>
+                                    <option value="BR">Brazil</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="CN">China</option>
+                                    <option value="DK">Denmark</option>
+                                    <option value="FI">Finland</option>
+                                    <option value="FR">France</option>
+                                    <option value="DE">Germany</option>
+                                    <option value="HK">Hong Kong</option>
+                                    <option value="IN">India</option>
+                                    <option value="IE">Ireland</option>
+                                    <option value="IT">Italy</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="LU">Luxembourg</option>
+                                    <option value="MX">Mexico</option>
+                                    <option value="NL">Netherlands</option>
+                                    <option value="NZ">New Zealand</option>
+                                    <option value="NO">Norway</option>
+                                    <option value="PT">Portugal</option>
+                                    <option value="SG">Singapore</option>
+                                    <option value="ES">Spain</option>
+                                    <option value="SE">Sweden</option>
+                                    <option value="CH">Switzerland</option>
+                                    <option value="GB">United Kingdom</option>
+                                    <option value="US" selected="selected">United States</option>
+                                </select>
                             </div>
-                        }
-                        else
-                        {
+                        </div>
+                    </div>
+                    <div class="div-seperate form-style card-padding">
+                        <div class="form-row div-input">
+                            <label for="card-element" class="label-font col-md-1">
+                                Card
+                            </label>
+                            <div id="card-element" class="col-md-11">
+                                <!-- A Stripe Element will be inserted here. -->
+                            </div>
+                            <input type="hidden" id="token" name="token">
+                            <!-- Used to display form errors. -->
+                            <div id="card-errors" role="alert"></div>
+                        </div>
+                    </div>
+                    <div class="div-seperate">
+                        <button class="button-style" id="pay" name="pay">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div id="sub_succ"></div>
+        }
+        else
+        {
+            <div class="div-main container-fluid">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="div-body" style="height: 234px;">
+                            <div class="div-heading row">
+                                <label class="stripe-headings">PLAN DETAILS</label>
+                            </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="upgrade-content" style="padding:10px 30px 10px 30px;">
+                                    <div class="upgrade-content upgrade-content-sub">
                                         You are currently using @ViewBag.Plan plan for @ViewBag.Users users per month. You can upgrade your plan for having more users, cost $5 for each.
                                     </div>
                                 </div>
                             </div>
+                            <div class="row" style="padding:20px 0px 10px 0px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-6 col-md-offset-3">
+                                        <button class="button" data-toggle="modal" data-target="#planUpgrade">Upgrade</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="div-body">
+                            <div class="div-heading row">
+                                <label class="stripe-headings">BILLING DETAILS</label>
+                            </div>
+                            <div class="row user-det-padding">
+                                <div class="user-det-sub-heading col-md-3 col-md-offset-1">
+                                    Name
+                                </div>
+                                <div class="user-det-contents col-md-6">
+                                    @ViewBag.Cust.Name
+                                </div>
+                            </div>
+                            <div class="row user-det-padding">
+                                <div class="user-det-sub-heading col-md-3 col-md-offset-1">
+                                    Email
+                                </div>
+                                <div class="user-det-contents col-md-6">
+                                    @ViewBag.Cust.Email
+                                </div>
+                            </div>
+                            <div class="row user-det-padding">
+                                <div class="user-det-sub-heading col-md-3 col-md-offset-1">
+                                    Address
+                                </div>
+                                <div class="user-det-contents col-md-6">
+                                    @ViewBag.Cust.Address
+                                </div>
+                            </div>
+                            <div class="row user-det-padding">
+                                <div class="user-det-sub-heading col-md-3 col-md-offset-1">
+                                    City
+                                </div>
+                                <div class="user-det-contents col-md-3">
+                                    @ViewBag.Cust.City
+                                </div>
+                                <div class="user-det-sub-heading col-md-2 ">
+                                    State
+                                </div>
+                                <div class="user-det-contents col-md-3">
+                                    @ViewBag.Cust.State
+                                </div>
+                            </div>
+                            <div class="row user-det-padding">
+                                <div class="user-det-sub-heading col-md-3 col-md-offset-1">
+                                    Country
+                                </div>
+                                <div class="user-det-contents col-md-3">
+                                    @ViewBag.Cust.Country
+                                </div>
+                                <div class="user-det-sub-heading col-md-2">
+                                    Zip
+                                </div>
+                                <div class="user-det-contents col-md-3">
+                                    @ViewBag.Cust.Zip
+                                </div>
+                            </div>
+                            <div class="row" style="padding:10px 0px 10px 0px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-6 col-md-offset-3">
+                                        <button class="button" data-toggle="modal" data-target="#custUpdate">Change</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="div-body">
+                            <div class="div-heading row">
+                                <label class="stripe-headings">CARD DETAILS</label>
+                            </div>
+                            <div class=" scrollable" id="style-15">
+                                <div class="div-card">
+                                    <div class="row">
+                                        <div class="col-md-offset-2 col-md-6 card-number">
+                                            **** **** **** @ViewBag.Card.Last4
+                                        </div>
+                                        <div class="col-md-4 card-exp">
+                                            Exp. (@ViewBag.Card.ExpMonth / @ViewBag.Card.ExpYear)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="div-card">
+                                    <div class="row">
+                                        <div class="col-md-offset-2 col-md-6 card-number">
+                                            **** **** **** @ViewBag.Card.Last4
+                                        </div>
+                                        <div class="col-md-4 card-exp">
+                                            Exp. (@ViewBag.Card.ExpMonth / @ViewBag.Card.ExpYear)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="div-card">
+                                    <div class="row">
+                                        <div class="col-md-offset-2 col-md-6 card-number">
+                                            **** **** **** @ViewBag.Card.Last4
+                                        </div>
+                                        <div class="col-md-4 card-exp">
+                                            Exp. (@ViewBag.Card.ExpMonth / @ViewBag.Card.ExpYear)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="padding:20px 0px 10px 0px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-6 col-md-offset-3">
+                                        <button class="button">Change</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                        }
-                    }
-                    <div class="row" style="padding:20px 0px 10px 0px;">
-                        <div class="col-md-12">
-                            <div class="col-md-6 col-md-offset-3">
-                                <a href="/Stripe/Index" class="button">Upgrade</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="div-body">
-                    <div class="div-heading row">
-                        <label class="stripe-headings">BILLING DETAILS</label>
-                    </div>
-                    <div class="row user-det-padding">
-                        <div class="user-det-sub-heading col-md-3 col-md-offset-1">
-                            Name
-                        </div>
-                        <div class="user-det-contents col-md-6">
-                            @ViewBag.Cust.Name
-                        </div>
-                    </div>
-                    <div class="row user-det-padding">
-                        <div class="user-det-sub-heading col-md-3 col-md-offset-1">
-                            Email
-                        </div>
-                        <div class="user-det-contents col-md-6">
-                            @ViewBag.Cust.Email
-                        </div>
-                    </div>
-                    <div class="row user-det-padding">
-                        <div class="user-det-sub-heading col-md-3 col-md-offset-1">
-                            Address
-                        </div>
-                        <div class="user-det-contents col-md-6">
-                            @ViewBag.Cust.Address
-                        </div>
-                    </div>
-                    <div class="row user-det-padding">
-                        <div class="user-det-sub-heading col-md-3 col-md-offset-1">
-                            City
-                        </div>
-                        <div class="user-det-contents col-md-3">
-                            @ViewBag.Cust.City
-                        </div>
-                        <div class="user-det-sub-heading col-md-2 ">
-                            State
-                        </div>
-                        <div class="user-det-contents col-md-3">
-                            @ViewBag.Cust.State
-                        </div>
-                    </div>
-                    <div class="row user-det-padding">
-                        <div class="user-det-sub-heading col-md-3 col-md-offset-1">
-                            Country
-                        </div>
-                        <div class="user-det-contents col-md-3">
-                            @ViewBag.Cust.Country
-                        </div>
-                        <div class="user-det-sub-heading col-md-2">
-                            Zip
-                        </div>
-                        <div class="user-det-contents col-md-3">
-                            @ViewBag.Cust.Zip
-                        </div>
-                    </div>
-                    <div class="row" style="padding:10px 0px 10px 0px;">
-                        <div class="col-md-12">
-                            <div class="col-md-6 col-md-offset-3">
-                                <a href="/Stripe/Index" class="button">Change</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="div-body">
-                    <div class="div-heading row">
-                        <label class="stripe-headings">CARD DETAILS</label>
-                    </div>
-                    <div class=" scrollable" id="style-15">
-                        <div class="div-card">
-                            <div class="row">
-                                <div class="col-md-offset-3 col-md-4 card-number">
-                                    **** **** **** @ViewBag.Card.Last4
-                                </div>
-                                <div class="col-md-4 card-exp">
-                                    Exp. (@ViewBag.Card.ExpMonth / @ViewBag.Card.ExpYear)
-                                </div>
-                            </div>
-                        </div>
-                        <div class="div-card">
-                            <div class="row">
-                                <div class="col-md-offset-3 col-md-4 card-number">
-                                    **** **** **** @ViewBag.Card.Last4
-                                </div>
-                                <div class="col-md-4 card-exp">
-                                    Exp. (@ViewBag.Card.ExpMonth / @ViewBag.Card.ExpYear)
-                                </div>
-                            </div>
-                        </div>
-                        <div class="div-card">
-                            <div class="row">
-                                <div class="col-md-offset-3 col-md-4 card-number">
-                                    **** **** **** @ViewBag.Card.Last4
-                                </div>
-                                <div class="col-md-4 card-exp">
-                                    Exp. (@ViewBag.Card.ExpMonth / @ViewBag.Card.ExpYear)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style="padding:20px 0px 10px 0px;">
-                        <div class="col-md-12">
-                            <div class="col-md-6 col-md-offset-3">
-                                <a href="/Stripe/Index" class="button">Change</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        @{
-            if (!ViewBag.Status)
-            {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="div-body-invoices">
                             <div class="div-label row">
-                                <label class="stripe-headings">SUBSCRIBTION HISTORY</label>
+                                <label class="stripe-headings">TRANSACTION HISTORY</label>
                             </div>
                             <div class="div-payment-details-heading row" style="margin-left:1px; margin-right:1px;">
                                 <div class="div-payment-details-heading-1 col-md-2 ">
@@ -462,7 +580,278 @@
                         </div>
                     </div>
                 </div>
-            }
+
+            </div>
         }
+    }
+    @* MODAL *@
+    @*-----------------------------PLAN----------------------------*@
+    <div id="planUpgrade" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+
+            <!-- Modal content-->
+
+            <div class="modal-content modal-size " id="modal-sub">
+                <div class="modal-body">
+
+                    <div class="modal-content modal-sub-upgrade " id="modal-upgrade">
+                        <div class="modal-body">
+                            <div id="users-form1" style="margin: 90px;">
+                                <div class="form-style form-style-padding">
+                                    <div class="div-input" id="div-usr1">
+                                        <label class="label-font-sub">Number of Users</label>
+                                        <input type="number" class="text-input" name="usr1" id="usr1" placeholder="5" min="5" onchange="calculateAmount1()" onkeyup="calculateAmount1()" required />
+                                        <input type="hidden" id="tot1" name="tot1" />
+                                        <input type="hidden" id="usrno1" name="usrno1" />
+                                    </div>
+                                    <div id="div-total1" class="div-input" style="display:none;">
+                                        <label class="label-total label-total-main-title">Total</label>
+                                        <label class="label-total label-total-content" id="total-content1" name="total-content1"></label>
+                                        <label class="label-total label-total-main" name="total1" id="total1"></label>
+                                        <label class="label-total label-total-content">/month</label>
+                                    </div>
+                                </div>
+                                <div class="div-seperate">
+                                    <button class="button-style" id="pay1" name="pay1">Subscribe</button>
+                                </div>
+
+                                @{TempData["SolnId"] = ViewBag.cid;}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sub_succ"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    @{TempData["SolnId"] = ViewBag.cid;}
+    @*--------------------CUSTOMER-------------------------*@
+    <div id="custUpdate" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content modal-cust-size ">
+                <div class="modal-body">
+                    @*<div id="users-form" style="margin: 90px;">
+                        <div id="payment-form">
+                            <div class="form-style-sub form-style-padding">
+                                <div class="div-input div-input-border">
+                                    <label class="label-font">Name</label>
+                                    <input type="text" class="text-input" name="name" id="name" placeholder="Jenny Rosen" required />
+                                </div>
+                                <div class="div-input div-input-border">
+                                    <label class="label-font">Email</label>
+                                    <input type="email" class="text-input" name="emailid" id="emailid" placeholder="jenny@example.com" required />
+                                </div>
+                                <div class="div-input div-input-border">
+                                    <label class="label-font">Address</label>
+                                    <input type="text" class="text-input" name="add1" id="add1" placeholder="185 Berry Street Suite 550" />
+                                </div>
+                                <div class="div-input div-input-border">
+                                    <label class="label-font">City</label>
+                                    <input type="text" class="text-input" name="city" id="city" placeholder="San Francisco" />
+                                </div>
+                                <div class="div-input div-input-border">
+                                    <label class="label-font">State</label>
+                                    <input type="text" class="text-input-sub" name="state" id="state" placeholder="CA" />
+                                    <label class="label-font">Zip</label>
+                                    <input type="text" class="text-input-sub" name="zip" id="zip" placeholder="94107" />
+                                </div>
+                                <div class="div-input">
+                                    <label class="label-font">Country</label>
+                                    <div>
+                                        <select name="country" class="text-select">
+                                            <option value="AU">Australia</option>
+                                            <option value="AT">Austria</option>
+                                            <option value="BE">Belgium</option>
+                                            <option value="BR">Brazil</option>
+                                            <option value="CA">Canada</option>
+                                            <option value="CN">China</option>
+                                            <option value="DK">Denmark</option>
+                                            <option value="FI">Finland</option>
+                                            <option value="FR">France</option>
+                                            <option value="DE">Germany</option>
+                                            <option value="HK">Hong Kong</option>
+                                            <option value="IN">India</option>
+                                            <option value="IE">Ireland</option>
+                                            <option value="IT">Italy</option>
+                                            <option value="JP">Japan</option>
+                                            <option value="LU">Luxembourg</option>
+                                            <option value="MX">Mexico</option>
+                                            <option value="NL">Netherlands</option>
+                                            <option value="NZ">New Zealand</option>
+                                            <option value="NO">Norway</option>
+                                            <option value="PT">Portugal</option>
+                                            <option value="SG">Singapore</option>
+                                            <option value="ES">Spain</option>
+                                            <option value="SE">Sweden</option>
+                                            <option value="CH">Switzerland</option>
+                                            <option value="GB">United Kingdom</option>
+                                            <option value="US" selected="selected">United States</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="div-seperate">
+                                <button class="button-style" id="custupdate" name="custupdate">Update</button>
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
     </div>
 </body>
+
+<script>
+    console.log(100);
+    if ('@ViewBag.Status' === 'True') {
+        var stripe = Stripe('@(ViewBag.pb_key)');
+
+        // Create an instance of Elements.
+        var elements = stripe.elements();
+
+        // Custom styling can be passed to options when creating an Element.
+        // (Note that this demo uses a wider set of styles than the guide below.)
+        var style = {
+            base: {
+                color: '#32325d',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        };
+
+        // Create an instance of the card Element.
+        var card = elements.create('card', { style: style });
+
+        // Add an instance of the card Element into the `card-element` <div>.
+        card.mount('#card-element');
+
+        // Handle real-time validation errors from the card Element.
+        card.addEventListener('change', function (event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle form submission.
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function (result) {
+                if (result.error) {
+                    // Inform the user if there was an error.
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    let dt = new Date(result.token.created * 1000);
+                    result.token.created = dt.getUTCFullYear() + "-" + (dt.getUTCMonth() + 1) + "-" + dt.getUTCDate() + " " + dt.getUTCHours() + ":" + dt.getUTCMinutes() + ":" + dt.getUTCSeconds();
+                    console.log('hfghj');
+                    document.getElementById('token').value = JSON.stringify(result.token);
+                    form.submit();
+                }
+            });
+        });
+    }
+    $('#pay').on('click', function () {
+        $.ajax({
+            type: "POST",
+            url: "../Stripe/Index",
+            data: { user_no: $('#usr').val(), name: $('#name').val(), email: $('#emailid').val(), address: $('#add1').val(), city: $('#city').val(), state: $('#state').val(), zip: $('#zip').val(), country: $('#country').val(), token: $('#token').val()},
+            success: function (data) {
+                $('#users-form').hide();
+                $('#modal-sub').hide();
+                $('#sub_succ1').append(`<div class="div-body-main">
+        <div class="div-icon">
+            <i class="fa fa-check fa-5x"></i>
+        </div>
+        <div class="heading">
+            SUBSCRIBED SUCCESSFULLY
+        </div>
+        <div class="div-sub-desc">
+            You have successfully subscribed to ${data.plan} on ${data.created}
+        </div>
+        <div class="div-sub-headings">
+            <div class="col-md-12 div-sub-heading">
+                <div class="col-md-6 sub-heading">
+                    Amount per Users
+                </div>
+                <div class="col-md-6 ">
+                   $${data.amount}
+                </div>
+            </div>
+            <div class="col-md-12 div-sub-heading">
+                <div class="col-md-6 sub-heading">
+                    Total Amount
+                </div>
+                <div class="col-md-6">
+                    $(${data.amount}* ${data.quantity})    ($${data.amount} * ${data.quantity} Users)
+                </div>
+            </div>
+        </div>
+        <div class="div-footer">
+            You will be charged $${data.amount* data.quantity}(${ data.periodStart } - ${ data.periodEnd }) on ${ data.periodEnd }
+        </div>
+    </div>`);
+            }
+        });
+    });
+
+
+    $('#pay1').on('click', function () {
+        $.ajax({
+            type: "POST",
+            url: "../Stripe/UpdateCustomerSubscription",
+            data: { user_no: $('#usr1').val() },
+            success: function (data) {
+                $('#users-form1').hide();
+                $('#modal-upgrade').hide();
+                $('#sub_succ').append(`<div class="div-body-main">
+        <div class="div-icon">
+            <i class="fa fa-check fa-5x"></i>
+        </div>
+        <div class="heading">
+            SUBSCRIBED SUCCESSFULLY
+        </div>
+        <div class="div-sub-desc">
+            You have successfully subscribed to ${data.plan} on ${data.created}
+        </div>
+        <div class="div-sub-headings">
+            <div class="col-md-12 div-sub-heading">
+                <div class="col-md-6 sub-heading">
+                    Amount per Users
+                </div>
+                <div class="col-md-6 ">
+                   $${data.amount}
+                </div>
+            </div>
+            <div class="col-md-12 div-sub-heading">
+                <div class="col-md-6 sub-heading">
+                    Total Amount
+                </div>
+                <div class="col-md-6">
+                    $(${data.amount}* ${data.quantity})    ($${data.amount} * ${data.quantity} Users)
+                </div>
+            </div>
+        </div>
+        <div class="div-footer">
+            You will be charged $${data.amount * data.quantity} (${data.periodStart} - ${data.periodEnd}) on ${data.periodEnd}
+        </div>
+    </div>`);
+            }
+        });
+    });
+
+</script>

@@ -110,9 +110,9 @@
 .tenant_sidebar {
     width: 100px;
 }
-.tenant_workpane {
+/*.tenant_workpane {
     width: calc(100% - 100px);
-}
+}*/
 .tenant_sidebar .t-container {
     padding-top: 0 !important;
 }
@@ -165,37 +165,72 @@
     padding: 5px;
     width: 16.6666666667%;
 }
-.connection_wrap {
-    /*margin: 5px;*/
-    height: 129px;
+
+    .connection_wrap_outer {
+        position: relative;
+        /*width: 50%;*/
+    }
+
+    .image-vender {
+        display: block;
+        width: 100%;
+        height: auto;
+        margin: auto;
+        transition: .5s ease;
+    }
+
+    .image-add {
+        position: absolute;
+         /*top: 79px; 
+        bottom: 9px;
+         left: 71px; 
+        right: 0;*/
+        height: 73%; 
+        width: 63%; 
+        opacity: 0;
+        transition: .5s ease;
+        background-color: white; 
+        /*margin-right: 15%;
+        margin-bottom: 14%;*/
+    }
+
+    .connection_wrap_outer:hover .image-add {
+        opacity: 1;
+        z-index:100;
+
+    }
+    /*.connection_wrap_outer:hover .image-vender {
+        opacity: 1;
+    }*/
+
+    .image-add .fa-plus-circle {
+        color: #4d86d6;
+        font-size: 44px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+
+    .connection_wrap {
     display: flex;
     box-shadow: 0 3px 3px rgba(0,0,0,.05);
     border-radius: 2px;
     border: 1px solid #e8e8e8;
     /*background-color: #f2f2f2;*/
-    /*flex-direction: column;*/
+    flex-direction: column;
 }
-    .connection_wrap .connection_wrap_header {
-        padding: 10px 41px;
-        display: flex;
-    }
-    .connection_wrap_footer {
-        padding: 8px 99px;
-        border-top: 1px solid #e8dfdf;
-    }
-    .connection_wrap_footer a {
-        color: #6d6d6d;
-        font-weight: 400;
-        cursor:pointer;
-    }
-    .connection_wrap_footer label {
-        border-radius: 2px;
-        color: white;
-        background-color: #47af08;
-        font-weight: 400;
-        font-size: 12px;
-        padding: 2px;
-    }
+        .connection_wrap .connection_wrap_header {
+            padding: 10px 41px;
+            display: flex;
+            margin: auto;
+            min-height: 110px;
+        }
+    
     .vend_img {
         margin-left: 24px;
         height: 40px;
@@ -227,7 +262,7 @@
     border-radius: 5px;
 }
     .inteConfContainer:hover {
-        background-color: #f2f2f2;
+        background-color: #f2f2f299;
     }
 
     .context-menu-active {
@@ -246,6 +281,10 @@
     .inteConfContainer_caret-down{
         width:4%;
         margin:auto;
+    }
+    .inteConfContainer:hover .inteConfContainer_caret-down {
+        transform: scale(2);
+        transition: all .75s;
     }
 
 

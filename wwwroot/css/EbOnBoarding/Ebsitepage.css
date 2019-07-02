@@ -1,22 +1,79 @@
-﻿@import url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css);
-
-
+﻿/*@import url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css);*/
 .field-icon {
-    float: right;
-    /*margin-left: -25px;*/
-    margin-top: -25px;
-    position: relative;
+    right: 0;
+    top: 15px;
+    position: absolute;
     z-index: 2;
 }
-
-
-
-.eb_required_group {
-    margin-right: -15px;
-    margin-left: -15px;
+.eb-signup_wrapper {
+    background: #508bf9;
+    font-family:Montserrat;
 }
 
+    .eb-signup_wrapper .eb-signup_socilaWrpr {
+        justify-content: center;
+        display: flex;
+    }
+        .eb-signup_wrapper .eb-signup_socilaWrpr .eb-signup_socilaWrpr_inner {
+            display: flex;
+        }
+    .eb-signup_wrapper .eb-signup-tnc {
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .eb-signup_wrapper .leftpart {
+        height: 100%;
+    }
 
+    .eb-signup_wrapper .rightpart {
+        background: white;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 50px 30px 0px 30px;
+        position: relative;
+        flex-flow: column;
+    }
+    .eb-signup_wrapper .sinpt {
+        height:45px;
+    }
+
+.eb-signup_wrapper .icon_input .sinpt {
+    padding-left: 35px;
+}
+    .eb-signup_wrapper .socialss_container {
+        text-align: center;
+        margin-top: auto;
+        margin-bottom: 40px;
+    }
+
+.center_rightpart {
+    display: flex;
+    height: 100%;
+    flex-flow: column;
+    flex: 0 0 90%;
+    max-width: 90%;
+}
+
+.eb-signup_wrapper .lg_button {
+    color: white;
+    background-color: #508bf9;
+    padding: 6px 30px;
+    height: 45px;
+    margin-top:15px;
+}
+
+    .eb-signup_wrapper .lg_button:hover {
+        background-color: #4382f7;
+        color: white;
+    }
+/*.eb_required_group {
+    margin-right: -15px;
+    margin-left: -15px;
+}*/
 /* start css for radio button on card 3 in sign up page*/
 .ulradio {
     margin: 0px;
@@ -104,8 +161,6 @@
     color: #444447;
     font-style: normal;
 }
-
-
 .inptradio[type=radio]:checked ~ .check {
     border: 5px solid #4d86d6;
 }
@@ -134,15 +189,18 @@
 }
 
 #rcorners1 {
-    border-radius: 4px; 
-    background-color: #f5f5f5;
+    display: none;
+    border-radius: 4px;
+    background-color: #ffffff;
     color: black;
-    float: left;
-    width: 17%;
-    height: 20%;
     box-shadow: 1px 1px 5px rgba(0,0,0,.5);
     line-height: 1.8;
     padding: 15px;
+    bottom: 0;
+    position: absolute;
+    z-index: 10;
+    left: -320px;
+    width: 320px;
 }
 
     #rcorners1:after {
@@ -257,24 +315,16 @@
         transform: translate(19px, 0);
     }
 }
-
-
-.txthighlight:focus {
-    /*border: none;*/
-    /*-webkit-box-shadow: 0px 0px 7px 0px rgba(95,163,245,0.51);
-    -moz-box-shadow: 0px 0px 7px 0px rgba(95,163,245,0.51);
-    box-shadow: 0px 0px 7px 0px rgba(95,163,245,0.51);*/
+/*.txthighlight:focus {
     border-color: #66afe9;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
 }
-
+*/
 .txthighlightred:focus {
     border-color: #fa6d72;
     outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(241, 84, 84, 0.5);
 }
 
 .sol_db_info {
@@ -282,85 +332,16 @@
     height: 30px;
     max-height: 30px;
 }
-
-
-
-
-/*signin page css*/ 
-
-
-.leftpart {
-   
-    background: #AAAAAA;
-    height: 100vh;
-}
-
-.rightpart {
-    background: #fffdfd;
-    height: 100vh;
-}
-
+/*signin page css*/
 input {
     border: none;
     margin: 0;
 }
 .input-group-addon {
-    
     /*background: #FFFFFF;
     border-left:  solid #ea4c88;
     color: #9f9f9f;*/
-    
 }
-
-.lg_button {
-    display: block;
-    border: none;
-    color: white;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-    border-radius: 4px;
-    background-color: #508bf9;
-    width: auto;
-    padding: 14px 40px;
-}
-    .lg_button:hover {
-        display: block;
-        border: none;
-        color: white;
-        padding: 14px 28px;
-        font-size: 16px;
-        cursor: pointer;
-        text-align: center;
-        border-radius: 4px;
-        background-color: #508bf9;
-        width: auto;
-        padding: 14px 40px;
-    }
-
-
-.center_rightpart {
-    width: 75%;
-    height: 75%;
-    top: 15%;
-    margin: 0 auto;
-    position: relative;
-    
-}
-
-
-
-
-.sinpt {
-    width: 100%;
-    border-radius: 4px;
-    outline: none;
-    padding: 8px;
-    box-sizing: border-box;
-   
-}
-
 .selinp {
     width: 100%;
     border-radius: 4px;
@@ -369,39 +350,29 @@ input {
     height: 46px;
     box-sizing: border-box;
 }
-.icon_input .sinpt {
-    padding-left: 35px;
-}
-
 .icon_input {
     position: relative;
 }
-
     .icon_input i {
         position: absolute;
         left: 0;
-        top: 8px;
+        top: 6px;
         padding: 9px 8px;
-        color: #aaa;
+        color: #7da4ec;
         transition: 0.3s;
-       
     }
 
-.txthighlight:focus + i {
+/*.txthighlight:focus + i {
     color: #66afe9;
-}
-.txthighlightred:focus + i {
+}*/
+/*.txthighlightred:focus + i {
     color: #fa6d72;
-}
-
-
-
+}*/
 .radio_cstm {
     position: absolute;
     opacity: 0;
    
 }
-
     .radio_cstm:checked + label,
     .radio_cstm:not(:checked) + label {
         position: relative;
@@ -411,8 +382,6 @@ input {
         display: inline-block;
         color: #555;
         font:inherit;
-        
-
     }
 
         .radio_cstm:checked + label:before,
@@ -426,9 +395,7 @@ input {
             border: 4px solid #ddd;
             border-radius: 100%;
             background: #fff;
-
         }
-
         .radio_cstm:checked + label:after,
         .radio_cstm:not(:checked) + label:after {
             content: '';
@@ -442,20 +409,16 @@ input {
             -webkit-transition: all 0.2s ease;
             transition: all 0.2s ease;
         }
-
         .radio_cstm:not(:checked) + label:after {
             opacity: 0;
             -webkit-transform: scale(0);
             transform: scale(0);
         }
-
         .radio_cstm:checked + label:after {
             opacity: 1;
             -webkit-transform: scale(1);
             transform: scale(1);
         }
-
-
 .radiodiv {
     color: #555;
     background-color: #fff;
@@ -467,12 +430,8 @@ input {
    
     margin-bottom:20px;
 }
-
-
 /*************line seperation form social meadia login****************/
-
-
-.hr-text {
+/*.hr-text {
     line-height: 1em;
     position: relative;
     outline: 0;
@@ -484,7 +443,7 @@ input {
 }
     .hr-text:before {
         content: '';
-        /*// use the linear-gradient for the fading effect // use a solid background color for a solid bar*/ 
+        use the linear-gradient for the fading effect // use a solid background color for a solid bar
         background: linear-gradient(to right, transparent, #818078, transparent);
         position: absolute;
         left: 0;
@@ -500,17 +459,10 @@ input {
     color: black;
     padding: 0 .5em;
     line-height: 1.5em;
-    /*// this is really the only tricky part, you need to specify the  background color of the container element...*/
+    this is really the only tricky part, you need to specify the  background color of the container element...
     color: #818078;
     background-color: #fcfcfa;
 }
-
-
-
-
-
-
-
   /******social media sign in******/
 
 .smGlobalBtn { /* global button class */
@@ -534,13 +486,13 @@ input {
 }
 
 /* facebook button class*/
-.facebookBtn {
+/*.facebookBtn {
     background: #4060A5;
 }
 
-    .facebookBtn:before { /* use :before to add the relevant icons */
+    .facebookBtn:before { use :before to add the relevant icons 
         font-family: "FontAwesome";
-        content: "\f09a"; /* add facebook icon */
+        content: "\f09a";  add facebook icon 
     }
 
     .facebookBtn:hover {
@@ -549,14 +501,14 @@ input {
         border-color: #4060A5; /* change the border color on mouse hover */
     }
 
-/* twitter button class*/
+/* twitter button class
 .twitterBtn {
     background: #00ABE3;
 }
 
     .twitterBtn:before {
         font-family: "FontAwesome";
-        content: "\f099"; /* add twitter icon */
+        content: "\f099"; /* add twitter icon 
     }
 
     .twitterBtn:hover {
@@ -566,14 +518,14 @@ input {
     }
 
 
-/* linkedin button class*/
+/* linkedin button class
 .linkedinBtn {
     background: #0094BC;
 }
 
     .linkedinBtn:before {
         font-family: "FontAwesome";
-        content: "\f0e1"; /* add linkedin icon */
+        content: "\f0e1";  add linkedin icon 
     }
 
     .linkedinBtn:hover {
@@ -582,14 +534,14 @@ input {
         border-color: #0094BC;
     }
 
-/* pinterest button class*/
+/* pinterest button class
 .gmailBtn {
     background: #cb2027;
 }
 
 .gmailBtn:before {
     font-family: "FontAwesome";
-    content: "\f1a0"; /* add pinterest icon */
+    content: "\f1a0"; /* add pinterest icon 
 }
 
 .gmailBtn:hover {
@@ -598,19 +550,20 @@ input {
     border-color: #cb2027;
 }
 
-/* github button class*/
+/* github button class
 .githubBtn {
     background: #201f1f;
 }
 
     .githubBtn:before {
         font-family: "FontAwesome";
-        content: "\f09b"; /* add pinterest icon */
+        content: "\f09b"; /* add pinterest icon 
     }
 
     .githubBtn:hover {
         color: #201f1f;
         background: #fff;
         border-color: #201f1f;
-    }
+    }*/
 
+    /*********new style edited by amal*/

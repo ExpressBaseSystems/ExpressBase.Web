@@ -1,17 +1,44 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPageHeader");
+    //Html.RenderPartial("~/Views/Shared/ExtPageHeader.cshtml");
+    string home = string.Empty;
+    if (ViewBag.Env == "Development")
+    {
+        home = "http://localhost:41400";
+    }
+    if (ViewBag.Env == "Staging")
+    {
+        home = "https://eb-test.xyz";
+    }
+    if (ViewBag.Env == "Production")
+    {
+        home = "https://expressbase.com";
+    }
 }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
 <script>
-    function onSubmit(token) {
-        document.getElementById("log_form").submit();
-        $(".loader_top").EbLoader("show");
+    function recaptchaCallback(token) {
+        if (token) {
+            document.getElementById("log_form").submit();
+            $(".lgLoader").show();
+        }
     }
 </script>
 <section class="eb_login">
-    <div class="container">
+    <div class="header hidden-xs">
+        <div class="callFrAction" style="display: flex;align-items: center;">
+            <div class="goHome" style="margin-left: 40px;"><a href="@home" style="color:white;"><i class="fa fa-chevron-left"></i> Home</a></div>
+            <spn style="margin-left: auto;font-size: 13px;">
+                New to EXPRESSbase?
+            </spn>
+            <button class="callActionBtn">
+                Sign Up
+            </button>
+        </div>
+    </div>
+    <div class="container-fluid" style="height:100%">
         <div class="row h100andflex">
-            <div class="lg_content">
+            <div class="col-md-7 col-lg-7 hidden-sm hidden-xs lg_content">
                 <div class="info_sec_log_container hidden-xs hidden-sm">
                     <h4>Empowering SMBs to Take off</h4>
                     <p>
@@ -23,67 +50,71 @@
                     <img src="~/images/paper_plane_PNG20.png" />
                 </div>
             </div>
-            <div class="login_container m-l-60">
+            <div class="col-md-5 col-lg-5 col-sm-12 col-xs-12 login_container">
                 <div class="loader_top" id="loader_profile"></div>
-                <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator">
-                    <h1 class="text-center">Sign In</h1><br>
+                <img src="~/images/EB_Logo.png" class="log-eblogo"/>
+                <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator" role="form">
+                    <h1>SIGN IN</h1><br>
                     <div class="form-group mb-25">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                            <input type="email" name="uname" class="form-control inputEmail" placeholder="Email" id="inputEmail" data-error="Email address is invalid." required><br />
+                        <label>Email</label>
+                        <div class="log-username">
+                            <input type="email" name="uname" class="form-control ebtext-lg" placeholder="Email" data-error="email address is invalid" required />
                         </div>
-                        <div class="help-block with-errors f12 text-right"></div>
+                        <div class="help-block with-errors"></div>
                     </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                            <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required>
+                    <div class="form-group mb-25">
+                        <label>Password</label>
+                        <div class="log-pw">
+                            <input type="password" id="pass" name="pass" class="form-control ebtext-lg" placeholder="Password" required />
                         </div>
+                        <div class="help-block with-errors"></div>
                     </div>
-                    <input type="hidden" name="reDir" value="@ViewBag.reDirectUrl"/>
-                    <div class="form-group">
-                        <div class="checkbox icheck btm_pdng text-right">
-                            <div class="nopadding" style="float:left;">
-                                <a href="/ForgotPassword">Forgot password?</a>
+                    <div class="form-group mb-25">
+                        <div class="fpNdRemMe">
+                            <div class="rememberMe">
+                                <input type="checkbox" /> <span>Remember me</span>
                             </div>
+                            <a href="/ForgotPassword">Forgot password?</a>
                         </div>
-                        <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey=@ViewBag.ReCaptchaKey data-callback='onSubmit'>
-                            Sign In
+                    </div>
+                    <div class="form-group mb-25">
+                        <button type="submit" id="logNow" class="btn signin-btn g-recaptcha" data-sitekey="@ViewBag.ReCaptchaKey" data-callback='recaptchaCallback'>
+                            Sign In <i class="fa fa-cog fa-spin fa-spin lgLoader" style="margin-left:5px;display:none;font-size:16px"></i>
                         </button>
                     </div>
                     @*<div class="form-group text-center">Or Sign In by</div>*@
                     @*<div class="form-group" style="padding-left: 34px;float: left;">
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
-                                <i class="fa fa-facebook"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="#" class="btn btn-lg btn-block">
-                                <i class="fa fa-twitter text-info"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="#" class="btn btn-lg btn-block">
-                                <i class="fa fa-google-plus text-danger"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="#" class="btn btn-lg btn-block">
-                                <i class="fa fa-linkedin"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                        <div class="col-xs-2 col-sm-2">
-                            <a href="#" class="btn btn-lg btn-block">
-                                <i class="fa fa-github text-muted"></i>
-                                <span class="hidden-xs"></span>
-                            </a>
-                        </div>
-                    </div>*@
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
+                                    <i class="fa fa-facebook"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-twitter text-info"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-google-plus text-danger"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-linkedin"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <a href="#" class="btn btn-lg btn-block">
+                                    <i class="fa fa-github text-muted"></i>
+                                    <span class="hidden-xs"></span>
+                                </a>
+                            </div>
+                        </div>*@
                 </form>
             </div>
         </div>

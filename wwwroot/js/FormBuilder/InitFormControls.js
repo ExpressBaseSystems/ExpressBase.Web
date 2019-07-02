@@ -240,6 +240,21 @@
         });
 
         $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
+
+        if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+            $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        }
+        else {
+            $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
+            if (ebcontext.user.wc === "dc")
+                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+            else if (ebcontext.user.wc === "uc") {
+                if (ctrl.LoadCurrentLocation)
+                    $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + loc__.CurrentLocObj.LocId + ']').trigger('click');
+                else
+                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+            }
+        }
     };
 
     this.UserLocationCheckboxChanged = function (ctrl) {
@@ -256,17 +271,13 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        ebcontext.userLoc = { lat: 37.754404 ,long: -122.447086};
+        ebcontext.userLoc = { lat: 0 ,long: 0};
         if (_rowId === undefined || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                ebcontext.userLoc.lat = position.coords.latitude;
-                ebcontext.userLoc.long = position.coords.longitude;
-                this.InitMap4inpG(ctrl);
+                $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
             }.bind(this));
         }
-        else {
-            this.InitMap4inpG(ctrl);
-        }        
+        this.InitMap4inpG(ctrl);
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -404,6 +415,12 @@
             var val = $('#' + this.id + 'Lbl').text().trim();
             $('#' + ctrl.Name).val(val);
         });
+        if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code && ctrl.OnChangeFn.Code !== '') {
+            if (ctrl.DefaultValue !== "")
+                $("body input[name='" + ctrl.EbSid_CtxId + "'][value='" + ctrl.DefaultValue + "']").prop("checked", true).trigger("change");
+            else
+                $("body input[name='" + ctrl.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
+        }
     };
 
     this.CheckBoxGroup = function (ctrl) {
@@ -430,28 +447,41 @@
         $("#iFrameFormModal").modal("show");
     };
 
-    this.SysLocation = function (ctrl) {
-        if (_rowId === undefined || _rowId === 0) {
-            setTimeout(function () {
-                if (ctrl.DisplayMember === 1) {
-                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);
-                }
-                else {
-                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.ShortName);
-                }
-            }, 500);
-        }        
+    this.SysLocation = function (ctrl) {//all sys controls init commented to avoid confusion with the default value in new mode
+        //if (_rowId === undefined || _rowId === 0) {
+        //    setTimeout(function () {
+        //        if (ctrl.DisplayMember === 1) {
+        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);
+        //        }
+        //        else if (ctrl.DisplayMember === 3) {
+        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LongName);
+        //        }
+        //        else {
+        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.ShortName);
+        //        }
+        //    }, 500);
+        //}        
     };
     this.SysCreatedBy = function (ctrl) {
-        if (ctrl.DisplayMember === 1) {
-            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
-        }
-        else {
-            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
-        }
+        //if (ctrl.DisplayMember === 1) {
+        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
+        //}
+        //else {
+        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        //}
+    };
+    this.SysModifiedBy = function (ctrl) {
+        //if (_rowId > 0) {
+        //    if (ctrl.DisplayMember === 1) {
+        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
+        //    }
+        //    else {
+        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        //    }
+        //}        
     };
     this.SysCreatedAt = function (ctrl) {
-        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
+        //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
 
     this.Numeric = function (ctrl) {

@@ -7,32 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
     <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-
-    <style>
-        .div-body-main {
-            font-weight: 100;
-            background-color: white;
-            margin: 100px 500px 100px 500px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            height : 400px;
-        }
-        .div-icon{
-            padding:20px 0px 10px 0px;
-            text-align:center;
-            color:cadetblue;
-        }
-        .heading {
-            font-family: 'Lucida Console';
-            text-align: center;
-            color: darkblue;
-            font-size : large;
-            padding-bottom:40px;
-        }
-        .sub-heading{
-            text-align:right;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/Stripe/subscribedview.css">
 
 </head>
 <body>
@@ -43,24 +18,29 @@
         <div class="heading">
             SUBSCRIBED SUCCESSFULLY
         </div>
-        <div>
-            You 
+        <div class="div-sub-desc">
+            You have successfully subscribed to @ViewBag.SubscribeObjects.Plan on @ViewBag.SubscribeObjects.Created.ToString("dd MMM,yyyy")
         </div>
-        <div class="col-md-12">
-            <div class="col-md-6 sub-heading">
-                Amount per Users :
+        <div class="div-sub-headings">
+            <div class="col-md-12 div-sub-heading">
+                <div class="col-md-6 sub-heading">
+                    Amount per Users
+                </div>
+                <div class="col-md-6 ">
+                    $@(ViewBag.SubscribeObjects.Amount / 100)
+                </div>
             </div>
-            <div class="col-md-6">
-                $@(ViewBag.SubscribeObjects.Amount/100)
+            <div class="col-md-12 div-sub-heading">
+                <div class="col-md-6 sub-heading">
+                    Total Amount
+                </div>
+                <div class="col-md-6">
+                    $@(ViewBag.SubscribeObjects.Amount / 100 * ViewBag.SubscribeObjects.Quantity)    ($@(ViewBag.SubscribeObjects.Amount / 100) * @ViewBag.SubscribeObjects.Quantity Users)
+                </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="col-md-6 sub-heading">
-                Total Amount :
-            </div>
-            <div class="col-md-6">
-                $@(ViewBag.SubscribeObjects.Amount/100 * ViewBag.SubscribeObjects.Quantity) ($@(ViewBag.SubscribeObjects.Amount/100) * @ViewBag.SubscribeObjects.Quantity Users)
-            </div>
+        <div class="div-footer">
+            You will be charged $@(ViewBag.SubscribeObjects.Amount / 100 * ViewBag.SubscribeObjects.Quantity) (@ViewBag.SubscribeObjects.PeriodStart.ToString("dd MMM,yyyy") - @ViewBag.SubscribeObjects.PeriodEnd.ToString("dd MMM,yyyy")) on @ViewBag.SubscribeObjects.PeriodEnd.ToString("dd MMM,yyyy")
         </div>
     </div>
 </body>

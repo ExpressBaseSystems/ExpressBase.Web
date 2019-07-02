@@ -123,12 +123,13 @@
         let formObject = ctrlOpts.formObject;
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
+        let fun = null;
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
             if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code) {
-                let fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
+                fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
                 $input.MonthPicker({
                     OnAfterChooseMonth: fun.bind(this, formObject, userObject)
                 });

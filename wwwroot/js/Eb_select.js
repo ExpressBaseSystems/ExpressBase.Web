@@ -207,7 +207,8 @@ const EbSelect = function (ctrl, options) {
 
     this.clearValues = function () {
         $.each(this.Vobj.valueMembers, function (i, val) {
-            $(this.DTSelector + ` [type=checkbox][value=${val}]`).prop("checked", false);
+            if (val.trim() !== "")
+                $(this.DTSelector + ` [type=checkbox][value=${val}]`).prop("checked", false);
         }.bind(this));
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
@@ -701,7 +702,7 @@ const EbSelect = function (ctrl, options) {
         $tr.find('.focus').removeClass('focus');
         setTimeout(function () {
             $tr.addClass('selected');
-        },10);
+        }, 10);
     };
 
     this.RemoveRowFocusStyle = function ($tr) {

@@ -192,7 +192,7 @@ function EbMakeValid(contSel, _ctrlCont) {
     $(`${contSel}  ${_ctrlCont}:first`).css("box-shadow", "inherit").siblings("[name=ctrlsend]").css('disabled', false);
     $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
-};
+}
 
 function sortByProp(arr, prop) {
 

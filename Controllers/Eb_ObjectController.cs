@@ -47,15 +47,12 @@ namespace ExpressBase.Web.Controllers
             ViewBag.mode = buildermode;
 
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (soln != null)
-            {
-                ViewBag.versioning = soln.IsVersioningEnabled;
-            }
-            else
+            if (soln == null)
             {
                 this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = ViewBag.cid, UserId = ViewBag.UId });
                 soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             }
+            ViewBag.versioning = soln.IsVersioningEnabled;
 
             if (objid != "null")
             {

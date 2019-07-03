@@ -1,5 +1,5 @@
 ﻿
-var SolutionDashBoard = function (connections, sid ) {
+var SolutionDashBoard = function (connections, sid) {
     this.Connections = connections;
     this.whichModal = "";
     this.Sid = sid;
@@ -826,6 +826,7 @@ var SolutionDashBoard = function (connections, sid ) {
                         var temp = this.Connections.Integrations[key];
                         var id = $(options.$trigger).attr("id");
                         var dt = $(options.$trigger).attr("data-whatever");
+                        var conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Edit") {
                             if (dt == "PGSQL" || dt == "MYSQL" || dt == "MSSQL" || dt == "ORACLE")
                                 this.DBinteConfEditr(id, dt);
@@ -837,7 +838,7 @@ var SolutionDashBoard = function (connections, sid ) {
                         else if (key == "Delete") {
                             EbDialog("show",
                                 {
-                                    Message: "The Connection info will be permanently removed ",
+                                    Message: "The " + conf_NN +" info will be permanently removed ",
                                     Buttons: {
                                         "Confirm": {
                                             Background: "green",
@@ -857,48 +858,50 @@ var SolutionDashBoard = function (connections, sid ) {
                                 });
                         }
                         else {
-                            postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfId": id }
-                            if (temp == undefined) {
-
-                                this.IntegrationSubmit();
-                            }
-                            //else if (key == "EbDATA" || key == "Cloudinary") {
-                            //    if (temp == null) {
-                            //        this.IntegrationSubmit();
-                            //    }
-                            //    else {
-                            //        EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
-                            //    }
-                            //}
-                            else if (key == "SMS" || key == "SMTP") {
-                                if (temp.length == 1) {
-                                    $.each(temp, function (i) {
-                                        if (temp[i].Preference == 1) {
-                                            postData.Preference = "FALLBACK";
-                                        }
-                                    }.bind(this));   
+                            var flag = 0;
+                            $.each(temp, function (i) {
+                                if (temp[i].ConfId == id) {
+                                    flag = 1;
+                                }
+                            }.bind(this));
+                            if (flag == 0) {
+                                postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfId": id }
+                                if (temp == undefined) {
                                     this.IntegrationSubmit();
                                 }
-                                else if (temp.length == 0) {
+                                else if (key == "SMS" || key == "SMTP") {
+                                    if (temp.length == 1) {
+                                        $.each(temp, function (i) {
+                                            if (temp[i].Preference == 1) {
+                                                postData.Preference = "FALLBACK";
+                                            }
+                                        }.bind(this));
+                                        this.IntegrationSubmit();
+                                    }
+                                    else if (temp.length == 0) {
+                                        this.IntegrationSubmit();
+                                    }
+                                    else {
+                                        EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
+                                    }
+                                }
+                                else if (key == "EbFILES") {
+                                    $.each(temp, function (i) {
+                                        if (temp[i].Preference == 1) {
+                                            postData.Preference = "OTHER";
+                                        }
+                                    }.bind(this));
                                     this.IntegrationSubmit();
                                 }
                                 else {
                                     EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
                                 }
-                            }
-                            else if (key == "EbFILES") {
-                                $.each(temp, function (i) {
-                                    if (temp[i].Preference == 1) {
-                                        postData.Preference = "OTHER";
-                                    }
-                                }.bind(this));                                
-                                this.IntegrationSubmit();
-                            }
-                            else {
-                                EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
-                            }
 
+                            } else {
+                                EbMessage("show", { Message: "This " + conf_NN +" have been already used.", Background: "red" });
+                            }
                         }
+
                     }.bind(this),
                     items: {}
                 };
@@ -976,9 +979,10 @@ var SolutionDashBoard = function (connections, sid ) {
                         var temp = this.Connections.Integrations[dt];
                         var id = $(options.$trigger).attr("id");
                         var confid = $(options.$trigger).attr("dataConffId");
+                        var conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Remove") {
                             EbDialog("show", {
-                                Message: "The Data will be removed ",
+                                Message: "The " + conf_NN + " will be removed !!!",
                                 Buttons: {
                                     "Confirm": {
                                         Background: "green",
@@ -1005,7 +1009,7 @@ var SolutionDashBoard = function (connections, sid ) {
                                     postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: id, Type: dt, ConfigId: confid };
                                 }
                                 else {
-                                    postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
+                                    postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                 }
                                 preferancetype.push(postData)
                             }
@@ -1017,14 +1021,26 @@ var SolutionDashBoard = function (connections, sid ) {
                                     postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: id, Type: dt, ConfigId: confid };
                                 }
                                 else {
-                                    postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
+                                    postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
+                                }
+                                preferancetype.push(postData)
+                            }
+                            this.PreferencesChange();
+                        } else if (key == "RemoveFilesD") {
+                            preferancetype = [];
+                            for (var i = 0, n = temp.length; i < n; i++) {
+                                if (temp[i].Id == id) {
+                                    postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: id, Type: dt, ConfigId: temp[i].ConfId };
+                                }
+                                else if (temp[i].Preference == "1") {
+                                    postData = { SolutionId: this.Sid, Preference: "OTHER", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                 }
                                 preferancetype.push(postData)
                             }
                             this.PreferencesChange();
                         } else if (key == "RemoveP") {
                             EbDialog("show", {
-                                Message: "The Fallback will be set as PRIMARY !!! ",
+                                Message: "The " + conf_NN + " will be removed. Fallback will be set as PRIMARY !!! ",
                                 Buttons: {
                                     "Confirm": {
                                         Background: "green",
@@ -1041,7 +1057,7 @@ var SolutionDashBoard = function (connections, sid ) {
                                     if (name == "Confirm") {
                                         for (var i = 0, n = temp.length; i < n; i++) {
                                             if (temp[i].Preference == "2") {
-                                                postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].ConfId, Type: dt, ConfigId: temp[i].Id };
+                                                postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                             }
                                             else {
                                                 Deleteid = id;
@@ -1058,23 +1074,35 @@ var SolutionDashBoard = function (connections, sid ) {
 
                 if ($trigger.hasClass('EbDATAedit')) {
                     options.items.Remove = { name: "Unset" }
+
                 } else if ($trigger.hasClass('EbFILESedit 3')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.PRIMARY = { name: "Set as PRIMARY" }
+                        options.items.RemoveFilesD = { name: "Set as Default" }
+
                 } else if ($trigger.hasClass('EbFILESedit 1')) {
-                    options.items.RemoveP = { name: "Unset" },
-                        options.items.FALLBACK = { name: "Set as FALLBACK" }
+                    options.items.Remove = { name: "Unset" },
+                        options.items.FALLBACK = {
+                            name: "Set as FALLBACK", disabled: function (key, opt) {
+                                // this references the trigger element
+                                return !this.data('cutDisabled');
+                            }
+                        }
+
                 } else if ($trigger.hasClass('SMTPedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
                         options.items.FALLBACK = { name: "Set as FALLBACK" }
+
                 } else if ($trigger.hasClass('SMTPedit 2')) {
                     options.items.Remove = { name: "Unset" },
                         options.items.PRIMARY = { name: "Set as PRIMARY" }
+
                 } else if ($trigger.hasClass('Cloudinaryedit')) {
                     options.items.Remove = { name: "Unset" }
+
                 } else if ($trigger.hasClass('SMSedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
                         options.items.FALLBACK = { name: "Set as FALLBACK" }
+
                 } else if ($trigger.hasClass('SMSedit 2')) {
                     options.items.Remove = { name: "Unset" },
                         options.items.PRIMARY = { name: "Set as PRIMARY" }
@@ -1095,7 +1123,7 @@ var SolutionDashBoard = function (connections, sid ) {
         $("#EbDATA-All").empty();
         $.each(Integrations, function (i, rows) {
             //$.each(rows, function (j, rowss) {
-            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" data-whatever="${rows.Type}" id="${rows.Id}">
+            html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
                                 <div class="integrationContainer_Image">
                                     ${Imageurl[rows.Ctype]}
                                 </div>
@@ -1111,50 +1139,43 @@ var SolutionDashBoard = function (connections, sid ) {
             count += 1;
         }.bind(this));
         $('#EbDATA-All').append(html);
-        $('#Integration_data').append("(" + count + ")");
+        $('#Integration_data').empty().append("Data Store (" + count + ")");
     }.bind(this);
 
     this.integration_EbFiles_all = function () {
         let html = [];
         var count = 0;
         Integrations = this.Connections.Integrations["EbFILES"];
-        $("#EbFILES-All").empty();
         $.each(Integrations, function (i, rows) {
             //$.each(rows, function (j, rowss) {
-            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${ rows.Preference}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
                             <div id="nm" class="integrationContainer_NN">
                                 <span>${rows.NickName}</span>
                             `);
-                            if (rows.Preference == "1")
-                            {
-                                html.push(`<span  class="PF_span">PRIMARY</span>`);
-                            }
-                             else
-                            {
-                                html.push(`<span  class="PF_span">Fallback</span>`);
-                            }
-                    html.push(`</div>
+            if (rows.Preference == "1") {
+                html.push(`<span  class="PF_span">PRIMARY</span>`);
+            }
+            html.push(`</div>
                                     <div id="nm" class="inteConfContainer_caret-down ">
                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </div>
                           </div>`)
             count += 1;
         }.bind(this));
-        $('#EbFILES-All').append(html.join(''));
-        $('#Integration_files').append("(" + count + ")");
+        $('#EbFILES-All').empty().append(html.join(''));
+        $('#Integration_files').empty().append("File Store (" + count + ")");
     }.bind(this);
 
     this.integration_SMTP_all = function () {
         let html = [];
         var count = 0;
         Integrations = this.Connections.Integrations["SMTP"];
-        $("#SMTP-All").empty();
         $.each(Integrations, function (i, rows) {
             //$.each(rows, function (j, rowss) {
-            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" data-whatever="${rows.Type}" conf_NN="${rows.NickName}" id="${rows.Id}" dataConffId="${rows.ConfId}">
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
@@ -1174,18 +1195,17 @@ var SolutionDashBoard = function (connections, sid ) {
                           </div>`)
             count += 1;
         }.bind(this));
-        $('#SMTP-All').append(html.join(''));
-        $('#Integration_SMTP').append("(" + count + ")");
+        $('#SMTP-All').empty().append(html.join(''));
+        $('#Integration_SMTP').empty().append("Email (" + count + ")");
     }.bind(this);
 
     this.integration_Cloudinary_all = function () {
         let html = [];
         var count = 0;
         Integrations = this.Connections.Integrations["Cloudinary"];
-        $("#Cloudinary-all").empty();
         $.each(Integrations, function (i, rows) {
             //$.each(rows, function (j, rowss) {
-            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
@@ -1199,18 +1219,17 @@ var SolutionDashBoard = function (connections, sid ) {
                         </div>`)
             count += 1;
         }.bind(this));
-        $('#Cloudinary-all').append(html.join(''));
-        $('#Integration_cloudinary').append("(" + count + ")");
+        $('#Cloudinary-all').empty().append(html.join(''));
+        $('#Integration_cloudinary').empty().append("Cloudinary (" + count + ")");
     }.bind(this);
 
     this.integration_SMS_all = function () {
         let html = [];
         var count = 0;
         Integrations = this.Connections.Integrations["SMS"];
-        $("#SMS-all").empty();
         $.each(Integrations, function (i, rows) {
             //$.each(rows, function (j, rowss) {
-            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
@@ -1231,18 +1250,17 @@ var SolutionDashBoard = function (connections, sid ) {
                         </div>`)
             count += 1;
         }.bind(this));
-        $('#SMS-all').append(html.join(''));
-        $('#Integration_sms').append("(" + count + ")");
+        $('#SMS-all').empty().append(html.join(''));
+        $('#Integration_sms').empty().append("Message (" + count + ")");
     }.bind(this);
 
     this.integration_config_all = function () {
         let html = [];
-        var count =0;
-        $("#integration_config_all").empty();
+        var count = 0;
         InteConfig = this.Connections.IntegrationsConfig;
         $.each(InteConfig, function (i, rows) {
             $.each(rows, function (j, rowss) {
-                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " data-whatever="${rowss.Type}" id="${rowss.Id}">
+                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rows.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
                                 <div id = "nm" class="inteConfContainer_Image ">
                                     ${Imageurl[rowss.Type]}
                                 </div >
@@ -1254,11 +1272,11 @@ var SolutionDashBoard = function (connections, sid ) {
                                 </div>
                              </div > `)
                 html.join("");
-                count+=1;
+                count += 1;
             }.bind(this));
         }.bind(this));
-        $('#integration_config_all').append(html);
-        $('#Integration_conf_all').append("("+count+")");
+        $('#integration_config_all').empty().append(html);
+        $('#Integration_conf_all').empty().append("ALL (" + count + ")");
     }.bind(this);
 
     this.Conf_obj_update = function (connections) {

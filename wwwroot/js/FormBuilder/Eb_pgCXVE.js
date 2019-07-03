@@ -117,6 +117,7 @@
 
     this.pgCXE_BtnClicked = function (e) {
         this.PGobj.isModalOpen = true;
+        //this.PGobj.CurProp = $(e.target).closest(".pgCX-Editor-Btn").attr("for");
         this.PGobj.CurProp = e.target.getAttribute("for");
         this.CurMeta = getObjByval(this.PGobj.Metas, "name", this.PGobj.CurProp);
         this.curCXEbtn = $(e.target);

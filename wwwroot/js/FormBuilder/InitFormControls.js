@@ -123,12 +123,13 @@
         let formObject = ctrlOpts.formObject;
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
+        let fun = null;
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
             if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code) {
-                let fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
+                fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
                 $input.MonthPicker({
                     OnAfterChooseMonth: fun.bind(this, formObject, userObject)
                 });
@@ -239,6 +240,21 @@
         });
 
         $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
+
+        if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+            $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        }
+        else {
+            $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
+            if (ebcontext.user.wc === "dc")
+                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+            else if (ebcontext.user.wc === "uc") {
+                if (ctrl.LoadCurrentLocation)
+                    $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + loc__.CurrentLocObj.LocId + ']').trigger('click');
+                else
+                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+            }
+        }
     };
 
     this.UserLocationCheckboxChanged = function (ctrl) {
@@ -399,6 +415,12 @@
             var val = $('#' + this.id + 'Lbl').text().trim();
             $('#' + ctrl.Name).val(val);
         });
+        if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code && ctrl.OnChangeFn.Code !== '') {
+            if (ctrl.DefaultValue !== "")
+                $("body input[name='" + ctrl.EbSid_CtxId + "'][value='" + ctrl.DefaultValue + "']").prop("checked", true).trigger("change");
+            else
+                $("body input[name='" + ctrl.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
+        }
     };
 
     this.CheckBoxGroup = function (ctrl) {

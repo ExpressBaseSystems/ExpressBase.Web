@@ -19,7 +19,7 @@
         }
         $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
         $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
-        $("body").off("click").on("click", ".backbtn", this.closeSingle.bind(this));
+        $("body").on("click", ".EbQuickMoverlaySideWRpr .backbtn", this.closeSingle.bind(this));
         $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
         $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
         //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));

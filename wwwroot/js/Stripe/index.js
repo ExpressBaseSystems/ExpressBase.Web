@@ -1,5 +1,6 @@
 ﻿
 function calculateAmt() {
+    document.getElementById("div-total").style.display = "flex";
     var users = document.getElementById('usr').value;
     var tot;
     if (users <= 5) {
@@ -19,7 +20,7 @@ function calculateAmt() {
     document.getElementById('total').innerHTML = tott;
     document.getElementById('tot').value = tot;
     document.getElementById('usrno').value = users;
-    document.getElementById("div-total").style.display = "flex";
+    
     document.getElementById('pay').innerHTML = button;
 }
 

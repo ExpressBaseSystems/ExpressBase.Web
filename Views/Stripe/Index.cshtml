@@ -35,7 +35,7 @@
                         <label class="label-font-sub">Number of Users</label>
                         <input type="number" class="text-input" name="usr" id="usr" placeholder="5" min="5" onchange="calculateAmt()" onkeyup="calculateAmt()" required />
                     </div>
-                    <div id="div-total" class="div-input" style="display:none;">
+                    <div id="div-total" class="div-input">
                         <label class="label-total label-total-main-title">Total</label>
                         <label class="label-total label-total-content" id="total-content" name="total-content"></label>
                         <label class="label-total label-total-main" name="total" id="total"></label>
@@ -45,9 +45,9 @@
                 <div class="div-seperate" id="div-continue-button">
                     <button class="button-style" id="continue-button" onclick="showpayment()">Proceed to Payment</button>
                 </div>
-                <form id="payment-form" action="/Stripe/Index" method="post" autocomplete="off" style="display: none;">
+                <div id="payment-form" autocomplete="off" style="display: none;">
                     <div class="form-style-sub form-style-padding">
-                       
+
                         <div class="div-input div-input-border">
                             <label class="label-font">Name</label>
                             <input type="text" class="text-input" name="name" id="name" placeholder="Jenny Rosen" required />
@@ -121,8 +121,9 @@
                     <div class="div-seperate">
                         <button class="button-style" id="pay" name="pay">Subscribe</button>
                     </div>
-                </form>
+                </div>
             </div>
+            <div id="sub_succ"></div>
         }
         else
         {
@@ -225,6 +226,49 @@
             });
         });
 
+
+    $('#pay').on('click', function () {
+        $.ajax({
+            type: "POST",
+            url: "../Stripe/Index",
+            data: { user_no: $('#usr').val(), name: $('#name').val(), email: $('#emailid').val(), address: $('#add1').val(), city: $('#city').val(), state: $('#state').val(), zip: $('#zip').val(), country: $('#country').val(), token: $('#token').val() },
+            success: function (data) {
+                $('#users-form').hide();
+                $('#sub_succ').append(`<div class="div-body-main">
+        <div class="div-icon">
+            <i class="fa fa-check fa-5x"></i>
+        </div>
+        <div class="heading">
+            SUBSCRIBED SUCCESSFULLY
+        </div>
+        <div class="div-sub-desc">
+            You have successfully subscribed to ${data.plan} on ${data.created}
+        </div>
+        <div class="div-sub-headings">
+            <div class="col-md-12 div-sub-heading">
+                <div class="col-md-6 sub-heading">
+                    Amount per Users
+                </div>
+                <div class="col-md-6 ">
+                   $${data.amount}
+                </div>
+            </div>
+            <div class="col-md-12 div-sub-heading">
+                <div class="col-md-6 sub-heading">
+                    Total Amount
+                </div>
+                <div class="col-md-6">
+                    $(${data.amount}* ${data.quantity})    ($${data.amount} * ${data.quantity} Users)
+                </div>
+            </div>
+        </div>
+        <div class="div-footer">
+            You will be charged $${data.amount * data.quantity}(${data.periodStart} - ${data.periodEnd}) on ${data.periodEnd}
+        </div>
+    </div>`);
+            }
+        });
+    });
     
 
 </script>

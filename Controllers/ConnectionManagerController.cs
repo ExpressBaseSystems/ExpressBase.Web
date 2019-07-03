@@ -919,7 +919,7 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public string IntegrateConfDelete()
+        public string IntegrateConfDelete(int Id, string sid)
         {
             EbIntegrationConfDeleteResponse res = new EbIntegrationConfDeleteResponse();
             var req = this.HttpContext.Request.Form;
@@ -927,10 +927,10 @@ namespace ExpressBase.Web.Controllers
             {
                 EbIntegrationConf _obj = new EbIntegrationConf
                 {
-                    Id = Convert.ToInt32(req["Id"])
+                    Id = Convert.ToInt32(req["Id[Id]"])
                 };
-                res = this.ServiceClient.Post<EbIntegrationConfDeleteResponse>(new EbIntergationConfDeleteRequest { IntegrationConfdelete = _obj, SolnId = req["SolutionId"] });
-                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                res = this.ServiceClient.Post<EbIntegrationConfDeleteResponse>(new EbIntergationConfDeleteRequest { IntegrationConfdelete = _obj, SolnId = sid });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
                 return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)

@@ -181,74 +181,72 @@
 
     .image-add {
         position: absolute;
-        /* top: 79px; */
+         /*top: 79px; 
         bottom: 9px;
          left: 71px; 
-        /*right: 0;*/
-        /* height: 100%; */
-        /* width: 100%; */
+        right: 0;*/
+        height: 73%; 
+        width: 63%; 
         opacity: 0;
         transition: .5s ease;
-        /* background-color: white; */
+        background-color: white; 
         /*margin-right: 15%;
         margin-bottom: 14%;*/
     }
 
     .connection_wrap_outer:hover .image-add {
+        opacity: .7;
+        z-index:100;
+
+    }
+    /*.connection_wrap_outer:hover .image-vender {
         opacity: 1;
+    }*/
 
-    }
-    .connection_wrap_outer:hover .image-vender {
-        opacity: .5;
-    }
-
-    .fa-plus-circle {
-        /*color: black;
-        font-size: 37px;*/
-        /*position: absolute;
+    .image-add .fa-plus-square {
+        color: #44a00c;
+        font-size: 60px;
+        position: absolute;
         top: 50%;
         left: 50%;
         -webkit-transform: translate(-50%, -50%);
         -ms-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
-        text-align: center;*/
+        text-align: center;
+    }
+
+    .image-add .fa-coming-soon {
+        color: #000000;
+        font-size: 27px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-weight:800;
+    }
+    .image-add .fa-coming-soon:before {
+        content: "";
     }
 
 
-
-.connection_wrap {
-    /*margin: 5px;*/
-    height: 129px;
+    .connection_wrap {
     display: flex;
     box-shadow: 0 3px 3px rgba(0,0,0,.05);
     border-radius: 2px;
     border: 1px solid #e8e8e8;
     /*background-color: #f2f2f2;*/
-    /*flex-direction: column;*/
+    flex-direction: column;
 }
-    .connection_wrap .connection_wrap_header {
-        padding: 10px 41px;
-        /*display: flex;*/
-        margin: auto;
-        margin-bottom: 15%;
-    }
-    .connection_wrap_footer {
-        padding: 8px 99px;
-        border-top: 1px solid #e8dfdf;
-    }
-    .connection_wrap_footer a {
-        color: #6d6d6d;
-        font-weight: 400;
-        cursor:pointer;
-    }
-    .connection_wrap_footer label {
-        border-radius: 2px;
-        color: white;
-        background-color: #47af08;
-        font-weight: 400;
-        font-size: 12px;
-        padding: 2px;
-    }
+        .connection_wrap .connection_wrap_header {
+            padding: 10px 41px;
+            display: flex;
+            margin: auto;
+            min-height: 110px;
+        }
+    
     .vend_img {
         margin-left: 24px;
         height: 40px;

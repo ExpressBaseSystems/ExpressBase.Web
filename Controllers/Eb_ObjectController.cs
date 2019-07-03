@@ -47,13 +47,14 @@ namespace ExpressBase.Web.Controllers
             ViewBag.mode = buildermode;
 
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (soln.PricingTier == PricingTiers.FREE)
+            if (soln != null)
             {
-                ViewBag.IsFreeUser = true;
+                ViewBag.versioning = soln.IsVersioningEnabled;
             }
             else
             {
-                ViewBag.IsFreeUser = false; 
+                this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = ViewBag.cid, UserId = ViewBag.UId });
+                soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             }
 
             if (objid != "null")
@@ -650,10 +651,10 @@ namespace ExpressBase.Web.Controllers
             return ServiceClient.Get(new EbObjectAllVersionsRequest { RefId = objid }).Data;
         }
 
-        public string ChangeStatus(string _refid, string _changelog, string _status)
+        public bool ChangeStatus(string _refid, string _changelog, string _status)
         {
             EbObjectChangeStatusResponse res = ServiceClient.Post(new EbObjectChangeStatusRequest { RefId = _refid, Status = (ObjectLifeCycleStatus)Enum.Parse(typeof(ObjectLifeCycleStatus), _status), ChangeLog = _changelog });
-            return (res.Id > 0) ? "success" : "failed";
+            return res.Response;
         }
 
         public string Create_Major_Version(string _refId, int _type)

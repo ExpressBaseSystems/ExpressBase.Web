@@ -4,6 +4,7 @@
 * EXPRESSbase Systems Pvt. Ltd, author: Jith Job
 */
 var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
+    console.log("Eb_FilterDialogRender ....");
     this.FormObj = fObj;
     this.submitId = submitId;
     this.formObject = {};
@@ -25,8 +26,8 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     }.bind(this);
 
     this.init = function () {
-        this.initFilterDialogCtrls();
         this.initFormObject2();
+        this.initFilterDialogCtrls();
 
         //this.bindFuncsToDom();
 
@@ -58,13 +59,9 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     this.initFormObject2 = function () {
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
             this.formObject[cObj.Name] = cObj;
-
-            Object.defineProperty(this.formObject, cObj.Name, {
-                get: function () {
-                    return cObj;
-                }.bind(this)
-            });
         }.bind(this));
+        //this.FRC.setUpdateDependentControlsFn();
+
     };
 
     this.initFormObject = function () {

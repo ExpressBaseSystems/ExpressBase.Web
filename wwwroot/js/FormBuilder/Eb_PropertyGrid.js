@@ -470,9 +470,18 @@
 
     //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) { ////////// need optimization
-        let oldVal = this.PropsObj.__oldValues[this.CurProp];
+        let oldVal = "";
+        try {
+            oldVal = this.PropsObj.__oldValues[this.CurProp];
+        }
+        catch(e){
+            alert(e);
+            console.log(e);
+        }
         this.getvaluesFromPG();
-        this.PropsObj.__oldValues = $.extend({}, this.PropsObj);
+        let objCopy = ($.extend({}, this.PropsObj));
+        delete objCopy.__oldValues;
+        this.PropsObj.__oldValues = objCopy;
         let subTypeOf = null;
         if (e) {
             let $e = $(e.target);

@@ -30,9 +30,13 @@
             success: function (response) {
                 //this.CreateHtml(response);
                 //this.CreateResult(response);
-                this.CreateExplain(response);
-                this.JsonTraverse(JSON.parse(response.explain)[0]);
-                $('#JsonD' + tabNum).append(html.join());
+                let _d = JSON.parse(response.explain);
+                this.CreateExplain(_d.json);
+                if (_d.vendor === "PGSQL")
+
+
+                this.JsonTraverse(JSON.parse(_d.json)[0]);
+                $('#JsonD' + tabNum).append(html.join(''));
                 if (Object.keys(draw).length > 1)
                     this.draw();
                 $("#eb_common_loader").EbLoader("hide");
@@ -41,9 +45,8 @@
     };
 
     this.CreateExplain = function (response) {
-        var obj = JSON.parse(response.explain)[0];
-        var Node = '';
-       
+        var obj = JSON.parse(response)[0];
+        var Node = '';      
 
         var formattedData = JSON.stringify(obj, null, '\t');
         //$('#output').text(formattedData);
@@ -76,8 +79,23 @@
                         pre = 'a' + pre;
                         let send = idi - 1;
                         sent = 'a' + send;
+                        ////HJ[count++] = { sent };
                         //this.draw(sent, pre);
-                        draw[connect++] = { "From": sent, "To": HJ[--count].sent };
+                        //draw[connect++] = { "From": sent, "To": HJ[count--].sent };
+                        draw[connect++] = { "From": sent, "To": pre };
+                    }
+                    else if (object[keys]["Node Type"] === "Hash Join") {
+                        index += 1;
+                        html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/hash.svg"  id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Hash Cond : ' + object[keys]["Hash Cond"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' Parent Relationship : ' + object[keys]["Parent Relationship"] + ' "/><br/>' + object[keys]["Node Type"] + " " + object[keys]["Join Type"] + '</div>');
+                        if (idi !== 1) {
+                            let pre = idi - 2;
+                            pre = 'a' + pre;
+                            let send = idi - 1;
+                            sent = 'a' + send;
+                            //this.draw(sent, pre);
+                            draw[connect++] = { "From": sent, "To": pre };
+                            HJ[count++] = { sent };
+                        }
                     }
                     else if (object[keys]["Node Type"] === "Index Scan") {
                         index -= 1;
@@ -137,19 +155,7 @@
                         //this.draw(sent, pre);
                         draw[connect++] = { "From": sent, "To": pre };
                     }
-                    else if (object[keys]["Node Type"] === "Hash Join") {
-                        index += 1;
-                        html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/hash.svg"  id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Hash Cond : ' + object[keys]["Hash Cond"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' Parent Relationship : ' + object[keys]["Parent Relationship"] + ' "/><br/>' + object[keys]["Node Type"] + " " + object[keys]["Join Type"] + '</div>');
-                        if (idi !== 1) {
-                            let pre = idi - 2;
-                            pre = 'a' + pre;
-                            let send = idi - 1;
-                            sent = 'a' + send;
-                            //this.draw(sent, pre);
-                            draw[connect++] = { "From": sent, "To": pre };
-                            HJ[count++] = { sent };
-                        }
-                    }
+                   
                     else if (object[keys]["Node Type"] === "Nested Loop") {
                         index += 1;
                         html.push('<div class =  "_column" >' + '<img src="../images/QueryExplain/ex_nested.svg"  id="a' + idi++ + '" style="width:30px;height:40x; data-toggle="tooltip" data-placement="top" title="Join Filter : ' + object[keys]["Join Filter"] + ' Parallel Aware : ' + object[keys]["Parallel Aware"] + ' Parent Relationship : ' + object[keys]["Parent Relationship"] + '"/><br/>' + object[keys]["Node Type"] + " " + object[keys]["Join Type"] + '</div>');
@@ -212,7 +218,7 @@
                         html.push("<div> **unknown** </div>");
                     }
                 }
-                if (key === "Plans") {
+                if (key === "Plans" || key === "Plan") {
                     //str += '</div ><div style="float: right;">';
                     this.JsonTraverse(object[keys][key]);
                 }

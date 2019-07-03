@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Components
 {
-    public class StripeViewComponent:ViewComponent
+    public class StripeViewComponent : ViewComponent
     {
         protected JsonServiceClient ServiceClient { get; set; }
 
@@ -27,10 +27,14 @@ namespace ExpressBase.Web.Components
             ViewBag.pb_key = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STRIPE_PUBLISHABLE_KEY);
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             string cust_id = "";
+            if (soln == null)
+            {
+                this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = ViewBag.cid });
+                soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            }
             if (soln.PricingTier == 0)
             {
                 ViewBag.Status = true;
-                return View("Index");
             }
             else
             {
@@ -38,7 +42,7 @@ namespace ExpressBase.Web.Components
                 //---------------------------Plan------------------------
                 CheckCustomerSubscribedResponse cust1 = this.ServiceClient.Post<CheckCustomerSubscribedResponse>(new CheckCustomerSubscribedRequest
                 {
-                    //SolnId = ViewBag.cid
+                    SolnId = ViewBag.cid
                 });
                 ViewBag.Plan = cust1.Plan;
                 ViewBag.Users = cust1.Users;
@@ -74,5 +78,5 @@ namespace ExpressBase.Web.Components
             return View("StripeHome");
         }
     }
-  
+
 }

@@ -1,4 +1,4 @@
-﻿var Eb_ObjectCommon = function (refid, dsobj, cur_status, ver_num, tabNum, type, major, ssurl) {
+﻿var Eb_ObjectCommon = function (refid, dsobj, cur_status, ver_num, tabNum, type, major, ssurl, isversioned) {
     this.ver_Refid = refid;
     this.Current_obj = dsobj;
     //this.Current_obj.Status = cur_status;
@@ -18,6 +18,7 @@
     this.PreviewObject = function () { };//edits by amal
     this.RedColor = "#aa0000";
     this.GreenColor = "#00AD6E";
+    this.isversioned = (isversioned === 'True');
 
     this.init = function () {
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
@@ -31,6 +32,7 @@
         $('#ProfilerHome').off('click').on('click', this.SqlProfilerHome.bind(this));
         $('#profiler').off('click').on('click', this.onProfilerClick.bind(this));
         $('#del_obj').off('click').on('click', this.DeleteObject.bind(this));
+        $('#singlesave').off('click').on('click', this.SingleSave.bind(this));
         this.target = $("#versionNav li.active a").attr("href");//edits by amal
 
         if (this.Current_obj !== null)
@@ -49,7 +51,10 @@
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {
                 event.preventDefault();
-                this.Save();
+                if (this.isversioned)
+                    this.Save();
+                else
+                    this.SingleSave();
             }
         }
     };
@@ -129,7 +134,8 @@
             this.ObjCollection[target].EbObject = this.Current_obj;
             this.ObjCollection[target].Refid = this.ver_Refid;
             $(`#versionNav [href='${target}']`).attr("data-verNum", this.Current_obj.VersionNumber);//edits by amal
-            $(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
+            if (this.isversioned)
+                $(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
 
@@ -417,7 +423,7 @@
             this.ajaxSave(tagvalues, apps, getNav);
     };
 
-    this.Commit = function () {
+    this.Commit = function (callback) {
         $("#eb_common_loader").EbLoader("show");
         var tagvalues = $('#tags').val();
         var apps = $("#apps").val();
@@ -427,17 +433,21 @@
         var getNav = this.target; /*$("#versionNav li.active a").attr("href");*/
         if (this.isBeforSaveImplemets(getNav)) {
             if (this.ObjCollection[getNav].BeforeSave())
-                this.ajaxCommit(tagvalues, apps, getNav, changeLog);
+                this.ajaxCommit(tagvalues, apps, getNav, changeLog, function (data) {
+                    callback(data);
+                });
             else
                 $("#eb_common_loader").EbLoader("hide");
         }
         else
-            this.ajaxCommit(tagvalues, apps, getNav, changeLog);
+            this.ajaxCommit(tagvalues, apps, getNav, changeLog, function (data) {
+                callback(data);
+            });
     };
 
-    this.ajaxSave = function (tagvalues, apps, getNav) {
+    this.ajaxSave = function (tagvalues, apps, getNav, callback) {
         if (this.Current_obj.Validate === undefined || this.Current_obj.Validate()) {
-             $.post("../Eb_Object/SaveEbObject", {
+            $.post("../Eb_Object/SaveEbObject", {
                 _refid: this.ver_Refid,
                 _json: JSON.stringify(this.Current_obj),
                 _rel_obj: this.ObjCollection[getNav].relatedObjects,
@@ -449,7 +459,7 @@
             EbMessage("show", { Message: "Validation faild! save uncompleted.", Background: this.RedColor });
     };
 
-    this.ajaxCommit = function (tagvalues, apps, getNav, changeLog) {
+    this.ajaxCommit = function (tagvalues, apps, getNav, changeLog, callback) {
         if (this.Current_obj.Validate === undefined || this.Current_obj.Validate()) {
             $.post("../Eb_Object/CommitEbObject", {
                 _refid: this.ver_Refid, _changeLog: changeLog,
@@ -457,7 +467,10 @@
                 _rel_obj: this.ObjCollection[getNav].relatedObjects,
                 _tags: tagvalues,
                 _apps: apps
-            }, this.UpdateTab.bind(this));
+            }, function (data) {
+                callback(data);
+                this.UpdateTab(data);
+            }.bind(this));
         }
         else
             EbMessage("show", { Message: "Validation faild! commit uncompleted.", Background: this.RedColor });
@@ -616,5 +629,20 @@
             }
         });
     };
+
+    this.SingleSave = function () {
+        $('#obj_changelog').text("Single Save");
+        this.Commit(function (data) {
+            if (this.Current_obj.Status !== "Live") {
+                $.post("../Eb_Object/ChangeStatus",
+                    {
+                        _refid: data.refid,
+                        _changelog: "Single Save",
+                        _status: "3"
+                    });
+            }
+        }.bind(this));
+    }.bind(this);
+
     this.init();
 };

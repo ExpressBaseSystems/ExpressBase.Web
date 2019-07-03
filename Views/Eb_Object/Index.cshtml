@@ -5,6 +5,7 @@
     @using ExpressBase.Common.Structures;
     @using Newtonsoft.Json;
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
+    bool _versioning = ViewBag.versioning;
 }
 <script type="text/javascript" src="~/js/SQLProfiler/SQLProfiler.js"></script>
 <script>
@@ -18,30 +19,20 @@
     $('title').text('@ViewBag.ObjectName');
     });
 
-    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl');
+    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl', versioning = '@_versioning');
     $("#layout_div").data("commonObj", commonObj);
     console.log("Index   " + $("#layout_div").data("commonObj"));
 
 </script>
 <div id="object_Dashboard_main">
-    @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _apps = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles })
+    @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _apps = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles, _versioning =@_versioning})
 </div>
 
 <div class="row codedit" id="codedit" style="margin-top:38px;">
     <div class="tab-section-common" id="tab-section-common">
         <ul class="nav nav-tabs" id="versionNav">
-            @{
-                var icon = "";
-                if (ViewBag.VersionNumber.Substring(ViewBag.VersionNumber.Length - 1) == "w")
-                {
-                    icon = "fa-pencil";
-                }
-                else
-                {
-                    icon = "fa-lock";
-                }
-            }
-            @if (ViewBag.IsNew =="false" && (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter))
+
+            @if (ViewBag.IsNew == "false" && (ViewBag.ObjType == (int)EbObjectTypes.DataReader || ViewBag.ObjType == (int)EbObjectTypes.DataWriter))
             {
                 <li class="">
                     <a data-toggle="tab" class="cetab" id="ProfilerHome" href="#builderDashB">
@@ -49,7 +40,31 @@
                     </a>
                 </li>
             }
-            <li class="active"><a data-toggle="tab" class="cetab" tnum="0" href="#vernav0" data-verNum="@ViewBag.VersionNumber"><i class='fa @(icon)' aria-hidden='true'></i> v @ViewBag.VersionNumber</a></li>
+            @{
+                var icon = "";
+                var head =" v " + ViewBag.VersionNumber;
+                if (!_versioning)
+                {
+                    icon = "fa-pencil";
+                    head =  ((string)ViewBag.ObjectName).Substring(0,8) + "...";
+                }
+                else if (ViewBag.VersionNumber.Substring(ViewBag.VersionNumber.Length - 1) == "w")
+                {
+                    icon = "fa-pencil";
+                }
+                else
+                {
+                    icon = "fa-lock";
+                }
+
+
+            }
+            <li class="active">
+                <a data-toggle="tab" class="cetab" tnum="0" href="#vernav0" data-verNum="@ViewBag.VersionNumber">
+                    <i class='fa @(icon)' aria-hidden='true'></i>
+                    @head
+                </a>
+            </li>
             @if (ViewBag.ObjType == (int)EbObjectTypes.Report)
             {
                 <li class="">
@@ -77,11 +92,11 @@
                     @await Component.InvokeAsync("CodeEditor", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
                 }
                 else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization && ViewBag.mode)
-                    {
-                        object o = null;
-                        @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
+                {
+                    object o = null;
+                    @await Component.InvokeAsync("DVBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl, url = ViewBag.BrowserURLContext })
 
-                    }
+                }
                 /**/
                 else if (ViewBag.ObjType == (int)EbObjectTypes.TableVisualization)
                 {

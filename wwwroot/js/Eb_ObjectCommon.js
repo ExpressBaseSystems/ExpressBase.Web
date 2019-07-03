@@ -51,7 +51,10 @@
         if (event.ctrlKey || event.metaKey) {
             if (event.which === 83) {
                 event.preventDefault();
-                this.Save();
+                if (this.isversioned)
+                    this.Save();
+                else
+                    this.SingleSave();
             }
         }
     };

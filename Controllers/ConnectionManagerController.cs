@@ -819,7 +819,7 @@ namespace ExpressBase.Web.Controllers
         public string AddCloudinary()
         {
             AddCloudinaryResponse res = new AddCloudinaryResponse();
-            var req = this.HttpContext.Request.Form;
+            IFormCollection req = this.HttpContext.Request.Form;
             try
             {
                 EbCloudinaryConfig con = new EbCloudinaryConfig
@@ -832,6 +832,29 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 res = this.ServiceClient.Post<AddCloudinaryResponse>(new AddCloudinaryRequest { Config = con/*, IsNew = true*/ , SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+
+        public string AddGoogleMap()
+        {
+            AddGoogleMapResponse res = new AddGoogleMapResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                EbGoogleMapConfig con = new EbGoogleMapConfig
+                {
+                    ApiKey = req["ApiKey"],
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"])
+            };
+                res = this.ServiceClient.Post<AddGoogleMapResponse>(new AddGoogleMapRequest { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }
@@ -943,7 +966,7 @@ namespace ExpressBase.Web.Controllers
             var req = JsonConvert.DeserializeObject<List<EbIntegration>>(preferancetype);
             var SolnId = ViewBag.cid;
             EbIntegrationSwitchResponse res = new EbIntegrationSwitchResponse();
-           
+
             try
             {
                 res = this.ServiceClient.Post<EbIntegrationSwitchResponse>(new EbIntergationSwitchRequest { Integrations = req, SolnId = sid });
@@ -959,7 +982,7 @@ namespace ExpressBase.Web.Controllers
 
         public string PrimaryDelete(string preferancetype, string sid, string deleteId)
         {
-            
+
             var SolnId = ViewBag.cid;
             EbIntegrationResponse res = new EbIntegrationResponse();
 

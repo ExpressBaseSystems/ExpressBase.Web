@@ -76,3 +76,11 @@
     box-shadow: var(--eb-shadow);
     margin-top: 10px;
 }
+
+.map_inner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    background: white;
+}

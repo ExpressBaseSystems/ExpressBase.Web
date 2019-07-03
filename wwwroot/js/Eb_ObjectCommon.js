@@ -445,9 +445,9 @@
             });
     };
 
-    this.ajaxSave = function (tagvalues, apps, getNav,callback) {
+    this.ajaxSave = function (tagvalues, apps, getNav, callback) {
         if (this.Current_obj.Validate === undefined || this.Current_obj.Validate()) {
-             $.post("../Eb_Object/SaveEbObject", {
+            $.post("../Eb_Object/SaveEbObject", {
                 _refid: this.ver_Refid,
                 _json: JSON.stringify(this.Current_obj),
                 _rel_obj: this.ObjCollection[getNav].relatedObjects,
@@ -468,8 +468,8 @@
                 _tags: tagvalues,
                 _apps: apps
             }, function (data) {
-                    callback(data);
-                    this.UpdateTab(data);
+                callback(data);
+                this.UpdateTab(data);
             }.bind(this));
         }
         else
@@ -633,13 +633,16 @@
     this.SingleSave = function () {
         $('#obj_changelog').text("Single Save");
         this.Commit(function (data) {
-            $.post("../Eb_Object/ChangeStatus",
-                {
-                    _refid: data.refid,
-                    _changelog: "Single Save",
-                    _status:"3"}); 
-        });
-    };
+            if (this.Current_obj.Status !== "Live") {
+                $.post("../Eb_Object/ChangeStatus",
+                    {
+                        _refid: data.refid,
+                        _changelog: "Single Save",
+                        _status: "3"
+                    });
+            }
+        }.bind(this));
+    }.bind(this);
 
     this.init();
 };

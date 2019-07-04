@@ -670,11 +670,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateObjectDashboard(string refid)
+        public IActionResult UpdateObjectDashboard(string refid, bool versioning)
         {
             List<EbObjectWrapper> objlist = ServiceClient.Get(new EbObjectUpdateDashboardRequest { Refid = refid }).Data;
             EbObjectWrapper w = objlist[0];
-            return ViewComponent("ObjectDashboard", new { refid, objname = w.Name, w.Status, vernum = w.VersionNumber, workcopies = w.Wc_All, _tags = w.Tags, _apps = w.Apps, _dashbord_tiles = w.Dashboard_Tiles });
+            return ViewComponent("ObjectDashboard", new { refid, objname = w.Name, w.Status, vernum = w.VersionNumber, workcopies = w.Wc_All, _tags = w.Tags, _apps = w.Apps, _dashbord_tiles = w.Dashboard_Tiles, _versioning = versioning });
         }
 
         public bool CheckRestricted(string _sql)

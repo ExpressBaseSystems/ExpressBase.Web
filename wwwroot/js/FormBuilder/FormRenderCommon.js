@@ -7,10 +7,8 @@
     this.fireInitOnchange = function (inpCtrl) {
         if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
             try {
-                let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.FO.formObject, this.FO.userObject);
-                inpCtrl.__onChangeFn = onChangeFn;
                 console.eb_log(`>> Starting execution of OnChange function of 'form.${inpCtrl.Name}'`);
-                onChangeFn();
+                inpCtrl.__onChangeFn();
             }
             catch (e) {
                 console.eb_log("eb error :");
@@ -22,11 +20,20 @@
 
 
     ////////////
-    this.bindFnsToCtrl = function (Obj) {
+    this.bindFnsToCtrl_init = function (Obj) {
         if (Obj.Required)
             this.bindRequired(Obj);
         if (Obj.Unique)
             this.bindUniqueCheck(Obj);
+
+        if (Obj.DefaultValue)
+            Obj.setValue(Obj.DefaultValue);
+        if (Obj.DefaultValueExpression && Obj.DefaultValueExpression.Code) {
+            let fun = new Function("form", "user", `event`, atob(Obj.DefaultValueExpression.Code)).bind(Obj, this.FO.formObject, this.FO.userObject);
+            let val = fun();
+            Obj.setValue(val);
+        }
+
         if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0)
             this.bindOnChange(Obj);
         if (Obj.Validators.$values.length > 0)
@@ -38,8 +45,6 @@
     };
 
     this.bindOnChange = function (control) {
-        if (control.DefaultValue)
-            control.setValue(control.DefaultValue);
         if (control.IsDisable)
             control.disable();
         if (control.OnChangeFn.Code.trim() !== "" && control.OnChangeFn.Code.trim() !== null) {
@@ -56,6 +61,7 @@
         }
 
     };
+
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) {
             $.each(curCtrl.DependedValExp.$values, function (i, ctrl) {

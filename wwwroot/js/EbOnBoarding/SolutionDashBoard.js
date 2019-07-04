@@ -5,6 +5,7 @@ var SolutionDashBoard = function (connections, sid) {
     this.Sid = sid;
     var postData;
     var Deleteid;
+    var conf_NN;
     var preferancetype = [];
     var Imageurl = {
         "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:45px' />",
@@ -246,6 +247,26 @@ var SolutionDashBoard = function (connections, sid) {
             data: postData,
             beforeSend: function () {
                 $("#cloudnary_loader").EbLoader("show", { maskItem: { Id: "#cloudnary_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#cloudnary_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Changed Successfully" });
+            $("#cldnry_conEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
+    this.mapOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddGoogleMap",
+            data: postData,
+            beforeSend: function () {
+                $("#Map_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
             this.Conf_obj_update(JSON.parse(data));
@@ -826,7 +847,7 @@ var SolutionDashBoard = function (connections, sid) {
                         var temp = this.Connections.Integrations[key];
                         var id = $(options.$trigger).attr("id");
                         var dt = $(options.$trigger).attr("data-whatever");
-                        var conf_NN = $(options.$trigger).attr("conf_NN");
+                        conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Edit") {
                             if (dt == "PGSQL" || dt == "MYSQL" || dt == "MSSQL" || dt == "ORACLE")
                                 this.DBinteConfEditr(id, dt);
@@ -979,7 +1000,7 @@ var SolutionDashBoard = function (connections, sid) {
                         var temp = this.Connections.Integrations[dt];
                         var id = $(options.$trigger).attr("id");
                         var confid = $(options.$trigger).attr("dataConffId");
-                        var conf_NN = $(options.$trigger).attr("conf_NN");
+                        conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Remove") {
                             EbDialog("show", {
                                 Message: "The " + conf_NN + " will be removed !!!",
@@ -1260,7 +1281,7 @@ var SolutionDashBoard = function (connections, sid) {
         InteConfig = this.Connections.IntegrationsConfig;
         $.each(InteConfig, function (i, rows) {
             $.each(rows, function (j, rowss) {
-                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rows.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
+                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rowss.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
                                 <div id = "nm" class="inteConfContainer_Image ">
                                     ${Imageurl[rowss.Type]}
                                 </div >
@@ -1306,6 +1327,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
+        $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();
@@ -1344,17 +1366,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
 
-        //$(".inteConfContainer").on("click", ".PGSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MYSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MSSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".ORACLEedit", this.PostgreinteConfEditr.bind(this));
-        ////$(".oracleintegrationedit").on("click", this.DbinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MongoDBedit", this.MongointeConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".Cloudinaryedit", this.ColudinaryinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".SMTPedit", this.SmtpinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".Twilioedit", this.twiliointeConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".ExpertTextingedit", "", this.expertinteConfEditr.bind(this));
-
+        
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));
         //$("#IntegrationsCall").trigger("click");
         //$("#MyIntegration").trigger("click");

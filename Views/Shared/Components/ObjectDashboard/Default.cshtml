@@ -9,9 +9,9 @@
     string Logourl = "/images/logo/" + ViewBag.cid + ".png";
 
     string DpUrl = "/images/dp/" + ViewBag.UId + ".png";
-    string[] wrkcpy = (ViewBag.Workingcopy == null)? new string[] { } : ViewBag.Workingcopy;
+    string[] wrkcpy = (ViewBag.Workingcopy == null) ? new string[] { } : ViewBag.Workingcopy;
     EbObj_Dashboard tile = ViewBag.tile;
-    }
+}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>@*dona*@
 <script type="text/javascript" src="~/js/Eb_ObjectCommon.js"></script>
 <div class="row">
@@ -57,26 +57,35 @@
             <div class='toolicons form-inline pull-right'>
                 <div id="obj_icons" style="display:inline"></div>
                 <div class='form-group'>
-                    <button class='btn save' id="save" data-toggle="tooltip" data-placement="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-                    <button class='btn commit_outer' id="commit_outer" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
-                    @{
-                        if (ViewBag.Refid.Length > 0)
+                    @{ if (ViewBag.versioning)
                         {
-                            var vNumMajor = ("v." + (tile.MajorVersionNumber + 1) + "." + tile.MinorVersionNumber + "." + tile.PatchVersionNumber + ".w");
-                            var vNumMinor = ("v." + tile.MajorVersionNumber + "." + (tile.MinorVersionNumber + 1) + "." + tile.PatchVersionNumber + ".w");
-                            var vNumPatch = ("v." + tile.MajorVersionNumber + "." + tile.MinorVersionNumber + "." + (tile.PatchVersionNumber + 1) + ".w");
-                            <div class="dropdown" style="display:inline" id="create_button">
-                                <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
-                                    <i class="fa fa-plus" aria-hidden="true"></i>
-                                </button>
-                                <ul class="dropdown-menu" id="create"></ul>
-                            </div>
-                            <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
-                            ///<button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
-                            <button class='btn status' id="status" data-toggle="tooltip" data-placement="bottom" title="status"><i class="fa fa-exchange" aria-hidden="true"></i></button>
-                            <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
-                            <button class='btn del_obj' id="del_obj" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                            <button class='btn save' id="save" data-toggle="tooltip" data-plament="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                            <button class='btn commit_outer' id="commit_outer" data-toggle="tooltip" data-placement="bottom" title="Commit"><i class="fa fa-upload" aria-hidden="true"></i></button>
+
+                            if (ViewBag.Refid.Length > 0)
+                            {
+                                var vNumMajor = ("v." + (tile.MajorVersionNumber + 1) + "." + tile.MinorVersionNumber + "." + tile.PatchVersionNumber + ".w");
+
+                                var vNumMinor = ("v." + tile.MajorVersionNumber + "." + (tile.MinorVersionNumber + 1) + "." + tile.PatchVersionNumber + ".w");
+                                var vNumPatch = ("v." + tile.MajorVersionNumber + "." + tile.MinorVersionNumber + "." + (tile.PatchVersionNumber + 1) + ".w");
+                                <div class="dropdown" style="display:inline" id="create_button">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" id="create"></ul>
+                                </div>
+                                <button class='btn compare' id="compare" data-toggle="tooltip" data-placement="bottom" title="Compare"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+                                ///<button class='btn rel_obj' id="rel_obj" data-toggle="tooltip" data-placement="bottom" title="Related Objects"><i class="fa fa-cogs" aria-hidden="true"></i></button>
+                                <button class='btn status' id="status" data-toggle="tooltip" data-placement="bottom" title="status"><i class="fa fa-exchange" aria-hidden="true"></i></button>
+                                <button class='btn ver_his' id="ver_his" data-toggle="tooltip" data-placement="bottom" title="Version History"><i class="fa fa-history" aria-hidden="true"></i></button>
+
+                            }
                         }
+                        else
+                        {
+                            <button class='btn save' id="singlesave" data-toggle="tooltip" data-plament="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                        }
+                        <button class='btn del_obj' id="del_obj" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button>
                     }
                     <button class="btn notification_menu" style="display:none;">
                         <i class="fa fa-bell" alt="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
@@ -142,97 +151,100 @@
             @{
                 if (ViewBag.Refid.Length > 0)
                 {
+                    if (ViewBag.versioning)
+                    {
 
-                    <div class="card1">
-                        <div class="head">
-                            Working Copy(s)
-                        </div>
-                        <div class="count text-center workcopies">
-                            @using Newtonsoft.Json;
-                            @{
-                        
-                                if (wrkcpy!=null|| wrkcpy.Count() < 1 || wrkcpy[0] == "")
-                                {
-                                    <p>No working copies</p>
-                                }
-                                else
-                                {
-                                    foreach (string w in wrkcpy)
+                        <div class="card1">
+                            <div class="head">
+                                Working Copy(s)
+                            </div>
+                            <div class="count text-center workcopies">
+                                @using Newtonsoft.Json;
+                                @{
+
+                                    if (wrkcpy != null || wrkcpy.Count() < 1 || wrkcpy[0] == "")
                                     {
-                                        if (!string.IsNullOrEmpty(w))
+                                        <p>No working copies</p>
+                                    }
+                                    else
+                                    {
+                                        foreach (string w in wrkcpy)
                                         {
-                                            var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
-                                            foreach (KeyValuePair<string, string> k in wcpy)
-                                            {<a href="#" class="wrkcpylink tag label label-primary" data-id="@k.Value" data-verNum="@k.Key">@k.Key.Replace(".w", " w")</a>}
+                                            if (!string.IsNullOrEmpty(w))
+                                            {
+                                                var wcpy = JsonConvert.DeserializeObject<Dictionary<string, string>>(w);
+                                                foreach (KeyValuePair<string, string> k in wcpy)
+                                                {<a href="#" class="wrkcpylink tag label label-primary" data-id="@k.Value" data-verNum="@k.Key">@k.Key.Replace(".w", " w")</a>}
                                         }
                                     }
                                 }
-                            }
-
-                        </div>
-                    </div>
-                    <div class="card1">
-                        <div class="head">
-                            Last Commit
-                        </div>
-                        <div class="card_body">
-                            @{
-                                if (tile.LastCommitedVersionRefid != "")
-                                {
-                                    <div class="card1-mid">
-                                        <div class="count text-right">
-                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LastCommitedVersionRefid" data-verNum="@tile.LastCommitedVersionNumber">@tile.LastCommitedVersionNumber</a>
-                                            @tile.LastCommitedVersion_Status
-                                        </div>
-                                    </div>
-                                    <div class="card1-botm" style="display:block">
-                                        <div class="userimg">
-                                            @*<img src="../static/dp/dp_@(tile.LastCommitedby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
-                                        </div>
-                                        <div class="profileInfo">
-                                            <h6 class="xtrasmall">@tile.LastCommitedby_Name</h6>
-                                            <h6 class="xtrasmall"> @tile.LastCommitedVersionCommit_ts</h6>
-                                        </div>
-                                    </div>
                                 }
-                                else
-                                {
-                                    <p class="count text-center">No Committed Version</p>
                                 }
-                            }
+                            </div>
                         </div>
-                    </div>
-                    <div class="card1">
-                        <div class="head">
-                            Live Version
-                        </div>
-                        <div class="card_body">
-                            @{
-                                if (tile.LiveVersionRefid != "")
-                                {
-                                    <div class="card1-mid">
-                                        <div class="count text-right">
-                                            <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LiveVersionRefid" data-verNum="@tile.LiveVersionNumber">@tile.LiveVersionNumber</a>
-                                            @tile.LiveVersion_Status
+                        <div class="card1">
+                            <div class="head">
+                                Last Commit
+                            </div>
+                            <div class="card_body">
+                                @{
+                                    if (tile.LastCommitedVersionRefid != "")
+                                    {
+                                        <div class="card1-mid">
+                                            <div class="count text-right">
+                                                <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LastCommitedVersionRefid" data-verNum="@tile.LastCommitedVersionNumber">@tile.LastCommitedVersionNumber</a>
+                                                @tile.LastCommitedVersion_Status
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="card1-botm" style="display:block">
-                                        <div class="userimg">
-                                            @*<img src="../static/dp/dp_@(tile.LiveVersionCommitby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                        <div class="card1-botm" style="display:block">
+                                            <div class="userimg">
+                                                @*<img src="../static/dp/dp_@(tile.LastCommitedby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                            </div>
+                                            <div class="profileInfo">
+                                                <h6 class="xtrasmall">@tile.LastCommitedby_Name</h6>
+                                                <h6 class="xtrasmall"> @tile.LastCommitedVersionCommit_ts</h6>
+                                            </div>
                                         </div>
-                                        <div class="profileInfo">
-                                            <h6 class="xtrasmall">@tile.LiveVersionCommitby_Name</h6>
-                                            <h6 class="xtrasmall">@tile.LiveVersionCommit_ts</h6>
-                                        </div>
-                                    </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="count text-center">No Committed Version</p>
+                                    }
                                 }
-                                else
-                                {
-                                    <p class="count text-center">No Live Version</p>
-                                }
-                            }
+                            </div>
                         </div>
-                    </div>
+                        <div class="card1">
+                            <div class="head">
+                                Live Version
+                            </div>
+                            <div class="card_body">
+                                @{
+                                    if (tile.LiveVersionRefid != "")
+                                    {
+                                        <div class="card1-mid">
+                                            <div class="count text-right">
+                                                <a href="#" class="wrkcpylink tag label label-primary" data-id="@tile.LiveVersionRefid" data-verNum="@tile.LiveVersionNumber">@tile.LiveVersionNumber</a>
+                                                @tile.LiveVersion_Status
+                                            </div>
+                                        </div>
+                                        <div class="card1-botm" style="display:block">
+                                            <div class="userimg">
+                                                @*<img src="../static/dp/dp_@(tile.LiveVersionCommitby_Id)_micro.jpg" class="prof_dp img-thumbnail img-circle" />*@
+                                            </div>
+                                            <div class="profileInfo">
+                                                <h6 class="xtrasmall">@tile.LiveVersionCommitby_Name</h6>
+                                                <h6 class="xtrasmall">@tile.LiveVersionCommit_ts</h6>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="count text-center">No Live Version</p>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
                     <div class="card1">
                         <div class="head">
                             <i class="fa fa-bug" aria-hidden="true"></i> Issues
@@ -280,7 +292,7 @@
     <button class="btn btn-primary pull-right" id="commit">Commit</button>
 </div>
 
-    @*<div class="changLog-container" id="changelogPopup">
+@*<div class="changLog-container" id="changelogPopup">
         <div class="chlog-top">
             <div class="ch-l-title">Change Log</div>
             <button class="btn btn-sm" id="close_popup"><i class="fa fa-times"></i></button>
@@ -297,7 +309,7 @@
     </div>*@
 
 
-    <script>
+<script>
 
     var data = @appdata;
     var array_values = new Array();
@@ -421,4 +433,4 @@
             _form.submit();
             document.body.removeChild(_form);
         }
-    </script>
+</script>

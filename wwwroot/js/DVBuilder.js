@@ -781,6 +781,9 @@ class DvBuilder {
         obj.sTitle = $(e.target).val();
         var type = $(e.target).closest("li").attr('eb-type');
         this.propGrid.setObject(obj, AllMetas[type]);
+        if (this.CurrentRowgroup.Name)
+            $(`#${this.CurrentRowgroup.Name}_${name}_rowgroupcolumntitle`).val(obj.sTitle);
+        this.RowgroupObjectchanges(obj);
     }
 
     RowgroupColumnTitleChanged(e) {
@@ -790,6 +793,17 @@ class DvBuilder {
         var type = $(e.target).closest("li").attr('eb-type');
         $(`#${name}_columntitle`).val(obj.sTitle);
         this.propGrid.setObject(obj, AllMetas[type]);
+        this.RowgroupObjectchanges(obj);
+    }
+
+    RowgroupObjectchanges(obj) {
+        $.each(this.EbObject.RowGroupCollection.$values, function (i, _rowgroupobj) {
+            $.each(_rowgroupobj.RowGrouping.$values, function (j, _col) {
+                if (_col.name === obj.name) {
+                    _rowgroupobj.RowGrouping.$values[j] = obj;
+                }
+            });
+        });
     }
 
     ColumnKeyMove(e) {

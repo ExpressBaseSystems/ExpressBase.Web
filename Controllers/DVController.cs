@@ -81,6 +81,7 @@ namespace ExpressBase.Web.Controllers
             string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
             return RedirectToAction("dv", new { refid = _refid, rowData = "", filterValues = returnValue, tabNum = 0 });
         }
+
         public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag, string wc, string contextId, bool customcolumn, string _curloc, string submitId)
         {
             EbDataVisualization dvObject = EbSerializers.Json_Deserialize(dvobj);
@@ -250,6 +251,7 @@ namespace ExpressBase.Web.Controllers
         //copied to boti - febin
         public DataSourceDataResponse getData(TableDataRequest request)
         {
+            request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             if (request.DataVizObjString != null)
                 request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
             if (request.CurrentRowGroup != null)
@@ -285,6 +287,7 @@ namespace ExpressBase.Web.Controllers
         {
             InlineTableDataRequest request = new InlineTableDataRequest();
             request = _request;
+            request.eb_solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             if (request.DataVizObjString != null)
                 request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
             request.DataVizObjString = null;

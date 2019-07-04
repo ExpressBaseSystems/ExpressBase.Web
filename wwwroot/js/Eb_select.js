@@ -207,7 +207,7 @@ const EbSelect = function (ctrl, options) {
 
     this.clearValues = function () {
         $.each(this.Vobj.valueMembers, function (i, val) {
-            if (val.trim() !== "")
+            if (val.trim() !== "")// prevent Jq selector error
                 $(this.DTSelector + ` [type=checkbox][value=${val}]`).prop("checked", false);
         }.bind(this));
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)

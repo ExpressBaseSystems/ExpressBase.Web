@@ -415,7 +415,7 @@
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
                                     var tb_name = key.$trigger.attr("data-name");
-                                    var Col_name;
+                                    var Col_name = "";
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + ", ";
                                     }.bind(this))
@@ -430,7 +430,7 @@
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
                                     var tb_name = key.$trigger.attr("data-name");
-                                    var Col_name;
+                                    var Col_name="";
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + ", ";
                                     }.bind(this))
@@ -445,11 +445,11 @@
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
                                     var tb_name = key.$trigger.attr("data-name");
-                                    var Col_name;
+                                    var Col_name="";
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + "= ?, ";
                                     }.bind(this))
-                                    this.editor[exe_window].setValue("UPDATE \n" + tb_name + " FROM \n" + Col_name + "\nWHERE <condition>;");
+                                    this.editor[exe_window].setValue("UPDATE \n" + tb_name + " SET \n" + Col_name + "\nWHERE <condition>;");
                                 }.bind(this)
                             }
                         }
@@ -465,13 +465,8 @@
                             this.editor[exe_window].setValue("select COUNT(*) from " + tb_name + ";");
                             $('#sqlquery').trigger('click');
                         }.bind(this)
-                    },
-                    select: {
-                        name: "Select",
-                        callback: function (key, opt) {
-                            alert("Clicked on " + key);
-                        }
                     }
+                    
                 }
 
             };

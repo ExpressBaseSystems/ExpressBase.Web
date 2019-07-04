@@ -25,7 +25,7 @@
 
 </script>
 <div id="object_Dashboard_main">
-    @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _apps = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles, _versioning =@_versioning})
+    @await Component.InvokeAsync("ObjectDashboard", new { refid = ViewBag.Refid, objname = ViewBag.ObjectName, status = ViewBag.Status, vernum = ViewBag.VersionNumber, workcopies = ViewBag.Workingcopy, _tags = ViewBag.Tags, _apps = ViewBag.AppId, _dashbord_tiles = ViewBag.DashboardTiles, _versioning = @_versioning })
 </div>
 
 <div class="row codedit" id="codedit" style="margin-top:38px;">
@@ -42,11 +42,11 @@
             }
             @{
                 var icon = "";
-                var head =" v " + ViewBag.VersionNumber;
+                var head = " v " + ViewBag.VersionNumber;
                 if (!_versioning)
                 {
                     icon = "fa-pencil";
-                    head =  ((string)ViewBag.ObjectName).Substring(0,8) + "...";
+                    head = (((string)ViewBag.ObjectName).Length > 8) ? ((string)ViewBag.ObjectName).Substring(0, 8) + "..." : ViewBag.ObjectName;
                 }
                 else if (ViewBag.VersionNumber.Substring(ViewBag.VersionNumber.Length - 1) == "w")
                 {

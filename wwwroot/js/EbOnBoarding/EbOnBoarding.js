@@ -9,48 +9,49 @@ var EbOnBoarding = function () {
         e.preventDefault();
         let info = this.validate();
         let svbtn = $(".save-tenant");
-      
+
         if (info) {
-         {   $.ajax({
-                type: 'POST',
-               url: "../Ext/Board",
-                beforeSend: function () {
-                    $(".iconspin").addClass("fa fa-spinner fa-pulse")
-                    $(".savetenant").prop('disabled', true);
-                    $(".commonLoader").EbLoader("show");
-                },
-                data: {
-                    email: $("#email").val().trim(),
-                    name: $("#name").val().trim(),
-                    country: $("#country option:selected").text().trim(),
-                    account: $("input[name='account_typ']:checked").val().trim(),
-                    password: $("#inputPassword").val().trim()
-                }
-            }).done(function (data) {
-                $(".commonLoader").EbLoader("hide");
-                if (data.id > 0) {
-                    location.href = "/MySolutions";
-                }
-                else {
-                    if (data.isEmailUniq == false) {
-                        EbMessage("show", { Message: "Mail id already exists", Background: 'red' });
-                        $(".iconspin").removeClass("fa fa-spinner fa-pulse")
-                        $(".savetenant").prop('disabled', false);
+            {
+                $.ajax({
+                    type: 'POST',
+                    url: "../Ext/Board",
+                    beforeSend: function () {
+                        $(".iconspin").addClass("fa fa-spinner fa-pulse")
+                        $("#save-profile").prop('disabled', true);
+                        $(".commonLoader").EbLoader("show");
+                    },
+                    data: {
+                        email: $("#email").val().trim(),
+                        name: $("#name").val().trim(),
+                        country: $("#country option:selected").text().trim(),
+                        account: $("input[name='account_typ']:checked").val().trim(),
+                        password: $("#inputPassword").val().trim()
+                    }
+                }).done(function (data) {
+                    $(".commonLoader").EbLoader("hide");
+                    if (data.id > 0) {
+                        location.href = "/MySolutions";
                     }
                     else {
-                        if (data.AccountCreated == false) {
-                            EbMessage("show", { Message: "Cannot Create Account ", Background: 'red' });
-                            $(".iconspin").removeClass("fa fa-spinner fa-pulse")
-                            $(".savetenant").prop('disabled', false);
+                        if (data.isEmailUniq == false) {
+                            EbMessage("show", { Message: "Mail id already exists", Background: 'red' });
+                            $(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                            $("#save-profile").prop('disabled', false);
+                        }
+                        else {
+                            if (data.AccountCreated == false) {
+                                EbMessage("show", { Message: "Cannot Create Account ", Background: 'red' });
+                                $(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                                $("#save-profile").prop('disabled', false);
+                            }
                         }
                     }
-                }
 
-            }.bind(this));
-        }
+                }.bind(this));
+            }
 
-    };
-
+        };
+    }
     this.validate = function () {
         let sts = true
         let pass = $('#inputPassword').val();

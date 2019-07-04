@@ -47,8 +47,10 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.initControls.init(Obj, opt);
 
             this.FRC.bindFnsToCtrl_init(Obj);
+        }.bind(this));
 
-            this.FRC.fireInitOnchange(Obj);
+        $.each(this.FormObj.Controls.$values, function (k, Obj) {
+           this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 

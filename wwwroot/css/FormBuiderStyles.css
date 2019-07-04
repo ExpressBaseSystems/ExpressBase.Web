@@ -596,6 +596,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: none !important;
 }
 
+.ctrl-cover > .btn-group.bootstrap-select {
+    width: 100% !important;
+}
+
 [ctype=SimpleSelect] .ctrl-cover .dropdown-toggle, [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle {
     padding: 0 12px 0 5px
 }

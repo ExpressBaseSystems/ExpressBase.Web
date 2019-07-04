@@ -16,7 +16,8 @@ var SolutionDashBoard = function (connections, sid) {
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
-        "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />"
+        "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
+        "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />"
     }
     this.customElementLoader = $("<div>", {
         id: "connecting",
@@ -55,10 +56,10 @@ var SolutionDashBoard = function (connections, sid) {
             $("#Integration_loder").EbLoader("hide");
             if (data) {
                 this.Conf_obj_update(JSON.parse(data));
-                EbMessage("show", { Message: "Integreation Changed Successfully" });
+                EbMessage("show", { Message: "Connection set Successfully" });
             }
             else
-                EbMessage("show", { Message: "Integreation Change Failed", Background: "red" });
+                EbMessage("show", { Message: "Connection set Failed", Background: "red" });
         }.bind(this));
     };
 
@@ -270,9 +271,9 @@ var SolutionDashBoard = function (connections, sid) {
             }
         }).done(function (data) {
             this.Conf_obj_update(JSON.parse(data));
-            $("#cloudnary_loader").EbLoader("hide");
+            $("#Map_loader").EbLoader("hide");
             EbMessage("show", { Message: "Connection Changed Successfully" });
-            $("#cldnry_conEdit").modal("toggle");
+            $("#MapConnectionEdit").modal("toggle");
             $("#IntegrationsCall").trigger("click");
             $("#MyIntegration").trigger("click");
         }.bind(this));
@@ -619,6 +620,18 @@ var SolutionDashBoard = function (connections, sid) {
             }
         }
     };
+    this.GoogleMapinteConfEditr = function (INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#MapConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#MapInputNickname').val(temp[obj].NickName);
+                $('#MapInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#MapInputApiKey').val(temp1["ApiKey"]);
+            }
+        }
+    };
 
     this.VerticalTab = function (evt, cityName) {
         var button = $(evt.currentTarget)
@@ -903,10 +916,10 @@ var SolutionDashBoard = function (connections, sid) {
                                         this.IntegrationSubmit();
                                     }
                                     else {
-                                        EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
+                                        EbMessage("show", { Message: "Please delete existing account and try again", Background: "red" });
                                     }
                                 }
-                                else if (key == "EbFILES") {
+                                else if (key == "EbFILES" || key == "MAPS") {
                                     $.each(temp, function (i) {
                                         if (temp[i].Preference == 1) {
                                             postData.Preference = "OTHER";
@@ -919,7 +932,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 }
 
                             } else {
-                                EbMessage("show", { Message: "This " + conf_NN +" have been already used.", Background: "red" });
+                                EbMessage("show", { Message: "This " + conf_NN +" have been already used as "+ key +".", Background: "red" });
                             }
                         }
 
@@ -979,6 +992,11 @@ var SolutionDashBoard = function (connections, sid) {
                 }
                 else if ($trigger.hasClass('Cloudinaryedit')) {
                     options.items.Cloudinary = { name: "Set as Cloudinary" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('GoogleMapedit')) {
+                    options.items.MAPS = { name: "Set as Map" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
@@ -1047,7 +1065,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 preferancetype.push(postData)
                             }
                             this.PreferencesChange();
-                        } else if (key == "RemoveFilesD") {
+                        } else if (key == "RemoveDefault") {
                             preferancetype = [];
                             for (var i = 0, n = temp.length; i < n; i++) {
                                 if (temp[i].Id == id) {
@@ -1077,7 +1095,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 CallBack: function (name) {
                                     if (name == "Confirm") {
                                         for (var i = 0, n = temp.length; i < n; i++) {
-                                            if (temp[i].Preference == "2") {
+                                            if (temp[i].Preference == "2" || temp[i].Preference == "3") {
                                                 postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                             }
                                             else {
@@ -1098,10 +1116,10 @@ var SolutionDashBoard = function (connections, sid) {
 
                 } else if ($trigger.hasClass('EbFILESedit 3')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.RemoveFilesD = { name: "Set as Default" }
+                        options.items.RemoveDefault = { name: "Set as Default" }
 
                 } else if ($trigger.hasClass('EbFILESedit 1')) {
-                    options.items.Remove = { name: "Unset" },
+                    options.items.RemoveP = { name: "Unset" },
                         options.items.FALLBACK = {
                             name: "Set as FALLBACK", disabled: function (key, opt) {
                                 // this references the trigger element
@@ -1127,6 +1145,19 @@ var SolutionDashBoard = function (connections, sid) {
                 } else if ($trigger.hasClass('SMSedit 2')) {
                     options.items.Remove = { name: "Unset" },
                         options.items.PRIMARY = { name: "Set as PRIMARY" }
+                } else if ($trigger.hasClass('MAPSedit 3')) {
+                    options.items.Remove = { name: "Unset" },
+                        options.items.RemoveDefault = { name: "Set as Default" }
+
+                } else if ($trigger.hasClass('MAPSedit 1')) {
+                    options.items.RemoveP = { name: "Unset" },
+                        options.items.FALLBACK = {
+                            name: "Set as FALLBACK", disabled: function (key, opt) {
+                                // this references the trigger element
+                                return !this.data('cutDisabled');
+                            }
+                        }
+
                 }
 
                 return options;
@@ -1275,6 +1306,35 @@ var SolutionDashBoard = function (connections, sid) {
         $('#Integration_sms').empty().append("Message (" + count + ")");
     }.bind(this);
 
+    this.integration_Map_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["MAPS"];
+        $.each(Integrations, function (i, rows) {
+            //$.each(rows, function (j, rowss) {
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+                            <div class="integrationContainer_Image">
+                                 ${Imageurl[rows.Ctype]}
+                            </div>
+                            <div id="nm" class="integrationContainer_NN">
+                                <span>${rows.NickName}</span>
+                                `);
+            if (rows.Preference == "1") {
+                html.push(`<span  class="PF_span">PRIMARY</span>`);
+            }
+            
+            html.push(`
+                            </div>
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                        </div>`)
+            count += 1;
+        }.bind(this));
+        $('#MAP-all').empty().append(html.join(''));
+        $('#Integration_map').empty().append("Google Maps (" + count + ")");
+    }.bind(this);
+
     this.integration_config_all = function () {
         let html = [];
         var count = 0;
@@ -1315,6 +1375,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMTP_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
+        this.integration_Map_all();
     }.bind(this);
 
     this.init = function () {
@@ -1365,6 +1426,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMTP_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
+        this.integration_Map_all();
 
         
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));

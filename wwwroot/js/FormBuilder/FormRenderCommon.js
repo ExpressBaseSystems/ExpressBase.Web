@@ -7,10 +7,8 @@
     this.fireInitOnchange = function (inpCtrl) {
         if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
             try {
-                let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.FO.formObject, this.FO.userObject);
-                inpCtrl.__onChangeFn = onChangeFn;
                 console.eb_log(`>> Starting execution of OnChange function of 'form.${inpCtrl.Name}'`);
-                onChangeFn();
+                inpCtrl.__onChangeFn();
             }
             catch (e) {
                 console.eb_log("eb error :");

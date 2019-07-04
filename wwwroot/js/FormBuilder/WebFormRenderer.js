@@ -95,7 +95,6 @@ const WebFormRender = function (option) {
 
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
-
             if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
@@ -106,7 +105,7 @@ const WebFormRender = function (option) {
 
             this.initControls.init(Obj, opt);
 
-            this.FRC.bindFnsToCtrl(Obj);
+            this.FRC.bindFnsToCtrl_init(Obj);
 
             this.FRC.fireInitOnchange(Obj);
         }.bind(this));

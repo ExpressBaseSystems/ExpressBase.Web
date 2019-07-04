@@ -251,36 +251,44 @@ namespace ExpressBase.Web.Controllers
         //copied to boti - febin
         public DataSourceDataResponse getData(TableDataRequest request)
         {
-            request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (request.DataVizObjString != null)
-                request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
-            if (request.CurrentRowGroup != null)
-                (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
-            request.DataVizObjString = null;
-            request.UserInfo = this.LoggedInUser;
-            if (request.TFilters != null)
-            {
-                foreach (TFilters para in request.TFilters)
-                {
-
-                    if (para.Type == "date")
-                    {
-                        para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
-                    }
-                    //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
-                }
-            }
-            DataSourceDataResponse resultlist1 = null;
             try
             {
-                this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
-                resultlist1 = this.ServiceClient.Post(request);
+                request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                if (request.DataVizObjString != null)
+                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+                if (request.CurrentRowGroup != null)
+                    (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
+                request.DataVizObjString = null;
+                request.UserInfo = this.LoggedInUser;
+                if (request.TFilters != null)
+                {
+                    foreach (TFilters para in request.TFilters)
+                    {
+
+                        if (para.Type == "date")
+                        {
+                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                        }
+                        //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
+                    }
+                }
+                DataSourceDataResponse resultlist1 = null;
+                try
+                {
+                    this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
+                    resultlist1 = this.ServiceClient.Post(request);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.ToString());
+                }
+                return resultlist1;
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: " + e.ToString());
+                Console.WriteLine("dvconroller getdata request Exception........." + e.StackTrace);
             }
-            return resultlist1;
+            return null;
         }
 
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)

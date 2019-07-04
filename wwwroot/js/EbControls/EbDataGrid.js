@@ -414,6 +414,11 @@
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
             if (inpCtrl.DefaultValue)
                 inpCtrl.setValue(inpCtrl.DefaultValue);
+            if (inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
+                let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                let val = fun();
+                inpCtrl.setValue(val);
+            }
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
             // run DG onChangeFns initially

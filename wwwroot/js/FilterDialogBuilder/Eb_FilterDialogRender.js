@@ -46,7 +46,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
 
             this.initControls.init(Obj, opt);
 
-            this.FRC.bindFnsToCtrl(Obj);
+            this.FRC.bindFnsToCtrl_init(Obj);
 
             this.FRC.fireInitOnchange(Obj);
         }.bind(this));

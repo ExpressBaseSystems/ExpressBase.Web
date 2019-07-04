@@ -90,6 +90,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
                 return new WebformData();
             }
         }
@@ -161,6 +162,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
                 return string.Empty;
             }
         }

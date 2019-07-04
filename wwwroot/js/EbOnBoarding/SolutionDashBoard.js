@@ -16,7 +16,8 @@ var SolutionDashBoard = function (connections, sid) {
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
-        "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />"
+        "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
+        "MAP": "<img class='img- responsive image-vender' src='~/images/maps - google.png' style='width: 100 %' />"
     }
     this.customElementLoader = $("<div>", {
         id: "connecting",
@@ -616,6 +617,18 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#ExpertInputApi').val(temp1["ApiKey"]);
                 $('#ExpertInputFrom').val(temp1["From"]);
                 $('#IsSSL').val(temp1["IsSSL"]);
+            }
+        }
+    };
+    this.MapinteConfEditr = function (INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#MapConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#MapInputNickname').val(temp[obj].NickName);
+                $('#MapInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#MapInputApiKey').val(temp1["UserName"]);
             }
         }
     };
@@ -1275,6 +1288,37 @@ var SolutionDashBoard = function (connections, sid) {
         $('#Integration_sms').empty().append("Message (" + count + ")");
     }.bind(this);
 
+    this.integration_Map_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["MAP"];
+        $.each(Integrations, function (i, rows) {
+            //$.each(rows, function (j, rowss) {
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+                            <div class="integrationContainer_Image">
+                                 ${Imageurl[rows.Ctype]}
+                            </div>
+                            <div id="nm" class="integrationContainer_NN">
+                                <span>${rows.NickName}</span>
+                                `);
+            if (rows.Preference == "1") {
+                html.push(`<span  class="PF_span">PRIMARY</span>`);
+            }
+            else {
+                html.push(`<span  class="PF_span">Fallback</span>`);
+            }
+            html.push(`
+                            </div>
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                        </div>`)
+            count += 1;
+        }.bind(this));
+        $('#MAP-all').empty().append(html.join(''));
+        $('#Integration_map').empty().append("Google Maps (" + count + ")");
+    }.bind(this);
+
     this.integration_config_all = function () {
         let html = [];
         var count = 0;
@@ -1315,6 +1359,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMTP_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
+        this.integration_Map_all();
     }.bind(this);
 
     this.init = function () {
@@ -1365,6 +1410,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMTP_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
+        this.integration_Map_all();
 
         
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));

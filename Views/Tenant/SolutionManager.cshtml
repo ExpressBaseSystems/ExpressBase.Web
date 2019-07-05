@@ -5,7 +5,10 @@
     @using ExpressBase.Objects.ServiceStack_Artifacts;
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
+
+@section JavaScript{
+    <script src="~/js/EbDashBoards/SolutionDashBoard.js" type="text/javascript"></script>
+}
 @{
     string proto = string.Empty;
 
@@ -63,7 +66,7 @@
         margin-top: 4px;
     }*/
 </style>
-<div class="row s-dash-container">
+<div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
@@ -101,10 +104,10 @@
         </div>
     </div>
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-9 pd-0">
                 <h4 class="mr-t-0 mr-0">@ViewBag.Connections.SolutionInfo.SolutionName</h4>
-                <p class="small mr-0">@ViewBag.Connections.SolutionInfo.EsolutionId Created on @ViewBag.Connections.SolutionInfo.DateCreated</p>
+                <p class="small mr-t-10 mr-b-0">Created on @ViewBag.Connections.SolutionInfo.DateCreated</p>
                 <p class="small mr-0">
                     @ViewBag.Connections.SolutionInfo.Description
                 </p>
@@ -114,7 +117,7 @@
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="dc" />
-                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="dc">
+                    <button class="ebbtn eb_btnwhite eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="dc">
                         <i class="fa fa-wrench"></i> Dev Home
                     </button>
                 </form>
@@ -122,25 +125,33 @@
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="uc" />
-                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="uc">
+                    <button class="ebbtn eb_btnblue eb_btn-sm pull-right" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="uc">
                         <i class="fa fa-user-o" aria-hidden="true"></i> User Home
                     </button>
                 </form>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <ul class="nav nav-tabs" role="tablist">
+            <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
-                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">General</a>
+                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">
+                        <i class="fa fa-home"></i> 
+                        General
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">Connection Manager</a>
+                    <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">
+                        <i class="fa fa-plug"></i> 
+                        Connection Manager
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#team" role="tab">Team</a>
+                    <a class="nav-link" data-toggle="tab" href="#team" role="tab">
+                        <i class="fa fa-users"></i> Team</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#billing" role="tab">Billing</a>
+                    <a class="nav-link" data-toggle="tab" href="#billing" role="tab">
+                        <i class="fa fa-usd"></i> Billing</a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -157,15 +168,17 @@
                 </div>
                 <div class="tab-pane" id="Integrations" role="tabpanel">
                     <div class="col-md-12 pd-0">
-                        <ul class="nav nav-tabs chormer-effect" role="tablist">
+                        <ul class="nav nav-tabs tab-inside-tab chormer-effect" role="tablist">
                             <li class="nav-item active">
-                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">New Connections</a>
+                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">
+                                <i class="fa fa-plus-square"></i> New Connections</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">My Connections</a>
+                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">
+                                <i class="fa fa-list"></i> My Connections</a>
                             </li>
                         </ul>
-                        <div class="tab-content">
+                        <div class="tab-content" style="padding:10px 0">
                             <div class="tab-pane active" id="Integration" role="tabpanel">
                                 <div class="eb_connection_wrapper flex-container">
                                     <div class="connection_wrap_outer   db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" id="Postgres" data-whatever="PGSQL">
@@ -173,7 +186,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/POSTGRES.png" align="middle" style="width:63%" />
                                                 <div class="image-add">
-                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
                                                 </div>
                                             </div>
                                         </div>
@@ -183,7 +196,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/mysql.png" align="middle" style="width:70%" />
                                                 <div class="image-add">
-                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -193,8 +206,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/oracle.png" style="width:70%" />
                                                 <div class="image-add">
-                                                    @*<i class="fa fa-plus-circle" aria-hidden="true"></i>*@
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -204,7 +216,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
                                                 <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -214,7 +226,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/MongodB.png" style="width:50%; margin:auto;" />
                                                 <div class="image-add">
-                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -224,7 +236,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/cloudnary.png" style="width:75%" />
                                                 <div class="image-add">
-                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
                                                 </div>
                                             </div>
                                         </div>
@@ -234,7 +246,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="EmailConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/svg/email.svg" style="width:47%" />
                                                 <div class="image-add">
-                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -244,7 +256,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="TwilioConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/twilio.png" style="width:95%" />
                                                 <div class="image-add">
-                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
                                                 </div>
                                             </div>
                                         </div>
@@ -254,7 +266,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="ExpertTextingConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/expert texting.png" style="width:85%" />
                                                 <div class="image-add">
-                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -283,8 +295,28 @@
                                                 </h4>
                                             </div>
                                             <div id="All" class="panel-collapse collapse in">
-                                                <div id="integration_config_all" class="panel-body">
-                                                   
+                                                <div id ="integration_config_all"class="panel-body">
+                                                    @*@{
+                                                        foreach (KeyValuePair<string, List<EbIntegrationConfData>> Conf_type in ViewBag.Connections.IntegrationsConfig)
+                                                        {
+                                                            List<EbIntegrationConfData> Row0 = Conf_type.Value;
+                                                            foreach (EbIntegrationConfData row0 in Row0)
+                                                            {
+                                                                <div class="inteConfContainer @string.Concat(row0.Type, "edit")" data-whatever="@row0.Type" datawhater="@row0.Id">
+
+                                                                    <div id="nm" class="inteConfContainer_Image ">
+                                                                        @Html.Raw(Image_url[row0.Type])
+                                                                    </div>
+                                                                    <div id="nm" class="inteConfContainer_NN" data-toggle="tooltip" data-placement="top" title="Updated on : @row0.CreatedOn">
+                                                                        <span>@row0.NickName</span>
+                                                                    </div>
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }*@
                                                     <div>
                                                     </div>
                                                 </div>
@@ -313,8 +345,36 @@
                                             </div>
                                             <div id="EbFILES" class="panel-collapse collapse">
                                                 <div id="EbFILES-All" class="panel-body">
-                                                  
-                        
+                                                    @*@{
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("EbFILES"))
+                                                        {
+                                                            List<EbIntegrationData> Row2 = ViewBag.Connections.Integrations["EbFILES"];
+                                                            foreach (EbIntegrationData row2 in Row2)
+                                                            {
+                                                                <div class="integrationContainer hover-mover @string.Concat(row2.Type, "edit") @row2.Preference" data-whatever="@row2.Type" datawhater="@row2.Id" dataConffId="@row2.ConfId">
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row2.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row2.NickName</span>
+                                                                        @{
+                                                                            if (row2.Preference == "1")
+                                                                            {
+                                                                                <span  class="PF_span">PRIMARY</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span  class="PF_span">Fallback</span>
+                                                                            }
+                                                                        }
+                                                                    </div>
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }*@
                                                 </div>
                                             </div>
                                         </div>
@@ -329,36 +389,36 @@
                                             <div id="SMTP_call" class="panel-collapse collapse">
                                                 <div id="SMTP-All" class="panel-body">
                                                     @*@{
-                        if (ViewBag.Connections.Integrations.ContainsKey("SMTP"))
-                        {
-                            List<EbIntegrationData> Row1 = ViewBag.Connections.Integrations["SMTP"];
-                            foreach (EbIntegrationData row1 in Row1)
-                            {
-                                <div class="integrationContainer hover-mover @string.Concat(row1.Type, "edit") @row1.Preference" data-whatever="@row1.Type" datawhater="@row1.Id" dataConffId="@row1.ConfId">
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("SMTP"))
+                                                        {
+                                                            List<EbIntegrationData> Row1 = ViewBag.Connections.Integrations["SMTP"];
+                                                            foreach (EbIntegrationData row1 in Row1)
+                                                            {
+                                                                <div class="integrationContainer hover-mover @string.Concat(row1.Type, "edit") @row1.Preference" data-whatever="@row1.Type" datawhater="@row1.Id" dataConffId="@row1.ConfId">
 
-                                    <div class="integrationContainer_Image">
-                                        @Html.Raw(Image_url[row1.Ctype])
-                                    </div>
-                                    <div id="nm" class="integrationContainer_NN">
-                                        <span>@row1.NickName</span>
-                                        @{
-                                            if (row1.Preference == "1")
-                                            {
-                                                <span  class="PF_span">PRIMARY</span>
-                                            }
-                                            else
-                                            {
-                                                <span  class="PF_span">Fallback</span>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="nm" class="inteConfContainer_caret-down ">
-                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            }
-                        }
-                    }*@
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row1.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row1.NickName</span>
+                                                                        @{
+                                                                            if (row1.Preference == "1")
+                                                                            {
+                                                                                <span  class="PF_span">PRIMARY</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span  class="PF_span">Fallback</span>
+                                                                            }
+                                                                        }
+                                                                    </div>
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }*@
                                                 </div>
                                             </div>
                                         </div>
@@ -373,37 +433,37 @@
                                             <div id="Cloudinary" class="panel-collapse collapse">
                                                 <div id="Cloudinary-all" class="panel-body">
                                                     @*@{
-                        if (ViewBag.Connections.Integrations.ContainsKey("Cloudinary"))
-                        {
-                            List<EbIntegrationData> Row3 = ViewBag.Connections.Integrations["Cloudinary"];
-                            foreach (EbIntegrationData row3 in Row3)
-                            {
-                                <div class="integrationContainer hover-mover @string.Concat(row3.Type, "edit")" data-whatever="@row3.Type" datawhater="@row3.Id">
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("Cloudinary"))
+                                                        {
+                                                            List<EbIntegrationData> Row3 = ViewBag.Connections.Integrations["Cloudinary"];
+                                                            foreach (EbIntegrationData row3 in Row3)
+                                                            {
+                                                                <div class="integrationContainer hover-mover @string.Concat(row3.Type, "edit")" data-whatever="@row3.Type" datawhater="@row3.Id">
 
-                                    <div class="integrationContainer_Image">
-                                        @Html.Raw(Image_url[row3.Ctype])
-                                    </div>
-                                    <div id="nm" class="integrationContainer_NN">
-                                        <span>@row3.NickName</span>
-                                        @{
-                                            if (row3.Preference == "1")
-                                            {
-                                                <span  class="PF_span">PRIMARY</span>
-                                            }
-                                            else
-                                            {
-                                                <span  class="PF_span">Fallback</span>
-                                            }
-                                        }
-                                    </div>
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row3.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row3.NickName</span>
+                                                                        @{
+                                                                            if (row3.Preference == "1")
+                                                                            {
+                                                                                <span  class="PF_span">PRIMARY</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span  class="PF_span">Fallback</span>
+                                                                            }
+                                                                        }
+                                                                    </div>
 
-                                    <div id="nm" class="inteConfContainer_caret-down ">
-                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            }
-                        }
-                    }*@
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }*@
                                                 </div>
                                             </div>
                                         </div>
@@ -417,21 +477,38 @@
                                             </div>
                                             <div id="SMS" class="panel-collapse collapse">
                                                 <div id="SMS-all" class="panel-body">
-                                                   
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title">
-                                                    <a id="Integration_map" data-toggle="collapse" data-parent="#MyIntegrations" href="#MAP">
-                                                        Google Maps
-                                                    </a>
-                                                </h4>
-                                            </div>
-                                            <div id="MAP" class="panel-collapse collapse">
-                                                <div id="MAP-all" class="panel-body">
-                                                    
+                                                    @*@{
+                                                        if (ViewBag.Connections.Integrations.ContainsKey("SMS"))
+                                                        {
+                                                            List<EbIntegrationData> Row4 = ViewBag.Connections.Integrations["SMS"];
+                                                            foreach (EbIntegrationData row4 in Row4)
+                                                            {
+                                                                <div class="integrationContainer hover-mover @string.Concat(row4.Type, "edit") @row4.Preference" data-whatever="@row4.Type" datawhater="@row4.Id" dataConffId="@row4.ConfId">
+
+                                                                    <div class="integrationContainer_Image">
+                                                                        @Html.Raw(Image_url[row4.Ctype])
+                                                                    </div>
+                                                                    <div id="nm" class="integrationContainer_NN">
+                                                                        <span>@row4.NickName</span>
+                                                                        @{
+                                                                            if (row4.Preference == "1")
+                                                                            {
+                                                                                <span  class="PF_span">PRIMARY</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span  class="PF_span">Fallback</span>
+                                                                            }
+                                                                        }
+                                                                    </div>
+
+                                                                    <div id="nm" class="inteConfContainer_caret-down ">
+                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }*@
                                                 </div>
                                             </div>
                                         </div>
@@ -1032,14 +1109,14 @@
 </div>
 
 
-
-
 <div class="eb-cropie" id="cropsection"></div>
-<script>
-    let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
-	var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId');
-	$("#no_user").change(function (e) {
-		$("#user_countForm").val(e.target.value);
-    });
+@section JsCode{
+    <script>
+        let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
+	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId');
+	    $("#no_user").change(function (e) {
+		    $("#user_countForm").val(e.target.value);
+        });
+    </script>
+}
 
-</script>

@@ -20,12 +20,7 @@
 
 
     ////////////
-    this.bindFnsToCtrl_init = function (Obj) {
-        if (Obj.Required)
-            this.bindRequired(Obj);
-        if (Obj.Unique)
-            this.bindUniqueCheck(Obj);
-
+    this.setDefaultValues = function (Obj) {
         if (Obj.DefaultValue)
             Obj.setValue(Obj.DefaultValue);
         if (Obj.DefaultValueExpression && Obj.DefaultValueExpression.Code) {
@@ -33,7 +28,20 @@
             let val = fun();
             Obj.setValue(val);
         }
+    };
 
+    this.setDefaultvalsNC = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            this.setDefaultValues(Obj);
+        }.bind(this));
+    };
+
+
+    this.bindFnsToCtrl= function (Obj) {
+        if (Obj.Required)
+            this.bindRequired(Obj);
+        if (Obj.Unique)
+            this.bindUniqueCheck(Obj);
         if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0)
             this.bindOnChange(Obj);
         if (Obj.Validators.$values.length > 0)
@@ -42,6 +50,18 @@
 
     this.bindValidators = function (control) {
         $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
+    };
+
+    this.fireInitOnchangeNC = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            this.fireInitOnchange(Obj);
+        }.bind(this));
+    };
+
+    this.bindFnsToCtrls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            this.bindFnsToCtrl(Obj);
+        }.bind(this));
     };
 
     this.bindOnChange = function (control) {

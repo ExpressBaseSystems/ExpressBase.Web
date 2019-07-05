@@ -144,11 +144,20 @@ const EbSelect = function (ctrl, options) {
 
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
+        let $e = $(e.target);
+        let searchVal = $e.val();
+        let MaxSearchVal = this.getMaxLenVal();
+
         if (!isPrintable(e) && e.which !== 8)
             return;
 
-        let $e = $(e.target);
-        let searchVal = $e.val();
+        if (this.ComboObj.MinSeachLength > MaxSearchVal.length) {
+            EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
+            return;
+        }
+        else {
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+        }
 
         let mapedField = $e.closest(".searchable").attr("maped-column");
         let mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));

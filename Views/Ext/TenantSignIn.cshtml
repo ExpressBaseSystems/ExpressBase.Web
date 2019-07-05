@@ -1,6 +1,5 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
-    //Html.RenderPartial("~/Views/Shared/ExtPageHeader.cshtml");
     string home = string.Empty;
     if (ViewBag.Env == "Development")
     {
@@ -15,15 +14,17 @@
         home = "https://expressbase.com";
     }
 }
-<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
-<script>
-    function recaptchaCallback(token) {
-        if (token) {
-            document.getElementById("log_form").submit();
-            $(".lgLoader").show();
+@section JavaScript{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+    <script>
+        function recaptchaCallback(token) {
+            if (token) {
+                document.getElementById("log_form").submit();
+                $(".lgLoader").show();
+            }
         }
-    }
-</script>
+    </script>
+}
 <section class="eb_login">
     <div class="header hidden-xs">
         <div class="callFrAction" style="display: flex;align-items: center;">
@@ -31,9 +32,9 @@
             <spn style="margin-left: auto;font-size: 13px;">
                 New to EXPRESSbase?
             </spn>
-            <button class="callActionBtn">
+            <a href="/Platform/Board" class="callActionBtn">
                 Sign Up
-            </button>
+            </a>
         </div>
     </div>
     <div class="container-fluid" style="height:100%">
@@ -52,7 +53,7 @@
             </div>
             <div class="col-md-5 col-lg-5 col-sm-12 col-xs-12 login_container">
                 <div class="loader_top" id="loader_profile"></div>
-                <img src="~/images/EB_Logo.png" class="log-eblogo"/>
+                <img src="~/images/EB_Logo.png" class="log-eblogo" />
                 <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator" role="form">
                     <h1>SIGN IN</h1><br>
                     <div class="form-group mb-25">
@@ -72,7 +73,7 @@
                     <div class="form-group mb-25">
                         <div class="fpNdRemMe">
                             <div class="rememberMe">
-                                <input type="checkbox" /> <span>Remember me</span>
+                                @*<input type="checkbox" /> <span>Remember me</span>*@
                             </div>
                             <a href="/ForgotPassword">Forgot password?</a>
                         </div>
@@ -120,11 +121,14 @@
         </div>
     </div>
 </section>
-<script>
-    if ('@ViewBag.ErrorMsg')
-        EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
-    if ('@ViewBag.UniqTest')
-        EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
-    if ('@ViewBag.mailmsg')
-        EbMessage("show", { Message: "@ViewBag.mailmsg" });
-</script>
+
+@section JsCode{
+    <script>
+        if ('@ViewBag.ErrorMsg')
+            EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
+        if ('@ViewBag.UniqTest')
+            EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
+        if ('@ViewBag.mailmsg')
+            EbMessage("show", { Message: "@ViewBag.mailmsg" });
+    </script>
+}

@@ -88,11 +88,6 @@ const WebFormRender = function (option) {
     };
 
     this.initNCs = function () {
-        let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
-        $.each(allFlatControls, function (k, Obj) {
-            this.updateCtrlUI(Obj);
-        }.bind(this));
-
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
             if (Obj.ObjType === "PowerSelect")
@@ -102,14 +97,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-
             this.initControls.init(Obj, opt);
-
-            this.FRC.bindFnsToCtrl_init(Obj);
-        }.bind(this));
-
-        $.each(this.flatControls, function (k, Obj) {
-            this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 
@@ -134,14 +122,27 @@ const WebFormRender = function (option) {
 
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
+        this.updateCtrlsUI();
+        this.initNCs();// order 1
+        this.FRC.setDefaultvalsNC(this.flatControls);// order 2
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
-        this.initNCs();
+
+
+        this.FRC.fireInitOnchangeNC();
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
             this.FRC.bindOnChange(_DG);
+        }.bind(this));
+    };
+
+    this.updateCtrlsUI = function () {
+        let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
         }.bind(this));
     };
 

@@ -1,17 +1,17 @@
 ﻿function EbDialog(action, options) {
     var operation = action;
     var settings = $.extend({
-        Message: "nothing specified",
+        Message: "Nothing specified",
         Buttons: {
             "Ok": {
-                Background: "green",
-                Align: "right",
+                Background: "#508bf9",
+                Align: "left",
                 FontColor:"white;"
             },
             "Cancel": {
-                Background: "red",
-                Align: "left",
-                FontColor: "white;"
+                Background: "#989898",
+                Align: "right",
+                FontColor: "white"
             }
         },
         CallBack: function (name) { }
@@ -59,9 +59,13 @@
         return html.join(" ");
     }
 
-    if (operation === "show")
+    if (operation === "show") {
         showMsg();
-    else if (operation === "hide")
+        return true;
+    }
+    else if (operation === "hide") {
         hideMsg();
+        return false;
+    }
     else return null;
 };

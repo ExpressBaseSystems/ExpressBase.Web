@@ -27,6 +27,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Index(string refId, string _params, int _mode, int _locId)
         {
+            Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
@@ -37,6 +38,7 @@ namespace ExpressBase.Web.Controllers
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
                 if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
+                    Console.WriteLine("Webform Render - View mode request identified.");
                     WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
                     if (wfd.MultipleTables.Count == 0)
                     {
@@ -90,7 +92,6 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
-                Console.WriteLine(ex.StackTrace);
                 return new WebformData();
             }
         }
@@ -149,7 +150,6 @@ namespace ExpressBase.Web.Controllers
 
         public string GetAuditTrail(string refid, int rowid, int currentloc)
         {
-            //throw new FormException("Exception: AuditTrail not implemented");
             try
             {
                 if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
@@ -162,7 +162,6 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
-                Console.WriteLine(ex.StackTrace);
                 return string.Empty;
             }
         }
@@ -190,7 +189,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch(Exception e)
             {
-                Console.WriteLine("Exception when checking user permission: " + e.Message);
+                Console.WriteLine(string.Format("Exception when checking user permission: {0}\nRefId = {1}\nOperation = {2}\nLocId = {3}", e.Message, RefId, ForWhat, LocId));
             }
 
             return false;

@@ -1,0 +1,568 @@
+﻿.field-icon {
+    right: 0;
+    top: 15px;
+    position: absolute;
+    z-index: 2;
+}
+.eb-signup_wrapper {
+    background: #508bf9;
+    font-family:Montserrat;
+}
+
+    .eb-signup_wrapper .eb-signup_socilaWrpr {
+        justify-content: center;
+        display: flex;
+    }
+        .eb-signup_wrapper .eb-signup_socilaWrpr .eb-signup_socilaWrpr_inner {
+            display: flex;
+        }
+    .eb-signup_wrapper .eb-signup-tnc {
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .eb-signup_wrapper .leftpart {
+        height: 100%;
+    }
+
+    .eb-signup_wrapper .rightpart {
+        background: white;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 50px 30px 0px 30px;
+        position: relative;
+        flex-flow: column;
+    }
+    .eb-signup_wrapper .sinpt {
+        height:45px;
+    }
+
+.eb-signup_wrapper .icon_input .sinpt {
+    padding-left: 35px;
+}
+    .eb-signup_wrapper .socialss_container {
+        text-align: center;
+        margin-top: auto;
+        margin-bottom: 40px;
+    }
+
+.center_rightpart {
+    display: flex;
+    height: 100%;
+    flex-flow: column;
+    flex: 0 0 90%;
+    max-width: 90%;
+}
+
+.eb-signup_wrapper .lg_button {
+    color: white;
+    background-color: #508bf9;
+    padding: 6px 30px;
+    height: 45px;
+    margin-top:15px;
+}
+
+    .eb-signup_wrapper .lg_button:hover {
+        background-color: #4382f7;
+        color: white;
+    }
+/*.eb_required_group {
+    margin-right: -15px;
+    margin-left: -15px;
+}*/
+/* start css for radio button on card 3 in sign up page*/
+.ulradio {
+    margin: 0px;
+}
+
+.liradio {
+    color: #AAAAAA;
+    display: block;
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 100px;
+    border-radius: 4px;
+    border: 1px thin;
+    padding: 20px;
+    margin: 10px 0 10px 0;
+    cursor: pointer;
+    /*box-shadow: 2px 6px 6px rgba(0, 0, 0, .5);*/
+    -webkit-box-shadow: 0px 0px 0px 1px rgba(66,66,66,0.13);
+    -moz-box-shadow: 0px 0px 0px 1px rgba(66,66,66,0.13);
+    box-shadow: 0px 0px 0px 1px rgba(66,66,66,0.13);
+}
+
+.inptradio {
+    position: absolute;
+    visibility: hidden;
+}
+
+.lblradio {
+    display: block;
+    position: relative;
+    font-weight: 300;
+    font-size: 1.07em;
+    padding-left: 50px;
+    padding-top: 10px;
+    margin: 10px auto;
+    height: 30px;
+    z-index: 9;
+    cursor: pointer;
+    -webkit-transition: all 0.25s linear;
+}
+/*.lblradio:hover {
+        color: green;
+}*/
+.liradio:hover {
+    //color: black;
+    //font-size: 1.08em;
+    /*border-radius: 6px;
+    border: 6px thin;*/
+    /*box-shadow: 0px 2px 7px rgba(0, 0, 0, .5);*/
+    -webkit-box-shadow: 0px 0px 7px -3px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 7px -3px rgba(0,0,0,1);
+    box-shadow: 0px 0px 7px -3px rgba(0,0,0,1);
+}
+
+.checkradio {
+    display: block;
+    position: absolute;
+    border: 5px solid #AAAAAA;
+    border-radius: 100%;
+    height: 25px;
+    width: 25px;
+    top: 35px;
+    left: 20px;
+    z-index: 5;
+    transition: border .25s linear;
+    -webkit-transition: border .25s linear;
+}
+
+    .checkradio::before {
+        display: block;
+        position: absolute;
+        content: '';
+        border-radius: 100%;
+        height: 10px;
+        width: 10px;
+        top: 2px;
+        left: 2px;
+        margin: auto;
+        transition: background 0.25s linear;
+        -webkit-transition: background 0.25s linear;
+    }
+
+.inptradio[type=radio]:checked + label {
+    color: #444447;
+    font-style: normal;
+}
+.inptradio[type=radio]:checked ~ .check {
+    border: 5px solid #4d86d6;
+}
+
+    .inptradio[type=radio]:checked ~ .check::before {
+        background: #4d86d6;
+    }
+
+/*.inptradio[type=radio]:checked ~ label {
+    color: red;
+}*/
+
+
+/*end css for radio button on card 3 in sign up page*/
+
+
+
+
+.inline_css {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.p_hover {
+    margin-top: 0 0 0 0px;
+}
+
+#rcorners1 {
+    display: none;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: black;
+    box-shadow: 1px 1px 5px rgba(0,0,0,.5);
+    line-height: 1.8;
+    padding: 15px;
+    bottom: 0;
+    position: absolute;
+    z-index: 10;
+    left: -320px;
+    width: 320px;
+}
+
+    #rcorners1:after {
+        content: ' ';
+        width: 0px;
+        height: 0px;
+        border-top: 10px solid transparent;
+        border-left: 10px solid #f5f5f5;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid transparent;
+        position: absolute;
+        left: 100%;
+        top: 60%;
+        margin-left: -2px;
+        
+    }
+
+
+.center {
+    margin: 259px 508px 251px 511px;
+    height: auto;
+    width: auto;
+}
+
+.modal-open .modal {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.modal-dialog {
+    width: auto;
+    margin: 30px auto;
+}
+
+
+
+.full-height {
+    height: 100%;
+    background-color: darkgray;
+    position: fixed;
+    opacity: 0.5;
+}
+
+
+
+.lds-ellipsis {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+    left: -32px;
+    margin: auto 50%;
+}
+
+    .lds-ellipsis div {
+        position: absolute;
+        top: 27px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #8785cc;
+        box-shadow: inset 0px 0px 7px 0px #1e1c87, 0px 16px 2px 0 #46466d26;
+        /*animation-timing-function: cubic-bezier(0, 1, 1, 0);*/
+    }
+
+        .lds-ellipsis div:nth-child(1) {
+            left: 6px;
+            animation: lds-ellipsis1 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(2) {
+            left: 6px;
+            animation: lds-ellipsis2 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(3) {
+            left: 26px;
+            animation: lds-ellipsis2 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(4) {
+            left: 45px;
+            animation: lds-ellipsis3 0.6s infinite;
+        }
+
+@keyframes lds-ellipsis1 {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes lds-ellipsis3 {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0);
+    }
+}
+
+@keyframes lds-ellipsis2 {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(19px, 0);
+    }
+}
+/*.txthighlight:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+}
+*/
+.txthighlightred:focus {
+    border-color: #fa6d72;
+    outline: 0;
+}
+
+.sol_db_info {
+    padding: 10px 5px 0px 5px;
+    height: 30px;
+    max-height: 30px;
+}
+/*signin page css*/
+input {
+    border: none;
+    margin: 0;
+}
+.input-group-addon {
+    /*background: #FFFFFF;
+    border-left:  solid #ea4c88;
+    color: #9f9f9f;*/
+}
+.selinp {
+    width: 100%;
+    border-radius: 4px;
+    outline: none;
+    padding: 8px 10px 8px 25px;
+    height: 46px;
+    box-sizing: border-box;
+}
+.icon_input {
+    position: relative;
+}
+    .icon_input i {
+        position: absolute;
+        left: 0;
+        top: 6px;
+        padding: 9px 8px;
+        color: #7da4ec;
+        transition: 0.3s;
+    }
+
+/*.txthighlight:focus + i {
+    color: #66afe9;
+}*/
+/*.txthighlightred:focus + i {
+    color: #fa6d72;
+}*/
+.radio_cstm {
+    position: absolute;
+    opacity: 0;
+   
+}
+    .radio_cstm:checked + label,
+    .radio_cstm:not(:checked) + label {
+        position: relative;
+        padding-left: 28px;
+        cursor: pointer;
+        line-height: 20px;
+        display: inline-block;
+        color: #555;
+        font:inherit;
+    }
+
+        .radio_cstm:checked + label:before,
+        .radio_cstm:not(:checked) + label:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border: 4px solid #ddd;
+            border-radius: 100%;
+            background: #fff;
+        }
+        .radio_cstm:checked + label:after,
+        .radio_cstm:not(:checked) + label:after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: cornflowerblue;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            border-radius: 100%;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+        }
+        .radio_cstm:not(:checked) + label:after {
+            opacity: 0;
+            -webkit-transform: scale(0);
+            transform: scale(0);
+        }
+        .radio_cstm:checked + label:after {
+            opacity: 1;
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+.radiodiv {
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    
+    border-radius: 4px;
+    padding-bottom: 7px;
+    padding-top: 9px;
+   
+    margin-bottom:20px;
+}
+/*************line seperation form social meadia login****************/
+/*.hr-text {
+    line-height: 1em;
+    position: relative;
+    outline: 0;
+    border: 0;
+    color: black;
+    text-align: center;
+    height: 1.5em;
+    opacity: .5;
+}
+    .hr-text:before {
+        content: '';
+        use the linear-gradient for the fading effect // use a solid background color for a solid bar
+        background: linear-gradient(to right, transparent, #818078, transparent);
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 1px;
+    }
+
+.hr-text:after {
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    color: black;
+    padding: 0 .5em;
+    line-height: 1.5em;
+    this is really the only tricky part, you need to specify the  background color of the container element...
+    color: #818078;
+    background-color: #fcfcfa;
+}
+  /******social media sign in******/
+
+.smGlobalBtn { /* global button class */
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border: 2px solid #ddd; /* add border to the buttons */
+    box-shadow: 0 3px 3px #999;
+    padding: 0px;
+    text-decoration: none !important;
+    text-align: center;
+    color: #fff;
+    font-size: 25px;
+    font-weight: normal;
+    line-height: 2em;
+    border-radius: 27px;
+    -moz-border-radius: 27px;
+    -webkit-border-radius: 27px;
+}
+
+/* facebook button class*/
+/*.facebookBtn {
+    background: #4060A5;
+}
+
+    .facebookBtn:before { use :before to add the relevant icons 
+        font-family: "FontAwesome";
+        content: "\f09a";  add facebook icon 
+    }
+
+    .facebookBtn:hover {
+        color: #4060A5;
+        background: #fff;
+        border-color: #4060A5; /* change the border color on mouse hover */
+    }
+
+/* twitter button class
+.twitterBtn {
+    background: #00ABE3;
+}
+
+    .twitterBtn:before {
+        font-family: "FontAwesome";
+        content: "\f099"; /* add twitter icon 
+    }
+
+    .twitterBtn:hover {
+        color: #00ABE3;
+        background: #fff;
+        border-color: #00ABE3;
+    }
+
+
+/* linkedin button class
+.linkedinBtn {
+    background: #0094BC;
+}
+
+    .linkedinBtn:before {
+        font-family: "FontAwesome";
+        content: "\f0e1";  add linkedin icon 
+    }
+
+    .linkedinBtn:hover {
+        color: #0094BC;
+        background: #fff;
+        border-color: #0094BC;
+    }
+
+/* pinterest button class
+.gmailBtn {
+    background: #cb2027;
+}
+
+.gmailBtn:before {
+    font-family: "FontAwesome";
+    content: "\f1a0"; /* add pinterest icon 
+}
+
+.gmailBtn:hover {
+    color: #cb2027;
+    background: #fff;
+    border-color: #cb2027;
+}
+
+/* github button class
+.githubBtn {
+    background: #201f1f;
+}
+
+    .githubBtn:before {
+        font-family: "FontAwesome";
+        content: "\f09b"; /* add pinterest icon 
+    }
+
+    .githubBtn:hover {
+        color: #201f1f;
+        background: #fff;
+        border-color: #201f1f;
+    }*/
+
+    /*********new style edited by amal*/

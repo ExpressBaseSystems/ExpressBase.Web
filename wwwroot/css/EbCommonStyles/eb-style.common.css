@@ -254,7 +254,7 @@
 .s-dash-workplace {
     display: flex;
     display:-webkit-flex;
-    flex-flow: column wrap;
+    flex-flow: column;
     margin-left: auto;
     flex: 1;
     -webkit-flex:1;

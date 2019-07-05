@@ -237,6 +237,7 @@
     border: 1px solid #e8e8e8;
     /*background-color: #f2f2f2;*/
     flex-direction: column;
+    height:100%;
 }
         .connection_wrap .connection_wrap_header {
             padding: 10px 41px;

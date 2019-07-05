@@ -144,11 +144,20 @@ const EbSelect = function (ctrl, options) {
 
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
+        let $e = $(e.target);
+        let searchVal = $e.val();
+        let MaxSearchVal = this.getMaxLenVal();
+
         if (!isPrintable(e) && e.which !== 8)
             return;
 
-        let $e = $(e.target);
-        let searchVal = $e.val();
+        if (this.ComboObj.MinSeachLength > MaxSearchVal.length) {
+            EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
+            return;
+        }
+        else {
+            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+        }
 
         let mapedField = $e.closest(".searchable").attr("maped-column");
         let mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
@@ -207,7 +216,8 @@ const EbSelect = function (ctrl, options) {
 
     this.clearValues = function () {
         $.each(this.Vobj.valueMembers, function (i, val) {
-            $(this.DTSelector + ` [type=checkbox][value=${val}]`).prop("checked", false);
+            if (val.trim() !== "")// prevent Jq selector error
+                $(this.DTSelector + ` [type=checkbox][value=${val}]`).prop("checked", false);
         }.bind(this));
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
@@ -701,7 +711,7 @@ const EbSelect = function (ctrl, options) {
         $tr.find('.focus').removeClass('focus');
         setTimeout(function () {
             $tr.addClass('selected');
-        },10);
+        }, 10);
     };
 
     this.RemoveRowFocusStyle = function ($tr) {

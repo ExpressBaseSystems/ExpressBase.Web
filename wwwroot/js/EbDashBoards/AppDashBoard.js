@@ -6,10 +6,10 @@
     this.ExportCollection = [];
 	this.AppId = appid;
 
-    for (type in this.ObjTypes) {
-        $("#object_types_drd").append(`<li class="drp_menuitems">
-                       <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${type}"">${this.ObjTypes[type]}</a></li>`);
-    }
+    //for (type in this.ObjTypes) {
+    //    $("#object_types_drd").append(`<li class="drp_menuitems">
+    //                   <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=${type}"">${this.ObjTypes[type]}</a></li>`);
+    //}
 
     this.apndObTypeClpsCont = function () {
         for (var otype in this.ObjCollection) {

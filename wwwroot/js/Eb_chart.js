@@ -109,7 +109,7 @@ var animateObj = function (duration) {
     };
 }
 
-var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [], TableId, zoomlevel, MarkerLink, markerParams = [], Te_id, Usr_id;
+var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [], TableId, zoomlevel, MarkerLink, markerParams = [], Te_id, Usr_id, AutoZoom;
 
 var informaion = function (nam, val) {
     this.name = nam;
@@ -829,6 +829,9 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 }
                 if (this.EbObject.Zoomlevel)
                     zoomlevel = this.EbObject.Zoomlevel;
+                else
+                    zoomlevel = 10;
+                AutoZoom = this.EbObject.AutoZoom;
                 MarkerLink = this.EbObject.MarkerLink;
                 if (this.EbObject.FormParameter.$values.length > 0) {
                     let obj = this.EbObject.FormParameter.$values[0];
@@ -1428,75 +1431,89 @@ var EbGoogleMap = function (option) {
 };
 
 function initMap() {
-    var infowindow = new google.maps.InfoWindow();
-    var directionsService = new google.maps.DirectionsService();
-    var directionsDisplay = new google.maps.DirectionsRenderer();
-    var mid = Math.floor(Xlabel.length / 2);
-    var map = new google.maps.Map(document.getElementById('map' + TableId), {
-        zoom: zoomlevel || 5,
-        center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
-        gestureHandling: 'greedy'
-        // mapTypeId: google.maps.MapTypeId.ROADMAP
-    });
-    directionsDisplay.setMap(map);
-    var request = {
-        travelMode: google.maps.TravelMode.DRIVING
-    };
-    var marker, i;
-    for (i = 0; i < Xlabel.length; i++) {
-        var latlng = new google.maps.LatLng(Ylabel[i], Xlabel[i]);
-
-        marker = new google.maps.Marker({
-            position: latlng,
-            map: map,
-            label: markLabel[i],
+    if (Xlabel.length > 0) {
+        var infowindow = new google.maps.InfoWindow();
+        var directionsService = new google.maps.DirectionsService();
+        var directionsDisplay = new google.maps.DirectionsRenderer();
+        var bounds = new google.maps.LatLngBounds();
+        var mid = Math.floor(Xlabel.length / 2);
+        var map = new google.maps.Map(document.getElementById('map' + TableId), {
+            center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
+            gestureHandling: 'greedy'
+            // mapTypeId: google.maps.MapTypeId.ROADMAP
         });
+        if (!AutoZoom)
+            map.setZoom(zoomlevel);
+        directionsDisplay.setMap(map);
+        var request = {
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+        var marker, i;
+        for (i = 0; i < Xlabel.length; i++) {
+            var latlng = new google.maps.LatLng(Ylabel[i], Xlabel[i]);
 
-        if (i == 0) request.origin = marker.getPosition();
-        else if (i == Xlabel.length - 1) request.destination = marker.getPosition();
-        else {
-            if (!request.waypoints) request.waypoints = [];
-            request.waypoints.push({
-                location: marker.getPosition(),
-                stopover: true
+            marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                //label: markLabel[i]
+            });
+
+            if (i == 0) request.origin = marker.getPosition();
+            else if (i == Xlabel.length - 1) request.destination = marker.getPosition();
+            else {
+                if (!request.waypoints) request.waypoints = [];
+                request.waypoints.push({
+                    location: marker.getPosition(),
+                    stopover: true
+                });
+            }
+
+            var content = "", url ="";
+            $.each(Inform, function (k, obj) {
+                content += obj.value[i] + "</br>";
+            });
+            if (MarkerLink) {
+                url = `../webform/index?refid=${MarkerLink}&_params=${btoa(JSON.stringify([markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
+            }
+            if (content === "")
+                content = "no details";
+            infowindow.setContent(content);
+            infowindow.setOptions({ maxWidth: 200 });
+
+            google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infowindow) {
+                return function () {
+                    infowindow.setContent(content);
+                    infowindow.open(map, marker);
+                };
+            })(marker, content, infowindow));  
+
+            marker.addListener('click', function () {
+                if (url !== "")
+                    window.open(url, "_blank");
+            });
+            map.addListener('click', function () {
+                infowindow.close(map, marker);
+            });
+            if (AutoZoom)
+                bounds.extend(latlng);
+        }
+        if (showRoute) {
+            directionsService.route(request, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(result);
+                }
             });
         }
-
-        google.maps.event.addListener(marker, 'click', (function (marker, i) {
-            return function () {
-                var content = "";
-                $.each(Inform, function (k, obj) {
-                    content += obj.name + ":" + obj.value[i] + "</br>";
-                });
-                if (MarkerLink) {
-                    let url = `../webform/index?refid=${MarkerLink}&_params=${btoa(JSON.stringify([markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
-                    content += `<a href="#" onclick='window.open("${url}","_blank");'>Form Link</a>`;
-                }
-                if (content === "")
-                    content = "no details";
-                infowindow.setContent(content);
-                infowindow.setOptions({ maxWidth: 200 });
-                infowindow.open(map, marker);
-            }
-        })(marker, i));
-
+        if (AutoZoom)
+            map.fitBounds(bounds);
     }
-    if (showRoute) {
-        directionsService.route(request, function (result, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-                directionsDisplay.setDirections(result);
-            }
-        });
+    else {
+        $(`#map${TableId}`).append("<div class='map_inner'>No Data Available</div>");
     }
-
-    google.maps.event.addListener(infowindow, 'domready', function (e,i,j) {
-        //code to dynamically load new content to infowindow
-        //for example:
-        //    var existing_content = referenceToInfoWindow.getContent();
-        //    var new_content = "...";
-        //    referenceToInfoWindow.setContent(existing_content + new_content);
-    }); 
+    
 }
+
 function someFunction(e){
     alert("hhhhhh");
 }

@@ -1,26 +1,4 @@
 ﻿
-.column {
-    float: left;
-    margin-top: 00px;
-    height: 575px;
-}
-
-.left_view {
-    padding-top: 0px;
-    padding-left: 6px;
-    padding-right: 20px;
-    width: 20%;
-    overflow: auto;
-    background-color: #eaedec;
-}
-
-.right1 {
-    width: 80%;
-    PADDING-TOP: 0PX;
-    padding-left: 100px;
-    padding-right: 100px;
-    background-color: white;
-}
 .render {
     background-color: #f8f8f8;
     max-width: 644px;
@@ -30,12 +8,11 @@
     margin: 0px;
     overflow: auto;
 }
-
-div.ex3 {
-    overflow: auto;
+.CurrentSelection {
+    color: darkblue;
+    font-weight: bolder;
 }
-
-div.ex2 {
+div.searchDiv {
     width: 100%;
     height: 82px;
     overflow: hidden;
@@ -45,11 +22,11 @@ div.ex2 {
     padding-bottom: 5px;
 }
 
-div.ex2 center {
+div.searchDiv center {
     text-align: left;
 }
 
-div.ex2 h1 {
+div.searchDiv h1 {
    display: block;
     font-size: 13px;
     padding: 0px;
@@ -58,45 +35,15 @@ div.ex2 h1 {
     text-align: left;
 }
 
-div.ex2 p {
+div.searchDiv p {
     color: black;
     font-size: 13px;
     padding: 0px;
     margin-bottom: 0px;
     line-height: 20px;
 }
-div.ex2 a {
+div.searchDiv a {
     font-size: 20px;
-}
-
-
-.header {
-    background-color: lightgrey;
-    width: 100%;
-    border: 00px;
-   
-}
-.header_column {
-    float: left;
-    height: 50px;
-}
-
-.header_left {
-    width: 20%;
-    padding: 41px;
-
-    background-color: #eaedec;
-}
-
-.header_right {
-    width: 80%;
-    padding: 41px;
-    padding-left: 116px;
-}
-
-.ic {
-    font-size: large;
-    width: 193px;
 }
 
 .block {
@@ -105,17 +52,6 @@ div.ex2 a {
     padding: 0px;
     width: 876px;
     overflow:auto;
-}
-.wiki-align {
-    padding-right: 60px;
-    padding-left: 60px;
-}
-
-.navbar {
-    position: relative;
-    min-height: 50px;
-    margin-bottom: -1px;
-    border: 1px solid transparent;
 }
 
 .input-group {
@@ -131,38 +67,6 @@ div.ex2 a {
     border-color: #508cf9;
 }
 
-
-.navbar1 {
-    background-color: #4077de;
-    border-color: #508bf9;
-    color: #FFF;
-    height: 540px;
-    overflow: auto;
-    padding-left: 0px;
-    padding-top: 11px;
-    margin-top: 2px;
-    -webkit-box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
-    -moz-box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
-    box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
-    border-radius: 0px 5px 5px 0px;
-    -moz-border-radius: 0px 5px 5px 0px;
-    -webkit-border-radius: 0px 5px 5px 0px;
-    border: 0px solid #000000;
-}
-.navbar1 a {
-        color: #FFF;
-}
-.navbar1 .row {
-    padding-left: 10px;
-}
-.navbar1 h5 {
-    font-size: 16px;
-    line-height: 5px;
-    font-family: Montserrat;
-    text-shadow: inherit;
-}
-
-
 .props {
     width: 63px;
     height: 25px;
@@ -174,6 +78,7 @@ div.ex2 a {
 .props:active {
     background-color: cornflowerblue;
 }
+
 iframe {
     width: 470px;
     height: 315px;
@@ -194,11 +99,8 @@ iframe {
 }
 
 .style-4::-webkit-scrollbar-thumb {
-    background-color: lightgrey;//#557aff;
+    background-color: lightgrey #557aff;
 }
-.code{
-}
-
 
 h1 {
     font-size: 40px;
@@ -232,10 +134,6 @@ h4 {
     font-weight: 400;
 }
 
-/* Won't be used here */
-
-
-
 h6 {
     font-size: 12px;
     line-height: 20px;
@@ -252,7 +150,8 @@ p {
     font-weight: 400;
     color: #4c4848;
 }
-ul li {
+
+  ul li {
     font-family: sans-serif;
     color: #3b415e;
     font-weight: 400;
@@ -270,12 +169,11 @@ a {
     line-height: 26px;
 }
 
-a:focus, a:hover {
+props.a:focus, a:hover {
     -webkit-transition-property: font-size; /* Safari */
   -webkit-transition-duration: .2s; /* Safari */
   -webkit-transition-delay: .1s;
    transition-timing-function: linear;
-    font-size:14px;
     color: blue;
     text-decoration: none;
 }
@@ -289,27 +187,7 @@ a:focus, a:hover {
     text-decoration: none;
   }
 
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #cd9557;
-    opacity: .7;
-    z-index: 1;
-}
-
-.trihuddiv {
-    position: fixed;
-    width: 2%;
-    /* height: 100%; */
-    clip-path: polygon(0 0,100% 0,100% -14%,0% 92%);
-    background: #fff;
-    height: 670px;
-    top: 0px;
-}
-
+/*share links*/
 .icon-bar {
   position: fixed;
   top: 75%;
@@ -341,12 +219,6 @@ a:focus, a:hover {
   background: #55ACEE;
   color: white;
 }
-
-.google {
-  background: #dd4b39;
-  color: white;
-}
-
 .linkedin {
   background: #007bb5;
   color: white;
@@ -356,42 +228,6 @@ a:focus, a:hover {
   background: green;
   color: white;
 }
-
-.content {
-  margin-left: 75px;
-  font-size: 30px;
-}
-
-
-
-.notify_div {
-    top: 0px;
-    left: 0px;
-    padding-left: 15px;
-    position: fixed;
-    width: 153px;
-    height: 85px;
-    background: white;
-    border-radius: 10px;
-    border: 1px solid black;
-    z-index: 1;
-    opacity: 1;
-    -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.22);
-    -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.22);
-    box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.22);
-}
-
-    .notify_div ::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 16%;
-        margin-left: -4px;
-        border-width: 6px;
-        border-style: solid;
-        border-color: #555 transparent transparent transparent;
-    }
-
 
 /*wiki admin*/
 
@@ -525,20 +361,11 @@ a:focus, a:hover {
     color: rgba(0, 0, 0, 0.84);
     font-style: normal;
 }
+
 .menu_border{
     border:solid 1px;
 }
 
-
-div.absolute {
-    position: absolute;
-    top: 0px;
-    right: -10px;
-    width: 45px;
-    height: 30px;
-    margin-right: 25px;
-    border: 2px solid #73AD21;
-}
 .render_field {
     width: 45px;
     height: 30px;

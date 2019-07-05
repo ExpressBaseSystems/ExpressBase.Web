@@ -46,6 +46,8 @@
             this.bindOnChange(Obj);
         if (Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
+        if (control.IsDisable)// should move
+            control.disable();
     };
 
     this.bindValidators = function (control) {
@@ -65,8 +67,6 @@
     };
 
     this.bindOnChange = function (control) {
-        if (control.IsDisable)
-            control.disable();
         if (control.OnChangeFn.Code.trim() !== "" && control.OnChangeFn.Code.trim() !== null) {
             try {
                 let FnString = `console.log('${control.__path || control.Name}');` + atob(control.OnChangeFn.Code) + (control.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(${control.__path}, form)` : "");

@@ -152,9 +152,10 @@
     border: none;
 }
 
-    .chormer-effect.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    .chormer-effect.nav-tabs > li.active > a, .chormer-effect.nav-tabs > li.active > a:hover, .chormer-effect.nav-tabs > li.active > a:focus {
         border: none !important;
-        //text-decoration: underline;
+        color: #1c6bbb;
+        font-weight: 600;
     }
 
     .chormer-effect > li > a {
@@ -195,7 +196,7 @@
     }
 
     .connection_wrap_outer:hover .image-add {
-        opacity: .7;
+        opacity: 1;
         z-index:100;
 
     }
@@ -203,9 +204,9 @@
         opacity: 1;
     }*/
 
-    .image-add .fa-plus-square {
-        color: #44a00c;
-        font-size: 60px;
+    .image-add .fa-plus-circle {
+        color: #4d86d6;
+        font-size: 44px;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -213,22 +214,6 @@
         -ms-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
         text-align: center;
-    }
-
-    .image-add .fa-coming-soon {
-        color: #000000;
-        font-size: 27px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-        text-align: center;
-        font-weight:800;
-    }
-    .image-add .fa-coming-soon:before {
-        content: "";
     }
 
 
@@ -416,38 +401,70 @@
         color: white;
     }
     /*appdash*/
-    .appcontainer{
-        float:left;
-        padding:5px;
-    }
+.appcontainer {
+    padding: 5px;
+    width: 25%;
+}
+.tabpane-flex{
+    display:flex;
+    flex-flow:row wrap;
+}
+.appcontainer-head .title {
+    font-size: 17px;
+    font-weight: 400;
+    padding-left: 10px;
+}
 .appcontainer_inner {
     display: flex;
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
-    border-radius: 2px;
-    border: 1px solid #e8e8e8;
-    background-color: #f2f2f2;
+    border-radius: 4px;
+    border: 1px solid #ccc;
     color: #4a4747;
     text-decoration: none !important;
-    padding: 10px 5px;
+    padding: 20px 10px;
+    flex-flow: row nowrap;
+    position:relative;
 }
-.appcontainer_inner .flex-center{
-    font-size:27px;
+
+.appcontainer_inner .appcontainer-icon-container {
+    padding-right:10px;
 }
-.txtdecor_none{
-    text-decoration:none;
+    .appcontainer_inner .appcontainer-icon-container .appcontainer-icon {
+        font-size: 20px;
+    }
+    .appcontainer_inner .appcontainer-body .title{
+        font-size:15px;
+        font-weight:400;
+        margin-bottom:5px;
+    }
+        .appcontainer_inner .appcontainer-body .description {
+            font-size:12px;
+        }
+.txtdecor_none {
+    text-decoration: none;
 }
-.appcontainer_inner:hover {
-    background-color: #f3f8ff !important;
+.appcontainer_inner .openinnew {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display:none;
 }
-/*locswitch*/
-.loc_switchModal {
-    display: none;
-    font-family: open sans;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
+.appcontainer_inner:hover, .appcontainer_inner:focus, .appcontainer_inner:active {
+    background-color: #508bf9 !important;
+    color: white;
 }
+    .appcontainer_inner:hover .openinnew, .appcontainer_inner:focus .openinnew, .appcontainer_inner:active .openinnew {
+        display: block;
+    }
+    /*locswitch*/
+    .loc_switchModal {
+        display: none;
+        font-family: open sans;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+    }
 .display-flex{
     display:flex;
 }
@@ -838,7 +855,41 @@ outline:none;
     .appdash_obj_container .objitems .object_container:hover {
         background-color: #f3f8ff;
     }
-
+.newObjectmdl .eb-newobj-mdlbdy {
+    display: flex;
+    flex-flow: row wrap;
+}
+    .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile {
+        padding: 5px;
+        width: 16.6%;
+    }
+    .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner {
+        border: 1px solid #ccc;
+        display: flex;
+        flex-flow: column;
+        text-align: center;
+        padding: 15px 5px;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+    }
+        .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner:hover {
+            background-color: #508bf9;
+            color:white;
+        }
+        .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner .icon {
+            font-size: 25px;
+            color: #5388ea;
+            padding: 10px 0;
+        }
+        .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner:hover .icon {
+            color: white;
+        }
+        .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner .name {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content:center;
+        }
 /*marker for export*/
 .ExportMark {
     position: absolute;

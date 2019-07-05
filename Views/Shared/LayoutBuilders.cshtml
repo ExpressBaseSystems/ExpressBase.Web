@@ -40,11 +40,11 @@
     @* EB CSS *@
     <link rel="stylesheet" type="text/css" href="~/css/GridStackStyle.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd />
-    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version=@bApnd />@*amal*@
+    <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.css" asp-append-version=@bApnd />@*amal*@
     <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version=@bApnd />
     <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version=@bApnd />@*amal*@
     <link rel="stylesheet" href="~/css/Eb.css" asp-append-version=@bApnd />@*jith*@
-    <link rel="stylesheet" href="~/css/EbOnBoarding/eb-assets.style.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/EbCommonStyles/eb-assets.style.css" asp-append-version=@bApnd />
     <link href="~/css/EbControls/EbFileUpload.css" asp-append-version=@bApnd rel="stylesheet" />@*amal*@
     <link href="~/css/EbControls/EbDialogBox.css" asp-append-version=@bApnd rel="stylesheet" />@*amal*@
     <link href="~/css/EbControls/EbFupFormControl.css" asp-append-version=@bApnd rel="stylesheet" />@*amal*@
@@ -55,10 +55,6 @@
     <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/jquery.fontselect.min.js" asp-append-version=@bApnd></script>
-
-
-
-    <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
 
     @* BOOTSTRAP JS *@
     <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
@@ -94,8 +90,11 @@
     <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>
     <script type="text/javascript" src="~/js/FormBuilder/MultiLanguage.js"></script>
     @* EB JS *@
+
+    <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
     <script src="~/js/EbControls/EbProgressBar.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
-    <script src="~/js/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbControls/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbControls/EbPopBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="~/js/Eb_FontEditor.js" asp-append-version=@bApnd></script>
     <script src="~/js/EbServerEvents/ServerEvents.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
@@ -140,68 +139,93 @@
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     }
-    <script>
-    window.ebcontext= {
-        sid: "@ViewBag.cid",
-        user: ("@ViewBag.UserObject"!= "")?JSON.parse('@Html.Raw(ViewBag.UserObject)'):null,
-        menu: {}
+    @if (IsSectionDefined("StyleSheet"))
+    {
+        @RenderSection("StyleSheet")
     }
+    @if (IsSectionDefined("JavaScript"))
+    {
+        @RenderSection("JavaScript")
+    }
+    <script>
+        var _uo = @Html.Raw(@ViewBag.UserObject);
+        window.ebcontext= {
+            sid: "@ViewBag.cid",
+            user: _uo || null,
+            menu: {},
+            locations: {}
+        }
     </script>
 </head>
 <body>
-    @if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-    {
-        Html.RenderPartial("EbQuickMenu");
-    }
-    <div id="tenatDtls" class="container-fluid">
-
-        @if (ViewBag.wc == "uc")
-        {
-            <div class="loc_switchModal_fade"></div>
-            <div class="loc_switchModal" id="loc_switchModal">
-                <div class="loc_switchModal_outer">
-                    <div class="loc_switchModal_box">
-                        <div class="locs_head">
-                            <h4>Switch Location</h4>
-                            <div class="loc_searchInput w-100">
-                                <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
+    <div class="html-root">
+        @{
+            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+            {
+                <div id="eb-common-menu">
+                    @{ Html.RenderPartial("EbQuickMenu");}
+                </div>
+            }
+            if (ViewBag.wc == "uc")
+            {
+                <div id="eb-locswitch_wraper">
+                    <div class="loc_switchModal_fade"></div>
+                    <div class="loc_switchModal" id="loc_switchModal">
+                        <div class="loc_switchModal_outer">
+                            <div class="loc_switchModal_box">
+                                <div class="locs_head">
+                                    <h4>Switch Location</h4>
+                                    <div class="loc_searchInput w-100">
+                                        <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
+                                    </div>
+                                </div>
+                                <div class="locs_bdy"></div>
+                                <div class="locs_foot">
+                                    <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
+                                </div>
+                                <div class="no_loc_config">No Locations.</div>
                             </div>
                         </div>
-                        <div class="locs_bdy"></div>
-                        <div class="locs_foot">
-                            <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
-                        </div>
-                        <div class="no_loc_config">No Locations.</div>
                     </div>
                 </div>
-            </div>
+            }
         }
+        <div id="layout_div" class="container-fluid html-root-layout">
+            @RenderBody()
+        </div>
     </div>
-    <div id="layout_div" class="container-fluid main-cont">
-        @RenderBody()
-    </div>
+
+    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
+    {
+        <script>
+            window.ebcontext.menu = new EbMenu({
+                Console: '@ViewBag.wc',
+                Sid: '@ViewBag.cid',
+                Uid: '@ViewBag.UId'
+            });
+        </script>
+    }
+    @if (ViewBag.wc == "uc")
+    {
+        <script>
+            let loc__ = new LocSwitch({
+                Location: '@Html.Raw(ViewBag.Locations)',
+                Tid: '@ViewBag.cid',
+                Uid:'@ViewBag.UId',
+                Current:@ViewBag.CurrentLocation
+            });
+            window.ebcontext.locations = loc__;
+            //loc__.Listener.ChangeLocation = function (o) {
+            //    console.error(o);
+            //}
+        </script>
+    }
+    <script>
+        $('.Eb_Image').Lazy();
+    </script>
+    @if (IsSectionDefined("JsCode"))
+    {
+        @RenderSection("JsCode")
+    }
 </body>
 </html>
-<script>
-    window.ebcontext.menu = new EbMenu({
-        Console: '@ViewBag.wc',
-        Sid: '@ViewBag.cid',
-        Uid: '@ViewBag.UId'
-    });
-    $('.Eb_Image').Lazy();
-</script>
-
-@if (ViewBag.wc == "uc")
-{
-    <script>
-        let loc__ = new LocSwitch({
-            Location: '@Html.Raw(ViewBag.Locations)',
-            Tid: '@ViewBag.cid',
-            Uid:'@ViewBag.UId',
-            Current:@ViewBag.CurrentLocation
-        });
-        //loc__.Listener.ChangeLocation = function (o) {
-        //    console.error(o);
-        //}
-    </script>
-}

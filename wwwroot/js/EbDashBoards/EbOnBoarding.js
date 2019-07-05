@@ -8,50 +8,31 @@ var EbOnBoarding = function () {
     this.submitProfile = function (e) {
         e.preventDefault();
         let info = this.validate();
-        let svbtn = $(".save-tenant");
 
         if (info) {
-            {
-                $.ajax({
-                    type: 'POST',
-                    url: "../Ext/Board",
-                    beforeSend: function () {
-                        $(".iconspin").addClass("fa fa-spinner fa-pulse")
-                        $("#save-profile").prop('disabled', true);
-                        $(".commonLoader").EbLoader("show");
-                    },
-                    data: {
-                        email: $("#email").val().trim(),
-                        name: $("#name").val().trim(),
-                        country: $("#country option:selected").text().trim(),
-                        account: $("input[name='account_typ']:checked").val().trim(),
-                        password: $("#inputPassword").val().trim()
-                    }
-                }).done(function (data) {
-                    $(".commonLoader").EbLoader("hide");
-                    if (data.id > 0) {
-                        location.href = "/MySolutions";
-                    }
-                    else {
-                        if (data.isEmailUniq == false) {
-                            EbMessage("show", { Message: "Mail id already exists", Background: 'red' });
-                            $(".iconspin").removeClass("fa fa-spinner fa-pulse");
-                            $("#save-profile").prop('disabled', false);
-                        }
-                        else {
-                            if (data.AccountCreated == false) {
-                                EbMessage("show", { Message: "Cannot Create Account ", Background: 'red' });
-                                $(".iconspin").removeClass("fa fa-spinner fa-pulse");
-                                $("#save-profile").prop('disabled', false);
-                            }
-                        }
-                    }
+            $.ajax({
+                type: 'POST',
+                url: "../Ext/Board",
+                beforeSend: function () {
+                    $(".commonLoader").EbLoader("show");
+                },
+                data: {
+                    email: $("#email").val().trim(),
+                    name: $("#name").val().trim(),
+                    country: $("#country option:selected").text().trim(),
+                    account: $("input[name='account_typ']:checked").val().trim(),
+                    password: $("#inputPassword").val().trim()
+                }
+            }).done(function (data) {
+                $(".commonLoader").EbLoader("hide");
+                if (data.id > 0) {
+                    location.href = "/MySolutions";
+                }
+            }.bind(this));
+        }
 
-                }.bind(this));
-            }
+    };
 
-        };
-    }
     this.validate = function () {
         let sts = true
         let pass = $('#inputPassword').val();
@@ -72,7 +53,7 @@ var EbOnBoarding = function () {
             $("#passlbl").focusout();
         } else {
             $('#passlbl').text("Enter strong password");
-            $("#passlbl").css({ 'color': '#a94442' });
+            $("#passlbl").css({ 'color': 'red' });
             $("#inputPassword").focus();
             $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
             sts = false;
@@ -100,7 +81,6 @@ var EbOnBoarding = function () {
             sts = false;
         }
         else {
-             $('#name').removeClass('txthighlightred').addClass('txthighlight');
             $("#namelbl").css("visibility", "hidden");
         }
 
@@ -164,7 +144,7 @@ var EbOnBoarding = function () {
         //let k = $('input[name=selector]:checked').attr("id");
         //let k = e.target.children[0].id;
 
-        $("#rcorners1").css("display", "block");
+        $("#rcorners1").css("visibility", "visible");
         $("#s-option").removeAttr("checked");
         $("#t-option").prop('checked', true);
     }
@@ -187,21 +167,6 @@ var EbOnBoarding = function () {
             $('#email').removeClass('txthighlightred').addClass('txthighlight');
         }
     }
- this.Namevalidate = function () {
- let name = $("#name").val();
-        let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
-        if ((name.length == 0) || (u.test(name) == false)) {
-            $("#namelbl").css("visibility", "visible");
-            $("#namelbl").show();
-            $("#name").focus();
-            $('#name').removeClass('txthighlight').addClass('txthighlightred');
-            sts = false;
-        }
-        else {
-             $('#name').removeClass('txthighlightred').addClass('txthighlight');
-            $("#namelbl").css("visibility", "hidden");
-        }
-}
 
     this.Countryselect = function () {
         if ($("#country option:selected").val() == 0) {
@@ -218,11 +183,10 @@ var EbOnBoarding = function () {
     }
 
     this.init = function () {
-        $(".save-tenant").on("click", this.submitProfile.bind(this));
+        $("#save-profile").on("click", this.submitProfile.bind(this));
         $("#radio1").on("click", this.selradiofirstfn.bind(this));
         $("#radio2").on("click", this.selradiosecfn.bind(this));
         $("#email").on("keyup", this.Emailvalidate.bind(this));
-        $("#name").on("keyup", this.Namevalidate.bind(this));
         $("#country").on("click", this.Countryselect.bind(this));
     };
     this.init();
@@ -250,14 +214,14 @@ var PasswordValidation = function () {
     }
 
     this.Psdinfofn = function () {
-        $("#rcorners1").css("display", "block");
+        $("#rcorners1").css("visibility", "visible");
 
     }
     this.hidePasswordInfo = function () {
-        $("#rcorners1").css("display", "none");
+        $("#rcorners1").css("visibility", "hidden");
     }
     this.hidePasswordInfo1 = function () {
-        $("#rcorners1").css("display", "none");
+        $("#rcorners1").css("visibility", "hidden");
     }
     this.repeatpasswordcheck = function () {
         let pass = $('#inputPassword').val();
@@ -334,7 +298,7 @@ var PasswordValidation = function () {
 
         if (pass.length < 8) {
             $('#passlbl').text("Enter Strong password");
-            $("#passlbl").css({ 'color': '#a94442' });
+            $("#passlbl").css({ 'color': 'red' });
             $("#psdinfo1").css({ 'color': '#cf4f4f' });
             $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
             $("#inputPassword").focus();
@@ -349,7 +313,7 @@ var PasswordValidation = function () {
                 $('#inputPassword').removeClass('txthighlightred').addClass('txthighlight');
             } else {
                 $('#passlbl').text("Enter Strong password");
-                $("#passlbl").css({ 'color': '#a94442' });
+                $("#passlbl").css({ 'color': 'red' });
                 $("#psdinfo1").css({ 'color': '#cf4f4f' });
                 $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
                 $("#inputPassword").focus();
@@ -357,9 +321,9 @@ var PasswordValidation = function () {
                 st = false;
             }
         }
-        $("#rcorners1").css("display", "block");
+        $("#rcorners1").css("visibility", "visible");
         if (st == true) {
-            $("#rcorners1").css("visibility", "none");
+            $("#rcorners1").css("visibility", "hidden");
         }
         return st;
 

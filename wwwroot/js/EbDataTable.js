@@ -3320,7 +3320,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
         this.linkDV = $(e.target).closest("a").attr("data-link");
-        var idx = this.Api.row($(e.target).parent().parent()).index();
+        var idx = this.Api.row($(e.target).parents().closest("td")).index();
         if (typeof (idx) !== "undefined")
             //this.rowData = this.Api.row(idx).data();
             this.rowData = this.unformatedData[idx];

@@ -692,7 +692,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
-[singleselect="true"] .dropdown-toggle.clearfix {
+.dropdown-toggle.clearfix {
     width: 100%;
 }
 

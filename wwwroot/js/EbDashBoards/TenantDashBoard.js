@@ -1,7 +1,7 @@
 ﻿var TenantDashBoard = function () {        
     this.goToSolutionWindow = function (e) {
-        var console = $(e.target).closest(".btn").attr("wc");
-        var sid = $(e.target).closest(".btn").attr("sid");
+        var console = $(e.target).closest(".sso-btn").attr("wc");
+        var sid = $(e.target).closest(".sso-btn").attr("sid");
         var tk = getTok();
         var rtk = getrToken();
         var form = document.createElement("form");

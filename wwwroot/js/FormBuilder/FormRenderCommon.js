@@ -37,7 +37,7 @@
     };
 
 
-    this.bindFnsToCtrl= function (Obj) {
+    this.bindFnsToCtrl = function (Obj) {
         if (Obj.Required)
             this.bindRequired(Obj);
         if (Obj.Unique)
@@ -46,6 +46,8 @@
             this.bindOnChange(Obj);
         if (Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
+        if (Obj.IsDisable)// should move
+            Obj.disable();
     };
 
     this.bindValidators = function (control) {
@@ -65,21 +67,16 @@
     };
 
     this.bindOnChange = function (control) {
-        if (control.IsDisable)
-            control.disable();
-        if (control.OnChangeFn.Code.trim() !== "" && control.OnChangeFn.Code.trim() !== null) {
-            try {
-                let FnString = `console.log('${control.__path || control.Name}');` + atob(control.OnChangeFn.Code) + (control.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
-                let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
-                control.__onChangeFn = onChangeFn;
-                control.bindOnChange(onChangeFn);
-            } catch (e) {
-                console.eb_log("eb error :");
-                console.eb_log(e);
-                alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
-            }
+        try {
+            let FnString = `console.log('${control.__path || control.Name}');` + atob(control.OnChangeFn.Code) + (control.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
+            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+            control.__onChangeFn = onChangeFn;
+            control.bindOnChange(onChangeFn);
+        } catch (e) {
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
         }
-
     };
 
     this.setUpdateDependentControlsFn = function () {

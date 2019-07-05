@@ -852,7 +852,9 @@ namespace ExpressBase.Web.Controllers
                 {
                     ApiKey = req["ApiKey"],
                     NickName = req["NickName"],
-                    Id = Convert.ToInt32(req["Id"])
+                    Id = Convert.ToInt32(req["Id"]),
+                    MapType=MapType.COMMON,
+                    Vendor=MapVendors.GOOGLEMAP
             };
                 res = this.ServiceClient.Post<AddGoogleMapResponse>(new AddGoogleMapRequest { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
@@ -906,7 +908,7 @@ namespace ExpressBase.Web.Controllers
                     Id = Convert.ToInt32(req["Id"]),
                     ConfigId = Convert.ToInt32(req["ConfId"]),
                     Preference = Enum.Parse<ConPreferences>(req["Preference"].ToString()),
-                    Type = Enum.Parse<EbConnections>(req["Type"].ToString())
+                    Type = Enum.Parse<EbConnectionTypes>(req["Type"].ToString())
                 };
                 res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = _obj, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
@@ -1008,10 +1010,10 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public void ConnectionsHelper()
-        {
-            _GetConectionsResponse res = ServiceClient.Get<_GetConectionsResponse>(new _GetConectionsRequest { });
-        }
+        //public void ConnectionsHelper()
+        //{
+        //    _GetConectionsResponse res = ServiceClient.Get<_GetConectionsResponse>(new _GetConectionsRequest { });
+        //}
     }
 }
 

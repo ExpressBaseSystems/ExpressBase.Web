@@ -37,6 +37,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MySolutions")]
         public IActionResult TenantDashboard()
         {
+            ViewBag.Title = "MySolutions";
             ViewBag.AppType = TempData["apptype"];
             ViewBag.IsSSO = TempData["SSO"];
             ViewBag.Msg = TempData[Msg];
@@ -95,9 +96,11 @@ namespace ExpressBase.Web.Controllers
         //    return res;
         //}
 
+        [HttpGet("NewSolution")]
         [EbBreadCrumbFilter("MySolutions/NewSolution", new string[] { "/MySolutions" })]
         public IActionResult CreateSolution()
         {
+            ViewBag.Title = "New Solution";
             return View();
         }
 

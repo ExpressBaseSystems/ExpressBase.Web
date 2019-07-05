@@ -32,7 +32,7 @@
                         <label class="label-font-sub">Number of Users</label>
                         <input type="number" class="text-input" name="usr" id="usr" placeholder="5" min="5" onchange="calculateAmt()" onkeyup="calculateAmt()" required />
                     </div>
-                    <div id="div-total" class="div-input" style="display:none;">
+                    <div id="div-total" class="div-input">
                         <label class="label-total label-total-main-title">Total</label>
                         <label class="label-total label-total-content" id="total-content" name="total-content"></label>
                         <label class="label-total label-total-main" name="total" id="total"></label>
@@ -44,7 +44,8 @@
                 </div>
                 <form id="payment-form" action="/Stripe/Index" method="post" autocomplete="off" style="display: none;">
                     <div class="form-style-sub form-style-padding">
-                       
+                        <input type="hidden" id="tot" name="tot" />
+                        <input type="hidden" id="usrno" name="usrno" />
                         <div class="div-input div-input-border">
                             <label class="label-font">Name</label>
                             <input type="text" class="text-input" name="name" id="name" placeholder="Jenny Rosen" required />

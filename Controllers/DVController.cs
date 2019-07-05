@@ -72,6 +72,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.DvList = JsonConvert.SerializeObject(resultlist.DvList);
             ViewBag.DvTaggedList = JsonConvert.SerializeObject(resultlist.DvTaggedList);
             ViewBag.TypeRegister = _jsResult.TypeRegister;
+            ViewBag.MapApiKey = this.ServiceClient.Get<string>(new GetDefaultMapApiKeyFromConnectionRequest());
             return View();
         }
 
@@ -81,6 +82,7 @@ namespace ExpressBase.Web.Controllers
             string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
             return RedirectToAction("dv", new { refid = _refid, rowData = "", filterValues = returnValue, tabNum = 0 });
         }
+
         public IActionResult dvCommon(string dvobj, string dvRefId, bool _flag, string wc, string contextId, bool customcolumn, string _curloc, string submitId)
         {
             EbDataVisualization dvObject = EbSerializers.Json_Deserialize(dvobj);
@@ -193,7 +195,7 @@ namespace ExpressBase.Web.Controllers
 
         public object ExecuteTreeUpdate(string sql)
         {
-            var resultlist = this.ServiceClient.Get<UpdateTreeColumnResponse>(new UpdateTreeColumnRequest { sql = sql});
+            var resultlist = this.ServiceClient.Get<UpdateTreeColumnResponse>(new UpdateTreeColumnRequest { sql = sql });
             return new object();
         }
         //[HttpPost]//copied to boti - febin
@@ -250,41 +252,51 @@ namespace ExpressBase.Web.Controllers
         //copied to boti - febin
         public DataSourceDataResponse getData(TableDataRequest request)
         {
-            if (request.DataVizObjString != null)
-                request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
-            if (request.CurrentRowGroup != null)
-                (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
-            request.DataVizObjString = null;
-            request.UserInfo = this.LoggedInUser;
-            if (request.TFilters != null)
-            {
-                foreach (TFilters para in request.TFilters)
-                {
-
-                    if (para.Type == "date")
-                    {
-                        para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
-                    }
-                    //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
-                }
-            }
-            DataSourceDataResponse resultlist1 = null;
             try
             {
-                this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
-                resultlist1 = this.ServiceClient.Post(request);
+                request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                if (request.DataVizObjString != null)
+                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+                if (request.CurrentRowGroup != null)
+                    (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
+                request.DataVizObjString = null;
+                request.UserInfo = this.LoggedInUser;
+                if (request.TFilters != null)
+                {
+                    foreach (TFilters para in request.TFilters)
+                    {
+
+                        if (para.Type == "date")
+                        {
+                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                        }
+                        //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
+                    }
+                }
+                DataSourceDataResponse resultlist1 = null;
+                try
+                {
+                    this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
+                    resultlist1 = this.ServiceClient.Post(request);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.ToString());
+                }
+                return resultlist1;
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: " + e.ToString());
+                Console.WriteLine("dvconroller getdata request Exception........." + e.StackTrace);
             }
-            return resultlist1;
+            return null;
         }
 
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)
         {
             InlineTableDataRequest request = new InlineTableDataRequest();
             request = _request;
+            request.eb_solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             if (request.DataVizObjString != null)
                 request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
             request.DataVizObjString = null;
@@ -318,7 +330,7 @@ namespace ExpressBase.Web.Controllers
             public List<EbObjectWrapper> DvTaggedList { get; set; }
         }
 
-             
+
         [HttpPost]
         public void exportToexcel(TableDataRequest req)
         {
@@ -339,17 +351,17 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception: " + e.ToString());
             }
-           
+
         }
-        
-       
+
+
         public IActionResult GetExcel(string refid, string filename)
         {
 
             var res = Redis.Get<byte[]>("excel" + refid);
             byte[] decompressedData = Decompress(res);
             Redis.Delete("excel" + refid);
-            return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",filename);
+            return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
 
         public static byte[] Decompress(byte[] data)
@@ -362,7 +374,7 @@ namespace ExpressBase.Web.Controllers
                 return resultStream.ToArray();
             }
         }
-       
+
     }
 
     public class ReturnColumns

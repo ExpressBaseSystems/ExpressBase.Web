@@ -60,7 +60,9 @@ $.fn.extend({
         });
     }
 });
+
 var default_colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC']
+
 var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
     this.label = label;
     this.data = data;
@@ -68,6 +70,7 @@ var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
     this.borderColor = borderColor;
     this.fill = fill;
 };
+
 var datasetObj4Pie = function (label, data, backgroundColor, borderColor, fill) {
     this.label = label;
     this.data = data;
@@ -106,11 +109,13 @@ var animateObj = function (duration) {
     };
 }
 
-var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [], TableId, zoomlevel;
+var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [], TableId, zoomlevel, MarkerLink, markerParams = [], Te_id, Usr_id, AutoZoom;
+
 var informaion = function (nam, val) {
     this.name = nam;
     this.value = val;
 }
+
 var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData, PGobj, TenantId, UserId) {
     this.propGrid = PGobj || null;
     this.EbObject = null;
@@ -824,6 +829,18 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 }
                 if (this.EbObject.Zoomlevel)
                     zoomlevel = this.EbObject.Zoomlevel;
+                else
+                    zoomlevel = 10;
+                AutoZoom = this.EbObject.AutoZoom;
+                MarkerLink = this.EbObject.MarkerLink;
+                if (this.EbObject.FormParameter.$values.length > 0) {
+                    let obj = this.EbObject.FormParameter.$values[0];
+                    $.each(this.data, function (k, value) {
+                        markerParams.push(new fltr_obj(obj.Type, obj.name, value[obj.data]));
+                    }.bind(this));
+                    Te_id = TenantId;
+                    Usr_id = UserId;
+                }
             }
 
         }
@@ -1408,154 +1425,95 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     this.start();
 };
 
+var EbGoogleMap = function (option) {
+    this.propGrid = null;
+    this.EbObject = null;
+};
+
 function initMap() {
-    var infowindow = new google.maps.InfoWindow();
-    var directionsService = new google.maps.DirectionsService();
-    var directionsDisplay = new google.maps.DirectionsRenderer();
-    var mid = Math.floor(Xlabel.length / 2);
-    var map = new google.maps.Map(document.getElementById('map' + TableId), {
-        zoom: zoomlevel || 5,
-        center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
-        gestureHandling: 'greedy'
-        // mapTypeId: google.maps.MapTypeId.ROADMAP
-    });
-    directionsDisplay.setMap(map);
-    var request = {
-        travelMode: google.maps.TravelMode.DRIVING
-    };
-    var marker, i;
-    for (i = 0; i < Xlabel.length; i++) {
-        var latlng = new google.maps.LatLng(Ylabel[i], Xlabel[i]);
-
-        marker = new google.maps.Marker({
-            position: latlng,
-            map: map,
-            label: markLabel[i],
+    if (Xlabel.length > 0) {
+        var infowindow = new google.maps.InfoWindow();
+        var directionsService = new google.maps.DirectionsService();
+        var directionsDisplay = new google.maps.DirectionsRenderer();
+        var bounds = new google.maps.LatLngBounds();
+        var mid = Math.floor(Xlabel.length / 2);
+        var map = new google.maps.Map(document.getElementById('map' + TableId), {
+            center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
+            gestureHandling: 'greedy'
+            // mapTypeId: google.maps.MapTypeId.ROADMAP
         });
+        if (!AutoZoom)
+            map.setZoom(zoomlevel);
+        directionsDisplay.setMap(map);
+        var request = {
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+        var marker, i;
+        for (i = 0; i < Xlabel.length; i++) {
+            var latlng = new google.maps.LatLng(Ylabel[i], Xlabel[i]);
 
-        if (i == 0) request.origin = marker.getPosition();
-        else if (i == Xlabel.length - 1) request.destination = marker.getPosition();
-        else {
-            if (!request.waypoints) request.waypoints = [];
-            request.waypoints.push({
-                location: marker.getPosition(),
-                stopover: true
+            marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                //label: markLabel[i]
+            });
+
+            if (i == 0) request.origin = marker.getPosition();
+            else if (i == Xlabel.length - 1) request.destination = marker.getPosition();
+            else {
+                if (!request.waypoints) request.waypoints = [];
+                request.waypoints.push({
+                    location: marker.getPosition(),
+                    stopover: true
+                });
+            }
+
+            var content = "", url ="";
+            $.each(Inform, function (k, obj) {
+                content += obj.value[i] + "</br>";
+            });
+            if (MarkerLink) {
+                url = `../webform/index?refid=${MarkerLink}&_params=${btoa(JSON.stringify([markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
+            }
+            if (content === "")
+                content = "no details";
+            infowindow.setContent(content);
+            infowindow.setOptions({ maxWidth: 200 });
+
+            google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infowindow) {
+                return function () {
+                    infowindow.setContent(content);
+                    infowindow.open(map, marker);
+                };
+            })(marker, content, infowindow));  
+
+            marker.addListener('click', function () {
+                if (url !== "")
+                    window.open(url, "_blank");
+            });
+            map.addListener('click', function () {
+                infowindow.close(map, marker);
+            });
+            if (AutoZoom)
+                bounds.extend(latlng);
+        }
+        if (showRoute) {
+            directionsService.route(request, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(result);
+                }
             });
         }
-
-        google.maps.event.addListener(marker, 'click', (function (marker, i) {
-            return function () {
-                var content = "";
-                $.each(Inform, function (k, obj) {
-                    content += obj.name + ":" + obj.value[i] + "</br>";
-                });
-                if (content === "")
-                    content = "no details";
-                infowindow.setContent(content);
-                infowindow.setOptions({ maxWidth: 200 });
-                infowindow.open(map, marker);
-            }
-        })(marker, i));
-
+        if (AutoZoom)
+            map.fitBounds(bounds);
     }
-    if (showRoute) {
-        directionsService.route(request, function (result, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-                directionsDisplay.setDirections(result);
-            }
-        });
+    else {
+        $(`#map${TableId}`).append("<div class='map_inner'>No Data Available</div>");
     }
-    //}
+    
 }
 
-{
-    //var eb_chart111 = function (EbObject, ssurl, data, tableId) {
-    //    this.data = data;
-    //    this.EbObject = EbObject;
-    //    //this.type = (this.EbObject.options === null || this.EbObject.options === undefined) ? "bar" : this.EbObject.options.type.trim().toLowerCase();
-    //    this.ssurl = ssurl;
-    //    this.chartJs = null;
-    //    this.tableId = tableId;
-    //    // functions
-
-    //    this.init = function () {
-    //        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1) {
-    //            $("#Toolbar").children(":not(.commonControls)").remove();
-    //            $("#content_" + this.tableId).append("<div id='graphcontainer_tab" + this.tableId + "'>" +
-    //                "<table>" +
-    //                "<tr>" +
-    //                "<td colspan=2>" +
-    //                "<div id=id='xy" + this.tableId + "' style='vertical-align: top;width: 300%;'> " +
-    //                "<div class='input-group' > " +
-    //                "<span class='input-group-addon' id='basic-addon3'> X - Axis</span> " +
-    //                "<div class='form-control' style='padding: 4px;height:33px' id='X_col_name" + this.tableId + "' ></div> " +
-    //                "</div> " +
-    //                "<div class='input-group' style='padding-top: 1px;'> " +
-    //                "<span class='input-group-addon' id='basic-addon3'> Y - Axis</span> " +
-    //                "<div class='form-control' style='padding: 4px;height:33px' id='Y_col_name" + this.tableId + "'></div> " +
-    //                "</div> " +
-    //                "</div> " +
-    //                "</td>" +
-    //                "</tr>" +
-    //                "<tr>" +
-    //                "<td>" +
-    //                "<div id='columns4Drag" + this.tableId + "' style='width:200px'> " +
-    //                "<div>" +
-    //                "<label class='nav-header disabled' > <center><strong>Columns</strong></center> <center><font size='1'>Darg n Drop to X or Y Axis</font></center></label> " +
-    //                "<input id='searchColumn" + this.tableId + "' type='text' class='form-control' placeholder='search for column'/>" +
-    //                "<ul class='list-group' style='height: 450px; overflow-y: auto;' ></ul> " +
-    //                "</div> " +
-    //                "</div> " +
-    //                "</td > " +
-    //                "<td>" +
-    //                //"<canvas id='myChart" + this.tableId + "' width='80%' height='auto' ></canvas> " +
-    //                "</td > " +
-    //                "</tr>" +
-    //                "</table>" +
-    //                "</div>");
-    //            this.createButtons();
-    //            this.chartJs = new Eb_chartJSgraph( this.data, this.EbObject, this.ssurl, tableId);
-    //        }
-    //    };
-
-    //    this.createButtons = function () {
-    //        $("#Toolbar").append("<label class='dvname' style='color: #333;'>" + this.EbObject.Name + "</label>" +
-    //            "<div class='dropdown' id='graphDropdown_tab" + this.tableId + "' style='display: inline-block;padding-top: 1px;'>" +
-    //            "<button class='tools dropdown-toggle' type='button' data-toggle='dropdown'>" +
-    //            "<span class='caret'></span>" +
-    //            "</button>" +
-    //            "<ul class='dropdown-menu'>" +
-    //            "<li><a href='#'><i class='fa fa-line-chart custom'></i> Line</a></li>" +
-    //            "<li><a href='#'><i class='fa fa-bar-chart custom'></i> Bar </a></li>" +
-    //            "<li><a href='#'><i class='fa fa-area-chart custom'></i> AreaFilled </a></li>" +
-    //            "<li><a href='#'><i class='fa fa-pie-chart custom'></i> pie </a></li>" +
-    //            "<li><a href='#'> doughnut </a></li>" +
-    //            "<li><a href='#'> map </a></li>" +
-    //            "</ul>" +
-    //            "</div>" +
-    //            "<button id='reset_zoom" + this.tableId + "' class='tools'>Reset zoom</button>" +
-    //            "<button id='btnColumnCollapse" + this.tableId + "' class='tools' style='display: inline-block;'>" +
-    //            "<i class='fa fa-cog' aria-hidden='true'></i>" +
-    //            "</button>");
-
-    //    };
-
-    //    this.drawGraphHelper = function (datain) {
-    //        this.chartJs.drawGraphHelper(datain);
-    //    }
-
-    //    this.init();
-    //}
+function someFunction(e){
+    alert("hhhhhh");
 }
-
-            //var tid = this.tableId;
-            //$.ajax({
-            //    type: "GET",
-            //    url: "../DV/dvgoogle",
-            //    success: function (text) {
-            //        $("#canvasDiv" + tid).children("iframe").remove();
-            //        $("#myChart" + tid).remove();
-            //        //$("#graphcontainer_tab" + current.tableId).children("table").css("display", "none");
-            //        $("#canvasDiv" + tid).append(text);
-            //    }
-            //});

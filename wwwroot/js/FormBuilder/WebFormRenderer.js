@@ -61,23 +61,13 @@ const WebFormRender = function (option) {
     };
 
     this.setFormObject = function () {
-        let flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
-        $.each(flatControlsWithDG, function (i, ctrl) {
+        this.flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
+        $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
         this.setFormObjectMode();
-
-        this.formObject.updateDependentControls = function (curCtrl) {
-            $.each(curCtrl.DependedValExp.$values, function (i, ctrl) {
-                let form = this.formObject;
-                let depCtrl = eval(ctrl);
-                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                if (valExpFnStr) {
-                    depCtrl.setValue(new Function("form", "user", `event`, valExpFnStr).bind(ctrl, this.formObject, this.userObject)());
-                }
-
-            }.bind(this));
-        }.bind(this);
+        this.FRC.setUpdateDependentControlsFn();
+        
 
         return this.formObject;
     };
@@ -98,14 +88,8 @@ const WebFormRender = function (option) {
     };
 
     this.initNCs = function () {
-        let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
-        $.each(allFlatControls, function (k, Obj) {
-            this.updateCtrlUI(Obj);
-        }.bind(this));
-
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
-
             if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
@@ -113,12 +97,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-
             this.initControls.init(Obj, opt);
-
-            this.FRC.bindFnsToCtrl(Obj);
-
-            this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 
@@ -143,14 +122,27 @@ const WebFormRender = function (option) {
 
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
+        this.updateCtrlsUI();
+        this.initNCs();// order 1
+        this.FRC.setDefaultvalsNC(this.flatControls);// order 2
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
-        this.initNCs();
+
+
+        this.FRC.fireInitOnchangeNC();
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
             this.FRC.bindOnChange(_DG);
+        }.bind(this));
+    };
+
+    this.updateCtrlsUI = function () {
+        let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
         }.bind(this));
     };
 

@@ -5,7 +5,10 @@
     @using ExpressBase.Objects.ServiceStack_Artifacts;
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
+
+@section JavaScript{
+    <script src="~/js/EbDashBoards/SolutionDashBoard.js" type="text/javascript"></script>
+}
 @{
     string proto = string.Empty;
 
@@ -63,7 +66,7 @@
         margin-top: 4px;
     }*/
 </style>
-<div class="row s-dash-container">
+<div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
@@ -101,10 +104,10 @@
         </div>
     </div>
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-9 pd-0">
                 <h4 class="mr-t-0 mr-0">@ViewBag.Connections.SolutionInfo.SolutionName</h4>
-                <p class="small mr-0">@ViewBag.Connections.SolutionInfo.EsolutionId Created on @ViewBag.Connections.SolutionInfo.DateCreated</p>
+                <p class="small mr-t-10 mr-b-0">Created on @ViewBag.Connections.SolutionInfo.DateCreated</p>
                 <p class="small mr-0">
                     @ViewBag.Connections.SolutionInfo.Description
                 </p>
@@ -114,7 +117,7 @@
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="dc" />
-                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="dc">
+                    <button class="ebbtn eb_btnwhite eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="dc">
                         <i class="fa fa-wrench"></i> Dev Home
                     </button>
                 </form>
@@ -122,25 +125,33 @@
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="uc" />
-                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="uc">
+                    <button class="ebbtn eb_btnblue eb_btn-sm pull-right" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="uc">
                         <i class="fa fa-user-o" aria-hidden="true"></i> User Home
                     </button>
                 </form>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <ul class="nav nav-tabs" role="tablist">
+            <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
-                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">General</a>
+                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">
+                        <i class="fa fa-home"></i> 
+                        General
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">Connection Manager</a>
+                    <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">
+                        <i class="fa fa-plug"></i> 
+                        Connection Manager
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#team" role="tab">Team</a>
+                    <a class="nav-link" data-toggle="tab" href="#team" role="tab">
+                        <i class="fa fa-users"></i> Team</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#billing" role="tab">Billing</a>
+                    <a class="nav-link" data-toggle="tab" href="#billing" role="tab">
+                        <i class="fa fa-usd"></i> Billing</a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -157,15 +168,17 @@
                 </div>
                 <div class="tab-pane" id="Integrations" role="tabpanel">
                     <div class="col-md-12 pd-0">
-                        <ul class="nav nav-tabs chormer-effect" role="tablist">
+                        <ul class="nav nav-tabs tab-inside-tab chormer-effect" role="tablist">
                             <li class="nav-item active">
-                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">New Connections</a>
+                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">
+                                <i class="fa fa-plus-square"></i> New Connections</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">My Connections</a>
+                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">
+                                <i class="fa fa-list"></i> My Connections</a>
                             </li>
                         </ul>
-                        <div class="tab-content">
+                        <div class="tab-content" style="padding:10px 0">
                             <div class="tab-pane active" id="Integration" role="tabpanel">
                                 <div class="eb_connection_wrapper flex-container">
                                     <div class="connection_wrap_outer   db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" id="Postgres" data-whatever="PGSQL">
@@ -173,9 +186,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/POSTGRES.png" align="middle" style="width:63%" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
                                                 </div>
                                             </div>
                                         </div>
@@ -185,33 +196,27 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/mysql.png" align="middle" style="width:70%" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="ORACLE">
+                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit"*@ data-whatever="ORACLE">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/oracle.png" style="width:70%" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MSSQL">
+                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit"*@ data-whatever="MSSQL">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -221,9 +226,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/MongodB.png" style="width:50%; margin:auto;" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -233,9 +236,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/cloudnary.png" style="width:75%" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
                                                 </div>
                                             </div>
                                         </div>
@@ -245,9 +246,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="EmailConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/svg/email.svg" style="width:47%" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -257,9 +256,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="TwilioConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/twilio.png" style="width:95%" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
                                                 </div>
                                             </div>
                                         </div>
@@ -269,9 +266,17 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="ExpertTextingConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/expert texting.png" style="width:85%" />
                                                 <div class="image-add">
-                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add
-                                                    </button>
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="maps" class="connection_wrap_outer" data-toggle="modal" data-target="#MapConnectionEdit" data-whatever="Maps">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/maps-google.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -327,28 +332,6 @@
                                             </div>
                                             <div id="EbDATA" class="panel-collapse collapse">
                                                 <div id="EbDATA-All" class="panel-body">
-                                                    @*@{
-                                                        if (ViewBag.Connections.Integrations.ContainsKey("EbDATA"))
-                                                        {
-                                                            List<EbIntegrationData> Row = ViewBag.Connections.Integrations["EbDATA"];
-                                                            foreach (EbIntegrationData row in Row)
-                                                            {
-                                                                <div class="integrationContainer @string.Concat(row.Type, "edit")" data-whatever="@row.Type" datawhater="@row.Id">
-
-                                                                    <div class="integrationContainer_Image">
-                                                                        @Html.Raw(Image_url[row.Ctype])
-                                                                    </div>
-                                                                    <div id="nm" class="integrationContainer_NN">
-                                                                        <span>@row.NickName</span>
-                                                                        <span class="PF_span">PRIMARY</span>
-                                                                    </div>
-                                                                    <div id="nm" class="integrationContainer_caret-down">
-                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        }*@
-                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -448,7 +431,7 @@
                                                 </h4>
                                             </div>
                                             <div id="Cloudinary" class="panel-collapse collapse">
-                                                <div id="Cloudinary-all"class="panel-body">
+                                                <div id="Cloudinary-all" class="panel-body">
                                                     @*@{
                                                         if (ViewBag.Connections.Integrations.ContainsKey("Cloudinary"))
                                                         {
@@ -540,7 +523,7 @@
 
                 </div>
                 <div class="tab-pane" id="billing" role="tabpanel">
-                    @await Component.InvokeAsync("Stripe")
+                    @*@await Component.InvokeAsync("Stripe")*@
                 </div>
             </div>
         </div>
@@ -1085,14 +1068,55 @@
     </div>
 </div>
 
+<div id="MapConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="Map_mask">
+            <form action="" method="post" id="MapsConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Google Maps</h4>
+                    <div id="Map_loader" class="MapConnection_loder"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input name="MapVendor" type="hidden" value="GoogleMap" class="form-control Vendor" readonly />
+                            @* <input name="MongoId" type="hidden" />*@
+                            <div class="form-group">
+                                <label>Nick Name</label>
+                                <input id="MapInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>ApiKey</label>
+                                    <input id="MapInputApiKey" name="ApiKey" type="text" class="form-control Inputclear" required />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                    <input type="hidden" class="Inputclear IntConfId" id="MapInputIntConfId" name="Id" value="0" />
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary MapConnection">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <div class="eb-cropie" id="cropsection"></div>
-<script>
-    let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
-	var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId');
-	$("#no_user").change(function (e) {
-		$("#user_countForm").val(e.target.value);
-    });
+@section JsCode{
+    <script>
+        let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
+	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId');
+	    $("#no_user").change(function (e) {
+		    $("#user_countForm").val(e.target.value);
+        });
+    </script>
+}
 
-</script>

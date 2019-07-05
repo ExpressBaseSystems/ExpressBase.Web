@@ -4,6 +4,7 @@
 * EXPRESSbase Systems Pvt. Ltd, author: Jith Job
 */
 var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
+    console.log("Eb_FilterDialogRender ....");
     this.FormObj = fObj;
     this.submitId = submitId;
     this.formObject = {};
@@ -25,9 +26,12 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     }.bind(this);
 
     this.init = function () {
-        this.initFilterDialogCtrls();
         this.initFormObject2();
+        this.initFilterDialogCtrls();// order 1
+        this.FRC.setDefaultvalsNC(this.flatControls);// order 2
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
 
+        this.FRC.fireInitOnchangeNC();
         //this.bindFuncsToDom();
 
     };
@@ -46,8 +50,10 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.initControls.init(Obj, opt);
 
             this.FRC.bindFnsToCtrl(Obj);
+        }.bind(this));
 
-            this.FRC.fireInitOnchange(Obj);
+        $.each(this.FormObj.Controls.$values, function (k, Obj) {
+           this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 
@@ -58,13 +64,9 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     this.initFormObject2 = function () {
         $.each(this.FormObj.Controls.$values, function (k, cObj) {
             this.formObject[cObj.Name] = cObj;
-
-            Object.defineProperty(this.formObject, cObj.Name, {
-                get: function () {
-                    return cObj;
-                }.bind(this)
-            });
         }.bind(this));
+        //this.FRC.setUpdateDependentControlsFn();
+
     };
 
     this.initFormObject = function () {
@@ -127,34 +129,34 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     //    this.onChangeExeFuncs[name](this.formObject, userObj);
     //};
 
-    this.initialLoad = function () {
-        $.each(this.FormObj.Controls.$values, function (k, cObj) {
-            if (cObj.ObjType === 'RadioGroup' && cObj.OnChangeFn && cObj.OnChangeFn.Code && cObj.OnChangeFn.Code !== '') {
-                if (cObj.DefaultValue !== "")
-                    $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
-                else
-                    $("body input[name='" + cObj.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
-            }
-            else if (cObj.ObjType === 'UserLocation') {
-                if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
-                    $('#' + cObj.EbSid_CtxId + "_checkbox").trigger('click');
-                }
-                else {
-                    $('#' + cObj.EbSid_CtxId + "_checkbox_div").hide();
-                    if (wc === "dc")
-                        $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-                    else if (wc === "uc") {
-                        if (cObj.LoadCurrentLocation)
-                            $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + curloc + ']').trigger('click');
-                        else
-                            $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-                    }
-                }
-            }
-        });
-        //if (this.FormObj.Width > 150)
-        //    this.$filterBox.parent().css("width", this.FormObj.Width + "px");
-    };
+    //this.initialLoad = function () {
+    //    $.each(this.FormObj.Controls.$values, function (k, cObj) {
+    //        if (cObj.ObjType === 'RadioGroup' && cObj.OnChangeFn && cObj.OnChangeFn.Code && cObj.OnChangeFn.Code !== '') {
+    //            if (cObj.DefaultValue !== "")
+    //                $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
+    //            else
+    //                $("body input[name='" + cObj.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
+    //        }
+    //        else if (cObj.ObjType === 'UserLocation') {
+    //            if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+    //                $('#' + cObj.EbSid_CtxId + "_checkbox").trigger('click');
+    //            }
+    //            else {
+    //                $('#' + cObj.EbSid_CtxId + "_checkbox_div").hide();
+    //                if (wc === "dc")
+    //                    $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+    //                else if (wc === "uc") {
+    //                    if (cObj.LoadCurrentLocation)
+    //                        $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + curloc + ']').trigger('click');
+    //                    else
+    //                        $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+    //                }
+    //            }
+    //        }
+    //    });
+    //    //if (this.FormObj.Width > 150)
+    //    //    this.$filterBox.parent().css("width", this.FormObj.Width + "px");
+    //};
 
     //this.UserLocationCheckboxChanged = function (cObj) {
     //    if ($(event.target).prop("checked")) {

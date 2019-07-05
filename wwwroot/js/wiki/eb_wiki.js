@@ -1,6 +1,8 @@
 ﻿
 let addwiki = function () {
 
+    let historyId = [];
+
     this.printresult = function () {
         let abc = $('#text').val();
         $('#render').html(abc);
@@ -13,61 +15,120 @@ let addwiki = function () {
         $('.front_page_wiki').show();
     };
 
-    this.printval = function (e) {
-        let id = e.target.getAttribute('val');
-        let txt = 'text';
-        this.insertAtCaret(txt, id);
+
+    let start;
+    let end;
+    let id;
+
+    this.appendVal = function (e) {
+        document.getElementById('text');
+        let abc = window.getSelection().toString();
+       var ele = document.getElementById('text');
+        var text = ele.value;
+        start = ele.selectionStart;
+        end = ele.selectionEnd;
+        text = text.slice(0, start) + text.slice(end);
+        ele.value = text;
+
+        id = e.target.getAttribute('val');
+        if (id == `img` ||  id == `iframe`) {
+            let insertVal = `<${id} src=" "> </${id}>`
+            let txt = 'text';
+            if (abc == "") {
+                this.insertAtCaret(txt, insertVal);
+            }
+            else {
+                let insertVal = `<${id} src=''> ${abc} </${id}>`
+                this.insertAtCaret(txt, insertVal);
+            }
+        }
+        else if (id == `a`) {
+            let insertVal = `<${id} data-id=" " class="wikilist"> </${id}>`
+            let txt = 'text';
+            if (abc == "") {
+                this.insertAtCaret(txt, insertVal);
+            }
+            else {
+                let insertVal = `<${id} src=''> ${abc} </${id}>`
+                this.insertAtCaret(txt, insertVal);
+            }
+        }
+        else {
+            let insertVal = `<${id}> </${id}>`
+            let txt = 'text';
+            if (abc == "") {
+                this.insertAtCaret(txt, insertVal);
+            }
+            else {
+                let insertVal = `<${id}> ${abc} </${id}>`
+                this.insertAtCaret(txt, insertVal);
+            }
+        }
+      
     }
 
-    this.fetchwikilist = function (e) {
-        let id = e.target.getAttribute('id');
+    this.SelectInternalLink = function () {
+        $.contextMenu({
+            selector: '.InternalLinks',
+            trigger: 'left',
+            items: {
+                "edit": {
+                    name: "edit", icon: "edit", callback: this.editWiki.bind(this)
+                },
+                "publish": {
+                    name: "publish", icon: "cut", callback: this.PublishWiki.bind(this)
+                },
 
+            }
+        });
+    }
+
+    this.FetchWikiList = function (e) {
+        let id = e.target.getAttribute('data-id');
+        window.history.pushState('obj', 'PageTitle', `/publicwiki/docs/${id}`);
+        $(".wikilist").removeClass("CurrentSelection");
+        $(`#${id}`).addClass("CurrentSelection");
+        this.AjaxCalFetchWikiList(id);
+    }
+
+    this.AjaxCalFetchWikiList = function (id) {
         $.ajax({
             type: 'POST',
             url: "/PublicWiki/GetWiki",
             data: {
                 wiki_id: id
             },
-            success: function (ob) {
-                $('#wiki_data_div').show();
-                $("#wiki_data_div").scrollTop(0);
-                $('.edit').attr('href', '../wiki/add/' + ob.id);
-                $('.edit').attr('id', ob.id);
-                $(".facebook").removeAttr("href").attr("href", "https://www.facebook.com/share.php?u=http://myaccount.localhost:41500/publicwiki/view/" + id + "&title=" + ob.title);
-                $(".twitter").removeAttr("href").attr("href", "https://twitter.com/intent/tweet?status=" + ob.title + "http://myaccount.localhost:41500/publicwiki/view/" + id);
-                $(".linkedin").removeAttr("href").attr("href", "https://www.linkedin.com/shareArticle?mini=true&url=http://www.expressbase.com&title=LinkedIn%20Developer%20Network&summary=My%20favorite%20developer%20program&source=LinkedIn");
-                $(".whatsapp").removeAttr("href").attr("href", "https://wa.me/?text=http://myaccount.localhost:41500/publicwiki/view/" + id);
-                $(".pintrest").removeAttr("href").attr("href", "https://plus.google.com/share?url=http://myaccount.localhost:41500/publicwiki/view/" + id);
-                $('#wiki_data_div').html(ob.html).slideUp(10).slideDown(200).fadeIn(100);
-                //$('.edit').css('visibility', 'visible'); 
-                $('.front_page_wiki').hide();
-            }
+            success: this.FetchWikiListSuccess.bind(this, id)
         });
     }
 
-    this.wikisearch = function (e) {
-        let id = e.target.getAttribute('val');
-        $.ajax({
-            type: 'POST',
-            url: "/PublicWiki/GetWiki",
-            data: {
-                wiki_id: id
-            },
-            success: function (ob) {
-                $('#wiki_data_div').show();
-                $('.edit').attr('href', '../wiki/add/' + ob.id);
-                $('.edit').attr('id', ob.id);
-                $('#wiki_data_div').html(ob.html);
-                //$('.edit').css('visibility', 'visible'); 
-                $('.front_page_wiki').hide();
-            }
-        });
+    this.FetchWikiListSuccess = function (id,ob) {
+
+        $('#wiki_data_div').show();
+        $("#wiki_data_div").scrollTop(0);
+        $('.edit').attr('href', '../wiki/add/' + ob.id);
+        $('.edit').attr('id', ob.id);
+        
+        var url = window.location.href + "/" + id;
+        $(".facebook").removeAttr("href").attr("href", "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title);
+        $(".twitter").removeAttr("href").attr("href", "https://twitter.com/intent/tweet?status=" + url);
+        $(".linkedin").removeAttr("href").attr("href", `https://www.linkedin.com/shareArticle?mini=true&url= ${url}&title= ${ob.title}&summary=YourarticleSummary&source=www.expressbase.com`);
+        $(".whatsapp").removeAttr("href").attr("href", "https://wa.me/?text=" + url);
+
+        //let $tagDiv = $(`<div class="row"></div>`);
+        $('#wiki_data_div').html(ob.html).slideUp(10).slideDown(200).fadeIn(100);
+        var res = ob.tags.split(",");
+        for (var i = 0; i < res.length; i++) {
+            //$tagDiv.append(` <button class="SearchWithTag" tag-val="${res[i]}"> ${res[i]}</button>`);
+            $('#wiki_data_div').append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
+        }
+        $('.front_page_wiki').hide();
     }
 
-    this.search_wiki = function () {
+    this.WikiSearch = function () {
         let key = $('#search_wiki').val();
         if (key.length == 0) {
-
+            //$("wiki_data_div").show();
         }
         else if (key.length < 3) {
             $("#wiki_data_div").empty();
@@ -97,8 +158,8 @@ let addwiki = function () {
                     for (let i = 0; i < ob.length; i++) {
                         $("#wiki_data_div").show(500);
                         $('.front_page_wiki').hide(100);
-                        let $Report = $(`<div class="ex2"></div>`);
-                        $Report.append(`<a class="searchshow" id="${ob[i].id}"> ${ob[i].title} </a>`);
+                        let $Report = $(`<div class="searchDiv"></div>`);
+                        $Report.append(`<a class="searchshow" data-id="${ob[i].id}"> ${ob[i].title} </a>`);
                         $Report.append(` ${ob[i].html}`);      
                         $("#wiki_data_div").append($Report);          
                         $('#' + ob[i].id).attr('title', ob[i].category);
@@ -110,31 +171,31 @@ let addwiki = function () {
 
 
     this.insertAtCaret = function (areaId, text) {
-        let txtarea = document.getElementById(areaId);
+        var txtarea = document.getElementById(areaId);
         if (!txtarea) {
             return;
         }
 
-        let scrollPos = txtarea.scrollTop;
-        let strPos = 0;
-        let br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
+        var scrollPos = txtarea.scrollTop;
+        var strPos = 0;
+        var br = ((start || end == '0') ?
             "ff" : (document.selection ? "ie" : false));
         if (br == "ie") {
             txtarea.focus();
-            let range = document.selection.createRange();
+            var range = document.selection.createRange();
             range.moveStart('character', -txtarea.value.length);
             strPos = range.text.length;
         } else if (br == "ff") {
-            strPos = txtarea.selectionStart;
+            strPos = start;
         }
 
-        let front = (txtarea.value).substring(0, strPos);
-        let back = (txtarea.value).substring(strPos, txtarea.value.length);
+        var front = (txtarea.value).substring(0, strPos);
+        var back = (txtarea.value).substring(strPos, txtarea.value.length);
         txtarea.value = front + text + back;
         strPos = strPos + text.length;
         if (br == "ie") {
             txtarea.focus();
-            let ieRange = document.selection.createRange();
+            var ieRange = document.selection.createRange();
             ieRange.moveStart('character', -txtarea.value.length);
             ieRange.moveStart('character', strPos);
             ieRange.moveEnd('character', 0);
@@ -146,40 +207,76 @@ let addwiki = function () {
         }
 
         txtarea.scrollTop = scrollPos;
-        let data = this.format($("#text").val());
-        $('#text').val(data);
-
-
-    };
-
-
-    this.format = function (str) {
-        str = str.replace(/\n/g, "");
-        let div = document.createElement('div');
-        div.innerHTML = str.trim();
-
-        return this.formatHelper(div, 0).innerHTML;
     }
 
-    this.formatHelper = function (node, level) {
-        let indentBefore = new Array(level++ + 1).join('        '),
-            indentAfter = new Array(level - 1).join('  '),
-            textNode;
+    //this.insertAtCaret = function (areaId, text) {
+    //    let txtarea = document.getElementById(areaId);
+    //    if (!txtarea) {
+    //        return;
+    //    }
+    //    let scrollPos = txtarea.scrollTop;
+    //    let strPos = 0;
+    //    let br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
+    //        "ff" : (document.selection ? "ie" : false));
+    //    if (br == "ie") {
+    //        txtarea.focus();
+    //        let range = document.selection.createRange();
+    //        range.moveStart('character', -txtarea.value.length);
+    //        strPos = range.text.length;
+    //    } else if (br == "ff") {
+    //        strPos = txtarea.selectionStart;
+    //    }
 
-        for (let i = 0; i < node.children.length; i++) {
-            textNode = document.createTextNode('\n' + indentBefore);
-            node.insertBefore(textNode, node.children[i]);
+    //    let front = (txtarea.value).substring(0, strPos);
+    //    let back = (txtarea.value).substring(strPos, txtarea.value.length);
+    //    txtarea.value = front + text + back;
+    //    strPos = strPos + text.length;
+    //    if (br == "ie") {
+    //        txtarea.focus();
+    //        let ieRange = document.selection.createRange();
+    //        ieRange.moveStart('character', -txtarea.value.length);
+    //        ieRange.moveStart('character', strPos);
+    //        ieRange.moveEnd('character', 0);
+    //        ieRange.select();
+    //    } else if (br == "ff") {
+    //        txtarea.selectionStart = strPos;
+    //        txtarea.selectionEnd = strPos;
+    //        txtarea.focus();
+    //    }
 
-            this.formatHelper(node.children[i], level);
+    //    txtarea.scrollTop = scrollPos;
+    //    let data = this.format($("#text").val());
+    //    $('#text').val(data);
+    //};
 
-            if (node.lastElementChild == node.children[i]) {
-                textNode = document.createTextNode('\n' + indentAfter);
-                node.appendChild(textNode);
-            }
-        }
 
-        return node;
-    }
+    //this.format = function (str) {
+    //    str = str.replace(/\n/g, "");
+    //    let div = document.createElement('div');
+    //    div.innerHTML = str.trim();
+
+    //    return this.formatHelper(div, 0).innerHTML;
+    //}
+
+    //this.formatHelper = function (node, level) {
+    //    let indentBefore = new Array(level++ + 1).join('        '),
+    //        indentAfter = new Array(level - 1).join('  '),
+    //        textNode;
+
+    //    for (let i = 0; i < node.children.length; i++) {
+    //        textNode = document.createTextNode('\n' + indentBefore);
+    //        node.insertBefore(textNode, node.children[i]);
+
+    //        this.formatHelper(node.children[i], level);
+
+    //        if (node.lastElementChild == node.children[i]) {
+    //            textNode = document.createTextNode('\n' + indentAfter);
+    //            node.appendChild(textNode);
+    //        }
+    //    }
+
+    //    return node;
+    //}
 
 
     this.add_tag = function (e) {
@@ -188,18 +285,9 @@ let addwiki = function () {
         $("#view-tags").append("<label>" + tag + "</label>")
     }
 
-    this.display = function (e) {
+    this.WikiListToggle = function (e) {
         let id = e.target.getAttribute('val');
-        let temp = $("#" + id).val();
-        if (temp == "show") {
-            $("#" + id).val("hide");
-            $("#" + id).hide(200);
-        }
-        else {
-            $("#" + id).val("show")
-            $("#" + id).show(300);
-        }
-
+        $("#" + id).toggle(200);
     }
 
     this.render_page_toggle = function (e) {
@@ -418,7 +506,6 @@ let addwiki = function () {
                 $Form.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
             }
         }
-        //$Form.append(`<button class="UpdateOrder" update-val="Form"> update </button>`);
         $("#public").append($Form);
 
         $("#public").append(`<div class="WikiMenu" val="Report">  Report <div>`);
@@ -428,18 +515,16 @@ let addwiki = function () {
                 $Report.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
             }
         }
-        //$Report.append(`<button class="UpdateOrder" update-val="Report"> update </button> `);
         $("#public").append($Report);
 
 
-        //$("#public").append(`<div class="WikiMenu" val="API">  API <div>`);
+        $("#public").append(`<div class="WikiMenu" val="API">  API <div>`);
         let $API = $(`<ul data-val="API" class="dragable_wiki_list"  ></ul>`);
         for (let i = 0; i < ob.wikiList.length; i++) {
             if (ob.wikiList[i].category == "API") {
                 $API.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
             }
         }
-        //$API.append(`<button class="UpdateOrder" update-val="API"> update </button>`);
         $("#public").append($API);
 
         $("#public").append(`<div class="WikiMenu" val="Chatbots">  Chatbots <div>`);
@@ -449,7 +534,6 @@ let addwiki = function () {
                 $Chatbots.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title} </li>`);
             }
         }
-        //$Chatbots.append(`<button class="UpdateOrder" update-val="Chatbots"> update </button>`);
         $("#public").append($Chatbots);
 
         $("#public").append(`<div class="WikiMenu" val="Security">  Security <div>`);
@@ -459,7 +543,6 @@ let addwiki = function () {
                 $Security.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title} </li>`);
             }
         }
-        //$Security.append(`<button class="UpdateOrder" val="Security"> update </button>`);
         $("#public").append($Security);
 
         $("#public").append(`<div class="WikiMenu" update-val="AppStore">  App Store <div>`);
@@ -469,7 +552,6 @@ let addwiki = function () {
                 $AppStore.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title} </li>`);
             }
         }
-        //$AppStore.append(`<button class="UpdateOrder" update-val="AppStore"> update </button>`);
         $("#public").append($AppStore);
 
         $("#public").append(`<button class="UpdateOrder" update-val="AppStore"> update </button>`);
@@ -481,6 +563,9 @@ let addwiki = function () {
     this.draggableAppStore();
     $("#eb_common_loader").EbLoader("hide");
 }
+
+
+
 
     this.draggableForm = function () {
         $("[data-val=Form]").sortable();
@@ -522,8 +607,7 @@ let addwiki = function () {
                     name: "edit", icon: "edit", callback: this.editWiki.bind(this)
                 },
                 "publish": {
-                    name: "publish", icon: "cut", callback: this.PublishWiki.bind(this)
-                    
+                    name: "publish", icon: "cut", callback: this.PublishWiki.bind(this)   
                 },
                
             }
@@ -600,14 +684,12 @@ let addwiki = function () {
     this.UnpublishWiki = function (key, options) {
         let id = $(options.$trigger).attr("data-id");
         let status = $(options.$trigger).attr("val");
-
         $.ajax({
             type: 'POST',
             url: "/Wiki/Publish_wiki",
             data: {
                 wiki_id: id,
                 wiki_status: status
-
             },
             success: function (ob) {
                 if (ob.id != null) {
@@ -641,7 +723,7 @@ let addwiki = function () {
                         $("#eb_common_loader").EbLoader("hide");
                     }
                     else {
-                        alert("UnSuccess")
+                        alert("Un fSuccess")
                         $("#eb_common_loader").EbLoader("hide");
                     }
 
@@ -669,20 +751,42 @@ let addwiki = function () {
 
             });
     }
+
+    this.SearchWithTagFun = function (e) {
+        let val = e.target.getAttribute('val');
+        $("#search_wiki").val(val);
+        $("#search_wiki").focus();
+        $("#search_wiki").click();
+    }
+
+
+    this.HandleBackFunctionality = function() {
+        if (window.event) //Internet Explorer
+        {
+            alert("Browser back button is clicked on Internet Explorer...");
+        }
+        else //Other browsers e.g. Chrome
+        {
+            alert("Browser back button is clicked on other browser...");
+        }
+    }
+
     this.init = function () {
 
-        $(".props").on("click", this.printval.bind(this));
-        $(".wikilist").on("click", this.fetchwikilist.bind(this));
-        $("#wiki_data_div").on("click", ".searchshow" , this.fetchwikilist.bind(this));
-        $(".wikisearch").on("click", this.wikisearch.bind(this));
+        $(".props").on("click", this.appendVal.bind(this));
+        $(".wikilist").on("click", this.FetchWikiList.bind(this));
+       
+
+        $("#wiki_data_div").on("click", ".searchshow", this.FetchWikiList.bind(this));
         $("#text").on("keyup", this.printresult.bind(this));
+        $("#text").on("click", this.printresult.bind(this));
         $("#home").on("click", this.show_home.bind(this));
-        $("#search_wiki").on("keyup", this.search_wiki.bind(this));
-        $("#search_wiki").on("change", this.search_wiki.bind(this));
-        $("#search_wiki").on("click", this.search_wiki.bind(this));
-        $("#add_tag").on("click", this.add_tag.bind(this));
-        $(".menu").on("click", this.display.bind(this));
+        $("#search_wiki").on("keyup focus", this.WikiSearch.bind(this));
+        $(".menu").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
+        $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
+        $(".wiki_data").on("click", ".wikilist ", this.FetchWikiList.bind(this));
+
         //wiki admin
         $(".wikies_list").on("click", this.Admin_Wiki_List.bind(this));
         $("#public").on("click",".WikiMenu", this.WikiMenuToggle.bind(this));
@@ -693,3 +797,46 @@ let addwiki = function () {
 
     this.init();
 }
+
+$(function () {
+    /**************************************************
+     * Context-Menu with Sub-Menu
+     **************************************************/
+    $.contextMenu({
+        selector: '.context-menu-one',
+        callback: function (key, options) {
+            var m = "clicked: " + key;
+            window.console && console.log(m) || alert(m);
+        },
+        items: {
+            "edit": { "name": "Edit", "icon": "edit" },
+            "cut": { "name": "Cut", "icon": "cut" },
+            "sep1": "---------",
+            "quit": { "name": "Quit", "icon": "quit" },
+            "sep2": "---------",
+            "fold1": {
+                "name": "Sub group",
+                "items": {
+                    "fold1-key1": { "name": "Foo bar" },
+                    "fold2": {
+                        "name": "Sub group 2",
+                        "items": {
+                            "fold2-key1": { "name": "alpha" },
+                            "fold2-key2": { "name": "bravo" },
+                            "fold2-key3": { "name": "charlie" }
+                        }
+                    },
+                    "fold1-key3": { "name": "delta" }
+                }
+            },
+            "fold1a": {
+                "name": "Other group",
+                "items": {
+                    "fold1a-key1": { "name": "echo" },
+                    "fold1a-key2": { "name": "foxtrot" },
+                    "fold1a-key3": { "name": "golf" }
+                }
+            }
+        }
+    });
+});

@@ -72,6 +72,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.DvList = JsonConvert.SerializeObject(resultlist.DvList);
             ViewBag.DvTaggedList = JsonConvert.SerializeObject(resultlist.DvTaggedList);
             ViewBag.TypeRegister = _jsResult.TypeRegister;
+            ViewBag.MapApiKey = this.ServiceClient.Get<string>(new GetDefaultMapApiKeyFromConnectionRequest());
             return View();
         }
 
@@ -194,7 +195,7 @@ namespace ExpressBase.Web.Controllers
 
         public object ExecuteTreeUpdate(string sql)
         {
-            var resultlist = this.ServiceClient.Get<UpdateTreeColumnResponse>(new UpdateTreeColumnRequest { sql = sql});
+            var resultlist = this.ServiceClient.Get<UpdateTreeColumnResponse>(new UpdateTreeColumnRequest { sql = sql });
             return new object();
         }
         //[HttpPost]//copied to boti - febin
@@ -329,7 +330,7 @@ namespace ExpressBase.Web.Controllers
             public List<EbObjectWrapper> DvTaggedList { get; set; }
         }
 
-             
+
         [HttpPost]
         public void exportToexcel(TableDataRequest req)
         {
@@ -350,17 +351,17 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("Exception: " + e.ToString());
             }
-           
+
         }
-        
-       
+
+
         public IActionResult GetExcel(string refid, string filename)
         {
 
             var res = Redis.Get<byte[]>("excel" + refid);
             byte[] decompressedData = Decompress(res);
             Redis.Delete("excel" + refid);
-            return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",filename);
+            return File(decompressedData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
 
         public static byte[] Decompress(byte[] data)
@@ -373,7 +374,7 @@ namespace ExpressBase.Web.Controllers
                 return resultStream.ToArray();
             }
         }
-       
+
     }
 
     public class ReturnColumns

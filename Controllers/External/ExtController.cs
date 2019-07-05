@@ -419,17 +419,6 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
-        {
-            string url = string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token);
-            var req = WebRequest.Create(url);
-            var r = await req.GetResponseAsync().ConfigureAwait(false);
-            var responseReader = new StreamReader(r.GetResponseStream());
-            var responseData = await responseReader.ReadToEndAsync();
-            var d = Newtonsoft.Json.JsonConvert.DeserializeObject<Recaptcha>(responseData);
-            return d;
-        }
-
         public IActionResult SwitchContext()
         {
             Console.WriteLine("Inside Context Switch");
@@ -509,6 +498,89 @@ namespace ExpressBase.Web.Controllers
             }
 
             return false;
+        }
+
+        private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
+        {
+            string url = string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token);
+            var req = WebRequest.Create(url);
+            var r = await req.GetResponseAsync().ConfigureAwait(false);
+            var responseReader = new StreamReader(r.GetResponseStream());
+            var responseData = await responseReader.ReadToEndAsync();
+            var d = Newtonsoft.Json.JsonConvert.DeserializeObject<Recaptcha>(responseData);
+            return d;
+        }
+
+        private string WhichConsole(string subdomain)
+        {
+            string cid = string.Empty;
+            string console = string.Empty;
+            if(subdomain.Equals(RoutingConstants.MYACCOUNT))
+            {
+                cid = CoreConstants.EXPRESSBASE;
+                console = EbAuthContext.TenantContext;
+            }
+            else
+            {
+                if (subdomain.EndsWith(RoutingConstants.DASHBOT) || subdomain.EndsWith(RoutingConstants.DASHMOB) || subdomain.EndsWith(RoutingConstants.DASHDEV))
+                {
+                    cid = subdomain.Substring(0, subdomain.LastIndexOf(CharConstants.DASH));
+                    if (subdomain.EndsWith(RoutingConstants.DASHBOT))
+                        console = EbAuthContext.BotUserContext;
+                    else if (subdomain.EndsWith(RoutingConstants.DASHMOB))
+                        console = EbAuthContext.MobileUserContext;
+                    else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                        console = EbAuthContext.DeveloperContext;
+                    else
+                        console = EbAuthContext.WebUserContext;
+                }
+                else
+                {
+                    cid = subdomain;
+                    console = EbAuthContext.TenantContext;
+                }
+            }
+            ViewBag.cid = cid;
+            return console;
+        }
+
+        public async Task<IActionResult> Login()
+        {
+            HostString host = this.HttpContext.Request.Host;
+            string[] hostparts = host.Host.Split(CharConstants.DOT);
+            IFormCollection formData = this.HttpContext.Request.Form;
+            string console = this.WhichConsole(hostparts[0]);
+            string recaptch_tok = formData["g-recaptcha-response"];
+            Recaptcha captcharesp = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), recaptch_tok);
+
+            if (!captcharesp.Success)
+            {
+                if (console.Equals(EbAuthContext.TenantContext))
+                    return RedirectToAction(RoutingConstants.TENANTSIGNIN, captcharesp);
+                else
+                    return RedirectToAction(RoutingConstants.USERSIGNIN2UC, captcharesp);
+            }
+            else
+            {
+                MyAuthenticateResponse authResponse = null;
+                try
+                {
+                    string tenantid = ViewBag.cid;
+                    authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                    {
+                        provider = CredentialsAuthProvider.Name,
+                        UserName = formData["uname"],
+                        Password = (formData["pass"] + formData["uname"]).ToMD5Hash(),
+                        Meta = new Dictionary<string, string> { { RoutingConstants.WC, console }, { TokenConstants.CID, tenantid } },
+                        RememberMe = true
+                    });
+                }
+                catch(Exception e)
+                {
+
+                }
+            }
+            return View();
         }
 
         [HttpPost]

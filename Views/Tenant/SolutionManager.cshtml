@@ -46,6 +46,10 @@
     Image_url.Add("ExpertTexting", "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />");
     Image_url.Add("Twilio", "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />");
     Image_url.Add("SMTP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
+
+    <script>
+        const sid = '@ViewBag.cid';
+    </script>
 }
 <script>
     var cm = new EbHeader().setName("Solution Configuration");
@@ -491,7 +495,7 @@
 
                 </div>
                 <div class="tab-pane" id="billing" role="tabpanel">
-                    @*@await Component.InvokeAsync("Stripe")*@
+                    @await Component.InvokeAsync("Stripe",new { sid =ViewBag.cid })
                 </div>
             </div>
         </div>

@@ -7,9 +7,6 @@
     float:left;
     width:100%;
 }
-.create_loc_mod{
-    font-family:open sans;
-}
 .location_conf .btn_container {
     margin-bottom: 15px;
     width:100%;
@@ -47,7 +44,6 @@
 }
 /*billing*/
 .billing_wrap {
-    font-family: open sans;
     background-color: white;
     padding: 30px;
     border-radius: 4px;
@@ -464,12 +460,12 @@
         font-size: 20px;
     }
     .appcontainer_inner .appcontainer-body .title{
-        font-size:17px;
+        font-size:15px;
         font-weight:400;
         margin-bottom:5px;
     }
         .appcontainer_inner .appcontainer-body .description {
-            font-size:13px;
+            font-size:12px;
         }
 .txtdecor_none {
     text-decoration: none;
@@ -490,7 +486,6 @@
     /*locswitch*/
     .loc_switchModal {
         display: none;
-        font-family: open sans;
         position: fixed;
         width: 100%;
         height: 100%;
@@ -505,7 +500,6 @@
     min-width: 60%;
     display: flex;
     flex-direction: column;
-    font-family: open sans;
     border-radius: 6px;
     max-width: 60%;
 }
@@ -729,7 +723,6 @@ outline:none;
         font-weight: 400;
         color: #4d4a4e !important;
         background-color: transparent;
-        font-weight: 600;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -813,6 +806,7 @@ outline:none;
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-right: 15px;
+    font-weight:400;
 }
 
 .appdash_obj_container .objitems p {

@@ -12,10 +12,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="~/images/favicon.ico">
     @* BOOTSTRAP CSS *@
-    @*<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />*@
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />@*jith*@
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    @*<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">*@
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     @*<link rel="stylesheet" type="text/css" href="~/css/commonStyles/bootstrap.min.css" />*@@*jith*@
@@ -148,9 +150,10 @@
         @RenderSection("JavaScript")
     }
     <script>
+        var _uo = @Html.Raw(@ViewBag.UserObject);
         window.ebcontext= {
             sid: "@ViewBag.cid",
-            user: ("@ViewBag.UserObject"!= "")?JSON.parse('@Html.Raw(ViewBag.UserObject)'):null,
+            user: _uo || null,
             menu: {},
             locations: {}
         }
@@ -193,7 +196,6 @@
             @RenderBody()
         </div>
     </div>
-
     @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
     {
         <script>
@@ -202,7 +204,6 @@
                 Sid: '@ViewBag.cid',
                 Uid: '@ViewBag.UId'
             });
-            $('.Eb_Image').Lazy();
         </script>
     }
     @if (ViewBag.wc == "uc")
@@ -220,7 +221,9 @@
             //}
         </script>
     }
-
+    <script>
+        $('.Eb_Image').Lazy();
+    </script>
     @if (IsSectionDefined("JsCode"))
     {
         @RenderSection("JsCode")

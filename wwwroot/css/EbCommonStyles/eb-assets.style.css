@@ -433,12 +433,12 @@
         font-size: 20px;
     }
     .appcontainer_inner .appcontainer-body .title{
-        font-size:17px;
+        font-size:15px;
         font-weight:400;
         margin-bottom:5px;
     }
         .appcontainer_inner .appcontainer-body .description {
-            font-size:13px;
+            font-size:12px;
         }
 .txtdecor_none {
     text-decoration: none;

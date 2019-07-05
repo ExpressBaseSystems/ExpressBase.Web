@@ -281,6 +281,11 @@
     left: 0;
 }
 
+.pgCXEditor-Cont .CodeMirror-gutters {
+    border-right: 1px solid #dddddd54 !important;
+    background-color: #ffffff !important;
+}
+
 
 
 .pgCXEditor-Cont .CodeMirror-cursor {
@@ -558,6 +563,10 @@
     .pgCXEditor-Cont .btn[name="CXE_OK"]:hover {
         background-color: rgba(0, 0, 0, 0.7);
         color: white;
+    }
+    .pgCXEditor-Cont .btn[name="CXE_OK"]:focus {
+        outline: none;
+        box-shadow: 0 0 1px 1px #72c5ff;
     }
 
 .pgCXEditor-Cont .modal-body {

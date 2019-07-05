@@ -5,6 +5,7 @@ var SolutionDashBoard = function (connections, sid) {
     this.Sid = sid;
     var postData;
     var Deleteid;
+    var conf_NN;
     var preferancetype = [];
     var Imageurl = {
         "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:45px' />",
@@ -15,7 +16,8 @@ var SolutionDashBoard = function (connections, sid) {
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
-        "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />"
+        "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
+        "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />"
     }
     this.customElementLoader = $("<div>", {
         id: "connecting",
@@ -54,10 +56,10 @@ var SolutionDashBoard = function (connections, sid) {
             $("#Integration_loder").EbLoader("hide");
             if (data) {
                 this.Conf_obj_update(JSON.parse(data));
-                EbMessage("show", { Message: "Integreation Changed Successfully" });
+                EbMessage("show", { Message: "Connection set Successfully" });
             }
             else
-                EbMessage("show", { Message: "Integreation Change Failed", Background: "red" });
+                EbMessage("show", { Message: "Connection set Failed", Background: "red" });
         }.bind(this));
     };
 
@@ -252,6 +254,26 @@ var SolutionDashBoard = function (connections, sid) {
             $("#cloudnary_loader").EbLoader("hide");
             EbMessage("show", { Message: "Connection Changed Successfully" });
             $("#cldnry_conEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
+    this.mapOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddGoogleMap",
+            data: postData,
+            beforeSend: function () {
+                $("#Map_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#Map_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Changed Successfully" });
+            $("#MapConnectionEdit").modal("toggle");
             $("#IntegrationsCall").trigger("click");
             $("#MyIntegration").trigger("click");
         }.bind(this));
@@ -598,6 +620,18 @@ var SolutionDashBoard = function (connections, sid) {
             }
         }
     };
+    this.GoogleMapinteConfEditr = function (INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#MapConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#MapInputNickname').val(temp[obj].NickName);
+                $('#MapInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#MapInputApiKey').val(temp1["ApiKey"]);
+            }
+        }
+    };
 
     this.VerticalTab = function (evt, cityName) {
         var button = $(evt.currentTarget)
@@ -826,7 +860,7 @@ var SolutionDashBoard = function (connections, sid) {
                         var temp = this.Connections.Integrations[key];
                         var id = $(options.$trigger).attr("id");
                         var dt = $(options.$trigger).attr("data-whatever");
-                        var conf_NN = $(options.$trigger).attr("conf_NN");
+                        conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Edit") {
                             if (dt == "PGSQL" || dt == "MYSQL" || dt == "MSSQL" || dt == "ORACLE")
                                 this.DBinteConfEditr(id, dt);
@@ -882,10 +916,10 @@ var SolutionDashBoard = function (connections, sid) {
                                         this.IntegrationSubmit();
                                     }
                                     else {
-                                        EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
+                                        EbMessage("show", { Message: "Please delete existing account and try again", Background: "red" });
                                     }
                                 }
-                                else if (key == "EbFILES") {
+                                else if (key == "EbFILES" || key == "MAPS") {
                                     $.each(temp, function (i) {
                                         if (temp[i].Preference == 1) {
                                             postData.Preference = "OTHER";
@@ -898,7 +932,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 }
 
                             } else {
-                                EbMessage("show", { Message: "This " + conf_NN +" have been already used.", Background: "red" });
+                                EbMessage("show", { Message: "This " + conf_NN +" have been already used as "+ key +".", Background: "red" });
                             }
                         }
 
@@ -961,6 +995,11 @@ var SolutionDashBoard = function (connections, sid) {
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
+                else if ($trigger.hasClass('GoogleMapedit')) {
+                    options.items.MAPS = { name: "Set as Map" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
                 return options;
             }.bind(this)
         });
@@ -979,7 +1018,7 @@ var SolutionDashBoard = function (connections, sid) {
                         var temp = this.Connections.Integrations[dt];
                         var id = $(options.$trigger).attr("id");
                         var confid = $(options.$trigger).attr("dataConffId");
-                        var conf_NN = $(options.$trigger).attr("conf_NN");
+                        conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Remove") {
                             EbDialog("show", {
                                 Message: "The " + conf_NN + " will be removed !!!",
@@ -1026,7 +1065,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 preferancetype.push(postData)
                             }
                             this.PreferencesChange();
-                        } else if (key == "RemoveFilesD") {
+                        } else if (key == "RemoveDefault") {
                             preferancetype = [];
                             for (var i = 0, n = temp.length; i < n; i++) {
                                 if (temp[i].Id == id) {
@@ -1056,7 +1095,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 CallBack: function (name) {
                                     if (name == "Confirm") {
                                         for (var i = 0, n = temp.length; i < n; i++) {
-                                            if (temp[i].Preference == "2") {
+                                            if (temp[i].Preference == "2" || temp[i].Preference == "3") {
                                                 postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                             }
                                             else {
@@ -1077,10 +1116,10 @@ var SolutionDashBoard = function (connections, sid) {
 
                 } else if ($trigger.hasClass('EbFILESedit 3')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.RemoveFilesD = { name: "Set as Default" }
+                        options.items.RemoveDefault = { name: "Set as Default" }
 
                 } else if ($trigger.hasClass('EbFILESedit 1')) {
-                    options.items.Remove = { name: "Unset" },
+                    options.items.RemoveP = { name: "Unset" },
                         options.items.FALLBACK = {
                             name: "Set as FALLBACK", disabled: function (key, opt) {
                                 // this references the trigger element
@@ -1106,6 +1145,19 @@ var SolutionDashBoard = function (connections, sid) {
                 } else if ($trigger.hasClass('SMSedit 2')) {
                     options.items.Remove = { name: "Unset" },
                         options.items.PRIMARY = { name: "Set as PRIMARY" }
+                } else if ($trigger.hasClass('MAPSedit 3')) {
+                    options.items.Remove = { name: "Unset" },
+                        options.items.RemoveDefault = { name: "Set as Default" }
+
+                } else if ($trigger.hasClass('MAPSedit 1')) {
+                    options.items.RemoveP = { name: "Unset" },
+                        options.items.FALLBACK = {
+                            name: "Set as FALLBACK", disabled: function (key, opt) {
+                                // this references the trigger element
+                                return !this.data('cutDisabled');
+                            }
+                        }
+
                 }
 
                 return options;
@@ -1254,13 +1306,42 @@ var SolutionDashBoard = function (connections, sid) {
         $('#Integration_sms').empty().append("Message (" + count + ")");
     }.bind(this);
 
+    this.integration_Map_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["MAPS"];
+        $.each(Integrations, function (i, rows) {
+            //$.each(rows, function (j, rowss) {
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+                            <div class="integrationContainer_Image">
+                                 ${Imageurl[rows.Ctype]}
+                            </div>
+                            <div id="nm" class="integrationContainer_NN">
+                                <span>${rows.NickName}</span>
+                                `);
+            if (rows.Preference == "1") {
+                html.push(`<span  class="PF_span">PRIMARY</span>`);
+            }
+            
+            html.push(`
+                            </div>
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                        </div>`)
+            count += 1;
+        }.bind(this));
+        $('#MAP-all').empty().append(html.join(''));
+        $('#Integration_map').empty().append("Google Maps (" + count + ")");
+    }.bind(this);
+
     this.integration_config_all = function () {
         let html = [];
         var count = 0;
         InteConfig = this.Connections.IntegrationsConfig;
         $.each(InteConfig, function (i, rows) {
             $.each(rows, function (j, rowss) {
-                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rows.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
+                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rowss.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
                                 <div id = "nm" class="inteConfContainer_Image ">
                                     ${Imageurl[rowss.Type]}
                                 </div >
@@ -1294,6 +1375,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMTP_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
+        this.integration_Map_all();
     }.bind(this);
 
     this.init = function () {
@@ -1306,6 +1388,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
+        $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();
@@ -1343,18 +1426,9 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMTP_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
+        this.integration_Map_all();
 
-        //$(".inteConfContainer").on("click", ".PGSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MYSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MSSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".ORACLEedit", this.PostgreinteConfEditr.bind(this));
-        ////$(".oracleintegrationedit").on("click", this.DbinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MongoDBedit", this.MongointeConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".Cloudinaryedit", this.ColudinaryinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".SMTPedit", this.SmtpinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".Twilioedit", this.twiliointeConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".ExpertTextingedit", "", this.expertinteConfEditr.bind(this));
-
+        
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));
         //$("#IntegrationsCall").trigger("click");
         //$("#MyIntegration").trigger("click");

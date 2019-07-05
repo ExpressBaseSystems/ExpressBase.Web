@@ -253,7 +253,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         Decimal: null,
         Double: null,
         Int16: null,
-        Int32:null,
+        Int32: null,
         Json: null,
         String: null,
     }
@@ -429,7 +429,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             paramsArray = this.CreateObjString();
 
         commonO.tabNum++;
-        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum + " href='#vernav" + commonO.tabNum + "'>Result-" + this.EbObject.VersionNumber + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
+        var title = " Result";
+        if (commonObj.isversioned)
+            title = title + "(" + this.EbObject.VersionNumber+")";
+      
+        var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum + " href='#vernav" + commonO.tabNum + "'>" + title + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tab = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddTab(nav, tab);
         $('#vernav' + commonO.tabNum).append(`<div class='filter_modal_body'><div class="accordion" id="accordion${commonO.tabNum}"></div></div>`);
@@ -450,7 +454,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.Load_Table_Columns = function (result) {
         if (result !== null) {
             if (result.message !== null) {
-                EbMessage("show", { Message: result.message, Background: this.RedColor, AutoHide: false, Delay: 8000});
+                EbMessage("show", { Message: result.message, Background: this.RedColor, AutoHide: false, Delay: 8000 });
             }
             else {
                 var colscollection = JSON.parse(result.data);

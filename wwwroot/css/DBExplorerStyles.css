@@ -216,6 +216,10 @@ div.CodeMirror.cm-s-default {
     border-top-left-radius: 2px;
 }
 
+.CodeMirror-gutters{
+    z-index:auto;
+}
+
 /*.tab-section-common .nav-tabs .active a {
 background: #316396;
 color: white;

@@ -27,8 +27,11 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
 
     this.init = function () {
         this.initFormObject2();
-        this.initFilterDialogCtrls();
+        this.initFilterDialogCtrls();// order 1
+        this.FRC.setDefaultvalsNC(this.flatControls);// order 2
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
 
+        this.FRC.fireInitOnchangeNC();
         //this.bindFuncsToDom();
 
     };
@@ -46,9 +49,11 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
 
             this.initControls.init(Obj, opt);
 
-            this.FRC.bindFnsToCtrl(Obj);
+            this.FRC.bindFnsToCtrl_init(Obj);
+        }.bind(this));
 
-            this.FRC.fireInitOnchange(Obj);
+        $.each(this.FormObj.Controls.$values, function (k, Obj) {
+           this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 

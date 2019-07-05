@@ -73,6 +73,7 @@ namespace ExpressBase.Web.Controllers
                 UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
                 if (result.Unique)
                 {
+                    res.IsEmailUniq = true;
                     string activationcode = Guid.NewGuid().ToString();
                     var pgurl = this.HttpContext.Request.Host;
                     var pgpath = this.HttpContext.Request.Path;
@@ -91,7 +92,7 @@ namespace ExpressBase.Web.Controllers
 
                     if (res.Id > 0)
                     {
-                        res.IsEmailUniq = true;
+                        
                         MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                         {
                             provider = CredentialsAuthProvider.Name,
@@ -111,11 +112,14 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
                 else
+                {
                     res.IsEmailUniq = false;
+                }
+                   
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("Exception: " + e.Message + e.StackTrace);
             }
             return res;
         }
@@ -255,8 +259,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("social_oauth")]
         public IActionResult SocialOath(string scosignup)
         {
-
-            int streturn = 0;
+            
             SocialSignup Social = JsonConvert.DeserializeObject<SocialSignup>(scosignup);
             if (Social.UniqueEmail)
             {
@@ -277,17 +280,18 @@ namespace ExpressBase.Web.Controllers
                     this.ServiceClient.RefreshToken = authResponse.RefreshToken;
                 }
 
-                var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest { DeployDB = true });
+                var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest {
+                    SolutionName = "My First solution",
+                    Description = "my first solutiopn",
+                    DeployDB = true,
+                });
 
-                if (tmp.ErrDbMessage != null || tmp.ErrSolMessage != null)
-                {
-                    streturn = 2;
-                }
-                return Redirect("/Tenant/TenantDashboard");
+                return Redirect(RoutingConstants.MYSOLUTIONS);
             }
             else
             {
-                return Redirect("http://myaccount.localhost:41500/");
+                return RedirectToAction(RoutingConstants.TENANTSIGNIN);
+
             }
         }
 
